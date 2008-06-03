@@ -284,7 +284,7 @@ public class WPSClientSession {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("Accept-Encoding", "gzip");
 			conn.setDoOutput(true);
-			obj.save(conn.getOutputStream());
+			conn.setRequestProperty("Content-Type", "text/xml");
 			InputStream input = null;
 			String encoding = conn.getContentEncoding();
 			if(encoding.equalsIgnoreCase("gzip")) {
@@ -342,11 +342,17 @@ public class WPSClientSession {
 	private ExecuteResponseDocument retrieveExecuteResponseViaPOST( String url, ExecuteDocument doc) throws WPSClientException{
 		InputStream is = retrieveDataViaPOST(doc, url);
 		Document documentObj = checkInputStream(is);
+		ExceptionReportDocument erDoc = null;
 		try {
 			return ExecuteResponseDocument.Factory.parse(documentObj);
 		}
 		catch(XmlException e) {
-			throw new WPSClientException("Error occured while parsing executeResponse", e);
+			try {
+				erDoc = ExceptionReportDocument.Factory.parse(documentObj);
+			} catch (XmlException e1) {
+				throw new WPSClientException("Error occured while parsing executeResponse", e);
+			}
+			throw new WPSClientException("Error occured while parsing executeResponse", erDoc);
 		}
 	}
 	
