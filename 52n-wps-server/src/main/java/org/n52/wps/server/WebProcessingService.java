@@ -226,8 +226,14 @@ public class WebProcessingService extends HttpServlet {
     	    }
     	    LOGGER.debug(sw);
     	    String s;
+    	    String reqContentType = req.getContentType();
     	    if (sw.toString().startsWith("request=")){
-    	    	s = URLDecoder.decode(sw.toString().substring(8), "UTF-8");
+    	    	if(reqContentType.equalsIgnoreCase("text/plain")) {
+    	    		s = sw.toString().substring(8);
+    	    	}
+    	    	else {
+    	    		s = URLDecoder.decode(sw.toString().substring(8), "UTF-8");
+    	    	}
     	    	LOGGER.debug(s);
     	    } else{
     	    	s = sw.toString();
