@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <!-- $Id$ -->
+    <parent>
+        <groupId>org.n52.wps</groupId>
+        <artifactId>52n-wps-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.n52.wps</groupId>
+    <artifactId>52n-wps-webapp</artifactId>
+    <packaging>war</packaging>
+    <name>52n WPS Web Application</name>
+    <url>http://incubator.52north.org/maven/project-sites/52n-wps-server</url>
+    <inceptionYear>2007</inceptionYear>
+    <issueManagement>
+        <system>Bugzilla</system>
+        <url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
+    </issueManagement>
+        <scm>
+        <!-- Specification of the Source-Content-Managmentsystem -->
+        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
+    </scm>
+    <build>
+    <plugins> 
+          <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+        <excludes>
+        <exclude>**</exclude>
+        </excludes>
+        </configuration>
+      </plugin>
+      </plugins>
+    </build>
+    <profiles>
+        <profile>
+        
+        </profile>        
+    </profiles>    
+    <!-- here are the dependencies of the project -->
+    <dependencies>
+        <!-- Dependencies for Scope 'test' -->
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-commons</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-io</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+                <!--dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-server-processes</artifactId>
+            <version>${project.version}</version>
+        </dependency-->
+        <!--dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-client-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency-->
+        
+         <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-install-wizard</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+   			<groupId>net.sourceforge.pjl-comp-filter</groupId>
+    		<artifactId>pjl-comp-filter</artifactId>
+    		<scope>runtime</scope>
+   			 <version>1.6.4</version>
+</dependency>
+    </dependencies>
+</project>

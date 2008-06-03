@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This example describes a decimal precision modifying algorithm that transform coordinates in GML3. -->
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" 
+	xmlns:ows="http://www.opengis.net/ows/1.1" 
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.server.algorithm.DecimalPrecision</ows:Identifier>
+		<ows:Title>This example describes a decimal precision modifying algorithm that transform coordinates in GML3.</ows:Title>
+		<ows:Abstract></ows:Abstract>
+		<ows:Metadata xlink:title="spatial" />
+		<ows:Metadata xlink:title="coordinates" />
+		<ows:Metadata xlink:title="decimal" />
+		<ows:Metadata xlink:title="GML3" />
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Data</ows:Identifier>
+				<ows:Title>GML3 data</ows:Title>
+				<ows:Abstract>GML3 data where the decimal precision is altered.</ows:Abstract>
+				<ComplexData>
+				<Default>
+					<Format>
+						<MimeType>text/XML</MimeType>
+						<Schema>http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd</Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>text/XML</MimeType>
+						<Schema>http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd</Schema>
+					</Format>
+				</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Precision</ows:Identifier>
+				<ows:Title>decimal count</ows:Title>
+				<ows:Abstract>Wanted number of decimals</ows:Abstract>
+				<LiteralData>
+					<ows:DataType>
+						xs:integer
+					</ows:DataType>
+					<ows:AnyValue></ows:AnyValue>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>result</ows:Identifier>
+				<ows:Title>Modified GML3 data</ows:Title>
+				<ows:Abstract></ows:Abstract>
+				<ComplexOutput>
+				<Default>
+					<Format>
+						<MimeType>text/XML</MimeType>
+						<Schema>http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd</Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>text/XML</MimeType>
+						<Schema>http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd</Schema>
+					</Format>
+				</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
