@@ -33,22 +33,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
-import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
-
-import noNamespace.PropertyDocument;
 import noNamespace.WPSConfigurationDocument;
 import noNamespace.GeneratorDocument.Generator;
-import noNamespace.GeneratorListDocument.GeneratorList;
 import noNamespace.ParserDocument.Parser;
 import noNamespace.PropertyDocument.Property;
 import noNamespace.RepositoryDocument.Repository;
-import noNamespace.WPSConfigurationDocument.WPSConfiguration;
-import noNamespace.impl.PropertyDocumentImpl;
-import noNamespace.impl.PropertyDocumentImpl.PropertyImpl;
 import noNamespace.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+
+import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 
 public class WPSConfig {
 	private static WPSConfig wpsConfig;
