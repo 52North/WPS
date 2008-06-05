@@ -283,8 +283,9 @@ public class WPSClientSession {
 			URL url = new URL(urlString);
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("Accept-Encoding", "gzip");
-			conn.setDoOutput(true);
 			conn.setRequestProperty("Content-Type", "text/xml");
+			conn.setDoOutput(true);
+			obj.save(conn.getOutputStream());
 			InputStream input = null;
 			String encoding = conn.getContentEncoding();
 			if(encoding.equalsIgnoreCase("gzip")) {
