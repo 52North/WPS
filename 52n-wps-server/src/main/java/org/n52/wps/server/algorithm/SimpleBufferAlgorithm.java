@@ -60,6 +60,9 @@ public class SimpleBufferAlgorithm extends AbstractAlgorithm {
 	
 	public Map run(Map layers, Map parameters) {
 		FeatureCollection fc = (FeatureCollection)layers.get("data");
+		if(fc==null){
+			return new HashMap<String,Object>();
+		}
 		double width = ((Double)parameters.get("width")).doubleValue();
 		FeatureCollection fcnew = runBuffer(fc, width);
 		HashMap<String,Object> resulthash = new HashMap<String,Object>();
