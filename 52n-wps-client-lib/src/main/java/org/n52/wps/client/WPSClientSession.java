@@ -35,6 +35,8 @@ import org.xml.sax.SAXException;
 /**
  * Contains some convenient methods to access and manage WebProcessingSerivces in a very
  * generic way.
+ * 
+ * This is implemented as a singleton.
  * @author foerster
  */
 
@@ -45,6 +47,7 @@ public class WPSClientSession {
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
 	private static String SUPPORTED_VERSION = "1.0.0"; 
 	
+	private static WPSClientSession session;
 	private Map<String, CapabilitiesDocument> loggedServices;
 	private XmlOptions options = null;
 	
@@ -55,12 +58,25 @@ public class WPSClientSession {
 	 * Initializes a WPS client session with a no logged services.
 	 *
 	 */
-	public WPSClientSession() {
+	private WPSClientSession() {
 		options = new XmlOptions();
 		options.setLoadStripWhitespace();
 		options.setLoadTrimTextBuffer();
 		loggedServices = new HashMap<String, CapabilitiesDocument>();
 		processDescriptions = new HashMap<String, ProcessDescriptionsDocument>();
+	}
+	
+	public static WPSClientSession getInstance() {
+		if(session == null) {
+			session = new WPSClientSession();
+		}
+		return session;
+	}
+	/**
+	 * This resets the WPSClientSession. This might be necessary, to get rid of old service entries/descriptions. However, the session has to be repopulated afterwards.
+	 */
+	public static void reset() {
+		session = new WPSClientSession();
 	}
 	
 	/**
