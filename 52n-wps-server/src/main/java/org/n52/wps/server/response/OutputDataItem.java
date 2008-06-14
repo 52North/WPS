@@ -32,6 +32,7 @@ package org.n52.wps.server.response;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -155,7 +156,7 @@ public class OutputDataItem extends ResponseData {
 		OutputReferenceType outReference = output.addNewReference();
 		outReference.setSchema(schema);
 		IDatabase db = DatabaseFactory.getDatabase();
-		String storeID = reqID + "@" + id;
+		String storeID = reqID + "#" + id;
 		if(generator instanceof IStreamableGenerator) {
 			OutputStreamWriter writer = new OutputStreamWriter(baos);
 			((IStreamableGenerator)generator).write(obj, writer);
@@ -183,7 +184,8 @@ public class OutputDataItem extends ResponseData {
 				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
 		}
-		outReference.setHref(db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE));
+		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE);
+		outReference.setHref(URLEncoder.encode(storeReference));
 	}
 	
 	private OutputDataType prepareOutput(ExecuteResponseDocument res){
