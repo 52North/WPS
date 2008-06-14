@@ -56,7 +56,7 @@
 		<ows:Operation name="Execute">
 			<ows:DCP>
 				<ows:HTTP>
-					<!--ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/-->
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
 					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
 				</ows:HTTP>
 			</ows:DCP>
