@@ -185,7 +185,8 @@ public class OutputDataItem extends ResponseData {
 			}
 		}
 		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE);
-		outReference.setHref(URLEncoder.encode(storeReference));
+		storeReference = storeReference.replace("#", "%23");
+		outReference.setHref(storeReference);
 	}
 	
 	private OutputDataType prepareOutput(ExecuteResponseDocument res){
