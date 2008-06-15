@@ -176,6 +176,10 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 //				GeometryCollection geomColl = (GeometryCollection)geom;
 //				geomColl.get
 //			}
+			else if(geom.isEmpty()) {
+				//GEOMETRY is empty, do nothing
+				
+			}
 			else {
 				throw new IllegalArgumentException("geometryType not supported: " + geomType);
 			}
