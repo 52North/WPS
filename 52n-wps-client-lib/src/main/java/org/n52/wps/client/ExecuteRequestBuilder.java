@@ -28,9 +28,12 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.client;
 
 import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.OutputDefinitionType;
+import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
 
@@ -41,9 +44,7 @@ import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.xml.AbstractXMLGenerator;
 import org.w3c.dom.Node;
-
-/*
- * ExecuteRequestBuilder support WPS version 1.0.0
+/**
  * @author foerster
  * TODO: this does not handle referenced datasets
  */
@@ -60,6 +61,11 @@ public class ExecuteRequestBuilder {
 		ex.setVersion(SUPPORTED_VERSION);
 		ex.addNewIdentifier().setStringValue(processDesc.getIdentifier().getStringValue());
 		ex.addNewDataInputs();
+	}
+	
+	public ExecuteRequestBuilder(ProcessDescriptionType processDesc, ExecuteDocument execute) {
+		this.processDesc = processDesc;
+		this.execute = execute;
 	}
 	
 	public void addComplexData(String parameterID, Object value) {
@@ -144,6 +150,47 @@ public class ExecuteRequestBuilder {
 		return true;
 	}
 	
+	/**
+	 * this sets store for the specific output.
+	 * @param parentInput
+	 * @return
+	 */
+	public boolean setStoreSupport(String outputName) {
+		DocumentOutputDefinitionType outputDef = execute.getExecute().addNewResponseForm().addNewResponseDocument().addNewOutput();
+		for (OutputDescriptionType outputDesc : processDesc.getProcessOutputs().getOutputArray()) {
+			if(outputDesc.getIdentifier().getStringValue().equals(outputName)) {
+				outputDef.setIdentifier(outputDesc.getIdentifier());
+				ComplexDataDescriptionType format = outputDesc.getComplexOutput().getDefault().getFormat();
+				if(format.getMimeType() != null) {
+					outputDef.setMimeType(format.getMimeType());
+				}
+				if(format.getEncoding() != null) {
+					outputDef.setEncoding(format.getEncoding());
+				}
+				outputDef.setSchema(format.getSchema());
+				
+				outputDef.setAsReference(true);
+			}
+		}
+		return true;	
+	}
+	
+	public boolean setRawData() {
+		if(processDesc.getProcessOutputs().getOutputArray().length != 1) {
+			return false;
+		}
+		OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
+		ComplexDataDescriptionType complexDesc = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat();
+		output.setIdentifier(processDesc.getProcessOutputs().getOutputArray(0).getIdentifier());
+		output.setSchema(complexDesc.getSchema());
+		if(complexDesc.getMimeType() != null) {
+			output.setMimeType(complexDesc.getMimeType());
+		}
+		if(complexDesc.getEncoding() != null) {
+			output.setEncoding(complexDesc.getEncoding());
+		}
+		return true;
+	}
 	
 	public ExecuteDocument getExecute() {
 		return execute;

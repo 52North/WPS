@@ -27,6 +27,9 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.client;
 
+import java.io.InputStream;
+
+import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
@@ -44,15 +47,27 @@ import org.n52.wps.io.xml.AbstractXMLParser;
  */
 public class ExecuteResponseAnalyser {
 	
-	ExecuteResponseDocument response;
+	Object response;
+	ExecuteResponseDocument responseDoc;
 	ProcessDescriptionType processDesc;
-	public ExecuteResponseAnalyser(ExecuteResponseDocument response, ProcessDescriptionType processDesc) {
+	ExecuteDocument exec;
+	
+	public ExecuteResponseAnalyser(Object response, ExecuteDocument exec, ProcessDescriptionType processDesc) {
+		this.processDesc = processDesc;
 		this.response = response;
-		this.processDesc= processDesc;
+		this.exec= exec;
+	}
+	
+	public ExecuteResponseAnalyser(ExecuteResponseDocument responseDoc, ProcessDescriptionType processDesc) {
+		this.responseDoc = responseDoc;
+		this.processDesc= processDesc;		
 	}
 	
 	public Object getComplexData(String name) {
-		OutputDataType[] outputs = response.getExecuteResponse().getProcessOutputs().getOutputArray();
+		if(response != null) {
+			return parseProcessOutput(response);
+		}
+		OutputDataType[] outputs = responseDoc.getExecuteResponse().getProcessOutputs().getOutputArray();
 		for(OutputDataType output : outputs) {
 			if(output.getIdentifier().getStringValue().equals(name)) {
 				if(output.getData().getComplexData() == null) {
@@ -65,7 +80,10 @@ public class ExecuteResponseAnalyser {
 	}
 	
 	public Object getComplexDataByIndex(int index) {
-		OutputDataType[] outputs = response.getExecuteResponse().getProcessOutputs().getOutputArray();
+		if(response != null) {
+			return parseProcessOutput(response);
+		}
+		OutputDataType[] outputs = responseDoc.getExecuteResponse().getProcessOutputs().getOutputArray();
 		int counter = 0; 
 		for(OutputDataType output : outputs) {
 			if(output.getData().getComplexData() != null) {
@@ -77,6 +95,22 @@ public class ExecuteResponseAnalyser {
 		}
 		return null;
 	}
+	
+	public String getComplexReferenceByIndex(int index) {
+		OutputDataType[] outputs = responseDoc.getExecuteResponse().getProcessOutputs().getOutputArray();
+		int counter = 0; 
+		for(OutputDataType output : outputs) {
+			if(output.getReference() != null) {
+				if(counter == index) {
+					return output.getReference().getHref();
+				}
+				counter ++;
+			}
+		}
+		return null;
+	}
+		
+	
 	
 	private Object parseProcessOutput(OutputDataType output) {
 		String schemaURL = output.getData().getComplexData().getSchema();
@@ -96,6 +130,26 @@ public class ExecuteResponseAnalyser {
 			return xmlParser.parseXML(output.getData().getComplexData().newInputStream());
 		}
 		// parser is not of type AbstractXMLParser
+		return null;
+	}
+	/**
+	 * this parses rawData output directly.
+	 * @param obj
+	 * @return
+	 */
+	private Object parseProcessOutput(Object obj) {
+		String schema = exec.getExecute().getResponseForm().getRawDataOutput().getSchema();
+		if(schema == null) {
+			schema = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getSchema();
+			if(schema == null) {
+				throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + exec.getExecute().getIdentifier().getStringValue());
+			}
+		}
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
+		if(parser instanceof AbstractXMLParser) {
+			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
+			return xmlParser.parseXML((InputStream)response);
+		}
 		return null;
 	}
 }
