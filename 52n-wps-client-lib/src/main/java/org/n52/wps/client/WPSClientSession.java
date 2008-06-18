@@ -241,7 +241,7 @@ public class WPSClientSession {
 	 * @param execute
 	 * @return
 	 */
-	public ExecuteResponseDocument execute(String serverID, ExecuteDocument execute) throws WPSClientException{
+	public Object execute(String serverID, ExecuteDocument execute, boolean rawData) throws WPSClientException{
 		CapabilitiesDocument caps = loggedServices.get(serverID);
 		Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
 		String url = null;
@@ -254,7 +254,11 @@ public class WPSClientSession {
 			throw new WPSClientException("Caps does not contain any information about the entry point for process execution");
 		}
 		execute.getExecute().setVersion(SUPPORTED_VERSION);
-		return retrieveExecuteResponseViaPOST(url, execute);
+		return retrieveExecuteResponseViaPOST(url, execute,rawData);
+	}
+	
+	public Object execute(String serverID, ExecuteDocument execute) throws WPSClientException{
+		return execute(serverID, execute,false);
 	}
 	
 	private CapabilitiesDocument retrieveCapsViaGET(String url) throws WPSClientException {
@@ -304,7 +308,7 @@ public class WPSClientSession {
 			obj.save(conn.getOutputStream());
 			InputStream input = null;
 			String encoding = conn.getContentEncoding();
-			if(encoding.equalsIgnoreCase("gzip")) {
+			if(encoding != null && encoding.equalsIgnoreCase("gzip")) {
 				input = new GZIPInputStream(conn.getInputStream());
 			}
 			else {
@@ -356,8 +360,11 @@ public class WPSClientSession {
 		
 	}
 	
-	private ExecuteResponseDocument retrieveExecuteResponseViaPOST( String url, ExecuteDocument doc) throws WPSClientException{
+	private Object retrieveExecuteResponseViaPOST( String url, ExecuteDocument doc, boolean rawData) throws WPSClientException{
 		InputStream is = retrieveDataViaPOST(doc, url);
+		if(rawData) {
+			return is;
+		}
 		Document documentObj = checkInputStream(is);
 		ExceptionReportDocument erDoc = null;
 		try {
