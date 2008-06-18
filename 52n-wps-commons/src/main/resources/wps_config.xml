@@ -31,7 +31,7 @@
 		</Repository>
 		
 		</AlgorithmRepositoryList>
-	<Server hostport="8080" includeDataInputsInResponse="false" hostname="localhost" computationTimeoutSeconds="5">
+	<Server hostport="8080" includeDataInputsInResponse="false" hostname="localhost" computationTimeoutMilliSeconds="5">
 		<Database></Database>
 		</Server>
 </WPSConfiguration>
