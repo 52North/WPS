@@ -115,7 +115,7 @@ public class RequestHandler {
 		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
 			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
 		}*/
-		this.sleepingTime = new Integer(WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds());
+		this.sleepingTime = new Integer(WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds());
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
 
