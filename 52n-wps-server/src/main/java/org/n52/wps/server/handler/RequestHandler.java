@@ -115,7 +115,12 @@ public class RequestHandler {
 		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
 			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
 		}*/
-		this.sleepingTime = new Integer(WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds());
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds();
+		if(sleepTime==null || sleepTime.equals("")){
+			sleepTime = "5";
+		}
+		this.sleepingTime = new Integer(sleepTime);
+		
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
 
@@ -160,7 +165,12 @@ public class RequestHandler {
 		Document doc;
 		this.os = os;
 		
-		this.sleepingTime = new Integer(WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds());
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds();
+		if(sleepTime==null || sleepTime.equals("")){
+			sleepTime = "5";
+		}
+		this.sleepingTime = new Integer(sleepTime);
+		
 		try {
 			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 		
