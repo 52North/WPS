@@ -52,7 +52,7 @@ import net.opengis.gml.LinearRingMemberType;
 import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonType;
-import noNamespace.PropertyDocument.Property;
+import org.n52.wps.PropertyDocument.Property;
 
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;

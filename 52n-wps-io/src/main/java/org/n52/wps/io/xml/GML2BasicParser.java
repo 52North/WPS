@@ -48,7 +48,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import noNamespace.PropertyDocument.Property;
+import org.n52.wps.PropertyDocument.Property;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;

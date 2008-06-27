@@ -37,7 +37,7 @@ package org.n52.wps.io;
 import java.util.ArrayList;
 import java.util.List;
 
-import noNamespace.GeneratorDocument.Generator;
+import org.n52.wps.GeneratorDocument.Generator;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.xml.AbstractXMLGenerator;

@@ -34,15 +34,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 
-import noNamespace.WPSConfigurationDocument;
-import noNamespace.GeneratorDocument.Generator;
-import noNamespace.ParserDocument.Parser;
-import noNamespace.PropertyDocument.Property;
-import noNamespace.RepositoryDocument.Repository;
-import noNamespace.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
-
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+
+import org.n52.wps.WPSConfigurationDocument;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RepositoryDocument.Repository;
+import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+
 
 public class WPSConfig {
 	private static WPSConfig wpsConfig;
@@ -65,7 +66,7 @@ public class WPSConfig {
 	public static WPSConfig getInstance() {
 		if(wpsConfig==null){
 			try {
-				wpsConfig = new WPSConfig(WPSConfig.class.getClassLoader().getResourceAsStream("wps_config.xml"));
+				wpsConfig = new WPSConfig(getConfigPath());
 			} catch (XmlException e) {
 				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
 				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
@@ -77,6 +78,22 @@ public class WPSConfig {
 		return wpsConfig;
 	}
 	
+	public static String getConfigPath() throws IOException {
+		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		//truncate
+		int index = domain.indexOf("WEB-INF");
+		if(index<0){
+			throw new IOException("Could not find wps_config.xml");
+		}
+		String substring = domain.substring(0,index);
+		if(!substring.endsWith("/")){
+			substring = substring + "/";
+		}
+		substring = substring + "config/wps_config.xml";
+		
+		return substring;
+	}
+
 	public WPSConfigurationImpl getWPSConfig(){
 		return wpsConfigXMLBeans;
 	}
@@ -131,7 +148,15 @@ public class WPSConfig {
 		}
 		
 		return (Property[]) Array.newInstance(Property.Factory.class,0);
-		
-		
 	}
+	
+	public Property getPropertyForKey(Property[] properties, String key){
+		for(Property property: properties){
+			if(property.getName().equalsIgnoreCase(key)){
+				return property;
+			}
+		}
+		return null;
+	}
+	
 }

@@ -91,7 +91,7 @@ public class InstallLocationPanelDescriptor extends WizardPanelDescriptor implem
     
     @Override
     public void finishPage(){
-    	if(!panel2.getTomcatLocation().endsWith("webapps")){
+    	if(!panel2.getTomcatLocation().endsWith("wps")){
     		if(panel2.getTomcatLocation().endsWith("/")||panel2.getTomcatLocation().endsWith("\\")){
     			getWizard().addProperties(TOMCAT_LOCATION, panel2.getTomcatLocation()+"webapps");
     		}else{

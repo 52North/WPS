@@ -51,11 +51,9 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessFailedType;
 import net.opengis.wps.x100.StatusType;
-import noNamespace.WPSConfigurationDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -115,7 +113,7 @@ public class RequestHandler {
 		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
 			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
 		}*/
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds();
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
 		if(sleepTime==null || sleepTime.equals("")){
 			sleepTime = "5";
 		}
@@ -165,7 +163,7 @@ public class RequestHandler {
 		Document doc;
 		this.os = os;
 		
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutSeconds();
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
 		if(sleepTime==null || sleepTime.equals("")){
 			sleepTime = "5";
 		}

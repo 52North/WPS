@@ -36,8 +36,6 @@ package org.n52.wps.io;
 
 import java.io.OutputStream;
 
-import noNamespace.PropertyDocument.Property;
-
 /** 
  * Basic interface for all Generators.
  * @author foerster

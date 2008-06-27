@@ -33,9 +33,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Insets;
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -43,13 +41,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
-import javax.xml.ws.Response;
-
-import noNamespace.WPSConfigurationDocument;
-import noNamespace.PropertyDocument.Property;
-import noNamespace.RepositoryDocument.Repository;
 
 import org.apache.xmlbeans.XmlException;
+import org.n52.wps.WPSConfigurationDocument;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.install.framework.InstallWizard;
 import org.n52.wps.test.checknodetree.CheckNode;
 import org.n52.wps.test.checknodetree.CheckNodeTree;

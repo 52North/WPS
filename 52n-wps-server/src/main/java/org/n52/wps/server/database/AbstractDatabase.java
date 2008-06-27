@@ -40,11 +40,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-import noNamespace.DatabaseDocument.Database;
-import noNamespace.PropertyDocument.Property;
-import noNamespace.ServerDocument.Server;
+
 
 import org.apache.log4j.Logger;
+import org.n52.wps.DatabaseDocument.Database;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;

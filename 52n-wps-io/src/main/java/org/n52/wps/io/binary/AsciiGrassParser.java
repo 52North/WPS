@@ -35,13 +35,11 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
-import noNamespace.PropertyDocument.Property;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
+import org.n52.wps.PropertyDocument.Property;
 import org.opengis.coverage.grid.GridCoverageReader;
 
 public class AsciiGrassParser extends AbstractBinaryParser {

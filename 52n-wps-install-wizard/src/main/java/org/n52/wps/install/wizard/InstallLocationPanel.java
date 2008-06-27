@@ -37,8 +37,6 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLDecoder;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -52,9 +50,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 
-import noNamespace.WPSConfigurationDocument;
-
 import org.apache.xmlbeans.XmlException;
+import org.n52.wps.WPSConfigurationDocument;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.install.framework.InstallWizard;
 
 
@@ -119,24 +117,31 @@ public class InstallLocationPanel extends JPanel {
         secondaryPanel.add(contentPanel, BorderLayout.NORTH);
         add(secondaryPanel, BorderLayout.WEST);
         
-       /* 
+      /*  
         String wpsConfigPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
     	wpsConfigPath = URLDecoder.decode(wpsConfigPath);
     	wpsConfigPath = wpsConfigPath.replace("\\", "/");
     	wpsConfigPath = wpsConfigPath.replace("/bin", "/conf/wps_config.xml");
-    	wpsConfigPath = wpsConfigPath.replace("file:/", "");*/
+    	wpsConfigPath = wpsConfigPath.replace("file:/", "");
         
         String wpsConfigPath = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
     	wpsConfigPath = URLDecoder.decode(wpsConfigPath);
     	wpsConfigPath = wpsConfigPath.replace("\\", "/");
     	wpsConfigPath = wpsConfigPath.replace("file:/", "");
         int index = wpsConfigPath.indexOf("WEB-INF");
-    	wpsConfigPath = wpsConfigPath.substring(0,index);
+       	wpsConfigPath = wpsConfigPath.substring(0,index);
     	wpsConfigPath = wpsConfigPath + "/WEB-INF/classes/org/n52/wps/server/wps_config.xml";
-    	
+    	*/
     	
         try {
-			WPSConfigurationDocument doc = WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath));
+        	//InputStream stream = InstallLocationPanel.class.getClassLoader().getResourceAsStream("wps_config.xml");
+        	String tempConfigPath = WPSConfig.getConfigPath();
+        	File file = new File (tempConfigPath);
+			
+			
+			WPSConfigurationDocument doc = WPSConfigurationDocument.Factory.parse(file);
+			
+			
 			installWizard.addProperties(InstallLocationPanelDescriptor.WPS_CCONFIG, doc);
 		} catch (XmlException e) {
 			// TODO Auto-generated catch block

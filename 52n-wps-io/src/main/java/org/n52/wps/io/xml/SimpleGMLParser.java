@@ -47,7 +47,6 @@ import net.opengis.gml.LinearRingMemberType;
 import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonPropertyType;
-import noNamespace.PropertyDocument.Property;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;

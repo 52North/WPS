@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import noNamespace.PropertyDocument.Property;
+import org.n52.wps.PropertyDocument.Property;
 
 /**
  * This parser can be used to bypass the other parsers that 

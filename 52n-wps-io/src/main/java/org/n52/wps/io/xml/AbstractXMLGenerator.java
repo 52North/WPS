@@ -35,7 +35,7 @@ Muenster, Germany
 package org.n52.wps.io.xml;
 
 
-import noNamespace.PropertyDocument.Property;
+import org.n52.wps.PropertyDocument.Property;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IGenerator;

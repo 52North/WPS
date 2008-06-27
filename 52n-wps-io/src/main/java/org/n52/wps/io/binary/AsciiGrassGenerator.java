@@ -41,12 +41,11 @@ import java.io.FileReader;
 import java.io.OutputStream;
 import java.io.Writer;
 
-import noNamespace.PropertyDocument.Property;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridWriter;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableGenerator;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;

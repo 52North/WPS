@@ -28,9 +28,6 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.io;
 
 import java.io.InputStream;
-import java.util.List;
-
-import noNamespace.PropertyDocument.Property;
 
 public interface IParser extends IOHandler{
 	Object parse(InputStream input);

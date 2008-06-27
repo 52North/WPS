@@ -27,8 +27,8 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.client;
 
-import noNamespace.GeneratorDocument.Generator;
-import noNamespace.ParserDocument.Parser;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.ParserDocument.Parser;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;

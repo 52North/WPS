@@ -42,7 +42,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import noNamespace.PropertyDocument.Property;
+import org.n52.wps.PropertyDocument.Property;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IStreamableGenerator;

@@ -32,12 +32,11 @@ package org.n52.wps.install.wizard;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -47,13 +46,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import noNamespace.WPSConfigurationDocument;
-import noNamespace.GeneratorDocument.Generator;
-import noNamespace.ParserDocument.Parser;
-import noNamespace.PropertyDocument.Property;
-import noNamespace.RepositoryDocument.Repository;
-
-import org.apache.xmlbeans.XmlException;
+import org.n52.wps.WPSConfigurationDocument;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RepositoryDocument.Repository;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.install.framework.InstallWizard;
 import org.n52.wps.install.framework.WizardPanelDescriptor;
 import org.n52.wps.install.wizard.util.DirectoryCopier;
@@ -101,8 +99,8 @@ public class FinishPanelDescriptor extends WizardPanelDescriptor {
     @Override
     public void finishPage() {
     	
-    	//create config
-    	Map<String, Object> properties = getWizard().getProperties();
+    		//create config
+    		Map<String, Object> properties = getWizard().getProperties();
         
         	WPSConfigurationDocument doc = (WPSConfigurationDocument) getWizard().getProperties().get(InstallLocationPanelDescriptor.WPS_CCONFIG); 
 			//replace elements
@@ -116,28 +114,26 @@ public class FinishPanelDescriptor extends WizardPanelDescriptor {
 			
 			
 				
-				Parser[] parsers = doc.getWPSConfiguration().getDatahandlers().getParserList().getParserArray();
+			Parser[] parsers = doc.getWPSConfiguration().getDatahandlers().getParserList().getParserArray();
 				
 				
 				
-				for(int i = 0; i<parsers.length; i++){
-					boolean isIncluded = false;
+			for(int i = 0; i<parsers.length; i++){
+				boolean isIncluded = false;
 					
-					for(CheckNode node : selectedNodes1){
-						String name =  node.toString();
-						if(parsers[i].getName().equals(name)){
-							isIncluded = true;
-							break;
-						}
-					}
-					if(!isIncluded){
-						doc.getWPSConfiguration().getDatahandlers().getParserList().removeParser(i);
+				for(CheckNode node : selectedNodes1){
+					String name =  node.toString();
+					if(parsers[i].getName().equals(name)){
+						isIncluded = true;
+						break;
 					}
 				}
+				if(!isIncluded){
+					doc.getWPSConfiguration().getDatahandlers().getParserList().removeParser(i);
+				}
+			}
 				
 				
-				
-			
 			//generators
 			CheckNodeTree tree2 = (CheckNodeTree) properties.get(GeneratorLocationPanelDescriptor.GENERATORS);
 			CheckNode[] selectedNodes2 = tree2.getCheckedNodes();
@@ -202,40 +198,132 @@ public class FinishPanelDescriptor extends WizardPanelDescriptor {
 				
 			
 			//writeXmlFile(doc.getDomNode().getOwnerDocument(),wpsConfigPath);
-			writeXmlFile(doc.getWPSConfiguration().getDomNode().getOwnerDocument(),"c:\\test_wps_config.xml");
+			//URL resourcePath = InstallLocationPanel.class.getClassLoader().getResource("wps_config.xml");
+			String configpath = null;
+			try {
+				String tempConfigPath = WPSConfig.getConfigPath();
+				File file = new File (tempConfigPath);
+				configpath = file.getAbsolutePath();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("Resource Path = " + configpath);
+			writeXmlFile(doc.getWPSConfiguration().getDomNode().getOwnerDocument(),configpath);
 		
     	
+			
     	
-    	
-    	
-    	//copy project
-        String tomcatLocation = (String) properties.get(InstallLocationPanelDescriptor.TOMCAT_LOCATION);
-       /* try {
-			DirectoryCopier.copyDirectory(new File(wpsConfigPath), new File(tomcatLocation));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+			//copy project
+			String tomcatLocation = (String) properties.get(InstallLocationPanelDescriptor.TOMCAT_LOCATION);
+			String sourceLocation = getClass().getProtectionDomain().getCodeSource().getLocation().toString();
+			sourceLocation = URLDecoder.decode(sourceLocation);
+			sourceLocation = sourceLocation.replace("\\", "/");
+			sourceLocation = sourceLocation.replace("file:/", "");
+	        int index = sourceLocation.indexOf("WEB-INF");
+	        sourceLocation = sourceLocation.substring(0,index);
+	      	       
+			try {
+			DirectoryCopier.copyDirectory(new File(sourceLocation), new File(tomcatLocation));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
         
         
         
     }    
     
-    public void writeXmlFile(Document doc, String filename) {
+   
+    
+    public static void writeXmlFile(Document doc, String filename) {
         try {
             // Prepare the DOM document for writing
             Source source = new DOMSource(doc);
-    
+            System.out.println("");
+            System.out.println("");
+            System.out.println(filename);
+            System.out.println("");
+            System.out.println("");
             // Prepare the output file
+            System.out.println("1");
             File file = new File(filename);
+            System.out.println("2");
             Result result = new StreamResult(file);
+            System.out.println("3");
     
             // Write the DOM document to the file
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
             xformer.transform(source, result);
         } catch (TransformerConfigurationException e) {
+        	e.printStackTrace();
         } catch (TransformerException e) {
+        	e.printStackTrace();
         }
+    }
+    
+    public static void main(String[] args){
+    	String resource = "C:\\devel\\Workspaces\\WPS_SVN\\WPS\\52n-wps-webapp\\target\\52n-wps-webapp-1.0-SNAPSHOT\\config\\wps_config.xml";
+    	Document doc = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	writeXmlFile(doc,resource);
+    	
+    	/*
+    	String resource = "C:/devel/Workspaces/WPS_SVN/WPS/52n-wps-webapp/target/52n-wps-webapp-1.0-SNAPSHOT/WEB-INF/lib/52n-wps-commons-1.0-SNAPSHOT.jar!/wps_config.xml";
+    	Document doc = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		resource = resource.replace("!/wps_config.xml", "");
+		try {
+			JarFile j = new JarFile(resource);
+			j.getJarEntry("wps_config.xml");
+			*/
+			/*
+			 * InputStream input = ...
+OutputStream output = ...
+ZIpInputStream inZip = new ZipInputStream(input);
+ZIpOuputStream outZip = new ZipOuputStream(output);
+
+ZipEntry in;
+while ((in = inZip.nextEntry()) != null)
+{
+ZipEntry out = self.replacementFor(in);
+if (out == null)
+{
+// just copy "in"
+outZip.putNextEntry(in);
+self.copyEntryContents(inZip, outZip);
+}
+else
+{
+// write replacement
+outZip.putNextEnty(out);
+self.writeReplacementContents(in, outZip);
+}
+inZip.closeEntry();
+outZip.closeEntry();
+}
+
+inZip.close();
+outZip.close();
+			 */
+			
+			/*
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+    	writeXmlFile(doc,resource);
+	*/
     }
             
 }

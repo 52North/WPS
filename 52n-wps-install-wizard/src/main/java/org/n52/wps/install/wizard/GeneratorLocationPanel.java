@@ -31,14 +31,9 @@ package org.n52.wps.install.wizard;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -46,11 +41,9 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
-import noNamespace.WPSConfigurationDocument;
-import noNamespace.GeneratorDocument.Generator;
-import noNamespace.ParserDocument.Parser;
-
 import org.apache.xmlbeans.XmlException;
+import org.n52.wps.WPSConfigurationDocument;
+import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.install.framework.InstallWizard;
 import org.n52.wps.test.checknodetree.CheckNodeTree;
 

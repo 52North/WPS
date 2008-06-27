@@ -1,22 +1,15 @@
 package org.n52.wps.io.xml;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.examples.packet.GMLPacketDocument;
-import noNamespace.PropertyDocument.Property;
-
-import org.geotools.feature.FeatureCollection;
-import org.geotools.xml.DocumentWriter;
 import org.n52.wps.io.IStreamableGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
