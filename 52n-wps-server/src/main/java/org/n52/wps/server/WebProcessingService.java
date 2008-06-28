@@ -52,18 +52,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import noNamespace.GeneratorDocument.Generator;
-import noNamespace.ParserDocument.Parser;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
-
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
  * @author foerster

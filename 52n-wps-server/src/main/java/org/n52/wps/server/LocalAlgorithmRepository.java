@@ -40,13 +40,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import noNamespace.PropertyDocument.Property;
-
 import org.apache.log4j.Logger;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.RepositoryManager;
 
 
 

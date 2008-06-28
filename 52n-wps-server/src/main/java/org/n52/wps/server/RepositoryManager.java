@@ -37,9 +37,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import noNamespace.RepositoryDocument.Repository;
-
 import org.apache.log4j.Logger;
+import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
 
 public class RepositoryManager {
