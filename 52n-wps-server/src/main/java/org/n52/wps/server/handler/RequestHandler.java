@@ -94,6 +94,10 @@ public class RequestHandler {
 	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
 	
 	private String responseMimeType;
+	
+	private Request req;
+	
+	
 
 	/**
 	 * Handles requests of type HTTP_GET (currently capabilities and
@@ -143,7 +147,7 @@ public class RequestHandler {
 					ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}
 
-		handle(req);
+		this.req = req;
 	}
 
 	/**
@@ -213,7 +217,12 @@ public class RequestHandler {
 		}
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
-			handle(new ExecuteRequest(doc));
+			req = new ExecuteRequest(doc);
+			if(req instanceof ExecuteRequest){
+				setResponseMimeType((ExecuteRequest)req);
+			}else{
+					this.responseMimeType = "text/xml";
+			}
 		} else if (nodeName.equals("Capabilities")) {
 			throw new ExceptionReport(
 					"Just HTTP GET is for getCapabilitiies supported for now",
@@ -241,12 +250,14 @@ public class RequestHandler {
 	 * @param req The request of the client.
 	 * @throws ExceptionReport
 	 */
-	public void handle(Request req) throws ExceptionReport {
+	public void handle() throws ExceptionReport {
 		Response resp = null;
+		if(req ==null){
+			throw new ExceptionReport("Internal Error","");
+		}
 		if (req instanceof ExecuteRequest) {
 			// cast the request to an executerequest
 			ExecuteRequest execReq = (ExecuteRequest) req;
-			setResponseMimeType(execReq);
 			// get the statustype of this request
 			StatusType status = StatusType.Factory.newInstance();
 			execReq.getExecuteResponseBuilder().setStatus(status);
@@ -343,7 +354,10 @@ public class RequestHandler {
 	}
 
 	public String getResponseMimeType(){
-		return responseMimeType;
+		if(responseMimeType == null){
+			return "text/xml";
+		}
+		return responseMimeType.toLowerCase();
 	}
 }
 

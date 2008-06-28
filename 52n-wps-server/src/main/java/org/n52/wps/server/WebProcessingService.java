@@ -55,8 +55,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
+
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
@@ -197,8 +199,12 @@ public class WebProcessingService extends HttpServlet {
 	//	OutputStream out = getConfiguredOutputStream(req, res);	
 		OutputStream out = res.getOutputStream();
 		try {
-			res.setContentType("text/xml");
-			new RequestHandler((Map<String, String[]>)req.getParameterMap(), out);
+			RequestHandler handler = new RequestHandler((Map<String, String[]>)req.getParameterMap(), out);
+			String mimeType = handler.getResponseMimeType();
+			res.setContentType(mimeType);
+			handler.handle();
+						
+			res.setStatus(HttpServletResponse.SC_OK);
 		} catch(ExceptionReport e) {
 			handleException(e, res, out);
 		}
@@ -240,8 +246,12 @@ public class WebProcessingService extends HttpServlet {
     	    
     	    is = new ByteArrayInputStream(s.getBytes("UTF-8"));
 			if(is != null) {
-				res.setContentType("text/xml");
-				new RequestHandler(is, out);
+				
+				RequestHandler handler = new RequestHandler(is, out);
+				String mimeType = handler.getResponseMimeType();
+				res.setContentType(mimeType);
+				handler.handle();
+							
 				res.setStatus(HttpServletResponse.SC_OK);
 			}
 			else{
@@ -264,7 +274,7 @@ public class WebProcessingService extends HttpServlet {
 	}
 
 	private void handleException(ExceptionReport exception, HttpServletResponse res, OutputStream os) {
-//		res.setContentType("text/xml");
+		res.setContentType("text/xml");
 		try {
 //			exception.getExceptionDocument().save(res.getWriter());
 			exception.getExceptionDocument().save(os);
