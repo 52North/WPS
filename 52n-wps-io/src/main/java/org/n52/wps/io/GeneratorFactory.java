@@ -69,10 +69,8 @@ public class GeneratorFactory {
 		for(Generator currentGenerator : generators) {
 			IGenerator generator = null;
 			String generatorClass = currentGenerator.getClassName();
-						
 			try {
 				 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
-				 
 			}
 			catch (ClassNotFoundException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
@@ -83,7 +81,9 @@ public class GeneratorFactory {
 			catch(InstantiationException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
 			}
-			registeredGenerators.add(generator);
+			if(generator != null) {
+				registeredGenerators.add(generator);
+			}
 		}
 	}
 

@@ -86,13 +86,16 @@ public class ParserFactory {
 			catch(InstantiationException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
 			}
-			if (parser.supportsSchemas()) {
-				LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas()[0]);
+			
+			if(parser != null) {
+				if (parser.supportsSchemas()) {
+					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas()[0]);
+				}
+				else {
+					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedFormats()[0]);
+				}
+				registeredParsers.add(parser);
 			}
-			else {
-				LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedFormats()[0]);
-			}
-			registeredParsers.add(parser);
 		}
 	}
 
