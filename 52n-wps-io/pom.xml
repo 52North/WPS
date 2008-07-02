@@ -13,10 +13,6 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-io</name>
     <description>The project 52 north 52n-wps-io does something with JAVA.</description>
-    <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
-    </scm>
     <build>
     <plugins>
             <plugin>
