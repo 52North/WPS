@@ -19,13 +19,13 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 				<Default>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 					</Format>	
 				</Default>
 				<Supported>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
 					</Format>
 				</Supported>
 				</ComplexData>
@@ -49,16 +49,16 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 				<ows:Abstract>GML stream describing the smooth feature.</ows:Abstract>
 				<ComplexOutput>
 				<Default>
-					<Format>
-						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
-					</Format>
-				</Default>
-				<Supported>
 				<Format>
 					<MimeType>text/XML</MimeType>
 					<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 				</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>text/XML</MimeType>
+						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+					</Format>
 				<Format>
 					<MimeType>application/vnd.google-earth.kml+xml</MimeType>
 					<Schema>http://www.opengis.net/kml/2.2</Schema>

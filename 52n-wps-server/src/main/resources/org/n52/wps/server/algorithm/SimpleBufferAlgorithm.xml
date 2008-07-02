@@ -53,7 +53,7 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 				<Default>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
 					</Format>
 				</Default>
 				<Supported>
