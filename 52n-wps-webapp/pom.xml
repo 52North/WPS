@@ -12,16 +12,7 @@
     <artifactId>52n-wps-webapp</artifactId>
     <packaging>war</packaging>
     <name>52n WPS Web Application</name>
-    <url>http://incubator.52north.org/maven/project-sites/52n-wps-server</url>
     <inceptionYear>2007</inceptionYear>
-    <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
-    </issueManagement>
-        <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
-    </scm>
     <build>
     <plugins> 
           <plugin>
@@ -58,11 +49,11 @@
             <artifactId>52n-wps-server</artifactId>
             <version>${project.version}</version>
         </dependency>
-                <!--dependency>
+                <dependency>
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-server-processes</artifactId>
             <version>${project.version}</version>
-        </dependency-->
+        </dependency>
         <!--dependency>
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-client-lib</artifactId>

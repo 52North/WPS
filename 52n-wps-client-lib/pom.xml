@@ -13,10 +13,6 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-client library</name>
     <description>This module contains some convenient classes to interact with WPS</description>
-    <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
-    </scm>
     <build>
     <plugins>
             <!--plugin>
