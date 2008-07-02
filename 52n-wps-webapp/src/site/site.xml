@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="WPS webapp">
+    <!-- $Id:  $ -->
+  <publishDate format="yyyy-MM-dd" />
+  <version position="left" />
+    
+	<body>
+	<breadcrumbs>
+      <item name="52North" href="../../"/>
+      <item name="Geoprocessing" href="../../../52n-wps-parent/"/>
+      <item name="52n WPS" href="index.html"/>
+    </breadcrumbs>
+	
+		<menu name="Overview">
+			<item name="About" href="index.html" />
+			<item name="Download" href="download.html" />
+		</menu>
+		<menu name="User Guide">
+			<item name="Installation" href="installation.html" />
+			<item name="Configuration" href="configuration.html" />
+		</menu>
+		<!--menu name="Reference Material">
+
+		</menu-->
+		<menu ref="reports" />
+	</body>
+</project>
