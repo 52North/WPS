@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="WPS">
+  <publishDate format="yyyy-MM-dd" />
+  <body>
+    <breadcrumbs>
+      <item name="52North" href="../"/>
+      <item name="Geoprocessing" href="index.html"/>
+    </breadcrumbs>
+    <menu name="GeoProcessing Community">
+			<item name="About" href="index.html"/>
+			<item name="Mission" href="mission.html"/>
+			<item name="Roadmap" href="roadmap.html"/>
+			<item name="News" href="news.html"/>
+    </menu>
+    <menu name="Sub-Projects">
+			<item name="WPS applications">
+				<item name="52n WPS" href="../52n-wps-webapp/" collapse="false"/>
+				<item name="WPS client uDig" href="../52n-wps-client-udig/" collapse="false"/>
+				<item name="WPS client jump" href="../52n-wps-client-jump/" collapse="false"/>
+			</item>
+			<item name="WPS API">
+				<item name="Client API" href="../52n-wps-client-lib" collapse="false"/>
+			</item>
+    </menu>
+    <menu name="Resources">
+			<item name="Bugzilla" href="bugzilla_note.html" />
+			<item name="Mailing Lists" href="mail-lists.html" />
+			<item name="Browse Source" href="http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/" />
+			<item name="Browse JavaDoc" href="apidocs/"/>
+			<item name="Wiki" href="https://52north.org/twiki/bin/view/Processing/" />
+			<item name="XML Schema Repo" href="http://www.52north.org/schema" />		
+			<item name="Application Developer Guide" href="developer_guide.html"/>
+    </menu>
+    <menu name="Extras">
+			<item name="Tutorials">
+				<item name="GI days 2008" href="https://52north.org/twiki/bin/view/Processing/WebHome#!Gi-days%20workshop%202008"/>
+			</item>
+    </menu>
+  </body>
+</project>
