@@ -26,7 +26,7 @@
 			<item name="Bugzilla" href="bugzilla_note.html" />
 			<item name="Mailing Lists" href="mail-lists.html" />
 			<item name="Browse Source" href="http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/" />
-			<item name="Browse JavaDoc" href="apidocs/"/>
+			<item name="Browse JavaDoc" href="../apidocs/"/>
 			<item name="Wiki" href="https://52north.org/twiki/bin/view/Processing/" />
 			<item name="XML Schema Repo" href="http://www.52north.org/schema" />		
 			<item name="Application Developer Guide" href="developer_guide.html"/>
