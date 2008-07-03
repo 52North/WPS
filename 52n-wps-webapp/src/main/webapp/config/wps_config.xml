@@ -8,9 +8,7 @@
 				<Property name="fcBufferTimeout">10000</Property>
 			</Parser>
 			<Parser name="AsciiGrassParser" className="org.n52.wps.io.binary.AsciiGrassParser"/>
-			<Parser name="DummyParser" className="org.n52.wps.io.xml.DummyParser"/>
-			<Parser name="DummyParser" className="org.n52.wps.io.xml.OandMParser"/>
-		</ParserList>
+			</ParserList>
 		<GeneratorList>
 			<Generator name="SimpleGMLGenerator" className="org.n52.wps.io.xml.SimpleGMLGenerator"/>
 			<Generator name="GML2BasicGenerator" className="org.n52.wps.io.xml.GML2BasicGenerator">
@@ -19,8 +17,7 @@
 			</Generator>
 			<Generator name="AsciiGrassGenerator" className="org.n52.wps.io.binary.AsciiGrassGenerator"/>
 			<Generator name="KMLGenerator" className="org.n52.wps.io.xml.KMLGenerator"/>
-			<Generator name="DummyParser" className="org.n52.wps.io.xml.OandMGenerator"/>
-		</GeneratorList>
+			</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.LocalAlgorithmRepository">
