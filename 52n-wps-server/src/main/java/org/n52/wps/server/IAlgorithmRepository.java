@@ -34,14 +34,7 @@ Muenster, Germany
 
 package org.n52.wps.server;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import noNamespace.PropertyDocument.Property;
-
-import org.apache.log4j.Logger;
 
 public interface IAlgorithmRepository {
 
