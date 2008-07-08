@@ -143,6 +143,9 @@ public class ExecuteResponseBuilder {
 				DocumentOutputDefinitionType documentDef = request.getExecute().getResponseForm().getResponseDocument().getOutputArray(i);
 				String responseID = definition.getIdentifier().getStringValue();
 				OutputDescriptionType desc = XMLBeansHelper.findOutputByID(responseID, outputDescs);
+				if(desc==null){
+					throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
+				}
 				if(desc.isSetComplexOutput()) {
 					String mimeType = ExecuteResponseBuilder.getMimeType(desc, definition);
 					String schema = ExecuteResponseBuilder.getSchema(desc, definition);
