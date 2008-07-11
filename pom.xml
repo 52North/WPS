@@ -10,15 +10,15 @@
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-parent</artifactId>
     <distributionManagement>
-        <repository>
+        <!--repository>
             <id>n52-repo</id>
             <name>52n WPS repository</name>
             <url>dav://http://52north.org/maven/repo/releases</url>
-        </repository>
+        </repository-->
         <site>
             <id>n52-repo</id>
             <name>52n WPS site location</name>
-            <url>dav:http://52north.org/maven/project-sites/wps</url>
+            <url>dav:https://52north.org/maven/project-sites/wps/</url>
         </site>
     </distributionManagement>
     <packaging>pom</packaging>
