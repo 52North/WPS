@@ -6,7 +6,6 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.n52.wps</groupId>
   <artifactId>52n-wps-commons</artifactId>
   <name>52north 52n-wps-commons</name>
   <description>The project 52 north 52n-wps-server does something with JAVA.</description>
@@ -17,7 +16,7 @@
         <includes>
           <include>**/*.xml</include>
         </includes>
-        
+
       </resource>
     </resources>
     <plugins>
@@ -40,10 +39,8 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-		<groupId>org.n52.wps</groupId>
+		<groupId>${project.groupId}</groupId>
 		<artifactId>52n-wps-config</artifactId>
-		<version>1.0.0</version>
-	</dependency>
+    </dependency>
    </dependencies>
 </project>
-
