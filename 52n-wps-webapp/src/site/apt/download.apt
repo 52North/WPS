@@ -1,0 +1,17 @@
+ -----
+ Welcome
+ -----
+Theodor Foerster
+ -----
+ 2008-07-01
+ -----
+
+WPS Download section
+~~~~~~~~~~~~~~~~~~
+* Latest version:
+
+	{{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc1/52n-wps-webapp-1.0-rc1.war} 52n WPS 1.0 RC1}}, release date July 2008.
+
+* Archive @ sourceforge
+
+	This archive at the {{{http://sourceforge.net/project/showfiles.php?group_id=183259&package_id=236086}52n sourceforge download site}} contains former releases of 52n WPS. Please only use them for trial and testing.

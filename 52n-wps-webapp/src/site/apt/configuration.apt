@@ -1,0 +1,28 @@
+ -----
+52n WPS configuration guide
+ -----
+Theodor Foerster
+ -----
+ 2008-07-01
+ -----
+ 
+52n WPS configuration guide
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* General configuration
+
+ The configuration is two-fold. 
+
+** Service metadata configuration
+
+ First the configuration of the service meta data (i.e. provider information & contact details) in the GetCapabilities file.
+ This will be configured using a XML skeleton of the original GetCapabilities. This makes it straight-forward to imagine, how the XML file finally looks like.
+ The skeleton is located at WPS_WEBAPP_ROOT/config/wpsCapabilitiesSkeleton.xml.
+
+** Operational WPS settings
+
+ Second there is the configuration of your developed processes and the configuration of the WPS instance itself. This configuration file (which called wps.properties in former versions)
+ is located at WPS_WEBAPP_ROOT/config/wps_config.xml. The schema for the configuration file can be found at {{{http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-webapp/src/main/webapp/config/schema_v1.xsd}here}}.
+
+ In an initial configuration it is important to change the server's hostname to your machine's name. Currently it is not possible to alter the path of your WPS instance (it has to be /wps). 
+ 
