@@ -44,6 +44,7 @@ import net.opengis.ows.x11.OperationDocument.Operation;
 import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.wps.x100.CapabilitiesDocument;
 import net.opengis.wps.x100.ProcessBriefType;
+import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 
 import org.apache.xmlbeans.XmlException;
@@ -65,7 +66,11 @@ public class CapabilitiesConfiguration {
 	private CapabilitiesConfiguration() {/*nothing here*/}
 	
 	public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-		if(capabilitiesDocumentObj == null) {
+		if(WPSConfig.getInstance().getWPSConfig().getServer().getCacheCapabilites()){
+			if(capabilitiesDocumentObj == null) {
+				CapabilitiesConfiguration.initSkeleton();
+			}
+		}else{
 			CapabilitiesConfiguration.initSkeleton();
 		}
 		return capabilitiesDocumentObj;
@@ -105,11 +110,15 @@ public class CapabilitiesConfiguration {
 		}
 		ProcessOfferings processes = capsSkeleton.getCapabilities().addNewProcessOfferings();
 		for(String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
+			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
+			ProcessDescriptionType description = algorithm.getDescription();
+			if(description==null){
+				continue;
+			}
 			ProcessBriefType process = processes.addNewProcess();
 			CodeType ct = process.addNewIdentifier();
 			ct.setStringValue(algorithmName);
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
-			LanguageStringType title = algorithm.getDescription().getTitle();
+			LanguageStringType title = description.getTitle();
 			String processVersion = algorithm.getDescription().getProcessVersion();
 			process.setProcessVersion(processVersion);
 			process.setTitle(title);

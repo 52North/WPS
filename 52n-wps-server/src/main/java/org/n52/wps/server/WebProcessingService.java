@@ -139,33 +139,16 @@ public class WebProcessingService extends HttpServlet {
 		RepositoryManager.getInstance();
 		LOGGER.info("Algorithms initialized");
 		
-		/*
-		String registeredParsersPropertyValue = WPSConfiguration.getInstance().getProperty(ParserFactory.PROPERTY_NAME_REGISTERED_PARSERS);
-		if(registeredParsersPropertyValue != null) {
-			String[] registeredParsers = registeredParsersPropertyValue.split(",");
-			ParserFactory.initialize(registeredParsers);
-			LOGGER.info("XML Parsers initialized successfully");
-		}	else {
-			LOGGER.warn(GeneratorFactory.PROPERTY_NAME_REGISTERED_GENERATORS + " could not be found in properties file");
-		}*/
+		
 		Parser[] parsers = WPSConfig.getInstance().getRegisteredParser();
 		ParserFactory.initialize(parsers);
 				
-		/*
-		String registeredGeneratorsPropertyValue = WPSConfiguration.getInstance().getProperty(GeneratorFactory.PROPERTY_NAME_REGISTERED_GENERATORS);
-		if(registeredGeneratorsPropertyValue != null) {
-			String[] registeredGenerators = registeredGeneratorsPropertyValue.split(",");
-			GeneratorFactory.initialize(registeredGenerators);
-			LOGGER.info("XML Generators initialized successfully");
-		}	else {
-			LOGGER.warn(GeneratorFactory.PROPERTY_NAME_REGISTERED_GENERATORS + " could not be found in properties file");
-		}*/
 		Generator[] generators = WPSConfig.getInstance().getRegisteredGenerators();
 		GeneratorFactory.initialize(generators);	
 			
 		
 		//String customWebappPath = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_WEBAPP_PATH);
-		String customWebappPath = null;//WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath();
+		String customWebappPath = WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath();
 		if(customWebappPath != null) {
 			WEBAPP_PATH = customWebappPath;
 		}
