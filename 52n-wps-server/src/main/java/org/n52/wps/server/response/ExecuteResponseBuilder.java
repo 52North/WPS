@@ -129,11 +129,19 @@ public class ExecuteResponseBuilder {
 				OutputDefinitionType rawDataOutput = request.getExecute().getResponseForm().getRawDataOutput();
 				String id = rawDataOutput.getIdentifier().getStringValue();
 				OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
-				String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
-				String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
-				String mimeType = ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
+				if(desc.isSetComplexOutput()) {
+					String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
+					String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
+					String mimeType = ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
+					generateComplexDataOutput(id, false, true, schema, mimeType, encoding, null);
+				}
 				
-				generateComplexDataOutput(id, false, true, schema, mimeType, encoding, null);
+				else if (desc.isSetLiteralOutput()) {
+					String mimeType = null;
+					String schema = null;
+					String encoding = null;
+					generateLiteralDataOutput(id, doc, desc.getLiteralOutput().getDataType().getReference(), schema, mimeType, encoding, desc.getTitle());
+				}
 				return;
 			}
 			// Get the outputdefinitions from the clients request
