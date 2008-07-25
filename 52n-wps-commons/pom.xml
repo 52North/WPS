@@ -41,6 +41,7 @@
     <dependency>
 		<groupId>${project.groupId}</groupId>
 		<artifactId>52n-wps-config</artifactId>
+		<version>1.0.1</version>
     </dependency>
    </dependencies>
 </project>
