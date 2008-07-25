@@ -42,7 +42,7 @@
         <!-- Specification of the Source-Content-Managmentsystem -->
         <connection>scm:svn:http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</connection>
         <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</developerConnection>
-      <url>http://52north.org/cgi-bin/viewvc.cgi/maven-root-project/trunk/?root=52n/52n-wps-parent</url>
+      <url>http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</url>
   </scm>
     <build>
 
@@ -123,7 +123,7 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-config</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
