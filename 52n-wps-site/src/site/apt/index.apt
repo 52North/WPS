@@ -6,20 +6,12 @@ Theodor Foerster
  2008-07-01
  -----
 
-WPS
+Geoprocessing Community
 ~~~~~~~~~~~~~~~~~~
   
    Welcome to the 52\xB0North Geoprocessing Community! We provide ready-to-use software as well as prototype implementions
    to enable geo processing on the Web using OGC Web Processing Service and related facilities.
 
-* 52n WPS
 
-* Our Mission
-
- The Geo-Processing community aims to design a pluggable web service architecture for orchestrating and executing geo-processes, as well as research GRID based and spatio-temporal data analysis processing techniques. This comprehensive web service architecture will incorporate sophisticated communication mechanisms and reflect established work on standards (such as the OGC Web Processing Service) and will act in close cooperation with other working groups (ILWIS, SWE and Security).
-
- 
 
 ===============================
-   
-   {*} The services WAS and WSS are based on specifications developed by the {{{http://www.gdi-nrw.org}GDI NRW}} initiative already in 2002

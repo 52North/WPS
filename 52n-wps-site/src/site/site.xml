@@ -3,8 +3,8 @@
   <publishDate format="yyyy-MM-dd" />
   <body>
     <breadcrumbs>
-      <item name="52North" href="../"/>
-      <item name="Geoprocessing" href="index.html"/>
+      <item name="52North" href="../../../../"/>
+      <item name="Geoprocessing" href="../52n-wps-site/index.html"/>
     </breadcrumbs>
     <menu name="GeoProcessing Community">
 			<item name="About" href="index.html"/>
@@ -32,9 +32,13 @@
 			<item name="Application Developer Guide" href="developer_guide.html"/>
     </menu>
     <menu name="Extras">
-			<item name="Tutorials">
-				<item name="GI days 2008" href="https://52north.org/twiki/bin/view/Processing/WebHome#!Gi-days%20workshop%202008"/>
-			</item>
+	    <item name="Publications" href="publications.html"/>
+			<menu name="Tutorials">
+				<menu name="GI days 2008">
+				  <item name="OGC WPS" href="https://52north.org/twiki/bin/view/Processing/GIdaysWPSworkshop"/>
+				  <item name="Grid Computing in Geoprocessing" href="https://52north.org/twiki/bin/view/Processing/GIdaysGridworkshop"/>
+				</menu>
+			</menu>
     </menu>
   </body>
 </project>
