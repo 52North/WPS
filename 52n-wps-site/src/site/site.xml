@@ -13,14 +13,10 @@
 			<item name="News" href="news.html"/>
     </menu>
     <menu name="Sub-Projects">
-			<item name="WPS applications">
-				<item name="52n WPS" href="../52n-wps-webapp/" collapse="false"/>
-				<item name="WPS client uDig" href="../52n-wps-client-udig/" collapse="false"/>
-				<item name="WPS client jump" href="../52n-wps-client-jump/" collapse="false"/>
-			</item>
-			<item name="WPS API">
-				<item name="Client API" href="../52n-wps-client-lib" collapse="false"/>
-			</item>
+			<item name="52n WPS" href="../52n-wps-webapp/" collapse="false"/>
+			<item name="WPS client uDig" href="../52n-wps-client-udig-site/" collapse="false"/>
+			<item name="WPS client jump" href="../52n-wps-client-jump/" collapse="false"/>
+			<item name="Client API" href="../52n-wps-client-lib" collapse="false"/>
     </menu>
     <menu name="Resources">
 			<item name="Bugzilla" href="bugzilla_note.html" />
@@ -33,12 +29,10 @@
     </menu>
     <menu name="Extras">
 	    <item name="Publications" href="publications.html"/>
-			<menu name="Tutorials">
-				<menu name="GI days 2008">
-				  <item name="OGC WPS" href="https://52north.org/twiki/bin/view/Processing/GIdaysWPSworkshop"/>
-				  <item name="Grid Computing in Geoprocessing" href="https://52north.org/twiki/bin/view/Processing/GIdaysGridworkshop"/>
-				</menu>
-			</menu>
+	</menu>    
+	<menu name="Tutorials">
+		<item name="GI days 2008" href="GI-daysTutorials2008.html"/>
+
     </menu>
   </body>
 </project>
