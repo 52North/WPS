@@ -1,12 +1,14 @@
  -----
  Welcome
  -----
-Theodor Foerster
+Bastian Schäffer
  -----
- 2008-07-01
+ 2008-08-11
  -----
 
 Our Mission
 ~~~~~~~~~~~~~~~~~~
 
  The Geo-Processing community aims to design a pluggable web service architecture for orchestrating and executing geo-processes, as well as research GRID based and spatio-temporal data analysis processing techniques. This comprehensive web service architecture will incorporate sophisticated communication mechanisms and reflect established work on standards (such as the OGC Web Processing Service) and will act in close cooperation with other working groups (ILWIS, SWE and Security).
+ 
+ <<Vision:>> to leverage the fully interoperable web based processing of spatial related data.

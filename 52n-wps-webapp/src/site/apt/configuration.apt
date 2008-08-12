@@ -11,18 +11,103 @@ Theodor Foerster
 
 * General configuration
 
+** Precompiled Binaries
+
  The configuration is two-fold. 
 
-** Service metadata configuration
+*** Service metadata configuration
 
  First the configuration of the service meta data (i.e. provider information & contact details) in the GetCapabilities file.
  This will be configured using a XML skeleton of the original GetCapabilities. This makes it straight-forward to imagine, how the XML file finally looks like.
  The skeleton is located at WPS_WEBAPP_ROOT/config/wpsCapabilitiesSkeleton.xml.
 
-** Operational WPS settings
+*** Operational WPS settings
 
  Second there is the configuration of your developed processes and the configuration of the WPS instance itself. This configuration file (which called wps.properties in former versions)
  is located at WPS_WEBAPP_ROOT/config/wps_config.xml. The schema for the configuration file can be found at {{{http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-webapp/src/main/webapp/config/schema_v1.xsd}here}}.
 
- In an initial configuration it is important to change the server's hostname to your machine's name. Currently it is not possible to alter the path of your WPS instance (it has to be /wps). 
+ In an initial configuration it is important to change the server's hostname to your machine's name.
  
+** Development Version settings
+
+	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_svn.pdf}here}}.
+	
+	Please look at the Tomcat documentation how to deal with installing and compiling web applications in general. In the end the service has to be accessible through http://localhost:[YOUR_PORT]/wps/WebProcessingService.
+	
+	As the WPS is organized as a multi module project using Maven, you have to get the source from the SVN and use Maven to compile it. Information about Apache Maven 2 can be found here: {{{http://maven.apache.org/}maven.apache.org}}.
+	
+	The 52north remote repository is located at:
+	
+	{{{http://incubator.52north.org/maven/maven-repo/releases}http://incubator.52north.org/maven/maven-repo/releases}}
+	
+	As you have to set this repository in your settings.xml your configuration could look somehow like this:
+	
+	 
+--------------------------	
+	<profile>
+		<id>52n-start</id>
+		<repositories>
+			<repository>
+				<id>n52-releases</id>
+				<name>52n Releases</name>
+				<url>http://52north.org/maven/repo/releases</url>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>geotools</id>
+				<name>Geotools repository</name>
+				<url>http://maven.geotools.fr/repository</url>
+			</repository>
+			<repository>
+				<id>Refractions</id>
+				<name>Refractions repository</name>
+				<url>http://lists.refractions.net/m2</url>
+			</repository>
+			<repository>
+				<id>Apache</id>
+				<name>Apache repository</name>
+				<url>http://repo1.maven.org/maven2</url>
+			</repository>
+		</repositories>
+	</profile>
+	...
+	<activeProfiles>
+		<activeProfile>52n-start</activeProfile>
+	</activeProfiles>
+--------------------------
+	
+	Please note, that there are two repositories for geotools libraries, as the synchronization of these repositories does not seem to work that well. So just refer to both repositories.
+	
+	Basic commands to compile your sources are mvn compile or mvn install. The resulting war in the 52n-wps-webapp/target dir, can then be dropped into the tomcat webapp. We are aware of the fact, that some libraries might have to be installed manually into the local maven repository, but we try to set up the remote repository for the 52N WPS asap.
+	For the configuration of the WPS please have a look {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/configuration.html}here}}.
+	
+	The service will log into the catalina_home/logs/wps.log by default. Please feel free to change that location, by adjusting the log4j.properties in the classes root.
+	
+	After restarting your tomcat the logs in the mentioned log file should somehow look like this:
+	
+	 
+--------------------------
+	2006-01-23 17:51:35,193 INFO  org.n52.wps.server.WebProcessingService  - WebProcessingService initializing...
+	2006-01-23 17:51:35,208 INFO  org.n52.wps.server.WebProcessingService  - Initialization of wps properties successful!
+	2006-01-23 17:51:38,521 INFO  org.n52.wps.server.AlgorithmRepository  - Algorithm class registered: org.n52.wps.server.SimpleBufferAlgorithm
+	2006-01-23 17:51:38,552 INFO  org.n52.wps.server.AlgorithmRepository  - Algorithms registered!
+	2006-01-23 17:51:38,552 INFO  org.n52.wps.server.WebProcessingService  - Algorithms initialized
+	2006-01-23 17:51:38,599 INFO  org.n52.wps.server.WebProcessingService  - XML Parsers initialized successfully
+	2006-01-23 17:51:38,630 INFO  org.n52.wps.server.WebProcessingService  - XML Generators initialized successfully
+	2006-01-23 17:51:38,708 INFO  org.n52.wps.server.WebProcessingService  - !WPS up and running!
+--------------------------
+
+	Now you should get a http://localhost:[YOUR_WEBAPPS_PORT]/wps/WebProcessingService?Request=GetCapabilities&Service=WPS
+	
+	If the tomcat runs under port 8080 you can access a very simple test site on http://localhost:8080/wps.
+	
+	When you are getting the capabilities, feel free to test the DescribeProcess and the Execute Operation. If you would like to do that in a comfortable way, continue reading about how to use the JUMP Client.
+	
+	There is also a test instance running of the server at, feel free to use it as well: http://geoserver.itc.nl:8080/wps100/WebProcessingService
+	
+	To have a look at the capabilities of the WPS instance, just try this: {{{http://geoserver.itc.nl:8080/wps100/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}http://geoserver.itc.nl:8080/wps100/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}} 
