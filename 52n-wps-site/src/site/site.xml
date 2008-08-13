@@ -10,7 +10,7 @@
 			<item name="About" href="index.html"/>
 			<item name="Mission" href="mission.html"/>
 			<item name="Roadmap" href="roadmap.html"/>
-			<item name="News" href="news.html"/>
+			
     </menu>
     <menu name="Sub-Projects">
 			<item name="52n WPS" href="../52n-wps-webapp/" collapse="false"/>
