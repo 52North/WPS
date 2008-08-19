@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -61,7 +62,9 @@ public class WPSConfig {
 		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
 	}
 
-	
+	public static void forceInitialization(String configPath) throws XmlException, IOException{
+		wpsConfig = new WPSConfig(configPath);
+	}
 
 	public static WPSConfig getInstance() {
 		if(wpsConfig==null){
@@ -77,7 +80,11 @@ public class WPSConfig {
 		}
 		return wpsConfig;
 	}
-	
+	/**
+	 * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is only applicable for webapp applications. To customize this, please use directly {@link WPSConfig#forceInitialization(String)} and then getInstance().
+	 * @return
+	 * @throws IOException
+	 */
 	public static String getConfigPath() throws IOException {
 		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		//truncate
