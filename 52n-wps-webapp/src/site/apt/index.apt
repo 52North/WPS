@@ -19,36 +19,36 @@ Theodor Foerster
 	* Full java-based Open Source implementation.
 	
 	* Supports all features of WPS specification version 1.0.0 (document 05-007r7)
-
-    * Pluggable framework for algorithms and XML data handling and processing frameworks
+	
+	* Pluggable framework for algorithms and XML data handling and processing frameworks
     
-    * Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)
+	* Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)
     
-    * Supports all mandatory operations of WPS 1.0.0 (plus beta SOAP/WSDL support)
+	* Supports all mandatory operations of WPS 1.0.0 (plus beta SOAP/WSDL support)
     
-    * Supports full logging of service activity
+	* Supports full logging of service activity
     
-    * Supports exception handling according to the spec
+	* Supports exception handling according to the spec
     
-    * Basic client implementation for accessing the WPS (including the complete XML encoding)
+	* Basic client implementation for accessing the WPS (including the complete XML encoding)
     
-    * Plug-in for uDig and JUMP (Java Unified Mapping Platform) (fast hack, but give it a try)
+	* Plug-in for uDig and JUMP (Java Unified Mapping Platform) (fast hack, but give it a try)
     
-    * Storing of execution results
+	* Storing of execution results
     
-    * Full GML2 support for ComplexData (i.e. FeatureCollections)
+	* Full GML2 support for ComplexData (i.e. FeatureCollections)
     
-    * Beta Raster support based on GDAL
+	* Beta Raster support based on GDAL
     
-    * Asynchronous processing
+	* Asynchronous processing
     
-    * Raw data support
+	* Raw data support
     
-    * All responses are stored on the filesystem, but can also be stored in any database such as Apache derby
+	* All responses are stored on the filesystem, but can also be stored in any database such as Apache derby
     
-    * Full maven support
+	* Full maven support
     
-    * Supports HTTP-GET for Execute 
+	* Supports HTTP-GET for Execute 
 
 
 * Future issues

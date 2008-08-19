@@ -1,5 +1,5 @@
  -----
-52n WPS configuration guide
+Configuration guide
  -----
 Theodor Foerster
  -----
@@ -38,7 +38,7 @@ Theodor Foerster
 	
 	The 52north remote repository is located at:
 	
-	{{{http://incubator.52north.org/maven/maven-repo/releases}http://incubator.52north.org/maven/maven-repo/releases}}
+	{{{http://52north.org/maven/maven-repo/releases}http://52north.org/maven/maven-repo/releases}}
 	
 	As you have to set this repository in your settings.xml your configuration could look somehow like this:
 	
@@ -84,7 +84,7 @@ Theodor Foerster
 	Please note, that there are two repositories for geotools libraries, as the synchronization of these repositories does not seem to work that well. So just refer to both repositories.
 	
 	Basic commands to compile your sources are mvn compile or mvn install. The resulting war in the 52n-wps-webapp/target dir, can then be dropped into the tomcat webapp. We are aware of the fact, that some libraries might have to be installed manually into the local maven repository, but we try to set up the remote repository for the 52N WPS asap.
-	For the configuration of the WPS please have a look {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/configuration.html}here}}.
+	For the configuration of the WPS please have a look {{{configuration.html}here}}.
 	
 	The service will log into the catalina_home/logs/wps.log by default. Please feel free to change that location, by adjusting the log4j.properties in the classes root.
 	
@@ -108,6 +108,6 @@ Theodor Foerster
 	
 	When you are getting the capabilities, feel free to test the DescribeProcess and the Execute Operation. If you would like to do that in a comfortable way, continue reading about how to use the JUMP Client.
 	
-	There is also a test instance running of the server at, feel free to use it as well: http://geoserver.itc.nl:8080/wps100/WebProcessingService
+	There is also a test instance running of the server at, feel free to use it as well: http://geoserver.itc.nl:8080/wps/WebProcessingService
 	
-	To have a look at the capabilities of the WPS instance, just try this: {{{http://geoserver.itc.nl:8080/wps100/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}http://geoserver.itc.nl:8080/wps100/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}} 
+	To have a look at the capabilities of the WPS instance, just try this: {{{http://geoserver.itc.nl:8080/wps/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}http://geoserver.itc.nl:8080/wps100/WebProcessingService?REQUEST=GetCapabilities&SERVICE=WPS}} 
