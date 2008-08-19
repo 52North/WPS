@@ -10,7 +10,10 @@ WPS Download section
 ~~~~~~~~~~~~~~~~~~
 * Latest version:
 
-	{{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc1/52n-wps-webapp-1.0-rc1.war} 52n WPS 1.0 RC1}}, release date July 2008.
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc2/52n-wps-webapp-1.0-rc2.war} 52n WPS 1.0 RC2}}, release date August2008.
+* Former versions:
+
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc1/52n-wps-webapp-1.0-rc1.war} 52n WPS 1.0 RC1}}, release date July 2008.
 
 * Archive @ sourceforge
 
