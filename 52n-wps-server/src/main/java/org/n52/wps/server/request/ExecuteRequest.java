@@ -283,8 +283,8 @@ public class ExecuteRequest extends Request {
 			}
 		}
 		String rawData = getMapValue("RawDataOutput", false);
-		String[] rawDataparameters = rawData.split("@");
 		if (rawData != null) {
+			String[] rawDataparameters = rawData.split("@");
 			String rawDataInput = "";
 			if(rawDataparameters.length >0){
 				rawDataInput = rawDataparameters[0];
