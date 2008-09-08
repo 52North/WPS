@@ -24,6 +24,7 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.simplify.TopologyPreservingSimplificationAlgorithm</Property>
+			<Property name="Algorithm">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			</Repository>
 	</AlgorithmRepositoryList>
 	<Server hostport="8080" includeDataInputsInResponse="false" hostname="localhost" computationTimeoutMilliSeconds="5" cacheCapabilites="true" webappPath="wps">
