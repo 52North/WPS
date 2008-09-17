@@ -32,11 +32,14 @@ package org.n52.wps.commons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
+import java.io.StringBufferInputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.GeneratorDocument.Generator;
@@ -46,11 +49,11 @@ import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 
 
-public class WPSConfig {
-	private static WPSConfig wpsConfig;
-	private static WPSConfigurationImpl wpsConfigXMLBeans;
+public class WPSConfig  implements Serializable {
+	private static transient WPSConfig wpsConfig;
+	private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 	
-	private static Logger LOGGER = Logger.getLogger(WPSConfig.class);
+	private static transient Logger LOGGER = Logger.getLogger(WPSConfig.class);
 	
 		
 	private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
@@ -62,6 +65,28 @@ public class WPSConfig {
 		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
 	}
 
+	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
+	{
+		oos.writeObject(wpsConfigXMLBeans.xmlText());
+	}
+	
+	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
+	{		
+		try
+		{
+			String wpsConfigXMLBeansAsXml = (String) oos.readObject();
+			XmlObject configXmlObject = XmlObject.Factory.parse(wpsConfigXMLBeansAsXml);
+			WPSConfigurationDocument configurationDocument = WPSConfigurationDocument.Factory.newInstance();
+			configurationDocument.addNewWPSConfiguration().set(configXmlObject);
+			wpsConfig = new WPSConfig(new StringBufferInputStream(configurationDocument.xmlText()));
+		}
+		catch (XmlException e)
+		{
+			LOGGER.error(e.getMessage());
+			throw new IOException(e.getMessage());
+		}
+	}
+	
 	public static void forceInitialization(String configPath) throws XmlException, IOException{
 		wpsConfig = new WPSConfig(configPath);
 	}
