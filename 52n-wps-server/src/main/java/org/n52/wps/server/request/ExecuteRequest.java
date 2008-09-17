@@ -456,11 +456,11 @@ public class ExecuteRequest extends Request {
 			*/
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
 
-			/*********BS*/
+			/*********BS
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			}
-			/*********BB*/
+			*********BB*/
 			if (algorithm instanceof IDistributedAlgorithm)
 			{
 				returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getData();
