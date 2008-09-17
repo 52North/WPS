@@ -55,6 +55,7 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IDistributedAlgorithm;
@@ -148,8 +149,9 @@ public class ExecuteRequest extends Request {
 			String key = inputString.substring(0,position);
 			String value = null; 
 			if(key.length()+ 1 < inputString.length()) {
-				int valueDelimiter = inputString.indexOf("@");
-				if(valueDelimiter != -1) {
+				//BS int valueDelimiter = inputString.indexOf("@");
+				int valueDelimiter = inputString.indexOf("=@");
+				if(valueDelimiter != -1 && position + 1<valueDelimiter) {
 					value = inputString.substring(position + 1, valueDelimiter);
 				}
 				else {
@@ -167,8 +169,14 @@ public class ExecuteRequest extends Request {
 			String mimeTypeAttribute = null;
 			String schemaAttribute = null;
 			String hrefAttribute = null;
-			String inputItems[] = inputString.split("@");
-			if(inputItems.length > 1) {
+			String[] inputItemstemp = inputString.split("=@");
+			String[] inputItems = null;
+			if(inputItemstemp.length == 2){
+				inputItems = inputItemstemp[1].split("@");
+			}else{
+				inputItems = inputString.split("@");
+			}
+			if(inputItems.length > 1 ) {
 				for(int i = 1; i < inputItems.length; i++) {
 					int attributePos = inputItems[i].indexOf("=");
 					if(attributePos == -1 || attributePos + 1 >= inputItems[i].length() ) {
@@ -193,33 +201,34 @@ public class ExecuteRequest extends Request {
 					}
 	
 				}
-			}
-			if(inputDesc.isSetComplexData()) {
-				// TODO: check for different attributes
-				// handling ComplexReference
-				if(value == null || value.equals("")) {
-					if(hrefAttribute == null) {
-						throw new ExceptionReport("No complex data nor reference to complex data supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
+			
+				if(inputDesc.isSetComplexData()) {
+					// TODO: check for different attributes
+					// handling ComplexReference
+					if(!(hrefAttribute == null) && !hrefAttribute.equals("")) {
+						if(hrefAttribute == null) {
+							throw new ExceptionReport("No complex data nor reference to complex data supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
+						}
+						InputReferenceType reference = input.addNewReference();
+						reference.setHref(hrefAttribute);
+						if(schemaAttribute != null){
+							reference.setSchema(schemaAttribute);
+						}
+						else {
+							reference.setSchema(inputDesc.getComplexData().getDefault().getFormat().getSchema());
+						}
+						if(mimeTypeAttribute != null) {
+							reference.setMimeType(mimeTypeAttribute);
+						}
+						if(encodingAttribute != null) {
+							reference.setEncoding(encodingAttribute);
+						}
+					
 					}
-					InputReferenceType reference = input.addNewReference();
-					reference.setHref(hrefAttribute);
-					if(schemaAttribute != null){
-						reference.setSchema(schemaAttribute);
-					}
+					//Handling ComplexData
 					else {
-						reference.setSchema(inputDesc.getComplexData().getDefault().getFormat().getSchema());
+						//TODO
 					}
-					if(mimeTypeAttribute != null) {
-						reference.setMimeType(mimeTypeAttribute);
-					}
-					if(encodingAttribute != null) {
-						reference.setEncoding(encodingAttribute);
-					}
-					
-				}
-				//Handling ComplexData
-				else {
-					
 				}
 			}
 			else if(inputDesc.isSetLiteralData()) {
@@ -228,7 +237,8 @@ public class ExecuteRequest extends Request {
 					throw new ExceptionReport("No value provided for literal: " + inputDesc.getIdentifier().getStringValue(), ExceptionReport.MISSING_PARAMETER_VALUE);
 				}
 				data.setStringValue(value);
-			}
+				}
+			
 		}
 		// retrieve status
 		boolean status = false;
@@ -445,6 +455,12 @@ public class ExecuteRequest extends Request {
 			returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
 			*/
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
+
+			/*********BS*/
+			if(algorithm instanceof AbstractTransactionalAlgorithm){
+				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
+			}
+			/*********BB*/
 			if (algorithm instanceof IDistributedAlgorithm)
 			{
 				returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getData();
@@ -453,6 +469,7 @@ public class ExecuteRequest extends Request {
 			{
 				returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
 			} 
+
 		}catch(RuntimeException e) {
 			LOGGER.debug("RuntimeException:" + e.getMessage());
 			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
