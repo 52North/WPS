@@ -103,7 +103,10 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 				gml = gml.replaceFirst("</xml-fragment>", "");	
 			}
 			// TODO find a better solution. XML-beans hands in inappropriate XML, so the namespaces have to be set manually.
-			gml = gml.replaceFirst("<wfs:FeatureCollection", "<wfs:FeatureCollection xmlns:xsi=\"" + XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI + "\"");
+			if (gml.indexOf("xmlns:xsi=") < 0)
+			{
+				gml = gml.replaceFirst("<wfs:FeatureCollection", "<wfs:FeatureCollection xmlns:xsi=\"" + XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI + "\"");
+			}
 			StringReader sr = new StringReader(gml);
 			int i = sr.read();
 			while(i != -1){
