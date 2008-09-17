@@ -63,6 +63,8 @@ public class ExceptionReport extends Exception {
 	public static final String SERVER_BUSY = "ServerBusy";
 	/** The file size of one of the input parameters was too large for this process to handle. */
 	public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
+	/** An error occurs during remote and distributed computation process. */
+	public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
 	
 	protected String errorKey;
 	protected String locator;

@@ -57,6 +57,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.IDistributedAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
@@ -444,7 +445,14 @@ public class ExecuteRequest extends Request {
 			returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
 			*/
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
-			returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
+			if (algorithm instanceof IDistributedAlgorithm)
+			{
+				returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getData();
+			}
+			else
+			{
+				returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
+			} 
 		}catch(RuntimeException e) {
 			LOGGER.debug("RuntimeException:" + e.getMessage());
 			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
