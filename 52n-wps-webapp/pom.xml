@@ -147,6 +147,11 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-sextante</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-install-wizard</artifactId>
         </dependency>
         <dependency>

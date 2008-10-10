@@ -97,6 +97,7 @@
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
         <module>52n-wps-site</module>
+        <module>52n-wps-sextante</module>
     </modules>
     <dependencies>
         <dependency>
@@ -163,6 +164,12 @@
                 <artifactId>52n-wps-install-wizard</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-sextante</artifactId>
+            	<version>${project.version}</version>
+        	</dependency>
+            
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-site</artifactId>
