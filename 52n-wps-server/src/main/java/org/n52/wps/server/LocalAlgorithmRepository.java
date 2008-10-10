@@ -51,7 +51,7 @@ import org.n52.wps.commons.WPSConfig;
  * @author foerster
  *
  */
-public class LocalAlgorithmRepository implements IAlgorithmRepository{
+public class LocalAlgorithmRepository implements ITransactionalAlgorithmRepository{
 	
 	private static String PROPERTY_NAME_REGISTERED_LOCAL_ALGORITHMS = "registeredLocalAlgorithms";
 	private static Logger LOGGER = Logger.getLogger(LocalAlgorithmRepository.class);

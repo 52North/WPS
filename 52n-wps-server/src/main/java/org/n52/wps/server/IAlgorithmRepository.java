@@ -40,7 +40,7 @@ public interface IAlgorithmRepository {
 
 
 	
-	boolean addAlgorithm(Object className);
+	
 	
 	Collection<String> getAlgorithmNames();
 	
@@ -49,7 +49,7 @@ public interface IAlgorithmRepository {
 	
 	boolean containsAlgorithm(String processID);
 	
-	boolean removeAlgorithm(Object className);
+	
 
 	
 
