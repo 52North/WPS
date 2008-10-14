@@ -48,6 +48,6 @@ public interface IDeployManager {
 	boolean containsProcess(String processID);
 	Collection<String> getAllProcesses();
 	Document invoke(ExecuteDocument payload, String algorithmID);
-	void deployProcess(DeployProcessRequest request) throws Exception;
+	boolean deployProcess(DeployProcessRequest request) throws Exception;
 	
 }
