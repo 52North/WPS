@@ -234,7 +234,6 @@
    <dependency>
 		<groupId>org.n52.wps</groupId>
   		<artifactId>52n-wps-commons</artifactId>
-  		<version>1.0-SNAPSHOT</version>
   	</dependency>
 
 
