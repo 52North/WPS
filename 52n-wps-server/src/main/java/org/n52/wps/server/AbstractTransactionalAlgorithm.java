@@ -2,7 +2,7 @@ package org.n52.wps.server;
 
 import java.util.HashMap;
 
-import org.w3c.dom.Document;
+import net.opengis.wps.x100.ExecuteDocument;
 
 public abstract class AbstractTransactionalAlgorithm implements IAlgorithm{
 
@@ -19,7 +19,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm{
 		return algorithmID;
 	}
 	
-	public abstract HashMap run(Document document);
+	public abstract HashMap run(ExecuteDocument document);
 	
 	
 	
