@@ -49,11 +49,13 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xpath.XPathAPI;
+
 import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.traversal.NodeIterator;
+
+import com.sun.org.apache.xpath.internal.XPathAPI;
 
 public class BPELDeploymentProfile extends DeploymentProfile{
 	private Node suitCase;
