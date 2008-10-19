@@ -47,6 +47,7 @@ public class DeployProcessRequest implements ITransactionalRequest{
 
 	protected ProcessDescriptionType processDescription;
 	protected DeploymentProfile deploymentProfile;
+	protected String schema;
 	
 	
 	public DeployProcessRequest(Document doc) {
@@ -74,7 +75,6 @@ public class DeployProcessRequest implements ITransactionalRequest{
 					String processID = processDescription.getIdentifier().getStringValue();
 					
 					//extract request profile schema
-					String schema = null;;
 					//TODO choose a proper way to do that, xpath or so, again quick airport hack...
 					NodeList nodeList = child.getChildNodes();
 					for(int k = 0; k<nodeList.getLength(); k++){
@@ -116,6 +116,10 @@ public class DeployProcessRequest implements ITransactionalRequest{
 
 	public DeploymentProfile getDeploymentProfile() {
 		return deploymentProfile;
+	}
+	
+	public String getSchema() {
+		return schema;
 	}
 	
 	 

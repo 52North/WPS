@@ -36,6 +36,7 @@ import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.ITransactionalRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.n52.wps.transactional.response.TransactionalResponse;
+import org.n52.wps.transactional.service.TransactionalHelper;
 
 public class TransactionalRequestHandler {
 
@@ -44,8 +45,14 @@ public class TransactionalRequestHandler {
 	public static  TransactionalResponse handle(ITransactionalRequest request) {
 		
 		try {
-			//TODO get repository class from config by comparing the supported schemas
-			ITransactionalAlgorithmRepository repository = null; 
+			if(!(request instanceof DeployProcessRequest)){
+				throw new Exception("Error. Could not handle request");
+			}
+			ITransactionalAlgorithmRepository repository = TransactionalHelper.getMatchingTransactionalRepository(((DeployProcessRequest)request).getSchema()); 
+			
+			if(repository == null){
+				throw new Exception("Error. Could not find matching repository");
+			}
 			//request.execute();
 			 if (request instanceof DeployProcessRequest) {
 				 boolean success = repository.addAlgorithm(request);
@@ -66,7 +73,7 @@ public class TransactionalRequestHandler {
 			e.printStackTrace();
 			return new TransactionalResponse("Error = " +e.getMessage());
 		}
-		return new TransactionalResponse("");
+		return new TransactionalResponse("Error");
 		
 		
 	}
