@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-rc3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
@@ -41,9 +41,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
             <includes>
-            <include>
-            org/n52/wps/server/**
-            </include>
+           
         	<include>
             org/n52/wps/util/**
             </include>
@@ -87,11 +85,20 @@
             <version>1.0.4</version>
             <scope>compile</scope>
         </dependency>
+        
         <dependency>
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-server</artifactId>
             <version>${project.version}</version>
         </dependency>
+     
+        <dependency>
+			<groupId>org.n52.wps</groupId>
+  			<artifactId>52n-wps-commons</artifactId>
+  	 		<version>${project.version}</version>
+  		</dependency>
+        
+     
 
         <dependency>
 		    <groupId>tomcat</groupId>
@@ -101,12 +108,13 @@
 	     </dependency>
 
 
-   <dependency>
-		<groupId>org.n52.wps</groupId>
-  		<artifactId>52n-wps-commons</artifactId>
-  		<version>1.0-SNAPSHOT</version>
-  	</dependency>
-
+   
+  	<dependency>
+    <groupId>xalan</groupId>
+    <artifactId>xalan</artifactId>
+    <version>2.7.1</version>
+</dependency>
+ 
 
     </dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
