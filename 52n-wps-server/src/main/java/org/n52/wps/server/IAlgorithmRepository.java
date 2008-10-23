@@ -38,10 +38,6 @@ import java.util.Collection;
 
 public interface IAlgorithmRepository {
 
-
-	
-	
-	
 	Collection<String> getAlgorithmNames();
 	
 	IAlgorithm getAlgorithm(String processID);
