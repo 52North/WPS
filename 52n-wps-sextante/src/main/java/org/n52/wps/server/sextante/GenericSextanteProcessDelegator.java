@@ -1,3 +1,4 @@
+
 /***************************************************************
  This implementation provides a framework to publish processes to the
 web through the  OGC Web Processing Service interface. The framework 
@@ -39,17 +40,27 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.geotools.data.DataStore;
+import org.geotools.data.DefaultQuery;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.collection.CollectionDataStore;
+import org.geotools.feature.FeatureCollection;
 import org.n52.wps.server.IAlgorithm;
+import org.opengis.coverage.grid.GridCoverage;
 
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.ParametersSet;
+import es.unex.sextante.dataObjects.IRasterLayer;
+import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
+import es.unex.sextante.geotools.GTRasterLayer;
+import es.unex.sextante.geotools.GTVectorLayer;
+import es.unex.sextante.geotools.GTVectorLayerFactory;
+import es.unex.sextante.geotools.MemoryVectoryLayerFactory;
 import es.unex.sextante.outputs.Output;
-import es.unex.sextante.outputs.OutputRasterLayer;
-import es.unex.sextante.outputs.OutputVectorLayer;
 import es.unex.sextante.parameters.Parameter;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm {
@@ -197,12 +208,15 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 				e.printStackTrace();
 			} catch (GeoAlgorithmExecutionException e) {
 				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		       
 		return resultMap;
 	}
 
-	private Object wrapSextanteInputs(Parameter parameter, Map layers, Map wpsParameters, String parameterName,	String type) {
+	private Object wrapSextanteInputs(Parameter parameter, Map layers, Map wpsParameters, String parameterName,	String type) throws IOException {
 		if(type.equals("Vector Layer")){
 			Object vectorLayer = layers.get(parameterName);
 		
@@ -229,25 +243,32 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		
 	}
 
-	private Object unwrapSextanteResults(Output outputObject) {
+	private Object unwrapSextanteResults(Output outputObject) throws Exception {
 		Object result = outputObject.getOutputObject();
-		if(result instanceof OutputVectorLayer){
-			//TODO turn it into a featurecollection or the requested format
-		}else if (result instanceof OutputRasterLayer){
-			//TODO turn it into a GT raster object or the requested format
+		if(result instanceof IVectorLayer){
+			
+			IVectorLayer vectorLayer = ((IVectorLayer)result);
+			FeatureStore fs = (FeatureStore) vectorLayer.getBaseDataObject();
+			return fs.getFeatures();
+			
+		}else if (result instanceof IRasterLayer){
+			IRasterLayer rasterLayer = ((IRasterLayer)result);
+			GridCoverage coverage = (GridCoverage) rasterLayer.getBaseDataObject();
+			return coverage;
 		}
 			
 		return null;
 	}
 
-	private Object wrapRasterLayer(Object rasterLayer) {
+	private GTRasterLayer wrapRasterLayer(Object rasterLayer) {
 		// TODO 
 		return null;
 	}
 
-	private Object wrapVectorLayer(Object vectorLayer) {
-		// TODO 
-		return null;
+	private GTVectorLayer wrapVectorLayer(Object vectorLayer) throws IOException {
+		FeatureCollection fc  = (FeatureCollection) vectorLayer;
+		DataStore datastore = new CollectionDataStore(fc);
+		return GTVectorLayer.createLayer(datastore, new DefaultQuery());
 	}
 
 }
