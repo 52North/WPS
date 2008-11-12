@@ -79,6 +79,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 				File directory = new File(property.getStringValue());
 				if(!directory.isDirectory()){
 					LOGGER.warn("Could not find process descriptions for Sextante Extension", null);
+					continue;
 				}
 				FileFilter filter = new DefaultFileFilter("*.xml");
 				File[] files = directory.listFiles(filter);
@@ -138,6 +139,9 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	}
 
 	public IAlgorithm getAlgorithm(String processID) {
+		if(!containsAlgorithm(processID)){
+			throw new RuntimeException("Could not allocate Process");
+		}
 		return new GenericSextanteProcessDelegator(processID, registeredProcesses.get(processID));
 				
 		

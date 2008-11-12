@@ -37,11 +37,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.geotools.data.DataStore;
-import org.geotools.data.DefaultQuery;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.feature.FeatureCollection;
@@ -52,30 +52,34 @@ import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.ParametersSet;
+import es.unex.sextante.core.Sextante;
 import es.unex.sextante.dataObjects.IRasterLayer;
 import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
+import es.unex.sextante.geotools.GTOutputFactory;
 import es.unex.sextante.geotools.GTRasterLayer;
 import es.unex.sextante.geotools.GTVectorLayer;
-import es.unex.sextante.geotools.GTVectorLayerFactory;
-import es.unex.sextante.geotools.MemoryVectoryLayerFactory;
+import es.unex.sextante.geotools.PostProcessStrategy;
 import es.unex.sextante.outputs.Output;
 import es.unex.sextante.parameters.Parameter;
+import es.unex.sextante.parameters.ParameterTable;
+import es.unex.sextante.parameters.ParameterTableField;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(GenericSextanteProcessDelegator.class);
 	
 	private String processID;
-	private ProcessDescriptionType processDescription;
+	private ProcessDescriptionsDocument processDescription;
 	private String errors;
 	
 	
 	public GenericSextanteProcessDelegator(String processID, File file) {
-		this.processID = processID;
+		this.processID = processID.replace("Sextante_","");;
 		errors = "";
 		try {
-			processDescription = ProcessDescriptionType.Factory.parse(file);
+			
+			processDescription = ProcessDescriptionsDocument.Factory.parse(file);
 		} catch (XmlException e) {
 			LOGGER.error("Could not initialzize WPS Sextante Process " +processID);
 			e.printStackTrace();
@@ -91,7 +95,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	}
 
 	public ProcessDescriptionType getDescription() {
-		return processDescription;
+		return processDescription.getProcessDescriptions().getProcessDescriptionArray(0);
 	}
 
 	public String getErrors() {
@@ -116,10 +120,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		*/
 		
 		try {
-			Class<GeoAlgorithm> processClass = (Class<GeoAlgorithm>) Class.forName("es.unex.sextante.vectorTools.linesToEquispacedPoints.LinesToEquispacedPointsAlgorithm");
-			GeoAlgorithm sextanteProcess = processClass.newInstance();
 			
-			
+			GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(processID);
+						
 			 /* 
 			 * 2. Get the parameters needed from either the processdescription or the object itself
 			 * e.g.
@@ -145,8 +148,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 				 * we probably have to refactor the input stuff and add some metadata to know what koind of input is fed in (for instance vector or raster etc)
 				 */
 				Object wrappedInput = wrapSextanteInputs(parameter, layers, wpsParameters, parameterName, type);
-				parameter.setParameterValue(wrappedInput);
-				
+				if(wrappedInput!=null){
+					parameter.setParameterValue(wrappedInput);
+				}
 			}
 			
 			 /* 5. Specify the output
@@ -159,20 +163,15 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			 
 			//TODO eventually make the outputfactory dynamic based on the requested output type
 			//until now, only geotools is supported, which may also supports different formats-->please check.
-			 OutputFactory outputFactory = null;//new GTOutputFactory();
+			 OutputFactory outputFactory = new N52OutputFactory();
 	         OutputObjectsSet outputs = sextanteProcess.getOutputObjects();
-	         
+	        
 	         int outputDataCount = outputs.getOutputDataObjectsCount();
 	 		 for(int i = 0; i<outputDataCount; i++){
 	 			Output outputObject = outputs.getOutput(i);
 	 			String name = outputObject.getName();
 	 			
-	 			//TODO extract filename from config
-	 			//how do I know the output format?
-	 			outputObject.setFilename("");
-	 			
-	 			
-	 			
+	 			 			
 	 	         /* 6. Execute
 	 	         * e.g.
 	 	         * alg.execute(null, outputFactory);
@@ -219,7 +218,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	private Object wrapSextanteInputs(Parameter parameter, Map layers, Map wpsParameters, String parameterName,	String type) throws IOException {
 		if(type.equals("Vector Layer")){
 			Object vectorLayer = layers.get(parameterName);
-		
+			if(vectorLayer==null){
+				return null;
+			}
 			/* 4. Fill the input parameters with the wps input
 			 * e.g. 
 			 * params.getParameter(LinesToEquispacedPointsAlgorithm.LINES).setParameterValue(layer);
@@ -231,6 +232,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		}
 		else if (type.equals("Raster Layer")) {
 			Object rasterLayer = layers.get(parameterName);
+			if(rasterLayer==null){
+				return null;
+			}
 			return wrapRasterLayer(rasterLayer);
 			
 			
@@ -238,8 +242,27 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			return wpsParameters.get(parameterName);
 			
 			
-		}//TODO extend
-		throw new RuntimeException("Input paramter " + parameterName +"could not be resolved");
+		}else if (type.equals("Table Field")){
+			Object param = wpsParameters.get(parameterName);
+			if(param == null){
+				parameter.setParameterValue(0);
+				
+			}
+			return parameter;
+			
+		}else if (type.equals("Selection")){
+			Object param = wpsParameters.get(parameterName);
+			return param;
+			
+		}else if (type.equals("Boolean")){
+			Object param = wpsParameters.get(parameterName);
+			if(param == null){
+				param = false;
+			}
+			return param;
+			
+		}
+		return null;
 		
 	}
 
@@ -268,7 +291,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	private GTVectorLayer wrapVectorLayer(Object vectorLayer) throws IOException {
 		FeatureCollection fc  = (FeatureCollection) vectorLayer;
 		DataStore datastore = new CollectionDataStore(fc);
-		return GTVectorLayer.createLayer(datastore, new DefaultQuery());
+		GTVectorLayer gtVectorLayer =  GTVectorLayer.createLayer(datastore, datastore.getTypeNames()[0]);
+		gtVectorLayer.setPostProcessStrategy(new NullStrategy());
+		return gtVectorLayer;
 	}
 
 }
