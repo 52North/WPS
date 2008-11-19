@@ -134,20 +134,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-server</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.n52.wps</groupId>
-            <artifactId>52n-wps-server-processes</artifactId>
-            <version>${project.version}</version>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.n52.wps</groupId>
-            <artifactId>52n-wps-client-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency-->
-
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-sextante</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-transactional</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
