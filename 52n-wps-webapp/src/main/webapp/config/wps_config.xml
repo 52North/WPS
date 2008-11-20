@@ -31,22 +31,15 @@
 			<Property name="Sextante-Describe-Process-Location">C:\devel\Workspaces\WPS-S\sextante\ProcessDescriptions</Property>
 		</Repository>
 		
-		<!--
-		<Repository name="OracleBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository">
-			<Property name="GenericAlgorithm">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
-			<Property name="DeployManager">org.n52.wps.transactional.deploy.bpel.oracle.OracleBPELManager</Property>
-			<Property name="WorkspaceLocationRoot"></Property>
-			<Property name="supportedFormat">whatever.xsd</Property>
-			<Property name="DeploymentProfileClass">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
-			this should be created
-			
-			 <SupportedDeploymentProfiles schema="" repositoyName="OracleBPELRepository">
-			 
-					
 		
-			 
+		<Repository name="ApacheBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository">
+			<Property name="GenericAlgorithm">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
+			<Property name="DeployManager">org.n52.wps.transactional.deploy.bpel.apache.ApacheBPELManager</Property>
+			<Property name="WorkspaceLocationRoot"></Property>
+			<Property name="supportedFormat">http://localhost:8080/fme-schemas/BPELProfile.xsd</Property>
+			<Property name="DeploymentProfileClass">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
 		</Repository>
-			 -->
+			 
 		
 	</AlgorithmRepositoryList>
 	<Server hostport="8080" includeDataInputsInResponse="false" hostname="localhost" computationTimeoutMilliSeconds="5" cacheCapabilites="true" webappPath="wps">
