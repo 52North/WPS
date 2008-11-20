@@ -3,6 +3,8 @@ package org.n52.wps.transactional.service;
 
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,6 +14,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
+import org.n52.wps.transactional.deploy.AbstractDeployManager;
 import org.n52.wps.transactional.deploy.IDeployManager;
 import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
@@ -34,7 +37,15 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		}
 		String className = deployManagerXML.getStringValue();
 		try {
-			deployManager = (IDeployManager) Class.forName(className).newInstance();
+			
+			Class deployManagerClass = Class.forName(className);
+			if(deployManagerClass.asSubclass(AbstractDeployManager.class).equals(deployManagerClass)){
+				Constructor constructor = deployManagerClass.getConstructor(ITransactionalAlgorithmRepository.class);
+				deployManager = (IDeployManager) constructor.newInstance(this);
+			}else{
+				deployManager = (IDeployManager) deployManagerClass.newInstance();
+			}
+			
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error. Could not find matching DeployManager");
@@ -44,6 +55,18 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error. Could not find matching DeployManager");
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}

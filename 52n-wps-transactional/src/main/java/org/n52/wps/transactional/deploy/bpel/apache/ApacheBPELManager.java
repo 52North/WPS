@@ -22,6 +22,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import net.opengis.wps.x100.ExecuteDocument;
 
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.transactional.deploy.AbstractDeployManager;
 import org.n52.wps.transactional.deploy.IDeployManager;
 import org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile;
 import org.n52.wps.transactional.deploymentprofiles.DeploymentProfile;
@@ -47,10 +51,28 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
         
 
-public class ApacheBPELManager implements IDeployManager {
+public class ApacheBPELManager extends AbstractDeployManager {
 
-    private static ServiceClientUtil _client;
-    private static OMFactory _factory;
+    private ServiceClientUtil _client;
+    private OMFactory _factory;
+    private String deplyomentEndpoint;
+    private String processManagerEndpoint;
+    
+    public ApacheBPELManager(ITransactionalAlgorithmRepository repository) {
+    	super(repository);
+    	Property[] properties = WPSConfig.getInstance().getPropertiesForRepositoryClass(repository.getClass().getName());
+		//TODO think of multiple instance of this class registered (yet not possible since singleton)
+		Property deployEndpointProperty = WPSConfig.getInstance().getPropertyForKey(properties, "ODE-Engine_DeploymentEndpoint");
+		if(deployEndpointProperty==null){
+			throw new RuntimeException("Error. Could not find ODE-Engine_DeploymentEndpoint");
+		}
+		deplyomentEndpoint = deployEndpointProperty.getStringValue();
+		Property processManagerEndpointProperty = WPSConfig.getInstance().getPropertyForKey(properties, "ODE-Engine_ProcessManagerEndpoint");
+		if(deployEndpointProperty==null){
+			throw new RuntimeException("Error. Could not find ODE-Engine_ProcessManagerEndpoint");
+		}
+		processManagerEndpoint = processManagerEndpointProperty.getStringValue();
+	}
 
     
     public boolean deployProcess(DeployProcessRequest request) throws Exception {
@@ -133,6 +155,8 @@ public class ApacheBPELManager implements IDeployManager {
         //assigning message context’s option object into instance variable
         Options opts = outMsgCtx.getOptions();
         //setting properties into option
+        
+        //TODO is this correct?
         opts.setTo(new EndpointReference("http://shelob:8081/ode/processes/wps-t"));
         opts.setAction("");
         outMsgCtx.setEnvelope(creatSOAPEnvelope(domNode));
@@ -149,20 +173,26 @@ public class ApacheBPELManager implements IDeployManager {
     }
 
     public Collection<String> getAllProcesses() throws Exception {
-        List<String> allProcesses = new ArrayList<String>();
-        OMElement root = _client.buildMessage("listAllProcesses", new String[] {"filter", "orderKeys"}, new String[] {});
+       try{
+    	   List<String> allProcesses = new ArrayList<String>();
+      
+    	   OMElement root = _client.buildMessage("listAllProcesses", new String[] {"filter", "orderKeys"}, new String[] {});
                 
-        OMElement result = sendToPM(root);
-        Iterator<OMElement> pi = result.getFirstElement().getChildrenWithName(
+    	   OMElement result = sendToPM(root);
+    	   Iterator<OMElement> pi = result.getFirstElement().getChildrenWithName(
                        new QName("http://www.apache.org/ode/pmapi/types/2006/08/02/","process-info"));
         
-        while (pi.hasNext()) {
-            OMElement omPID = pi.next();
-            allProcesses.add(omPID.getFirstChildWithName(
+    	   while (pi.hasNext()) {
+    		   OMElement omPID = pi.next();
+    		   allProcesses.add(omPID.getFirstChildWithName(
                             new QName("http://www.apache.org/ode/pmapi/types/2006/08/02/","pid")).getText());
-        }
-	return allProcesses;
-        //throw new UnsupportedOperationException("Not supported yet.");
+    	   }
+    	   return allProcesses;
+       }catch(Exception e){
+    	   return new ArrayList<String>();
+       }
+      
+        
     }
 
     public boolean containsProcess(String processID) throws Exception {
@@ -175,21 +205,22 @@ public class ApacheBPELManager implements IDeployManager {
         //throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static void main(String[] args){
+   /* public static void main(String[] args){
 	try{
             _client = new ServiceClientUtil();
             _factory = OMAbstractFactory.getOMFactory();
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
     
-     private static OMElement sendToPM(OMElement msg) throws AxisFault {
-        return _client.send(msg, "http://shelob:8081/ode/processes/ProcessManagement");
+     private OMElement sendToPM(OMElement msg) throws AxisFault {
+    	
+        return _client.send(msg, this.processManagerEndpoint);
     }
 
-    private static OMElement sendToDeployment(OMElement msg) throws AxisFault {
-        return _client.send(msg, "http://shelob:8081/ode/processes/DeploymentService");
+    private OMElement sendToDeployment(OMElement msg) throws AxisFault {
+        return _client.send(msg,this.deplyomentEndpoint);
     }
 
     private ByteArrayOutputStream writeXMLToStream(Source source) throws TransformerException {
@@ -208,7 +239,7 @@ public class ApacheBPELManager implements IDeployManager {
         return out;
 	}
     
-    public static SOAPEnvelope creatSOAPEnvelope(Node domNode) {
+    public  SOAPEnvelope creatSOAPEnvelope(Node domNode) {
         SOAPFactory fac = OMAbstractFactory.getSOAP11Factory();
         SOAPEnvelope envelope = fac.getDefaultEnvelope();
         OMNamespace omNs = fac.createOMNamespace("http://ws.apache.org/axis2/xsd", "ns1");
