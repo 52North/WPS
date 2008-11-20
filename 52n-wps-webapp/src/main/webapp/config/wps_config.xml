@@ -38,6 +38,7 @@
 			<Property name="WorkspaceLocationRoot"></Property>
 			<Property name="supportedFormat">http://localhost:8080/fme-schemas/BPELProfile.xsd</Property>
 			<Property name="DeploymentProfileClass">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
+			<Property name="ODE-Engine Endpoint">http://localhost/tbd</Property>
 		</Repository>
 			 
 		
