@@ -1,7 +1,5 @@
 package org.n52.wps.server.sextante;
 
-import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 
 import net.opengis.ows.x11.RangeType;
@@ -12,6 +10,7 @@ import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
+import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
@@ -32,6 +31,7 @@ import es.unex.sextante.outputs.OutputText;
 import es.unex.sextante.outputs.OutputVectorLayer;
 import es.unex.sextante.parameters.Parameter;
 import es.unex.sextante.parameters.ParameterBand;
+import es.unex.sextante.parameters.ParameterBoolean;
 import es.unex.sextante.parameters.ParameterFixedTable;
 import es.unex.sextante.parameters.ParameterMultipleInput;
 import es.unex.sextante.parameters.ParameterNumericalValue;
@@ -42,20 +42,20 @@ import es.unex.sextante.parameters.ParameterString;
 import es.unex.sextante.parameters.ParameterTableField;
 import es.unex.sextante.parameters.ParameterVectorLayer;
 
-public class WPSGeoAlgorithm {
+public class SextanteProcessDescriptionCreator {
 
 	
 
 
-	public ProcessDescriptionType getDescribeProcessType(GeoAlgorithm algorithm){
+	public ProcessDescriptionType createDescribeProcessType(GeoAlgorithm algorithm) throws NullParameterAdditionalInfoException, UnsupportedGeoAlgorithmException{
 
-		try{
+	
 			ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
 
 			pdt.addNewAbstract().setStringValue(algorithm.getName());
 			pdt.addNewTitle().setStringValue(algorithm.getName());
 			pdt.addNewIdentifier().setStringValue(algorithm.getCommandLineName());
-
+			pdt.setProcessVersion("1.0.0");
 			//inputs
 			DataInputs inputs = pdt.addNewDataInputs();
 			ParametersSet params = algorithm.getParameters();
@@ -73,12 +73,7 @@ public class WPSGeoAlgorithm {
 			}
 
 			return pdt;
-		}
-		catch(Exception e){
-			//TODO:add better exception handling
-			e.printStackTrace();
-			return null;
-		}
+		
 
 	}
 
@@ -92,9 +87,14 @@ public class WPSGeoAlgorithm {
 			output.addNewComplexOutput().addNewDefault().addNewFormat().setMimeType("image/tiff");
 		}
 		else if (out instanceof OutputVectorLayer){
-			ComplexDataDescriptionType format = output.addNewComplexOutput().addNewDefault().addNewFormat();
-			format.setMimeType("text/XML");
-			format.setSchema("http://schemas.opengis.net/gml/3.0.0/base/gml.xsd");
+			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
+			ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
+			deafult.setMimeType("text/XML");
+			deafult.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+			ComplexDataDescriptionType supported = complexOutput.addNewSupported().addNewFormat();
+			supported.setMimeType("text/XML");
+			supported.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
+			
 		}
 		else if (out instanceof OutputTable){
 			//TODO:
@@ -138,10 +138,10 @@ public class WPSGeoAlgorithm {
 			SupportedComplexDataInputType complex = input.addNewComplexData();
 			ComplexDataDescriptionType format = complex.addNewSupported().addNewFormat();
 			format.setMimeType("text/XML");
-			format.setSchema("http://schemas.opengis.net/gml/3.0.0/base/gml.xsd");
+			format.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
 			defaultFormat.setMimeType("text/XML");
-			defaultFormat.setSchema("http://schemas.opengis.net/gml/3.0.0/base/gml.xsd");
+			defaultFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			if (ai.getIsMandatory()){
 				input.setMinOccurs(BigInteger.valueOf(1));
 			}
@@ -233,6 +233,16 @@ public class WPSGeoAlgorithm {
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			literal.setDefaultValue("0, 0");
 		}
+		else if (param instanceof ParameterBoolean){
+			LiteralInputType literal = input.addNewLiteralData();
+			input.setMinOccurs(BigInteger.valueOf(1));
+			
+			
+			
+			
+		
+			
+		}
 		else if (param instanceof ParameterFixedTable){
 			//TODO:
 			throw new UnsupportedGeoAlgorithmException();
@@ -247,16 +257,20 @@ public class WPSGeoAlgorithm {
 	}
 
 	public static void main(String[] args){
-		/*Sextante.initialize();
+		Sextante.initialize();
 		GeoAlgorithm algorithm = Sextante.getAlgorithmFromCommandLineName("buffer");
-		WPSGeoAlgorithm geoAlgorithm = new WPSGeoAlgorithm();
-		ProcessDescriptionType processDescription = geoAlgorithm.getDescribeProcessType(algorithm);
+		SextanteProcessDescriptionCreator geoAlgorithm = new SextanteProcessDescriptionCreator();
+		ProcessDescriptionType processDescription = null;
 		try {
-			processDescription.save(new File("C:\\testDescription.xml"));
-		} catch (IOException e) {
+			processDescription = geoAlgorithm.createDescribeProcessType(algorithm);
+			System.out.println(processDescription);
+		} catch (NullParameterAdditionalInfoException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
+			e1.printStackTrace();
+		} catch (UnsupportedGeoAlgorithmException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		
 	}

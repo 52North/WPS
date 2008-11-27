@@ -36,8 +36,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
+import net.opengis.wps.x100.impl.ExecuteDocumentImpl;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -70,32 +72,19 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(GenericSextanteProcessDelegator.class);
 	
 	private String processID;
-	private ProcessDescriptionsDocument processDescription;
+	private ProcessDescriptionType processDescription;
 	private String errors;
 	
 	
-	public GenericSextanteProcessDelegator(String processID, File file) {
+	public GenericSextanteProcessDelegator(String processID, ProcessDescriptionType processDescriptionType) {
 		this.processID = processID.replace("Sextante_","");;
-		errors = "";
-		try {
-			
-			processDescription = ProcessDescriptionsDocument.Factory.parse(file);
-		} catch (XmlException e) {
-			LOGGER.error("Could not initialzize WPS Sextante Process " +processID);
-			e.printStackTrace();
-			errors = "Could not initialzize WPS Sextante Process " +processID;
-			throw new RuntimeException("Could not initialzize WPS Sextante Process " +processID);
-		} catch (IOException e) {
-			LOGGER.error("Could not initialzize WPS Sextante Process " +processID);
-			e.printStackTrace();
-			errors = "Could not initialzize WPS Sextante Process " +processID;
-			throw new RuntimeException("Could not initialzize WPS Sextante Process " +processID);
-			
-		}
+		this.errors = "";
+		this.processDescription = processDescriptionType;
+		
 	}
 
 	public ProcessDescriptionType getDescription() {
-		return processDescription.getProcessDescriptions().getProcessDescriptionArray(0);
+		return processDescription;
 	}
 
 	public String getErrors() {
@@ -119,10 +108,12 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		 * 
 		*/
 		
+		
+		
 		try {
 			
 			GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(processID);
-						
+			
 			 /* 
 			 * 2. Get the parameters needed from either the processdescription or the object itself
 			 * e.g.
