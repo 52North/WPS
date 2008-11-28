@@ -50,6 +50,7 @@ import org.geotools.feature.FeatureCollection;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.coverage.grid.GridCoverage;
 
+import es.unex.sextante.additionalInfo.AdditionalInfoSelection;
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
@@ -58,6 +59,7 @@ import es.unex.sextante.core.Sextante;
 import es.unex.sextante.dataObjects.IRasterLayer;
 import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
+import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
 import es.unex.sextante.geotools.GTOutputFactory;
 import es.unex.sextante.geotools.GTRasterLayer;
@@ -139,7 +141,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 				 * we probably have to refactor the input stuff and add some metadata to know what koind of input is fed in (for instance vector or raster etc)
 				 */
 				Object wrappedInput = wrapSextanteInputs(parameter, layers, wpsParameters, parameterName, type);
-				if(wrappedInput!=null){
+				if(wrappedInput !=null){
 					parameter.setParameterValue(wrappedInput);
 				}
 			}
@@ -178,6 +180,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	 	         * FeatureStore fs = (FeatureStore) result.getBaseDataObject();
 	 	         */
 	 			 Object finalResult = unwrapSextanteResults(outputObject);
+	 			 if(finalResult==null){
+	 				 throw new RuntimeException("Error while executing process " + processID + ". Sextante Results are null");
+	 			 }
 	 			 /* 9. Fill the result hashmap
 	 	         */ 
 	 			 resultMap.put(name, finalResult);
@@ -206,7 +211,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		return resultMap;
 	}
 
-	private Object wrapSextanteInputs(Parameter parameter, Map layers, Map wpsParameters, String parameterName,	String type) throws IOException {
+	private Object wrapSextanteInputs(Parameter parameter, Map layers, Map wpsParameters, String parameterName,	String type) throws IOException, NullParameterAdditionalInfoException {
 		if(type.equals("Vector Layer")){
 			Object vectorLayer = layers.get(parameterName);
 			if(vectorLayer==null){
@@ -242,7 +247,26 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			return parameter;
 			
 		}else if (type.equals("Selection")){
-			Object param = wpsParameters.get(parameterName);
+			Object parameterType = parameter.getParameterValueAsObject();
+			Object param = null;
+			if(parameterType instanceof String){
+				param = wpsParameters.get(parameterName);
+			}
+			if(parameterType instanceof Integer){
+				if(wpsParameters.get(parameterName)==null){
+					return null;
+				}
+				param =  new Integer((String)wpsParameters.get(parameterName));
+				//mapping
+				AdditionalInfoSelection ai = (AdditionalInfoSelection) parameter.getParameterAdditionalInfo();
+				String[] values = ai.getValues();
+				for(int i = 0; i<values.length;i++){
+					if(values[i].equals(param)){
+						param = new Integer(i);
+						break;
+					}
+				}
+			}
 			return param;
 			
 		}else if (type.equals("Boolean")){
@@ -263,7 +287,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			
 			IVectorLayer vectorLayer = ((IVectorLayer)result);
 			FeatureStore fs = (FeatureStore) vectorLayer.getBaseDataObject();
-			return fs.getFeatures();
+			return (FeatureCollection)fs.getFeatures();
 			
 		}else if (result instanceof IRasterLayer){
 			IRasterLayer rasterLayer = ((IRasterLayer)result);
@@ -284,6 +308,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		DataStore datastore = new CollectionDataStore(fc);
 		GTVectorLayer gtVectorLayer =  GTVectorLayer.createLayer(datastore, datastore.getTypeNames()[0]);
 		gtVectorLayer.setPostProcessStrategy(new NullStrategy());
+		gtVectorLayer.setName("VectorLayer");
 		return gtVectorLayer;
 	}
 

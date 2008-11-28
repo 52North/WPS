@@ -2,6 +2,10 @@ package org.n52.wps.server.sextante;
 
 import java.math.BigInteger;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -13,6 +17,9 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
+
+import org.apache.xmlbeans.XmlCursor;
+
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
 import es.unex.sextante.additionalInfo.AdditionalInfoRasterLayer;
@@ -51,7 +58,14 @@ public class SextanteProcessDescriptionCreator {
 
 	
 			ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
-
+			pdt.setStatusSupported(true);
+			pdt.setStoreSupported(true);
+			/*XmlCursor c = pdt.newCursor();
+			c.toFirstChild();
+			c.toLastAttribute();
+			c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
+			*/
+			
 			pdt.addNewAbstract().setStringValue(algorithm.getName());
 			pdt.addNewTitle().setStringValue(algorithm.getName());
 			pdt.addNewIdentifier().setStringValue(algorithm.getCommandLineName());
@@ -153,6 +167,10 @@ public class SextanteProcessDescriptionCreator {
 		else if (param instanceof ParameterNumericalValue){
 			AdditionalInfoNumericalValue ai = (AdditionalInfoNumericalValue) param.getParameterAdditionalInfo();
 			LiteralInputType literal = input.addNewLiteralData();
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:double");
+			literal.setDataType(dataType);
+			
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
@@ -164,6 +182,9 @@ public class SextanteProcessDescriptionCreator {
 			LiteralInputType literal = input.addNewLiteralData();
 			input.setMinOccurs(BigInteger.valueOf(1));
 			literal.addNewAnyValue();
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:string");
+			literal.setDataType(dataType);
 		}
 		else if (param instanceof ParameterMultipleInput){
 			AdditionalInfoMultipleInput ai = (AdditionalInfoMultipleInput) param.getParameterAdditionalInfo();
@@ -206,6 +227,8 @@ public class SextanteProcessDescriptionCreator {
 			for (int i = 0; i < values.length; i++) {
 				allowedValues.addNewValue().setStringValue(values[i]);
 			}
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:string");
 		}
 		else if (param instanceof ParameterTableField ){
 			//This has to be improved, to add the information about the parent parameter
@@ -215,6 +238,8 @@ public class SextanteProcessDescriptionCreator {
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
 			literal.setDefaultValue("0");
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:string");
 		}
 		else if (param instanceof ParameterBand){
 			//This has to be improved, to add the information about the parent parameter
@@ -232,11 +257,19 @@ public class SextanteProcessDescriptionCreator {
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			literal.setDefaultValue("0, 0");
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:string");
 		}
 		else if (param instanceof ParameterBoolean){
 			LiteralInputType literal = input.addNewLiteralData();
 			input.setMinOccurs(BigInteger.valueOf(1));
-			
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:boolean");
+			literal.setDataType(dataType);
+			literal.addNewAnyValue();
+			input.setMinOccurs(BigInteger.valueOf(1));
+			input.setMaxOccurs(BigInteger.valueOf(1));
+			literal.setDefaultValue("false");
 			
 			
 			
