@@ -28,7 +28,6 @@
 		</Repository>
 		
 		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
-			<Property name="Sextante-Describe-Process-Location">C:\devel\Workspaces\WPS-S\sextante\ProcessDescriptions</Property>
 		</Repository>
 		
 		<!--
