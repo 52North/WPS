@@ -8,6 +8,7 @@ is extensible in terms of processes and data handlers.
 
  Authors: 
 	Bastian Schaeffer, Institute for Geoinformatics, Muenster, Germany
+	Victor Olaya, Universtity of Jaume, Spain
 
  Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 52n@conterra.de
@@ -31,18 +32,15 @@ is extensible in terms of processes and data handlers.
 
 package org.n52.wps.server.sextante;
 
-import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
-import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-import net.opengis.wps.x100.impl.ExecuteDocumentImpl;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
@@ -50,6 +48,8 @@ import org.geotools.feature.FeatureCollection;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.coverage.grid.GridCoverage;
 
+import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
+import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoSelection;
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
@@ -61,14 +61,11 @@ import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
 import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
-import es.unex.sextante.geotools.GTOutputFactory;
 import es.unex.sextante.geotools.GTRasterLayer;
 import es.unex.sextante.geotools.GTVectorLayer;
-import es.unex.sextante.geotools.PostProcessStrategy;
 import es.unex.sextante.outputs.Output;
+import es.unex.sextante.parameters.FixedTableModel;
 import es.unex.sextante.parameters.Parameter;
-import es.unex.sextante.parameters.ParameterTable;
-import es.unex.sextante.parameters.ParameterTableField;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(GenericSextanteProcessDelegator.class);
@@ -234,17 +231,28 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			return wrapRasterLayer(rasterLayer);
 			
 			
-		}else if (type.equals("Numerical Value")){
-			return wpsParameters.get(parameterName);
-			
-			
-		}else if (type.equals("Table Field")){
+		}else if (type.equals("Numerical Value") || type.equals("String")){
+ 			return wpsParameters.get(parameterName);
+		}else if (type.equals("Multiple Input")){
+			return createMultipleInputArray(parameter, layers);
+		}else if (type.equals("Selection")){			
 			Object param = wpsParameters.get(parameterName);
-			if(param == null){
-				parameter.setParameterValue(0);
-				
+			if(param instanceof String){
+				AdditionalInfoSelection ai = (AdditionalInfoSelection) parameter.getParameterAdditionalInfo();
+				String[] values = ai.getValues();
+				for(int i = 0; i<values.length;i++){
+					if(values[i].equals((String)param)){
+						return new Integer(i);
+					}
+				}
 			}
-			return parameter;
+			
+			if(param instanceof Integer){
+				return param;
+			}
+			else{
+				return null;
+			}
 			
 		}else if (type.equals("Selection")){
 			Object parameterType = parameter.getParameterValueAsObject();
@@ -277,6 +285,47 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 			return param;
 			
 		}
+		
+		else if (type.equals("Fixed Table")){
+			boolean bIsNumberOfRowsFixed;
+			int iCols, iRows;
+			int iCol, iRow;
+			int iToken = 0;
+			FixedTableModel tableModel;
+			Object value = layers.get(parameterName);
+			if(value==null){
+				return null;
+			}
+			String sValue = value.toString();
+			StringTokenizer st = new StringTokenizer(sValue, ",");
+			String sToken;
+			AdditionalInfoFixedTable ai;
+			ai = (AdditionalInfoFixedTable) parameter.getParameterAdditionalInfo();
+			iCols = ai.getColsCount();
+			iRows = (int) (st.countTokens() / iCols) + 1;
+			bIsNumberOfRowsFixed = ai.isNumberOfRowsFixed();
+			tableModel = new FixedTableModel(ai.getCols(), iRows, bIsNumberOfRowsFixed);
+			if (bIsNumberOfRowsFixed){
+				if (iRows != ai.getRowsCount()){
+					return null;
+				}
+			}
+			else{
+				if (st.countTokens() % iCols != 0){
+					return null;
+				}
+			}
+			
+			while (st.hasMoreTokens()){
+				iRow =  (int) Math.floor(iToken / (double) iCols);
+				iCol = iToken % iCols;
+				sToken = st.nextToken().trim();
+				tableModel.setValueAt(sToken, iRow, iCol);
+				iToken++;
+			}
+			
+			return tableModel;
+		}
 		return null;
 		
 	}
@@ -299,11 +348,21 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 	}
 
 	private GTRasterLayer wrapRasterLayer(Object rasterLayer) {
-		// TODO 
-		return null;
+		if(!(rasterLayer instanceof GridCoverage)){
+			return null;
+		}
+		GridCoverage coverage = (GridCoverage) rasterLayer;
+		GTRasterLayer sextanteRasterLayer = new GTRasterLayer();
+		sextanteRasterLayer.create(coverage);
+		
+		return sextanteRasterLayer;
+		
 	}
 
 	private GTVectorLayer wrapVectorLayer(Object vectorLayer) throws IOException {
+		if(!(vectorLayer instanceof FeatureCollection)){
+			return null;
+		}
 		FeatureCollection fc  = (FeatureCollection) vectorLayer;
 		DataStore datastore = new CollectionDataStore(fc);
 		GTVectorLayer gtVectorLayer =  GTVectorLayer.createLayer(datastore, datastore.getTypeNames()[0]);
@@ -311,5 +370,34 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 		gtVectorLayer.setName("VectorLayer");
 		return gtVectorLayer;
 	}
+	
+	private ArrayList createMultipleInputArray(Parameter parameter, Map layers)
+					throws NullParameterAdditionalInfoException, IOException{
+			String parameterName = parameter.getParameterName();
+			Object layer = layers.get(parameterName);
+			ArrayList list = new ArrayList();
+			AdditionalInfoMultipleInput ai = (AdditionalInfoMultipleInput)parameter.getParameterAdditionalInfo();
+			switch (ai.getDataType()){
+				case AdditionalInfoMultipleInput.DATA_TYPE_RASTER:
+					wrapRasterLayer(layer);
+					break;
+				case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_ANY:
+					wrapVectorLayer(layer);
+					break;
+				case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_LINE:
+					wrapVectorLayer(layer);
+					break;
+				case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POLYGON:
+					wrapVectorLayer(layer);
+					break;
+				case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POINT:
+					wrapVectorLayer(layer);
+					break;		
+				default:
+			}
+	
+			return list;
+	
+	 	}
 
 }
