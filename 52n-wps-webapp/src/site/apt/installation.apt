@@ -15,13 +15,16 @@ Theodor Foerster
 
 * Source download
 
- To download the full 52n WPS sources please visit the WPS trunk of the geoprocessing community trough your default SVN client.
+ To download the latest 52n WPS sources please visit the WPS trunk of the geoprocessing community trough your favorite SVN client.
 
 --------------------------
 http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
 --------------------------
 
-  To get the latest sources from the latest distribution, please visit the {{{source-repository.html}source repository information}} 
+  For a detailed description, please visit the {{{source-repository.html}source repository information}}
+  
+  Build and configuration instructions can be found {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/configuration.html} here}}
+   
 
 * System requirements
 
