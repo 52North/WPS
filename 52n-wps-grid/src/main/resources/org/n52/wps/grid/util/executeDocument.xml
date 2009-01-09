@@ -1,0 +1,22 @@
+<ns:Execute version="1.0.0" xmlns:ns="http://www.opengis.net/wps/1.0.0">
+	<ns1:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">org.n52.wps.grid.algorithm.DistributedSimpleBufferAlgorithm</ns1:Identifier>
+	<ns:DataInputs>
+		<ns:Input>
+			<ns1:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">data</ns1:Identifier>
+			<ns:Reference schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"
+				xlin:href="http://naturegis.jrc.it:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;typename=orchestra:ba2000" xmlns:xlin="http://www.w3.org/1999/xlink" />
+		</ns:Input>
+		<ns:Input>
+			<ns1:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">width</ns1:Identifier>
+			<ns:Data>
+				<ns:LiteralData dataType="xs:double">0.1</ns:LiteralData>
+			</ns:Data>
+		</ns:Input>
+	</ns:DataInputs>
+	<ns:ResponseForm>
+		<ns:RawDataOutput mimeType="text/XML" schema="http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd">
+			<ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xlink="http://www.w3.org/1999/xlink"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">result</ows:Identifier>
+		</ns:RawDataOutput>
+	</ns:ResponseForm>
+</ns:Execute>
