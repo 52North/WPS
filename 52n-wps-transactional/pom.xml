@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- $Id: pom.xml,v 1.1.2.2 2007/05/26 23:01:56 schaeffer Exp $ -->
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>1.0-rc3-SNAPSHOT</version>
+        <version>2.0-rc1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
@@ -21,8 +20,10 @@
     </issueManagement>
         <scm>
         <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
-    </scm>
+        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS/tags/2.0-rc1</connection>
+      <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/tags/2.0-rc1/52n-wps-transactional</developerConnection>
+    <url>http://52north.org/svn/geoprocessing/main/WPS/tags/2.0-rc1/52n-wps-transactional</url>
+  </scm>
     <build>
          <!--resources>
       
