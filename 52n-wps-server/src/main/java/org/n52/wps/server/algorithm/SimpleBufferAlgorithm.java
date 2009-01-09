@@ -33,38 +33,62 @@ Muenster, Germany
  Created on: 13.06.2006
  ***************************************************************/
 package org.n52.wps.server.algorithm;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.IllegalAttributeException;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 public class SimpleBufferAlgorithm extends AbstractAlgorithm {
-	
 	private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
+	
 	
 	public SimpleBufferAlgorithm() {
 		super();
+		
 	}
 
-	public String errors = "";
-	public String getErrors() {
+	private List<String> errors = new ArrayList<String>();
+	public List<String> getErrors() {
 		return errors;
 	}
 	
-	public Map run(Map layers, Map parameters) {
-		FeatureCollection fc = (FeatureCollection)layers.get("data");
+	public Map<String, IData> run(Map<String, List<IData>> inputData) {
+		if(inputData==null || !inputData.containsKey("data")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> dataList = inputData.get("data");
+		if(dataList == null || dataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData firstInputData = dataList.get(0);
+				
+		FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 		
-		double width = ((Double)parameters.get("width")).doubleValue();
-		FeatureCollection fcnew = runBuffer(fc, width);
-		HashMap<String,Object> resulthash = new HashMap<String,Object>();
-		resulthash.put("result", fcnew);
+		if( !inputData.containsKey("width")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> widthDataList = inputData.get("width");
+		if(widthDataList == null || widthDataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		Double width = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
+		
+		FeatureCollection fcnew = runBuffer(featureCollection, width);
+		HashMap<String,IData> resulthash = new HashMap<String,IData>();
+		resulthash.put("result", new GTVectorDataBinding(fcnew));
 		return resulthash;
 	}
 	
@@ -103,4 +127,22 @@ public class SimpleBufferAlgorithm extends AbstractAlgorithm {
 		  }
 		  return null;
 		}
+
+		
+
+		public Class getInputDataType(String id) {
+			if(id.equalsIgnoreCase("data")){
+				return GTVectorDataBinding.class;
+			}else if(id.equalsIgnoreCase("width")){
+					return LiteralDoubleBinding.class;
+			}
+			throw new RuntimeException("Could not find datatype for id " + id);
+		
+		}
+
+		public Class getOutputDataType(String id) {
+			return GTVectorDataBinding.class;
+		}
+
+		
 }
