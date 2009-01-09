@@ -35,6 +35,11 @@ Muenster, Germany
 package org.n52.wps.util;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntegerBinding;
+import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
 public class BasicXMLTypeFactory {
 	
@@ -52,42 +57,29 @@ public class BasicXMLTypeFactory {
 	 * @param xmlDataTypeURI the expected XML basicDataType
 	 * @param obj the XML object String
 	 */
-	public static Object getBasicJavaObject(String xmlDataTypeURI, String obj) {
+	public static IData getBasicJavaObject(String xmlDataTypeURI, String obj) {
 		obj = obj.replace('\n', ' ').replace('\t', ' ').trim();
 		if(xmlDataTypeURI == null) {
-			return obj;
+			return new LiteralStringBinding(obj);
 		}
 		if(xmlDataTypeURI.equals(DOUBLE_URI)) {
-			return Double.parseDouble(obj);
+			return new LiteralDoubleBinding(Double.parseDouble(obj));
 		}
 		if(xmlDataTypeURI.equals(INT_URI)) {
-			return Integer.parseInt(obj);
+			return new LiteralIntegerBinding(Integer.parseInt(obj));
 		}
 		if(xmlDataTypeURI.equals(BOOLEAN_URI)) {
-			return Boolean.parseBoolean(obj);
+			return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
 		}
 		if(xmlDataTypeURI.equals(STRING_URI)) {
-			return obj;
+			return new LiteralStringBinding(obj);
 		}
 		return null;
 		
 	}
 	
-   public static String getStringRepresentation(String xmlDataTypeURI, Object obj) {
-        if (xmlDataTypeURI.equals(DOUBLE_URI) && obj instanceof Double) {
-            return ((Double)obj).toString();
-        }
-        if (xmlDataTypeURI.equals(INT_URI) && obj instanceof Integer) {
-            return ((Integer)obj).toString();
-        }
-        if (xmlDataTypeURI.equals(BOOLEAN_URI) && obj instanceof Boolean) {
-            return ((Boolean)obj).toString();
-        }
-        if (xmlDataTypeURI.equals(STRING_URI) && obj instanceof String) {
-            return (String)obj;
-        }
-        LOGGER.debug(xmlDataTypeURI + " is unknown or object is not matching the dataType");
-        return null;
+   public static String getStringRepresentation(String xmlDataTypeURI, IData obj) {
+	   return obj.getPayload().toString();
     }
 
 }

@@ -43,7 +43,7 @@ import org.n52.wps.server.request.Request;
 abstract public class Response {
 
 	protected Request request;
-	
+		
 	public Response(Request request){
 		this.request = request;
 	}
@@ -57,5 +57,10 @@ abstract public class Response {
 	}
 	
 	public abstract void save(OutputStream os) throws ExceptionReport;
+	
+	public Request getRequest(){
+		return request;
+	}
+
 
 }

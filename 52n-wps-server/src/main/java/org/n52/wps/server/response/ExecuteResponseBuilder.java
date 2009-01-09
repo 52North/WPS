@@ -36,9 +36,11 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -57,6 +59,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -132,8 +135,8 @@ public class ExecuteResponseBuilder {
 				if(desc.isSetComplexOutput()) {
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
 					String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
-					String mimeType = ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
-					generateComplexDataOutput(id, false, true, schema, mimeType, encoding, null);
+					String responseMimeType = getMimeType();
+					generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
 				}
 				
 				else if (desc.isSetLiteralOutput()) {
@@ -155,7 +158,7 @@ public class ExecuteResponseBuilder {
 					throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
 				}
 				if(desc.isSetComplexOutput()) {
-					String mimeType = ExecuteResponseBuilder.getMimeType(desc, definition);
+					String mimeType = getMimeType();
 					String schema = ExecuteResponseBuilder.getSchema(desc, definition);
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, definition);
 					generateComplexDataOutput(responseID, documentDef.getAsReference(), false,  schema, mimeType, encoding, desc.getTitle());
@@ -220,30 +223,41 @@ public class ExecuteResponseBuilder {
 		return encoding;
 	}
 	
-	// TODO Rename to getMimeType... the method is a getter, not setter.
-	public static String getMimeType(OutputDescriptionType desc, OutputDefinitionType def) {
-		String mimeType = null;
-		if(def != null) {
-			mimeType = def.getMimeType();
+	
+	public String getMimeType() {
+		String mimeType = "";
+		OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
+		if (request.getExecute().isSetResponseForm()) {
+			// Get the outputdescriptions from the algorithm
+			if(request.isRawData()) {
+				mimeType = request.getExecute().getResponseForm().getRawDataOutput().getMimeType();
+				
+				
+			}
+			else{
+				mimeType = "text/xml";
+			}
 		}
-		if(mimeType == null) {
+		if(mimeType==null){
 			// TODO Default MIME type will be returned. What about alternative MIME types?
-			return desc.getComplexOutput().getDefault().getFormat().getMimeType();
+			mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
 		}
+		
+		
 		return mimeType;
 	}
 
 
 
 	private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
-		Object obj = request.getAttachedResult().get(responseID);
+		IData obj = request.getAttachedResult().get(responseID);
 		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType);
+			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier);
 		}
 		else {
-			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title);
+			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
 			if(asReference) {
-				handler.updateResponseAsReference(doc, Long.toString(request.getUniqueId()));
+				handler.updateResponseAsReference(doc, Long.toString(request.getUniqueId()),mimeType);
 			}
 			else {
 				handler.updateResponseForComplexData(doc);
@@ -253,8 +267,8 @@ public class ExecuteResponseBuilder {
 	}
 
 	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) {
-		Object obj = request.getAttachedResult().get(responseID);
-		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title);
+		IData obj = request.getAttachedResult().get(responseID);
+		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
 		handler.updateResponseForLiteralData(res, dataTypeReference);
 	}
 

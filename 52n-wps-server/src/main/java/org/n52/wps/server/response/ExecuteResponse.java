@@ -44,14 +44,16 @@ import org.n52.wps.server.request.ExecuteRequest;
 public class ExecuteResponse extends Response {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteResponse.class);
-	private boolean alreadyStored = false;
-	ExecuteResponseBuilder builder = null;
+	private boolean alreadyStored;
+	private ExecuteResponseBuilder builder;
 	
 	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
 		super(request);
+		alreadyStored = false;
 		this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
 		if(request.isQuickStatus()){
 			LOGGER.debug("Store Response in Database");
+			
 			DatabaseFactory.getDatabase().storeResponse(this);
 		}
 	}
@@ -66,5 +68,13 @@ public class ExecuteResponse extends Response {
 			}
 		}
 		this.builder.save(os);
+	}
+	
+	public ExecuteResponseBuilder getExecuteResponseBuilder(){
+		return builder;
+	}
+	
+	public String getMimeType(){
+		return builder.getMimeType();
 	}
 }

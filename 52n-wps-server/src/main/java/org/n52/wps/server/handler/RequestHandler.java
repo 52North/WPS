@@ -36,6 +36,7 @@
  ***************************************************************/
 package org.n52.wps.server.handler;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -340,18 +341,12 @@ public class RequestHandler {
 	}
 	
 	private void setResponseMimeType(ExecuteRequest req) {
-		if(req.isRawData()){
-			ProcessDescriptionType description = RepositoryManager.getInstance().getAlgorithm(req.getExecute().getIdentifier().getStringValue()).getDescription();
-			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			OutputDefinitionType rawDataOutput = req.getExecute().getResponseForm().getRawDataOutput();
-			String id = rawDataOutput.getIdentifier().getStringValue();
-			OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
-			responseMimeType =  ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
-		}else{
-			responseMimeType = "text/XML";
-		}
+		responseMimeType = req.getExecuteResponseBuilder().getMimeType();
+		
 		
 	}
+	
+	
 
 	public String getResponseMimeType(){
 		if(responseMimeType == null){

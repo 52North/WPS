@@ -31,8 +31,12 @@
 package org.n52.wps.server.database;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
+
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -69,7 +73,7 @@ public interface IDatabase {
 	// identifier, which was already given to the client for reference.
 	public InputStream lookupResponse(String request_id);
 	
-	public String storeComplexValue(String id, ByteArrayOutputStream stream, String type);
+	public String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType);
 	
 	// The URL referencing the location from which the ExecuteResponse can be retrieved. 
 	// If "status" is "true" in the Execute request, the ExecuteResponse should also be 
@@ -84,4 +88,11 @@ public interface IDatabase {
 	// process has succeeded, the ExecuteResponse found at this URL shall contain the output 
 	// values or references to them.
 	public String generateRetrieveResultURL(String id);
+	
+	public String getMimeTypeForStoreResponse(String id);
+	
+	public boolean deleteStoredResponse(String id);
+
+	public File lookupResponseAsFile(String id);
+	
 }

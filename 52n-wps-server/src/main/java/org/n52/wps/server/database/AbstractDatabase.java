@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -40,16 +41,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 
-
-
 import org.apache.log4j.Logger;
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
+import org.n52.wps.util.StreamUtils;
 
 /**
 * An anstract-layer to the databases. 
@@ -57,7 +59,7 @@ import org.n52.wps.server.response.Response;
 * @author Janne Kovanen
 * 
 */
-public abstract class AbstractDatabase implements IDatabase {
+public abstract class AbstractDatabase implements IDatabase{
 	/** Property of the path to the location of the database */
 	public static final String PROPERTY_NAME_DATABASE_PATH = "databasePath";
 	
@@ -96,6 +98,8 @@ public abstract class AbstractDatabase implements IDatabase {
 
 	/** The column of "request_id" in the update statement. */
 	protected static final int UPDATE_COLUMN_REQUEST_ID = 2;
+
+	private static final int INSERT_COLUMN_MIME_TYPE = 5;
 	
 	/** get access to the global logger. */
 	private static Logger LOGGER = Logger.getLogger(AbstractDatabase.class);
@@ -129,14 +133,20 @@ public abstract class AbstractDatabase implements IDatabase {
 	 */
 	public synchronized String insertResponse(Response response) {
 		// Save the response to this outputstream.
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			response.save(baos);
-		} catch (ExceptionReport e) {
-			LOGGER.error("Saving the Response threw an ErrorReport: "
-					+ e.getMessage());
+		if(response instanceof ExecuteResponse){
+			ExecuteResponse executeResponse = (ExecuteResponse) response;
+		
+			LargeBufferStream baos = new LargeBufferStream();
+			try {
+				response.save(baos);
+			} catch (ExceptionReport e) {
+				LOGGER.error("Saving the Response threw an ErrorReport: "
+						+ e.getMessage());
+			}
+			return insertResultEntity(baos, Long.toString(response.getUniqueId()), response.getType(), executeResponse.getMimeType());
+		}else{
+			throw new RuntimeException("Could not insert a non execute response");
 		}
-		return insertResultEntity(baos, Long.toString(response.getUniqueId()), response.getType());
 	}
 	
 	/**
@@ -146,20 +156,9 @@ public abstract class AbstractDatabase implements IDatabase {
 	 * @param type
 	 */
 	private synchronized String insertResultEntity(
-			ByteArrayOutputStream baos, String id, String type) {
+			LargeBufferStream baos, String id, String type, String mimeType) {
 		// store the contents of the (finite) outputstream into a bytes array
-		byte[] b = baos.toByteArray();
-		
-		if(b.length == 0) {
-			LOGGER.error("Database insertion got an empty byte array!");
-			throw new RuntimeException("Database insertion got an empty byte array!");
-		}
-		
-		// Create a new inputstream from the byte array
-		
-		// ByteArrayInputStream bais = new ByteArrayInputStream(b);
-		InputStream bais = new ByteArrayInputStream(b);
-		
+		InputStream bais = StreamUtils.convertOutputStreamToInputStream(baos);
 		// Use Calendar to get the current date.
 		// Uses java.sql.Date !
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
@@ -169,6 +168,7 @@ public abstract class AbstractDatabase implements IDatabase {
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
 			AbstractDatabase.insertSQL.setDate(INSERT_COLUMN_REQUEST_DATE, date);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
+			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
 			// AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
 			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, bais.available());
 			AbstractDatabase.insertSQL.executeUpdate();
@@ -263,8 +263,8 @@ public abstract class AbstractDatabase implements IDatabase {
 	}
 	
 	public synchronized String storeComplexValue(String id, 
-			ByteArrayOutputStream stream, String type) {
-		return insertResultEntity(stream, id, type);
+			LargeBufferStream stream, String type, String mimeType) {
+		return insertResultEntity(stream, id, type, mimeType);
 	}
 	
 	/**
@@ -346,6 +346,39 @@ public abstract class AbstractDatabase implements IDatabase {
 	public void shutdown() {
 		
 	}
+	
+	public String getMimeTypeForStoreResponse(String id) {
+		try {
+			AbstractDatabase.selectSQL.setString(INSERT_COLUMN_MIME_TYPE, id);
+		
+			ResultSet res = AbstractDatabase.selectSQL.executeQuery();
+			if (res == null || !res.next()) {
+				LOGGER.warn("Query did not return a valid result.");
+				return null;
+			} else {
+				LOGGER.info("Successfully retrieved the Mimetyoe of the response: "
+						+ id);
+				return res.getString(1);
+			}
+		} catch (SQLException e) {
+			LOGGER.error("SQLException with request_id: " + id
+					+ "and message: " + e.getMessage());
+			return null;
+		}
+	}
 
+	
+	public boolean deleteStoredResponse(String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+
+	
+	public File lookupResponseAsFile(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

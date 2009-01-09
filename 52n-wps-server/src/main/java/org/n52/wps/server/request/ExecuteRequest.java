@@ -34,6 +34,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+
 import java.util.Map;
 
 import net.opengis.wps.x100.DataInputsType;
@@ -55,7 +56,7 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.server.AbstractTransactionalAlgorithm;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IDistributedAlgorithm;
@@ -455,7 +456,9 @@ public class ExecuteRequest extends Request {
 			returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
 			*/
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
-
+			
+			
+			
 			/*********BS
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
@@ -463,11 +466,19 @@ public class ExecuteRequest extends Request {
 			*********BB*/
 			if (algorithm instanceof IDistributedAlgorithm)
 			{
-				returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getData();
+				try
+				{
+					returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getOutputData();
+				}
+				catch (Exception e)
+				{
+					LOGGER.error(e.getMessage());
+					throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+				}
 			}
 			else
 			{
-				returnResults = algorithm.run((Map)parser.getParsedInputLayers(), (Map)parser.getParsedInputParameters());
+				returnResults = algorithm.run(parser.getParsedInputData());
 			} 
 
 		}catch(RuntimeException e) {
@@ -497,7 +508,7 @@ public class ExecuteRequest extends Request {
 		return execDom.getExecute();
 	}
 
-	public Map getAttachedResult(){
+	public Map<String, IData> getAttachedResult(){
 		return returnResults;
 	}
 
@@ -536,6 +547,7 @@ public class ExecuteRequest extends Request {
 			return false;
 		}
 	}
+	
 	
 	
 

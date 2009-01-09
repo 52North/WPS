@@ -29,12 +29,7 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
@@ -46,15 +41,16 @@ import net.opengis.wps.x100.OutputReferenceType;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.io.IStreamableGenerator;
-import org.n52.wps.io.binary.AbstractBinaryGenerator;
-import org.n52.wps.io.xml.AbstractXMLGenerator;
-import org.n52.wps.io.xml.AbstractXMLStringGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.datahandler.binary.AbstractBinaryGenerator;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
+import org.n52.wps.io.datahandler.xml.AbstractXMLStringGenerator;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.util.BasicXMLTypeFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.n52.wps.util.BasicXMLTypeFactory;
 import org.w3c.dom.Node;
 
 /*
@@ -67,20 +63,7 @@ public class OutputDataItem extends ResponseData {
 	private static String COMPLEX_DATA_TYPE = "ComplexDataResponse";
 	private LanguageStringType title;
 	
-	/**
-	 * 
-	 * @param obj
-	 * @param id
-	 * @param schema
-	 * @param encoding
-	 * @param mimeType
-	 * @param title
-	 */
-	public OutputDataItem(Object obj, String id, String schema, 
-			String encoding, String mimeType, LanguageStringType title) {
-		super(obj, id, schema, encoding, mimeType);
-		this.title = title;
-	}
+	
 
 	/**
 	 * 
@@ -92,7 +75,7 @@ public class OutputDataItem extends ResponseData {
 	 * @param title
 	 * @param algorithmIdentifier
 	 */
-	public OutputDataItem(Object obj, String id, String schema, String encoding, 
+	public OutputDataItem(IData obj, String id, String schema, String encoding, 
 			String mimeType, LanguageStringType title, String algorithmIdentifier) {
 		super(obj, id, schema, encoding, mimeType, algorithmIdentifier);
 		this.title = title;
@@ -148,23 +131,19 @@ public class OutputDataItem extends ResponseData {
 		literalData.setStringValue(processValue);
 	}
 	
-	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID) throws ExceptionReport {
+	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
 		prepareGenerator();
 		OutputDataType output = prepareOutput(res);
 		
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		LargeBufferStream baos = new LargeBufferStream();
 		OutputReferenceType outReference = output.addNewReference();
 		outReference.setSchema(schema);
 		IDatabase db = DatabaseFactory.getDatabase();
-		String storeID = reqID + "#" + id;
+		String storeID = reqID + "" + id;
 		if(generator instanceof IStreamableGenerator) {
-			OutputStreamWriter writer = new OutputStreamWriter(baos);
-			((IStreamableGenerator)generator).write(obj, writer);
-			try {
-				writer.close();
-			} catch(IOException io_ex) {
-				throw new ExceptionReport("Closing the writer throws an IO exception", ExceptionReport.NO_APPLICABLE_CODE); 
-			}
+			
+			((IStreamableGenerator)generator).writeToStream(obj, baos);
+			
 		} else {
 			if(generator instanceof AbstractXMLGenerator) {
 				Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, schema);
@@ -184,7 +163,7 @@ public class OutputDataItem extends ResponseData {
 				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
 		}
-		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE);
+		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE, mimeType);
 		storeReference = storeReference.replace("#", "%23");
 		outReference.setHref(storeReference);
 	}

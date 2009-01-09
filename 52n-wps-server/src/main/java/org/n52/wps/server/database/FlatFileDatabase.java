@@ -28,20 +28,23 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.database;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.Request;
 import org.n52.wps.server.response.Response;
 
 /*
@@ -116,19 +119,31 @@ public class FlatFileDatabase implements IDatabase {
 	 * @see org.n52.wps.server.database.IDatabase#lookupResponse(java.lang.String)
 	 */
 	public InputStream lookupResponse(String request_id) {
-		// TODO Auto-generated method stub
-		File f = new File(baseDir + File.separator + request_id);
+		File f = new File(baseDir);
+		File[] allFiles = f.listFiles();
 		try {
-			if(f.exists()){
-			
-				return new FileInputStream(f);
+			for(File tempFile : allFiles){
+				String fileName = tempFile.getName();
+				if(fileName.equalsIgnoreCase(request_id)){
+					
+						return new FileInputStream(tempFile);
+					
+				}
+				String[] splittedName = fileName.split("result");
+				if(splittedName.length==2){
+					if(splittedName[0].startsWith(request_id) || (splittedName[0]+"result").startsWith(request_id)){
+						return new FileInputStream(tempFile);
+					}
+				}
 			}
+			return new FileInputStream(baseDir + File.separator + request_id);
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException("Could not find requested file in FlatfileDatabase");
 		}
-		catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-		return null;
+		
 	}
+	
+	
 
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#shutdown()
@@ -141,19 +156,40 @@ public class FlatFileDatabase implements IDatabase {
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#storeComplexValue(java.lang.String, java.io.ByteArrayOutputStream, java.lang.String)
 	 */
-	public String storeComplexValue(String id, ByteArrayOutputStream stream,
-			String type) {
+	public String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType) {
 		// TODO enhance for multiple ProcessResults
-		byte[] bytes = stream.toByteArray();
+				
+		LargeBufferStream bufferedBytes = ((LargeBufferStream)stream);
 		try {
-			File f = new File(baseDir+File.separator+id);
+			String usedMimeType = mimeType;
+			String[] splittedMimeType= mimeType.split("/");
+			if(splittedMimeType.length==2){
+				usedMimeType = splittedMimeType[1];
+				if(usedMimeType.equalsIgnoreCase("TIFF")){
+					usedMimeType = "tif";
+				}
+			}
+			
+			
+			File f = new File(baseDir+File.separator+id+"result."+usedMimeType);
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
-			IOUtils.write(bytes, fos);
+			bufferedBytes.close();
+			bufferedBytes.writeTo(fos);
+			bufferedBytes.destroy();
+			fos.close();
+			
+		//	IOUtils.write(bytes, fos);
+			File f_mime = new File(baseDir+File.separator+id+"_mimeType");
+			FileOutputStream fos_mime = new FileOutputStream(f_mime);
+			IOUtils.write(mimeType, fos_mime);
+			fos_mime.close();
+			
 		}
 		catch(IOException e) {
 			throw new RuntimeException(e);
 		}
+	
 		return generateRetrieveResultURL(id);
 	}
 
@@ -161,19 +197,41 @@ public class FlatFileDatabase implements IDatabase {
 	 * @see org.n52.wps.server.database.IDatabase#storeResponse(org.n52.wps.server.response.Response)
 	 */
 	public String storeResponse(Response response) {
+		Request request = response.getRequest();
+		if(!(request instanceof ExecuteRequest)){
+			throw new RuntimeException("Could not store response in Flatfile Database. Response id = " + response.getUniqueId());
+		}
+		ExecuteRequest executeRequest = (ExecuteRequest) request;
+		String mimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
+		String usedMimeType = mimeType;
+		String[] splittedMimeType= mimeType.split("/");
+		if(splittedMimeType.length==2){
+			usedMimeType = splittedMimeType[1];
+			if(usedMimeType.equalsIgnoreCase("TIFF")){
+				usedMimeType = "tif";
+			}
+		}
 		
-		
-		File f = new File(baseDir + File.separator + response.getUniqueId());
+		File f = new File(baseDir+File.separator+response.getUniqueId()+"result."+usedMimeType);
 		try {
 			FileOutputStream os = new FileOutputStream(f);
 			response.save(os);
-		}
-		catch(ExceptionReport e) {
+			os.close();
+				
+			File f_mime = new File(baseDir+File.separator+response.getUniqueId()+"_mimeType");
+			FileOutputStream fos_mime = new FileOutputStream(f_mime);
+			IOUtils.write(mimeType, fos_mime);
+			fos_mime.close();
+		}catch(ExceptionReport e) {
 			throw new RuntimeException(e);
 		}
 		catch(FileNotFoundException e) {
 			throw new RuntimeException(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 		return generateRetrieveResultURL(Long.toString(response.getUniqueId()));
 	}
 
@@ -181,8 +239,74 @@ public class FlatFileDatabase implements IDatabase {
 	 * @see org.n52.wps.server.database.IDatabase#updateResponse(org.n52.wps.server.response.Response)
 	 */
 	public void updateResponse(Response response) {
+		
 		this.storeResponse(response);
 
 	}
+
+	public String getMimeTypeForStoreResponse(String id) {
+		File f_mime = new File(baseDir+File.separator+id+"_mimeType");
+		try {
+			if(f_mime.exists()){
+			
+				InputStream stream = new FileInputStream(f_mime);
+				String mimeType = "";
+				int c;
+				while (0 < (c = stream.read())) {
+					mimeType=mimeType + (char) c;
+				} 
+				stream.close();
+				return mimeType;
+				
+			}
+		}catch(Exception e){
+			
+		}
+		return null;
+	}
+
+	public boolean deleteStoredResponse(String id) {
+	/*	System.gc();
+		File f = new File(baseDir+File.separator+id);
+		File f1 = new File(baseDir+File.separator+id+"_mimeType");
+		boolean success = false;
+		try {
+			if(f.exists()){
+				success = f.delete();
+				if(!success){
+					return false;
+				}
+			}
+			if(f1.exists()){
+				success = f1.delete();
+				if(!success){
+					return false;
+				}
+			}
+		}catch(Exception e){
+			return false;
+		}*/
+		return true;
+	}
+
+	public File lookupResponseAsFile(String id) {
+		File f = new File(baseDir);
+		File[] allFiles = f.listFiles();
+		for(File tempFile : allFiles){
+			String fileName = tempFile.getName();
+			if(fileName.equalsIgnoreCase(id)){
+				return tempFile;
+			}
+			String[] splittedName = fileName.split("result");
+			if(splittedName.length==2){
+				if(splittedName[0].startsWith(id) || (splittedName[0]+"result").startsWith(id)){
+					return tempFile;
+				}
+			}
+		}
+		return new File(baseDir + File.separator + id);
+	}
+
+	
 
 }

@@ -30,6 +30,7 @@ package org.n52.wps.server.response;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 
 /*
@@ -46,8 +47,8 @@ public class RawData extends ResponseData {
 	 * @param encoding
 	 * @param mimeType
 	 */
-	public RawData(Object obj, String id, String schema, String encoding, String mimeType) throws ExceptionReport{
-		super(obj, id, schema, encoding, mimeType);
+	public RawData(IData obj, String id, String schema, String encoding, String mimeType, String algorithmIdentifier) throws ExceptionReport{
+		super(obj, id, schema, encoding, mimeType, algorithmIdentifier);
 		prepareGenerator();
 		
 	}

@@ -27,14 +27,15 @@
  ***************************************************************/
 package org.n52.wps.server.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.File;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -241,4 +242,22 @@ public class DerbyDatabase extends AbstractDatabase {
 		}
 		return true;
 	}
+
+	
+	public boolean deleteStoredResponse(String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+		
+	public File lookupResponseAsFile(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+	
+	
 }

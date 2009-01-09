@@ -29,6 +29,7 @@
 package org.n52.wps.server.database;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -39,6 +40,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hsqldb.DatabaseManager;
+import org.n52.wps.server.response.Response;
 
 /**
  * @note Uses lazy initialization without synchronization  
@@ -273,4 +275,14 @@ public class HSQLDatabase extends AbstractDatabase {
 			return "file";
 		return hsqlProtocol;
 	}
+
+	
+
+	
+
+	
+
+
+
+	
 }

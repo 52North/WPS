@@ -29,12 +29,15 @@
 package org.n52.wps.server.database;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -139,8 +142,8 @@ public class DatabaseFactory implements IDatabase
 		return DatabaseFactory.database.lookupResponse(request_id);
 	}
 	
-	public synchronized String storeComplexValue(String id, ByteArrayOutputStream stream, String type) {
-		return DatabaseFactory.database.storeComplexValue(id, stream, type);
+	public synchronized String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType) {
+		return DatabaseFactory.database.storeComplexValue(id, stream, type, mimeType);
 	}
 	
 	/**
@@ -179,6 +182,18 @@ public class DatabaseFactory implements IDatabase
 	 */
 	public String getDatabaseName() {
 		return DatabaseFactory.database.getDatabaseName();
+	}
+
+	public String getMimeTypeForStoreResponse(String id) {
+		return DatabaseFactory.database.getMimeTypeForStoreResponse(id);
+	}
+
+	public boolean deleteStoredResponse(String id) {
+		return DatabaseFactory.database.deleteStoredResponse(id);
+	}
+
+	public File lookupResponseAsFile(String id) {
+		return DatabaseFactory.database.lookupResponseAsFile(id);
 	}
 	
 
