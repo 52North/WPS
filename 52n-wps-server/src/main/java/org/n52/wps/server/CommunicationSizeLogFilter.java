@@ -34,7 +34,6 @@ package org.n52.wps.server;
 
 // import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,11 +55,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 
 
 class ResponseSizeInfoStream extends ServletOutputStream {
 	private OutputStream intStream;
-	private ByteArrayOutputStream baStream;
+	private LargeBufferStream baStream;
 	private boolean closed = false;
 	private long streamSize = 0;
 	
@@ -91,7 +91,8 @@ class ResponseSizeInfoStream extends ServletOutputStream {
         }
 */
     public void processStream() throws java.io.IOException {
-    	this.intStream.write(countBytes(baStream.toByteArray()));
+    	baStream.close();
+    	baStream.writeTo(intStream);
     	this.intStream.flush();
     }
      

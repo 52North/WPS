@@ -35,6 +35,7 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server;
 
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,10 +43,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+import javax.media.jai.JAI;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -117,6 +120,7 @@ public class WebProcessingService extends HttpServlet {
 	
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024L);
 		// this is important to set the lon lat support for correct CRS transformation.
 		//TODO: Might be changed to an additional configuration parameter.
 		System.setProperty("org.geotools.referencing.forceXY", "true");

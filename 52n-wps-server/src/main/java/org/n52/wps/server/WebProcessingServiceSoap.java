@@ -1,7 +1,6 @@
 package org.n52.wps.server;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,10 +23,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.axis.message.SOAPBody;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.handler.RequestHandler;
 import org.w3c.dom.DOMException;
-// import org.w3c.dom.Document;
-// import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -41,7 +39,7 @@ public class WebProcessingServiceSoap {
 	public void DescribeProcess(SOAPEnvelope requestEnvelope, SOAPEnvelope responseEnvelope) throws ExceptionReport {
 
 		// Create Output Stream.
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		LargeBufferStream outputStream = new LargeBufferStream();
 
 		Node requestDocument = null;
 		try {
@@ -80,7 +78,8 @@ public class WebProcessingServiceSoap {
 			
 			String filename = "temp"+parameterMap.hashCode()+".xml";
 			FileOutputStream fos = new FileOutputStream(filename);
-			fos.write(outputStream.toByteArray());
+			outputStream.close();
+			outputStream.writeTo(fos);
 			DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder  = factory.newDocumentBuilder();
@@ -112,7 +111,7 @@ public class WebProcessingServiceSoap {
 	public void GetCapabilities(SOAPEnvelope requestEnvelope, SOAPEnvelope responseEnvelope) throws ExceptionReport {
 
 		// Create Output Stream.
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		LargeBufferStream outputStream = new LargeBufferStream();
 
 		Node requestDocument = null;
 		try {
@@ -144,7 +143,8 @@ public class WebProcessingServiceSoap {
 			// String teststring = outputStream.toString("UTF-8");
 			String filename = "temp"+parameterMap.hashCode()+".xml";
 			FileOutputStream fos = new FileOutputStream(filename);
-			fos.write(outputStream.toByteArray());
+			outputStream.close();
+			outputStream.writeTo(fos);
 			DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder  = factory.newDocumentBuilder();
@@ -187,7 +187,7 @@ public class WebProcessingServiceSoap {
 	private static void callRequestHandler(SOAPEnvelope requestEnvelope, SOAPEnvelope responseEnvelope) {
 
 		// Create Output Stream.
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		LargeBufferStream outputStream = new LargeBufferStream();
 
 		// Create SOAP body document from request.
 		Node requestDocument = null;
@@ -231,7 +231,8 @@ public class WebProcessingServiceSoap {
 			// String teststring = outputStream.toString("UTF-8");
 			String filename = "temp"+requestHandler.hashCode()+".xml";
 			FileOutputStream fos = new FileOutputStream(filename);
-			fos.write(outputStream.toByteArray());
+			outputStream.close();
+			outputStream.writeTo(fos);
 			DocumentBuilderFactory factory  = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder  = factory.newDocumentBuilder();

@@ -27,17 +27,17 @@ Copyright ? 2007 52?North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 
@@ -66,9 +66,25 @@ public class RetrieveResultServlet extends HttpServlet {
 			PrintWriter pw = new PrintWriter(os);
 			pw.write("<html><title>52n WPS - id not found</title><body><H1>ID not found: " + id + "<H1></body></html>");
 		}
-		res.setContentType("text/xml");
 		IDatabase db = DatabaseFactory.getDatabase();
-		InputStream is = db.lookupResponse(id);
-		IOUtils.copy(is, os);
+		String mimeType = db.getMimeTypeForStoreResponse(id);
+		res.setContentType(mimeType);
+		String usedMimeType = mimeType;
+		String[] splittedMimeType= mimeType.split("/");
+		if(splittedMimeType.length==2){
+			usedMimeType = splittedMimeType[1];
+			if(usedMimeType.equalsIgnoreCase("tiff")){
+				usedMimeType = "tif";
+			}
+		}
+		File file = db.lookupResponseAsFile(id+"result."+usedMimeType);
+		String fileName = URLEncoder.encode(file.getName());
+		String redirect = "Databases/FlatFile/"+fileName;
+		
+		res.sendRedirect(redirect);
+		res.flushBuffer();
+		
+		
+		db.deleteStoredResponse(id);
 	}	
 }
