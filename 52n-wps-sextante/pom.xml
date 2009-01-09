@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>2.0-rc2-SNAPSHOT</version>
+        <version>2.0-rc1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
@@ -20,9 +20,9 @@
     </issueManagement>
         <scm>
         <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS</connection>
-      <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-sextante</developerConnection>
-    <url>http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-sextante</url>
+        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS/tags/52n-wps-parent-2.0-rc1</connection>
+      <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-parent-2.0-rc1/52n-wps-sextante</developerConnection>
+    <url>http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-parent-2.0-rc1/52n-wps-sextante</url>
   </scm>
     <build>
          <!--resources>
