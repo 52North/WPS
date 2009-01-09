@@ -118,21 +118,6 @@
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
-    <artifactId>sextante</artifactId>
-    <version>0.15</version>
-</dependency>
-<dependency>
-    <groupId>es.unex.sextante</groupId>
-    <artifactId>sextante</artifactId>
-    <version>0.15</version>
-</dependency>
-<dependency>
-    <groupId>es.unex.sextante</groupId>
-    <artifactId>sextante</artifactId>
-    <version>0.15</version>
-</dependency>
-<dependency>
-    <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridStatistics</artifactId>
     <version>0.15</version>
 </dependency>
