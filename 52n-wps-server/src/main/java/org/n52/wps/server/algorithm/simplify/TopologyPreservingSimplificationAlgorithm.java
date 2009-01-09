@@ -27,13 +27,19 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.algorithm.simplify;
 
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.IllegalAttributeException;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,10 +52,29 @@ import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 public class TopologyPreservingSimplificationAlgorithm extends
 		AbstractAlgorithm {
 
-	public Map run(Map layers, Map parameters) {
-		FeatureCollection col = (FeatureCollection)layers.get("FEATURES");
-		FeatureIterator iter = col.features();
-		Double tolerance = (Double)parameters.get("TOLERANCE");
+	private List<String> errors = new ArrayList<String>();
+	
+	public Map<String, IData> run(Map<String, List<IData>> inputData) {
+		if(inputData==null || !inputData.containsKey("FEATURES")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> dataList = inputData.get("FEATURES");
+		if(dataList == null || dataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData firstInputData = dataList.get(0);
+				
+		FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
+		FeatureIterator iter = featureCollection.features();
+		
+		if( !inputData.containsKey("width")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> widthDataList = inputData.get("TOLERANCE");
+		if(widthDataList == null || widthDataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		Double tolerance = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
 		while(iter.hasNext()) {
 			Feature f = iter.next();
 			Object userData = f.getDefaultGeometry().getUserData();
@@ -85,14 +110,32 @@ public class TopologyPreservingSimplificationAlgorithm extends
 				throw new RuntimeException("geometrytype of result is not matching", e);
 			}
 		}
-		HashMap result = new HashMap();
-		result.put("SIMPLIFIED_FEATURES", col);
+		HashMap<String, IData> result = new HashMap<String, IData>();
+		result.put("SIMPLIFIED_FEATURES", new GTVectorDataBinding(featureCollection));
 		return result;
 	}
 
-	public String getErrors() {
-		// TODO Auto-generated method stub
+	public List<String> getErrors() {
+		return errors;
+	}
+
+	public Class getInputDataType(String id) {
+		if(id.equalsIgnoreCase("FEATURES")){
+			return GTVectorDataBinding.class;
+		}else if(id.equalsIgnoreCase("TOLERANCE")){
+			return LiteralDoubleBinding.class;
+		}
 		return null;
 	}
+
+	public Class getOutputDataType(String id) {
+		if(id.equalsIgnoreCase("result")){
+			return GTVectorDataBinding.class;
+		}
+		return null;
+	}
+
+
+	
 
 }

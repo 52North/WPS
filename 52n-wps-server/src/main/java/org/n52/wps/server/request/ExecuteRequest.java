@@ -57,6 +57,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IDistributedAlgorithm;
@@ -459,11 +460,11 @@ public class ExecuteRequest extends Request {
 			
 			
 			
-			/*********BS
+			
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			}
-			*********BB*/
+			
 			if (algorithm instanceof IDistributedAlgorithm)
 			{
 				try

@@ -1,57 +1,4 @@
 /***************************************************************
- This implementation provides a framework to publish processes to the
-web through the  OGC Web Processing Service interface. The framework 
-is extensible in terms of processes and data handlers. It is compliant 
-to the WPS version 0.4.0 (OGC 05-007r4). 
-
- Copyright (C) 2006 by con terra GmbH
-
- Authors: 
-	Theodor Foerster, ITC, Enschede, the Netherlands
-	Carsten Priess, Institute for geoinformatics, University of
-Muenster, Germany
-
-
- Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
- 48155 Muenster, Germany, 52n@conterra.de
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program (see gnu-gpl v2.txt); if not, write to
- the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA  02111-1307, USA or visit the web page of the Free
- Software Foundation, http://www.fsf.org.
-
- Created on: 13.06.2006
- ***************************************************************/
-package org.n52.wps.server.algorithm.intersection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-import org.geotools.feature.AttributeType;
-import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.DefaultFeatureTypeFactory;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
-import org.n52.wps.server.AbstractAlgorithm;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-
-/***************************************************************
 This implementation provides a framework to publish processes to the
 web through the  OGC Web Processing Service interface. The framework 
 is extensible in terms of processes and data handlers. It is compliant 
@@ -68,7 +15,7 @@ Authors:
 Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
 48155 Muenster, Germany, 52n@conterra.de
 
-This program is free software; you can redistribute it and/or
+This printersectionogram is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 version 2 as published by the Free Software Foundation.
 
@@ -85,6 +32,32 @@ Software Foundation, http://www.fsf.org.
 
 Created on: 13.06.2006
 ***************************************************************/
+package org.n52.wps.server.algorithm.intersection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.geotools.feature.AttributeType;
+import org.geotools.feature.DefaultFeatureCollections;
+import org.geotools.feature.DefaultFeatureTypeFactory;
+import org.geotools.feature.Feature;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureType;
+import org.geotools.feature.IllegalAttributeException;
+import org.geotools.feature.SchemaException;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
+import org.n52.wps.server.AbstractAlgorithm;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+
+
 
 public class IntersectionAlgorithm extends AbstractAlgorithm {
 	
@@ -94,16 +67,39 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 		super();
 	}
 
-	public String errors = "";
-	public String getErrors() {
+	private List<String> errors = new ArrayList<String>();
+	public List<String> getErrors() {
 		return errors;
 	}
 	
 	
 	
-	public HashMap run(Map layers, Map parameters) {
-		FeatureCollection polygons = (FeatureCollection)layers.get("Polygons");
-		FeatureCollection lineStrings = (FeatureCollection)layers.get("LineStrings");
+	public Map<String, IData> run(Map<String, List<IData>> inputData) {
+		/*----------------------Polygons Input------------------------------------------*/
+		if(inputData==null || !inputData.containsKey("Polygons")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> dataList = inputData.get("Polygons");
+		if(dataList == null || dataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData firstInputData = dataList.get(0);
+				
+		FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
+		
+		/*----------------------LineStrings Input------------------------------------------*/
+		if(inputData==null || !inputData.containsKey("Polygons")){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> dataListLS = inputData.get("Polygons");
+		if(dataListLS == null || dataListLS.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData firstInputDataLS = dataListLS.get(0);
+				
+		FeatureCollection lineStrings = ((GTVectorDataBinding) firstInputDataLS).getPayload();
+		
+		
 		System.out.println("****************************************************************");
 		System.out.println("intersection started");
 		System.out.println("polygons size = " + polygons.size());
@@ -161,10 +157,10 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 			//	break;
 			//}
 		}
-		System.out.println("preresult");
-		HashMap<String,Object> resulthash = new HashMap<String,Object>();
-		resulthash.put("result", featureCollection);
-		System.out.println("result = " + featureCollection.size());
+		
+		
+		HashMap<String,IData> resulthash = new HashMap<String,IData>();
+		resulthash.put("result", new GTVectorDataBinding(featureCollection));
 		return resulthash;
 	}
 	
@@ -195,5 +191,14 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 		return feature;
 	}
 	
+	
+	public Class getInputDataType(String id) {
+		return GTVectorDataBinding.class;
+	
+	}
+
+	public Class getOutputDataType(String id) {
+		return GTVectorDataBinding.class;
+	}
 	
 }

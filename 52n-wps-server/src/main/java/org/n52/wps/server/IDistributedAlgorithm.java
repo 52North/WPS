@@ -1,38 +1,12 @@
-/*******************************************************************************
- * Copyright (C) 2008
- * by 52 North Initiative for Geospatial Open Source Software GmbH
- * 
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
- * 
- * This program is free software; you can redistribute and/or modify it under 
- * the terms of the GNU General Public License version 2 as published by the 
- * Free Software Foundation.
- * 
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
- * 
- * Author: Bastian Baranski (Bastian.Baranski@uni-muenster.de)
- * Created: 03.09.2008
- * Modified: 03.09.2008
- *
- ******************************************************************************/
-
 package org.n52.wps.server;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import net.opengis.wps.x100.ExecuteDocument;
+
+import org.n52.wps.io.data.IData;
 
 /**
  * @author bastian
@@ -40,85 +14,41 @@ import net.opengis.wps.x100.ExecuteDocument;
  */
 public interface IDistributedAlgorithm extends IAlgorithm
 {
-	/**
-	 * @param pExecuteDocument
-	 * @return
-	 * @throws ExceptionReport
-	 * @throws RuntimeException
-	 */
-	WebProcessingServiceOutput run(ExecuteDocument pExecuteDocument) throws ExceptionReport, RuntimeException;
-	
-	/**
-	 * @param pInput
-	 * @param pCount
-	 * @return
-	 */
+	void setDistributedComputingClient(String pUncioreClientClassName, Properties pProperties);
+
+	WebProcessingServiceOutput run(ExecuteDocument pExecuteDocument) throws Exception;
+
 	List<WebProcessingServiceInput> split(WebProcessingServiceInput pInput, int pMaximumNumberOfNodes);
-	
-	/**
-	 * @param pOutput
-	 * @return
-	 */
+
 	public WebProcessingServiceOutput merge(List<WebProcessingServiceOutput> pOutput);
 
-	/**
-	 * @author bastian
-	 * 
-	 */
 	public class WebProcessingServiceInput
 	{
-		public Map layers;
-		public Map parameters;
+		public Map<String, List<IData>> inputData;
 
-		/**
-		 * @param pLayers
-		 * @param pParameters
-		 */
-		public WebProcessingServiceInput(Map pLayers, Map pParameters)
+		public WebProcessingServiceInput(Map<String, List<IData>> pInputData)
 		{
-			layers = pLayers;
-			parameters = pParameters;
+			inputData = pInputData;
 		}
 
-		/**
-		 * @return
-		 */
-		public Map getLayers()
+		public Map<String, List<IData>> getInputData()
 		{
-			return layers;
-		}
-
-		/**
-		 * @return
-		 */
-		public Map getParameters()
-		{
-			return parameters;
+			return inputData;
 		}
 	}
 
-	/**
-	 * @author bastian
-	 * 
-	 */
 	public class WebProcessingServiceOutput
 	{
-		public Map data;
+		public Map<String, IData> outputData;
 
-		/**
-		 * @param pData
-		 */
-		public WebProcessingServiceOutput(Map pData)
+		public WebProcessingServiceOutput(Map<String, IData> pOutputData)
 		{
-			data = pData;
+			outputData = pOutputData;
 		}
 
-		/**
-		 * @return
-		 */
-		public Map getData()
+		public Map<String, IData> getOutputData()
 		{
-			return data;
+			return outputData;
 		}
 	}
 }
