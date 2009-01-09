@@ -25,10 +25,10 @@ Copyright � 2007 52�North Initiative for Geospatial Open Source Software Gmb
  Software Foundation�s web page, http://www.fsf.org.
 
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -44,8 +44,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.n52.wps.PropertyDocument.Property;
-
 import org.apache.log4j.Logger;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
@@ -55,7 +53,11 @@ import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
 import org.geotools.referencing.NamedIdentifier;
 import org.geotools.xml.SchemaFactory;
 import org.geotools.xml.schema.Schema;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -84,8 +86,8 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		}
 	}
 	
-	public void write(Object coll, Writer writer) {
-		FeatureCollection fc = (FeatureCollection) coll;
+	public void write(IData coll, Writer writer) {
+		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 		// this might be a workaround... 
 		if(fc == null || fc.size() == 0) {
 			try{
@@ -150,9 +152,13 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		}
 		try{
 			tx.transform( fc, writer);
+			writer.close();
 		}
 		catch(TransformerException e) {
 			throw new RuntimeException(e);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -174,13 +180,15 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		return false;
 	}
 
-	public Node generateXML(Object coll, String schema) {
+	public Node generateXML(IData coll, String schema) {
 		File f = null;
 		FileWriter writer = null;
 		try {
 			f = File.createTempFile("gml2", "xml");
-			writer = new FileWriter(f);
-			this.write(coll, writer);
+			FileOutputStream outputStream = new FileOutputStream(f);
+			this.writeToStream(coll, outputStream);
+			outputStream.flush();
+			outputStream.close();
 			if(f.length() <= 0) {
 				return null;
 			}
@@ -188,6 +196,7 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Node node = builder.parse(f);
+			if (f != null) f.delete();
 			return node;
 		}
 		catch (IOException e){
@@ -206,30 +215,30 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		
 	}
 
-	public OutputStream generate(Object coll) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer writer = new OutputStreamWriter(baos);
-		this.write(coll, writer);		
+	public OutputStream generate(IData coll) {
+		LargeBufferStream baos = new LargeBufferStream();
+		this.writeToStream(coll, baos);		
 		return baos;
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[]{FeatureCollection.class.getName()};
-	}
+	
 
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if(clazzName.equals(FeatureCollection.class.getName())) {
-			return true;
-		}
-		return false;
-	}
-
 	
 
+	public void writeToStream(IData coll, OutputStream os) {
+		OutputStreamWriter w = new OutputStreamWriter(os);
+		write (coll, w);		
+	}
+
+	public Class[] getSupportedInternalInputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
+	
+	}
 
 
 }

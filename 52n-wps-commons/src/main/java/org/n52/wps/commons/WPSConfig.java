@@ -154,7 +154,7 @@ public class WPSConfig  implements Serializable {
 				return generator.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 		
 	}
 	
@@ -166,7 +166,7 @@ public class WPSConfig  implements Serializable {
 				return parser.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 		
 	}
 	
@@ -179,7 +179,7 @@ public class WPSConfig  implements Serializable {
 			}
 		}
 		
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 	}
 	
 	public Property getPropertyForKey(Property[] properties, String key){

@@ -33,20 +33,25 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.binary;
+package org.n52.wps.io.datahandler.binary;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.data.DataSourceException;
 import org.geotools.gce.arcgrid.ArcGridWriter;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -56,45 +61,32 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 	private static Logger LOGGER = Logger.getLogger(AsciiGrassGenerator.class);
 	private static String SUPPORTED_FORMAT = "application/image-ascii-grass";
 
-	public synchronized OutputStream generate(Object o) {
+	public OutputStream generate(IData o) {
 
 		OutputStream outputStream = null;
 
-		LOGGER.debug("111");
-		
-		if (o instanceof GridCoverage2D) {
+				
+		if (o instanceof GTRasterDataBinding) {
 
 			try {
-
-				LOGGER.debug("112");
-				
-				final GridCoverage2D grid = (GridCoverage2D) o;
-				
-				LOGGER.debug("113");
+				final GridCoverage2D grid = ((GTRasterDataBinding) o).getPayload();
 				final File outputFile = File.createTempFile("temp"+grid.hashCode(), "tmp");
-
-				LOGGER.debug("114");
 				final GridCoverageWriter writer = new ArcGridWriter(outputFile);
 
-				LOGGER.debug("115");
 				// setting write parameters
 				ParameterValueGroup params = writer.getFormat().getWriteParameters();
-				LOGGER.debug("116");
 				params.parameter("GRASS").setValue(true);
-				LOGGER.debug("117");
 				params.parameter("compressed").setValue(false);
-				LOGGER.debug("118");
 				GeneralParameterValue[] gpv = { params.parameter("GRASS"), params.parameter("compressed") };
-				LOGGER.debug("119");
 				writer.write(grid, gpv);
-				LOGGER.debug("120");
+			
 				
 				outputStream = new FileOutputStream(outputFile);
 				
 				LOGGER.debug(outputFile.getAbsolutePath());
 
 			} catch (Exception e) {
-				LOGGER.error(outputStream);
+				LOGGER.error(e);
 			}
 
 		}
@@ -102,13 +94,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 		return outputStream;
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[]{GridCoverage2D.class.getName()};
-	}
-
-	public String[] getSupportedSchemas() {
-		return null;
-	}
+	
 
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
@@ -121,18 +107,13 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 		return false;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if(clazzName.equals(GridCoverage2D.class.getName())) {
-			return true;
-		}
-		return false;
-	}
+	
 
 	public String[] getSupportedFormats() {
-		return new String[] { "application/image" };
+		return new String[] {SUPPORTED_FORMAT};
 	}
 
-	public void write(Object o, Writer w) {
+	public void write(IData o, Writer w) {
 		OutputStream outputStream = null;
 		if (o instanceof GridCoverage2D) {
 			try {
@@ -150,7 +131,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 				IOUtils.copy(reader, w);
 				outputFile.delete();
 			} catch (Exception e) {
-				LOGGER.error(outputStream);
+				LOGGER.error(e);
 				throw new RuntimeException(e);
 			}
 		}
@@ -158,6 +139,71 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 
 	public void init(Property[] propertyArray) {
 		// TODO Auto-generated method stub
+		
+	}
+
+	public void writeToStream(IData data, OutputStream os) {
+		if(!(data instanceof GTRasterDataBinding)){
+			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
+		}
+		GridCoverage2D grid = ((GTRasterDataBinding) data).getPayload();
+		GridCoverageWriter writer;
+		try {
+			writer = new ArcGridWriter(os);
+		} catch (DataSourceException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		}
+		// setting write parameters
+		ParameterValueGroup params = writer.getFormat().getWriteParameters();
+		params.parameter("GRASS").setValue(true);
+		GeneralParameterValue[] gpv = { params.parameter("GRASS") };
+		try {
+			writer.write(grid, gpv);
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		}	
+	}
+
+	public Class[] getSupportedInternalInputDataType() {
+		Class[] supportedClasses = {GTRasterDataBinding.class};
+		return supportedClasses;
+	}
+
+
+
+	@Override
+	public File generateFile(IData data) {
+		if(!(data instanceof GTRasterDataBinding)){
+			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
+		}
+		GridCoverage2D grid = ((GTRasterDataBinding) data).getPayload();
+		String fileName = "temp"+System.currentTimeMillis()+".tmp";
+		File outputFile = new File(fileName);
+		GridCoverageWriter writer;
+		try {
+			writer = new ArcGridWriter(outputFile);
+		
+		// setting write parameters
+			ParameterValueGroup params = writer.getFormat().getWriteParameters();
+			params.parameter("GRASS").setValue(true);
+			GeneralParameterValue[] gpv = { params.parameter("GRASS") };
+			writer.write(grid, gpv);
+			return outputFile;
+		} catch (DataSourceException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		} catch (IllegalArgumentException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			LOGGER.error(e);
+			throw new RuntimeException(e);
+		}
 		
 	}
 

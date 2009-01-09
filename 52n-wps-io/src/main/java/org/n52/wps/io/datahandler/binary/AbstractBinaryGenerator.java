@@ -26,9 +26,12 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
 
  ***************************************************************/
 
-package org.n52.wps.io.binary;
+package org.n52.wps.io.datahandler.binary;
+
+import java.io.File;
 
 import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.data.IData;
 
 public abstract class AbstractBinaryGenerator implements IGenerator {
 
@@ -39,5 +42,10 @@ public abstract class AbstractBinaryGenerator implements IGenerator {
 	public boolean supportsSchemas() {
 		return false;
 	}
+	
+	public String[] getSupportedSchemas() {
+		return null;
+	}
 
+	public abstract File generateFile(IData coll);
 }

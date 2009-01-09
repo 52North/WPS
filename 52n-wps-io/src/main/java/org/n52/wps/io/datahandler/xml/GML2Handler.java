@@ -25,7 +25,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import java.util.HashMap;
 import java.util.Map;

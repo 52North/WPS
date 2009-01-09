@@ -37,7 +37,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
-import org.n52.wps.io.xml.AbstractXMLParser;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.datahandler.binary.AbstractBinaryParser;
+import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 
 /*
  * 
@@ -63,7 +65,7 @@ public class ExecuteResponseAnalyser {
 		this.processDesc= processDesc;		
 	}
 	
-	public Object getComplexData(String name) {
+	/*public IData getComplexData(String name) {
 		if(response != null) {
 			return parseProcessOutput(response);
 		}
@@ -94,7 +96,7 @@ public class ExecuteResponseAnalyser {
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	public String getComplexReferenceByIndex(int index) {
 		OutputDataType[] outputs = responseDoc.getExecuteResponse().getProcessOutputs().getOutputArray();
@@ -111,8 +113,8 @@ public class ExecuteResponseAnalyser {
 	}
 		
 	
-	
-	private Object parseProcessOutput(OutputDataType output) {
+	/*
+	private IData parseProcessOutput(OutputDataType output) {
 		String schemaURL = output.getData().getComplexData().getSchema();
 		if(schemaURL == null) {
 			for(OutputDescriptionType outputDesc :processDesc.getProcessOutputs().getOutputArray()) {
@@ -124,32 +126,42 @@ public class ExecuteResponseAnalyser {
 		if(schemaURL == null) {
 			throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + output.getIdentifier().getStringValue());
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, processDesc.getIdentifier().getStringValue());
 		if(parser instanceof AbstractXMLParser) {
 			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
 			return xmlParser.parseXML(output.getData().getComplexData().newInputStream());
 		}
 		// parser is not of type AbstractXMLParser
 		return null;
-	}
+	}*/
 	/**
 	 * this parses rawData output directly.
 	 * @param obj
 	 * @return
 	 */
-	private Object parseProcessOutput(Object obj) {
+	private IData parseProcessOutput(IData obj) {
 		String schema = exec.getExecute().getResponseForm().getRawDataOutput().getSchema();
 		if(schema == null) {
 			schema = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getSchema();
-			if(schema == null) {
-				throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + exec.getExecute().getIdentifier().getStringValue());
+			
+		}
+		String mimeType = exec.getExecute().getResponseForm().getRawDataOutput().getMimeType();
+		if(mimeType == null) {
+			mimeType = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getMimeType();
+			if(mimeType == null) {
+				throw new IllegalArgumentException("Could not find mimeType for output: " + exec.getExecute().getIdentifier().getStringValue());
 			}
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, IOHandler.DEFAULT_ENCODING,obj.getSupportedClass());
 		if(parser instanceof AbstractXMLParser) {
 			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
 			return xmlParser.parseXML((InputStream)response);
 		}
+		if(parser instanceof AbstractBinaryParser) {
+			AbstractBinaryParser binaryParser = (AbstractBinaryParser) parser;
+			return binaryParser.parse((InputStream)response);
+		}
+		// parser is not of type AbstractXMLParser
 		return null;
 	}
 }

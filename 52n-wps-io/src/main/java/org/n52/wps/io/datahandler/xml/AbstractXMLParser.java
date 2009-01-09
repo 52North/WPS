@@ -2,9 +2,9 @@
  This implementation provides a framework to publish processes to the
 web through the  OGC Web Processing Service interface. The framework 
 is extensible in terms of processes and data handlers. It is compliant 
-to the WPS version 0.4.0 (OGC 05-007r4). 
+to the WPS version 1.0.0 (OGC 05-007r4). 
 
- Copyright (C) 2006 by con terra GmbH
+ Copyright (C) 2008 by con terra GmbH
 
  Authors: 
 	Theodor Foerster, ITC, Enschede, the Netherlands
@@ -32,33 +32,29 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
+import java.io.InputStream;
 
 import org.n52.wps.PropertyDocument.Property;
-
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.IGenerator;
-import org.w3c.dom.Node;
+import org.n52.wps.io.IParser;
+import org.n52.wps.io.data.IData;
 
-/**
- * This class and its extending subclasses shall provide functionality to
- * create XML encoded String.
- * @author foerster
- *
- */
+import com.vividsolutions.jts.geom.GeometryFactory;
 
-public abstract class AbstractXMLGenerator implements IGenerator { 
+public abstract class AbstractXMLParser implements IParser {
+	protected GeometryFactory geomFactory;
 	protected Property[] properties;
 	
-	public AbstractXMLGenerator() {
-		 properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+	public AbstractXMLParser() {
+		 geomFactory = new GeometryFactory();
+		 properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
 	}
-	
-	public abstract Node generateXML(Object coll, String schema);
+
 	public final boolean isSupportedFormat(String format) {
 		for(String f : getSupportedFormats()) {
-			if (f.equalsIgnoreCase(format)) {
+			if(f.equalsIgnoreCase(format)) {
 				return true;
 			}
 		}
@@ -70,6 +66,11 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 	}
 	
 	public String[] getSupportedFormats() {
-		return new String[]{"text/xml"};
+		return new String[]{DEFAULT_MIMETYPE};
 	}
+	
+	public abstract IData parseXML(String gml);
+	public abstract IData parseXML(InputStream stream);
+		
+
 }

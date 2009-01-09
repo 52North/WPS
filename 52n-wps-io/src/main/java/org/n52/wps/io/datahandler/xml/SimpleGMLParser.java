@@ -32,7 +32,7 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +58,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureType;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.feature.SchemaException;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -86,7 +87,7 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return SUPPORTED_SCHEMAS;
 	}
 
-	public FeatureCollection parseXML(String gml) {
+	public GTVectorDataBinding parseXML(String gml) {
 		GMLPacketDocument doc;
 		try {
 			doc = GMLPacketDocument.Factory.parse(gml);
@@ -99,7 +100,7 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return null;
 	}
 	
-	public FeatureCollection parseXML(InputStream stream) {
+	public GTVectorDataBinding parseXML(InputStream stream) {
 		GMLPacketDocument doc;
 		try {
 			doc = GMLPacketDocument.Factory.parse(stream);
@@ -116,7 +117,7 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return null;
 	}
 	
-	private FeatureCollection parseXML(GMLPacketDocument doc) {
+	private GTVectorDataBinding parseXML(GMLPacketDocument doc) {
 		FeatureCollection collection = DefaultFeatureCollections.newCollection();
 		int numberOfMembers = doc.getGMLPacket().getPacketMemberArray().length;
 		for(int i = 0; i< numberOfMembers; i++) {
@@ -129,7 +130,7 @@ public class SimpleGMLParser extends AbstractXMLParser {
 				LOGGER.debug("feature has no geometry, feature will not be included in featureCollection");
 			}
 		}
-		return collection; 
+		return new GTVectorDataBinding(collection); 
 	}
 	
 	private Feature convertStaticFeature(StaticFeatureType staticFeature) {
@@ -268,23 +269,19 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return false;
 	}
 
-	public Object parse(InputStream input) {
+	public GTVectorDataBinding parse(InputStream input) {
 		return parseXML(input);
-	}
-
-	public String[] getSupportedRootClasses() {
-		return new String[]{FeatureCollection.class.getName()};
 	}
 
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if(clazzName.equals(FeatureCollection.class.getName())) {
-			return true;
-		}
-		return false;
+	
+	public Class[] getSupportedInternalOutputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
+	
 	}
 
 	

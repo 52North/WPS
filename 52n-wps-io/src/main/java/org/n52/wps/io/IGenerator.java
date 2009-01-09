@@ -34,7 +34,11 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.io;
 
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
+
+import org.n52.wps.io.data.IData;
 
 /** 
  * Basic interface for all Generators.
@@ -42,5 +46,9 @@ import java.io.OutputStream;
  *
  */
 public interface IGenerator extends IOHandler{
-	OutputStream generate(Object coll);
+	OutputStream generate(IData coll);
+	
+	Class[] getSupportedInternalInputDataType();
+	
+	
 }

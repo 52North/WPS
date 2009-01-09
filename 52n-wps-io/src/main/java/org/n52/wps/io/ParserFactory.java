@@ -34,13 +34,13 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.io;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.wps.ParserDocument.Parser;
-
 import org.apache.log4j.Logger;
-import org.n52.wps.io.xml.SimpleGMLParser;
+import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
  * @author foerster
@@ -103,7 +103,8 @@ public class ParserFactory {
 		return factory;
 	}
 	
-	public IParser getParser(String schema, String format, String encoding) {
+	
+	private IParser getParser(String schema, String format, String encoding) {
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
 			LOGGER.debug("Format is null, assume standard text/xml");
@@ -120,8 +121,8 @@ public class ParserFactory {
 		}
 		return null;
 	}
-	
-	public IParser getParser(String schema, String format, String encoding, String algorithmIdentifier) {
+	/*
+	public IParser getParser(String schema, String format, String encoding, String algorithmIdentifier, String inputIdentifer) {
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
 			LOGGER.debug("Format is null, assume standard text/xml");
@@ -131,28 +132,39 @@ public class ParserFactory {
 			LOGGER.debug("Encoding is null, assume standard UTF-8");
 		}
 		
-		String parserList = IOConfiguration.getInstance().getProperty(algorithmIdentifier + ".parsers");
-		if(parserList==null)
-			return getParser(schema, format, encoding);
-		String[] algorithmSupportedParsers = parserList.split(",");
-		// If there are no explicitly defined parsers, then lets return 
-		// what would be returned without knowing the algorithm identifier.
-		if(algorithmSupportedParsers.length==0)
-			return getParser(schema, format, encoding);
+		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
+		Class requiredInputClass = algorithm.getInputDataType(inputIdentifer);
 		
+		return getParser(schema, format, encoding, requiredInputClass);
+		
+	}
+	*/
+	
+	public IParser getParser(String schema, String format, String encoding, Class requiredInputClass) {
+		if(format == null) {
+			format = IOHandler.DEFAULT_MIMETYPE;
+			LOGGER.debug("Format is null, assume standard text/xml");
+		}
+		if(encoding == null) {
+			encoding = IOHandler.DEFAULT_ENCODING;
+			LOGGER.debug("Encoding is null, assume standard UTF-8");
+		}
+		//first, look if we can find a direct way		
 		for(IParser parser : registeredParsers) {
-			for(String supportedParser: algorithmSupportedParsers) {
-				// Comparing fully-qualified names.
-				if(supportedParser.compareTo(parser.getClass().getName()) == 0) {
-					// Only parsers supported are checked out.
-					if(parser.isSupportedSchema(schema) &&
-							parser.isSupportedEncoding(encoding) &&
-							parser.isSupportedFormat(format)) {
+			Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
+			for(Class clazz : supportedClasses){
+				if(clazz.equals(requiredInputClass)) {
+					if(parser.isSupportedSchema(schema) &&	parser.isSupportedEncoding(encoding) && parser.isSupportedFormat(format)) {
+						LOGGER.info("Matching parser found: " + parser);
 						return parser;
 					}
 				}
 			}
 		}
+	
+		//no parser could be found
+		//try an indirect way by creating all permutations and look if one matches
+		//TODO
 		return null;
 	}
 	

@@ -25,7 +25,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-package org.n52.wps.io.binary;
+package org.n52.wps.io.datahandler.binary;
 
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
@@ -40,13 +40,15 @@ import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.io.data.binding.complex.AsciiGrassDataBinding;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.opengis.coverage.grid.GridCoverageReader;
 
 public class AsciiGrassParser extends AbstractBinaryParser {
 
 	private static Logger LOGGER = Logger.getLogger(AsciiGrassParser.class);
 
-	public Object parse(InputStream input) {
+	public AsciiGrassDataBinding parse(InputStream input) {
 
 		GridCoverage2D grid = null;
 		
@@ -64,16 +66,11 @@ public class AsciiGrassParser extends AbstractBinaryParser {
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
-		return grid;
+		return new AsciiGrassDataBinding(grid);
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[] { WritableRaster.class.getName() };
-	}
-
-	public String[] getSupportedSchemas() {
-		return null;
-	}
+	
+	
 
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
@@ -88,13 +85,7 @@ public class AsciiGrassParser extends AbstractBinaryParser {
 		return false;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if (clazzName.equals(WritableRaster.class.getName())) {
-			return true;
-		}
-		return false;
-	}
-
+	
 	public String[] getSupportedFormats() {
 		return new String[] { "application/image-ascii-grass" };
 	}
@@ -122,6 +113,11 @@ public class AsciiGrassParser extends AbstractBinaryParser {
 	public void init(Property[] propertyList) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public Class[] getSupportedInternalOutputDataType() {
+		Class[] supportedClasses = {GTRasterDataBinding.class};
+		return supportedClasses;	
 	}
 
 }

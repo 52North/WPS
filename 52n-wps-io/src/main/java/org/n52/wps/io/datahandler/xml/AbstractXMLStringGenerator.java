@@ -32,12 +32,13 @@ Muenster, Germany
  Software Foundation, http://www.fsf.org.
 
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.data.IData;
 
 public abstract class AbstractXMLStringGenerator implements IGenerator {
-	public abstract String generateXML(Object stringifyable);
+	public abstract String generateXML(IData stringifyable);
 	public boolean isSupportedFormat(String format) {
 		if(format.equalsIgnoreCase("text/xml")) { return true; }
 		return false;

@@ -25,7 +25,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-package org.n52.wps.io.binary;
+package org.n52.wps.io.datahandler.binary;
 
 import org.n52.wps.io.IParser;
 
@@ -33,6 +33,10 @@ public abstract class AbstractBinaryParser implements IParser {
 
 	public boolean isSupportedSchema(String schema) {
 		return true;
+	}
+	
+	public String[] getSupportedSchemas() {
+		return null;
 	}
 	
 	public boolean supportsSchemas() {

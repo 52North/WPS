@@ -42,7 +42,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.xml.AbstractXMLGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.w3c.dom.Node;
 /**
  * @author foerster
@@ -68,7 +69,7 @@ public class ExecuteRequestBuilder {
 		this.execute = execute;
 	}
 	
-	public void addComplexData(String parameterID, Object value) {
+	public void addComplexData(String parameterID, IData value) {
 		GeneratorFactory fac = StaticDataHandlerRepository.getGeneratorFactory();
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if(inputDesc == null) {
@@ -78,7 +79,7 @@ public class ExecuteRequestBuilder {
 			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
 		}
 		String schemaURL = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		IGenerator generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
+		IGenerator generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getSupportedClass());
 		if(generator instanceof AbstractXMLGenerator) {
 			AbstractXMLGenerator xmlGenerator = (AbstractXMLGenerator) generator;
 			Node node = xmlGenerator.generateXML(value, null);

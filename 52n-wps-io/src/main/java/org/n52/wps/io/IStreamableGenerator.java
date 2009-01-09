@@ -27,9 +27,13 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.io;
 
+import java.io.OutputStream;
 import java.io.Writer;
+
+import org.n52.wps.io.data.IData;
 
 
 public interface IStreamableGenerator {
-	public void write(Object coll, Writer writer);
+	public void writeToStream(IData data, OutputStream os);
+	
 }

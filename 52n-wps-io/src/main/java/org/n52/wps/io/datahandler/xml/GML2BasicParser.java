@@ -32,7 +32,7 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,6 +62,8 @@ import org.geotools.xml.gml.GMLComplexTypes;
 import org.geotools.xml.schema.Element;
 import org.geotools.xml.schema.Schema;
 import org.n52.wps.io.IStreamableParser;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -77,7 +79,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 	
 	public GML2BasicParser() {
 		//default
-		fcBufferTimeout = 10000;
+		fcBufferTimeout = 1000000;
 		
 		for(Property property : properties){
 			if(property.getName().equalsIgnoreCase("fcBufferTimeout")){
@@ -92,7 +94,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		return new String[]{SUPPORTED_SCHEMA};
 	}
 
-	public FeatureCollection parseXML(String gml) {
+	public GTVectorDataBinding parseXML(String gml) {
 		File f = null;
 		FileOutputStream fos = null;
 		try{
@@ -113,19 +115,18 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 				fos.write(i);
 				i = sr.read();
 			}
+			fos.close();
 			//f.deleteOnExit();
 			return parseXML(f.toURI());
 		}
 		catch(IOException e) {
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-		finally {
-			if (fos != null) try { fos.close(); } catch (Exception e) { }
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
 			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
 		}
 	}
 	
-	public FeatureCollection parseXML(InputStream stream) {
+	public GTVectorDataBinding parseXML(InputStream stream) {
 		File f = null;
 		FileOutputStream fos = null;
 		try{
@@ -136,15 +137,14 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 				fos.write(i);
 				i = stream.read();
 			}
+			fos.close();
 			//f.deleteOnExit();
 			return parseXML(f.toURI());
 		}
 		catch(IOException e) {
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-		finally {
-			if (fos != null) try { fos.close(); } catch (Exception e) { }
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
 			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
 		}
 	}	
 
@@ -152,7 +152,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		return SUPPORTED_SCHEMA.equals(schema);
 	}
 	
-	public FeatureCollection parseXML(URI uri) {
+	public GTVectorDataBinding parseXML(URI uri) {
 		FeatureReader reader;
 		FeatureCollection coll = null;
 		URL featureTypeSchemaURL = null;
@@ -192,7 +192,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 
 
 		} catch (SAXException e) {
-e.printStackTrace();
+			e.printStackTrace();
 			throw new IllegalArgumentException(e);
 		} 
 		
@@ -212,7 +212,15 @@ e.printStackTrace();
 				LOGGER.debug(e);
 			}
 		}
-		return coll;
+		try {
+			stream.close();
+			reader.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new GTVectorDataBinding(coll);
 	}
 	
 	private String determineFeatureTypeSchema(URI uri) {
@@ -238,26 +246,17 @@ e.printStackTrace();
 		//return null;
 	}
 
-	public Object parse(InputStream input) {
+	public GTVectorDataBinding parse(InputStream input) {
 		return parseXML(input);
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[]{FeatureCollection.class.getName()};
-	}
+	
 
 	public boolean isSupportedEncoding(String encoding) {
 		// TODO Auto-generated method stub
 		return true;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		// TODO Auto-generated method stub
-		if(clazzName.equals(FeatureCollection.class.getName())) { 
-			return true;
-		}
-		return false;
-	}
 	
 	public static void main(String[] args){
 		GML2BasicParser parser = new GML2BasicParser();
@@ -273,6 +272,12 @@ e.printStackTrace();
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public Class[] getSupportedInternalOutputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
+	
 	}
 
 	

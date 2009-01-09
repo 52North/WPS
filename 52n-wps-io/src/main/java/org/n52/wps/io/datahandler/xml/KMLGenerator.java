@@ -32,7 +32,7 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -67,6 +67,9 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -103,29 +106,12 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 		return false;
 	}
 
-	public Node generateXML(Object coll, String schema) {
+	public Node generateXML(IData coll, String schema) {
 		return generateXMLObj(coll, schema).getDomNode();
 	}
 
-	public void write(Object coll, Writer writer) {
-		KmlDocument doc = generateXMLObj(coll, null);
-		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			XmlOptions opts = new XmlOptions();
-			opts.setSaveAggressiveNamespaces();
-			Map prefixes = new HashMap();
-			prefixes.put(SUPPORTED_SCHEMAS[0], "");
-			opts.setSaveSuggestedPrefixes(prefixes);
-			doc.save(bufferedWriter, opts);
-			bufferedWriter.close();
-		}
-		catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private KmlDocument generateXMLObj(Object coll, String schema2) {
+	
+	private KmlDocument generateXMLObj(IData coll, String schema2) {
 		org.geotools.factory.Hints.putSystemDefault(org.geotools.factory.Hints.FORCE_AXIS_ORDER_HONORING, "http");
 		KmlDocument doc = KmlDocument.Factory.newInstance();
 		KmlType kml = doc.addNewKml();
@@ -133,7 +119,7 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 		if(coll == null) {
 			return doc;
 		}
-		FeatureIterator iter = ((FeatureCollection)coll).features();
+		FeatureIterator iter = ((GTVectorDataBinding)coll).getPayload().features();
 		boolean crsIsSet = false;
 		MathTransform transform = null;
 		while(iter.hasNext()) {
@@ -270,31 +256,59 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 		return returnCoord;
 	}
 
-	public OutputStream generate(Object coll) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer writer = new OutputStreamWriter(baos);
-		this.write(coll, writer);
+	public OutputStream generate(IData coll) {
+		LargeBufferStream baos = new LargeBufferStream();
+		KmlDocument doc = generateXMLObj(coll, null);
+		try {
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(baos));
+			bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			XmlOptions opts = new XmlOptions();
+			opts.setSaveAggressiveNamespaces();
+			Map prefixes = new HashMap();
+			prefixes.put(SUPPORTED_SCHEMAS[0], "");
+			opts.setSaveSuggestedPrefixes(prefixes);
+			doc.save(bufferedWriter, opts);
+			bufferedWriter.close();
+		}
+		catch(IOException e) {
+			throw new RuntimeException(e);
+		}	
 		return baos;
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[]{FeatureCollection.class.getName()};
-	}
-
+	
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if(clazzName.equals(FeatureCollection.class.getName())) {
-			return true;
-		}
-		return false;
-	}
+	
 
 	public String[] getSupportedFormats() {
 		return new String[]{SUPPORTED_MIME_TYPE};
 	}
 
+	public void writeToStream(IData coll, OutputStream os) {
+		KmlDocument doc = generateXMLObj(coll, null);
+		try {
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
+			bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			XmlOptions opts = new XmlOptions();
+			opts.setSaveAggressiveNamespaces();
+			Map prefixes = new HashMap();
+			prefixes.put(SUPPORTED_SCHEMAS[0], "");
+			opts.setSaveSuggestedPrefixes(prefixes);
+			doc.save(bufferedWriter, opts);
+			bufferedWriter.close();
+		}
+		catch(IOException e) {
+			throw new RuntimeException(e);
+		}	
+	}
+	
+	public Class[] getSupportedInternalInputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
+	
+	}
 
 }

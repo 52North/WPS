@@ -34,7 +34,9 @@ package org.n52.wps.transactional.algorithm;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.Result;
@@ -49,7 +51,9 @@ import javax.xml.transform.stream.StreamResult;
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDataType;
+import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -58,17 +62,23 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntegerBinding;
+import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.transactional.deploy.IDeployManager;
-import org.n52.wps.transactional.service.DefaultTransactionalProcessRepository;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	
-	private String error;
+	private List<String> errors;
 	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
 	private ProcessDescriptionType processDescription;
 	private String workspace;
@@ -80,7 +90,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		WPSConfig wpsConfig = WPSConfig.getInstance();
 		Property[] properties = wpsConfig.getPropertiesForRepositoryClass(registeredRepository.getName());
 		this.workspace = wpsConfig.getPropertyForKey(properties,"WorkspaceLocationRoot").getStringValue();
-		this.error = "";
+		this.errors = new ArrayList<String>();
 		
 	}
 	
@@ -139,21 +149,22 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		}
 		
 		} catch (XmlException e) {
-			error = "Could not create ExecuteResponseDocument";
+			String error = "Could not create ExecuteResponseDocument";
+			errors.add(error);
 			LOGGER.warn(error + " Reason: " +e.getMessage());
 			throw new RuntimeException(error,e);
 		} catch (ExceptionReport e) {
-			error = e.getMessage();
-			LOGGER.warn( "Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException(error,e);
+			errors.add(e.getMessage());
+			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
+			throw new RuntimeException("Error processing results",e);
 		} catch (RemoteException e) {
-			error = e.getMessage();
-			LOGGER.warn( "Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException(error,e);
+			errors.add(e.getMessage());
+			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
+			throw new RuntimeException("Error processing results",e);
 		} catch (Exception e) {
-			error = e.getMessage();
-			LOGGER.warn( "Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException(error,e);
+			errors.add(e.getMessage());
+			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
+			throw new RuntimeException("Error processing results",e);
 		} 
 		
 		//add response id
@@ -163,8 +174,8 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	}
 
 
-	public String getErrors() {
-		return error;
+	public List<String> getErrors() {
+		return errors;
 	}
 
 
@@ -267,11 +278,74 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	}
 
 	public String getWellKnownName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
-	public Map run(Map layers, Map parameters) {
+	public Class getInputDataType(String id) {
+		InputDescriptionType[] inputs = processDescription.getDataInputs().getInputArray();
+		for(InputDescriptionType input : inputs){
+			if(input.getIdentifier().getStringValue().equals(id)){
+				if(input.isSetLiteralData()){
+					String datatype = input.getLiteralData().getDataType().getStringValue();
+					if(datatype.contains("tring")){
+							return LiteralStringBinding.class;
+					}
+					if(datatype.contains("ollean")){
+						return LiteralBooleanBinding.class;
+					}
+					if(datatype.contains("loat") || datatype.contains("ouble")){
+						return LiteralDoubleBinding.class;
+					}
+					if(datatype.contains("nt")){
+						return LiteralIntegerBinding.class;
+					}
+				}
+				if(input.isSetComplexData()){
+					 String mimeType = input.getComplexData().getDefault().getFormat().getMimeType();
+					 if(mimeType.contains("xml") || (mimeType.contains("XML"))){
+						 return GTVectorDataBinding.class;
+					 }else{
+						 return GTRasterDataBinding.class;
+					 }
+				}
+			}
+		}
+		throw new RuntimeException("Could not determie internal inputDataType");
+	}
+
+	public Class getOutputDataType(String id) {
+		OutputDescriptionType[] outputs = processDescription.getProcessOutputs().getOutputArray();
+		
+		for(OutputDescriptionType output : outputs){
+			
+			if(output.isSetLiteralOutput()){
+				String datatype = output.getLiteralOutput().getDataType().getStringValue();
+				if(datatype.contains("tring")){
+					return LiteralStringBinding.class;
+				}
+				if(datatype.contains("ollean")){
+					return LiteralBooleanBinding.class;
+				}
+				if(datatype.contains("loat") || datatype.contains("ouble")){
+					return LiteralDoubleBinding.class;
+				}
+				if(datatype.contains("nt")){
+					return LiteralIntegerBinding.class;
+				}
+			}
+			if(output.isSetComplexOutput()){
+				String mimeType = output.getComplexOutput().getDefault().getFormat().getMimeType();
+				if(mimeType.contains("xml") || (mimeType.contains("XML"))){
+					return GTVectorDataBinding.class;
+				}else{
+					return GTRasterDataBinding.class;
+				}
+			}
+		}
+		throw new RuntimeException("Could not determie internal inputDataType");
+	}
+
+	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		// TODO Auto-generated method stub
 		return null;
 	}

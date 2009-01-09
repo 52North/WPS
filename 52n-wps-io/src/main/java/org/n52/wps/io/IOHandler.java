@@ -43,7 +43,8 @@ public interface IOHandler {
 	
 	String[] getSupportedFormats();
 	
-	boolean isSupportedRootClass(String clazzName);
-	String[] getSupportedRootClasses();
+	
+	
+	
 	
 }

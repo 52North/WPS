@@ -32,10 +32,9 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io.xml;
+package org.n52.wps.io.datahandler.xml;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -52,12 +51,13 @@ import net.opengis.gml.LinearRingMemberType;
 import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonType;
-import org.n52.wps.PropertyDocument.Property;
 
 import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -86,11 +86,11 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		return false;
 	}
 
-	public Node generateXML(Object coll, String schema) {
+	public Node generateXML(IData coll, String schema) {
 		return generateXMLObj(coll, schema).getDomNode();
 	}
 
-	public void write(Object coll, Writer writer) {
+	public void write(IData coll, Writer writer) {
 		GMLPacketDocument doc = generateXMLObj(coll, null);
 		try {
 			BufferedWriter bufferedWriter = new BufferedWriter(writer);
@@ -103,13 +103,13 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		}
 	}
 
-	private GMLPacketDocument generateXMLObj(Object coll, String schema2) {
+	private GMLPacketDocument generateXMLObj(IData coll, String schema2) {
 		GMLPacketDocument doc = GMLPacketDocument.Factory.newInstance();
 		GMLPacketType packet = doc.addNewGMLPacket();
 		if(coll == null) {
 			return doc;
 		}
-		FeatureIterator iter = ((FeatureCollection)coll).features();
+		FeatureIterator iter = ((GTVectorDataBinding)coll).getPayload().features();
 		while(iter.hasNext()) {
 			Feature feature = iter.next();
 			StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();
@@ -233,28 +233,26 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		return xmlCoord;
 	}
 
-	public OutputStream generate(Object coll) {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		Writer writer = new OutputStreamWriter(baos);
-		this.write(coll, writer);
+	public OutputStream generate(IData coll) {
+		LargeBufferStream baos = new LargeBufferStream();
+		this.writeToStream(coll, baos);
 		return baos;
 	}
 
-	public String[] getSupportedRootClasses() {
-		return new String[]{FeatureCollection.class.getName()};
-	}
-
+	
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
 	}
 
-	public boolean isSupportedRootClass(String clazzName) {
-		if(clazzName.equals(FeatureCollection.class.getName())) {
-			return true;
-		}
-		return false;
+	public void writeToStream(IData coll, OutputStream os) {
+		OutputStreamWriter w = new OutputStreamWriter(os);
+		write (coll, w);		
 	}
 
+	public Class[] getSupportedInternalInputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
 	
+	}
 
 }
