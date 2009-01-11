@@ -100,6 +100,7 @@
         <module>52n-wps-site</module>
         <module>52n-wps-sextante</module>
         <module>52n-wps-transactional</module>
+        <module>52n-wps-webadmin</module>
     </modules>
     <dependencies>
         <dependency>
@@ -176,7 +177,11 @@
             	<artifactId>52n-wps-sextante</artifactId>
             	<version>${project.version}</version>
         	</dependency>
-
+			<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-webadmin</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
         	
         	<dependency>
             	<groupId>${project.groupId}</groupId>
