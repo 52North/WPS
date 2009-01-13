@@ -75,7 +75,7 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 		FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 		FeatureIterator iter = featureCollection.features();
 		
-		if( !inputData.containsKey("width")){
+		if( !inputData.containsKey("TOLERANCE")){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
 		List<IData> widthDataList = inputData.get("TOLERANCE");
@@ -136,7 +136,7 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 	}
 
 	public Class getInputDataType(String id) {
-		if(id.equalsIgnoreCase("FEATURES")){
+		if(id.equalsIgnoreCase("SIMPLIFIED_FEATURES")){
 			return GTVectorDataBinding.class;
 		}else if(id.equalsIgnoreCase("TOLERANCE")){
 			return LiteralDoubleBinding.class;
