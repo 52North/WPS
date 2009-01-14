@@ -136,7 +136,7 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 	}
 
 	public Class getInputDataType(String id) {
-		if(id.equalsIgnoreCase("SIMPLIFIED_FEATURES")){
+		if(id.equalsIgnoreCase("FEATURES")){
 			return GTVectorDataBinding.class;
 		}else if(id.equalsIgnoreCase("TOLERANCE")){
 			return LiteralDoubleBinding.class;
@@ -145,7 +145,7 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 	}
 
 	public Class getOutputDataType(String id) {
-		if(id.equalsIgnoreCase("result")){
+		if(id.equalsIgnoreCase("SIMPLIFIED_FEATURES")){
 			return GTVectorDataBinding.class;
 		}
 		return null;
