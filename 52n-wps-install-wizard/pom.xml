@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>2.0-rc1</version>
+		<version>2.0-rc2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
 	<artifactId>52n-wps-install-wizard</artifactId>
-  <version>2.0-rc1</version>
+  <version>2.0-rc2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>52north 52n-wps-nstall-wizard library</name>
 	<description>This module contains some convenient classes to install the WPS</description>
