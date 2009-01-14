@@ -30,7 +30,7 @@ Theodor Foerster
  
 ** Development Version settings
 
-	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_svn.pdf}here}}.
+	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{https://52north.org/twiki/bin/viewfile/Processing/52nWebProcessingService?rev=2;filename=WPS_Tutorial.pdf}here}}.
 	
 	Please look at the Tomcat documentation how to deal with installing and compiling web applications in general. In the end the service has to be accessible through http://localhost:[YOUR_PORT]/wps/WebProcessingService.
 	
