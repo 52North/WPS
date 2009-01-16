@@ -36,6 +36,8 @@ package org.n52.wps.server.request;
 
 
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
@@ -62,6 +64,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IDistributedAlgorithm;
 import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.handler.WPSTask;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
@@ -71,12 +74,13 @@ import org.w3c.dom.Document;
 /**
  * Handles an ExecuteRequest
  */
-public class ExecuteRequest extends Request {
+public class ExecuteRequest extends Request implements Observer{
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
 	private Map returnResults;
 	private ExecuteResponseBuilder execRespType;
+	
 	
 	/**
 	 * Creates an ExecuteRequest based on a Document (HTTP_POST)
@@ -458,6 +462,10 @@ public class ExecuteRequest extends Request {
 			*/
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
 			
+			if(algorithm instanceof Observable){
+				Observable observable = (Observable) algorithm;
+				observable.addObserver(this);
+			}
 			
 			
 			
@@ -547,6 +555,19 @@ public class ExecuteRequest extends Request {
 		else {
 			return false;
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object updatedPercentage) {
+		StatusType status = StatusType.Factory.newInstance();
+		int percentage = 0;
+		if(updatedPercentage instanceof Integer){
+			percentage = (Integer) updatedPercentage;
+		}
+		status.addNewProcessStarted().setPercentCompleted(percentage);
+		execRespType.setStatus(status);
+	
+		
 	}
 	
 	
