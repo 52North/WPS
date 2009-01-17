@@ -48,12 +48,13 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.AbstractObservableAlgorithm;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class SimpleBufferAlgorithm extends AbstractAlgorithm {
+public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
-	
+	private Integer percentage;
 	
 	public SimpleBufferAlgorithm() {
 		super();
@@ -68,6 +69,21 @@ public class SimpleBufferAlgorithm extends AbstractAlgorithm {
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		if(inputData==null || !inputData.containsKey("data")){
 			throw new RuntimeException("Error while allocating input parameters");
+		}
+		int i = 0;
+		while(true){
+			i++;
+			try {
+				percentage = i%100;
+				this.setChanged();
+				this.notifyObservers(percentage);
+				Thread.sleep(1000*5);
+				clearChanged();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
+		
 		}
 		List<IData> dataList = inputData.get("data");
 		if(dataList == null || dataList.size() != 1){

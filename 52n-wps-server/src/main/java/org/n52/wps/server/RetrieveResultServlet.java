@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.n52.wps.server.request.ExecuteRequest;
 
 /**
  * This is a simple servlet, which serves processed results. It serves
@@ -59,6 +60,8 @@ public class RetrieveResultServlet extends HttpServlet {
 			SERVLET_PATH = req.getContextPath();
 		}
 		String id = req.getParameter("id");
+		
+		
 		OutputStream os = res.getOutputStream();
 		if(id == null || id.equals("")) {
 			res.setContentType("text/html");

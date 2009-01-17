@@ -87,6 +87,7 @@ public class ExecuteResponseBuilder {
 	private RawData rawDataHandler = null; 
 	private ProcessDescriptionType description;
 	private static Logger LOGGER = Logger.getLogger(ExecuteResponseBuilder.class);
+	private Calendar creationTime;
 	
 	public ExecuteResponseBuilder(ExecuteRequest request) throws ExceptionReport{
 		this.request = request;
@@ -106,6 +107,7 @@ public class ExecuteResponseBuilder {
 		description = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue()).getDescription();
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
+		creationTime = Calendar.getInstance();
 	}
 	
 	public void update() throws ExceptionReport {		
@@ -293,7 +295,7 @@ public class ExecuteResponseBuilder {
 	
 	public void setStatus(StatusType status) {
 		//workaround, should be generated either at the creation of the document or when the process has been finished.
-		status.setCreationTime(Calendar.getInstance());
+		status.setCreationTime(creationTime);
 		doc.getExecuteResponse().setStatus(status);
 	}
 
