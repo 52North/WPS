@@ -54,7 +54,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
-	private Integer percentage;
+	private Double percentage;
 	
 	public SimpleBufferAlgorithm() {
 		super();
@@ -70,21 +70,7 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 		if(inputData==null || !inputData.containsKey("data")){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		int i = 0;
-		while(true){
-			i++;
-			try {
-				percentage = i%100;
-				this.setChanged();
-				this.notifyObservers(percentage);
-				Thread.sleep(1000*5);
-				clearChanged();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				break;
-			}
 		
-		}
 		List<IData> dataList = inputData.get("data");
 		if(dataList == null || dataList.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
@@ -110,7 +96,15 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 	
 	private FeatureCollection runBuffer(FeatureCollection fcA, double width)	{
 		  //Collection resultColl = new ArrayList();
+		  double i = 0;
+		  int totalNumberOfFeatures = fcA.size();
 		  for (Iterator ia = fcA.iterator(); ia.hasNext(); ) {
+			/********* How to publish percentage results *************/
+			i= i+1;
+			percentage = (i/totalNumberOfFeatures)*100;
+			this.setChanged();
+			this.notifyObservers(percentage.intValue());
+			/*********************/
 			Feature fa = (Feature) ia.next();
 			Geometry ga = fa.getDefaultGeometry();
 			Geometry result = null;
