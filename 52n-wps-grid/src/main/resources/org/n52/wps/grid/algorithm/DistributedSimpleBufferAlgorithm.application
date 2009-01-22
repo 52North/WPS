@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <application>    
 	<file_ref>
-	        <file_name>52n-wps-grid-1.0-rc3-SNAPSHOT.jar</file_name>
+	        <file_name>52n-wps-grid-2.0-rc1.jar</file_name>
 	</file_ref>
 	<file_ref>
-	        <file_name>52n-wps-io-1.0-rc3-SNAPSHOT.jar</file_name>
+	        <file_name>52n-wps-io-2.0-rc1.jar</file_name>
 	</file_ref>
 	<file_ref>
-	        <file_name>52n-wps-server-1.0-rc3-SNAPSHOT.jar</file_name>
+	        <file_name>52n-wps-server-2.0-rc1.jar</file_name>
 	</file_ref>
 	<file_ref>
-	        <file_name>52n-wps-commons-1.0-rc3-SNAPSHOT.jar</file_name>
+	        <file_name>52n-wps-commons-2.0-rc1.jar</file_name>
 	</file_ref>
 	<file_ref>
 	        <file_name>52n-wps-xml-1.0.0.jar</file_name>

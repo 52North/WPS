@@ -27,12 +27,11 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 		</Repository>
 	
-		
-
-		<!-- 
+		<!-- 	
 		<Repository name="LocalUnicoreAlgorithmRepository" className="org.n52.wps.grid.UnicoreAlgorithmRepository">
 			<Property name="Algorithm">org.n52.wps.grid.algorithm.DistributedSimpleBufferAlgorithm</Property>
-			<Property name="Registry">https://localhost:8080/REGISTRY/services/Registry?res=default_registry</Property>
+			
+			<Property name="Registry">https://localhost:8080/DEMO-SITE/services/Registry?res=default_registry</Property>			
 			<Property name="Keystore">/home/bastian/.gpe4unicore/keystore.jks</Property>	 
 			<Property name="Type">jks</Property>
 			<Property name="Alias">bb</Property>
@@ -40,7 +39,10 @@
 			<Property name="OverwriteRemoteFile">true</Property>
 			<Property name="MaximumNumberOfNodes">2</Property>
 		</Repository>	
+		 -->
 		
+		
+		<!-- 
 		<Repository name="OracleBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository">
 			<Property name="GenericAlgorithm">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
 			<Property name="DeployManager">org.n52.wps.transactional.deploy.bpel.oracle.OracleBPELManager</Property>
