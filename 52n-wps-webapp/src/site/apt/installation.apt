@@ -28,7 +28,7 @@ http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
 
 * System requirements
 
- The 52n WPS is tested on Tomcat 5.5, all applications require J2SE 5 or higher!
+ The 52n WPS is tested on Tomcat 5.5, all applications require Java 1.6.0_01-b06 or higher!
 
   If you have any problems running your WPS (especially if you run geoserver on the same tomcat instance), please have a look at this {{{https://52north.org/twiki/bin/view/Processing/52nWebProcessingService#Installation%20hints}hint in the wiki}}.
 
