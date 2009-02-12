@@ -101,9 +101,9 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 		  for (Iterator ia = fcA.iterator(); ia.hasNext(); ) {
 			/********* How to publish percentage results *************/
 			i= i+1;
-			percentage = (i/totalNumberOfFeatures)*100;
-			this.setChanged();
-			this.notifyObservers(percentage.intValue());
+//			percentage = (i/totalNumberOfFeatures)*100;
+//			this.setChanged();
+//			this.notifyObservers(percentage.intValue());
 			/*********************/
 			Feature fa = (Feature) ia.next();
 			Geometry ga = fa.getDefaultGeometry();
