@@ -124,8 +124,6 @@ public class OutputDataItem extends ResponseData {
 	public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
 		OutputDataType output = prepareOutput(res);
 		String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
-		CodeType idType = output.addNewIdentifier();
-		idType.setStringValue(id);
 		LiteralDataType literalData = output.addNewData().addNewLiteralData();
 		literalData.setDataType(dataTypeReference);
 		literalData.setStringValue(processValue);
