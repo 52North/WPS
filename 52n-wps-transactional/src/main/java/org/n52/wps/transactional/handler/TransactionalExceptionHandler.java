@@ -44,5 +44,14 @@ public class TransactionalExceptionHandler {
 		writer.close();
 		
 	}
+	
+	public static void handleException(PrintWriter writer, String exception) {
+		writer.write("<Result>");
+		writer.write(exception);
+		writer.write("</Result>");
+		writer.flush();
+		writer.close();
+		
+	}
 
 }

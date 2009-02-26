@@ -1,6 +1,9 @@
 package org.n52.wps.transactional.service;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
@@ -20,9 +23,7 @@ public class TransactionalHelper {
 					if(property.getStringValue().equals(schema)){
 						return repository;
 					}
-					if(property.getStringValue().equals("whatever.xsd")){
-						return repository;
-					}
+					
 				}
 				
 			}
@@ -35,7 +36,19 @@ public class TransactionalHelper {
 		String className = repository.getClassName();
 		Object instance = null;
 		try {
-			instance = Class.forName(className).newInstance();
+			//in case of a assumed singleton
+			Class<?> clazz = Class.forName(className);
+			Method[] methods = clazz.getMethods();
+			for(Method method : methods){
+				if(method.getName().equals("getInstance")){
+					instance = method.invoke(clazz, new Object[0]);
+					break;
+				}
+			}
+			//in case it is not a singleton
+			if(instance == null){
+				instance = Class.forName(className).newInstance();
+			}
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,6 +56,12 @@ public class TransactionalHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

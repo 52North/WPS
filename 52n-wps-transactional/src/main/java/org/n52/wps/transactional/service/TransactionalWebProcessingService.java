@@ -47,11 +47,14 @@ public class TransactionalWebProcessingService extends HttpServlet{
 				if(requestType.equals("UnDeployProcessRequest")){
 					response = TransactionalRequestHandler.handle(new UndeployProcessRequest(document));
 				}else{
-					throw new Exception("Could not process request. Reason: Reuqest type unknown. Must be DeployProcess or UndeployProcess");
+					throw new Exception("Could not process request. Reuqest type unknown. Must be DeployProcess or UndeployProcess");
 				}
 			}
+			if(response == null){
+				throw new Exception("Could not process request. Could not handle deploy process request properly.");
+			}
 		}catch(Exception exception){
-			TransactionalExceptionHandler.handleException(res.getWriter(), exception);
+			TransactionalExceptionHandler.handleException(res.getWriter(), "Internal Server Error. Could not handle deploy process request properly.");
 		}
 		
 		//TODO change this quick hack made on an airplane....
