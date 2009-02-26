@@ -73,6 +73,7 @@ import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.transactional.deploy.IDeployManager;
+import org.n52.wps.transactional.service.TransactionalHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -91,11 +92,12 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		Property[] properties = wpsConfig.getPropertiesForRepositoryClass(registeredRepository.getName());
 		this.workspace = wpsConfig.getPropertyForKey(properties,"WorkspaceLocationRoot").getStringValue();
 		this.errors = new ArrayList<String>();
+		processDescription = initializeDescription();
 		
 	}
 	
 	public ProcessDescriptionType getDescription()  {
-		return initializeDescription();
+		return processDescription;
 	}
 	
 	
@@ -106,8 +108,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		//forward request
 			
 			//TODO get deploy manager class from config
-			IDeployManager deployManager = null;
-			
+			IDeployManager deployManager = TransactionalHelper.getDeploymentManagerForSchema("whatever.xsd");
 			responseDocument = deployManager.invoke(payload, getAlgorithmID());
 			
 			//1.parse results;

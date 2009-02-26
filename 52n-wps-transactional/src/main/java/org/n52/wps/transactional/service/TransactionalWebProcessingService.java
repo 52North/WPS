@@ -40,11 +40,11 @@ public class TransactionalWebProcessingService extends HttpServlet{
 				throw new Exception("Request Not Valid");
 			}
 			
-			if(requestType.equals("DeployProcess")){
+			if(requestType.equals("DeployProcessRequest")){
 				response = TransactionalRequestHandler.handle(new DeployProcessRequest(document));
 			}
 			else{
-				if(requestType.equals("UnDeployProcess")){
+				if(requestType.equals("UnDeployProcessRequest")){
 					response = TransactionalRequestHandler.handle(new UndeployProcessRequest(document));
 				}else{
 					throw new Exception("Could not process request. Reason: Reuqest type unknown. Must be DeployProcess or UndeployProcess");

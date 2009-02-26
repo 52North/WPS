@@ -32,7 +32,9 @@ is extensible in terms of processes and data handlers.
 package org.n52.wps.transactional.deploymentprofiles;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +50,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
@@ -67,6 +68,13 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 	
 	public BPELDeploymentProfile(Node payload, String processID) {
 		super(payload, processID);
+		try {
+		
+			extractInformation(payload);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -94,22 +102,22 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		//  3. other wsdl
 		//  4. bpel
 		//	5.create describe process
-		
+		writeXmlFile(deployProcessDocument, "C:\\BPEL\\request.xml");
 		
 		//	1. suitcase
-		suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/SuitCase/BPELSuitcase");
+		suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase");
 		//select processName
-		String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcess/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
+		String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
 			
 		
 		
 		//	2. clientwsdl
-		clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/ClientWSDL/definitions");
+		clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/ProcessWSDL/definitions");
 		
 		
 		//  3. other wsdl
-		Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/WSDL-List");
-		NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcess/WSDL-List/definitions");
+		Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List");
+		NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List/definitions");
 		//Note: WSDL files are written in the correct order
 		wsdlList = new HashMap<Integer, Node>();
 		int index = 0;
@@ -124,17 +132,37 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		
 		
 		//  4. bpel
-		bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/BPEL/process");
+		bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/BPEL/process");
 			
-			
+		
 		//	  5. create describe process
-		Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/DescribeProcessDocument/ProcessDescriptions");
+		Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions/ProcessDescriptions");
+		
 		String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex= fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		writeXmlFile(describeProcess, subPath+"\\WEB-INF\\ProcessDescriptions\\"+processName+".xml");
+		if(subPath.startsWith("/")){
+			subPath = subPath.substring(1);
+		}
 		
+		File directory = new File(subPath+"WEB-INF/ProcessDescriptions/");
+		if(!directory.exists()){
+			directory.mkdirs();
+		}
+		String path = subPath+"WEB-INF/ProcessDescriptions/"+processName+".xml";
+		
+//		String decodedPath = path.replaceAll("%20"," ");
+		
+		//String encodedPath = java.net.URLEncoder.encode(path, "UTF-8");
+		//String decodedPath = URLDecoder.decode(encodedPath, "UTF-8");
+		
+		
+		//String path = subPath+"\\WEB-INF\\ProcessDescriptions\\"+processName+".xml";
+	
+		writeXmlFile(describeProcess, path);
+	
+
 		
 	}
 	
@@ -155,7 +183,8 @@ public class BPELDeploymentProfile extends DeploymentProfile{
         File directory = new File(parent);
         directory.mkdirs();
         //file.createNewFile();
-        Result result = new StreamResult(file);
+        OutputStream fileOutput = new FileOutputStream(file);
+        Result result = new StreamResult(fileOutput);
 
         // Write the DOM document to the file
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
