@@ -124,6 +124,8 @@ public class OutputDataItem extends ResponseData {
 	public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
 		OutputDataType output = prepareOutput(res);
 		String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
+		CodeType idType = output.addNewIdentifier();
+		idType.setStringValue(id);
 		LiteralDataType literalData = output.addNewData().addNewLiteralData();
 		literalData.setDataType(dataTypeReference);
 		literalData.setStringValue(processValue);
@@ -164,6 +166,9 @@ public class OutputDataItem extends ResponseData {
 		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE, mimeType);
 		storeReference = storeReference.replace("#", "%23");
 		outReference.setHref(storeReference);
+		// MSS:  05-02-2009 changed default output type to text/xml to be certain that the calling application doesn't 
+		// serve the wrong type as it is a reference in this case.
+		this.mimeType = "text/xml";
 	}
 	
 	private OutputDataType prepareOutput(ExecuteResponseDocument res){

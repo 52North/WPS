@@ -342,7 +342,11 @@ public class RequestHandler {
 	}
 	
 	private void setResponseMimeType(ExecuteRequest req) {
-		responseMimeType = req.getExecuteResponseBuilder().getMimeType();
+		if(req.isRawData()){
+			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
+		}else{
+			responseMimeType = "text/xml";
+		}
 		
 		
 	}

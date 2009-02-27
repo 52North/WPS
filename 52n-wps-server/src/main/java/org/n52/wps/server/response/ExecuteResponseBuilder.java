@@ -237,7 +237,9 @@ public class ExecuteResponseBuilder {
 				
 			}
 			else{
-				mimeType = "text/xml";
+				//mimeType = "text/xml";
+				// MSS 03/02/2009 defaulting to text/xml doesn't work when the data is a complex raster
+				mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
 			}
 		}
 		if(mimeType==null){
