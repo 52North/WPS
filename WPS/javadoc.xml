@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project default="javadoc">
-<target name="javadoc">
-<javadoc access="public" author="true" classpath="WEB-INF/lib/derbyclient.jar:WEB-INF/lib/jsr173_1.0_api.jar:WEB-INF/lib/commons-io-1.2.jar:WEB-INF/lib/gt2-main-2.2.1.jar:WEB-INF/lib/log4j-1.2.13.jar:/usr/share/tomcat5.5/common/lib/jasper-runtime.jar:WEB-INF/lib/jts-1.7.jar:WEB-INF/lib/wpsAll.jar:WEB-INF/lib/jsr108-0.01.jar:WEB-INF/lib/xbean.jar:/usr/share/tomcat5.5/common/lib/jsp-api.jar:WEB-INF/lib/commons-collections-3.1.jar:WEB-INF/lib/gt2-api-2.2.1.jar:/usr/share/tomcat5.5/common/lib/servlet-api.jar:WEB-INF/lib/gmlpacket.jar:WEB-INF/lib/geoapi-2.0.jar:WEB-INF/lib/gt2-referencing-2.2.1.jar:WEB-INF/lib/derbytools.jar:WEB-INF/lib/derbyrun.jar:WEB-INF/lib/derby.jar" destdir="javadoc" doctitle="Web Processing Service" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="org.n52.wps.xml,org.n52.wps.server.handler,org.n52.wps.server.response,org.n52.wps.server,org.n52.wps.server.algorithm,org.n52.wps.server.response.types,org.n52.wps.server.request,org.n52.wps.util,org.n52.wps.server.response.document" source="1.5" sourcepath="WEB-INF/src" splitindex="true" use="true" version="true">
-<link href="file:/home/timon/studie/minor/workspace/WPS-server/javadoc/"/>
-</javadoc>
-</target>
-</project>
