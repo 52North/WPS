@@ -1,9 +1,9 @@
  -----
  Download
  -----
-Theodor Foerster
+Bastian Schäffer
  -----
- 2008-07-01
+ 2009-03-07
  -----
 
 WPS Download section
@@ -12,7 +12,7 @@ WPS Download section
 	
 	* Binary:
 	
-		* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc1/52n-wps-webapp-2.0-rc1.war} 52n WPS 2.0 RC1}}, release date January 2009.
+		* {{{http://52north.org/index.php?option=com_jdownloads&Itemid=73&task=finish&cid=94&catid=22} 52n WPS 2.0 RC1}}, release date January 2009.
 		Note: Java 1.6.0_01-b06 or higher required
 		
 	* Source:
