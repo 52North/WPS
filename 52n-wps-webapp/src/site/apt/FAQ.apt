@@ -1,0 +1,26 @@
+ -----
+Demo section 
+ -----
+Bastian Schäffer
+ -----
+ 2008-03-19
+ -----
+ 
+FAQ
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ Q: uDig does not show any processes
+ 
+ A: Check:
+ 
+ 	1. Tomcat is started
+ 	
+ 	2. port (8080) is correct
+ 	
+ 	3. port is open
+ 	
+ 	4. webapp name (wps) is valid
+ 	
+ 	5. .war file is renamed to wps.war
+ 	
+ 	6. firewalls

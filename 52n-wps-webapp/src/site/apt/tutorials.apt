@@ -11,4 +11,9 @@ WPS Tutorials Section
 
  In this section you can find tutorials for installing and developing the 52North WPS.
  
- More to come.
+
+	* Tutorial about {{{https://52north.org/twiki/bin/viewfile/Processing/52nWebProcessingService?rev=1;filename=WPS_Tutorial.pdf}WPS installation and WPS process development }}.
+
+ 	* Tutorial about {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/52n_WPS_Grid_Computing_Hands_On.pdf}GRID WPS hands on tutorial}}.
+ 		
+ 		

@@ -11,4 +11,11 @@ WPS Architecture Section
 
  In this section you can find description of the 52North WPS Architecture.
  
- More to come.
+ 	
+ 	
+ The basic architecture is depicted in the following figure
+ 
+ [images/Architecture.png] figure 1
+ 
+ Basically, all external data formats are mapped to an internal dataformat via so called "Parser".
+ The internal dataformat is consumed by the process itself.

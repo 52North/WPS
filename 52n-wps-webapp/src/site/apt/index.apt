@@ -10,49 +10,69 @@ Theodor Foerster
 ~~~~~~~~~~~~~~~~~~
 
 
- The 52N Web Processing Service enables the deployment of geo-processes on the web. It features a pluggable architecture for processes and data encodings. The implementation is based on the current OpenGIS specification: 05-007r7 .
+ The 52N Web Processing Service enables the deployment of geo-processes on the web in a standardized way. It features a pluggable architecture for processes and data encodings. The implementation is based on the current OpenGIS specification: 05-007r7 .
 
- This implementation was mainly built within the ITC Generalization group and supported by the DURP project . Its focus was the creation of an extensible framework to provide algorithms for generalization on the web. 
+ Its focus was the creation of an extensible framework to provide algorithms for generalization on the web. 
 
 * Current features
 
-	* Full java-based Open Source implementation.
+	* General Features and Compliance
 	
-	* Supports all features of WPS specification version 1.0.0 (document 05-007r7)
+		* Full java-based Open Source implementation.
 	
-	* Pluggable framework for algorithms and XML data handling and processing frameworks
+		* Supports all features and operations of WPS specification version 1.0.0 (document 05-007r7)
+	
+		* Pluggable framework for algorithms and XML data handling and processing frameworks
     
-	* Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)
+		* Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)   
+	
+    	* Supports full logging of service activity
     
-	* Supports all mandatory operations of WPS 1.0.0 (plus beta SOAP/WSDL support)
+		* Supports exception handling according to the spec
+		
+		* Storing of execution results
+		
+		* Full maven support
+		
+	* Clients
     
-	* Supports full logging of service activity
+		* Basic client implementation for accessing the WPS (including the complete XML encoding)
     
-	* Supports exception handling according to the spec
+		* Plug-in for uDig and JUMP (Java Unified Mapping Platform) (fast hack, but give it a try)
+		
+		
     
-	* Basic client implementation for accessing the WPS (including the complete XML encoding)
+	* WPS Invocation
     
-	* Plug-in for uDig and JUMP (Java Unified Mapping Platform) (fast hack, but give it a try)
+		* Synchronous/Asynchronous invocation
     
-	* Storing of execution results
+		* Raw data support
     
-	* Full GML2 support for ComplexData (i.e. FeatureCollections)
-    
-	* Beta Raster support based on GDAL
-    
-	* Asynchronous processing
-    
-	* Raw data support
-    
-	* All responses are stored on the filesystem, but can also be stored in any database such as Apache derby
-    
-	* Full maven support
-    
-	* Supports HTTP-GET for Execute 
+		* Supports HTTP-GET for Execute
+	
+		* Supports SOAP
+	
+		* Exposes a WSDL document 
+		
+	
+	* Supported WPS Datatypes
+	
+		* GeoTiff Support
+	
+		* ArcGrid Support 
+	
+		* Full GML2 support for ComplexData (i.e. FeatureCollections)
+		
+	* Extensions
+		* 220+ SEXTANTE Processes
+		* Unicore GRID Middleware support 
+		* Transactional Profile (WPS-T)
+	
+	
+	
 
 
 * Future issues
 
     * Web GUI to maintain the service
-    
-    * Full Raster Support
+
