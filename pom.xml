@@ -39,11 +39,53 @@
     </licenses>
     <inceptionYear>2007</inceptionYear>
     <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
+        <!-- Specification of the Source-Content-Managementsystem -->
         <connection>scm:svn:http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</connection>
         <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</developerConnection>
       <url>http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</url>
   </scm>
+  
+      <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>geotools</id>
+      <name>Geotools Repo</name>
+      <url>http://download.osgeo.org/webdav/geotools</url>
+    </repository>
+    <repository>
+      <id>n52-releases</id>
+      <name>52n Releases</name>
+      <url>http://52north.org/maven/repo/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+	    <id>Refractions</id>
+	    <name>Refractions repository</name>
+	    <url>http://lists.refractions.net/m2</url>
+     </repository> 
+	<repository>
+	    <id>Apache</id>
+	    <name>Apache repository</name>
+	    <url>http://repo1.maven.org/maven2</url>
+	</repository>     
+	<repository>
+	    <id>Apache</id>
+	    <name>Geoserver repository</name>
+	    <url>http://repository.codehaus.org/</url>
+     </repository>    
+
+  </repositories>
+  
     <build>
 
 
