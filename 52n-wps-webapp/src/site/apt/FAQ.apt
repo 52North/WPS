@@ -9,9 +9,9 @@ Bastian Schäffer
 FAQ
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- Q: uDig does not show any processes
+Q: uDig does not show any processes
  
- A: Check:
+	A: Check:
  
  	1. Tomcat is started
  	
@@ -24,3 +24,27 @@ FAQ
  	5. .war file is renamed to wps.war
  	
  	6. firewalls
+ 	
+ 	
+Q: WPS and Jetty
+ 
+ A: (Thanks to Thorsten Reitz)
+ 
+ 	The mechanisms for getting resources like wps_config.xml has to be changed. Essentially two classes are needed, one being the Jetty Starter, another one being an extension of the WebProcessingService itself, where the init(ServletConfig) method is overriden to look like this:
+
+		public void init(ServletConfig config) throws ServletException 
+		               System.setProperty(
+		"javax.xml.transform.TransformerFactory",
+		"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+		               
+		       try {
+		                WPSConfig.forceInitialization(config.getServletContext().getRealPath("") + "/WEB-INF/config/wps_config.xml");
+		       } catch (XmlException e) {
+		               throw new ServletException(e);
+		       } catch (IOException e) {
+		               throw new ServletException(e);
+		       }
+		       super.init(config);
+		}
+
+		of course, your web.xml has to point to your extension servlet, and you might have to change some of the parameters in the Jetty starter.

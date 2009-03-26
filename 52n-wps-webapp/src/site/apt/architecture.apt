@@ -15,7 +15,8 @@ WPS Architecture Section
  	
  The basic architecture is depicted in the following figure
  
- [images/Architecture.png] figure 1
+  [http://52north.org/download/Geoprocessing/documents/Website/Architecture.png] Architecture
  
- Basically, all external data formats are mapped to an internal dataformat via so called "Parser".
+ Basically, all external data formats are mapped to an internal dataformat via so called "Parsers".
  The internal dataformat is consumed by the process itself.
+ The internal dataformat is transformed back to the requested external output format via so called "Generators".
