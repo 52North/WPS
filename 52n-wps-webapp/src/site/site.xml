@@ -26,8 +26,8 @@
 		</menu>
 		<menu name="Other Material">
 			<item name="FAQ" href="FAQ.html" />
-			<item name="Demo Theater" href="demos.html" />
 			<item name="Tutorials" href="tutorials.html" />
+			<item name="Demo Theater" href="demos.html" />			
 		</menu>
 		<menu ref="reports" />
 	</body>
