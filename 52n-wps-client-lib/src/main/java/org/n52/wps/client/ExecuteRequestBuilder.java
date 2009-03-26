@@ -28,6 +28,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.client;
 
 import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -43,6 +44,7 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.w3c.dom.Node;
 /**
@@ -79,14 +81,26 @@ public class ExecuteRequestBuilder {
 			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
 		}
 		String schemaURL = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		IGenerator generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getSupportedClass());
+		IGenerator generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
+		if(generator == null) {
+			for(ComplexDataDescriptionType dataDescType: inputDesc.getComplexData().getSupported().getFormatArray()) {
+				schemaURL = dataDescType.getSchema();
+				generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
+				if(generator != null) {
+					break;
+				}
+			}
+		}
 		if(generator instanceof AbstractXMLGenerator) {
 			AbstractXMLGenerator xmlGenerator = (AbstractXMLGenerator) generator;
 			Node node = xmlGenerator.generateXML(value, null);
 			InputType input = execute.getExecute().getDataInputs().addNewInput();
 			input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
+			
 			try {
-				input.addNewData().addNewComplexData().set(XmlObject.Factory.parse(node));
+				ComplexDataType data = input.addNewData().addNewComplexData();
+				data.set(XmlObject.Factory.parse(node));
+				data.setSchema(schemaURL);
 			}
 			catch(XmlException e) {
 				throw new IllegalArgumentException("problem inserting node into execute request", e);
@@ -157,7 +171,22 @@ public class ExecuteRequestBuilder {
 	 * @return
 	 */
 	public boolean setStoreSupport(String outputName) {
-		DocumentOutputDefinitionType outputDef = execute.getExecute().addNewResponseForm().addNewResponseDocument().addNewOutput();
+		DocumentOutputDefinitionType outputDef = null;
+		if(!execute.getExecute().isSetResponseForm()) {
+			execute.getExecute().addNewResponseForm();
+		}
+		if(!execute.getExecute().getResponseForm().isSetResponseDocument()) {
+			execute.getExecute().getResponseForm().addNewResponseDocument();
+		}
+		for(DocumentOutputDefinitionType outputDefTemp: execute.getExecute().getResponseForm().getResponseDocument().getOutputArray()) {
+			if(outputDefTemp.getIdentifier().getStringValue().equals(outputName)) {
+				outputDef = outputDefTemp;
+				break;
+			}
+		}
+		if(outputDef == null) {
+			outputDef = execute.getExecute().addNewResponseForm().addNewResponseDocument().addNewOutput();
+		}
 		for (OutputDescriptionType outputDesc : processDesc.getProcessOutputs().getOutputArray()) {
 			if(outputDesc.getIdentifier().getStringValue().equals(outputName)) {
 				outputDef.setIdentifier(outputDesc.getIdentifier());
@@ -169,11 +198,41 @@ public class ExecuteRequestBuilder {
 					outputDef.setEncoding(format.getEncoding());
 				}
 				outputDef.setSchema(format.getSchema());
-				
 				outputDef.setAsReference(true);
 			}
 		}
 		return true;	
+	}
+	
+	public boolean setSchemaForOutput(String schema, String outputName) {
+		DocumentOutputDefinitionType outputDef = null;
+		if(!execute.getExecute().isSetResponseForm()) {
+			execute.getExecute().addNewResponseForm();
+		}
+		if(!execute.getExecute().getResponseForm().isSetResponseDocument()) {
+			execute.getExecute().getResponseForm().addNewResponseDocument();
+		}
+		if(outputDef == null) {
+			outputDef = execute.getExecute().getResponseForm().getResponseDocument().addNewOutput();
+		}
+		for (OutputDescriptionType outputDesc : processDesc.getProcessOutputs().getOutputArray()) {
+			if(outputDesc.getIdentifier().getStringValue().equals(outputName)) {
+				outputDef.setIdentifier(outputDesc.getIdentifier());
+				if(outputDesc.getComplexOutput().getDefault().getFormat().getSchema().equals(schema)) {
+					return true;
+				}
+				else {
+					for(ComplexDataDescriptionType data : outputDesc.getComplexOutput().getSupported().getFormatArray()) {
+						if(data.getSchema().equals(schema)) {
+							outputDef.setSchema(schema);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public boolean setRawData() {
