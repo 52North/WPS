@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDataType;
@@ -89,7 +90,7 @@ public class OutputDataItem extends ResponseData {
 	public void updateResponseForComplexData(ExecuteResponseDocument res) throws ExceptionReport {
 		OutputDataType output = prepareOutput(res);
 		prepareGenerator();
-		
+		ComplexDataType complexData = null;
 		try {
 			// CHECKING IF STORE IS TRUE AND THEN PROCESSING.... SOMEHOW!
 			// CREATING A COMPLEXVALUE	
@@ -100,14 +101,16 @@ public class OutputDataItem extends ResponseData {
 					LOGGER.error("Something bad happend while generating output");
 				} else {
 					try {
-						output.addNewData().addNewComplexData().set(XmlObject.Factory.parse(xmlNode));
+						complexData = output.addNewData().addNewComplexData();
+						complexData.set(XmlObject.Factory.parse(xmlNode));
 					} catch(XmlException e) {
 						throw new ExceptionReport("Error occured while generating XML",ExceptionReport.NO_APPLICABLE_CODE, e);
 					}
 				}
 			} else if(generator instanceof AbstractXMLStringGenerator) {
 				try {
-					output.addNewData().addNewComplexData().set(XmlObject.Factory.parse(
+					complexData = output.addNewData().addNewComplexData();
+					complexData.set(XmlObject.Factory.parse(
 							((AbstractXMLStringGenerator)generator).generateXML(super.obj)));
 				} catch(XmlException xml_ex) {
 					throw new ExceptionReport("Error occured while generating XML",ExceptionReport.NO_APPLICABLE_CODE, xml_ex);
@@ -118,6 +121,10 @@ public class OutputDataItem extends ResponseData {
 		} catch(RuntimeException e) {
 			throw new ExceptionReport("Error while generating XML out of the process result", 
 												ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
+		if(complexData != null && schema != null) {
+			//setting the schema attribute for the output.
+			complexData.setSchema(schema);
 		}
 	}
 	
