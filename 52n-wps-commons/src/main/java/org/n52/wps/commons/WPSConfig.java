@@ -90,7 +90,10 @@ public class WPSConfig  implements Serializable {
 	public static void forceInitialization(String configPath) throws XmlException, IOException{
 		wpsConfig = new WPSConfig(configPath);
 	}
-
+	
+	public static void forceInitialization(InputStream stream) throws XmlException, IOException {
+		wpsConfig = new WPSConfig(stream);
+	}
 	public static WPSConfig getInstance() {
 		if(wpsConfig==null){
 			try {
