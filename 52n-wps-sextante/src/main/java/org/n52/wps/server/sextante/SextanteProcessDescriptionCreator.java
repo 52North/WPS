@@ -104,10 +104,10 @@ public class SextanteProcessDescriptionCreator {
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
 			ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
 			deafult.setMimeType("text/XML");
-			deafult.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+			deafult.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			ComplexDataDescriptionType supported = complexOutput.addNewSupported().addNewFormat();
 			supported.setMimeType("text/XML");
-			supported.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
+			supported.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			
 		}
 		else if (out instanceof OutputTable){
@@ -152,10 +152,10 @@ public class SextanteProcessDescriptionCreator {
 			SupportedComplexDataInputType complex = input.addNewComplexData();
 			ComplexDataDescriptionType format = complex.addNewSupported().addNewFormat();
 			format.setMimeType("text/XML");
-			format.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
+			format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
 			defaultFormat.setMimeType("text/XML");
-			defaultFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+			defaultFormat.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			if (ai.getIsMandatory()){
 				input.setMinOccurs(BigInteger.valueOf(1));
 			}
