@@ -190,7 +190,7 @@
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_vectorTools</artifactId>
-    <version>0.151</version>
+    <version>0.152</version>
 
 </dependency>
 <dependency>
