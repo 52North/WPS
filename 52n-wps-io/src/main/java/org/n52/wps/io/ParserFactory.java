@@ -35,6 +35,8 @@ Muenster, Germany
 package org.n52.wps.io;
 
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,13 +71,27 @@ public class ParserFactory {
 	}
 	
 	private ParserFactory(Parser[] parsers) {
-		registeredParsers = new ArrayList<IParser>();
+		loadAllParsers(parsers);
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getRegisteredParser());
+            }
+        });
+	}
+
+    private void loadAllParsers(Parser[] parsers){
+        registeredParsers = new ArrayList<IParser>();
 		for(Parser currentParser : parsers) {
 			String parserClass = currentParser.getClassName();
 			IParser parser = null;
 			try {
 				 parser = (IParser) this.getClass().getClassLoader().loadClass(parserClass).newInstance();
-				
+
 			}
 			catch (ClassNotFoundException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
@@ -86,7 +102,7 @@ public class ParserFactory {
 			catch(InstantiationException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
 			}
-			
+
 			if(parser != null) {
 				if (parser.supportsSchemas()) {
 					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas()[0]);
@@ -97,7 +113,7 @@ public class ParserFactory {
 				registeredParsers.add(parser);
 			}
 		}
-	}
+    }
 
 	public static ParserFactory getInstance() {
 		return factory;

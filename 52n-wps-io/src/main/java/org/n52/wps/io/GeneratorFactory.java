@@ -35,6 +35,8 @@ Muenster, Germany
 package org.n52.wps.io;
 
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +69,21 @@ public class GeneratorFactory {
 	}
 	
 	private GeneratorFactory(Generator[] generators) {
-		registeredGenerators = new ArrayList<IGenerator>();
+		loadAllGenerators(generators);
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getRegisteredGenerators());
+            }
+        });
+	}
+
+    private void loadAllGenerators(Generator[] generators){
+        registeredGenerators = new ArrayList<IGenerator>();
 		for(Generator currentGenerator : generators) {
 			IGenerator generator = null;
 			String generatorClass = currentGenerator.getClassName();
@@ -87,7 +103,7 @@ public class GeneratorFactory {
 				registeredGenerators.add(generator);
 			}
 		}
-	}
+    }
 
 	public static GeneratorFactory getInstance() {
 		return factory;
