@@ -15,16 +15,10 @@
           <mailingLists>
         <mailingList>
             <name>Geoprocessing</name>
-            <archive>
-                http://52north.org/pipermail/geoprocessingservices/
-            </archive>
+            <archive>http://52north.org/pipermail/geoprocessingservices/</archive>
             <post>geoprocessingservices@52north.org</post>
-            <subscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
-            </subscribe>
-            <unsubscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
-            </unsubscribe>
+            <subscribe>https://52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+            <unsubscribe>https://52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
         </mailingList>
     </mailingLists>
     <developers>
@@ -117,6 +111,7 @@
     </build>
     <profiles>
         <profile>
+            <id>default</id>
 
         </profile>
     </profiles>
@@ -149,11 +144,11 @@
             <version>${project.version}</version>
         </dependency-->
 
-        <dependency>
+        <!--dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-sextante</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency-->
         
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -177,6 +172,12 @@
             <artifactId>pjl-comp-filter</artifactId>
             <scope>runtime</scope>
             <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <scope>provided</scope>
+            <version>2.1</version>
         </dependency>
     </dependencies>
 </project>
