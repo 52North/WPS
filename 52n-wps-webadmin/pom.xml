@@ -24,6 +24,10 @@
         
     </build>
  <dependencies>
+    <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>52n-wps-io</artifactId>
+    </dependency>
  <dependency>
 <!-- junit for the unit tests -->
    <groupId>junit</groupId>
@@ -45,6 +49,12 @@
    <artifactId>commons-logging</artifactId>
    <version>1.0.4</version>
    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>tomcat</groupId>
+    <artifactId>servlet-api</artifactId>
+    <version>5.5.15</version>
+    <scope>provided</scope>
 </dependency>
 </dependencies>
 </project>
