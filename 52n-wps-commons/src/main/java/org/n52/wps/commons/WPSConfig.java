@@ -29,6 +29,10 @@
 
 package org.n52.wps.commons;
 
+// FvK: added Property Change support
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,18 +56,54 @@ import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 public class WPSConfig  implements Serializable {
 	private static transient WPSConfig wpsConfig;
 	private static transient WPSConfigurationImpl wpsConfigXMLBeans;
-	
+
 	private static transient Logger LOGGER = Logger.getLogger(WPSConfig.class);
-	
-		
+    
+    // FvK: added Property Change support
+    protected final PropertyChangeSupport propertyChangeSupport;
+    // constants for the Property change event names
+    public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
+	public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
+
 	private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
 		wpsConfigXMLBeans= (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
 		
+        // FvK: added Property Change support
+        propertyChangeSupport=new PropertyChangeSupport(this);
 	}
 	
 	private WPSConfig(InputStream resourceAsStream) throws XmlException, IOException {
 		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
+
+        // FvK: added Property Change support
+        propertyChangeSupport=new PropertyChangeSupport(this);
 	}
+
+
+    /**
+     * Add an Listener to the wpsConfig
+     * @param propertyName
+     * @param listener
+     */
+    public void addPropertyChangeListener(final String propertyName,
+            final PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(propertyName,listener);
+    }
+
+    /**
+     * remove a listener from the wpsConfig
+     * @param propertyName
+     * @param listener
+     */
+    public void removePropertyChangeListener(final String propertyName,
+            final PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(propertyName,listener);
+    }
+
+    //For Testing purpose only
+    public void notifyListeners(){
+        propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,null);
+    }
 
 	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
 	{
@@ -88,12 +128,44 @@ public class WPSConfig  implements Serializable {
 	}
 	
 	public static void forceInitialization(String configPath) throws XmlException, IOException{
-		wpsConfig = new WPSConfig(configPath);
+		// temporary save all registered listeners
+        PropertyChangeListener[] listeners = {};
+        if (wpsConfig != null){
+            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
+        }
+        wpsConfig = new WPSConfig(configPath);
+        
+        //register all saved listeners to new wpsConfig Instance
+        //reversed order to keep original order of the registration!!!
+        for (int i=listeners.length-1;i>=0;i--){
+            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
+        }
+
+        // fire event
+        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
+        LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
 	
 	public static void forceInitialization(InputStream stream) throws XmlException, IOException {
+        // temporary save all registered listeners
+        PropertyChangeListener[] listeners = {};
+        if (wpsConfig != null){
+            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
+        }
+
 		wpsConfig = new WPSConfig(stream);
+
+        //register all saved listeners to new wpsConfig Instance
+        //reversed order to keep original order of the registration!!!
+        for (int i=listeners.length-1;i>=0;i--){
+            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
+        }
+
+        // fire event
+        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
+        LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
+    
 	public static WPSConfig getInstance() {
 		if(wpsConfig==null){
 			try {
