@@ -24,8 +24,7 @@
     <name>52north processing</name>
     <version>2.0-rc3-SNAPSHOT</version>
     <description>52 north processing provides different tools for web based processing in context of the OGC WPS
-        specification.
-    </description>
+        specification.</description>
     <url>http://52north.org/maven/project-sites/wps</url>
     <issueManagement>
         <system>Bugzilla</system>
@@ -99,17 +98,15 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.5</source>
+                    <target>1.5</target>
 		    <encoding>ISO-8859-1</encoding>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
-                    <connectionUrl>
-                        scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
-                    </connectionUrl>
+                    <connectionUrl>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}</connectionUrl>
                 </configuration>
             </plugin>
             <plugin>
@@ -141,7 +138,7 @@
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
         <module>52n-wps-site</module>
-        <module>52n-wps-sextante</module>
+<!--        <module>52n-wps-sextante</module> -->
         <module>52n-wps-transactional</module>
         <module>52n-wps-webadmin</module>
     </modules>
@@ -215,12 +212,12 @@
                 <artifactId>52n-wps-install-wizard</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+<!--            <dependency>
             	<groupId>${project.groupId}</groupId>
             	<artifactId>52n-wps-sextante</artifactId>
             	<version>${project.version}</version>
         	</dependency>
-			<dependency>
+-->			<dependency>
             	<groupId>${project.groupId}</groupId>
             	<artifactId>52n-wps-webadmin</artifactId>
             	<version>${project.version}</version>
@@ -257,4 +254,3 @@
         </plugins>
     </reporting>
 </project>
-
