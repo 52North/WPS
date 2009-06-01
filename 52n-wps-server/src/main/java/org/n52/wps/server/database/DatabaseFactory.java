@@ -28,6 +28,8 @@
  ***************************************************************/
 package org.n52.wps.server.database;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -49,9 +51,27 @@ public class DatabaseFactory implements IDatabase
 	// Property of the name of the database. Used to define the database implementation.
 	public static final String PROPERTY_NAME_DATABASE_CLASS_NAME = "databaseClass";
 	private static IDatabase database;
+
+    private static PropertyChangeListener propertyChangeListener;
 	
 	public static IDatabase getDatabase() {
-		if(DatabaseFactory.database == null) {
+
+        // FvK: create and register listener to the WPSConfig if not yet happend.
+        if (propertyChangeListener == null){
+            propertyChangeListener =  new PropertyChangeListener(){
+                public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                        //shutdown Database connection and instance
+                        DatabaseFactory.database.shutdown();
+                        DatabaseFactory.database = null;
+                        DatabaseFactory.getDatabase();
+                        LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                    }
+            }; 
+            org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, propertyChangeListener);
+        }
+
+        if(DatabaseFactory.database == null) {
 			try {
 				String databaseClassName = 
 					AbstractDatabase.getDatabaseProperties(PROPERTY_NAME_DATABASE_CLASS_NAME);

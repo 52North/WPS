@@ -35,6 +35,8 @@ Software Foundation, http://www.fsf.org.
 package org.n52.wps.server;
 
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,20 +57,31 @@ public class RepositoryManager {
 	
 	
 	private RepositoryManager(){
-		repositories = new ArrayList<IAlgorithmRepository>();
-		/*if(!WPSConfiguration.getInstance().exists(PROPERTY_NAME_REGISTERED_REPOSITORIES)) {
-			LOGGER.warn("Missing " + PROPERTY_NAME_REGISTERED_REPOSITORIES + "Property");
-			return;
-		}
-		String propertyValue = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_REGISTERED_REPOSITORIES);
-		String[] registeredRepositories = propertyValue.split(",");
-		*/
-		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
 		
+        // initialize all Repositories
+        loadAllRepositories();
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllRepositories();
+            }
+        });
+
+	}
+
+    private void loadAllRepositories(){
+        repositories = new ArrayList<IAlgorithmRepository>();
+
+		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
+
 		for(Repository repository : repositoryList){
 			String repositoryClassName = repository.getClassName();
 			try {
-			
+
 				IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).newInstance();
 				repositories.add(algorithmRepository);
 				LOGGER.info("Algorithm Repositories initialized");
@@ -77,7 +90,7 @@ public class RepositoryManager {
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
 				try {
-					
+
 					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
 					repositories.add(algorithmRepository);
 				} catch (IllegalArgumentException e1) {
@@ -92,14 +105,14 @@ public class RepositoryManager {
 					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 				} catch (ClassNotFoundException e1) {
 					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				}				
-			
-				
+				}
+
+
 			} catch (ClassNotFoundException e) {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Class not found");
 			}
 		}
-	}
+    }
 	
 	public static RepositoryManager getInstance(){
 		if(instance==null){

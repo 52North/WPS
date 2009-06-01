@@ -36,6 +36,10 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
 package org.n52.wps.server;
 
 
+// FvK: added Property Change Listener support
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -124,7 +128,7 @@ public class WebProcessingService extends HttpServlet {
 		// this is important to set the lon lat support for correct CRS transformation.
 		//TODO: Might be changed to an additional configuration parameter.
 		System.setProperty("org.geotools.referencing.forceXY", "true");
-		
+
 		BasicConfigurator.configure();
 		LOGGER.info("WebProcessingService initializing...");
 
@@ -143,7 +147,7 @@ public class WebProcessingService extends HttpServlet {
 		RepositoryManager.getInstance();
 		LOGGER.info("Algorithms initialized");
 		
-		
+
 		Parser[] parsers = WPSConfig.getInstance().getRegisteredParser();
 		ParserFactory.initialize(parsers);
 				
@@ -180,6 +184,45 @@ public class WebProcessingService extends HttpServlet {
 		DatabaseFactory.getDatabase();
 		
 		LOGGER.info("WPS up and running!");
+        
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        // it will listen to changes of the wpsCapabilities
+        WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                try {
+                    CapabilitiesConfiguration.reloadSkeleton();
+                }
+                catch(IOException e) {
+                    LOGGER.error("error while initializing capabilitiesConfiguration", e);
+                }
+                catch(XmlException e) {
+                    LOGGER.error("error while initializing capabilitiesConfiguration", e);
+                }
+            }
+        });
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        // it will listen to changes of the wpsConfiguration
+        WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                try {
+                    CapabilitiesConfiguration.reloadSkeleton();
+                }
+                catch(IOException e) {
+                    LOGGER.error("error while initializing capabilitiesConfiguration", e);
+                }
+                catch(XmlException e) {
+                    LOGGER.error("error while initializing capabilitiesConfiguration", e);
+                }
+            }
+        });
+
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
