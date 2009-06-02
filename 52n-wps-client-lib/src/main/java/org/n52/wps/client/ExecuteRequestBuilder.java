@@ -56,6 +56,7 @@ public class ExecuteRequestBuilder {
 	ProcessDescriptionType processDesc;
 	ExecuteDocument execute;
 	String SUPPORTED_VERSION = "1.0.0";
+	String suggestedSchema;
 
 	public ExecuteRequestBuilder(ProcessDescriptionType processDesc) {
 		this.processDesc = processDesc;
@@ -82,15 +83,33 @@ public class ExecuteRequestBuilder {
 		}
 		String schemaURL = inputDesc.getComplexData().getDefault().getFormat().getSchema();
 		IGenerator generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
-		if(generator == null) {
-			for(ComplexDataDescriptionType dataDescType: inputDesc.getComplexData().getSupported().getFormatArray()) {
-				schemaURL = dataDescType.getSchema();
-				generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
-				if(generator != null) {
-					break;
+		if(suggestedSchema != null) {
+			if(!schemaURL.equals(suggestedSchema)) {
+				for(ComplexDataDescriptionType dataDescType: inputDesc.getComplexData().getSupported().getFormatArray()) {
+					schemaURL = dataDescType.getSchema();
+					if(schemaURL.equals(suggestedSchema)) {
+						generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
+						break;
+					}
 				}
 			}
 		}
+		else {
+			if(generator == null) {
+				for(ComplexDataDescriptionType dataDescType: inputDesc.getComplexData().getSupported().getFormatArray()) {
+					schemaURL = dataDescType.getSchema();
+					generator = fac.getGenerator(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, value.getClass());
+					if(generator != null) {
+						break;
+					}
+				}
+			}
+		}
+		if(generator == null) {
+		//generator is still null
+			throw new IllegalArgumentException("problem finding appropriate generator for parameter: " + parameterID);
+		}
+		
 		if(generator instanceof AbstractXMLGenerator) {
 			AbstractXMLGenerator xmlGenerator = (AbstractXMLGenerator) generator;
 			Node node = xmlGenerator.generateXML(value, null);
@@ -242,7 +261,12 @@ public class ExecuteRequestBuilder {
 		OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
 		ComplexDataDescriptionType complexDesc = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat();
 		output.setIdentifier(processDesc.getProcessOutputs().getOutputArray(0).getIdentifier());
-		output.setSchema(complexDesc.getSchema());
+		String schemaURL = complexDesc.getSchema();
+		if(suggestedSchema != null) {
+			schemaURL = suggestedSchema;
+		}
+			
+		output.setSchema(schemaURL);
 		if(complexDesc.getMimeType() != null) {
 			output.setMimeType(complexDesc.getMimeType());
 		}
@@ -255,6 +279,14 @@ public class ExecuteRequestBuilder {
 	public ExecuteDocument getExecute() {
 		return execute;
 	}
+	/**
+	 * sets a preferred schema for input and output! This is useful for chained processes, in which sometimes the featuretype is changing and not easy to determine, thus the client can ask for a specific schema.
+	 * @param schema
+	 */
+	public void suggestSchemaForComplexData(String schema) {
+		suggestedSchema = schema;
+	}
+	
 	/**
 	 * 
 	 * @param id
