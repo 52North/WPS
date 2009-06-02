@@ -116,8 +116,9 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 				i = sr.read();
 			}
 			fos.close();
-			//f.deleteOnExit();
-			return parseXML(f.toURI());
+			GTVectorDataBinding data = parseXML(f.toURI());
+			f.delete();
+			return data;
 		}
 		catch(IOException e) {
 			if (fos != null) try { fos.close(); } catch (Exception e1) { }
@@ -138,8 +139,9 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 				i = stream.read();
 			}
 			fos.close();
-			//f.deleteOnExit();
-			return parseXML(f.toURI());
+			GTVectorDataBinding data = parseXML(f.toURI());
+			f.delete();
+			return data;
 		}
 		catch(IOException e) {
 			if (fos != null) try { fos.close(); } catch (Exception e1) { }
