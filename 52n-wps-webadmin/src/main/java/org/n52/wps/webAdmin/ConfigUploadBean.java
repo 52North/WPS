@@ -1,7 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+/***************************************************************
+This implementation provides a framework to publish processes to the
+web through the  OGC Web Processing Service interface. The framework
+is extensible in terms of processes and data handlers. It is compliant
+to the WPS version 0.4.0 (OGC 05-007r4).
+
+Copyright (C) 2007 by con terra GmbH
+
+Authors:
+Florian van Keulen, ITC Student, ITC Enschede, the Netherlands
+
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program (see gnu-gpl v2.txt); if not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA  02111-1307, USA or visit the web page of the Free
+Software Foundation, http://www.fsf.org.
+
+ ***************************************************************/
 package org.n52.wps.webAdmin;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +38,8 @@ import org.n52.wps.commons.WPSConfig;
 import org.apache.log4j.Logger;
 
 /**
- *
- * @author fvk
+ * This Bean handles the fileupload of the xml configuration file
+ * @author Florian van Keulen
  */
 public class ConfigUploadBean {
     private static transient Logger LOGGER = Logger.getLogger(ConfigUploadBean.class);
