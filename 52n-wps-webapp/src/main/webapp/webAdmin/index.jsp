@@ -1,8 +1,8 @@
 <%@ page import = "org.n52.wps.webadmin.ConfigUploadBean" %>
 <%@ page import = "org.n52.wps.webadmin.ChangeConfigurationBean" %>
 
-<jsp:useBean id="fileUpload" class="org.n52.wps.webAdmin.ConfigUploadBean" scope="session"/>
-<jsp:useBean id="changeConfiguration" class="org.n52.wps.webAdmin.ChangeConfigurationBean" scope="session" />
+<jsp:useBean id="fileUpload" class="org.n52.wps.webadmin.ConfigUploadBean" scope="session"/>
+<jsp:useBean id="changeConfiguration" class="org.n52.wps.webadmin.ChangeConfigurationBean" scope="session" />
 <jsp:setProperty name="changeConfiguration" property="*"/>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
