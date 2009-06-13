@@ -37,7 +37,6 @@ package org.n52.wps.server;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +46,6 @@ import org.n52.wps.commons.WPSConfig;
 
 public class RepositoryManager {
 	
-	public static String PROPERTY_NAME_REGISTERED_REPOSITORIES = "registeredAlgorithmRepositories";
 
 	private static RepositoryManager instance;
 	private static Logger LOGGER = Logger.getLogger(RepositoryManager.class);
@@ -89,24 +87,24 @@ public class RepositoryManager {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
-				try {
-
-					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
-					repositories.add(algorithmRepository);
-				} catch (IllegalArgumentException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (SecurityException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (IllegalAccessException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (InvocationTargetException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (NoSuchMethodException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (ClassNotFoundException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				}
-
+//				try {
+//
+//					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
+//					repositories.add(algorithmRepository);
+//				} catch (IllegalArgumentException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (SecurityException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (IllegalAccessException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (InvocationTargetException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (NoSuchMethodException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (ClassNotFoundException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				}
+				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 
 			} catch (ClassNotFoundException e) {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Class not found");
