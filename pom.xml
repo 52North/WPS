@@ -138,7 +138,7 @@
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
         <module>52n-wps-site</module>
-<!--        <module>52n-wps-sextante</module> -->
+        <module>52n-wps-sextante</module>
         <module>52n-wps-transactional</module>
         <module>52n-wps-webadmin</module>
     </modules>
