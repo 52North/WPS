@@ -52,21 +52,11 @@ import org.n52.wps.commons.WPSConfig;
  */
 public class LocalAlgorithmRepository implements ITransactionalAlgorithmRepository{
 	
-	private static String PROPERTY_NAME_REGISTERED_LOCAL_ALGORITHMS = "registeredLocalAlgorithms";
 	private static Logger LOGGER = Logger.getLogger(LocalAlgorithmRepository.class);
-	private static Map<String, IAlgorithm> algorithmMap;
+	private Map<String, IAlgorithm> algorithmMap;
 	
-	private static LocalAlgorithmRepository instance;
-	
-	private LocalAlgorithmRepository() {
+	public LocalAlgorithmRepository() {
 		algorithmMap = new HashMap<String, IAlgorithm>();
-		/*if(!WPSConfiguration.getInstance().exists(PROPERTY_NAME_REGISTERED_LOCAL_ALGORITHMS)) {
-			LOGGER.warn("Missing " + PROPERTY_NAME_REGISTERED_LOCAL_ALGORITHMS + "Property");
-			return;
-		}
-		String propertyValue = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_REGISTERED_LOCAL_ALGORITHMS);
-		String[] registeredAlgorithms = propertyValue.split(",");
-		addAlgorithms(registeredAlgorithms);*/
 		
 		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
 		for(Property property : propertyArray){
@@ -75,13 +65,6 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 			}
 		}
 		
-	}
-	
-	public static LocalAlgorithmRepository getInstance(){
-		if(instance==null){
-			instance = new LocalAlgorithmRepository();
-		}
-		return instance;
 	}
 	
 	public boolean addAlgorithms(String[] algorithms)  {

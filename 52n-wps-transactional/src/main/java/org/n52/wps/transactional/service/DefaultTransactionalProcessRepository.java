@@ -21,11 +21,11 @@ import org.n52.wps.transactional.request.UndeployProcessRequest;
 
 public class DefaultTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
 	private static Logger LOGGER = Logger.getLogger(DefaultTransactionalProcessRepository.class);
-	private static DefaultTransactionalProcessRepository instance;
+	
 	
 	private IDeployManager deployManager;
 	
-	private DefaultTransactionalProcessRepository(){
+	public DefaultTransactionalProcessRepository(){
 		Property[] properties = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getName());
 		//TODO think of multiple instance of this class registered (yet not possible since singleton)
 		Property deployManagerXML = WPSConfig.getInstance().getPropertyForKey(properties, "DeployManager");
@@ -47,17 +47,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		}
 		
 	}
-	
-	public static DefaultTransactionalProcessRepository getInstance(){
-		if(instance==null){
-			instance = new DefaultTransactionalProcessRepository();
-		}
-		return instance;
-			
 		
-	}
-	
-	
 	public boolean addAlgorithm(Object process) {
 		if(!(process instanceof DeployProcessRequest)){
 			return false;
