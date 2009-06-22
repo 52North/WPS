@@ -13,18 +13,9 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-sextante</name>
     <description>The project 52 north 52n-wps-sextante exposes the Sextatne Librries as WPS processes</description>
-    <url>http://incubator.52north.org/maven/project-sites/52n-wps-server</url>
+    
     <inceptionYear>2008</inceptionYear>
-    <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
-    </issueManagement>
-        <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:cvs:pserver:anonymous:@core-52n.cvs.sourceforge.net:/cvsroot/core-52n:WPS/tags/52n-wps-2.0-rc1</connection>
-      <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1/52n-wps-sextante</developerConnection>
-    <url>http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1/52n-wps-sextante</url>
-  </scm>
+
     <build>
          <!--resources>
       
