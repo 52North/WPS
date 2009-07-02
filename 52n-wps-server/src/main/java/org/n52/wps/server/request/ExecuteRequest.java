@@ -548,7 +548,7 @@ public class ExecuteRequest extends Request implements Observer {
 					throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
 				}
 			}
-			else
+			if(returnResults==null)
 			{
 				returnResults = algorithm.run(parser.getParsedInputData());
 			} 

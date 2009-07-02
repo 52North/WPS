@@ -36,6 +36,7 @@ public class TransactionalWebProcessingService extends HttpServlet{
 			
 			//look up what kind of Request we are dealing with
 			String requestType = document.getFirstChild().getNodeName();
+			LOGGER.info("requesttype is: "+requestType);
 			if(requestType == null){
 				throw new Exception("Request Not Valid");
 			}

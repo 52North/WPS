@@ -38,13 +38,20 @@ public class TransactionalHelper {
 		try {
 			//in case of a assumed singleton
 			Class<?> clazz = Class.forName(className);
+			
 			Method[] methods = clazz.getMethods();
+			
 			for(Method method : methods){
 				if(method.getName().equals("getInstance")){
-					instance = method.invoke(clazz, new Object[0]);
+					instance = method.invoke(null, new Object[0]);
 					break;
 				}
 			}
+			
+			//Class cls = Class.forName(className);
+			//Method method1 = cls.getMethod("getInstance", new Class[0]);
+			//Object o = method1.invoke(cls, new Object[0]);
+			
 			//in case it is not a singleton
 			if(instance == null){
 				instance = Class.forName(className).newInstance();
@@ -64,7 +71,10 @@ public class TransactionalHelper {
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		if(instance != null){
 			return (ITransactionalAlgorithmRepository) instance;
 		}

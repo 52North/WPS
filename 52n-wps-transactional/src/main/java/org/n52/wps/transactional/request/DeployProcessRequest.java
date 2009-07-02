@@ -87,6 +87,7 @@ public class DeployProcessRequest implements ITransactionalRequest{
 						if(node!= null && node.getAttributes().getLength()>0){
 							if(node.getNodeName().equals("wps:Schema")){
 								schema = node.getAttributes().getNamedItem("href").getNodeValue();
+								break;
 							}
 						}
 						
