@@ -103,7 +103,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	
 	public HashMap run(ExecuteDocument payload){
 		Document responseDocument;
-		HashMap<String,Object> resultHash = new HashMap<String,Object>();
+		HashMap<String,IData> resultHash = new HashMap<String,IData>();
 		try {	
 		//forward request
 			
@@ -127,7 +127,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 				String key = ioElement.getIdentifier().getStringValue();
 				//4.the the literal value as String
 				if(ioElement.getData().getLiteralData()!=null){
-					resultHash.put(key, OutputParser.handleLiteralValue(ioElement) );
+					resultHash.put(key, OutputParser.handleLiteralValue(ioElement));
 				}
 				//5.parse the complex value
 				if(ioElement.getData().getComplexData()!=null){
@@ -138,7 +138,9 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 				}
 				//6.parse the complex value reference
 				if(ioElement.getReference()!=null){
-					resultHash.put(key, OutputParser.handleComplexValueReference(ioElement));
+					//TODO handle this
+					//download the data, parse it and put it in the hashmap
+					//resultHash.put(key, OutputParser.handleComplexValueReference(ioElement));
 				}
 				
 				//7.parse Bounding Box value
