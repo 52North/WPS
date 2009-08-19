@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.7.0 (http://www.liquid-technologies.com) -->
+<schema xmlns:ows="http://www.opengis.net/ows/1.1" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/ows/1.1" version="1.1.0" xml:lang="en" xmlns="http://www.w3.org/2001/XMLSchema">
+  <include schemaLocation="owsGetResourceByID.xsd" />
+  <include schemaLocation="owsExceptionReport.xsd" />
+  <include schemaLocation="owsDomainType.xsd" />
+  <include schemaLocation="owsContents.xsd" />
+  <include schemaLocation="owsInputOutputData.xsd" />
+  <annotation>
+    <appinfo>owsAll.xsd 2006-10-04</appinfo>
+    <documentation>This XML Schema Document includes and imports, directly and indirectly, all the XML Schemas defined by the OWS Common Implemetation Specification.
+		Copyright(c) 2006 Open Geospatial Consortium, Inc. All Rights Reserved. </documentation>
+  </annotation>
+</schema>

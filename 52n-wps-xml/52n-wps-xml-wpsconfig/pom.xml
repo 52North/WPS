@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.n52.wps</groupId>
+        <artifactId>52n-wps-xml</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>52n-wps-xml-wpsconfig</artifactId>
+    <name>xml-wpsconfig</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xmlbeans-maven-plugin</artifactId>
+                <configuration>
+                    <sourceSchemas>
+                        <sourceSchema>n52/wpsconfig/1.0.1/wpsconfig.xsd</sourceSchema>
+                    </sourceSchemas>
+                    <download>true</download>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+             <groupId>org.apache.xmlbeans</groupId>
+             <artifactId>xmlbeans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${pom.groupId}</groupId>
+            <artifactId>52n-wps-xml-schema</artifactId>
+        </dependency>
+    </dependencies>
+</project>

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-    version="2.4">
-  <display-name>52n WPS 1.0.0</display-name>
-  <description>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+	<display-name>52n WPS 1.0.0</display-name>
+	<description>
     a 52n prototype implementation of the WPS 1.0.0 spec.
   </description>
+<<<<<<< .working
   <filter>
     <filter-name>CommunicationSizeLogFilter</filter-name>
     <filter-class>org.n52.wps.server.CommunicationSizeLogFilter</filter-class>
@@ -80,19 +78,79 @@
 		<servlet-mapping>
 	<servlet-name>wps-T Servlet</servlet-name>
 	<url-pattern>/WPS-T</url-pattern>
+=======
+	<filter>
+		<filter-name>CommunicationSizeLogFilter</filter-name>
+		<filter-class>org.n52.wps.server.CommunicationSizeLogFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CommunicationSizeLogFilter</filter-name>
+		<url-pattern>/WebProcessingService</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>CompressingFilter</filter-name>
+		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param>
+			<param-name>statsEnabled</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CompressingFilter</filter-name>
+		<url-pattern>/WebProcessingService</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>wpsServlet</servlet-name>
+		<servlet-class>org.n52.wps.server.WebProcessingService</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet><servlet>
+	<servlet-name>AxisServlet</servlet-name>
+	<display-name>Apache-Axis Servlet</display-name>
+	<servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
+	<!--<init-param>-->
+	<!--<param-name>axis2.xml.path</param-name>-->
+	<!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
+	<!--<param-name>axis2.xml.url</param-name>-->
+	<!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
+	<!--<param-name>axis2.repository.path</param-name>-->
+	<!--<param-value>/WEB-INF</param-value>-->
+	<!--<param-name>axis2.repository.url</param-name>-->
+	<!--<param-value>http://localhot/myrepo</param-value>-->
+	<!--</init-param>-->
+	<load-on-startup>1</load-on-startup>
+</servlet>
+	<servlet-mapping>
+		<servlet-name>wpsServlet</servlet-name>
+		<url-pattern>/WebProcessingService</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>wps-T Servlet</servlet-name>
+		<servlet-class>org.n52.wps.transactional.service.TransactionalWebProcessingService</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>wps-T Servlet</servlet-name>
+		<url-pattern>/WPS-T</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+	<servlet-name>AxisServlet</servlet-name>
+	<url-pattern>/services/*</url-pattern>
+>>>>>>> .merge-right.r924
 </servlet-mapping>
-
-  <servlet>
-<servlet-name>retrieveResultServlet</servlet-name>
-			<servlet-class>org.n52.wps.server.RetrieveResultServlet</servlet-class>
-			<load-on-startup>1</load-on-startup>
-		</servlet>
-<servlet-mapping>
-	<servlet-name>retrieveResultServlet</servlet-name>
-	<url-pattern>/RetrieveResultServlet</url-pattern>
-</servlet-mapping>
-
-<welcome-file-list>
-	<welcome-file>/index.html</welcome-file>
-</welcome-file-list>
+	<servlet>
+		<servlet-name>retrieveResultServlet</servlet-name>
+		<servlet-class>org.n52.wps.server.RetrieveResultServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>retrieveResultServlet</servlet-name>
+		<url-pattern>/RetrieveResultServlet</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>/index.html</welcome-file>
+	</welcome-file-list>
 </web-app>

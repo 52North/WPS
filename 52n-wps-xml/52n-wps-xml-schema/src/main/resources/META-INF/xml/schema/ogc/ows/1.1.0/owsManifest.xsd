@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid XML Studio 1.0.7.0 (http://www.liquid-technologies.com) -->
+<schema xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ows="http://www.opengis.net/ows/1.1" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/ows/1.1" version="1.1.0" xml:lang="en" xmlns="http://www.w3.org/2001/XMLSchema">
+  <include schemaLocation="owsDataIdentification.xsd" />
+  <import schemaLocation="../../xlink/1.0.0/xlinks.xsd" namespace="http://www.w3.org/1999/xlink" />
+  <annotation>
+    <appinfo>owsManifest.xsd 2006-10-04</appinfo>
+    <documentation>This XML Schema Document specifies types and elements for document or resource references and for package manifests that contain multiple references. The contents of each type and element specified here can be restricted and/or extended for each use in a specific OWS specification.
+		Copyright (c) 2006 Open Geospatial Consortium, Inc. All Rights Reserved. </documentation>
+  </annotation>
+  <element abstract="true" name="AbstractReferenceBase" type="ows:AbstractReferenceBaseType" />
+  <complexType name="AbstractReferenceBaseType">
+    <annotation>
+      <documentation> Base for a reference to a remote or local resource. </documentation>
+      <documentation>This type contains only a restricted and annotated set of the attributes from the xlink:simpleLink attributeGroup. </documentation>
+    </annotation>
+    <attribute fixed="simple" form="qualified" name="type" type="string" />
+    <attribute ref="xlink:href" use="required">
+      <annotation>
+        <documentation>Reference to a remote resource or local payload. A remote resource is typically addressed by a URL. For a local payload (such as a multipart mime message), the xlink:href must start with the prefix cid:. </documentation>
+      </annotation>
+    </attribute>
+    <attribute ref="xlink:role" use="optional">
+      <annotation>
+        <documentation>Reference to a resource that describes the role of this reference. When no value is supplied, no particular role value is to be inferred. </documentation>
+      </annotation>
+    </attribute>
+    <attribute ref="xlink:arcrole" use="optional">
+      <annotation>
+        <documentation>Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. </documentation>
+      </annotation>
+    </attribute>
+    <attribute ref="xlink:title" use="optional">
+      <annotation>
+        <documentation>Describes the meaning of the referenced resource in a human-readable fashion. </documentation>
+      </annotation>
+    </attribute>
+    <attribute ref="xlink:show" use="optional">
+      <annotation>
+        <documentation>Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. </documentation>
+      </annotation>
+    </attribute>
+    <attribute ref="xlink:actuate" use="optional">
+      <annotation>
+        <documentation>Although allowed, this attribute is not expected to be useful in this application of xlink:simpleLink. </documentation>
+      </annotation>
+    </attribute>
+  </complexType>
+  <element name="Reference" substitutionGroup="ows:AbstractReferenceBase" type="ows:ReferenceType" />
+  <complexType name="ReferenceType">
+    <annotation>
+      <documentation>Complete reference to a remote or local resource, allowing including metadata about that resource. </documentation>
+    </annotation>
+    <complexContent mixed="false">
+      <extension base="ows:AbstractReferenceBaseType">
+        <sequence>
+          <element minOccurs="0" ref="ows:Identifier">
+            <annotation>
+              <documentation>Optional unique identifier of the referenced resource. </documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" maxOccurs="unbounded" ref="ows:Abstract" />
+          <element minOccurs="0" name="Format" type="ows:MimeType">
+            <annotation>
+              <documentation>The format of the referenced resource. This element is omitted when the mime type is indicated in the http header of the reference. </documentation>
+            </annotation>
+          </element>
+          <element minOccurs="0" maxOccurs="unbounded" ref="ows:Metadata">
+            <annotation>
+              <documentation>Optional unordered list of additional metadata about this resource. A list of optional metadata elements for this ReferenceType could be specified in the Implementation Specification for each use of this type in a specific OWS. </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="ReferenceGroup" type="ows:ReferenceGroupType" />
+  <complexType name="ReferenceGroupType">
+    <annotation>
+      <documentation>Logical group of one or more references to remote and/or local resources, allowing including metadata about that group. A Group can be used instead of a Manifest that can only contain one group. </documentation>
+    </annotation>
+    <complexContent mixed="false">
+      <extension base="ows:BasicIdentificationType">
+        <sequence>
+          <element maxOccurs="unbounded" ref="ows:AbstractReferenceBase" />
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="Manifest" type="ows:ManifestType" />
+  <complexType name="ManifestType">
+    <annotation>
+      <documentation>Unordered list of one or more groups of references to remote and/or local resources. </documentation>
+    </annotation>
+    <complexContent mixed="false">
+      <extension base="ows:BasicIdentificationType">
+        <sequence>
+          <element maxOccurs="unbounded" ref="ows:ReferenceGroup" />
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

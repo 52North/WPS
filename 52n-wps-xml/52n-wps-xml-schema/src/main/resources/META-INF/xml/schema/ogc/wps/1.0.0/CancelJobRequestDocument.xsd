@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<!-- =============================================================
+  includes and imports
+ ============================================================== -->
+	<include schemaLocation="http://schemas.opengis.net/wps/1.0.0/common/RequestBaseType.xsd"/>
+	<!-- =============================================================
+  elements and types
+ ============================================================== -->
+	<element name="CancelJob">
+		<annotation>
+			<documentation>WPS Execute operation request, to execute one identified Process. If a process is to be run multiple times, each run shall be submitted as a separate Execute request. </documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:RequestBaseType">
+					<sequence>
+						<element name="ProcessIdentifier" type="string" minOccurs="1" maxOccurs="1"/>
+					</sequence>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+
+</schema>

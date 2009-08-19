@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 sp2 (http://www.altova.com) by Wilden (Institut für Geoinformatik der Westf. Wilhelms-Universität) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsExecute_response.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema Document encodes the WPS Execute operation response.</description>
+			<copyright>Copyright (c) 2007 OGC, All Rights Reserved. 
+For conditions, see OGC Software Notice http://www.opengeospatial.org/ogc/software</copyright>
+		</documentation>
+	</annotation>
+	<!---->
+	<include schemaLocation="common/ResponseBaseType.xsd"/>
+	<include schemaLocation="common/ProcessBriefType.xsd"/>
+	<include schemaLocation="wpsExecute_request.xsd"/>
+	<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="../../ows/1.1.0/owsAll.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<element name="GetJobsResponse">
+		<annotation>
+			<documentation>WPS Execute operation response. By default, this XML document is delivered to the client in response to an Execute request. If "status" is "false" in the Execute operation request, this document is normally returned when process execution has been completed.
+			If "status" in the Execute request is "true", this response shall be returned as soon as the Execute request has been accepted for processing. In this case, the same XML document is also made available as a web-accessible resource from the URL identified in the statusLocation, and the WPS server shall repopulate it once the process has completed. It may repopulate it on an ongoing basis while the process is executing.
+			However, the response to an Execute request will not include this element in the special case where the output is a single complex value result and the Execute request indicates that "store" is "false". Instead, the server shall return the complex result (e.g., GIF image or GML) directly, without encoding it in the ExecuteResponse. If processing fails in this special case, the normal ExecuteResponse shall be sent, with the error condition indicated. This option is provided to simplify the programming required for simple clients and for service chaining. </documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:ResponseBaseType">
+					<sequence>
+						<element ref="wps:Jobs"/>
+					</sequence>
+					<attribute name="serviceInstance" type="anyURI" use="required">
+						<annotation>
+							<documentation>This attribute shall contain the GetCapabilities URL of the WPS service which was invoked</documentation>
+						</annotation>
+					</attribute>
+					<attribute name="statusLocation" type="anyURI" use="optional">
+						<annotation>
+							<documentation>The URL referencing the location from which the ExecuteResponse can be retrieved. If "status" is "true" in the Execute request, the ExecuteResponse should also be found here as soon as the process returns the initial response to the client. It should persist at this location as long as the outputs are accessible from the server. The outputs may be stored for as long as the implementer of the server decides. If the process takes a long time, this URL can be repopulated on an ongoing basis in order to keep the client updated on progress. Before the process has succeeded, the ExecuteResponse contains information about the status of the process, including whether or not processing has started, and the percentage completed. It may also optionally contain the inputs and any ProcessStartedType interim results. When the process has succeeded, the ExecuteResponse found at this URL shall contain the output values or references to them. </documentation>
+						</annotation>
+					</attribute>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========== STATUS ========================================= -->
+	<complexType name="Jobs">
+		<sequence>
+			<element ref="wps:Job" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="Job">
+		<sequence>
+			<element ref="wps:JobID"/>
+			<element ref="wps:ProcessIdentifier"/>
+			<element ref="wps:JobOwner"/>
+			<element ref="wps:JobPriority"/>
+			<element ref="wps:JobSubmissionTime"/>
+			<element ref="wps:JobStatus"/>
+		</sequence>
+	</complexType>
+	<complexType name="JobStatus">
+		<sequence>
+			<element ref="wps:Description"/>
+			<element ref="wps:JobStatusIdentifier"/>
+			<element ref="wps:QueuePosition" minOccurs="0"/>
+		</sequence>
+	</complexType>
+	<element name="Jobs" type="wps:Jobs"/>
+	<element name="JobSubmissionTime" type="dateTime"/>
+	<element name="JobOwner" type="string"/>
+	<element name="JobID" type="string"/>
+	<element name="Job" type="wps:Job"/>
+	<element name="JobPriority" type="string"/>
+	<element name="JobStatus" type="wps:JobStatus"/>
+	<element name="ProcessIdentifier" type="string"/>
+	<element name="Description" type="string"/>
+	<element name="JobStatusIdentifier" type="string"/>
+	<element name="QueuePosition" type="string"/>
+</schema>

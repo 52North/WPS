@@ -65,8 +65,8 @@ import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
-import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
+import org.n52.wps.server.response.builder.ExecuteResponseBuilder;
 import org.n52.wps.util.XMLBeansHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -86,20 +86,22 @@ public class RequestHandler {
 
 	/** Computation timeout in seconds */
 	private static final String PROPERTY_NAME_COMPUTATION_TIMEOUT = "computationTimeoutSeconds";
-	private int sleepingTime = 0;
+	protected int sleepingTime = 0;
 	
-	private static RequestExecutor pool = new RequestExecutor();
+	protected static RequestExecutor pool = new RequestExecutor();
 
-	private OutputStream os;
+	protected OutputStream os;
 
 	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
 	
-	private String responseMimeType;
+	protected String responseMimeType;
 	
-	private Request req;
+	protected Request req;
 	
-	
-	
+	// Empty constructor due to classes which extend the RequestHandler
+	protected RequestHandler() {
+		
+	}
 
 	/**
 	 * Handles requests of type HTTP_GET (currently capabilities and
@@ -341,7 +343,7 @@ public class RequestHandler {
 		}
 	}
 	
-	private void setResponseMimeType(ExecuteRequest req) {
+	protected void setResponseMimeType(ExecuteRequest req) {
 		if(req.isRawData()){
 			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
 		}else{
