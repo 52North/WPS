@@ -28,21 +28,23 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-
 package org.n52.wps.transactional.handler;
 
-import java.io.OutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
+
+import org.n52.wps.server.ExceptionReport;
 
 public class TransactionalExceptionHandler {
 
-	public static void handleException(PrintWriter writer, Exception exception) {
-		writer.write("<Result>");
-		writer.write(exception.getMessage());
-		writer.write("</Result>");
-		writer.flush();
-		writer.close();
-		
+	public static void handleException(PrintWriter writer,
+			ExceptionReport exception) {
+		try {
+			exception.getExceptionDocument().save(writer);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void handleException(PrintWriter writer, String exception) {

@@ -2,12 +2,10 @@ package org.n52.wps.server.sextante;
 
 import java.math.BigInteger;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
+import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.LiteralInputType;
@@ -17,9 +15,6 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
-
-import org.apache.xmlbeans.XmlCursor;
-
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
 import es.unex.sextante.additionalInfo.AdditionalInfoRasterLayer;
@@ -105,10 +100,15 @@ public class SextanteProcessDescriptionCreator {
 			ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
 			deafult.setMimeType("text/XML");
 			deafult.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
-			ComplexDataDescriptionType supported = complexOutput.addNewSupported().addNewFormat();
-			supported.setMimeType("text/XML");
-			supported.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+			ComplexDataCombinationsType supported = complexOutput.addNewSupported();
+			ComplexDataDescriptionType supportedFormat = supported.addNewFormat();
+			supportedFormat.setMimeType("text/XML");
+			supportedFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			
+			supportedFormat = supported.addNewFormat();
+			// TODO use constants
+			supportedFormat.setMimeType("application/x-zipped-shp");
+			supportedFormat.setEncoding("base64");
 		}
 		else if (out instanceof OutputTable){
 			//TODO:
@@ -150,9 +150,14 @@ public class SextanteProcessDescriptionCreator {
 			//TODO:add shape type
 			AdditionalInfoVectorLayer ai = (AdditionalInfoVectorLayer) param.getParameterAdditionalInfo();
 			SupportedComplexDataInputType complex = input.addNewComplexData();
-			ComplexDataDescriptionType format = complex.addNewSupported().addNewFormat();
+			ComplexDataCombinationsType supported = complex.addNewSupported();
+			ComplexDataDescriptionType format = supported.addNewFormat();
 			format.setMimeType("text/XML");
 			format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+			format = supported.addNewFormat();
+			// TODO use constants
+			format.setEncoding("base64");
+			format.setMimeType("application/x-zipped-shp");
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
 			defaultFormat.setMimeType("text/XML");
 			defaultFormat.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");

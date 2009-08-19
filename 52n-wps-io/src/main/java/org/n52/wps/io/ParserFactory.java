@@ -105,10 +105,10 @@ public class ParserFactory {
 
 			if(parser != null) {
 				if (parser.supportsSchemas()) {
-					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas()[0]);
+					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas());
 				}
 				else {
-					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedFormats()[0]);
+					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedFormats());
 				}
 				registeredParsers.add(parser);
 			}

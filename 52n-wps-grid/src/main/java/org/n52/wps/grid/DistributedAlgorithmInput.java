@@ -290,11 +290,11 @@ public class DistributedAlgorithmInput implements Serializable
 
 		if (generator instanceof AbstractXMLGenerator)
 		{
-			// TODO does not support multiple input parameters with same id
-			IData data = pInput.getInputData().get(inputId).get(0);
-			Node xmlNode = ((AbstractXMLGenerator) generator).generateXML(data, null);
 			try
 			{
+				// TODO does not support multiple input parameters with same id
+				IData data = pInput.getInputData().get(inputId).get(0);
+				Node xmlNode = ((AbstractXMLGenerator) generator).generateXML(data, null);
 				XmlObject xmlObj = XmlObject.Factory.parse(xmlNode);
 				return xmlObj.xmlText();
 			}
@@ -414,8 +414,13 @@ public class DistributedAlgorithmInput implements Serializable
 
 		String algorithmIdentifier = pExecuteDocument.getExecute().getIdentifier().getStringValue();
 
-		Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(algorithmIdentifier, inputId);
-		IParser parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+		IParser parser;
+		try {
+			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(algorithmIdentifier, inputId);
+			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
 
 		if (parser == null)
 		{

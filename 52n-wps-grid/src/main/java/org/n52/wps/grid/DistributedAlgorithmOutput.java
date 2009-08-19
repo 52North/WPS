@@ -280,11 +280,11 @@ public class DistributedAlgorithmOutput implements Serializable
 
 		if (generator instanceof AbstractXMLGenerator)
 		{
-			IData obj = pOutput.getOutputData().get(ouputId);
-			Node xmlNode = ((AbstractXMLGenerator) generator).generateXML(obj, null);
 
 			try
 			{
+				IData obj = pOutput.getOutputData().get(ouputId);
+				Node xmlNode = ((AbstractXMLGenerator) generator).generateXML(obj, null);
 				XmlObject xmlObj = XmlObject.Factory.parse(xmlNode);
 				return xmlObj.xmlText();
 			}

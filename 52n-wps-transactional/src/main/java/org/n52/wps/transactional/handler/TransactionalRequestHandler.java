@@ -28,11 +28,12 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-
 package org.n52.wps.transactional.handler;
 
-
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.ITransactionalRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
@@ -40,43 +41,82 @@ import org.n52.wps.transactional.response.TransactionalResponse;
 import org.n52.wps.transactional.service.TransactionalHelper;
 
 public class TransactionalRequestHandler {
-
-	
-
-	public static  TransactionalResponse handle(ITransactionalRequest request) {
-		
-		try {
-			if(!(request instanceof DeployProcessRequest)){
-				throw new Exception("Error. Could not handle request");
-			}
-			ITransactionalAlgorithmRepository repository = TransactionalHelper.getMatchingTransactionalRepository(((DeployProcessRequest)request).getSchema()); 
-			
-			if(repository == null){
-				throw new Exception("Error. Could not find matching repository");
-			}
-			//request.execute();
-			 if (request instanceof DeployProcessRequest) {
-				 boolean success = repository.addAlgorithm(request);
-				 if(! success){
-					 return new TransactionalResponse("Error. Could not deploy process"); 
-				 }
-				 return new TransactionalResponse("Process successfully deployed");
-			 }
-			 if (request instanceof UndeployProcessRequest) {
-				 boolean success = repository.removeAlgorithm(request);
-				 if(! success){
-					 return new TransactionalResponse("Error. Could not undeploy process"); 
-				 }
-				 return new TransactionalResponse("Process successfully undeployed");	
-			 }
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new TransactionalResponse("Error = " +e.getMessage());
+	/**
+	 * Handles the request and returns a transactional response (if succeeded)
+	 * or throws an exception (otherwise)
+	 * 
+	 * @param request
+	 *            the request to handle
+	 * @return a response if the process has succeded. <code>null</code> is
+	 *         never returned
+	 * @throws Exception
+	 *             if an error occurs handling the request
+	 */
+	public static TransactionalResponse handle(ITransactionalRequest request)
+			throws ExceptionReport {
+		if (request instanceof DeployProcessRequest) {
+			return handleDeploy((DeployProcessRequest) request);
+		} else if (request instanceof UndeployProcessRequest) {
+			return handleUnDeploy((UndeployProcessRequest) request);
+		} else {
+			throw new ExceptionReport("Error. Could not handle request",
+					ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}
-		return new TransactionalResponse("Error");
-		
-		
 	}
 
+	private static TransactionalResponse handleDeploy(
+			DeployProcessRequest request) throws ExceptionReport {
+		try {
+			ITransactionalAlgorithmRepository repository = TransactionalHelper
+					.getMatchingTransactionalRepository(request.getSchema());
+
+			if (repository == null) {
+				throw new ExceptionReport("Could not find matching repository",
+						ExceptionReport.NO_APPLICABLE_CODE);
+			}
+
+			if (!repository.addAlgorithm(request)) {
+				throw new ExceptionReport("Could not deploy process",
+						ExceptionReport.NO_APPLICABLE_CODE);
+			} else {
+				return new TransactionalResponse(
+						"Process successfully deployed");
+			}
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Could not deploy process",
+					ExceptionReport.NO_APPLICABLE_CODE);
+		}
+	}
+
+	private static TransactionalResponse handleUnDeploy(
+			UndeployProcessRequest request) throws ExceptionReport {
+		try {
+			if (RepositoryManager.getInstance().getAlgorithm(
+					request.getProcessID()) == null) {
+				throw new ExceptionReport("The process does not exist",
+						ExceptionReport.INVALID_PARAMETER_VALUE);
+			}
+			IAlgorithmRepository repository = RepositoryManager.getInstance()
+					.getRepositoryForAlgorithm(request.getProcessID());
+			if (repository instanceof ITransactionalAlgorithmRepository) {
+				ITransactionalAlgorithmRepository transactionalRepository = (ITransactionalAlgorithmRepository) repository;
+				if (!transactionalRepository.removeAlgorithm(request)) {
+					throw new ExceptionReport("Could not undeploy process",
+							ExceptionReport.NO_APPLICABLE_CODE);
+				} else {
+					return new TransactionalResponse(
+							"Process successfully undeployed");
+				}
+			} else {
+				throw new ExceptionReport(
+						"The process is not in a transactional "
+								+ "repository and cannot be undeployed",
+						ExceptionReport.INVALID_PARAMETER_VALUE);
+			}
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Could not undeploy process",
+					ExceptionReport.NO_APPLICABLE_CODE);
+		}
+
+	}
 }

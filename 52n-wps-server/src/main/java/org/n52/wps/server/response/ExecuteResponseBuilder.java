@@ -45,7 +45,9 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
@@ -137,7 +139,7 @@ public class ExecuteResponseBuilder {
 				if(desc.isSetComplexOutput()) {
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
 					String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
-					String responseMimeType = getMimeType();
+					String responseMimeType = getMimeType(rawDataOutput);
 					generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
 				}
 				
@@ -145,7 +147,9 @@ public class ExecuteResponseBuilder {
 					String mimeType = null;
 					String schema = null;
 					String encoding = null;
-					generateLiteralDataOutput(id, doc, desc.getLiteralOutput().getDataType().getReference(), schema, mimeType, encoding, desc.getTitle());
+					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+					String reference = dataType != null ? dataType.getReference() : null;
+					generateLiteralDataOutput(id, doc, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				return;
 			}
@@ -160,7 +164,7 @@ public class ExecuteResponseBuilder {
 					throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
 				}
 				if(desc.isSetComplexOutput()) {
-					String mimeType = getMimeType();
+					String mimeType = getMimeType(definition);
 					String schema = ExecuteResponseBuilder.getSchema(desc, definition);
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, definition);
 					generateComplexDataOutput(responseID, documentDef.getAsReference(), false,  schema, mimeType, encoding, desc.getTitle());
@@ -169,7 +173,9 @@ public class ExecuteResponseBuilder {
 					String mimeType = null;
 					String schema = null;
 					String encoding = null;
-					generateLiteralDataOutput(responseID, doc, desc.getLiteralOutput().getDataType().getReference(), schema, mimeType, encoding, desc.getTitle());
+					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+					String reference = dataType != null ? dataType.getReference() : null;
+					generateLiteralDataOutput(responseID, doc, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				else{
 					throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
@@ -206,6 +212,12 @@ public class ExecuteResponseBuilder {
 			schema = def.getSchema();
 		}
 		if(schema == null) {
+			ComplexDataDescriptionType[] formats = desc.getComplexOutput().getSupported().getFormatArray();
+			for (ComplexDataDescriptionType format : formats) {
+				if (format.getSchema() == null) {
+					return null;
+				}
+			}
 			// TODO Default schema will be returned. What about alternative schemas? 
 			return desc.getComplexOutput().getDefault().getFormat().getSchema();
 		}
@@ -225,8 +237,11 @@ public class ExecuteResponseBuilder {
 		return encoding;
 	}
 	
-	
 	public String getMimeType() {
+		return getMimeType(null);
+	}
+	
+	public String getMimeType(OutputDefinitionType def) {
 		String mimeType = "";
 		OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
 		if (request.getExecute().isSetResponseForm()) {
@@ -242,7 +257,11 @@ public class ExecuteResponseBuilder {
 				if(outputDescs[0].isSetLiteralOutput()){
 					mimeType = "text/xml";
 				}else{
-					mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+					if (def != null) {
+						mimeType = def.getMimeType();
+					} else {
+						mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+					}
 				}
 			}
 		}

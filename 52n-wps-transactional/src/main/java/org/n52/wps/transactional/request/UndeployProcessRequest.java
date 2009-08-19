@@ -28,17 +28,30 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-
 package org.n52.wps.transactional.request;
 
+import javax.xml.transform.TransformerException;
+
+import org.apache.xpath.XPathAPI;
+import org.n52.wps.server.ExceptionReport;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 
-public class UndeployProcessRequest implements ITransactionalRequest{
-	
+public class UndeployProcessRequest implements ITransactionalRequest {
 	private String processID;
-	
-	public UndeployProcessRequest(Document request){
-		//TODO parsing
+
+	public UndeployProcessRequest(Document request) throws ExceptionReport {
+		try {
+			processID = XPathAPI.selectSingleNode(request,
+					"/UnDeployProcessRequest/Process/attribute::id")
+					.getNodeValue();
+		} catch (DOMException e) {
+			throw new ExceptionReport("Error. Malformed undeploy request",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (TransformerException e) {
+			throw new ExceptionReport("Error. Malformed undeploy request",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
 	}
 
 	public String getProcessID() {

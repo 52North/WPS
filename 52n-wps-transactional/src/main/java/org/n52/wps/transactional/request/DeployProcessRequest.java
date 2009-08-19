@@ -28,86 +28,84 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-
 package org.n52.wps.transactional.request;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
-import net.opengis.wps.x100.impl.ProcessDescriptionTypeImpl;
+import javax.xml.transform.TransformerException;
 
-import org.apache.xmlbeans.XmlException;
+import org.apache.log4j.Logger;
+import org.apache.xpath.XPathAPI;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.transactional.deploymentprofiles.DeploymentProfile;
 import org.n52.wps.transactional.service.TransactionalHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-public class DeployProcessRequest implements ITransactionalRequest{
-
-	//protected ProcessDescriptionType processDescription;
+public class DeployProcessRequest implements ITransactionalRequest {
 	protected Node processDescription;
 	protected DeploymentProfile deploymentProfile;
 	protected String schema;
-	
-	
-	public DeployProcessRequest(Document doc) {
-		//TODO this can be achieved in a better way using xml beans
-		//quick and dirty hack made on a plane....
-		NodeList childs = doc.getFirstChild().getChildNodes();
-		if(childs.getLength()==2){
-			//have to do it twice, because we want the process id first
-			for(int i = 0; i <2; i++){
-				Node child = childs.item(i);
-				if(child.getNodeName().contains("ProcessDescription")){
-					//try {
-						//processDescription = ProcessDescriptionType.Factory.parse(child);
-						processDescription = child;
-				//	} catch (XmlException e) {
-						// TODO Auto-generated catch block
-					//	e.printStackTrace();
-					//}
-				}
+
+	public DeployProcessRequest(Document doc) throws ExceptionReport {
+		try {
+			String processID = XPathAPI.selectSingleNode(
+					doc,
+					"/DeployProcessRequest/ProcessDescriptions/"
+							+ "ProcessDescription/Identifier/text()")
+					.getNodeValue().trim();
+			if (RepositoryManager.getInstance().getAlgorithm(processID) != null) {
+				throw new ExceptionReport(
+						"A process with that ID already exists",
+						ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
-			for(int j = 0; j <2; j++){
-				Node child = childs.item(j);
-				if(child.getNodeName().contains("ProcessDescription")){
-					//do nothing, we have it already
-				}else{
-					//String processID = processDescription.getIdentifier().getStringValue();
-					String processID = processDescription.getFirstChild().getFirstChild().getFirstChild().getFirstChild().getNodeValue();
-					//extract request profile schema
-					//TODO choose a proper way to do that, xpath or so, again quick airport hack...
-					NodeList nodeList = child.getChildNodes();
-					for(int k = 0; k<nodeList.getLength(); k++){
-						Node node = nodeList.item(k);
-						
-						if(node!= null && node.getAttributes().getLength()>0){
-							if(node.getNodeName().equals("wps:Schema")){
-								schema = node.getAttributes().getNamedItem("href").getNodeValue();
-								break;
-							}
-						}
-						
-					}
-					if(schema == null){
-						throw new RuntimeException("Error. Could not find supported deployment profile");
-					}
-					String deployManagerClass = TransactionalHelper.getDeploymentProfileForSchema(schema);
-					Constructor<?> constructor;
-					try {
-						constructor = Class.forName(deployManagerClass).getConstructor(Node.class, String.class);
-						this.deploymentProfile = (DeploymentProfile) constructor.newInstance(child, processID);
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new RuntimeException("Error. Could not find supported deployment profile");
-					}
-				}
+			processDescription = XPathAPI.selectSingleNode(doc,
+					"/DeployProcessRequest/ProcessDescriptions");
+			schema = XPathAPI
+					.selectSingleNode(doc,
+							"/DeployProcessRequest/DeploymentProfile/Schema/attribute::href")
+					.getNodeValue();
+			if (schema == null) {
+				throw new ExceptionReport(
+						"Error. Could not find schema in the deployment profile",
+						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-			
+			Logger.getLogger(DeployProcessRequest.class).info(
+					"process ID: " + processID);
+			String deployManagerClass = TransactionalHelper
+					.getDeploymentProfileForSchema(schema);
+			Constructor<?> constructor;
+			constructor = Class.forName(deployManagerClass).getConstructor(
+					Node.class, String.class);
+			deploymentProfile = (DeploymentProfile) constructor.newInstance(
+					XPathAPI.selectSingleNode(doc,
+							"/DeployProcessRequest/DeploymentProfile"),
+					processID);
+		} catch (TransformerException e) {
+			throw new ExceptionReport("Error. Malformed DeployProcess request",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (NoSuchMethodException e) {
+			throw new ExceptionReport("An error has occurred while obtaining "
+					+ "the deployment profile",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (ClassNotFoundException e) {
+			throw new ExceptionReport("An error has occurred while obtaining "
+					+ "the deployment profile",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (InstantiationException e) {
+			throw new ExceptionReport("An error has occurred while obtaining "
+					+ "the deployment profile",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (IllegalAccessException e) {
+			throw new ExceptionReport("An error has occurred while obtaining "
+					+ "the deployment profile",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (InvocationTargetException e) {
+			throw new ExceptionReport("An error has occurred while obtaining "
+					+ "the deployment profile",
+					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 			
 		

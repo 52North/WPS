@@ -1,12 +1,12 @@
 /*****************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
 Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
 
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -24,7 +24,7 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.server.response;
@@ -122,9 +122,19 @@ public class OutputDataItem extends ResponseData {
 			throw new ExceptionReport("Error while generating XML out of the process result", 
 												ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
-		if(complexData != null && schema != null) {
-			//setting the schema attribute for the output.
-			complexData.setSchema(schema);
+		if (complexData != null) {
+			if (schema != null) {
+				// setting the schema attribute for the output.
+				complexData.setSchema(schema);
+			}
+
+			if (encoding != null) {
+				complexData.setEncoding(encoding);
+			}
+			
+			if (mimeType != null) {
+				complexData.setMimeType(mimeType);
+			}
 		}
 	}
 	
@@ -134,7 +144,9 @@ public class OutputDataItem extends ResponseData {
 		//CodeType idType = output.addNewIdentifier();
 		//idType.setStringValue(id);
 		LiteralDataType literalData = output.addNewData().addNewLiteralData();
-		literalData.setDataType(dataTypeReference);
+		if (dataTypeReference != null) {
+			literalData.setDataType(dataTypeReference);
+		}
 		literalData.setStringValue(processValue);
 	}
 	
@@ -148,13 +160,16 @@ public class OutputDataItem extends ResponseData {
 		IDatabase db = DatabaseFactory.getDatabase();
 		String storeID = reqID + "" + id;
 		if(generator instanceof IStreamableGenerator) {
-			
-			((IStreamableGenerator)generator).writeToStream(obj, baos);
+			try {
+				((IStreamableGenerator)generator).writeToStream(obj, baos);
+			} catch (RuntimeException e) {
+				throw new ExceptionReport("Error generating data", ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
 			
 		} else {
 			if(generator instanceof AbstractXMLGenerator) {
-				Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, schema);
 				try{
+					Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, schema);
 					XmlObject xmlObj = XmlObject.Factory.parse(xmlNode);
 					xmlObj.save(baos);
 				}
@@ -162,6 +177,9 @@ public class OutputDataItem extends ResponseData {
 					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
 				}
 				catch(IOException e) {
+					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
+				}
+				catch(RuntimeException e) {
 					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
 				}
 			} if(generator instanceof AbstractBinaryGenerator) {

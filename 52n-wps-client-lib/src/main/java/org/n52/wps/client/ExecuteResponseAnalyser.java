@@ -1,10 +1,10 @@
 /*****************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,7 +22,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.client;
@@ -39,7 +39,6 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.binary.AbstractBinaryParser;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 
 /*
@@ -153,16 +152,19 @@ public class ExecuteResponseAnalyser {
 				throw new IllegalArgumentException("Could not find mimeType for output: " + exec.getExecute().getIdentifier().getStringValue());
 			}
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
-		if(parser instanceof AbstractXMLParser) {
-			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
-			return xmlParser.parseXML((InputStream)response);
+		String encoding = exec.getExecute().getResponseForm().getRawDataOutput().getEncoding();
+		if(encoding == null) {
+			encoding = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getEncoding();
+			if(encoding == null) {
+				encoding = IOHandler.DEFAULT_ENCODING;
+				//throw new IllegalArgumentException("Could not find encoding for output: " + exec.getExecute().getIdentifier().getStringValue());
+			}
 		}
-		if(parser instanceof AbstractBinaryParser) {
-			AbstractBinaryParser binaryParser = (AbstractBinaryParser) parser;
-			return binaryParser.parse((InputStream)response);
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
+		if(parser != null) {
+			return parser.parse((InputStream)response);
 		}
-		// parser is not of type AbstractXMLParser
+
 		return null;
 	}
 }

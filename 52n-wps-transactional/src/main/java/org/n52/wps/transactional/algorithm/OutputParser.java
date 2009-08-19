@@ -41,7 +41,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.io.data.binding.literal.LiteralIntegerBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.server.ExceptionReport;
@@ -135,7 +135,7 @@ public class OutputParser {
 				return LiteralDoubleBinding.class;
 			}
 			if(datatype.contains("nt")){
-				return LiteralIntegerBinding.class;
+				return LiteralIntBinding.class;
 			}
 		}
 		if(output.isSetComplexOutput()){

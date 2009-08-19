@@ -67,7 +67,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.io.data.binding.literal.LiteralIntegerBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
@@ -300,7 +300,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 						return LiteralDoubleBinding.class;
 					}
 					if(datatype.contains("nt")){
-						return LiteralIntegerBinding.class;
+						return LiteralIntBinding.class;
 					}
 				}
 				if(input.isSetComplexData()){
@@ -333,7 +333,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 					return LiteralDoubleBinding.class;
 				}
 				if(datatype.contains("nt")){
-					return LiteralIntegerBinding.class;
+					return LiteralIntBinding.class;
 				}
 			}
 			if(output.isSetComplexOutput()){

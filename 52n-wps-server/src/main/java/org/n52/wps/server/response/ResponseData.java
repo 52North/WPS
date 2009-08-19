@@ -1,10 +1,10 @@
 /*****************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,7 +22,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.server.response;
@@ -84,12 +84,16 @@ public abstract class ResponseData {
 	protected void storeRaw(OutputStream stream, IGenerator generator) 
 			throws ExceptionReport {
 		if(generator instanceof IStreamableGenerator) {
-			((IStreamableGenerator)generator).writeToStream(obj, stream);
+			try {
+				((IStreamableGenerator)generator).writeToStream(obj, stream);
+			} catch (RuntimeException e) {
+				throw new ExceptionReport("Error generating data", ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
 		}
 		else {
 			if(generator instanceof AbstractXMLGenerator) {
-				Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, null);
 				try {
+					Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, null);
 					XmlObject xmlObj = XmlObject.Factory.parse(xmlNode);
 					xmlObj.save(stream);
 					
@@ -98,6 +102,9 @@ public abstract class ResponseData {
 					throw new ExceptionReport("Something happend while converting XML node to the rawDataStream", ExceptionReport.NO_APPLICABLE_CODE);
 				}
 				catch(IOException e) {
+					throw new ExceptionReport("Something happend while converting XML node to rawDataStream", ExceptionReport.NO_APPLICABLE_CODE);
+				}
+				catch(RuntimeException e) {
 					throw new ExceptionReport("Something happend while converting XML node to rawDataStream", ExceptionReport.NO_APPLICABLE_CODE);
 				}
 			}

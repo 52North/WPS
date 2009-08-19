@@ -54,7 +54,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.io.data.binding.literal.LiteralIntegerBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.coverage.grid.GridCoverage;
@@ -443,7 +443,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 								return LiteralDoubleBinding.class;
 							}
 							if(datatype.contains("nt")){
-								return LiteralIntegerBinding.class;
+								return LiteralIntBinding.class;
 							}
 						}
 						if(input.isSetComplexData()){
@@ -458,7 +458,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 				}
 				
 			}else if (type.equals("Selection")){			
-					return LiteralIntegerBinding.class;				
+					return LiteralIntBinding.class;				
 			}else if (type.equals("Boolean")){
 				return LiteralBooleanBinding.class;				
 			}			
@@ -487,7 +487,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm {
 					return LiteralDoubleBinding.class;
 				}
 				if(datatype.contains("nt")){
-					return LiteralIntegerBinding.class;
+					return LiteralIntBinding.class;
 				}
 			}
 			if(output.isSetComplexOutput()){

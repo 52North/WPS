@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -131,9 +132,6 @@ public class InputHandler {
 		String schema = input.getData().getComplexData().getSchema();
 		String encoding = input.getData().getComplexData().getEncoding();
 		String mimeType = input.getData().getComplexData().getMimeType();
-		if(schema == null) {
-			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		}
 		if(mimeType == null) {
 			mimeType = inputDesc.getComplexData().getDefault().getFormat().getMimeType();
 		}
@@ -145,8 +143,12 @@ public class InputHandler {
 //		if(this.algorithmIdentifier==null)
 //			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding);
 //		else
-		Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
-		parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+		try {
+			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
 		if(parser == null) {
 			parser = ParserFactory.getInstance().getSimpleParser();
 		}
@@ -192,7 +194,8 @@ public class InputHandler {
 					break;
 				}
 			}
-			xmlDataType = inputDesc.getLiteralData().getDataType().getReference();
+			DomainMetadataType dataType = inputDesc.getLiteralData().getDataType();
+			xmlDataType = dataType != null ? dataType.getReference() : null;
 		}
 		IData parameterObj = null;
 		try {
@@ -263,15 +266,19 @@ public class InputHandler {
 //		if(this.algorithmIdentifier==null)
 //			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding);
 //		else
-		Class algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
-		if(algorithmInputClass == null) {
-			throw new RuntimeException("Could not determine internal input class for input" + inputID);
-		}
-		parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
-		
-		if(parser == null) {
-			LOGGER.warn("No applicable parser found. Trying simpleGMLParser");
-			parser = ParserFactory.getInstance().getSimpleParser();
+		try {
+			Class algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			if(algorithmInputClass == null) {
+				throw new RuntimeException("Could not determine internal input class for input" + inputID);
+			}
+			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
+			
+			if(parser == null) {
+				LOGGER.warn("No applicable parser found. Trying simpleGMLParser");
+				parser = ParserFactory.getInstance().getSimpleParser();
+			}
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		try {
 			
