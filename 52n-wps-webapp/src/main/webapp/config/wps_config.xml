@@ -16,22 +16,7 @@
 			<Parser name="GTBinZippedSHPParser"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser" />
 
-			<!-- GDMS parsers -->
-			<Parser name="GDMSBinParser" className="org.n52.wps.io.datahandler.parsers.GDMSBinParser" />
-			<Parser name="GDMSBinZippedSHPParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinZippedSHPParser" />
-			<Parser name="GDMSBinSoleneParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinSoleneParser" />
-			<Parser name="GDMSBinDBFParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinDBFParser" />
-			<Parser name="GDMSBinCSVParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinCSVParser" />
-			<Parser name="GDMSBinGMLParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinGMLParser" />
-			<Parser name="GDMSBinZippedGMLParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSBinZippedGMLParser" />
-			<Parser name="GDMSBinZippedGMLParser"
-				className="org.n52.wps.io.datahandler.parsers.GDMSEmbeddedGMLParser" />
+			
 		</ParserList>
 		<GeneratorList>
 			<Generator name="SimpleGMLGenerator"
@@ -50,13 +35,7 @@
 			<Generator name="GTBinZippedSHPGenerator"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator" />
 				
-			<!-- GDMS generators -->
-			<Generator name="GDMSBinGenerator"
-				className="org.n52.wps.io.datahandler.generators.GDMSBinGenerator" />
-			<Generator name="GDMSBinZippedGMLGenerator"
-				className="org.n52.wps.io.datahandler.generators.GDMSBinZippedGMLGenerator" />
-			<Generator name="GDMSBinZippedSHPGenerator"
-				className="org.n52.wps.io.datahandler.generators.GDMSBinZippedSHPGenerator" />
+			
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
@@ -99,15 +78,7 @@
 		<Repository name="SextanteRepository"
 			className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
-		<Repository name="SQLScriptsRepository"
-			className="org.n52.wps.sqlScripts.SQLScriptsRepository">
-			<Property name="WorkspaceLocationRoot"></Property>
-			<Property name="GenericAlgorithm">org.n52.wps.sqlScripts.SQLScriptsAlgorithm</Property>
-			<Property name="DeployManager">org.n52.wps.sqlScripts.SQLScriptsDeployManager</Property>
-			<Property name="supportedFormat">http://localhost:8080/52n-wps-sqlScripts/sqlScripts-script.xsd</Property>
-			<Property name="DeploymentProfileClass">org.n52.wps.sqlScripts.SQLScriptsDeploymentProfile</Property>
-		</Repository>
-
+		
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
