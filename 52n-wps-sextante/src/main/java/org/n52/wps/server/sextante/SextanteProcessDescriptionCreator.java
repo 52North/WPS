@@ -44,14 +44,10 @@ import es.unex.sextante.parameters.ParameterString;
 import es.unex.sextante.parameters.ParameterTableField;
 import es.unex.sextante.parameters.ParameterVectorLayer;
 
-public class SextanteProcessDescriptionCreator {
-
-	
-
+public class SextanteProcessDescriptionCreator implements SextanteConstants{
 
 	public ProcessDescriptionType createDescribeProcessType(GeoAlgorithm algorithm) throws NullParameterAdditionalInfoException, UnsupportedGeoAlgorithmException{
 
-	
 			ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
 			pdt.setStatusSupported(true);
 			pdt.setStoreSupported(true);
@@ -60,7 +56,7 @@ public class SextanteProcessDescriptionCreator {
 			c.toLastAttribute();
 			c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
 			*/
-			
+
 			pdt.addNewAbstract().setStringValue(algorithm.getName());
 			pdt.addNewTitle().setStringValue(algorithm.getName());
 			pdt.addNewIdentifier().setStringValue(algorithm.getCommandLineName());
@@ -73,6 +69,12 @@ public class SextanteProcessDescriptionCreator {
 				addParameter(inputs, param);
 			}
 
+			//grid extent for raster layers (if needed)
+			if (algorithm.generatesUserDefinedRasterOuput()
+						&& algorithm.requiresRasterLayers()){
+				addGridExtent(inputs);
+			}
+
 			//outputs
 			ProcessOutputs outputs = pdt.addNewProcessOutputs();
 			OutputObjectsSet ooset = algorithm.getOutputObjects();
@@ -82,7 +84,49 @@ public class SextanteProcessDescriptionCreator {
 			}
 
 			return pdt;
-		
+
+
+	}
+
+	private void addGridExtent(DataInputs inputs){
+
+		addDoubleValue(inputs, GRID_EXTENT_X_MIN, "xMin");
+		addDoubleValue(inputs, GRID_EXTENT_X_MAX, "xMax");
+		addDoubleValue(inputs, GRID_EXTENT_Y_MIN, "yMin");
+		addDoubleValue(inputs, GRID_EXTENT_Y_MAX, "yMax");
+
+		InputDescriptionType input = inputs.addNewInput();
+		input.addNewAbstract().setStringValue(description);
+		input.addNewTitle().setStringValue(description);
+		input.addNewIdentifier().setStringValue(name);
+
+		LiteralInputType literal = input.addNewLiteralData();
+		DomainMetadataType dataType = literal.addNewDataType();
+		dataType.setReference("xs:double");
+		literal.setDataType(dataType);
+		input.setMinOccurs(BigInteger.valueOf(1));
+		input.setMaxOccurs(BigInteger.valueOf(1));
+		RangeType range = literal.addNewAllowedValues().addNewRange();
+		//range.addNewMaximumValue().setStringValue(Double.toString(ai.getMaxValue()));
+		range.addNewMinimumValue().setStringValue("0");
+		literal.setDefaultValue("0");
+
+	}
+
+	private void addDoubleValue(DataInputs inputs, String name, String description){
+
+		InputDescriptionType input = inputs.addNewInput();
+		input.addNewAbstract().setStringValue(description);
+		input.addNewTitle().setStringValue(description);
+		input.addNewIdentifier().setStringValue(name);
+
+		LiteralInputType literal = input.addNewLiteralData();
+		DomainMetadataType dataType = literal.addNewDataType();
+		dataType.setReference("xs:double");
+		literal.setDataType(dataType);
+		input.setMinOccurs(BigInteger.valueOf(1));
+		input.setMaxOccurs(BigInteger.valueOf(1));
+		literal.setDefaultValue("0");
 
 	}
 
@@ -104,7 +148,6 @@ public class SextanteProcessDescriptionCreator {
 			ComplexDataDescriptionType supportedFormat = supported.addNewFormat();
 			supportedFormat.setMimeType("text/XML");
 			supportedFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
-			
 			supportedFormat = supported.addNewFormat();
 			// TODO use constants
 			supportedFormat.setMimeType("application/x-zipped-shp");
@@ -175,7 +218,6 @@ public class SextanteProcessDescriptionCreator {
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:double");
 			literal.setDataType(dataType);
-			
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
@@ -220,7 +262,6 @@ public class SextanteProcessDescriptionCreator {
 			default:
 				throw new UnsupportedGeoAlgorithmException();
 			}
-
 		}
 		else if (param instanceof ParameterSelection){
 			AdditionalInfoSelection ai = (AdditionalInfoSelection) param.getParameterAdditionalInfo();
@@ -254,6 +295,8 @@ public class SextanteProcessDescriptionCreator {
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
 			literal.setDefaultValue("0");
+			DomainMetadataType dataType = literal.addNewDataType();
+			dataType.setReference("xs:int");
 		}
 		else if (param instanceof ParameterPoint){
 			//points are entered as x and y coordinates separated by a comma (any idea
@@ -275,11 +318,6 @@ public class SextanteProcessDescriptionCreator {
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			literal.setDefaultValue("false");
-			
-			
-			
-		
-			
 		}
 		else if (param instanceof ParameterFixedTable){
 			//TODO:
@@ -309,10 +347,10 @@ public class SextanteProcessDescriptionCreator {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-		
+
+
 	}
-	
+
 }
 
 
