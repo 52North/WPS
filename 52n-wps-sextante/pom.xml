@@ -90,73 +90,73 @@
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante</artifactId>
-    <version>0.16</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridAnalysis</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridCalculus</artifactId>
-   <version>0.15</version>
+   <version>0.5</version>
 
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridCategorical</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridStatistics</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gridTools</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gui</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_hydrology</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_imageAnalysis</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_lighting</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_locate</artifactId>
-   <version>0.15</version>
+   <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_morphometry</artifactId>
-   <version>0.15</version>
+   <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_pointAnalysis</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_profiles</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
@@ -166,36 +166,48 @@
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_statisticalMethods</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_tables</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_vectorize</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_vectorTools</artifactId>
-    <version>0.152</version>
+    <version>0.5</version>
 
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_vegetationIndices</artifactId>
-    <version>0.15</version>
+    <version>0.5</version>
 </dependency>
 
+
+<dependency>
+    <groupId>es.unex.sextante</groupId>
+    <artifactId>libDocEngines</artifactId>
+    <version>0.5</version>
+</dependency>
+
+<dependency>
+    <groupId>es.unex.sextante</groupId>
+    <artifactId>libMath</artifactId>
+    <version>0.5</version>
+</dependency>
 
 
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gt24_bindings</artifactId>
-    <version>0.17</version>
+    <version>0.3</version>
 </dependency>
 
 

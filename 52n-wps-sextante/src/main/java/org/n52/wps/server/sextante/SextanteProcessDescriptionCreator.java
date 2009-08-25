@@ -70,7 +70,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			}
 
 			//grid extent for raster layers (if needed)
-			if (algorithm.generatesUserDefinedRasterOuput()
+			if (algorithm.generatesUserDefinedRasterOutput()
 						&& algorithm.requiresRasterLayers()){
 				addGridExtent(inputs);
 			}
@@ -94,22 +94,9 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		addDoubleValue(inputs, GRID_EXTENT_X_MAX, "xMax");
 		addDoubleValue(inputs, GRID_EXTENT_Y_MIN, "yMin");
 		addDoubleValue(inputs, GRID_EXTENT_Y_MAX, "yMax");
-
-		InputDescriptionType input = inputs.addNewInput();
-		input.addNewAbstract().setStringValue(description);
-		input.addNewTitle().setStringValue(description);
-		input.addNewIdentifier().setStringValue(name);
-
-		LiteralInputType literal = input.addNewLiteralData();
-		DomainMetadataType dataType = literal.addNewDataType();
-		dataType.setReference("xs:double");
-		literal.setDataType(dataType);
-		input.setMinOccurs(BigInteger.valueOf(1));
-		input.setMaxOccurs(BigInteger.valueOf(1));
-		RangeType range = literal.addNewAllowedValues().addNewRange();
-		//range.addNewMaximumValue().setStringValue(Double.toString(ai.getMaxValue()));
-		range.addNewMinimumValue().setStringValue("0");
-		literal.setDefaultValue("0");
+		addDoubleValue(inputs, GRID_EXTENT_CELLSIZE, "cellSize");
+		
+		
 
 	}
 
@@ -137,7 +124,9 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		output.addNewIdentifier().setStringValue(out.getName());
 		output.addNewTitle().setStringValue(out.getDescription());
 		if (out instanceof OutputRasterLayer){
-			output.addNewComplexOutput().addNewDefault().addNewFormat().setMimeType("image/tiff");
+			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
+			complexOutput.addNewDefault().addNewFormat().setMimeType("image/tiff");
+			complexOutput.addNewSupported().addNewFormat().setMimeType("image/tiff");
 		}
 		else if (out instanceof OutputVectorLayer){
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();

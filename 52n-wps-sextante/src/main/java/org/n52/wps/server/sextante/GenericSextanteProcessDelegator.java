@@ -32,6 +32,7 @@ is extensible in terms of processes and data handlers.
 
 package org.n52.wps.server.sextante;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,14 +157,14 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			}
 
 			/* 4. Adjust output grid extent if needed */
-			if (sextanteProcess.generatesUserDefinedRasterOuput()
+			if (sextanteProcess.generatesUserDefinedRasterOutput()
 						&& sextanteProcess.requiresRasterLayers()){
 				GridExtent ge = getGridExtent(
-					inputData.get(GRID_EXTENT_X_MIN).get(0).getPayload(),
-					inputData.get(GRID_EXTENT_X_MAX).get(0).getPayload()
-					inputData.get(GRID_EXTENT_Y_MIN).get(0).getPayload()
-					inputData.get(GRID_EXTENT_Y_MAX).get(0).getPayload()
-					inputData.get(GRID_EXTENT_CELLSIZE).get(0).getPayload());
+					(Double)inputData.get(GRID_EXTENT_X_MIN).get(0).getPayload(),
+					(Double)inputData.get(GRID_EXTENT_X_MAX).get(0).getPayload(),
+					(Double)inputData.get(GRID_EXTENT_Y_MIN).get(0).getPayload(),
+					(Double)inputData.get(GRID_EXTENT_Y_MAX).get(0).getPayload(),
+					(Double)inputData.get(GRID_EXTENT_CELLSIZE).get(0).getPayload());
 				sextanteProcess.setGridExtent(ge);
 			}
 
@@ -317,12 +318,12 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 		}
 
-		}else if (type.equals("Point") && wpsInputParameters.size() == 1){
+		else if (type.equals("Point") && wpsInputParameters.size() == 1){
 			IData param = wpsInputParameters.get(0);
 			if(param == null){
 				return false;
 			}
-			String sValue = param.getPayload().toString().split(",");
+			String[] sValue = param.getPayload().toString().split(",");
 			return new Point2D.Double(Double.parseDouble(sValue[0]),
 									  Double.parseDouble(sValue[1]));
 
