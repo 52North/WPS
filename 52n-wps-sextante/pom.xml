@@ -90,7 +90,7 @@
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante</artifactId>
-    <version>0.5</version>
+    <version>0.51</version>
 </dependency>
 <dependency>
     <groupId>es.unex.sextante</groupId>

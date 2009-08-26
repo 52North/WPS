@@ -115,7 +115,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		DomainMetadataType dataType = literal.addNewDataType();
 		dataType.setReference("xs:double");
 		literal.setDataType(dataType);
-		input.setMinOccurs(BigInteger.valueOf(1));
+		input.setMinOccurs(BigInteger.valueOf(iMinOccurs));
 		input.setMaxOccurs(BigInteger.valueOf(1));
 		literal.setDefaultValue("0");
 
