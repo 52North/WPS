@@ -77,10 +77,10 @@ public class ExecuteRequestBuilder {
 	public void addComplexData(String parameterID, IData value) {
 		GeneratorFactory fac = StaticDataHandlerRepository.getGeneratorFactory();
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
-		if(inputDesc == null) {
+		if (inputDesc == null) {
 			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
 		}
-		if(inputDesc.getComplexData() == null) {
+		if (inputDesc.getComplexData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
 		}
 		String schemaURL = suggestedSchema;
@@ -119,17 +119,17 @@ public class ExecuteRequestBuilder {
 				}
 			}
 		}
-		if(generator == null) {
-		//generator is still null
+		if (generator == null) {
+			// generator is still null
 			throw new IllegalArgumentException("problem finding appropriate generator for parameter: " + parameterID);
 		}
-		
-		if(generator instanceof AbstractXMLGenerator) {
+
+		if (generator instanceof AbstractXMLGenerator) {
 			AbstractXMLGenerator xmlGenerator = (AbstractXMLGenerator) generator;
 			Node node = xmlGenerator.generateXML(value, null);
 			InputType input = execute.getExecute().getDataInputs().addNewInput();
 			input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
-			
+
 			try {
 				ComplexDataType data = input.addNewData().addNewComplexData();
 				data.set(XmlObject.Factory.parse(node));
@@ -144,13 +144,13 @@ public class ExecuteRequestBuilder {
 			}
 		}
 	}
-	
+
 	public void addLiteralData(String parameterID, String value) {
 		InputDescriptionType inputDesc = this.getParameterDescription(parameterID);
-		if(inputDesc == null) {
+		if (inputDesc == null) {
 			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
 		}
-		if(inputDesc.getLiteralData() == null) {
+		if (inputDesc.getLiteralData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type literalData: " + parameterID);			
 		}
 		InputType input = execute.getExecute().getDataInputs().addNewInput();
@@ -161,6 +161,7 @@ public class ExecuteRequestBuilder {
 			input.getData().getLiteralData().setDataType(dataType.getReference());
 		}
 	}
+
 	/**
 	 * this sets the complexdataReference, if the process description also refers to this schema:
 	 * http://schemas.opengis.net/gml/2.1.2/feature.xsd
@@ -168,42 +169,55 @@ public class ExecuteRequestBuilder {
 	 * @param value
 	 */
 	public void addComplexDataReference(String parameterID, String value) {
-		String supportedSchema = "http://schemas.opengis.net/gml/2.1.2/feature.xsd";
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
-		if(inputDesc == null) {
+		if (inputDesc == null) {
 			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
 		}
-		if(inputDesc.getComplexData() == null) {
+		if (inputDesc.getComplexData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type complexData: " + parameterID);
 		}
-		boolean isSupportedSchema = false;
-		if(inputDesc.getComplexData().getDefault().getFormat().getSchema().equals(supportedSchema)){
-			isSupportedSchema = true;
-		}
-		if(inputDesc.getComplexData().getSupported() != null && !isSupportedSchema) {
-			for(ComplexDataDescriptionType dataDesc: inputDesc.getComplexData().getSupported().getFormatArray()) {
-				if(!isSupportedSchema && dataDesc.getSchema().equals(supportedSchema)) {
-					isSupportedSchema = true;
-				}
+		boolean isSupported = false;
+		for (ComplexDataDescriptionType dataDesc : inputDesc.getComplexData()
+				.getSupported().getFormatArray()) {
+			String enc = dataDesc.getEncoding();
+			String sch = dataDesc.getSchema();
+			String mime = dataDesc.getMimeType();
+			if ((enc == null && suggestedEncoding == null)
+					|| (enc != null && enc.equals(suggestedEncoding))
+					&& ((sch == null && suggestedSchema == null) || (sch != null && sch
+							.equals(suggestedSchema)))
+					&& ((mime == null && suggestedMimeType == null) || (mime != null && mime
+							.equals(suggestedMimeType)))) {
+				isSupported = true;
 			}
 		}
-		if(!isSupportedSchema) {
-			throw new IllegalArgumentException("complexparameter does not support the default dataEncoding GML2");
+		if (!isSupported) {
+			throw new IllegalArgumentException(
+					"complexparameter does not support the suggested encoding, schema and mimetype");
 		}
 		InputType input = execute.getExecute().getDataInputs().addNewInput();
 		input.addNewIdentifier().setStringValue(parameterID);
 		input.addNewReference().setHref(value);
-		input.getReference().setSchema(supportedSchema);
+		if (suggestedSchema != null) {
+			input.getReference().setSchema(suggestedSchema);
+		}
+
+		if (suggestedEncoding != null) {
+			input.getReference().setEncoding(suggestedEncoding);
+		}
+		if (suggestedMimeType != null) {
+			input.getReference().setMimeType(suggestedMimeType);
+		}
 	}
-	
-	/** 
+
+	/**
 	 * checks, if the execute, which has been build is valid according to the process description.
 	 * @return
 	 */
 	public boolean isExecuteValid() {
 		return true;
 	}
-	
+
 	/**
 	 * this sets store for the specific output.
 	 * @param parentInput
@@ -211,10 +225,10 @@ public class ExecuteRequestBuilder {
 	 */
 	public boolean setStoreSupport(String outputName) {
 		DocumentOutputDefinitionType outputDef = null;
-		if(!execute.getExecute().isSetResponseForm()) {
+		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
 		}
-		if(!execute.getExecute().getResponseForm().isSetResponseDocument()) {
+		if (!execute.getExecute().getResponseForm().isSetResponseDocument()) {
 			execute.getExecute().getResponseForm().addNewResponseDocument();
 		}
 		for(DocumentOutputDefinitionType outputDefTemp: execute.getExecute().getResponseForm().getResponseDocument().getOutputArray()) {
@@ -223,31 +237,34 @@ public class ExecuteRequestBuilder {
 				break;
 			}
 		}
-		if(outputDef == null) {
-			outputDef = execute.getExecute().addNewResponseForm().addNewResponseDocument().addNewOutput();
+		if (outputDef == null) {
+			outputDef = execute.getExecute().getResponseForm()
+					.getResponseDocument().addNewOutput();
 		}
 		for (OutputDescriptionType outputDesc : processDesc.getProcessOutputs().getOutputArray()) {
-			if(outputDesc.getIdentifier().getStringValue().equals(outputName)) {
+			if (outputDesc.getIdentifier().getStringValue().equals(outputName)) {
 				outputDef.setIdentifier(outputDesc.getIdentifier());
 				ComplexDataDescriptionType format = outputDesc.getComplexOutput().getDefault().getFormat();
-				if(format.getMimeType() != null) {
+				if (format.getMimeType() != null) {
 					outputDef.setMimeType(format.getMimeType());
 				}
-				if(format.getEncoding() != null) {
+				if (format.getEncoding() != null) {
 					outputDef.setEncoding(format.getEncoding());
 				}
-				outputDef.setSchema(format.getSchema());
+				if (format.getSchema() != null) {
+					outputDef.setSchema(format.getSchema());
+				}
 				outputDef.setAsReference(true);
 			}
 		}
-		return true;	
+		return true;
 	}
-	
+
 	public boolean setSchemaForOutput(String schema, String outputName) {
-		if(!execute.getExecute().isSetResponseForm()) {
+		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
 		}
-		if(!execute.getExecute().getResponseForm().isSetResponseDocument()) {
+		if (!execute.getExecute().getResponseForm().isSetResponseDocument()) {
 			execute.getExecute().getResponseForm().addNewResponseDocument();
 		}
 		OutputDescriptionType outputDesc = getOutputDescription(outputName);
@@ -346,7 +363,7 @@ public class ExecuteRequestBuilder {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -374,30 +391,31 @@ public class ExecuteRequestBuilder {
 	}
 
 	public boolean setRawData() {
-		if(processDesc.getProcessOutputs().getOutputArray().length != 1) {
+		if (processDesc.getProcessOutputs().getOutputArray().length != 1) {
 			return false;
 		}
 		OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
 		ComplexDataDescriptionType complexDesc = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat();
 		output.setIdentifier(processDesc.getProcessOutputs().getOutputArray(0).getIdentifier());
 		String schemaURL = complexDesc.getSchema();
-		if(suggestedSchema != null) {
+		if (suggestedSchema != null) {
 			schemaURL = suggestedSchema;
 		}
-			
+
 		output.setSchema(schemaURL);
-		if(complexDesc.getMimeType() != null) {
+		if (complexDesc.getMimeType() != null) {
 			output.setMimeType(complexDesc.getMimeType());
 		}
-		if(complexDesc.getEncoding() != null) {
+		if (complexDesc.getEncoding() != null) {
 			output.setEncoding(complexDesc.getEncoding());
 		}
 		return true;
 	}
-	
+
 	public ExecuteDocument getExecute() {
 		return execute;
 	}
+
 	/**
 	 * sets a preferred schema for input and output! This is useful for chained processes, in which sometimes the featuretype is changing and not easy to determine, thus the client can ask for a specific schema.
 	 * @param schema
@@ -421,7 +439,7 @@ public class ExecuteRequestBuilder {
 	 */
 	private InputDescriptionType getParameterDescription(String id) {
 		InputDescriptionType[] inputDescs = processDesc.getDataInputs().getInputArray();
-		for(InputDescriptionType inputDesc : inputDescs) {
+		for (InputDescriptionType inputDesc : inputDescs) {
 			if(inputDesc.getIdentifier().getStringValue().equals(id))
 			{
 				return inputDesc;

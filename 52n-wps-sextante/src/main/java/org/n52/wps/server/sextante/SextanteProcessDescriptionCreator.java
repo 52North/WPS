@@ -2,6 +2,8 @@ package org.n52.wps.server.sextante;
 
 import java.math.BigInteger;
 
+import org.n52.wps.io.IOHandler;
+
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
@@ -135,16 +137,15 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		else if (out instanceof OutputVectorLayer){
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
 			ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
-			deafult.setMimeType("text/XML");
+			deafult.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			deafult.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			ComplexDataCombinationsType supported = complexOutput.addNewSupported();
 			ComplexDataDescriptionType supportedFormat = supported.addNewFormat();
-			supportedFormat.setMimeType("text/XML");
+			supportedFormat.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			supportedFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			supportedFormat = supported.addNewFormat();
-			// TODO use constants
-			supportedFormat.setMimeType("application/x-zipped-shp");
-			supportedFormat.setEncoding("base64");
+			supportedFormat.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+			supportedFormat.setEncoding(IOHandler.ENCODING_BASE64);
 		}
 		else if (out instanceof OutputTable){
 			//TODO:
@@ -170,8 +171,12 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		if (param instanceof ParameterRasterLayer){
 			AdditionalInfoRasterLayer ai = (AdditionalInfoRasterLayer) param.getParameterAdditionalInfo();
 			SupportedComplexDataInputType complex = input.addNewComplexData();
-			ComplexDataDescriptionType format = complex.addNewSupported().addNewFormat();
+			ComplexDataCombinationsType supported = complex.addNewSupported();
+			ComplexDataDescriptionType format = supported.addNewFormat();
 			format.setMimeType("image/tiff");
+			format = supported.addNewFormat();
+			format.setMimeType("image/tiff");
+			format.setEncoding(IOHandler.ENCODING_BASE64);
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
 			defaultFormat.setMimeType("image/tiff");
 			if (ai.getIsMandatory()){
@@ -188,14 +193,13 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			SupportedComplexDataInputType complex = input.addNewComplexData();
 			ComplexDataCombinationsType supported = complex.addNewSupported();
 			ComplexDataDescriptionType format = supported.addNewFormat();
-			format.setMimeType("text/XML");
+			format.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			format = supported.addNewFormat();
-			// TODO use constants
-			format.setEncoding("base64");
-			format.setMimeType("application/x-zipped-shp");
+			format.setEncoding(IOHandler.ENCODING_BASE64);
+			format.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
-			defaultFormat.setMimeType("text/XML");
+			defaultFormat.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			defaultFormat.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			if (ai.getIsMandatory()){
 				input.setMinOccurs(BigInteger.valueOf(1));
@@ -245,14 +249,13 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POLYGON:
 				//TODO:add shape type
 				ComplexDataDescriptionType format = complex.addNewDefault().addNewFormat();
-				format.setMimeType("text/XML");
+				format.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 				format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 				ComplexDataDescriptionType supportedFormat1 = complex.addNewSupported().addNewFormat();
-				// TODO use constants
-				supportedFormat1.setEncoding("base64");
-				supportedFormat1.setMimeType("application/x-zipped-shp");
+				supportedFormat1.setEncoding(IOHandler.ENCODING_BASE64);
+				supportedFormat1.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 				ComplexDataDescriptionType supportedFormat2 = complex.addNewSupported().addNewFormat();
-				supportedFormat2.setMimeType("text/XML");
+				supportedFormat2.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 				supportedFormat2.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 				if (ai.getIsMandatory()){
 					input.setMinOccurs(BigInteger.valueOf(1));

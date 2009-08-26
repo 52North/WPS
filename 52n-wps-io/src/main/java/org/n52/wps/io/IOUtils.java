@@ -2,16 +2,53 @@ package org.n52.wps.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.axis.encoding.Base64;
+
 public class IOUtils {
+	/**
+	 * Reads the given input stream as a string and decodes that base64 string
+	 * into a file with the specified extension
+	 * 
+	 * @param input
+	 *            the stream with the base64 string
+	 * @param extension
+	 *            the extension of the result file (without the '.' at the
+	 *            beginning)
+	 * @return the decoded base64 file written to disk
+	 * @throws IOException
+	 *             if an error occurs while writing the contents to disk
+	 */
+	public static File writeBase64ToFile(InputStream input, String extension)
+			throws IOException {
+		char[] buffer = new char[4096];
+		String encoded = "";
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		while (reader.read(buffer) != -1) {
+			encoded += new String(buffer);
+		}
+		reader.close();
+
+		File file = File.createTempFile("file", "." + extension, new File(
+				System.getProperty("java.io.tmpdir")));
+		FileOutputStream output = new FileOutputStream(file);
+		Base64.decode(encoded, output);
+		output.close();
+
+		return file;
+	}
+
 	/**
 	 * Zip the files. Returns a zipped file and delete the specified files
 	 * 

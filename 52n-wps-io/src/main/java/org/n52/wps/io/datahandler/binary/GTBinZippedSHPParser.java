@@ -11,11 +11,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.axis.encoding.Base64;
-import org.apache.commons.io.IOUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
@@ -73,7 +73,7 @@ public class GTBinZippedSHPParser extends AbstractXMLParser {
 			DataStore store = new ShapefileDataStore(shp.toURI().toURL());
 			FeatureCollection features = store.getFeatureSource(
 					store.getTypeNames()[0]).getFeatures();
-			// TODO should we delete the shp file here?
+			shp.delete();
 			return new GTVectorDataBinding(features);
 		} catch (ParserConfigurationException e) {
 			throw new RuntimeException(
@@ -104,14 +104,8 @@ public class GTBinZippedSHPParser extends AbstractXMLParser {
 	@Override
 	public IData parse(InputStream input) throws RuntimeException {
 		try {
-			File zipped = File.createTempFile("zip", ".zip", new File(System
-					.getProperty("java.io.tmpdir")));
-			FileOutputStream output = new FileOutputStream(zipped);
-			IOUtils.copy(input, output);
-			input.close();
-			output.close();
-
-			File shp = org.n52.wps.io.IOUtils.unzip(zipped, "shp");
+			File zipped = IOUtils.writeBase64ToFile(input, "zip");
+			File shp = IOUtils.unzip(zipped, "shp");
 
 			if (shp == null) {
 				throw new RuntimeException(
@@ -121,7 +115,9 @@ public class GTBinZippedSHPParser extends AbstractXMLParser {
 			DataStore store = new ShapefileDataStore(shp.toURI().toURL());
 			FeatureCollection features = store.getFeatureSource(
 					store.getTypeNames()[0]).getFeatures();
-			// TODO should we delete the shp file here?
+			zipped.delete();
+			shp.delete();
+			
 			return new GTVectorDataBinding(features);
 		} catch (IOException e) {
 			throw new RuntimeException(
