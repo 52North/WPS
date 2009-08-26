@@ -93,7 +93,6 @@ public class GeotiffParser  extends AbstractBinaryParser{
 			
 			System.gc();
 			tempFile.delete();
-			//read(coverage);
 			return new GTRasterDataBinding(coverage);
 		} catch (DataSourceException e) {
 			System.gc();
@@ -110,62 +109,6 @@ public class GeotiffParser  extends AbstractBinaryParser{
 		
 	}
 	
-	public static void read(GridCoverage2D coverage){
-		BigInteger nullValues = new BigInteger("0");
-		BigInteger nonNullValues = new BigInteger("0");
-		System.out.println(coverage.getCoordinateReferenceSystem());
-		RenderedImage readImage = coverage.getRenderedImage();
-		BigInteger one = new BigInteger("1");
-		
-		
-		for(int i = 0; i<readImage.getNumXTiles(); i++){
-			Raster raster;
-			for(int j = 0; j<readImage.getNumYTiles();j++){
-				
-				raster = readImage.getTile(i, j);
-				
-				//System.out.println("Tile = " + i + " , "+ j);
-		
-				for(int x = raster.getMinX();x<raster.getMinX()+raster.getWidth();x++){
-					for(int y = raster.getMinY(); y<raster.getMinY()+raster.getHeight();y++){
-						
-						int value = raster.getSample(x, y, 0);
-						if(value != 0){
-							System.out.println(value);
-							nonNullValues = nonNullValues.add(one);
-						}else{
-							nullValues = nullValues.add(one);
-						}
-						
-					}
-				}
-			}
-		}
-		System.out.println("0 values = " + nullValues);
-		System.out.println("Non 0 values = "+ nonNullValues);
-		
-		
-	}
-
-	public static void main(String[] args){
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024L);
-		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-		GeoTiffReader reader;
-		try {
-			File file = new File("C:\\devel\\Programme\\Apache Software Foundation\\Tomcat 5.5\\webapps\\data\\9829CATD1.tif");
-			FileInputStream stream = new FileInputStream(file);
-			ImageInputStream s = ImageIO.createImageInputStream(stream);
-			/*reader = new GeoTiffReader(stream, hints);
-			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);*/
-			
-		} catch (DataSourceException e) {
-			LOGGER.error(e);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			LOGGER.error(e);
-			throw new RuntimeException(e);
-		}
-	}
 	
 	public String[] getSupportedFormats() {
 		String[] supportedFormats = {SUPPORTED_FORMAT};
