@@ -157,14 +157,17 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			}
 
 			/* 4. Adjust output grid extent if needed */
-			if (sextanteProcess.generatesUserDefinedRasterOutput()
-						&& sextanteProcess.requiresRasterLayers()){
-				GridExtent ge = getGridExtent(
-					(Double)inputData.get(GRID_EXTENT_X_MIN).get(0).getPayload(),
-					(Double)inputData.get(GRID_EXTENT_X_MAX).get(0).getPayload(),
-					(Double)inputData.get(GRID_EXTENT_Y_MIN).get(0).getPayload(),
-					(Double)inputData.get(GRID_EXTENT_Y_MAX).get(0).getPayload(),
-					(Double)inputData.get(GRID_EXTENT_CELLSIZE).get(0).getPayload());
+			if (sextanteProcess.generatesUserDefinedRasterOutput()){
+				GridExtent ge = null;
+				try{
+					ge = getGridExtent(
+							(Double)inputData.get( GRID_EXTENT_X_MIN).get(0).getPayload(),
+							(Double)inputData.get(GRID_EXTENT_X_MAX).get(0).getPayload(),
+							(Double)inputData.get(GRID_EXTENT_Y_MIN).get(0).getPayload(),
+							(Double)inputData.get(GRID_EXTENT_Y_MAX).get(0).getPayload(),
+							(Double)inputData.get(GRID_EXTENT_CELLSIZE).get(0).getPayload());
+				}
+				catch(Exception e){}
 				sextanteProcess.setGridExtent(ge);
 			}
 
@@ -286,7 +289,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			return createMultipleInputArray(parameter, wpsInputParameters);
 		}else if (type.equals("Selection") && wpsInputParameters.size() == 1){
 				IData param = wpsInputParameters.get(0);
-				if(param.getSupportedClass().equals(Integer.class)){
+				if(param.getSupportedClass().equals(String.class)){
 					AdditionalInfoSelection ai = (AdditionalInfoSelection) parameter.getParameterAdditionalInfo();
 					String[] values = ai.getValues();
 					for(int i = 0; i<values.length;i++){
@@ -316,9 +319,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			}
 			return param.getPayload();
 
-		}
-
-		else if (type.equals("Point") && wpsInputParameters.size() == 1){
+		}else if (type.equals("Point") && wpsInputParameters.size() == 1){
 			IData param = wpsInputParameters.get(0);
 			if(param == null){
 				return false;
@@ -493,9 +494,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 						}
 					}
 				}
-				
-			}else if (type.equals("Selection")){			
-					return LiteralIntBinding.class;				
+
+			}else if (type.equals("Selection")){
+					return LiteralIntBinding.class;
 			}else if (type.equals("Boolean")){
 				return LiteralBooleanBinding.class;
 			}

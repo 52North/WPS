@@ -70,10 +70,10 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			}
 
 			//grid extent for raster layers (if needed)
-			if (algorithm.generatesUserDefinedRasterOutput()
-						&& algorithm.requiresRasterLayers()){
-				addGridExtent(inputs);
+			if (algorithm.generatesUserDefinedRasterOutput()){
+				addGridExtent(inputs, algorithm.requiresRasterLayers());
 			}
+
 
 			//outputs
 			ProcessOutputs outputs = pdt.addNewProcessOutputs();
@@ -84,23 +84,27 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			}
 
 			return pdt;
-
-
-	}
-
-	private void addGridExtent(DataInputs inputs){
-
-		addDoubleValue(inputs, GRID_EXTENT_X_MIN, "xMin");
-		addDoubleValue(inputs, GRID_EXTENT_X_MAX, "xMax");
-		addDoubleValue(inputs, GRID_EXTENT_Y_MIN, "yMin");
-		addDoubleValue(inputs, GRID_EXTENT_Y_MAX, "yMax");
-		addDoubleValue(inputs, GRID_EXTENT_CELLSIZE, "cellSize");
-		
 		
 
 	}
 
-	private void addDoubleValue(DataInputs inputs, String name, String description){
+	private void addGridExtent(DataInputs inputs, boolean bOptional){
+
+		addDoubleValue(inputs, GRID_EXTENT_X_MIN, "xMin", bOptional);
+		addDoubleValue(inputs, GRID_EXTENT_X_MAX, "xMax", bOptional);
+		addDoubleValue(inputs, GRID_EXTENT_Y_MIN, "yMin", bOptional);
+		addDoubleValue(inputs, GRID_EXTENT_Y_MAX, "yMax", bOptional);
+		addDoubleValue(inputs, GRID_EXTENT_CELLSIZE, "cellsize", bOptional);
+
+	}
+
+	private void addDoubleValue(DataInputs inputs, String name, String description, boolean bOptional){
+
+		int iMinOccurs = 1;
+
+		if (bOptional){
+			iMinOccurs = 0;
+		}
 
 		InputDescriptionType input = inputs.addNewInput();
 		input.addNewAbstract().setStringValue(description);
@@ -240,7 +244,16 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POINT:
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POLYGON:
 				//TODO:add shape type
-				complex.addNewDefault().addNewFormat().setMimeType("image/tiff");
+				ComplexDataDescriptionType format = complex.addNewDefault().addNewFormat();
+				format.setMimeType("text/XML");
+				format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
+				ComplexDataDescriptionType supportedFormat1 = complex.addNewSupported().addNewFormat();
+				// TODO use constants
+				supportedFormat1.setEncoding("base64");
+				supportedFormat1.setMimeType("application/x-zipped-shp");
+				ComplexDataDescriptionType supportedFormat2 = complex.addNewSupported().addNewFormat();
+				supportedFormat2.setMimeType("text/XML");
+				supportedFormat2.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 				if (ai.getIsMandatory()){
 					input.setMinOccurs(BigInteger.valueOf(1));
 				}
@@ -267,6 +280,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		}
 		else if (param instanceof ParameterTableField ){
 			//This has to be improved, to add the information about the parent parameter
+			//the value is the zero-based index of the field
 			LiteralInputType literal = input.addNewLiteralData();
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
@@ -274,7 +288,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			range.addNewMinimumValue().setStringValue("0");
 			literal.setDefaultValue("0");
 			DomainMetadataType dataType = literal.addNewDataType();
-			dataType.setReference("xs:string");
+			dataType.setReference("xs:int");
 		}
 		else if (param instanceof ParameterBand){
 			//This has to be improved, to add the information about the parent parameter
