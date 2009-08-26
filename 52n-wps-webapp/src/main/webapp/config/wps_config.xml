@@ -13,10 +13,9 @@
 			<Parser name="AsciiGrassParser"
 				className="org.n52.wps.io.datahandler.binary.AsciiGrassParser" />
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser" />
+			<Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser" />
 			<Parser name="GTBinZippedSHPParser"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser" />
-
-			
 		</ParserList>
 		<GeneratorList>
 			<Generator name="SimpleGMLGenerator"
@@ -80,7 +79,7 @@
 		</Repository>
 		
 	</AlgorithmRepositoryList>
-	<Server hostname="localhost" hostport="8080"
+	<Server hostname="hooters.uni-muenster.de" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="true" webappPath="wps">
 		<Database />
