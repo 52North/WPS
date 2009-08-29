@@ -56,7 +56,9 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 	}
 	
 	public abstract Node generateXML(IData coll, String schema);
-	public final boolean isSupportedFormat(String format) {
+	
+	
+	public boolean isSupportedFormat(String format) {
 		for(String f : getSupportedFormats()) {
 			if (f.equalsIgnoreCase(format)) {
 				return true;

@@ -14,7 +14,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.apache.axis.encoding.Base64;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import com.sun.org.apache.xpath.internal.XPathAPI;
 
 public class IOUtils {
 	/**
@@ -44,6 +54,25 @@ public class IOUtils {
 				System.getProperty("java.io.tmpdir")));
 		FileOutputStream output = new FileOutputStream(file);
 		Base64.decode(encoded, output);
+		output.close();
+
+		return file;
+	}
+
+	public static File writeBase64XMLToFile(InputStream stream, String extension)
+			throws SAXException, IOException, ParserConfigurationException,
+			DOMException, TransformerException {
+		// Create XML document
+		Document document = DocumentBuilderFactory.newInstance()
+				.newDocumentBuilder().parse(stream);
+		String binaryContent = XPathAPI.selectSingleNode(
+				document.getFirstChild(), "text()").getTextContent();
+
+		// Flush binary data to temporary file
+		File file = File.createTempFile("file", "." + extension, new File(
+				System.getProperty("java.io.tmpdir")));
+		FileOutputStream output = new FileOutputStream(file);
+		Base64.decode(binaryContent, output);
 		output.close();
 
 		return file;

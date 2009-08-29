@@ -2,15 +2,12 @@ package org.n52.wps.io.datahandler.binary;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.apache.axis.encoding.Base64;
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
@@ -20,10 +17,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xpath.internal.XPathAPI;
 
 public class GTBinZippedSHPParser extends AbstractXMLParser {
 	/**
@@ -48,22 +42,9 @@ public class GTBinZippedSHPParser extends AbstractXMLParser {
 	@Override
 	public IData parseXML(InputStream stream) throws RuntimeException {
 		try {
-			// Create XML document
-			Document document = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder().parse(stream);
-
-			String binaryContent = XPathAPI.selectSingleNode(
-					document.getFirstChild(), "text()").getTextContent();
-
-			// Flush binary data to temporary file
-			File tmp = File.createTempFile("shapefile", ".zip", new File(System
-					.getProperty("java.io.tmpdir")));
-			FileOutputStream output = new FileOutputStream(tmp);
-			Base64.decode(binaryContent, output);
-			output.close();
-
 			// Unzip and obtain the data binding
-			File shp = org.n52.wps.io.IOUtils.unzip(tmp, "shp");
+			File tmp = IOUtils.writeBase64XMLToFile(stream, "zip");
+			File shp = IOUtils.unzip(tmp, "shp");
 
 			if (shp == null) {
 				throw new RuntimeException(

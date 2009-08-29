@@ -156,7 +156,15 @@ public class OutputDataItem extends ResponseData {
 		
 		LargeBufferStream baos = new LargeBufferStream();
 		OutputReferenceType outReference = output.addNewReference();
-		outReference.setSchema(schema);
+		if (schema != null) {
+			outReference.setSchema(schema);
+		}
+		if (encoding != null) {
+			outReference.setEncoding(encoding);
+		}
+		if (mimeType != null) {
+			outReference.setMimeType(mimeType);
+		}
 		IDatabase db = DatabaseFactory.getDatabase();
 		String storeID = reqID + "" + id;
 		if(generator instanceof IStreamableGenerator) {
