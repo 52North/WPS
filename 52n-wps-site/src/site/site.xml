@@ -18,9 +18,10 @@
 			<item name="WPS client uDig" href="../52n-wps-client-udig-site/" collapse="false"/>
 			<item name="WPS client jump" href="../52n-wps-client-jump/" collapse="false"/>
 			<item name="Client API" href="../52n-wps-client-lib" collapse="false"/>
+			<item name="Cloud Computing" href="CloudComputing.htm" collapse="false"/>
     </menu>
     <menu name="Resources">
-			<item name="Bugzilla" href="bugzilla_note.html" />
+			<item name="Bugzilla" href="https://52north.org/bugzilla/" />
 			<item name="Mailing Lists" href="mail-lists.html" />
 			<item name="Browse Source" href="http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/" />
 			<item name="Browse JavaDoc" href="../apidocs/"/>
