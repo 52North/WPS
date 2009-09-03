@@ -146,7 +146,6 @@
         </plugins>
     </build>
     <modules>
-    	<module>52n-wps-xml</module>
         <module>52n-wps-commons</module>
         <module>52n-wps-io</module>
         <module>52n-wps-server</module>

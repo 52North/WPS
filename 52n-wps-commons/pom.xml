@@ -39,10 +39,11 @@
       <version>1.0.4</version>
       <scope>compile</scope>
     </dependency>
-    <dependency>
+	  <dependency>
 		<groupId>${project.groupId}</groupId>
-		<artifactId>52n-wps-xml-wpsconfig</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<artifactId>52n-wps-config</artifactId>
+		<version>1.0.1</version>
 		</dependency>
+ 
    </dependencies>
 </project>
