@@ -12,6 +12,25 @@
 		<filter-name>CommunicationSizeLogFilter</filter-name>
 		<url-pattern>/WebProcessingService</url-pattern>
 	</filter-mapping>
+	<security-constraint>
+	<web-resource-collection>
+		<web-resource-name>My JSP</web-resource-name>
+		<url-pattern>/webAdmin/index.jsp</url-pattern>
+		<http-method>GET</http-method>
+		<http-method>POST</http-method>
+	</web-resource-collection>
+	<auth-constraint>
+		<role-name>wpsAdmin</role-name>
+	</auth-constraint>
+<!--user-data-constraint>
+<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+</user-data-constraint-->
+</security-constraint>
+   <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Basic Authentication</realm-name>
+  </login-config>
+	
 	<!--
 	<filter>
 		<filter-name>CompressingFilter</filter-name>
