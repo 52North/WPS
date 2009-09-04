@@ -15,10 +15,10 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
-	private static String SUPPORTED_FORMAT = "image/tiff";
-	private static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
+	protected static String[] SUPPORTED_FORMAT = {"image/tiff","image/geotiff"};
+	protected static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
 
-	protected static IData parseTiffFile(InputStream input) {
+	protected IData parseTiff(InputStream input) {
 		String fileName = "tempfile" + System.currentTimeMillis();
 		File tempFile = new File(fileName);
 		try {
@@ -67,13 +67,15 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 	}
 
 	public String[] getSupportedFormats() {
-		String[] supportedFormats = { SUPPORTED_FORMAT };
-		return supportedFormats;
+		return SUPPORTED_FORMAT;
+	
 	}
 
 	public boolean isSupportedFormat(String format) {
-		if (format.equals(SUPPORTED_FORMAT)) {
-			return true;
+		for(String supportedFormat : SUPPORTED_FORMAT){
+			if (supportedFormat.equalsIgnoreCase(format)) {
+				return true;
+			}
 		}
 		return false;
 	}
