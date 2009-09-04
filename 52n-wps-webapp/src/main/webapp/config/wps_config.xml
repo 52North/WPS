@@ -79,7 +79,7 @@
 		</Repository>
 		
 	</AlgorithmRepositoryList>
-	<Server hostname="hooters.uni-muenster.de" hostport="8080"
+	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="true" webappPath="wps">
 		<Database />
