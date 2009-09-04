@@ -12,6 +12,7 @@
 		<filter-name>CommunicationSizeLogFilter</filter-name>
 		<url-pattern>/WebProcessingService</url-pattern>
 	</filter-mapping>
+	<!--
 	<filter>
 		<filter-name>CompressingFilter</filter-name>
 		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
@@ -24,10 +25,12 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
+	
 	<filter-mapping>
 		<filter-name>CompressingFilter</filter-name>
 		<url-pattern>/WebProcessingService</url-pattern>
 	</filter-mapping>
+	-->
 	<servlet>
 		<servlet-name>wpsServlet</servlet-name>
 		<servlet-class>org.n52.wps.server.WebProcessingService</servlet-class>
