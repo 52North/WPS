@@ -37,8 +37,13 @@ Muenster, Germany
 package org.n52.wps.server.request;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -47,6 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
+
+import javax.xml.XMLConstants;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -58,11 +65,13 @@ import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
-import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.util.BasicXMLTypeFactory;
+import org.xml.sax.InputSource;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -162,8 +171,40 @@ public class InputHandler {
 						ExceptionReport.NO_APPLICABLE_CODE, e);
 			}
 		}
+		//embedded binary data
 		else {
-			throw new ExceptionReport("parser does not support operation: " + parser.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
+			File f;
+			try {
+				f = File.createTempFile("wps"+System.currentTimeMillis(), "tmp");
+				FileOutputStream fos = new FileOutputStream(f);
+				
+				if(complexValue.startsWith("<xml-fragment")){
+					int startIndex = complexValue.indexOf(">");
+					complexValue = complexValue.substring(startIndex+1);
+					
+					int endIndex = complexValue.indexOf("</xml-fragment");
+					complexValue = complexValue.substring(0,endIndex);
+					
+				}
+				StringReader sr = new StringReader(complexValue);
+				int i = sr.read();
+				while(i != -1){
+					fos.write(i);
+					i = sr.read();
+				}
+				fos.close();
+				collection =  parser.parse(new FileInputStream(f));
+				System.gc();
+				f.delete();
+			} catch (IOException e) {
+				throw new ExceptionReport("Error occured, while Base64 extracting", 
+						ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
+		
+			
+			
+
+			
 		}
 		//enable maxxoccurs of parameters with the same name.
 		if(inputData.containsKey(inputID)) {

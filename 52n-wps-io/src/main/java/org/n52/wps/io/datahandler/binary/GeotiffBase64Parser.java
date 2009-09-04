@@ -16,14 +16,15 @@ import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.w3c.dom.DOMException;
 import org.xml.sax.SAXException;
 
-public class GeotiffBase64Parser extends AbstractXMLParser {
-	private GeotiffParser parser = new GeotiffParser();
+public class GeotiffBase64Parser extends AbstractGeotiffParser {
+	
 
 	@Override
 	public IData parse(InputStream input) {
 		try {
 			File tiff = IOUtils.writeBase64ToFile(input, "tiff");
-			IData data = parser.parse(new FileInputStream(tiff));
+			IData data = parseTiff(new FileInputStream(tiff));
+			System.gc();
 			tiff.delete();
 			return data;
 		} catch (IOException e) {
@@ -36,48 +37,5 @@ public class GeotiffBase64Parser extends AbstractXMLParser {
 		return encoding.equals(IOHandler.ENCODING_BASE64);
 	}
 
-	@Override
-	public IData parseXML(String xml) {
-		return parseXML(new ByteArrayInputStream(xml.getBytes()));
-	}
-
-	@Override
-	public IData parseXML(InputStream stream) {
-		try {
-			File tiff = IOUtils.writeBase64XMLToFile(stream, "tif");
-			IData data = parser.parse(new FileInputStream(tiff));
-			tiff.delete();
-			return data;
-		} catch (DOMException e) {
-			throw new RuntimeException("Cannot parse base64 tiff image", e);
-		} catch (SAXException e) {
-			throw new RuntimeException("Cannot parse base64 tiff image", e);
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot parse base64 tiff image", e);
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException("Cannot parse base64 tiff image", e);
-		} catch (TransformerException e) {
-			throw new RuntimeException("Cannot parse base64 tiff image", e);
-		}
-	}
-
-	@Override
-	public Class<?>[] getSupportedInternalOutputDataType() {
-		return parser.getSupportedInternalOutputDataType();
-	}
-
-	@Override
-	public String[] getSupportedSchemas() {
-		return new String[] {};
-	}
-
-	@Override
-	public boolean isSupportedSchema(String schema) {
-		return schema == null;
-	}
-
-	@Override
-	public String[] getSupportedFormats() {
-		return parser.getSupportedFormats();
-	}
+	
 }
