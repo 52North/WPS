@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>2.0-rc3</version>
+        <version>2.0-rc3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-sextante</artifactId>
-  <version>2.0-rc3</version>
+  <version>2.0-rc3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>52north 52n-wps-sextante</name>
     <description>The project 52 north 52n-wps-sextante exposes the Sextatne Librries as WPS processes</description>
