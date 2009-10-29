@@ -34,6 +34,8 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -64,7 +66,6 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IDistributedAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.server.handler.WPSTask;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
@@ -149,7 +150,9 @@ public class ExecuteRequest extends Request implements Observer {
 		execute.addNewIdentifier().setStringValue(processID);
 		DataInputsType dataInputs = execute.addNewDataInputs();
 		String dataInputString = getMapValue("DataInputs", true);
+		dataInputString = dataInputString.replace("&amp;","&");
 		String[] inputs = dataInputString.split(";");
+		
 		// Handle data inputs
 		for (String inputString : inputs) {
 			int position = inputString.indexOf("=");
@@ -189,7 +192,7 @@ public class ExecuteRequest extends Request implements Observer {
 				inputItems = inputString.split("@");
 			}
 			if (inputItems.length > 1) {
-				for (int i = 1; i < inputItems.length; i++) {
+				for (int i = 0; i < inputItems.length; i++) {
 					int attributePos = inputItems[i].indexOf("=");
 					if (attributePos == -1
 							|| attributePos + 1 >= inputItems[i].length()) {
@@ -205,7 +208,7 @@ public class ExecuteRequest extends Request implements Observer {
 						mimeTypeAttribute = attributeValue;
 					} else if (attributeName.equalsIgnoreCase("schema")) {
 						schemaAttribute = attributeValue;
-					} else if (attributeName.equalsIgnoreCase("href")) {
+					} else if (attributeName.equalsIgnoreCase("href") | attributeName.equalsIgnoreCase("xlink:href")) {
 						hrefAttribute = attributeValue;
 					} else {
 						throw new ExceptionReport(
