@@ -8,14 +8,13 @@
 		<ParserList>
 			<Parser name="SimpleGMLParser" className="org.n52.wps.io.datahandler.xml.SimpleGMLParser" />
 			<Parser name="GML2BasicParser" className="org.n52.wps.io.datahandler.xml.GML2BasicParser">
-				<Property name="fcBufferTimeout">10000</Property>
-			</Parser>
+			<Property name="fcBufferTimeout">10000</Property></Parser>
 			<Parser name="AsciiGrassParser"
 				className="org.n52.wps.io.datahandler.binary.AsciiGrassParser" />
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser" />
 			<Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser" />
-			<Parser name="GTBinZippedSHPParser"
-				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser" />
+			<Parser name="GTBinZippedSHPParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser" />
+			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.xml.KMLParser"/>
 		</ParserList>
 		<GeneratorList>
 			<Generator name="SimpleGMLGenerator"
