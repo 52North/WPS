@@ -38,6 +38,7 @@
         </configuration>
       </plugin>
     </plugins>
+   
             
         <!-- build-jar should be without version number -->
         <!--finalName>52n-wps-io</finalName-->
@@ -47,6 +48,44 @@
         </testResources>
         
     </build>
+     <repositories>
+       <repository>
+        <releases>
+                <enabled>true</enabled>
+        </releases>
+        <snapshots>
+                <enabled>false</enabled>
+        </snapshots>
+        <id>ifgi.releases</id>
+        <name>Ifgi - Maven releases</name>
+        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/releases/</url>
+</repository>
+<repository>
+        <releases>
+                <enabled>false</enabled>
+        </releases>
+        <snapshots>
+                <enabled>true</enabled>
+        </snapshots>
+        <id>ifgi.snapshots</id>
+        <name>Ifgi - Maven snapshots</name>
+        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/snapshots/</url>
+</repository>      
+<repository>
+                <id>osgeo</id>
+                <name>Open Source Geospatial Foundation Repository</name>
+                <url>http://download.osgeo.org/webdav/geotools/</url>
+            </repository>
+            <repository>
+                   <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <id>opengeo</id>
+                    <name>OpenGeo Maven Repository</name>
+                    <url>http://repo.opengeo.org</url>
+            </repository>
+    </repositories>   
+    
  <dependencies>
  <dependency>
 <!-- junit for the unit tests -->
@@ -73,7 +112,7 @@
 <dependency>
      <groupId>com.vividsolutions</groupId>
      <artifactId>jts</artifactId>
-     <version>1.9</version>
+     <version>1.10</version>
 </dependency>
 <dependency>
      <groupId>log4j</groupId>
