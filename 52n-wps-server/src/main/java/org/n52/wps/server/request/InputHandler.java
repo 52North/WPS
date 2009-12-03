@@ -47,6 +47,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,6 +276,8 @@ public class InputHandler {
 			
 		}
 		String dataURLString = input.getReference().getHref();
+		//dataURLString = URLDecoder.decode(dataURLString);
+		//dataURLString = dataURLString.replace("&amp;", "");
 		LOGGER.debug("Loading data from: " + dataURLString);
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
@@ -292,7 +295,7 @@ public class InputHandler {
 		String schema = input.getReference().getSchema();
 		String encoding = input.getReference().getEncoding();
 		String mimeType = input.getReference().getMimeType();
-		if(schema == null) {
+		if(schema == null && !(mimeType.equalsIgnoreCase("application/x-zipped-shp"))) {
 			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
 		}
 		if(mimeType == null) {
@@ -324,6 +327,17 @@ public class InputHandler {
 		try {
 			
 			/****PROXY*****/
+			/*String decodedURL = URLDecoder.decode(dataURLString);
+			decodedURL = decodedURL.replace("&amp;", "&");
+			if(decodedURL.indexOf("&BBOX")==-1){
+				decodedURL = decodedURL.replace("BBOX", "&BBOX");
+				decodedURL = decodedURL.replace("outputFormat", "&outputFormat");
+				decodedURL = decodedURL.replace("SRS", "&SRS");
+				decodedURL = decodedURL.replace("REQUEST", "&REQUEST");
+				decodedURL = decodedURL.replace("VERSION", "&VERSION");
+				decodedURL = decodedURL.replace("SERVICE", "&SERVICE");
+				decodedURL = decodedURL.replace("format", "&format");
+			}*/
 			URL dataURL = new URL(dataURLString);
 			//URL dataURL = new URL("http", "proxy", 8080, dataURLString);
 			IData parsedInputData = null;
