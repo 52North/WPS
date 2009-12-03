@@ -50,7 +50,7 @@ public class IOUtils {
 		}
 		reader.close();
 
-		File file = File.createTempFile("file", "." + extension, new File(
+		File file = File.createTempFile("file"+System.currentTimeMillis(), "." + extension, new File(
 				System.getProperty("java.io.tmpdir")));
 		FileOutputStream output = new FileOutputStream(file);
 		Base64.decode(encoded, output);
@@ -69,7 +69,7 @@ public class IOUtils {
 				document.getFirstChild(), "text()").getTextContent();
 
 		// Flush binary data to temporary file
-		File file = File.createTempFile("file", "." + extension, new File(
+		File file = File.createTempFile("file"+System.currentTimeMillis(), "." + extension, new File(
 				System.getProperty("java.io.tmpdir")));
 		FileOutputStream output = new FileOutputStream(file);
 		Base64.decode(binaryContent, output);
@@ -88,7 +88,7 @@ public class IOUtils {
 	 *             if the zipping process fails.
 	 */
 	public static File zip(File... files) throws IOException {
-		File zip = File.createTempFile("zip", ".zip");
+		File zip = File.createTempFile("zip"+System.currentTimeMillis(), ".zip");
 
 		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip));
 
@@ -137,7 +137,7 @@ public class IOUtils {
 		ZipInputStream zipInputStream = new ZipInputStream(
 				new BufferedInputStream(new FileInputStream(file)));
 		ZipEntry entry;
-		File tempDir = File.createTempFile("unzipped", "", new File(System
+		File tempDir = File.createTempFile("unzipped"+System.currentTimeMillis(), "", new File(System
 				.getProperty("java.io.tmpdir")));
 		tempDir.delete();
 		tempDir.mkdir();
