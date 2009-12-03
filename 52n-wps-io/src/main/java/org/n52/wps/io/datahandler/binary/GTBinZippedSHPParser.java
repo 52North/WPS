@@ -118,7 +118,13 @@ public class GTBinZippedSHPParser extends AbstractXMLParser {
 
 	@Override
 	public boolean isSupportedEncoding(String encoding) {
-		return encoding.equals(IOHandler.ENCODING_BASE64);
+		if(encoding.equals(IOHandler.ENCODING_BASE64)){
+			return true;
+		}
+		if(encoding.equals(IOHandler.DEFAULT_ENCODING)){
+			return true;
+		}
+		return false;
 	}
 
 	@Override
