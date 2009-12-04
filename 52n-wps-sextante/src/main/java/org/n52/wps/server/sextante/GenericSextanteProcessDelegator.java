@@ -33,6 +33,7 @@ is extensible in terms of processes and data handlers.
 package org.n52.wps.server.sextante;
 
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.FileDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -69,12 +71,15 @@ import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.ParametersSet;
 import es.unex.sextante.core.Sextante;
 import es.unex.sextante.dataObjects.IRasterLayer;
+import es.unex.sextante.dataObjects.ITable;
 import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
 import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
 import es.unex.sextante.geotools.GTRasterLayer;
+import es.unex.sextante.geotools.GTTable;
 import es.unex.sextante.geotools.GTVectorLayer;
+import es.unex.sextante.outputs.FileOutputChannel;
 import es.unex.sextante.outputs.Output;
 import es.unex.sextante.parameters.FixedTableModel;
 import es.unex.sextante.parameters.Parameter;
@@ -386,6 +391,10 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			IRasterLayer rasterLayer = ((IRasterLayer)result);
 			GridCoverage coverage = (GridCoverage) rasterLayer.getBaseDataObject();
 			return new GTRasterDataBinding((GridCoverage2D)coverage);
+		}else if(result instanceof ITable){
+			FileOutputChannel outputChannel = (FileOutputChannel) outputObject.getOutputChannel();
+			File output = new File(outputChannel.getFilename());
+			return new FileDataBinding(output);
 		}
 		//TODO Extend for literal output
 
