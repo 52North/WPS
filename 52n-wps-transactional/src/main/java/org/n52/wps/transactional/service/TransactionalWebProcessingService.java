@@ -2,7 +2,7 @@ package org.n52.wps.transactional.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -11,14 +11,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.transactional.handler.TransactionalExceptionHandler;
 import org.n52.wps.transactional.handler.TransactionalRequestHandler;
 import org.n52.wps.transactional.request.DeployProcessRequest;
+import org.n52.wps.transactional.request.ITransactionalRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.n52.wps.transactional.response.TransactionalResponse;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class TransactionalWebProcessingService extends HttpServlet{
 	private static Logger LOGGER = Logger.getLogger(TransactionalWebProcessingService.class);
@@ -33,36 +37,59 @@ public class TransactionalWebProcessingService extends HttpServlet{
 			DocumentBuilderFactory documentBuiloderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder documentBuilder= documentBuiloderFactory.newDocumentBuilder();
 			Document document = documentBuilder.parse(is);
-			
-			//look up what kind of Request we are dealing with
+
 			String requestType = document.getFirstChild().getNodeName();
-			if(requestType == null){
-				throw new Exception("Request Not Valid");
+			ITransactionalRequest request = null;
+			if (requestType == null) {
+				throw new ExceptionReport("Request not valid",
+						ExceptionReport.OPERATION_NOT_SUPPORTED);
+			} else if (requestType.equals("DeployProcessRequest")) {
+				request = new DeployProcessRequest(document);
+			} else if (requestType.equals("UnDeployProcessRequest")) {
+				request = new UndeployProcessRequest(document);
+			} else {
+				throw new ExceptionReport("Request type unknown ("
+						+ requestType
+						+ ") Must be DeployProcess or UnDeployProcess",
+						ExceptionReport.OPERATION_NOT_SUPPORTED);
 			}
-			
-			if(requestType.equals("DeployProcess")){
-				response = TransactionalRequestHandler.handle(new DeployProcessRequest(document));
+
+			LOGGER.info("Request type: " + requestType);
+			response = TransactionalRequestHandler.handle(request);
+			if (response == null) {
+				throw new ExceptionReport("bug! An error has occurred while "
+						+ "processing the request: " + requestType,
+						ExceptionReport.NO_APPLICABLE_CODE);
+			} else {
+				String rootTag = (request instanceof DeployProcessRequest) ? "DeployProcessResponse"
+						: "UnDeployProcessResponse";
+				PrintWriter writer = res.getWriter();
+				writer.write("<" + rootTag + ">");
+				writer.write("<Result success=\"true\">");
+				writer.write(response.getMessage());
+				writer.write("</Result>");
+				writer.write("</" + rootTag + ">");
+				writer.flush();
+				writer.close();
+				LOGGER.info("Request handled successfully: " + requestType);
 			}
-			else{
-				if(requestType.equals("UnDeployProcess")){
-					response = TransactionalRequestHandler.handle(new UndeployProcessRequest(document));
-				}else{
-					throw new Exception("Could not process request. Reason: Reuqest type unknown. Must be DeployProcess or UndeployProcess");
-				}
-			}
-		}catch(Exception exception){
-			TransactionalExceptionHandler.handleException(res.getWriter(), exception);
+		} catch (ParserConfigurationException e) {
+			TransactionalExceptionHandler.handleException(res.getWriter(),
+					new ExceptionReport("An error has occurred while "
+							+ "building the XML parser",
+							ExceptionReport.NO_APPLICABLE_CODE));
+		} catch (SAXException e) {
+			TransactionalExceptionHandler.handleException(res.getWriter(),
+					new ExceptionReport("An error has occurred while "
+							+ "parsing the XML request",
+							ExceptionReport.NO_APPLICABLE_CODE));
+		} catch (ExceptionReport exception) {
+			TransactionalExceptionHandler.handleException(res.getWriter(),
+					exception);
+		} catch (Throwable t) {
+			TransactionalExceptionHandler.handleException(res.getWriter(),
+					new ExceptionReport("Unexpected error",
+							ExceptionReport.NO_APPLICABLE_CODE));
 		}
-		
-		//TODO change this quick hack made on an airplane....
-		Writer writer = res.getWriter();
-		writer.write("<Result>");
-		writer.write(response.getMessage());
-		writer.write("</Result>");
-		writer.flush();
-		writer.close();
-		LOGGER.info(" DeployProcess Request handled successfully. " + new Date());
 	}
-
-
 }

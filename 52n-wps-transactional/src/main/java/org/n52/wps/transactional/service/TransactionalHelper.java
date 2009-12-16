@@ -1,6 +1,9 @@
 package org.n52.wps.transactional.service;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
@@ -20,6 +23,7 @@ public class TransactionalHelper {
 					if(property.getStringValue().equals(schema)){
 						return repository;
 					}
+					
 				}
 				
 			}
@@ -32,7 +36,26 @@ public class TransactionalHelper {
 		String className = repository.getClassName();
 		Object instance = null;
 		try {
-			instance = Class.forName(className).newInstance();
+			//in case of a assumed singleton
+			Class<?> clazz = Class.forName(className);
+			
+			Method[] methods = clazz.getMethods();
+			
+			for(Method method : methods){
+				if(method.getName().equals("getInstance")){
+					instance = method.invoke(null, new Object[0]);
+					break;
+				}
+			}
+			
+			//Class cls = Class.forName(className);
+			//Method method1 = cls.getMethod("getInstance", new Class[0]);
+			//Object o = method1.invoke(cls, new Object[0]);
+			
+			//in case it is not a singleton
+			if(instance == null){
+				instance = Class.forName(className).newInstance();
+			}
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,19 +65,39 @@ public class TransactionalHelper {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		if(instance != null){
 			return (ITransactionalAlgorithmRepository) instance;
 		}
 		return null;
 	}
 	
-	public static String getDeploymentManagerForSchema(String schema){
+	public static String getDeploymentProfileForSchema(String schema){
+		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
+		Property[] properties = repository.getPropertyArray();
+		for(Property property : properties){
+			if(property.getName().equals("DeploymentProfileClass")){
+				return property.getStringValue();
+			}
+		}
+		return null;
+	}
+	
+	public static IDeployManager getDeploymentManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		Property[] properties = repository.getPropertyArray();
 		for(Property property : properties){
 			if(property.getName().equals("DeployManager")){
-				return property.getStringValue();
+				return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
 			}
 		}
 		return null;
