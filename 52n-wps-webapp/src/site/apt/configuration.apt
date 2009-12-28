@@ -11,24 +11,29 @@ Theodor Foerster
 
 * General configuration
 
-** Precompiled Binaries
 
- The configuration is two-fold. 
-
-*** Service metadata configuration
+** Service metadata configuration
 
  First the configuration of the service meta data (i.e. provider information & contact details) in the GetCapabilities file.
  This will be configured using a XML skeleton of the original GetCapabilities. This makes it straight-forward to imagine, how the XML file finally looks like.
  The skeleton is located at WPS_WEBAPP_ROOT/config/wpsCapabilitiesSkeleton.xml.
 
-*** Operational WPS settings
+** Operational WPS settings
 
  Second there is the configuration of your developed processes and the configuration of the WPS instance itself. This configuration file (which called wps.properties in former versions)
  is located at WPS_WEBAPP_ROOT/config/wps_config.xml. The schema for the configuration file can be found at {{{http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-webapp/src/main/webapp/config/schema_v1.xsd}here}}.
 
  In an initial configuration it is important to change the server's hostname to your machine's name.
- 
-** Development Version settings
+
+** WPS Web Admin Console (beta)
+
+ The WPS Web Admin Console is accessible through http://YOURHOST:YOURPORT/wps or directly through http://YOURHOST:YOURPORT/wps/webAdmin/index.jsp. It allows you to configure the WPS settings, as defined in the wps_config.xml. To use this console, it is necessary to define a user in the config/tomcat-users.xml (if you use Apache Tomcat). The role to define is wpsAdmin, userName and password can be chosen as you like. Example is:
+
+-------------
+ <user username="wpsAdmin" password="wpsAdmin" roles="wpsAdmin"/>
+-------------
+
+* Development Version settings
 
 	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{http://52north.org/download/Geoprocessing/documents/Website/WPS_Tutorial.pdf}here}}.
 	
