@@ -263,9 +263,13 @@
 			<artifactId>gt2-shapefile</artifactId>
 			<version>2.4.2</version>
 		</dependency>
-
+ <dependency>
+    <groupId>xalan</groupId>
+    <artifactId>xalan</artifactId>
+    <version>2.7.1</version>
+</dependency>   
 
     </dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
-   
+
 </project>
