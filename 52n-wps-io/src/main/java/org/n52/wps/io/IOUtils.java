@@ -24,7 +24,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.sun.org.apache.xpath.internal.XPathAPI;
+import org.apache.xpath.XPathAPI;
 
 public class IOUtils {
 	/**
