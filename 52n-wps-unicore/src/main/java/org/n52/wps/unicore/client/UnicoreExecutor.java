@@ -72,7 +72,7 @@ public class UnicoreExecutor
 		{
 			FileInputStream fis = new FileInputStream(userDirectory + "/" + UnicoreTask.TARGET_SYSTEM_INPUT_FILE_NAME);
 			byte[] data = Compression
-					.createUncompressedData(fis, Boolean.getBoolean(unicoreProperties.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)));
+					.createUncompressedData(fis, Boolean.parseBoolean(unicoreProperties.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)));
 			ByteArrayInputStream bais = new ByteArrayInputStream(data);
 			ObjectInputStream ois = new ObjectInputStream(bais);
 			UnicoreAlgorithmInput algorithmInput = (UnicoreAlgorithmInput) ois.readObject();
@@ -101,8 +101,8 @@ public class UnicoreExecutor
 	protected void putAlgorithmOutput(UnicoreAlgorithmOutput pAlgorithmOutput) throws FileNotFoundException, IOException
 	{
 		byte[] data = Compression.toByteArray(pAlgorithmOutput);
-		byte[] dataCompressed = Compression.createCompressedData(data, Boolean.getBoolean(unicoreProperties
-				.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)));
+		byte[] dataCompressed = Compression.createCompressedData(data, Boolean
+				.parseBoolean(unicoreProperties.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)));
 		FileOutputStream fos = new FileOutputStream(userDirectory + "/" + UnicoreTask.TARGET_SYSTEM_OUTPUT_FILE_NAME);
 		fos.write(dataCompressed);
 		fos.close();

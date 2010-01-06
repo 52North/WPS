@@ -68,7 +68,7 @@ public class UnicoreTask implements Callable<Object>
 		submitInputData(smsUspace, inputData);
 
 		// stage in configuration
-//		submitWpsConfiguration(smsUspace);
+		submitWpsConfiguration(smsUspace);
 
 		// stage in execution script
 		submitExecutionScript(smsUspace);
@@ -206,7 +206,7 @@ public class UnicoreTask implements Callable<Object>
 		byte[] dataCompressed = null;
 		if (Boolean.parseBoolean(unicoreProperties.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)))
 		{
-			dataCompressed = Compression.createCompressedData(data, Boolean.getBoolean(unicoreProperties
+			dataCompressed = Compression.createCompressedData(data, Boolean.parseBoolean(unicoreProperties
 					.getProperty(UnicoreAlgorithmRepository.CFG_COMPRESSION)));
 			LOGGER.info("Compress input data (ratio: " + ((double) dataCompressed.length) / ((double) data.length) + ").");
 		}
@@ -223,12 +223,12 @@ public class UnicoreTask implements Callable<Object>
 		}
 	}
 
-//	protected void submitWpsConfiguration(StorageClient pSms) throws Exception
-//	{
-//		RByteIOClient fileClient = pSms.getImport("/wps_config.xml");
-//		File f = new File(WPSConfig.getConfigPath());
-//		FileInputStream is = new FileInputStream(f);
-//		fileClient.writeAllData(is);
-//		is.close();
-//	}
+	protected void submitWpsConfiguration(StorageClient pSms) throws Exception
+	{
+		RByteIOClient fileClient = pSms.getImport("/wps_config.xml");
+		File f = new File(WPSConfig.getConfigPath());
+		FileInputStream is = new FileInputStream(f);
+		fileClient.writeAllData(is);
+		is.close();
+	}
 }
