@@ -50,22 +50,26 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 		</Repository>
 
-		<!--
-			<Repository name="LocalUnicoreAlgorithmRepository"
-			className="org.n52.wps.grid.UnicoreAlgorithmRepository"> <Property
-			name="Algorithm">org.n52.wps.grid.algorithm.DistributedSimpleBufferAlgorithm</Property>
+		<!-- 
+		<Repository name="LocalUnicoreAlgorithmRepository"	className="org.n52.wps.unicore.UnicoreAlgorithmRepository">			
+			<Property name="Algorithm">org.n52.wps.unicore.algorithm.UnicoreSimpleBufferAlgorithm</Property>
 
-			<Property
-			name="Registry">https://localhost:8080/DEMO-SITE/services/Registry?res=default_registry</Property>
-			<Property
-			name="Keystore">/home/bastian/.gpe4unicore/keystore.jks</Property>
-			<Property name="Type">jks</Property> <Property
-			name="Alias">bb</Property> <Property
-			name="Password">unicore</Property> <Property
-			name="OverwriteRemoteFile">true</Property> <Property
-			name="MaximumNumberOfNodes">2</Property> </Repository>
-		-->
-
+			<Property name="Registry">https://localhost:8080/DEMO-SITE/services/Registry?res=default_registry</Property>
+			<Property name="Keystore">/home/bastian/.gpe4unicore/keystore.jks</Property>
+			<Property name="Type">jks</Property>
+			<Property name="Alias">demo user</Property>
+			<Property name="Password">unicore</Property>
+			
+			<Property name="OverwriteRemoteFile">false</Property>
+			<Property name="CompressInputData">true</Property>			
+		</Repository>
+		 -->
+		 
+		 <!-- 
+		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository">		
+			<Property name="Algorithm">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
+		</Repository>
+ 		-->
 
 		<!--
 			<Repository name="OracleBPELRepository"
@@ -80,10 +84,12 @@
 			this should be created <SupportedDeploymentProfiles schema=""
 			repositoyName="OracleBPELRepository">
 		-->
+		<!-- 
 		<Repository name="SextanteRepository"
 			className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
-		
+		 -->
+		 
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"

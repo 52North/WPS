@@ -89,6 +89,19 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		}
 		
 	}
+	
+	public GML2BasicParser(boolean pReadWPSConfig) {
+		super(pReadWPSConfig);
+		fcBufferTimeout = 1000000;
+		
+		for(Property property : properties){
+			if(property.getName().equalsIgnoreCase("fcBufferTimeout")){
+				fcBufferTimeout = new Integer(property.getStringValue());
+				
+			}
+		}
+		
+	}
 
 	public String[] getSupportedSchemas() {
 		return new String[]{SUPPORTED_SCHEMA};

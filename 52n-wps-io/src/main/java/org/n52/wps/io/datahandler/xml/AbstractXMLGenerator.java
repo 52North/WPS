@@ -55,6 +55,17 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 		 properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 	}
 	
+	public AbstractXMLGenerator(boolean pReadWPSConfig) {
+		if (pReadWPSConfig)
+		{
+			properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+		}
+		else
+		{
+			properties = new Property[0];
+		}
+	}
+	
 	public abstract Node generateXML(IData coll, String schema);
 	
 	

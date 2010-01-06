@@ -86,6 +86,23 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		}
 	}
 	
+	public GML2BasicGenerator(boolean pReadWPSConfig){
+		super(pReadWPSConfig);
+		featureTransformerIncludeBounding = false;
+		featureTransformerDecimalPlaces = 4;
+		for(Property property : properties){
+			if(property.getName().equalsIgnoreCase("featureTransformerIncludeBounding")){
+				featureTransformerIncludeBounding = new Boolean(property.getStringValue());
+				
+			}
+			if(property.getName().equalsIgnoreCase("featureTransformerDecimalPlaces")){
+				featureTransformerDecimalPlaces = new Integer(property.getStringValue());
+				
+			}
+			
+		}
+	}
+	
 	public void write(IData coll, Writer writer) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 		// this might be a workaround... 

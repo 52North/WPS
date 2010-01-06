@@ -80,7 +80,10 @@ public class SimpleGMLParser extends AbstractXMLParser {
 	//private FeatureType type;
 	
 	public SimpleGMLParser() {
-
+	}
+	
+	public SimpleGMLParser(boolean pReadWPSConfig) {
+		super(pReadWPSConfig);
 	}
 
 	public String[] getSupportedSchemas() {

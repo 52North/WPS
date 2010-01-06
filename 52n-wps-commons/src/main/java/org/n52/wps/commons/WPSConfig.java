@@ -166,20 +166,45 @@ public class WPSConfig  implements Serializable {
         LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
     
-	public static WPSConfig getInstance() {
-		if(wpsConfig==null){
-			try {
-				wpsConfig = new WPSConfig(getConfigPath());
-			} catch (XmlException e) {
-				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
-				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
-			} catch (IOException e) {
+	public static WPSConfig getInstance()
+	{
+		if (wpsConfig == null)
+		{
+			try
+			{
+				return getInstance(getConfigPath());
+			}
+			catch (IOException e)
+			{
 				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
 				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
 			}
 		}
 		return wpsConfig;
 	}
+	
+	public static WPSConfig getInstance(String path)
+	{
+		if (wpsConfig == null)
+		{
+			try
+			{
+				wpsConfig = new WPSConfig(path);
+			}
+			catch (XmlException e)
+			{
+				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			}
+			catch (IOException e)
+			{
+				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			}
+		}
+		return wpsConfig;
+	}
+	
 	/**
 	 * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is only applicable for webapp applications. To customize this, please use directly {@link WPSConfig#forceInitialization(String)} and then getInstance().
 	 * @return

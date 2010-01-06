@@ -51,6 +51,19 @@ public abstract class AbstractXMLParser implements IParser {
 		 geomFactory = new GeometryFactory();
 		 properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
 	}
+	
+	public AbstractXMLParser(boolean pReadWPSConfig) {
+		 geomFactory = new GeometryFactory();
+		 if (pReadWPSConfig)
+		 {
+			 properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+			 
+		 }
+		 else
+		 {
+			 properties = new Property[0];
+		 }
+	}
 
 	public final boolean isSupportedFormat(String format) {
 		for(String f : getSupportedFormats()) {

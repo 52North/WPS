@@ -34,8 +34,6 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -63,7 +61,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.IDistributedAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.response.ExecuteResponse;
@@ -539,18 +536,18 @@ public class ExecuteRequest extends Request implements Observer {
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			}
 			
-			if (algorithm instanceof IDistributedAlgorithm)
-			{
-				try
-				{
-					returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getOutputData();
-				}
-				catch (Exception e)
-				{
-					LOGGER.error(e.getMessage());
-					throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
-				}
-			}
+//			if (algorithm instanceof IDistributedAlgorithm)
+//			{
+//				try
+//				{
+//					returnResults = ((IDistributedAlgorithm) algorithm).run(execDom).getOutputData();
+//				}
+//				catch (Exception e)
+//				{
+//					LOGGER.error(e.getMessage());
+//					throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+//				}
+//			}
 			if(returnResults==null)
 			{
 				returnResults = algorithm.run(parser.getParsedInputData());

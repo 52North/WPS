@@ -74,6 +74,16 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		"http://www.opengeospatial.org/gmlpacket.xsd", 
 		"http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd"};
 
+	public SimpleGMLGenerator()
+	{
+		super();
+	}
+	
+	public SimpleGMLGenerator(boolean pReadWPSConfig)
+	{
+		super(pReadWPSConfig);
+	}
+	
 	public String[] getSupportedSchemas() {
 		return SUPPORTED_SCHEMAS;
 	}

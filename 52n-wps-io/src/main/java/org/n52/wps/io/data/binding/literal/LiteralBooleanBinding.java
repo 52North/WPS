@@ -1,9 +1,11 @@
 package org.n52.wps.io.data.binding.literal;
 
+import java.io.IOException;
+
 import org.n52.wps.io.data.IData;
 
 public class LiteralBooleanBinding implements IData {
-	private boolean payload;
+	private transient boolean payload;
 	
 	public LiteralBooleanBinding(boolean payload){
 		this.payload = payload;
@@ -15,6 +17,16 @@ public class LiteralBooleanBinding implements IData {
 
 	public Class getSupportedClass() {
 		return Boolean.class;
+	}
+	
+	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
+	{
+		oos.writeObject(Boolean.toString(payload));
+	}
+	
+	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
+	{
+		payload = Boolean.parseBoolean((String) oos.readObject());
 	}
 
 }

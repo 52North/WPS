@@ -137,11 +137,13 @@
         </plugins>
     </build>
     <modules>
+	
         <module>52n-wps-commons</module>
         <module>52n-wps-io</module>
         <module>52n-wps-server</module>
-		<module>52n-wps-grid</module>
-        <module>52n-wps-webapp</module>
+	<module>52n-wps-unicore</module>
+	<module>52n-wps-gridgain</module>
+	<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
         <module>52n-wps-site</module>
