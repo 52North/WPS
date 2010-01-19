@@ -218,8 +218,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
-			range.addNewMaximumValue().setStringValue(Double.toString(ai.getMaxValue()));
-			range.addNewMinimumValue().setStringValue(Double.toString(ai.getMinValue()));
+			range.addNewMaximumValue().setStringValue("+Infinity");
+			range.addNewMinimumValue().setStringValue("-Infinity");
 			literal.setDefaultValue(Double.toString(ai.getDefaultValue()));
 		}
 		else if (param instanceof ParameterString){
@@ -289,6 +289,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
+			range.addNewMaximumValue().setStringValue("+Infinity");
 			literal.setDefaultValue("0");
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:int");
@@ -300,6 +301,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
+			range.addNewMaximumValue().setStringValue("+Infinity");
 			literal.setDefaultValue("0");
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:int");
