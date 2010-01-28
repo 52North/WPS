@@ -37,36 +37,96 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.algorithm.spatialquery;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.geotools.feature.Feature;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
 
 public class DistanceAlgorithm extends AbstractAlgorithm {
 
-	@Override
+	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
+	private final String inputID1 = "LAYER1";
+	private final String inputID2 = "LAYER2";
+	private final String outputID = "RESULT";
+	private List<String> errors = new ArrayList<String>();
+
 	public List<String> getErrors() {
-		// TODO Auto-generated method stub
-		return null;
+		return errors;
 	}
 
-	@Override
 	public Class getInputDataType(String id) {
-		// TODO Auto-generated method stub
+		if (id.equalsIgnoreCase(inputID1) || id.equalsIgnoreCase(inputID2)) {
+			return GTVectorDataBinding.class;
+		}
 		return null;
 	}
 
-	@Override
 	public Class getOutputDataType(String id) {
-		// TODO Auto-generated method stub
+		if(id.equalsIgnoreCase(outputID)){
+			return LiteralDoubleBinding.class;
+		}
 		return null;
 	}
 
 	@Override
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if(inputData==null || !inputData.containsKey(inputID1)){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		if(inputData==null || !inputData.containsKey(inputID2)){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		List<IData> dataList = inputData.get(inputID1);
+		if(dataList == null || dataList.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData firstInputData = dataList.get(0);
+				
+		FeatureCollection firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
+
+		List<IData> dataListLS = inputData.get(inputID2);
+		if(dataListLS == null || dataListLS.size() != 1){
+			throw new RuntimeException("Error while allocating input parameters");
+		}
+		IData secondInputData = dataListLS.get(0);
+				
+		FeatureCollection secondCollection = ((GTVectorDataBinding) secondInputData).getPayload();
+		
+		FeatureIterator firstIterator = firstCollection.features();
+		
+		FeatureIterator secondIterator = secondCollection.features();
+		
+		if(!firstIterator.hasNext()){
+			throw new RuntimeException("Error while iterating over features in layer 1");
+		}
+		
+		if(!secondIterator.hasNext()){
+			throw new RuntimeException("Error while iterating over features in layer 2");
+		}
+		
+		Feature firstFeature = firstIterator.next();
+		
+		Feature secondFeature = secondIterator.next();
+		
+		double distance = firstFeature.getDefaultGeometry().distance(secondFeature.getDefaultGeometry());
+		
+		HashMap<String, IData> result = new HashMap<String, IData>();
+
+		result.put(outputID,
+				new LiteralDoubleBinding(distance));
+		return result;
 	}
 
 }
