@@ -29,7 +29,7 @@ public class GTBinZippedSHPParser extends AbstractGTBinZippedSHPParser {
 	 * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
 	 */
 	@Override
-	public IData parse(InputStream input) throws RuntimeException {
+	public IData parse(InputStream input, String mimeType) throws RuntimeException {
 		try {
 			String fileName = "tempfile" + System.currentTimeMillis()+".zip";
 			File tempFile = new File(fileName);

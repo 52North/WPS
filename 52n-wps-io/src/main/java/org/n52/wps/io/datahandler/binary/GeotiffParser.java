@@ -32,20 +32,10 @@ to the WPS version 0.4.0 (OGC 05-007r4).
 
 package org.n52.wps.io.datahandler.binary;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.data.DataSourceException;
-import org.geotools.factory.Hints;
-import org.geotools.gce.geotiff.GeoTiffReader;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public class GeotiffParser extends AbstractGeotiffParser {
 	
@@ -54,7 +44,7 @@ public class GeotiffParser extends AbstractGeotiffParser {
 	}
 
 	@Override
-	public IData parse(InputStream input) {
+	public IData parse(InputStream input, String mimeType) {
 		return parseTiff(input);
 	}
 

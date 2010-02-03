@@ -109,7 +109,7 @@ public abstract class ResponseData {
 				}
 			}
 			else if(generator instanceof AbstractBinaryGenerator) {
-				File file = ((AbstractBinaryGenerator)generator).generateFile(obj);
+				File file = ((AbstractBinaryGenerator)generator).generateFile(obj, mimeType);
 				try {
 					FileInputStream fileInputStream = new FileInputStream(file);
 					IOUtils.copy(fileInputStream, stream);

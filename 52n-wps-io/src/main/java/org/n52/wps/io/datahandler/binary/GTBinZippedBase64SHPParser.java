@@ -31,7 +31,7 @@ public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 	 * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
 	 */
 	@Override
-	public IData parse(InputStream input) throws RuntimeException {
+	public IData parse(InputStream input, String mimeType) throws RuntimeException {
 		try {
 			File zipped = IOUtils.writeBase64ToFile(input, "zip");
 			File shp = IOUtils.unzip(zipped, "shp");

@@ -272,7 +272,7 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return false;
 	}
 
-	public GTVectorDataBinding parse(InputStream input) {
+	public GTVectorDataBinding parse(InputStream input, String mimeType) {
 		return parseXML(input);
 	}
 

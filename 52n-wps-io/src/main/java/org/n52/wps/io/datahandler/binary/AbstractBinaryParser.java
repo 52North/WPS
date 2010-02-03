@@ -31,6 +31,7 @@ import org.n52.wps.io.IParser;
 
 public abstract class AbstractBinaryParser implements IParser {
 
+
 	public boolean isSupportedSchema(String schema) {
 		return true;
 	}

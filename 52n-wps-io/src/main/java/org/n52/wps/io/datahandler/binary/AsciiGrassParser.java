@@ -27,7 +27,6 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.io.datahandler.binary;
 
-import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,8 +46,8 @@ import org.opengis.coverage.grid.GridCoverageReader;
 public class AsciiGrassParser extends AbstractBinaryParser {
 
 	private static Logger LOGGER = Logger.getLogger(AsciiGrassParser.class);
-
-	public AsciiGrassDataBinding parse(InputStream input) {
+	
+	public AsciiGrassDataBinding parse(InputStream input, String mimeType) {
 
 		GridCoverage2D grid = null;
 		

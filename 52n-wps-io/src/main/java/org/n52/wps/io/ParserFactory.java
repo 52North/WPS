@@ -105,10 +105,10 @@ public class ParserFactory {
 
 			if(parser != null) {
 				if (parser.supportsSchemas()) {
-					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedSchemas());
+					LOGGER.info("Parser class registered: " + parserClass);
 				}
 				else {
-					LOGGER.info("Parser class registered: "+parserClass + " " + parser.getSupportedFormats());
+					LOGGER.info("Parser class registered: " + parserClass);
 				}
 				registeredParsers.add(parser);
 			}
@@ -119,7 +119,7 @@ public class ParserFactory {
 		return factory;
 	}
 	
-	
+	/*
 	private IParser getParser(String schema, String format, String encoding) {
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
@@ -137,6 +137,8 @@ public class ParserFactory {
 		}
 		return null;
 	}
+	*/
+	
 	/*
 	public IParser getParser(String schema, String format, String encoding, String algorithmIdentifier, String inputIdentifer) {
 		if(format == null) {

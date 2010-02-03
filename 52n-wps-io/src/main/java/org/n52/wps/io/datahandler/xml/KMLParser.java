@@ -53,7 +53,7 @@ public class KMLParser extends AbstractXMLParser {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public IData parse(InputStream input) {
+	public IData parse(InputStream input, String mimeType) {
 		GTVectorDataBinding kmlBinding = null;
 		Streams kml = new KMLStream();
 
@@ -251,7 +251,7 @@ public class KMLParser extends AbstractXMLParser {
 
 	@Override
 	public IData parseXML(InputStream stream) {
-		parse(stream);
+		parse(stream, null);
 		return null;
 	}
 

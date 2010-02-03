@@ -11,6 +11,7 @@
 			<Property name="fcBufferTimeout">10000</Property></Parser>
 			<Parser name="AsciiGrassParser"
 				className="org.n52.wps.io.datahandler.binary.AsciiGrassParser" />
+			<Parser name="GenericFileParser" className="org.n52.wps.io.datahandler.binary.GenericFileParser"/>
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser" />
 			<Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser" />
 
@@ -38,6 +39,7 @@
 				className="org.n52.wps.io.datahandler.xml.KMLGenerator" />
 			<Generator name="GTBinZippedSHPGenerator"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator" />
+			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator"/>
 				
 			
 		</GeneratorList>
@@ -89,6 +91,35 @@
 			className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
 		 -->
+		
+		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository">
+			<Property name="IP">**</Property>
+			<Property name="DOMAIN">**</Property>
+			<Property name="USER">**</Property>
+			<Property name="PASS">**</Property>
+			<Property name="WORKSPACEBASE">**</Property>
+			<Property name="ARCOBJECTSJAR">**</Property>
+			<Property name="DESCRIBE_PROCESS_DIR">D:\development\xmlDescriptions</Property>
+		</Repository>
+		
+		<Repository name="LegacyProcessRepository" className="org.n52.wps.server.legacy.LegacyProcessRepository">
+			
+			<Property name="DESCRIBE_PROCESS_DIR">D:\development\legacyDescriptions</Property>
+			<Property name="TEMPLATE_WORKSPACE_DIR">D:\development\templateWS</Property>
+			
+			<!-- current workaround to configure legacy delegators in wps properties-->
+			<Property name="DELEGATOR">org.n52.wps.ags.LegacyAGSProcessDelegator</Property>
+			<Property name="DELEGATOR">org.n52.wps.ags.scripting.LegacyPythonDelegator</Property>
+			
+			<!-- 
+			<Delegator name="LegacyAGSProcessDelegator" className="org.n52.wps.ags.LegacyAGSProcessDelegator">
+				<Property name="CONTAINER">urn:n52:esri:arctoolbox:9.3</Property>
+				<Property name="BACKEND">urn:n52:esri:arcgis:9.3.1</Property>
+				<Property name="BACKEND">urn:n52:esri:arcgis:9.3</Property>
+			</Delegator>
+			-->
+			
+		</Repository> 
 		 
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080"

@@ -32,7 +32,8 @@ import java.io.InputStream;
 import org.n52.wps.io.data.IData;
 
 public interface IParser extends IOHandler{
-	IData parse(InputStream input);
+	
+	IData parse(InputStream input, String mimeType);
 	
 	Class[] getSupportedInternalOutputDataType();
 	

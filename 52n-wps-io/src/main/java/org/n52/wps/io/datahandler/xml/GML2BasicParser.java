@@ -261,7 +261,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		//return null;
 	}
 
-	public GTVectorDataBinding parse(InputStream input) {
+	public GTVectorDataBinding parse(InputStream input, String mimeType) {
 		return parseXML(input);
 	}
 
@@ -277,7 +277,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		GML2BasicParser parser = new GML2BasicParser();
 		try {
 			long start = System.currentTimeMillis();
-			parser.parse(new URL("http://geoserver.itc.nl:8080/geoserver/wfs?Request=GetFeature&typeName=topp:tasmania_roads").openStream());
+			parser.parse(new URL("http://geoserver.itc.nl:8080/geoserver/wfs?Request=GetFeature&typeName=topp:tasmania_roads").openStream(), DEFAULT_MIMETYPE);
 			long finish = System.currentTimeMillis();
 			System.out.println((finish-start)/1000.0);
 		} catch (MalformedURLException e) {

@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.log4j.Logger;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -40,6 +41,9 @@ public class IOUtils {
 	 * @throws IOException
 	 *             if an error occurs while writing the contents to disk
 	 */
+	
+	private static Logger LOGGER = Logger.getLogger(IOUtils.class);
+	
 	public static File writeBase64ToFile(InputStream input, String extension)
 			throws IOException {
 		char[] buffer = new char[4096];
@@ -95,6 +99,7 @@ public class IOUtils {
 		byte[] buffer = new byte[4096];
 		for (File file : files) {
 			if (!file.exists()) {
+				LOGGER.debug("Colud not zip " + file.getAbsolutePath());
 				continue;
 			}
 

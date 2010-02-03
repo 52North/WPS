@@ -42,7 +42,7 @@ public abstract class  AbstractGTBinZippedSHPParser extends AbstractXMLParser {
 	
 	@Override
 	public IData parseXML(InputStream stream) throws RuntimeException {
-		return parse(stream);
+		return parse(stream, null);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public abstract class  AbstractGTBinZippedSHPParser extends AbstractXMLParser {
 	 * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
 	 */
 	@Override
-	public abstract IData parse(InputStream input);
+	public abstract IData parse(InputStream input, String mimeType);
 
 	@Override
 	public String[] getSupportedFormats() {

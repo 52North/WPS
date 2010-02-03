@@ -17,7 +17,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 	protected static String[] SUPPORTED_FORMAT = {"image/tiff","image/geotiff"};
 	protected static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
-
+	
 	protected IData parseTiff(InputStream input) {
 		String fileName = "tempfile" + System.currentTimeMillis();
 		File tempFile = new File(fileName);

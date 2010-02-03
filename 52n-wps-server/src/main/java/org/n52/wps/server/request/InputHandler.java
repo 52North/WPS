@@ -37,7 +37,6 @@ Muenster, Germany
 package org.n52.wps.server.request;
 
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -54,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
-import javax.xml.XMLConstants;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -66,13 +64,10 @@ import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.util.BasicXMLTypeFactory;
-import org.xml.sax.InputSource;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -194,7 +189,7 @@ public class InputHandler {
 					i = sr.read();
 				}
 				fos.close();
-				collection =  parser.parse(new FileInputStream(f));
+				collection = parser.parse(new FileInputStream(f), mimeType);
 				System.gc();
 				f.delete();
 			} catch (IOException e) {
@@ -363,7 +358,7 @@ public class InputHandler {
 					input.getReference().getBody().save(conn.getOutputStream());
 				}
 				InputStream inputStream = retrievingZippedContent(conn);
-				parsedInputData = parser.parse(inputStream);				
+				parsedInputData = parser.parse(inputStream, mimeType);				
 			}
 			catch(RuntimeException e) {
 				throw new ExceptionReport("Error occured while parsing XML", 
