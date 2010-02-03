@@ -177,7 +177,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 
 
 	@Override
-	public File generateFile(IData data) {
+	public File generateFile(IData data, String mimeType) {
 		if(!(data instanceof GTRasterDataBinding)){
 			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
 		}

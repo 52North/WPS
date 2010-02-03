@@ -47,5 +47,5 @@ public abstract class AbstractBinaryGenerator implements IGenerator {
 		return null;
 	}
 
-	public abstract File generateFile(IData coll);
+	public abstract File generateFile(IData coll, String mimeType);
 }

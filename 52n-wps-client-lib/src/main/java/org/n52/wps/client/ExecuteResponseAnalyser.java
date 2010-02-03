@@ -162,7 +162,7 @@ public class ExecuteResponseAnalyser {
 		}
 		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
 		if(parser != null) {
-			return parser.parse((InputStream)response);
+			return parser.parse((InputStream)response, mimeType);
 		}
 
 		return null;
