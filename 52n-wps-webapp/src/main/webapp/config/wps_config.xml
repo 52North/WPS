@@ -91,7 +91,7 @@
 			className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
 		 -->
-		
+		<!--
 		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository">
 			<Property name="IP">**</Property>
 			<Property name="DOMAIN">**</Property>
@@ -107,20 +107,20 @@
 			<Property name="DESCRIBE_PROCESS_DIR">D:\development\legacyDescriptions</Property>
 			<Property name="TEMPLATE_WORKSPACE_DIR">D:\development\templateWS</Property>
 			
-			<!-- current workaround to configure legacy delegators in wps properties-->
+			
 			<Property name="DELEGATOR">org.n52.wps.ags.LegacyAGSProcessDelegator</Property>
 			<Property name="DELEGATOR">org.n52.wps.ags.scripting.LegacyPythonDelegator</Property>
 			
-			<!-- 
+			 
 			<Delegator name="LegacyAGSProcessDelegator" className="org.n52.wps.ags.LegacyAGSProcessDelegator">
 				<Property name="CONTAINER">urn:n52:esri:arctoolbox:9.3</Property>
 				<Property name="BACKEND">urn:n52:esri:arcgis:9.3.1</Property>
 				<Property name="BACKEND">urn:n52:esri:arcgis:9.3</Property>
 			</Delegator>
-			-->
+			
 			
 		</Repository> 
-		 
+		 -->
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
