@@ -135,7 +135,7 @@ public class ConvexHullAlgorithm extends AbstractAlgorithm {
 
 		HashMap<String, IData> result = new HashMap<String, IData>();
 
-		result.put("CONVEX_HULL",
+		result.put("RESULT",
 				new GTVectorDataBinding(fOut));
 		return result;
 	}

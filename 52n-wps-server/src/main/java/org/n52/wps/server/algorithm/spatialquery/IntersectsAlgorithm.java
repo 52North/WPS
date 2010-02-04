@@ -52,7 +52,7 @@ import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
 
-public class DisjointAlgorithm extends AbstractAlgorithm {
+public class IntersectsAlgorithm extends AbstractAlgorithm {
 
 	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
 	private final String inputID1 = "LAYER1";
@@ -119,12 +119,12 @@ public class DisjointAlgorithm extends AbstractAlgorithm {
 		
 		Feature secondFeature = secondIterator.next();
 		
-		boolean disjoint = firstFeature.getDefaultGeometry().disjoint(secondFeature.getDefaultGeometry());
+		boolean intersects = firstFeature.getDefaultGeometry().intersects(secondFeature.getDefaultGeometry());
 		
 		HashMap<String, IData> result = new HashMap<String, IData>();
 
 		result.put(outputID,
-				new LiteralBooleanBinding(disjoint));
+				new LiteralBooleanBinding(intersects));
 		return result;
 	}
 

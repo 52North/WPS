@@ -87,19 +87,19 @@ public class CrossesAlgorithm extends AbstractAlgorithm{
 		if(inputData==null || !inputData.containsKey(inputID2)){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		List<IData> dataList = inputData.get(inputID1);
-		if(dataList == null || dataList.size() != 1){
+		List<IData> firstDataList = inputData.get(inputID1);
+		if(firstDataList == null || firstDataList.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		IData firstInputData = dataList.get(0);
+		IData firstInputData = firstDataList.get(0);
 				
 		FeatureCollection firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
-		List<IData> dataListLS = inputData.get(inputID2);
-		if(dataListLS == null || dataListLS.size() != 1){
+		List<IData> secondDataList = inputData.get(inputID2);
+		if(secondDataList == null || secondDataList.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		IData secondInputData = dataListLS.get(0);
+		IData secondInputData = secondDataList.get(0);
 				
 		FeatureCollection secondCollection = ((GTVectorDataBinding) secondInputData).getPayload();
 		
