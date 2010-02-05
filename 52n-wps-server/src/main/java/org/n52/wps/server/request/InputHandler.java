@@ -290,11 +290,11 @@ public class InputHandler {
 		String schema = input.getReference().getSchema();
 		String encoding = input.getReference().getEncoding();
 		String mimeType = input.getReference().getMimeType();
-		if(schema == null && !(mimeType.equalsIgnoreCase("application/x-zipped-shp"))) {
-			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		}
 		if(mimeType == null) {
 			mimeType = inputDesc.getComplexData().getDefault().getFormat().getMimeType();
+		}
+		if(schema == null && !(mimeType.equalsIgnoreCase("application/x-zipped-shp"))) {
+			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
 		}
 		if(encoding == null) {
 			encoding = inputDesc.getComplexData().getDefault().getFormat().getEncoding();
