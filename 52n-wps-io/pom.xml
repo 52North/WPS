@@ -114,11 +114,7 @@
      <artifactId>jts</artifactId>
      <version>1.10</version>
 </dependency>
-<dependency>
-     <groupId>log4j</groupId>
-     <artifactId>log4j</artifactId>
-     <version>1.2.14</version>
-</dependency>
+
 <dependency>
    <groupId>org.geotools</groupId>
    <artifactId>gt2-main</artifactId>
