@@ -9,9 +9,7 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 	service="WPS" version="1.0.0" xml:lang="en-US">
 	<ProcessDescription wps:processVersion="2" storeSupported="true"
 		statusSupported="false">
-		<ows:Identifier>
-			org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm
-		</ows:Identifier>
+		<ows:Identifier>org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</ows:Identifier>
 		<ows:Title>IntersectsAlgorithm</ows:Title>
 		<ows:Abstract>
 			Uses JTS implementation. Does not support topological

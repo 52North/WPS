@@ -54,7 +54,7 @@ import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
 
 public class OverlapsAlgorithm extends AbstractAlgorithm {
 
-	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
+	Logger LOGGER = Logger.getLogger(OverlapsAlgorithm.class);
 	private final String inputID1 = "LAYER1";
 	private final String inputID2 = "LAYER2";
 	private final String outputID = "RESULT";

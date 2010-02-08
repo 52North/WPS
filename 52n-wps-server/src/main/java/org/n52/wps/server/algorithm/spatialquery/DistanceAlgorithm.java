@@ -55,7 +55,7 @@ import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
 
 public class DistanceAlgorithm extends AbstractAlgorithm {
 
-	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
+	Logger LOGGER = Logger.getLogger(DistanceAlgorithm.class);
 	private final String inputID1 = "LAYER1";
 	private final String inputID2 = "LAYER2";
 	private final String outputID = "RESULT";

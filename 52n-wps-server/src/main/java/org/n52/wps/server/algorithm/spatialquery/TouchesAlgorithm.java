@@ -54,7 +54,7 @@ import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
 
 public class TouchesAlgorithm extends AbstractAlgorithm{
 
-	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
+	Logger LOGGER = Logger.getLogger(TouchesAlgorithm.class);
 	private List<String> errors = new ArrayList<String>();
 	private final String inputID1 = "LAYER1";
 	private final String inputID2 = "LAYER2";
