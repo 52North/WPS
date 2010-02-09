@@ -3,10 +3,10 @@
  -----
 Bastian Schäffer
  -----
- 2009-03-07
+ 2010-02-09
  -----
 
-Geo-Processing Community Roadmap 2009
+Geo-Processing Community Roadmap 2010
 ~~~~~~~~~~~~~~~~~~
 
 
@@ -15,15 +15,17 @@ Geo-Processing Community Roadmap 2009
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| WPS-2.0		   | Release of new features and improved data model including SEXTANTE and UNICORE GRID support      |			  -               |            Done	        |
+| 			WPS-2.1	Release	   | Release of new features and improved data model including ArcGIS and GRID GAIN support      |			  -               |            in progress	        |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			GRID  			   |  Complete prototypical WPS Gridification				  |    OWS-6          		     |   started           			|
+|			WPS-ArcGIS Server Turotial  			   |  New Tutorial on how to use ArcGIS Server as backend for Geoprocessing				  |    -         		     |   in progress           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			SecureWPS  			   |  Secure a WPS with the 52°North Security Components  |    OWS-6          		     |   started           			|
+|			WPS-FME Prototype  			   |  Use Safe Soft's famous FME as a WPS Processing Backend				  |    -         		     |   in progress           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			Delegation  			   |  		Enable Delegation and Delegation Chains in WPS based geoprocessing workflows		  |    OWS-6          		     |   started           			|
+|			WPS-Developer Community Meeting  			   |  Hackathon to improve existing features and create new ones				  |    -         		     |   to be scheduled           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-
+|			WPS+JTS  			   |  Enable JTS Feature analysis capabilities as processing backend 				  |    OWS-7          		     |    started           			|
+*--------------------------*--------------------------*--------------------------+--------------------------*
+				
 
 
   <<II. Quarter>>
@@ -31,16 +33,23 @@ Geo-Processing Community Roadmap 2009
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| WPS-Priority	   |	Extended WPS interface with pause, stop or restart     |			 GI-Innovation Price              |            started	        |
+| WPS OpenLayers client migration to 52n Repository	   |	Migrate the JavaScript source to the 52n SVN    |		-	              |            in progress	        |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|	
+| Improve 52North Udig WPS Plugin with Raste Capbilites 	   |	Raster support for process inputs and outputs    |		SLA4D-GRID	              |            in progress	        |
+*--------------------------*--------------------------*--------------------------+--------------------------*
+|			WPS+R  			   |  Enable R as processing backend for geostatistical analysis				  |    OWS-7          		     |   not started           			|
+*--------------------------*--------------------------*--------------------------+--------------------------*
+	
+	
 
   <<III. Quarter>>
 
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS-T with SQL  			   |  Create a SQL profile for the WPS-T				  |    52°North Innovation Price          		     |   not started           			|
+|			FOSS4G in Barcelona  			   |  Present latest developments at the FOSS4G in Barcelona				  |     FOSS4G       		     |   not started           			|
+*--------------------------*--------------------------*--------------------------+--------------------------*
+|			WPS Community Meeting @FOSS4G  			   |  Discuss the latest developments with 52n WPS users and devlopers				  |    FOSS4G          		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |			WPS-GRID + GLOBUS  			   |  Create GLOBUS support for the WPS-G				  |              		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
@@ -51,7 +60,11 @@ Geo-Processing Community Roadmap 2009
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |     <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS+GRASS  			   |  Enable GRASS processes to be performed via a WPS interface				  |    GENESIS          		     |   not started           			|
+|			WPS+GRASS  			   |  Enable GRASS processes to be performed via a WPS interface				  |    OWS-7/GENESIS          		     |   not started           			|
+*--------------------------*--------------------------*--------------------------+--------------------------*
+|			WPS+GDAL  			   |  Use GDAL for data conversion and coordiante transformation				  |    OWS-7          		     |   not started           			|
+*--------------------------*--------------------------*--------------------------+--------------------------*
+|			WPS-2.2 Release  			   |  Enable GRASS processes to be performed via a WPS interface				  |             		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
 
  
