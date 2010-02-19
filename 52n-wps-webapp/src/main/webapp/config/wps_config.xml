@@ -40,6 +40,7 @@
 			<Generator name="GTBinZippedSHPGenerator"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator" />
 			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator"/>
+			<Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files"/>
 				
 			
 		</GeneratorList>

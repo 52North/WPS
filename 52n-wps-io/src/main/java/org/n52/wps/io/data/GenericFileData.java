@@ -188,7 +188,12 @@ public class GenericFileData {
 	
 	public GTVectorDataBinding getAsGTVectorDataBinding(){
 		String dirName = "tmp" + System.currentTimeMillis();
-		File tempDir = new File(dirName);
+		File tempDir = null;
+		
+		if(new File(dirName).mkdir()){
+			tempDir = new File(dirName);
+		}
+		
 		LOGGER.info("Writing temp data to: " + tempDir);
 		String fileName = writeData(tempDir);
 		LOGGER.info("Temp file is: " + fileName);
