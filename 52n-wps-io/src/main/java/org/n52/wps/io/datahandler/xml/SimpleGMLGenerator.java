@@ -42,9 +42,12 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import net.opengis.examples.packet.DataType;
 import net.opengis.examples.packet.GMLPacketDocument;
 import net.opengis.examples.packet.GMLPacketType;
+import net.opengis.examples.packet.PropertyType;
 import net.opengis.examples.packet.StaticFeatureType;
+import net.opengis.examples.packet.PropertyType.Value;
 import net.opengis.gml.CoordType;
 import net.opengis.gml.LineStringPropertyType;
 import net.opengis.gml.LinearRingMemberType;
@@ -131,6 +134,53 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 				if (coord != null) {
 					PointPropertyType pointType = staticFeature.addNewPointProperty();
 					pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
+					
+					if(feature.getFeatureType().getAttributeCount()>1){
+						
+						for (int i = 0; i < feature.getNumberOfAttributes(); i++) {
+						
+							if(feature.getFeatureType().getAttributeType(i).getLocalName().contains("geom")){
+								continue;
+							}
+							
+							PropertyType propertyType = staticFeature.addNewProperty();
+							propertyType.setPropertyName(feature.getFeatureType().getAttributeType(i).getLocalName());
+							
+							Object o = feature.getAttribute(i);
+							
+							if(o instanceof Integer){
+								
+								Value value = propertyType.addNewValue();
+								
+								value.setDataType(DataType.INTEGER);
+								
+								value.setStringValue(String.valueOf(o));
+							}else if(o instanceof String){
+								
+								Value value = propertyType.addNewValue();
+								
+								value.setDataType(DataType.STRING);
+								
+								value.setStringValue(String.valueOf(o));
+							}else if(o instanceof Boolean){
+								
+								Value value = propertyType.addNewValue();
+								
+								value.setDataType(DataType.BOOLEAN);
+								
+								value.setStringValue(String.valueOf(o));
+							}else if(o instanceof Long){
+								
+								Value value = propertyType.addNewValue();
+								
+								value.setDataType(DataType.LONG);
+								
+								value.setStringValue(String.valueOf(o));
+							}
+							
+						}
+				
+					}					
 				}
 			}
 			else if(geomType.equals("LineString")) {

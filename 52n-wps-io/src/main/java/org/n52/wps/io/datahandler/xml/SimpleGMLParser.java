@@ -40,16 +40,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.opengis.examples.packet.GMLPacketDocument;
+import net.opengis.examples.packet.PropertyType;
 import net.opengis.examples.packet.StaticFeatureType;
+import net.opengis.examples.packet.PropertyType.Value;
 import net.opengis.gml.CoordType;
 import net.opengis.gml.LineStringPropertyType;
 import net.opengis.gml.LinearRingMemberType;
 import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
+import net.opengis.gml.PointType;
 import net.opengis.gml.PolygonPropertyType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.geotools.feature.AttributeType;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.DefaultFeatureTypeFactory;
@@ -154,9 +158,29 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		}
 		
 		FeatureType type = createFeatureType(staticFeature);
-		
+				
 		try{
+			if(type.getAttributeCount()>1){
+				
+				if(staticFeature.sizeOfPropertyArray() > 0){
+					
+					ArrayList<Object> properties = new ArrayList<Object>(staticFeature.sizeOfPropertyArray());
+					
+					properties.add(geom);
+					
+					for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {						
+						PropertyType ptype = staticFeature.getPropertyArray(i);
+						if(!ptype.getPropertyName().contains("geom")){
+						Value v = ptype.getValue();
+						properties.add(v.getStringValue());	
+						}
+					}
+					feature = type.create(properties.toArray());
+				}				
+			
+			}else{
 			 feature = type.create(new Object[]{geom});
+			}
 		}
 		catch(IllegalAttributeException e) {
 			throw new IllegalArgumentException(e);
@@ -183,6 +207,23 @@ public class SimpleGMLParser extends AbstractXMLParser {
 					Polygon.class);
 			typeFactory.addType(geom);
 		}
+		
+		if(staticFeature.sizeOfPropertyArray() > 0){
+			for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {
+				
+				
+				
+				PropertyType type = staticFeature.getPropertyArray(i);
+				if(!type.getPropertyName().contains("geom")){
+				AttributeType value = org.geotools.feature.AttributeTypeFactory.newAttributeType( type.getPropertyName(),
+						String.class);
+				
+				typeFactory.addType(value);
+				}
+			}
+			
+		}
+		
 		FeatureType returnType;
 		try {
 			returnType = typeFactory.getFeatureType();
@@ -191,9 +232,8 @@ public class SimpleGMLParser extends AbstractXMLParser {
 			throw new RuntimeException(e);
 		}
 		return returnType;
-		
-//		staticFeature.get
 	}
+	
 	private Geometry convertToJTSGeometry(LineStringPropertyType lineString) {
 		Geometry geom;
 		if(lineString.getLineString().getCoordArray().length != 0) {
