@@ -20,16 +20,16 @@
   <inceptionYear>2007</inceptionYear>
       <mailingLists>
         <mailingList>
-            <name>Geoprocessing</name>
+            <name>Geoprocessing Community Mailinglist</name>
             <archive>
-                http://52north.org/pipermail/geoprocessingservices/
+                http://www2.52north.org/pipermail/geoprocessingservices/
             </archive>
             <post>geoprocessingservices@52north.org</post>
             <subscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
+                http://www2.52north.org/mailman/listinfo/geoprocessingservices
             </subscribe>
             <unsubscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
+                http://www2.52north.org/mailman/listinfo/geoprocessingservices
             </unsubscribe>
         </mailingList>
     </mailingLists>
