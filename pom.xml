@@ -81,7 +81,7 @@
 	    <url>http://repo1.maven.org/maven2</url>
 	</repository>     
 	<repository>
-	    <id>Apache</id>
+	    <id>Geoserver</id>
 	    <name>Geoserver repository</name>
 	    <url>http://repository.codehaus.org/</url>
      </repository>
