@@ -5,7 +5,71 @@
 			WPS Test
 		</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	</head>
+<SCRIPT LANGUAGE="javascript" type="text/javascript">								
+
+function OnChange()
+{
+	
+	if(document.form3.select1.options[0].value == 'Choose a request'){
+	document.form3.select1.remove(0);
+	}
+	var nav = navigator.appName;
+	var index  = document.form3.select1.selectedIndex;
+	if(document.form3.select1.options[index].value == 'Union'){
+		<!--document.form2.request.value = load('/requests/Unionrequest.xml');-->
+		
+		var xmlobject = (new DOMParser()).parseFromString(load('/requests/Unionrequest.xml'), "text/xml");
+		var string = (new XMLSerializer()).serializeToString(xmlobject);
+		var prettyString = XML(new XMLSerializer().serializeToString(xmlobject)).toXMLString();
+		
+		document.form2.request.value = prettyString;
+		
+	}else if(document.form3.select1.options[index].value =='Intersects'){
+		
+		var xmlobject = (new DOMParser()).parseFromString(load('/requests/Intersectsrequest.xml'), "text/xml");
+		var string = (new XMLSerializer()).serializeToString(xmlobject);
+		var prettyString = XML(new XMLSerializer().serializeToString(xmlobject)).toXMLString();
+		
+		document.form2.request.value = prettyString;
+		
+	}else if(document.form3.select1.options[index].value =='Touches'){
+		
+		var xmlobject = (new DOMParser()).parseFromString(load('/requests/Touchesrequest.xml'), "text/xml");
+		var string = (new XMLSerializer()).serializeToString(xmlobject);
+		var prettyString = XML(new XMLSerializer().serializeToString(xmlobject)).toXMLString();
+		
+		document.form2.request.value = prettyString;
+	}
+
+    return true;
+}
+
+function load(FileName)
+{
+	var e = "";
+ a = self.location.pathname;
+ 
+ a = a.substring(0, a.lastIndexOf('/')+1);
+
+fk = self.location.protocol + "//" +
+                      self.location.host + a + FileName;
+
+b = new java.net.URL(fk);
+                      
+                      
+ c = new java.io.BufferedReader(
+     new java.io.InputStreamReader(b.openStream()));
+ d = c.readLine();
+ while((d = c.readLine()) != null)
+ {e += d + ' ';}
+
+ c.close();
+
+return(e);
+}
+
+</SCRIPT>
+</head>
 	<body bgcolor="#ffffff" text="#000000">
 		<table align="center" border="0" bordercolor="#000099" height="740" width="75%">
 			<tbody>
@@ -68,7 +132,14 @@
 											</div>
 
 										</form>
-									</td>
+						<form name="form3" action=""><select name=select1
+							onchange='OnChange();'>
+							<option>Choose a request</option>
+							<option>Union</option>
+							<option>Intersects</option>
+							<option>Touches</option>
+						</form>
+						</td>
 								</tr>
 								<tr bgcolor="#000080">
 									<td>
