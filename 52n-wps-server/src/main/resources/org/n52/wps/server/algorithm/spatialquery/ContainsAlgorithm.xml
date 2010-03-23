@@ -5,7 +5,7 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
-http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd"
 	service="WPS" version="1.0.0" xml:lang="en-US">
 	<ProcessDescription wps:processVersion="2" storeSupported="true"
 		statusSupported="false">
