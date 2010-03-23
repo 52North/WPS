@@ -6,7 +6,6 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 		<ows:Identifier>org.n52.wps.ags.algorithm.DummyPython</ows:Identifier>
 		<ows:Title>dummy algorithm</ows:Title>
 		<ows:Abstract>Uses ArcGIS Server Backend</ows:Abstract>
-		<ows:Metadata xlink:title="SoKNOS" ></ows:Metadata>
 		<ows:Metadata xlink:title="spatial" ></ows:Metadata>
 		<ows:Metadata xlink:title="raster" />
 		<ows:Metadata xlink:title="dummyPython" ></ows:Metadata>
