@@ -4,14 +4,14 @@
 	<description>
     a 52n prototype implementation of the WPS 1.0.0 spec.
   </description>
-	<filter>
+	<!--filter>
 		<filter-name>CommunicationSizeLogFilter</filter-name>
 		<filter-class>org.n52.wps.server.CommunicationSizeLogFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>CommunicationSizeLogFilter</filter-name>
 		<url-pattern>/WebProcessingService</url-pattern>
-	</filter-mapping>
+	</filter-mapping-->
 	<security-constraint>
 	<web-resource-collection>
 		<web-resource-name>My JSP</web-resource-name>
