@@ -225,6 +225,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		else if (param instanceof ParameterString){
 			LiteralInputType literal = input.addNewLiteralData();
 			input.setMinOccurs(BigInteger.valueOf(1));
+			input.setMaxOccurs(BigInteger.valueOf(1));
 			literal.addNewAnyValue();
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:string");
@@ -242,6 +243,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				else{
 					input.setMinOccurs(BigInteger.valueOf(0));
 				}
+				input.setMaxOccurs(BigInteger.valueOf(1));
 				break;
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_ANY:
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_LINE:
@@ -263,6 +265,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				else{
 					input.setMinOccurs(BigInteger.valueOf(0));
 				}
+				input.setMaxOccurs(BigInteger.valueOf(1));
 				break;
 			default:
 				throw new UnsupportedGeoAlgorithmException();
