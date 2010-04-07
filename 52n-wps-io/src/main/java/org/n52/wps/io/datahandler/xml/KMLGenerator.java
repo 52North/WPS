@@ -7,8 +7,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
  Copyright (C) 2006 by con terra GmbH
 
  Authors: 
-	Theodor Foerster, ITC, Enschede, the Netherlands
-	Carsten Priess, Institute for geoinformatics, University of
+	Kristof Lange, Institute for Geoinformatics, University of
 Muenster, Germany
 
 
@@ -33,7 +32,12 @@ Muenster, Germany
  Created on: 13.06.2006
  ***************************************************************/
 package org.n52.wps.io.datahandler.xml;
-
+/*
+ * 
+ * 
+ * Deprecated due to the fact, that Sapience, as the underlying KML engine is no longer supported.
+ * 
+ *
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -207,10 +211,7 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 		return doc;
 	}
 	
-	/**
-	 * @param polygon
-	 * @return
-	 */
+	
 	private void convertToKmlPolygon(Polygon polygon, PolygonType kmlPolygon) {
 		net.opengis.kml.x22.LinearRingType kmlRing = (LinearRingType)kmlPolygon.addNewOuterBoundaryIs().addNewLinearRing().substitute(new QName(SUPPORTED_SCHEMAS[0], "LinearRing"), LinearRingType.type);
 		convertToKMLLinearRing(polygon.getExteriorRing(), kmlRing);
@@ -311,4 +312,4 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 	
 	}
 
-}
+}*/

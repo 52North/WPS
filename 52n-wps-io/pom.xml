@@ -145,11 +145,13 @@
    <artifactId>gt2-xml-gml2</artifactId>
    <version>2.4.2</version>
 </dependency>
-<dependency>
+<!-- deprecated
+	<dependency>
   <groupId>sapience</groupId>
   <artifactId>sapience-streams-kml</artifactId>
   <version>0.1-SNAPSHOT</version>
 </dependency>
+deprecated -->
 <!--
 <dependency>
    <groupId>org.geotools</groupId>
