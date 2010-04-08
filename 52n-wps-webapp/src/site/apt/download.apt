@@ -12,16 +12,18 @@ WPS Download section
 	
 	* Binary:
 	
-		* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc3/52n-wps-webapp-2.0-rc3.war} 52n WPS 2.0 RC3}}, release date September 2009.
+		* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc4/52n-wps-webapp-2.0-rc4.war} 52n WPS 2.0 RC4}}, release date April 2010.
 		Note: Java 1.6.0_01-b06 or higher required
 		
 		Please see the user guidance for further {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/source_setup.html} instructions}}.
 		
 	* Source:
 	
-		* See the {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/source_setup.html} source setup page}} for further instructions
+		* See the {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.0.pdf} source setup page}} for further instructions
 		
 * Former versions:
+
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc3/52n-wps-webapp-2.0-rc3.war} 52n WPS 2.0 RC3}}, release date September 2009.
 	
 	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc2/52n-wps-webapp-2.0-rc2.war} 52n WPS 2.0 RC2}}, release date March 2009.
 	

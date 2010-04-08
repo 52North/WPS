@@ -29,9 +29,11 @@ Theodor Foerster
 
  The WPS Web Admin Console is accessible through http://YOURHOST:YOURPORT/wps or directly through http://YOURHOST:YOURPORT/wps/webAdmin/index.jsp. It allows you to configure the WPS settings, as defined in the wps_config.xml. To use this console, it is necessary to define a user in the config/tomcat-users.xml (if you use Apache Tomcat). The role to define is wpsAdmin, userName and password can be chosen as you like. Example is:
 
--------------
- <user username="wpsAdmin" password="wpsAdmin" roles="wpsAdmin"/>
--------------
+** WPS ArcGIS Server Connector
+
+ See the turorial {{{http://XXX}here}}
+
+
 
 * Development Version settings
 
@@ -41,9 +43,7 @@ Theodor Foerster
 	
 	As the WPS is organized as a multi module project using Maven, you have to get the source from the SVN and use Maven to compile it. Information about Apache Maven 2 can be found here: {{{http://maven.apache.org/}maven.apache.org}}.
 	
-	The 52north remote repository is located at:
-	
-	{{{http://52north.org/maven/maven-repo/releases}http://52north.org/maven/maven-repo/releases}}
+	The 52north remote repository is located {{{http://52north.org/maven/repo/releases/}here}}.
 	
 	As you have to set this repository in your settings.xml your configuration could look somehow like this:
 	

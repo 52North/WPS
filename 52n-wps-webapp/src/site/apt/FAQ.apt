@@ -32,6 +32,7 @@ Q: WPS and Jetty
  
  	The mechanisms for getting resources like wps_config.xml has to be changed. Essentially two classes are needed, one being the Jetty Starter, another one being an extension of the WebProcessingService itself, where the init(ServletConfig) method is overriden to look like this:
 
+--------------------------	
 		public void init(ServletConfig config) throws ServletException 
 		               System.setProperty(
 		"javax.xml.transform.TransformerFactory",
@@ -46,5 +47,6 @@ Q: WPS and Jetty
 		       }
 		       super.init(config);
 		}
+--------------------------
 
 		of course, your web.xml has to point to your extension servlet, and you might have to change some of the parameters in the Jetty starter.

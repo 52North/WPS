@@ -65,8 +65,14 @@ Theodor Foerster
 		
 	* Extensions
 		* 220+ SEXTANTE Processes
+		
 		* Unicore GRID Middleware support 
+		
 		* Transactional Profile (WPS-T)
+		
+		* Web GUI to maintain the service
+		
+		* ArcGIS Server Connector ***new***
 	
 	
 	
@@ -74,5 +80,5 @@ Theodor Foerster
 
 * Future issues
 
-    * Web GUI to maintain the service
+    * GRASS Connector
 

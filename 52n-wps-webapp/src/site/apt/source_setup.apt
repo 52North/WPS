@@ -17,6 +17,12 @@ Bastian Schäffer
 http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
 --------------------------
 
+  Stable release can be found here:
+  
+--------------------------
+http://52north.org/svn/geoprocessing/main/WPS/tags/
+--------------------------	
+
   For a detailed description, please visit the {{{source-repository.html}source repository information}}
   
   Build and configuration instructions can be found {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/configuration.html} here}}
@@ -30,4 +36,4 @@ http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
 
 * Build, Configure and Create your own WPS process
  
- 	Please follow the installation {{{http://52north.org/download/Geoprocessing/documents/Website/WPS_Tutorial.pdf} tutorial}}
+ 	Please follow the installation {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.0.pdf} tutorial}}

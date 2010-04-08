@@ -15,4 +15,10 @@ WPS community demo section
     
     * {{{http://52north.org/maven/project-sites/download/wps/demos/JUMPDemo2007.html} 52n WPS JUMP client demo}}. Demonstrates basic interation with remote WPS instances within the JUMP Client. More information about the client can be found {{{http://52north.org/maven/project-sites/wps/52n-wps-client-jump/}here}}.
     
+    * {{{http://personales.alumno.upv.es/~vicgonco/wps/services.htm} WPS-T, Gearscape and Udig WPS Client }}. 52n WPS-T with Geospatial SQL profile execute from Gearscape and the 52°North Udig WPS Client.
+    
+    * {{{http://www.youtube.com/watch?v=bb0JqmZW7S4} 52n WPS in OpenLayers}}.
+    
+    * {{{https://52north.org/download/Geoprocessing/documents/WPS-FME.avi} 52n WPS and FME as backend}}.
+        
     * ... more to come.
