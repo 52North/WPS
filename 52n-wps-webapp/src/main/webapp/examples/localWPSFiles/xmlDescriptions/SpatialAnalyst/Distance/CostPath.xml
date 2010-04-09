@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.distance.costpath</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Title>CostPath_sa</ows:Title>
+		<ows:Abstract>Calculates the least-cost path from a source to a destination. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_destination_data</ows:Identifier><!-- 0 -->
+				<ows:Title>in destination data</ows:Title>
+				<ows:Abstract>A raster or feature dataset that identifies those cells from which the least-cost path is determined to the least costly source. If the input is a raster, the input consists of cells that have valid values (zero is a valid value), and the remaining cells must be assigned NoData.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shape</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shape</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>destination_field</ows:Identifier><!-- 5 -->
+				<ows:Title>destination field</ows:Title>
+				<ows:Abstract>The field used to obtain values for the destination locations. Input feature data must contain at least one valid field.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_cost_distance_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>in cost distance raster</ows:Title>
+				<ows:Abstract>The name of a cost distance raster used to determine the least-cost path from the in_destination_data cell locations to a source. The in_cost_distance_raster is usually created with the CostDistance function (or by the CostAllocation or CostBackLink functions). The in_cost_distance_raster stores, for each cell, the minimum accumulative cost distance over a cost surface from each cell to a set of source cells.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in cost backlink raster</ows:Identifier><!-- 2 -->
+				<ows:Title>in cost backlink raster</ows:Title>
+				<ows:Abstract>The name of a cost backlink raster used to determine the path to return to a source via the least-cost path. For each cell in the backlink raster, a value identifies the neighbor that is the next cell on the least accumulative cost path from the cell to a single source cell or set of source cells.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>path_type</ows:Identifier><!-- 4 -->
+				<ows:Title>path type</ows:Title>
+				<ows:Abstract>A keyword defining the manner in which the values and zones on the in_destination_data will be interpreted in the cost path calculations. EACH_CELL  — For each cell with valid values on the in_destination_data, a least-cost path is determined and saved on the output raster of the CostPath function. With EACH_CELL, each cell of the in_destination_data input is treated separately, and a least-cost path is determined for each from cell. EACH_ZONE  — For each zone on the in_destination_data , a least-cost path is determined and saved on the output raster of the CostPath function. With the EACH_ZONE keyword, the least-cost path for each zone begins at the cell with the lowest cost distance weighting in the zone. BEST_SINGLE  — For all cells on the in_destination_data input, the least-cost path is derived from the cell with the minimum of the least-cost paths to source cells.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>EACH_CELL</ows:Value>
+						<ows:Value>EACH_ZONE</ows:Value>
+						<ows:Value>BEST_SINGLE</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 3 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

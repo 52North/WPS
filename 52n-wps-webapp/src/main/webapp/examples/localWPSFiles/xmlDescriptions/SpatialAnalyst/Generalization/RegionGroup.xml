@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.math.generalization.regiongroup</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Title>RegionGroup_sa</ows:Title>
+		<ows:Abstract>For each cell in the output, Regiongroup records the identify of the connected region to which that cell belongs.A unique number is assigned to each region. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster</ows:Title>
+				<ows:Abstract>The input raster that Region Group will be applied to. It must be of integer type.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>number_neighbors</ows:Identifier><!-- 2 -->
+				<ows:Title>number neighbors</ows:Title>
+				<ows:Abstract>The number of neighboring cells to use in evaluating connectivity between cells. FOUR  — Defines connectivity between cells of the same value only if the cells are directly to the right or left or above or below each other — the four nearest neighbors. If two cells with the same value are diagonal from one another, they are not considered connected. EIGHT  — Defines connectivity between cells of the same value if they are within the immediate eight-cell neighborhood (eight nearest neighbors) of each other. This includes to the right or left, above or below, or diagonal to each other.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>FOUR</ows:Value>
+						<ows:Value>EIGHT</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>zone_connectivity</ows:Identifier><!-- 3 -->
+				<ows:Title>zone connectivity</ows:Title>
+				<ows:Abstract>Defines which cell values should be considered when testing for connectivity. WITHIN  — Tests connectivity between input values that are the same within the same zone. The only cells that can be grouped are cells from the same zone (value) that meet the spatial requirements of connectivity specified by the FOUR and EIGHT keywords. CROSS  — Tests connectivity by the spatial requirements specified by the keywords FOUR or EIGHT between cells with any values except the excluded value identified by the argument {excluded_value} if one is specified. A value for the {excluded_value} argument must be input when CROSS is used.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>WITHIN</ows:Value>
+						<ows:Value>CROSS</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>add_link</ows:Identifier><!-- 4 -->
+				<ows:Title>add link</ows:Title>
+				<ows:Abstract>Specifies whether a link field is added to the table of the output. ADD_LINK  — An ADD_LINK item will be added to the table of the output raster. The ADD_LINK item stores the original values for each newly created zone, from disconnected regions, from the input raster before they are regrouped. NO_LINK  — The attribute table for the output grid will only contain the Value and Count items.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>excluded_value</ows:Identifier><!-- 5 -->
+				<ows:Title>excluded value</ows:Title>
+				<ows:Abstract>Identifies a value such that if a cell location contains the value, no spatial connectivity will be evaluated regardless of the keyword specified (FOUR or EIGHT). Cells with the excluded value will be treated as NoData and are eliminated from calculations. Cell locations that contain an excluded value will receive zero for the location on the output raster. The excluded value is similar to the concept of a background value or setting a mask for a single function on the Environment Settings/Raster Settings dialog box. It is particularly useful in conjunction with the CROSS keyword and must be specified if the CROSS keyword is specified.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

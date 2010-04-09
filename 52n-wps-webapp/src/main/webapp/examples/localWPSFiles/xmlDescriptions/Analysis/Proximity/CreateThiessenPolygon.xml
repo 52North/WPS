@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.createthiessenpolygons</ows:Identifier><!-- ParameterCount=3 -->		
+		<ows:Title>CreateThiessenPolygons_analysis</ows:Title>
+		<ows:Abstract>This converts input points to an output feature class of Thiessen proximal polygons.
+		Thiessen polygons have the unique property that each polygon contains only one input point, and any location within a polygon is closer to its associated point than to the point of any other polygon. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Title>in features</ows:Title>
+				<ows:Abstract>The points for which the Thiessen polygons will be generated.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>fields_to_copy</ows:Identifier><!-- 2 -->
+				<ows:Title>fields to copy</ows:Title>
+				<ows:Abstract>Determines which attributes from the Input Features will be transferred to the Output Feature Class. ONLY_FID — Only the FID field from the Input Features will be transferred to the Output Feature Class. This is the default. ALL — All the attributes from the Input Features will be transferred to the Output Feature Class.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ONLY_FID</ows:Value>
+						<ows:Value>ALL</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_feature_class</ows:Identifier><!-- 1 -->
+				<ows:Title>out feature class</ows:Title>	
+				<ows:Abstract>The polygon feature class that will contain the Thiessen features.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

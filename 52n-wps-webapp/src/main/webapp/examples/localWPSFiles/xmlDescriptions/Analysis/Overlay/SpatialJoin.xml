@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.overlay.spatialjoin</ows:Identifier><!-- ParameterCount=9 -->		
+		<ows:Title>SpatialJoin_analysis</ows:Title>
+		<ows:Abstract>This creates a table join in which fields from one layer's attribute table are appended to another layer's attribute table based on the relative locations of the features in the two layers. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>target_features </ows:Identifier><!-- 0 -->
+				<ows:Title>target features</ows:Title>
+				<ows:Abstract>The dataset that you are joining to. The output of the join operation will contain the features from this feature class with appended columns from the join feature class. It can be any spatial data source (shapefiles, SDE feature classes, coverages, SDC, query tables, etc.) supported by ArcGIS. It can also be read-only.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>join_features </ows:Identifier><!-- 1 -->
+				<ows:Title>join features</ows:Title>
+				<ows:Abstract>The dataset that you are joining from. The attributes from this dataset are appended to the attributes of the target feature class in the output based on a spatial relation. It can be any spatial data source (shapefiles, SDE feature classes, coverages, SDC, query tables, etc.) supported by ArcGIS. It can also be read-only.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>join_operation</ows:Identifier><!-- 3 -->
+				<ows:Title>join operation</ows:Title>
+				<ows:Abstract>The join operation describes cardinality rules associated with matching features during the join. The join options are JOIN_ONE_TO_ONE — This means that the number of rows in the output matches the number of rows in the target feature class. If more than one feature from the join feature class matches a target feature, the attributes of the join features are aggregated in the result. For example, a point within polygon join where several points are within a single polygon results in the aggregation of the points attributes. The aggregation is based on the options set in the field map control. This is the default. JOIN_ONE_TO_MANY — The means that for each row in the target feature class, there can be several rows in the output feature class. With this option, attributes are never aggregated. For example, a point within polygon join where several points are within a single polygon results in a polygon for each matching point in the output feature class.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>JOIN_ONE_TO_ONE</ows:Value>
+						<ows:Value>JOIN_ONE_TO_MANY</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>join_type</ows:Identifier><!-- 4 -->
+				<ows:Title>join type</ows:Title>
+				<ows:Abstract>Determine if the join will be an inner or outer join. KEEP_ALL — All records in the input layer or table view will be included in the output; also known as an outer join. This is the default. KEEP_COMMON — Only those records in the input that match to a row in the join table will be present in the result; also known as an inner join.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>match_option</ows:Identifier><!-- 6 -->
+				<ows:Title>match option</ows:Title>
+				<ows:Abstract>Defines the criteria used to match rows. The match options are: INTERSECTS — Matches join features that intersect target features. CONTAINS — Matches occur when a target feature contains a join feature. Points can't be set as target features and polygons can only be set as join features when the target features are also polygons. IS_WITHIN — Target features within join features are matched. Points can't be set as join features and polygons can only be set as target features when the join features are also polygons. CLOSEST — The Target features will be matched to the closest join feature.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>INTERSECTS</ows:Value>
+						<ows:Value>CONTAINS</ows:Value>
+						<ows:Value>IS_WITHIN</ows:Value>
+						<ows:Value>CLOSEST</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>search_radius</ows:Identifier><!-- 7 -->
+				<ows:Title>search radius</ows:Title>
+				<ows:Abstract>Only used when the Match Option is INTERSECT or CLOSEST. Join features that are within this distance of the individual input feature will be considered for the operation. The default search radius is 0. A value of 0 for the Search radius means different things to the Match Option. INTERSECT: Only the join features that INTERSECT the input feature will be included in the join. CLOSEST: All join features will be candidates for each input feature. Basically, a value of 0 here means use all join features.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>INTERSECT</ows:Value>
+						<ows:Value>CLOSEST</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>distance_field_name</ows:Identifier><!-- 8 -->
+				<ows:Title>distance field name</ows:Title>
+				<ows:Abstract>The name of a new field to be added to the output feature class. This field will be of type Double and will contain distances between the Target and the closest Join Features. This option is only available when the Match Option parameter is set to CLOSEST. A value of -1 in the Distance Field means there were no Join Features within the distance specified in the Search Radius parameter. If no Distance Field Name is specified, then no field will be added to the output to capture this information.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>output_type</ows:Identifier><!-- 4 -->
+				<ows:Title>output type</ows:Title>
+				<ows:Abstract>Choose what type of intersection you want to find. INPUT — The intersections returned will be the same geometry type as the Input Features with the lowest dimension geometry. If all inputs are polygons, the output feature class will contain polygons. If one or more of the inputs are lines and none of the inputs are points, the output will be line. If one or more of the inputs are points, the output feature class will contain points. This is the default. LINE — Line intersections will be returned. This is only valid if none of the inputs are points. POINT — Point intersections will be returned.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>INPUT</ows:Value>
+						<ows:Value>LINE</ows:Value>
+						<ows:Value>POINT</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_feature_class</ows:Identifier><!-- 2 -->
+				<ows:Title>out feature class</ows:Title>	
+				<ows:Abstract>A new dataset which contains the results of the join operation.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

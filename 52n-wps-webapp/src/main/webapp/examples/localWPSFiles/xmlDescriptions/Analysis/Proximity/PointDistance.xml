@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.pointdistance</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Title>PointDistance_analysis</ows:Title>
+		<ows:Abstract>This determines the distances between point features in the Input Features to all points in the Near Features within the Search Radius. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Title>in features</ows:Title>
+				<ows:Abstract>The point features from which distances to the Near Features will be calculated.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>near_features </ows:Identifier><!-- 1 -->
+				<ows:Title>near features</ows:Title>
+				<ows:Abstract>The points to which distances from the Input Features will be determined. Distances between points within the same feature class or layer can be determined by specifying the same feature class or layer for the Input Features and Near Features.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>search_radius</ows:Identifier><!-- 3 -->
+				<ows:Title>search radius</ows:Title>
+				<ows:Abstract>Distances will only be calculated for those Near Features that are within the Search Radius of the Input Features.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>		
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 2 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>The table contains the list of Input Features and information about all Near Features within the Search Radius. If Search Radius is not used, the number of records in the output table may be quite large, as it will be the number of features in the Input Features multiplied by the number of features in the Input Features.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

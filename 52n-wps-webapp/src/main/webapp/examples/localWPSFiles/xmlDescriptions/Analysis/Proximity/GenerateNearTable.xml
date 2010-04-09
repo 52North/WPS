@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.generateneartable</ows:Identifier><!-- ParameterCount=8 -->		
+		<ows:Title>GenerateNearTable_analysis</ows:Title>
+		<ows:Abstract>Determines the distance from each feature in the Input Features to the nearest features in the Near Features, within the Search Radius. The results are recorded in the output table. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Title>in features</ows:Title>
+				<ows:Abstract>The feature class or layer containing features from which near distances are calculated to each feature in the Near Features.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>near_features </ows:Identifier><!-- 1 -->
+				<ows:Title>near features</ows:Title>
+				<ows:Abstract>The feature class or layer containing features from which distances are calculated to the closest feature in the Input Features. If multiple feature classes or layers are specified, an extra field named NEAR_FC will be added to the output table to identify which near feature class contains the closest feature.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>search radius</ows:Identifier><!-- 3 -->
+				<ows:Title>search radius</ows:Title>
+				<ows:Abstract>The maximum distance between Input Features and Near Features for which distance and FIDs will be determined. If no Search Radius is specified, all Near Features will be used.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>location</ows:Identifier><!-- 4 -->
+				<ows:Title>location</ows:Title>
+				<ows:Abstract>Determines whether the x,y coordinates of the nearest feature are added to the output table as well as NEAR_FID and NEAR_DIST. The new fields are NEAR_X and NEAR_Y. NO_LOCATION — The x,y coordinates or the nearest point are not saved. This is the default. LOCATION — Additional fields named NEAR_X and NEAR_Y will be added to the output table. These fields will contain the x- and y-coordinates of the Near Features.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>NEAR_DIST</ows:Value>
+						<ows:Value>NEAR_Y</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>angle</ows:Identifier><!-- 5 -->
+				<ows:Title>angle</ows:Title>
+				<ows:Abstract>Determines whether the angle between the near feature will be calculated and stored in the NEAR_ANGLE field. The angle value is measured in degrees, where one degree represents 1/360 of a circle, and fractions of a degree are represented as decimal points. Angles are measured from 180° to -180° ; 0° to the east, 90° to the north, 180° (-180° ) to the west, and -90° to the south. NO_ANGLE — The angle between the nearest point will not be saved. This is the default. ANGLE — A field named NEAR_ANGLE will be added to the output table and will contain the angle from the Input to the nearest point on the Near Feature.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>closest</ows:Identifier><!-- 6 -->
+				<ows:Title>closest</ows:Title>
+				<ows:Abstract>Determines whether to locate and return only the closest features or return all the features within the search radius. CLOSEST — Locate and return only the closest features from the Near Features to the Input Features within the search radius. This is the default. ALL — Locate and return all features from the Near Features to the Input Features within the search radius.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>closest_count</ows:Identifier><!-- 7 -->
+				<ows:Title>closest count</ows:Title>
+				<ows:Abstract>Finds only the specified number of closest features. This parameter is disabled if Find only closest feature is selected.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 2 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>The output table that will contain the proximity information such as INPUT_FID, NEAR_FID, and NEAR_DIST and other attributes such as NEAR_XY, NEAR_ANGLE, and NEAR_FC if necessary.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

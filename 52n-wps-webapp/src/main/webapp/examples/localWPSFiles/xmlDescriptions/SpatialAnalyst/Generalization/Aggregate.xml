@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.math.generalization.aggregate</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>Aggregate_sa</ows:Title>
+		<ows:Abstract>Generates a reduced resolution version of a raster. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster</ows:Title>
+				<ows:Abstract>The input raster to aggregate.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>cell factor</ows:Identifier><!-- 2 -->
+				<ows:Title>cell factor</ows:Title>
+				<ows:Abstract>The factor by which to multiply the cell size of the input raster to obtain the desired resolution for the output raster. For example, a cell_factor of three would result in an output cell size three times larger than that of the input raster. The cell_factor must be an integer greater than one.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>aggregation type</ows:Identifier><!-- 3 -->
+				<ows:Title>aggregation type</ows:Title>
+				<ows:Abstract>Establishes how the value for each output cell will be determined. The output value for each cell can be the sum, maximum, mean, median, or minimum value of the input cells that the coarser output cell will encompass. Sum is the default value.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>SUM</ows:Value>
+						<ows:Value>MAXIMUM</ows:Value>
+						<ows:Value>MEAN</ows:Value>
+						<ows:Value>MINIMUM</ows:Value>
+						<ows:Value>MEDIAN</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>extent_handling</ows:Identifier><!-- 4 -->
+				<ows:Title>extent handling</ows:Title>
+				<ows:Abstract>Defines how to handle the boundaries of the input raster when its rows or columns are not a multiple of the cell factor. If the number of rows and columns in the input grid is a multiple of the cell_factor, these keywords are not used. EXPAND  — Expands the bottom or right boundaries of the input raster so the total number of cells in a row or column is a multiple of the cell_factor. Expanded cells are given a value of NoData. With this option, the output raster can cover a larger spatial extent than the input raster. TRUNCATE  — Reduces the number of rows or columns in the output raster by one. This will truncate the remaining cells on the bottom or right boundaries of the input raster, making the number of rows or columns in the input raster a multiple of the cell_factor. With this option, the output raster can cover a smaller spatial extent than the input raster.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>ignore_nodata</ows:Identifier><!-- 5 -->
+				<ows:Title>ignore nodata</ows:Title>
+				<ows:Abstract>Denotes whether NoData values are ignored by the aggregation calculation. DATA  — Specifies that if NoData values exist for any of the cells that fall within the spatial extent of a larger cell on the output raster, the NoData values will be ignored when determining the value for output cell locations. Only input cells within the extent of the output cell that have data values will be used in determining the value of the output cell. NODATA  — Specifies that if any cell that falls within the spatial extent of a larger cell on the output raster has a value of NoData, the value for that output cell location will be NoData. When the NODATA keyword is used, it is implied that when cells within an aggregation contain the NoData value, there is insufficient information to perform the specified calculations necessary to determine an output value.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

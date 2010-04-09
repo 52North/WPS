@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.extraction.extractbypolygon</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Title>ExtractByPolygon_sa</ows:Title>
+		<ows:Abstract>Extracts the cells of a raster based on a polygon. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in_raster</ows:Title>
+				<ows:Abstract>The input raster from which cells will be extracted.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>polygon</ows:Identifier><!-- 1 -->
+				<ows:Title>polygon</ows:Title>
+				<ows:Abstract>Polygon that defines the area to be extracted. X,Y coordinates define the vertices of the polygon.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>extraction_area</ows:Identifier><!-- 3 -->
+				<ows:Title>extraction area</ows:Title>
+				<ows:Abstract>Identifies whether to extract cells inside or outside the input polygon. INSIDE  — A keyword specifying that the cells inside the input polygon should be selected and written to the output raster. All cells outside the polygon will receive NoData values on the output raster. OUTSIDE  — A keyword specifying that the cells outside the input polygon should be selected and written to the output raster. All cells inside the polygon will receive NoData values on the output grid.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>INSIDE</ows:Value>
+						<ows:Value>OUTSIDE</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

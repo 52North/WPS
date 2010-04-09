@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.reclass.slice</ows:Identifier><!-- ParameterCount=5 -->	
+		<ows:Title>Slice_sa</ows:Title>
+		<ows:Abstract>Slices a range of values of the input cells of a raster by zones of equal interval, equal area, or by natural breaks. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster</ows:Title>
+				<ows:Abstract>An input Raster, RasterDataset, RasterBand, or RasterDescriptor.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>number_zones</ows:Identifier><!-- 2 -->
+				<ows:Title>number zones</ows:Title>
+				<ows:Abstract>When the Slice method is Equal_Area, the output raster will have number_zones with a similar number of cells in each. When Equal_Interval is used, the output raster will have number_zones, each containing equal value ranges on the output raster. When Natural_Breaks is used, the output raster will have number_zones, with the number of cells in each determined by the class breaks.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>slice_type</ows:Identifier><!-- 3 -->
+				<ows:Title>slice type</ows:Title>
+				<ows:Abstract>The manner in which to slice the values in the input raster. EQUAL_INTERVAL  — Determines the range of the input values and divides the range into number_zones. Each zone on the sliced output raster has the potential of having input cell values that have the same range from the extremes. EQUAL_AREA  — Specifies that the input values will be divided into the number of zones specified by number_zones with each zone having a similar number of cells (each zone represents a similar amount of area). NATURAL_BREAKS  — Specifies that the classes will be based on natural groupings inherent in the data. Break points are identified by choosing the class breaks that best group similar values and that maximize the differences between classes. The cell values are divided into classes whose boundaries are set when there are relatively big jumps in the data values.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>EQUAL_INTERVAL</ows:Value>
+						<ows:Value>EQUAL_AREA</ows:Value>
+						<ows:Value>NATURAL_BREAKS</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>base_output_zone</ows:Identifier><!-- 4 -->
+				<ows:Title>base output zone</ows:Title>
+				<ows:Abstract>Defines the lowest zone value on the output raster dataset. The default value is one.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

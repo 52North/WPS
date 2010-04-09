@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.hydrology.streamtofeature</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Title>StreamToFeature_sa</ows:Title>
+		<ows:Abstract>Converts a raster representing a linear network to features representing the linear network. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+      <Input minOccurs="1" maxOccurs="1">
+			 <ows:Identifier>in_stream_raster</ows:Identifier><!-- 0 -->
+			 <ows:Title>in stream raster</ows:Title>
+			 <ows:Abstract>An input raster that represents a linear stream network.</ows:Abstract>
+			 <ComplexData>
+				<Default>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/GeoTIFF</MimeType>
+						<Schema></Schema>
+					</Format>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>	
+				</Supported>
+			 </ComplexData>
+		  </Input>
+		  <Input minOccurs="1" maxOccurs="1">
+			 <ows:Identifier>in_flow_direction_raster</ows:Identifier><!-- 1 -->
+			 <ows:Title>in flow direction raster</ows:Title>
+			 <ows:Abstract>The input raster that records the direction of flow out of each cell. This can be created with the Flow Direction function.</ows:Abstract>
+			 <ComplexData>
+				<Default>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/GeoTIFF</MimeType>
+						<Schema></Schema>
+					</Format>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>	
+				</Supported>
+			</ComplexData>
+		  </Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>simplify</ows:Identifier><!-- 3 -->
+				<ows:Title>simplify</ows:Title>	
+				<ows:Abstract>Specifies whether weeding is used. SIMPLIFY  — The feature is weeded to reduce the number of vertices. The Douglas-Puecker algorithm for line generalization is used, with a tolerance of sqrt(0.5) * cell size. NO_SIMPLIFY  — No weeding is applied. By default, weeding is applied.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>	
+			</Input>	
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>output_polyline_feature</ows:Identifier><!-- 2 -->
+				<ows:Title>output polyline features</ows:Title>	
+				<ows:Abstract>Output feature class that will hold the converted streams.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

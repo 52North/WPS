@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.statistics.frequency</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Title>Frequency_analysis</ows:Title>
+		<ows:Abstract>This creates a list of the unique code occurrences and their frequency for a specified set of items in a table. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_table</ows:Identifier><!-- 0 -->
+				<ows:Title>in table</ows:Title>
+				<ows:Abstract>The table containing the field(s) that will be used to calculate frequency statistics. It can be an INFO or OLE DB table, a dBASE or a VPF table, or a feature class.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>frequency_fields</ows:Identifier><!-- 2 -->
+				<ows:Title>frequency fields</ows:Title>
+				<ows:Abstract>The attribute field or fields that will be used to calculate frequency statistics.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>summary_fields</ows:Identifier><!-- 3 -->
+				<ows:Title>summary fields</ows:Title>
+				<ows:Abstract>The attribute field or fields to sum and add to the output table. Null values are excluded from this calculation.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>		
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 1 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>The table that will store the calculated frequency statistics.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

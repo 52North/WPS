@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.topotoraster</ows:Identifier><!-- ParameterCount=19 -->		
+		<ows:Title>TopoToRaster_sa</ows:Title>
+		<ows:Abstract>Interpolates a hydrologically correct surface from point, line, and polygon data. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_topo_features</ows:Identifier><!-- 0 -->
+				<ows:Title>in topo features</ows:Title>
+				<ows:Abstract>The input features containing the z-values to be interpolated into a surface raster. Each feature input can have a field specified that contains the z-values, and one of six types specified. Feature Layer  — The input feature dataset. {Field}  — The name of the Field that stores the attributes, where appropriate. {Type}  — The type of input feature dataset. There are six types of accepted inputs: POINTELEVATION  — A point feature class representing surface elevations. The Field stores the elevations of the points. CONTOUR  — A line feature class that represents elevation contours. The Field stores the elevations of the contour lines. STREAM  — A line feature class of stream locations. All arcs must be oriented to point downstream. The feature class should only contain single arc streams. There is no Field option for Stream. SINK  — A point feature class that represents known topographic depressions. Topo to Raster will not attempt to remove from the analysis any points explicitly identified as sinks. The Field used should be one that stores the elevation of the legitimate sink. If NONE is selected, only the location of the sink is used. BOUNDARY  — A feature class containing a single polygon that represents the outer boundary of the output raster. Cells in the output raster outside this boundary will be NoData. This option can be used for clipping out water areas along coastlines before making the final output raster. There is no Field option for Boundary. LAKE  — A polygon feature class that specifies the location of lakes. All output raster cells within a lake will be assigned to the minimum elevation value of all cells along the shoreline. There is no Field option for Lake.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 2 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>Cell size for the output raster dataset. This will be the value in the environment if it is explicitly set. Otherwise, it is the shorter of the width or the height of the extent of in_point_features, in the input spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>extent</ows:Identifier><!-- 3 -->
+				<ows:Title>extent</ows:Title>
+				<ows:Abstract>Extent for the output raster dataset. Interpolation will occur out to the x and y limits, and cells outside that extent will be NoData. For best interpolation results along the edges of the output raster, the x and y limits should be smaller than the extent of the input data by at least 10 cells on each side. X_Minimum  — The default is the smallest x coordinate of all inputs. Y_Minimum  — The default is the smallest y coordinate of all inputs. X_Maximum  — The default is the largest x coordinate of all inputs. Y_Maximum  — The default is the largest y coordinate of all inputs. The default extent is the smallest of all extents of the input feature data.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>margin</ows:Identifier><!-- 4 -->
+				<ows:Title>margin</ows:Title>
+				<ows:Abstract>Distance in cells to interpolate beyond the specified output extent and boundary. The value must be greater than or equal to 0 (zero). The default value is 20.	If the {extent} and Boundary feature dataset are the same as the limit of the input data (the default), values interpolated along the edge of the DEM will not match well with adjacent DEM data. This is because they have been interpolated using one-half as much data as the points inside the raster, which are surrounded on all sides by input data. The Margin option allows input data beyond these limits to be used in the interpolation.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>minimum_z_value</ows:Identifier><!-- 5 -->
+				<ows:Title>minimum z value</ows:Title>
+				<ows:Abstract>The minimum z-value to be used in the interpolation. The default is 20 percent below the smallest of all the input values. This setting should seldom be less than zero (sea level).</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maximum_z_value</ows:Identifier><!-- 6 -->
+				<ows:Title>maximum z value</ows:Title>
+				<ows:Abstract>The maximum z-value to be used in the interpolation. The default is 20 percent above the largest of all input values.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>enforce</ows:Identifier><!-- 7 -->
+				<ows:Title>enforce</ows:Title>
+				<ows:Abstract>The type of drainage enforcement to apply. The drainage enforcement option can be set to attempt to remove all sinks or depressions so a hydrologically correct DEM can be created. If sink points have been explicitly identified as in_topo_features, these depressions will not be filled by Topo to Raster. ENFORCE  — The algorithm will attempt to remove all sinks it encounters, whether they are "real" or "spurious". This is the default. NO_ENFORCE  — No sinks will be filled. ENFORCE_WITH_SINK  — Points identified as sinks in in_topo_features data represent known topographic depressions, and Topo to Raster will not alter them. Any sink not identified in in_topo_features is considered spurious, and the algorithm will attempt to fill it. Having more than 8,000 spurious sinks causes Topo to Raster to fail.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ENFORCE</ows:Value>
+						<ows:Value>NO_ENFORCE</ows:Value>
+						<ows:Value>ENFORCE_WITH_SINK</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>data_type</ows:Identifier><!-- 8 -->
+				<ows:Title>data type</ows:Title>
+				<ows:Abstract>The dominant elevation data type of the input feature data. CONTOUR  — The dominant type of input data will be elevation contours. This is the default. SPOT  — The dominant type of input will be point. Specifying the relevant selection optimizes the search method used during the generation of streams and ridges.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>CONTOUR</ows:Value>
+						<ows:Value>SPOT</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maximum_iterations</ows:Identifier><!-- 9-->
+				<ows:Title>maximum iterations</ows:Title>
+				<ows:Abstract>The maximum number of interpolation iterations. The number of iterations must be greater than zero. A default of 40 is normally adequate for both contour and line data. A value of 30 will clear fewer sinks. Rarely, higher values (45-50) may be useful to clear more sinks or to set more ridges and streams. Iteration ceases for each grid resolution when the maximum number of iterations has been reached.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>roughness_penality</ows:Identifier><!-- 10 -->
+				<ows:Title>roughness penality</ows:Title>
+				<ows:Abstract>The integrated squared second derivative as a measure of roughness. The roughness penalty must be zero or greater. If the data_type is CONTOUR, the default is zero. If the data_type is SPOT, the default is 0.5. Larger values are not normally recommended.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>discrete_error_factor</ows:Identifier><!-- 11 -->
+				<ows:Title>discrete error factor</ows:Title>
+				<ows:Abstract>The discrete error factor is used to adjust the amount of smoothing when converting the input data to a raster. The value must be greater than zero. The normal range of adjustment is 0.5 to 2, and the default is 1. A smaller value results in less data smoothing; a larger value causes greater smoothing.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>vertical_standard_error</ows:Identifier><!-- 12 -->
+				<ows:Title>vertical standard error</ows:Title>
+				<ows:Abstract>The amount of random error in the z-values of the input data. The value must be zero or greater. The default is zero. The vertical standard error may be set to a small positive value if the data has significant random (nonsystematic) vertical errors with uniform variance. In this case, set the vertical standard error to the standard deviation of these errors. For most elevation datasets, the vertical error should be set to zero, but it may be set to a small positive value to stabilize convergence when gridding point data with stream line data.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>tolerance_1</ows:Identifier><!-- 13 -->
+				<ows:Title>tolerance 1</ows:Title>
+				<ows:Abstract>This tolerance reflects the accuracy and density of the elevation points in relation to surface drainage. For point datasets, set the tolerance to the standard error of the data heights. For contour datasets, use one-half the average contour interval. The value must be zero or greater. The default is 2.5 if the data type is CONTOUR; zero if the data type is SPOT.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>tolerance_2</ows:Identifier><!-- 14 -->
+				<ows:Title>tolerance 2</ows:Title>
+				<ows:Abstract>This tolerance prevents drainage clearance through unrealistically high barriers. The value must be greater than zero. The default is 100 if the data type is CONTOUR and 200 if the data type is SPOT.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_surface_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out surface raster</ows:Title>	
+				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_stream_features</ows:Identifier><!-- 15 -->
+				<ows:Title>out stream features</ows:Title>	
+				<ows:Abstract>The output line feature class of stream polyline features and ridge line features. The line features are created at the beginning of the interpolation process. It provides the general morphology of the surface for interpolation. It can be used to verify correct drainage and morphology by comparing known stream and ridge data.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_sink_features</ows:Identifier><!-- 16 -->
+				<ows:Title>out sink features</ows:Title>	
+				<ows:Abstract>The output point feature class of the remaining sink point features. These are the sinks that were not specified in the input sink coverage and were not cleared during drainage enforcement. Adjusting the values of the tolerances, {tolerance_1} and {tolerance_2}, can reduce the number of remaining sinks. Remaining sinks often indicate errors in the input data that the drainage enforcement algorithm could not resolve. This can be an efficient way of detecting subtle elevation errors.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_diagnostic_file</ows:Identifier><!-- 17 -->
+				<ows:Title>out diagnostic file</ows:Title>	
+				<ows:Abstract>The output diagnostic file listing all inputs and parameters used and the number of sinks cleared at each resolution and iteration.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_parameter_file</ows:Identifier><!-- 18 -->
+				<ows:Title>out parameter file</ows:Title>	
+				<ows:Abstract>The output parameter file listing all inputs and parameters used, which can be used with Topo to Raster by File to run the interpolation again.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

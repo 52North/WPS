@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.generalization.thin</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Title>Thin_sa</ows:Title>
+		<ows:Abstract>Thins rasterized linear features by reducing the number of cells representing the width of the features. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster</ows:Title>
+				<ows:Abstract>The input raster that Thin will be applied to. It must be of integer type.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>background_value</ows:Identifier><!-- 2 -->
+				<ows:Title>background value</ows:Title>
+				<ows:Abstract>Specifies the cell value that will identify the background cells. The linear features are formed from the foreground cells. ZERO  — The background is composed of cells of zero or less, or NoData. All cells whose value is greater than zero are the foreground. NODATA  — The background is composed of NoData cells. All cells with valid values belong to the foreground.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ZERO</ows:Value>
+						<ows:Value>NODATA</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>filter</ows:Identifier><!-- 3 -->
+				<ows:Title>filter</ows:Title>
+				<ows:Abstract>Specifies whether a filter will be applied as the first phase of thinning. NOFILTER  — No filter will be applied. FILTER  — The raster will be filtered to smooth the boundaries between foreground and background cells. This option will eliminate minor irregularities from the output raster.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>corners</ows:Identifier><!-- 4 -->
+				<ows:Title>corners</ows:Title>
+				<ows:Abstract>Specifies whether round or sharp turns will be made at turns or junctions. It is also used during the vector conversion process to spline curves or create sharp intersections and corners. ROUND  — Attempts to smooth corners and junctions. This is best for vectorizing natural features, such as contours or streams. SHARP  — Attempts to preserve rectangular corners and junctions. This is best for vectorizing manmade features, such as streets.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ROUND</ows:Value>
+						<ows:Value>SHARP</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maximum_thickness</ows:Identifier><!-- 5 -->
+				<ows:Title>maximum thickness</ows:Title>
+				<ows:Abstract>The maximum thickness, in map units, of linear features in the input grid. The default thickness is ten times the cell size.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.reclass.reclassbyasciifile</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Title>ReclassByASCIIFile_sa</ows:Title>
+		<ows:Abstract>Reclassifies or changes the values of the input cells of a raster using an ASCII remap file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+				<Input minOccurs="1" maxOccurs="1">
+					<ows:Identifier>in_raster</ows:Identifier><!-- 0 -->
+					<ows:Title>in raster</ows:Title>
+					<ows:Abstract>An input Raster, RasterDataset, RasterBand, or RasterDescriptor.</ows:Abstract>
+					<ComplexData>
+						<Default>
+							<Format>
+								<MimeType>application/img</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Default>
+						<Supported>
+							<Format>
+								<MimeType>application/GeoTIFF</MimeType>
+								<Schema></Schema>
+							</Format>
+							<Format>
+								<MimeType>application/img</MimeType>
+								<Schema></Schema>
+							</Format>	
+						</Supported>
+					</ComplexData>
+				</Input>
+				<Input minOccurs="1" maxOccurs="1">
+					<ows:Identifier>in_remap_file</ows:Identifier><!-- 1 -->
+					<ows:Title>in remap file</ows:Title>
+					<ows:Abstract>ASCII remap file defining the single values or ranges to be reclassified and the values they will become.</ows:Abstract>
+					<ComplexData>
+						<Default>
+							<Format>
+								<MimeType>application/txt</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Default>
+						<Supported>
+							<Format>
+								<MimeType>application/txt</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Supported>
+					</ComplexData>
+				</Input>
+				<Input minOccurs="0" maxOccurs="1">
+					<ows:Identifier>missing_values</ows:Identifier><!-- 3 -->
+					<ows:Title>missing values</ows:Title>
+					<ows:Abstract>Denotes whether missing values in the reclass file retain their value or get mapped to NoData. DATA  — A keyword signifying that if any cell location on the input raster contains a value that is not present or reclassed in the remap file, the value should remain intact and be written for that location to the output raster. NODATA  — A keyword signifying that if any cell location on the input raster contains a value that is not present or reclassed in the remap file, the value will be reclassed to NODATA for that location on the output raster.
+					</ows:Abstract>
+					<LiteralData>
+						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					</LiteralData>
+				</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.overlay.identity</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Title>Identity_analysis</ows:Title>
+		<ows:Abstract>Computes a geometric intersection of the Input Features and Identity Features. The Input Features or portions thereof that overlap Identity Features will get the attributes of those Identity Features. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_features</ows:Identifier><!-- 0 -->
+				<ows:Title>in features</ows:Title>
+				<ows:Abstract>The input feature class or layer.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>identify_features</ows:Identifier><!-- 1 -->
+				<ows:Title>identify features</ows:Title>
+				<ows:Abstract>The identity feature class or layer. Must be polygons.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>join_attributes</ows:Identifier><!-- 3 -->
+				<ows:Title>join attributes</ows:Title>
+				<ows:Abstract>Determines what attributes will be transferred to the Output Feature Class. ALL — All the attributes (including FIDs) from the Input Features as well as the Identity Features will be transferred to the Output Feature Class. This is the default. NO_FID — All the attributes except the FID from the Input Features and Identity Features will be transferred to the Output Feature Class. ONLY_FID — All the attributes from the Input Features but only the FID from the Identity Features will be transferred to the Output Feature Class.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ALL</ows:Value>
+						<ows:Value>NO_FID</ows:Value>
+						<ows:Value>ONLY_FID</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cluster_tolerance</ows:Identifier><!-- 4 -->
+				<ows:Title>cluster tolerance</ows:Title>
+				<ows:Abstract>The minimum distance separating all feature coordinates (nodes and vertices) as well as the distance a coordinate can move in X or Y (or both). You can set the value to be higher for data that has less coordinate accuracy and lower for datasets with extremely high accuracy.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>relationship</ows:Identifier><!-- 5 -->
+				<ows:Title>relationship</ows:Title>
+				<ows:Abstract>Choose if you want additional spatial relationships between the Input Features and Identity Features to be written to the output. This only applies when the Input Features are lines and the Identity Features are polygons. NO_RELATIONSHIPS — No additional spatial relationship will be determined. KEEP_RELATIONSHIPS — Left and right polygon information will be determined for line on polygon identity and written into the RIGHT_poly, LEFT_poly field in the output.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>NO_RELATIONSHIPS</ows:Value>
+						<ows:Value>KEEP_RELATIONSHIPS</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_feature_class</ows:Identifier><!-- 2 -->
+				<ows:Title>out feature class</ows:Title>	
+				<ows:Abstract>The feature class that will be created and to which the results will be written.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

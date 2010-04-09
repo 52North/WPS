@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.trend</ows:Identifier><!-- ParameterCount=7 -->		
+		<ows:Title>Trend_sa</ows:Title>
+		<ows:Abstract>Interpolates a surface from points using a trend technique. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_point_features</ows:Identifier><!-- 0 -->
+				<ows:Title>in point features</ows:Title>
+				<ows:Abstract>The input point features containing z-values to be interpolated into a surface raster.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>z_field</ows:Identifier><!-- 1 -->
+				<ows:Title>z field</ows:Title>
+				<ows:Abstract>Field that holds a height or magnitude value for each point. This can be a numeric field, or the Shape field if the in_point_features contain z-values. If the regression type is Logistic, the values in the field can only be 0 or 1.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 3 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>The cell size at which the output raster will be created. This will be the value in the environment if it is explicitly set. Otherwise, it is the shorter of the width or the height of the extent of in_point_features, in the input spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>order</ows:Identifier><!-- 4 -->
+				<ows:Title>order</ows:Title>
+				<ows:Abstract>The order of the polynomial. This must be an integer between 1 and 12. A value of 1 will fit a flat plane to the points, and a higher value will fit a more complex surface. The default is 1.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+				</LiteralData>	
+			</Input>
+	
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>regression_type</ows:Identifier><!-- 5 -->
+				<ows:Title>regression type</ows:Title>
+				<ows:Abstract>The type of regression to be performed. LINEAR  — Polynomial regression is performed to fit a least-squares surface to the set of input points. This is applicable for continuous types of data. LOGISTIC  — Logistic trend surface analysis is performed. It generates a continuous probability surface for binary, or dichotomous, types of data.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>LINEAR</ows:Value>
+						<ows:Value>LOGISTIC</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_rms_file</ows:Identifier><!-- 6 -->
+				<ows:Title>out rms file</ows:Title>	
+				<ows:Abstract>Filename for the output text file that contains information about the RMS error and the Chi-Square of the interpolation. The extension must be ".txt".</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

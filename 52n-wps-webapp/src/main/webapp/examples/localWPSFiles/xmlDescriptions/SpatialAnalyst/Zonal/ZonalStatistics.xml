@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.zonal.zonalatatistics</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>ZonalStatistics_sa</ows:Title>
+		<ows:Abstract>Calculates statistics on values of a raster within the zones of another dataset. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_zone_data</ows:Identifier><!-- 0 -->
+				<ows:Title>in zone data</ows:Title>
+				<ows:Abstract>Dataset that defines the zones. It can be a raster or feature dataset.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>zone_field</ows:Identifier><!-- 1 -->
+				<ows:Title>zone field</ows:Title>
+				<ows:Abstract>Field that holds the values that define each zone.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_value_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>in value raster</ows:Title>
+				<ows:Abstract>Raster that contains the values on which to calculate a statistic.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>statistic_type</ows:Identifier><!-- 4 -->
+				<ows:Title>statistic type</ows:Title>
+				<ows:Abstract>Statistic type to be calculated. MEAN  — Calculates the average of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					MAJORITY  — Determines the value that occurs most often of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					MAXIMUM  — Determines the largest value of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					MEDIAN  — Determines the median value of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					MINIMUM  — Determines the smallest value of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					MINORITY  — Determines the value that occurs least often of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					RANGE  — Calculates the difference between the largest and smallest value of all cells in the input in_value_raster that belong to the same zone as the output cell. STD  — Calculates the standard deviation of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					SUM  — Calculates the total value of all cells in the input in_value_raster that belong to the same zone as the output cell. 
+					VARIETY  — Calculates the number of unique values for all cells in the input in_value_raster that belong to the same zone as the output cell.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>MEAN</ows:Value>
+						<ows:Value>MAJORITY</ows:Value>
+						<ows:Value>MAXIMUM</ows:Value>
+						<ows:Value>MEDIAN</ows:Value>
+						<ows:Value>MINIMUM</ows:Value>
+						<ows:Value>MINORITY</ows:Value>
+						<ows:Value>RANGE</ows:Value>
+					</ows:AllowedValues>		
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>ignore_nodata</ows:Identifier><!-- 5 -->
+				<ows:Title>ignore nodata</ows:Title>
+				<ows:Abstract>Denotes whether NoData values on the Value input will influence the results of the zone that they fall within. 
+					DATA  — Within any particular zone, only cells that have a value in the input Value raster will be used in determining the output value for that zone. NoData cells in the Value raster will be ignored in the statistic calculation. 
+					NODATA  — Within any particular zone, if any NoData cells exist in the Value raster it is deemed that there is insufficient information to perform statistical calculations for all the cells in that zone. Therefore, the entire zone will receive the NoData value on the output raster.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 3 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster the to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

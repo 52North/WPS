@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.distance.costallocation</ows:Identifier><!-- ParameterCount=8 -->		
+		<ows:Title>CostAllocation_sa</ows:Title>
+		<ows:Abstract>Calculates, for each cell its nearest source based on the least accumulative cost over a cost surface. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_source_data</ows:Identifier><!-- 0 -->
+				<ows:Title>in source data</ows:Title>
+				<ows:Abstract>The input source locations. This is a raster or feature dataset that identifies the cells or locations to which the least accumulated cost distances for all cells are calculated. If raster, it must be integer type. For features, only integer fields can be used.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+						<Format>
+							<MimeType>application/x-zipped-shape</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_cost_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>in cost raster</ows:Title>
+				<ows:Abstract>A raster defining the impedance or cost to move planimetrically through each cell. The value at each cell location represents the cost per unit distance for moving through the cell. Each cell location value is multiplied by the cell resolution while also compensating for diagonal movement to obtain the total cost of passing through the cell. The in_cost_raster values can be integer or floating point, but they cannot be negative or zero (you cannot have a negative or zero cost).</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>source_field</ows:Identifier><!-- 5 -->
+				<ows:Title>source field</ows:Title>
+				<ows:Abstract>The field used to assign values to the source locations when the {in_value_raster} is not set. The value raster will take precedence over any setting for the {source_field}.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>in_value_raster</ows:Identifier><!-- 4 -->
+				<ows:Title>in value raster</ows:Title>
+				<ows:Abstract>An optional input raster that identifies the zone values that should be used for each source location on the in_source_data. For each source location (cell or feature), the value defined by the {in_value_raster} will be assigned to all cells that will be allocated to the source location in the cost allocation computations. The value raster will take precedence over any setting for the {source_field}. This parameter can be used if other values or zones are to be used instead of the existing ones in the input source. This parameter can also be used if the source raster was created by the Test function, a Boolean operator that will only output the binary values 0 and 1.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maximum_distance</ows:Identifier><!-- 3 -->
+				<ows:Title>maximum distance</ows:Title>
+				<ows:Abstract>Defines the threshold that the accumulative cost values cannot exceed. If an accumulative cost distance value exceeds the {max_distance}, the output value for the cell location will be NoData. The {max_distance} defines the extent for which the accumulative cost distances are calculated. The default distance is to the edge of the output raster.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_allocation_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out allocation raster</ows:Title>	
+				<ows:Abstract>A raster that identifies the zone of each source location (cell or feature) that could be reached with the least accumulative cost.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_distance_raster</ows:Identifier><!-- 6 -->
+				<ows:Title>out distance raster</ows:Title>	
+				<ows:Abstract>A raster that identifies the zone of each source location (cell or feature) that could be reached with the least accumulative cost.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_backlink_raster</ows:Identifier><!-- 7 -->
+				<ows:Title>out backlink raster</ows:Title>	
+				<ows:Abstract>The name of the output cost back link raster. The back link raster contains values of 0 through 8, which define the direction or identify the next neighboring cell (the succeeding cell) along the least accumulative cost path from a cell to reach its least cost source. If the path is to pass into the right neighbor, the cell will be assigned the value 1, 2 for the lower right diagonal cell, and continuing clockwise. The value 0 is reserved for source cells.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

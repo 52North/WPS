@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.topotorasterbyfile</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Title>TopoToRasterByFile_sa</ows:Title>
+		<ows:Abstract>Interpolates a hydrologically correct surface from point, line, and polygon data using parameters specified in a file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_parameter_file</ows:Identifier><!-- 0 -->
+				<ows:Title>in parameter file</ows:Title>
+				<ows:Abstract>The input text file containing the inputs and parameters to use for the interpolation. The file is typically originally created from a previous run of Topo to Raster with the optional output parameter file specified. In order to test the outcome of changing the parameters, it is easier to make edits to this file and re-run the interpolation than to correctly issue the Topo to Raster tool each time.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>output_surface_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>output surface raster</ows:Title>	
+				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_stream_features</ows:Identifier><!-- 2 -->
+				<ows:Title>out stream features</ows:Title>	
+				<ows:Abstract>Output feature class of stream polyline features.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_sink_features</ows:Identifier><!-- 3 -->
+				<ows:Title>out sink features</ows:Title>	
+				<ows:Abstract>Output feature class of remaining sink point features.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

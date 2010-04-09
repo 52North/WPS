@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.zonal.zonalgeometry</ows:Identifier><!-- ParameterCount=5 -->	
+		<ows:Title>ZonalGeometry_sa</ows:Title>
+		<ows:Abstract>Calculates for each zone in a dataset the specified geometry measure (area, perimeter, thickness, or the characteristics of ellipse). Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_zone_data</ows:Identifier><!-- 0 -->
+				<ows:Title>in zone data</ows:Title>
+				<ows:Abstract>Dataset that defines the zones. The zones can be defined as an integer raster layer or a polygon feature layer.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>zone_field</ows:Identifier><!-- 1 -->
+				<ows:Title>zone field</ows:Title>
+				<ows:Abstract>Field that holds the values that define each zone. This can be an integer or string field of in_zone_data.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 4 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>The cell size at which the output raster will be created. This is the value in the environment if specifically set. If the environment is not set and in_zone_data is raster, the cell size is the same as in_zone_data. If the environment is not set and in_zone_data is feature, the cell size is the shorter of the width or height of the extent of in_zone_data in the output spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>geometry_type</ows:Identifier><!-- 3 -->
+				<ows:Title>geometry type</ows:Title>
+				<ows:Abstract>Geometry type to be calculated. 
+					AREA  — The area for each zone. 
+					PERIMETER  — The perimeter for each zone. 
+					THICKNESS  — The deepest (or thickest) point within the zone from its surrounding cells. 
+					CENTROID  — Locates the centroids of each zone.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>AREA</ows:Value>
+						<ows:Value>PERIMETER</ows:Value>
+						<ows:Value>THICKNESS</ows:Value>
+						<ows:Value>CENTROID</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>	
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

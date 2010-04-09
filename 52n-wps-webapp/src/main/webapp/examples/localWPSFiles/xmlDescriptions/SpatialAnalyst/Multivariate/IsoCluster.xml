@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.isocluster</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>IsoCluster_sa</ows:Title>
+		<ows:Abstract>Uses an isodata clustering algorithm to determine the characteristics of the natural groupings of cells in multidimensional attribute space and stores the results in an output ASCII signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
+				<ows:Title>input raster bands</ows:Title>
+				<ows:Abstract>Input raster bands.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>number_classes</ows:Identifier><!-- 2 -->
+				<ows:Title>number classes</ows:Title>
+				<ows:Abstract>Number of classes into which to group the cells.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>number_iterations</ows:Identifier><!-- 3 -->
+				<ows:Title>number iterations</ows:Title>
+				<ows:Abstract>Number of iterations of the clustering process to run. The default is 20.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>min_class_size</ows:Identifier><!-- 4 -->
+				<ows:Title>min class size</ows:Title>
+				<ows:Abstract>Minimum number of cells in a valid class. The default is 20.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>sample_interval</ows:Identifier><!-- 5 -->
+				<ows:Title>sample interval</ows:Title>
+				<ows:Abstract>The interval to use for sampling. Default is 10.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>	
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_signature_file</ows:Identifier><!-- 1 -->
+				<ows:Title>out signature file</ows:Title>	
+				<ows:Abstract>Output signature file. A ".gsg" extension is required.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

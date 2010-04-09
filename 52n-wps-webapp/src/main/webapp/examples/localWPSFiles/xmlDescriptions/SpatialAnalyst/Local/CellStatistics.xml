@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.local.cellstatistics</ows:Identifier><!-- ParameterCount=3 -->	
+		<ows:Title>CellStatistics_sa</ows:Title>
+		<ows:Abstract>Calculates a per-cell statistics from multiple rasters. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="2" maxOccurs="unbounded">
+				<ows:Identifier>in_rasters_or_constants</ows:Identifier><!-- 0 -->
+				<ows:Title>in rasters or constants</ows:Title>
+				<ows:Abstract>A list of input rasters for which a statistic will be calculated for each cell within the Analysis window. A number can be input as an argument, but it will be converted to a raster at the current window and cell size set in the analysis environment, with each location containing the input number.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>MEAN | MAJORITY | MAXIMUM | MEDIAN | MINIMUM | MINORITY | RANGE | STD | SUM | VARIETY</ows:Identifier><!-- 2 -->
+				<ows:Title>MEAN | MAJORITY | MAXIMUM | MEDIAN | MINIMUM | MINORITY | RANGE | STD | SUM | VARIETY</ows:Title>
+				<ows:Abstract>Statistic type to be calculated.
+					MEAN  — Calculates the mean (average) of the inputs.
+					MAJORITY  — Calculates the majority (value that occurs most often) of the inputs.
+					MAXIMUM  — Calculates the maximum (largest value) of the inputs.
+					MEDIAN  — Calculates the median of the inputs.
+					MINIMUM  — Calculates the minimum (smallest value) of the inputs.
+					MINORITY  — Calculates the minority (value that occurs least often) of the inputs.
+					RANGE  — Calculates the range (difference between largest and smallest value) of the inputs.
+					STD  — Calculates the standard deviation of the inputs.
+					SUM  — Calculates the sum (total of all values) of the inputs.
+					VARIETY  — Calculates the variety (number of unique values) of the inputs.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>MEAN</ows:Value>
+						<ows:Value>MAJORITY</ows:Value>
+						<ows:Value>MAXIMUM</ows:Value>
+						<ows:Value>MEDIAN</ows:Value>
+						<ows:Value>MINIMUM</ows:Value>
+						<ows:Value>MINORITY</ows:Value>
+						<ows:Value>RANGE</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

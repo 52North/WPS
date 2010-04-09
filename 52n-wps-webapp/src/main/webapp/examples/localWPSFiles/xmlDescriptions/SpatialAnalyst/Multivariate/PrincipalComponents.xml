@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.principalcomponents</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Title>PrincipalComponents_sa</ows:Title>
+		<ows:Abstract>Performs principal components analysis on a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster bands</ows:Title>
+				<ows:Abstract>Input raster bands.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>number_components</ows:Identifier><!-- 2 -->
+				<ows:Title>number components</ows:Title>
+				<ows:Abstract>Number of principal components. Must be greater than zero and less than or equal to the total number of raster bands in in_raster_bands. The default is the total number of rasters in the input.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_multiband_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>out multiband raster</ows:Title>	
+				<ows:Abstract>Output multiband raster dataset.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_data_file</ows:Identifier><!-- 3 -->
+				<ows:Title>out data file</ows:Title>	
+				<ows:Abstract>Output ASCII data file storing principal component parameters. The extension for the output file can be ".txt" or ".asc".</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

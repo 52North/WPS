@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.extraction.sample</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Title>Sample_sa</ows:Title>
+		<ows:Abstract>Creates a table that shows the values of cells from a raster, or set of rasters, for defined locations. The locations are defined by raster cells or by a set of points. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_location_data</ows:Identifier><!-- 1 -->
+				<ows:Title>in location data</ows:Title>
+				<ows:Abstract>Data identifying positions at which you want a sample taken. This can be a raster or a point feature dataset.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Supported>
+							<Format>
+								<MimeType>application/GeoTIFF</MimeType>
+								<Schema></Schema>
+							</Format>
+							<Format>
+								<MimeType>application/img</MimeType>
+								<Schema></Schema>
+							</Format>	
+						</Supported>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_rasters</ows:Identifier><!-- 0 -->
+				<ows:Title>in rasters</ows:Title>
+				<ows:Abstract>The rasters whose values will be sampled based on the input location data.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>resampling_type</ows:Identifier><!-- 3 -->
+				<ows:Title>resampling type</ows:Title>
+				<ows:Abstract>Resampling algorithm used when sampling a raster. NEAREST  — Nearest neighbor assignment. BILINEAR  — Bilinear interpolation. CUBIC  — Cubic convolution.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>NEAREST</ows:Value>
+						<ows:Value>BILINEAR</ows:Value>
+						<ows:Value>CUBIC</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 2 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>Output table holding the sampled cell values.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

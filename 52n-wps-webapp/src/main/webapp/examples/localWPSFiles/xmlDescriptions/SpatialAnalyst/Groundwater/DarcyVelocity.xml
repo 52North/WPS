@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.groundwater.darcyvelocity</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>DarcyVelocity_sa</ows:Title>
+		<ows:Abstract>Calculates the groundwater seepage velocity vector (direction and magnitude) for steady flow in an aquifer. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_head_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>in head raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the groundwater head elevation at that location. The head is typically an elevation above some datum, such as mean sea level.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_porosity_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>in porosity raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the effective formation porosity at that location.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_thickness_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>in thickness raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the saturated thickness at that location. The value for the thickness is interpreted from geological properties of the aquifer.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_transmissivity_raster</ows:Identifier><!-- 3 -->
+				<ows:Title>in transmissivity raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the formation transmissivity at that location. The transmissivity of an aquifer is defined as the hydraulic conductivity K times the saturated aquifer thickness b, as units of length squared over time. This property is generally estimated from field experimental data, such as pumping tests. Tables 1 and 2 in How Darcy Flow and Darcy Velocity work list ranges of hydraulic conductivities for some generalized geologic materials.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_direction_raster</ows:Identifier><!-- 4 -->
+				<ows:Title>out direction raster</ows:Title>	
+				<ows:Abstract>The output raster where each cell value represents the direction of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the out_magnitude_raster to describe the flow vector.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+				<Output minOccurs="0" maxOccurs="1">
+					<ows:Identifier>out_magnitude_raster</ows:Identifier><!-- 5 -->
+					<ows:Title>out magnitude raster</ows:Title>	
+					<ows:Abstract>The output raster where each cell value represents the magnitude of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the out_direction_raster to describe the flow vector.</ows:Abstract>
+					<ComplexOutput>
+						<Default>
+							<Format>
+								<MimeType>application/img</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Default>
+						<Supported>
+							<Format>
+								<MimeType>application/GeoTIFF</MimeType>
+								<Schema></Schema>
+							</Format>
+							<Format>
+								<MimeType>application/img</MimeType>
+								<Schema></Schema>
+							</Format>	
+						</Supported>
+					</ComplexOutput>
+				</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	
