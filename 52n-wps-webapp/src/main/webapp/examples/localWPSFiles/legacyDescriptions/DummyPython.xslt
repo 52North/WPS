@@ -10,11 +10,11 @@ Author: Matthias Mueller, TU Dresden
 		<xsl:variable name="docRoot" select="."/>
 		<GPAlgorithmDescription>
 			<xsl:attribute name="xsi:tns" namespace="http://www.w3.org/2001/XMLSchema-instance">
-				<xsl:value-of select="'http://141.30.100.173/svn/svn-gis/wps/schemas/LegacyAlgorithmSchema.xsd'"/>
+				<xsl:value-of select="'http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-webapp/src/main/webapp/examples/LegacyAlgorithmSchema.xsd'"/>
 			</xsl:attribute>
-			<algorithmWorkspaceLocation>http://gp-algorithms.modelbase.org/DummyPython</algorithmWorkspaceLocation>
-			<algorithmContainerLocation>http://gp-algorithms.modelbase.org/DummyPython/dummy.py</algorithmContainerLocation>
-			<algorithmLocation>http://gp-algorithms.modelbase.org/DummyPython/dummy.py?</algorithmLocation>
+			<algorithmWorkspaceLocation>http://gp-algorithms.tu-dresden.de/DummyPython</algorithmWorkspaceLocation>
+			<algorithmContainerLocation>http://gp-algorithms.tu-dresden.de/DummyPython/dummy.py</algorithmContainerLocation>
+			<algorithmLocation>http://gp-algorithms.tu-dresden.de/DummyPython/dummy.py?</algorithmLocation>
 			<algorithmContainerURN>urn:n52:python:2.5</algorithmContainerURN>
 			<processingSystemURN>urn:n52:esri:arcgis:9.3</processingSystemURN>
 			<algorithmParameters sequential="true">
