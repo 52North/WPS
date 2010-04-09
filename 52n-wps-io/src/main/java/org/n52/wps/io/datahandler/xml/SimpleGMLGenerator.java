@@ -55,12 +55,14 @@ import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonType;
 
+import org.apache.xmlbeans.SchemaType;
 import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.relaxng.datatype.Datatype;
 import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -135,52 +137,7 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 					PointPropertyType pointType = staticFeature.addNewPointProperty();
 					pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
 					
-					if(feature.getFeatureType().getAttributeCount()>1){
-						
-						for (int i = 0; i < feature.getNumberOfAttributes(); i++) {
-						
-							if(feature.getFeatureType().getAttributeType(i).getLocalName().contains("geom")){
-								continue;
-							}
-							
-							PropertyType propertyType = staticFeature.addNewProperty();
-							propertyType.setPropertyName(feature.getFeatureType().getAttributeType(i).getLocalName());
-							
-							Object o = feature.getAttribute(i);
-							
-							if(o instanceof Integer){
-								
-								Value value = propertyType.addNewValue();
-								
-								value.setDataType(DataType.INTEGER);
-								
-								value.setStringValue(String.valueOf(o));
-							}else if(o instanceof String){
-								
-								Value value = propertyType.addNewValue();
-								
-								value.setDataType(DataType.STRING);
-								
-								value.setStringValue(String.valueOf(o));
-							}else if(o instanceof Boolean){
-								
-								Value value = propertyType.addNewValue();
-								
-								value.setDataType(DataType.BOOLEAN);
-								
-								value.setStringValue(String.valueOf(o));
-							}else if(o instanceof Long){
-								
-								Value value = propertyType.addNewValue();
-								
-								value.setDataType(DataType.LONG);
-								
-								value.setStringValue(String.valueOf(o));
-							}
-							
-						}
-				
-					}					
+					generateAttribute(feature, staticFeature);					
 				}
 			}
 			else if(geomType.equals("LineString")) {
@@ -190,6 +147,8 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 					ls.getCoordinates();
 					LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
 					lsType.addNewLineString().setCoordArray(coords);
+					
+					generateAttribute(feature, staticFeature);	
 				}
 			}
 			else if(geomType.equals("Polygon")) {
@@ -201,6 +160,7 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 					LinearRingType innerRing = innerBoundary.addNewLinearRing();
 					innerRing.setCoordArray(convertToXMLCoordType(polygon.getInteriorRingN(i).getCoordinates()));
 				}
+				generateAttribute(feature, staticFeature);	
 			}
 			else if (geomType.equals("MultiPolygon")) {
 				MultiPolygon mp = (MultiPolygon)geom;
@@ -219,6 +179,7 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 					}
 					
 				}
+				generateAttribute(feature, staticFeature);	
 			}
 			// THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs, 
 			else if(geomType.equals("MultiLineString")) {
@@ -231,6 +192,7 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 					LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
 					lsType.addNewLineString().setCoordArray(convertToXMLCoordType(ls.getCoordinates()));
 				}
+				generateAttribute(feature, staticFeature);	
 			}
 //			else if(geomType.equals("GeometryCollection")) {
 //				GeometryCollection geomColl = (GeometryCollection)geom;
@@ -245,6 +207,38 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 			}
 		}
 		return doc;
+	}
+
+	private void generateAttribute(Feature feature,
+			StaticFeatureType staticFeature) {
+		if(feature.getFeatureType().getAttributeCount()>1){
+			
+			PropertyType propertyType;
+			Value value;
+			for (int i = 0; i < feature.getNumberOfAttributes(); i++) {
+			
+				Object o = feature.getAttribute(i);
+				DataType.Enum dataType;
+				if(o instanceof Integer){
+					dataType = DataType.INTEGER;
+				}else if(o instanceof String){
+					dataType = DataType.STRING;
+				}else if(o instanceof Boolean){
+					dataType = DataType.BOOLEAN;
+				}else if(o instanceof Long){
+					dataType = DataType.LONG;
+				}else if(o instanceof Double){
+					dataType = DataType.DECIMAL;
+				}
+				else continue;	//Don't create anything
+				
+				propertyType = staticFeature.addNewProperty();
+				propertyType.setPropertyName(feature.getFeatureType().getAttributeType(i).getLocalName());
+				value = propertyType.addNewValue();
+				value.setDataType(dataType);
+				value.setStringValue(String.valueOf(o));
+			}
+		}
 	}
 	
 	private LinearRingMemberType convertToXMLLinearRing(LineString ls) {
