@@ -121,6 +121,7 @@
 			
 			
 		</Repository> 
+		
 		 -->
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080"
