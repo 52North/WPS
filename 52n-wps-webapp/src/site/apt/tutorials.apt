@@ -18,6 +18,8 @@ WPS Tutorials Section
 	
     * Tutorial about {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/52n_WPS_Grid_Computing_Hands_On.pdf} Distributed Computing with GridGain and UNICORE}}.
     
-    * Tutorial about {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/52n_WPS_Grid_Computing_Hands_On.pdf} Setting up the 52°North WPS with ArcGIS Server}}.
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/Configuring%20ArcGIS%20support%20for%20the%2052N%20WPS-long_version-v1.0.pdf} Setting up the 52°North WPS with ArcGIS Server and Python scripts-long version}}.
+    
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/Exposing%20ArcGIS%20Server%20functionality%20with%2052%c2%b0North%20WPS-short-version-_v1.0.pdf} Setting up the 52°North WPS with ArcGIS Server-short version}}.
  		
  		
