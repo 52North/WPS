@@ -12,7 +12,7 @@ WPS Tutorials Section
  In this section you can find tutorials for installing and developing the 52North WPS.
  
 
-	* Tutorial about {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.0.pdf} Setting up and compiling the 52°North WPS sources}}.
+	* Tutorial about {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf} Setting up and compiling the 52°North WPS sources}}.
 
 	* Tutorial about {{{https://52north.org/twiki/bin/viewfile/Processing/52nWebProcessingService?rev=1;filename=WPS_Tutorial.pdf} 52°North WPS process development}}.
 	

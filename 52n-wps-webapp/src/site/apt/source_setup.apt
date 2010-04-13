@@ -14,13 +14,13 @@ Bastian Schäffer
  To download the latest 52n WPS sources please visit the WPS trunk of the geoprocessing community trough your favorite SVN client.
 
 --------------------------
-http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
+http://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
 --------------------------
 
   Stable release can be found here:
   
 --------------------------
-http://52north.org/svn/geoprocessing/main/WPS/tags/
+http://svn.52north.org/svn/geoprocessing/main/WPS/tags/
 --------------------------	
 
   For a detailed description, please visit the {{{source-repository.html}source repository information}}
@@ -36,4 +36,4 @@ http://52north.org/svn/geoprocessing/main/WPS/tags/
 
 * Build, Configure and Create your own WPS process
  
- 	Please follow the installation {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.0.pdf} tutorial}}
+ 	Please follow the installation {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf} tutorial}}
