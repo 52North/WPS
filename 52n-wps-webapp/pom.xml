@@ -15,10 +15,10 @@
           <mailingLists>
         <mailingList>
             <name>Geoprocessing</name>
-            <archive>http://52north.org/pipermail/geoprocessingservices/</archive>
+            <archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
             <post>geoprocessingservices@52north.org</post>
-            <subscribe>https://52north.org/mailman/listinfo/geoprocessingservices</subscribe>
-            <unsubscribe>https://52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
         </mailingList>
     </mailingLists>
     <developers>

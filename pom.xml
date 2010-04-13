@@ -30,7 +30,7 @@
     <issueManagement>
         <system>Bugzilla</system>
         <url>
-        	https://incubator.52north.org/cgi-bin/bugzilla/index.cgi
+        	https://52north.org/bugzilla/
         </url>
     </issueManagement>
     <licenses>
@@ -42,9 +42,9 @@
     <inceptionYear>2007</inceptionYear>
     <scm>
         <!-- Specification of the Source-Content-Managementsystem -->
-        <connection>scm:svn:http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</connection>
-        <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</developerConnection>
-		<url>http://52north.org/svn/geoprocessing/main/WPS/tags/52n-wps-2.0-rc1</url>
+        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</connection>
+        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</url>
   </scm>
   
       <repositories>
@@ -117,7 +117,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <connectionUrl>
-                    	scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
+                    	scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
                     </connectionUrl>
                 </configuration>
             </plugin>
