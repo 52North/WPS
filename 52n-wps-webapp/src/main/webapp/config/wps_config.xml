@@ -35,8 +35,9 @@
 				className="org.n52.wps.io.datahandler.binary.AsciiGrassGenerator" />
 			<Generator name="GeotiffGenerator"
 				className="org.n52.wps.io.datahandler.binary.GeotiffGenerator" />
-			<Generator name="KMLGenerator"
+		<!--	<Generator name="KMLGenerator"
 				className="org.n52.wps.io.datahandler.xml.KMLGenerator" />
+				-->
 			<Generator name="GTBinZippedSHPGenerator"
 				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator" />
 			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator"/>
