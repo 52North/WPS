@@ -138,7 +138,7 @@
 <dependency>
    <groupId>org.geotools</groupId>
    <artifactId>gt2-xml</artifactId>
-   <version>2.4.2-52n-patched</version>
+   <version>2.4.2</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
