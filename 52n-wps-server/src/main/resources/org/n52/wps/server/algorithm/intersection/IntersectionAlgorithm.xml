@@ -12,8 +12,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Metadata xlink:title="GML" />
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>Polygons</ows:Identifier>
-				<ows:Title>Polygons</ows:Title>
+				<ows:Identifier>Polygon1</ows:Identifier>
+				<ows:Title>Polygon1</ows:Title>
 				<ows:Abstract>Polygons</ows:Abstract>
 				<ComplexData>
 			
@@ -34,9 +34,9 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>LineStrings</ows:Identifier>
-				<ows:Title>LineStrings</ows:Title>
-				<ows:Abstract>The Geometries to buffer</ows:Abstract>
+				<ows:Identifier>Polygon2</ows:Identifier>
+				<ows:Title>Polygon2</ows:Title>
+				<ows:Abstract>The Geometries to be intersected</ows:Abstract>
 				<ComplexData>
 				<Default>
 					<Format>
