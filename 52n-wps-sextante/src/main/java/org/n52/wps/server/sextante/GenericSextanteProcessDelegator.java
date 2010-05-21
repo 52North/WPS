@@ -462,7 +462,10 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		for(int i = 0; i <numberOfParameters; i++){
 			Parameter parameter = parameterSet.getParameter(i);
 			String parameterName = parameter.getParameterName();
-
+			
+			if(!parameterName.equals(id)){
+				continue;
+			}
 			String type = parameter.getParameterTypeName();
 
 			if(type.equals("Vector Layer")){
@@ -522,6 +525,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 		for(OutputDescriptionType output : outputs){
 
+			if(!output.getIdentifier().getStringValue().equals(id)){
+				continue;
+			}
 			if(output.isSetLiteralOutput()){
 				String datatype = output.getLiteralOutput().getDataType().getStringValue();
 				if(datatype.contains("tring")){
