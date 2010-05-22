@@ -55,14 +55,12 @@ import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonType;
 
-import org.apache.xmlbeans.SchemaType;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
-import org.relaxng.datatype.Datatype;
+import org.opengis.feature.simple.SimpleFeature;
 import org.w3c.dom.Node;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -126,9 +124,9 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		}
 		FeatureIterator iter = ((GTVectorDataBinding)coll).getPayload().features();
 		while(iter.hasNext()) {
-			Feature feature = iter.next();
+			SimpleFeature feature = (SimpleFeature) iter.next();
 			StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();
-			Geometry geom = feature.getDefaultGeometry();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			String geomType = geom.getGeometryType();
 			if(geomType.equals("Point")) {
 				Point point = (Point)geom;
@@ -136,9 +134,8 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 				if (coord != null) {
 					PointPropertyType pointType = staticFeature.addNewPointProperty();
 					pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
-					
 					generateAttribute(feature, staticFeature);					
-				}
+					}
 			}
 			else if(geomType.equals("LineString")) {
 				LineString ls = (LineString)geom;
@@ -209,15 +206,14 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		return doc;
 	}
 
-	private void generateAttribute(Feature feature,
+	private void generateAttribute(SimpleFeature feature,
 			StaticFeatureType staticFeature) {
 		if(feature.getFeatureType().getAttributeCount()>1){
 			
 			PropertyType propertyType;
 			Value value;
-			for (int i = 0; i < feature.getNumberOfAttributes(); i++) {
-			
-				Object o = feature.getAttribute(i);
+			int attributePosCounter=0;
+			for (Object o: feature.getAttributes()) {
 				DataType.Enum dataType;
 				if(o instanceof Integer){
 					dataType = DataType.INTEGER;
@@ -233,10 +229,11 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 				else continue;	//Don't create anything
 				
 				propertyType = staticFeature.addNewProperty();
-				propertyType.setPropertyName(feature.getFeatureType().getAttributeType(i).getLocalName());
+				propertyType.setPropertyName(feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
 				value = propertyType.addNewValue();
 				value.setDataType(dataType);
 				value.setStringValue(String.valueOf(o));
+				attributePosCounter++;
 			}
 		}
 	}

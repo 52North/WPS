@@ -48,21 +48,17 @@ import net.opengis.gml.LineStringPropertyType;
 import net.opengis.gml.LinearRingMemberType;
 import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
-import net.opengis.gml.PointType;
 import net.opengis.gml.PolygonPropertyType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.geotools.feature.AttributeType;
 import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.DefaultFeatureTypeFactory;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -81,7 +77,8 @@ public class SimpleGMLParser extends AbstractXMLParser {
 	
 	private static String[] SUPPORTED_SCHEMAS = new String[]{"http://www.opengeospatial.org/gmlpacket.xsd", "http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd"};	
 	private static Logger LOGGER = Logger.getLogger(SimpleGMLParser.class);
-	//private FeatureType type;
+	private SimpleFeatureType type;
+	private SimpleFeatureBuilder featureBuilder;
 	
 	public SimpleGMLParser() {
 	}
@@ -129,7 +126,13 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		int numberOfMembers = doc.getGMLPacket().getPacketMemberArray().length;
 		for(int i = 0; i< numberOfMembers; i++) {
 			StaticFeatureType feature = doc.getGMLPacket().getPacketMemberArray(i).getStaticFeature();
-			Feature newFeature = convertStaticFeature(feature);
+			//at the start create the featureType and the featureBuilder
+			if(i==0) {
+				type = createFeatureType(feature);
+				featureBuilder = new SimpleFeatureBuilder(type);
+			}
+				
+			SimpleFeature newFeature = convertStaticFeature(feature);
 			if (newFeature != null) {
 				collection.add(newFeature);
 			}
@@ -140,9 +143,9 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return new GTVectorDataBinding(collection); 
 	}
 	
-	private Feature convertStaticFeature(StaticFeatureType staticFeature) {
+	private SimpleFeature convertStaticFeature(StaticFeatureType staticFeature) {
 		
-		Feature feature = null;
+		SimpleFeature feature = null;
 		Geometry geom = null;
 		if(staticFeature.isSetLineStringProperty()) {
 			geom = convertToJTSGeometry(staticFeature.getLineStringProperty());
@@ -157,81 +160,54 @@ public class SimpleGMLParser extends AbstractXMLParser {
 			return null;
 		}
 		
-		FeatureType type = createFeatureType(staticFeature);
-				
-		try{
-			if(type.getAttributeCount()>1){
-				
-				if(staticFeature.sizeOfPropertyArray() > 0){
-					
-					ArrayList<Object> properties = new ArrayList<Object>(staticFeature.sizeOfPropertyArray());
-					
-					properties.add(geom);
-					
-					for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {						
-						PropertyType ptype = staticFeature.getPropertyArray(i);
-						if(!ptype.getPropertyName().contains("geom")){
-						Value v = ptype.getValue();
-						properties.add(v.getStringValue());	
-						}
+		if(type.getAttributeCount()>1){
+			if(staticFeature.sizeOfPropertyArray() > 0){
+				ArrayList<Object> properties = new ArrayList<Object>(staticFeature.sizeOfPropertyArray());
+				properties.add(geom);
+				for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {						
+					PropertyType ptype = staticFeature.getPropertyArray(i);
+					if(!ptype.getPropertyName().contains("geom")){
+					Value v = ptype.getValue();
+					properties.add(v.getStringValue());	
 					}
-					feature = type.create(properties.toArray());
-				}				
-			
-			}else{
-			 feature = type.create(new Object[]{geom});
+				}
+				feature = featureBuilder.buildFeature(staticFeature.getFid(), properties.toArray());
+			}				
+		
+		}
+		else {
+		 feature = featureBuilder.buildFeature(staticFeature.getFid(), new Object[]{geom});
 			}
-		}
-		catch(IllegalAttributeException e) {
-			throw new IllegalArgumentException(e);
-		}
+		
 		return feature;
 	}
 	
-	private FeatureType createFeatureType(StaticFeatureType staticFeature) {
-		DefaultFeatureTypeFactory typeFactory = new DefaultFeatureTypeFactory();
-		typeFactory.setName("gmlPacketFeatures");
-		AttributeType geom;
+	private SimpleFeatureType createFeatureType(StaticFeatureType staticFeature) {
+		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+		typeBuilder.setName("gmlPacketFeatures");
+		
 		if(staticFeature.isSetLineStringProperty()) {
-			geom = org.geotools.feature.AttributeTypeFactory.newAttributeType( "LineString",
-					LineString.class);
-			typeFactory.addType(geom);
+			typeBuilder.add( "LineString", LineString.class);
+			
 		}
-		if(staticFeature.isSetPointProperty()) {
-			geom = org.geotools.feature.AttributeTypeFactory.newAttributeType( "Point",
-					Point.class);
-			typeFactory.addType(geom);
+		else if(staticFeature.isSetPointProperty()) {
+			typeBuilder.add( "Point", Point.class);
 		}
 		else if(staticFeature.isSetPolygonProperty()) {
-			geom = org.geotools.feature.AttributeTypeFactory.newAttributeType( "Polygon",
-					Polygon.class);
-			typeFactory.addType(geom);
+			typeBuilder.add( "Polygon", Polygon.class);
 		}
 		
 		if(staticFeature.sizeOfPropertyArray() > 0){
 			for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {
 				
-				
-				
 				PropertyType type = staticFeature.getPropertyArray(i);
-				if(!type.getPropertyName().contains("geom")){
-				AttributeType value = org.geotools.feature.AttributeTypeFactory.newAttributeType( type.getPropertyName(),
-						String.class);
-				
-				typeFactory.addType(value);
+				if(!type.getPropertyName().contains("geom")) {
+					typeBuilder.add(type.getPropertyName(),String.class);
 				}
 			}
 			
 		}
-		
-		FeatureType returnType;
-		try {
-			returnType = typeFactory.getFeatureType();
-		}
-		catch (SchemaException e) {
-			throw new RuntimeException(e);
-		}
-		return returnType;
+		return typeBuilder.buildFeatureType();
 	}
 	
 	private Geometry convertToJTSGeometry(LineStringPropertyType lineString) {
