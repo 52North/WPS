@@ -41,10 +41,15 @@
 		<profile />
 	</profiles>
 	<repositories>
-		<repository>
+		<!--  	repository>
 			<id>wso2-maven2-repository</id>
 			<url>http://dist.wso2.org/maven2</url>
+		</repository-->
+		<repository>
+			<id>ibiblio</id>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
 		</repository>
+		
 	</repositories>
 	<dependencies>
 		<dependency>
