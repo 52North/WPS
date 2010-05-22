@@ -41,18 +41,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.AttributeType;
+import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.DefaultFeatureTypeFactory;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -110,23 +109,23 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 		Iterator polygonIterator = polygons.iterator();
 		int j = 1;
 		while(polygonIterator.hasNext()){
-			Feature polygon = (Feature) polygonIterator.next();
+			SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
 			Iterator lineStringIterator = lineStrings.iterator();
 			int i = 1;
 			System.out.println("Polygon = " + j +"/"+ polygons.size());
 			while(lineStringIterator.hasNext()){
 				//System.out.println("Polygon = " + j + "LineString =" + i +"/"+lineStrings.size());
 				
-				Feature lineString = (Feature) lineStringIterator.next();
+				SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
 				Geometry lineStringGeometry = null;
-				if(lineString.getDefaultGeometry()==null && lineString.getNumberOfAttributes()>0 &&lineString.getAttribute(0) instanceof Geometry){
+				if(lineString.getDefaultGeometry()==null && lineString.getAttributeCount()>0 &&lineString.getAttribute(0) instanceof Geometry){
 					lineStringGeometry = (Geometry)lineString.getAttribute(0);
 				}else{
-					lineStringGeometry = lineString.getDefaultGeometry();
+					lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
 				}
 				try{
-					Geometry intersection = polygon.getDefaultGeometry().difference(lineStringGeometry);
-					Feature resultFeature = createFeature(intersection);
+					Geometry intersection = ((Geometry)polygon.getDefaultGeometry()).difference(lineStringGeometry);
+					Feature resultFeature = createFeature(polygon.getID(), intersection);
 					if(resultFeature!=null){
 					//	Iterator featureCollectionIterator = featureCollection.iterator();
 					//	while(featureCollectionIterator.hasNext()){
@@ -164,30 +163,14 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 		return resulthash;
 	}
 	
-	private Feature createFeature(Geometry geometry) {
-		DefaultFeatureTypeFactory typeFactory = new DefaultFeatureTypeFactory();
-		typeFactory.setName("gmlPacketFeatures");
-		AttributeType pointType = org.geotools.feature.AttributeTypeFactory.newAttributeType( "LineString", LineString.class);
-		typeFactory.addType(pointType);
-		
-		FeatureType featureType;
-		try {
-			featureType = typeFactory.getFeatureType();
-			
-		}
-		catch (SchemaException e) {
-			throw new RuntimeException(e);
-		}
-		Feature feature = null;
-		
-		
-		try{
-			 feature = featureType.create(new Object[]{geometry});
-			 
-		}
-		catch(IllegalAttributeException e) {
-			
-		}
+	private SimpleFeature createFeature(String id, Geometry geometry) {
+		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+		typeBuilder.setName("gmlPacketFeatures");
+		typeBuilder.add( "LineString", LineString.class);
+		SimpleFeatureType type = typeBuilder.buildFeatureType();
+		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
+		SimpleFeature feature = null;
+		feature = featureBuilder.buildFeature(id, new Object[]{geometry});
 		return feature;
 	}
 	

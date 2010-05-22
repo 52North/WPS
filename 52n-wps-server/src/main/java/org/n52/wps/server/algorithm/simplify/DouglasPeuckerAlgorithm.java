@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.IllegalAttributeException;
@@ -49,6 +48,8 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -86,15 +87,15 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 		
 		
 		while(iter.hasNext()) {
-			Feature f = iter.next();
+			SimpleFeature f = (SimpleFeature) iter.next();
 			if(f.getDefaultGeometry() == null) {
 				LOGGER.debug("defaultGeometry is null in feature id:" + f.getID());
 				throw new NullPointerException("defaultGeometry is null in feature id: " + f.getID());
 			}
-			Object userData = f.getDefaultGeometry().getUserData();
+			Map<Object, Object> userData = f.getUserData();
 			
 			try{
-				Geometry in = f.getDefaultGeometry();
+				Geometry in = (Geometry) f.getDefaultGeometry();
 				Geometry out = DouglasPeuckerSimplifier.simplify(in, tolerance);
                 /*
                  * THIS PASSAGE WAS CONTRIBUTED BY GOBE HOBONA.
@@ -119,7 +120,8 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
                 else {
                 	f.setDefaultGeometry(out);
                 }
-				f.getDefaultGeometry().setUserData(userData);
+				Geometry g = (Geometry) f.getDefaultGeometry();
+				g.setUserData(userData);
 			}
 			catch(IllegalAttributeException e) {
 				throw new RuntimeException("geometrytype of result is not matching", e);

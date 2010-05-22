@@ -41,14 +41,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.IllegalAttributeException;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractObservableAlgorithm;
+import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -105,8 +104,8 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 //			this.setChanged();
 //			this.notifyObservers(percentage.intValue());
 			/*********************/
-			Feature fa = (Feature) ia.next();
-			Geometry ga = fa.getDefaultGeometry();
+			SimpleFeature fa = (SimpleFeature) ia.next();
+			Geometry ga = (Geometry) fa.getDefaultGeometry();
 			Geometry result = null;
 			result = runBuffer(ga, width);
 			if (result != null || !result.getGeometryType().equals("MultiPolygon")) {
