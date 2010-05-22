@@ -3,6 +3,7 @@ package org.n52.wps.unicore.algorithm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.unicore.AbstractUnicoreAlgorithm;
+import org.opengis.feature.Feature;
 
 public class UnicoreSimpleBufferAlgorithm extends AbstractUnicoreAlgorithm
 {
@@ -66,18 +68,18 @@ public class UnicoreSimpleBufferAlgorithm extends AbstractUnicoreAlgorithm
 
 	protected FeatureCollection[] splitFeatureCollection(FeatureCollection pFeatureCollection, int pNumberOfChucks)
 	{
-		Object[] pFeatureArray = pFeatureCollection.toArray();
 		FeatureCollection[] result = new FeatureCollection[pNumberOfChucks];
-		int chunkSize = (int) Math.floor((double) pFeatureArray.length / (double) pNumberOfChucks);
+		int chunkSize = (int) Math.floor((double) pFeatureCollection.size() / (double) pNumberOfChucks);
 		int currentFeatureCollection = -1;
-		for (int i = 0; i < pFeatureArray.length; i++)
+		Iterator iterator = pFeatureCollection.iterator();
+		for (int i = 0; i < pFeatureCollection.size(); i++)
 		{
 			if (i % chunkSize == 0 && currentFeatureCollection < (pNumberOfChucks - 1))
 			{
 				currentFeatureCollection++;
 				result[currentFeatureCollection] = DefaultFeatureCollections.newCollection();
 			}
-			result[currentFeatureCollection].add(pFeatureArray[i]);
+			result[currentFeatureCollection].add((Feature) iterator.next());
 		}
 		return result;
 	}
