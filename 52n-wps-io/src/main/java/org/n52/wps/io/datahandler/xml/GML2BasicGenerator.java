@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -45,12 +44,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
-import org.geotools.referencing.NamedIdentifier;
 import org.geotools.xml.SchemaFactory;
 import org.geotools.xml.schema.Schema;
 import org.n52.wps.PropertyDocument.Property;
@@ -58,6 +54,9 @@ import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -118,18 +117,19 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 			return;
 		}
 		Feature f = fc.features().next();
-		FeatureType ft = f.getFeatureType();
+		FeatureType ft = f.getType();
 		//String srsName = (String)f.getDefaultGeometry().getUserData();
 	
-		Object srs = f.getDefaultGeometry().getUserData();
+		Map<Object, Object> userData = f.getUserData();
+		Object srs = userData.get("srs");
 		String srsName = null;
 		if (srs instanceof String) {
 		 srsName = (String) srs;
 		}
 		else if(srs instanceof CoordinateReferenceSystem) {
-	     Iterator<NamedIdentifier> iter = ((CoordinateReferenceSystem)srs).getIdentifiers().iterator();
+	     Iterator<ReferenceIdentifier> iter = ((CoordinateReferenceSystem)srs).getIdentifiers().iterator();
 	            if(iter.hasNext()){
-	                srsName= ((NamedIdentifier)iter.next()).toString();
+	                srsName= iter.next().toString();
 	            }
 		}
 		
@@ -140,27 +140,26 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 	    FeatureTypeNamespaces ftNames = tx.getFeatureTypeNamespaces();
         // StringBuffer typeNames = new StringBuffer();
         
-        Map ftNamespaces = new HashMap();
+		Map<String, String> ftNamespaces = new HashMap<String, String>();
 
-    	URI namespaceURI = ft.getNamespace();
-        
-        String uri = namespaceURI.toASCIIString();
-        ftNames.declareNamespace(fc.getSchema(), fc.getSchema().getTypeName(), uri);
-		
+		String uri = ft.getName().getNamespaceURI();
+		ftNames.declareNamespace(fc.getSchema(), fc.getSchema().getName()
+				.getLocalPart(), uri);
+
         if (ftNamespaces.containsKey(uri)) {
             String location = (String) ftNamespaces.get(uri);
-            ftNamespaces.put(uri, location + "," + fc.getSchema().getTypeName());
+			ftNamespaces.put(uri, location + ","
+					+ fc.getSchema().getName().getLocalPart());
         } else {
-            ftNamespaces.put(uri,
-                uri);
+            ftNamespaces.put(uri, uri);
         }
 
         if(srsName != null) {
         	tx.setSrsName(srsName);
         }
-        Schema s = SchemaFactory.getInstance(namespaceURI);
-        tx.addSchemaLocation(ft.getNamespace().toASCIIString(),s.getURI().toASCIIString());
-		tx.addSchemaLocation("http://www.opengis.net/wfs", "http://geoserver.itc.nl:8080/geoserver/schemas/wfs/1.0.0/WFS-basic.xsd");
+        Schema s = SchemaFactory.getInstance(uri);
+        tx.addSchemaLocation(uri,s.getURI().toASCIIString());
+		tx.addSchemaLocation("http://www.opengis.net/wfs", "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
 		if(writer == null) {
 			LOGGER.debug("writer is null");
 		}

@@ -39,11 +39,9 @@ package org.n52.wps.io.datahandler.xml;
  * 
  *
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,8 +62,6 @@ import net.opengis.kml.x22.PolygonType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlOptions;
-import org.geotools.feature.Feature;
-import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -74,6 +70,7 @@ import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -127,10 +124,11 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 		boolean crsIsSet = false;
 		MathTransform transform = null;
 		while(iter.hasNext()) {
-			Feature feature = iter.next();
+			SimpleFeature feature = (SimpleFeature) iter.next();
 			if(crsIsSet == false) {
-				CoordinateReferenceSystem crs = feature.getFeatureType().getDefaultGeometry().getCoordinateSystem();
-				String crsString = (String)feature.getDefaultGeometry().getUserData();
+				CoordinateReferenceSystem crs = feature.getFeatureType()
+						.getCoordinateReferenceSystem();
+				String crsString = (String) feature.getUserData().toString();
 				
 				if(crsString != null){
 					try {
@@ -149,7 +147,7 @@ public class KMLGenerator extends AbstractXMLGenerator implements IStreamableGen
 				}
 				crsIsSet = true;
 			}
-			Geometry geom = feature.getDefaultGeometry();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			if (transform != null) {
 				try {
 					geom = JTS.transform(geom, transform);

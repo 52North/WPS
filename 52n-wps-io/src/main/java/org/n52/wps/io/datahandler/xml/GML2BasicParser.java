@@ -42,28 +42,25 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.n52.wps.PropertyDocument.Property;
-
 import org.apache.log4j.Logger;
 import org.geotools.data.FeatureReader;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureType;
 import org.geotools.feature.IllegalAttributeException;
 import org.geotools.xml.SchemaFactory;
 import org.geotools.xml.gml.FCBuffer;
 import org.geotools.xml.gml.GMLComplexTypes;
 import org.geotools.xml.schema.Element;
 import org.geotools.xml.schema.Schema;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableParser;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -200,7 +197,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 			
 		Element[] elems = schema.getElements();
 		try{			
-			FeatureType tempType = GMLComplexTypes.createFeatureType(elems[0]);
+			SimpleFeatureType tempType = GMLComplexTypes.createFeatureType(elems[0]);
 
 			
 			reader = FCBuffer.getFeatureReader(uri, 10, fcBufferTimeout, tempType);	
@@ -277,7 +274,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		GML2BasicParser parser = new GML2BasicParser();
 		try {
 			long start = System.currentTimeMillis();
-			parser.parse(new URL("http://geoserver.itc.nl:8080/geoserver/wfs?Request=GetFeature&typeName=topp:tasmania_roads").openStream(), DEFAULT_MIMETYPE);
+			parser.parse(new URL("http://giv-wps.uni-muenster.de:8080/geoserver/wfs?Request=GetFeature&typeName=topp:tasmania_roads").openStream(), DEFAULT_MIMETYPE);
 			long finish = System.currentTimeMillis();
 			System.out.println((finish-start)/1000.0);
 		} catch (MalformedURLException e) {
