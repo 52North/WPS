@@ -5,24 +5,30 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.encoding.Base64;
-import org.geotools.data.FeatureWriter;
+import org.geotools.data.DataStoreFactorySpi;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
-import org.geotools.feature.Feature;
+import org.geotools.data.shapefile.ShapefileDataStore;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
+import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
@@ -160,20 +166,32 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 	private String toBase64ZippedSHP(FeatureCollection collection)
 			throws IOException, IllegalAttributeException {
 		File shp = File.createTempFile("shp", ".shp");
-		IndexedShapefileDataStore ds = new IndexedShapefileDataStore(shp
-				.toURI().toURL());
-		ds.createSchema(collection.getSchema());
-		FeatureWriter wr = ds.getFeatureWriter(Transaction.AUTO_COMMIT);
-		FeatureIterator features = collection.features();
-		while (features.hasNext()) {
-			Feature feature = features.next();
-			Feature next = wr.next();
-			for (int i = 0; i < feature.getNumberOfAttributes(); i++) {
-				next.setAttribute(i, feature.getAttribute(i));
-			}
+		DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
+		Map<String, Serializable> params = new HashMap<String, Serializable>();
+		params.put("url", shp.toURI().toURL());
+		params.put("create spatial index", Boolean.TRUE);
+
+		ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
+				.createNewDataStore(params);
+
+		newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
+		newDataStore.forceSchemaCRS(collection.getSchema()
+				.getCoordinateReferenceSystem());
+
+		Transaction transaction = new DefaultTransaction("create");
+
+		String typeName = newDataStore.getTypeNames()[0];
+		FeatureStore<SimpleFeatureType, SimpleFeature> featureStore = (FeatureStore<SimpleFeatureType, SimpleFeature>) newDataStore
+				.getFeatureSource(typeName);
+		featureStore.setTransaction(transaction);
+		try {
+			featureStore.addFeatures(collection);
+			transaction.commit();
+		} catch (Exception problem) {
+			transaction.rollback();
+		} finally {
+			transaction.close();
 		}
-		wr.close();
-		collection.close(features);
 
 		// Zip the shapefile
 		String path = shp.getAbsolutePath();
