@@ -43,14 +43,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.server.AbstractAlgorithm;
-import org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 public class DisjointAlgorithm extends AbstractAlgorithm {
 
@@ -115,16 +116,16 @@ public class DisjointAlgorithm extends AbstractAlgorithm {
 			throw new RuntimeException("Error while iterating over features in layer 2");
 		}
 		
-		Feature firstFeature = firstIterator.next();
+		SimpleFeature firstFeature = (SimpleFeature) firstIterator.next();
 		
-		Feature secondFeature = secondIterator.next();
+		SimpleFeature secondFeature = (SimpleFeature) secondIterator.next();
 		
-		boolean disjoint = firstFeature.getDefaultGeometry().disjoint(secondFeature.getDefaultGeometry());
+		boolean disjoints = ((Geometry)firstFeature.getDefaultGeometry()).disjoint((Geometry)secondFeature.getDefaultGeometry());
 		
 		HashMap<String, IData> result = new HashMap<String, IData>();
 
 		result.put(outputID,
-				new LiteralBooleanBinding(disjoint));
+				new LiteralBooleanBinding(disjoints));
 		return result;
 	}
 

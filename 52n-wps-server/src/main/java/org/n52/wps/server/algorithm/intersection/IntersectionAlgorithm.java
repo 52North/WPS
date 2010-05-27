@@ -50,9 +50,12 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 
 
@@ -124,7 +127,7 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 				try{
 					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
 					Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
-					Feature resultFeature = createFeature(intersection);
+					Feature resultFeature = createFeature(polygon.getID(), intersection);
 					if(resultFeature!=null){
 					//	Iterator featureCollectionIterator = featureCollection.iterator();
 					//	while(featureCollectionIterator.hasNext()){
@@ -162,14 +165,23 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 		return resulthash;
 	}
 	
-	private Feature createFeature(Geometry geometry) {
-		SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
-		b.add("LineString", LineString.class);
-		SimpleFeatureBuilder builder = new SimpleFeatureBuilder(b
-				.buildFeatureType());
-		builder.add(geometry);
-
-		return builder.buildFeature(null);
+	private Feature createFeature(String id, Geometry geometry) {
+		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+		typeBuilder.setName("gmlPacketFeatures");
+		if(geometry instanceof LineString){
+			typeBuilder.add("LineString", Polygon.class);
+		}
+		if(geometry instanceof Polygon){
+			typeBuilder.add("Polygon", Polygon.class);
+		}
+		if(geometry instanceof Point){
+			typeBuilder.add("Point", Polygon.class);
+		}
+		SimpleFeatureType type = typeBuilder.buildFeatureType();
+		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
+		SimpleFeature feature = null;
+		feature = featureBuilder.buildFeature(id, new Object[]{geometry});
+		return feature;
 	}
 	
 	

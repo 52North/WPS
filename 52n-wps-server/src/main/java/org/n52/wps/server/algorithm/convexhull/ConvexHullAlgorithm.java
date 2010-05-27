@@ -43,22 +43,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.AttributeType;
 import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.DefaultFeatureTypeFactory;
-import org.geotools.feature.Feature;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.FeatureType;
 import org.geotools.feature.SchemaException;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -106,7 +109,7 @@ public class ConvexHullAlgorithm extends AbstractAlgorithm {
 		int counter = 0;
 		
 		while (iter.hasNext()) {
-			Feature feature = iter.next();
+			SimpleFeature  feature = (SimpleFeature) iter.next();
 
 			if (feature.getDefaultGeometry() == null) {
 				throw new NullPointerException(
@@ -114,7 +117,7 @@ public class ConvexHullAlgorithm extends AbstractAlgorithm {
 								+ feature.getID());
 			}
 			
-			Geometry geom = feature.getDefaultGeometry();
+			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			
 			if(geom instanceof Point){
 				coordinateArray[counter] = ((Point)geom).getCoordinate();
@@ -141,27 +144,25 @@ public class ConvexHullAlgorithm extends AbstractAlgorithm {
 	}
 	
 	private Feature createFeature(Geometry geometry) {
-		DefaultFeatureTypeFactory typeFactory = new DefaultFeatureTypeFactory();
-			typeFactory.setName("gmlPacketFeatures");
-		AttributeType pointType = org.geotools.feature.AttributeTypeFactory.newAttributeType( "Polygon", Polygon.class);
-		typeFactory.addType(pointType);
+		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+		builder.setName( "gmlPacketFeatures" );
+		builder.setNamespaceURI( "http://localhost/" );
+		if(geometry instanceof LineString){
+			builder.add("LineString", Polygon.class);
+		}
+		if(geometry instanceof Polygon){
+			builder.add("Polygon", Polygon.class);
+		}
+		if(geometry instanceof Point){
+			builder.add("Point", Polygon.class);
+		}
 		
-		FeatureType featureType;
-		try {
-			featureType = typeFactory.getFeatureType();
-			
-		}
-		catch (SchemaException e) {
-			throw new RuntimeException(e);
-		}
-		Feature feature = null;		
+
+		SimpleFeatureType FLAG = builder.buildFeatureType();
+
+		SimpleFeature feature = SimpleFeatureBuilder.build( FLAG, new Object[]{geometry},"Polygon.1");
+	
 		
-		try{
-			 feature = featureType.create(new Object[]{geometry});	 
-		}
-		catch(Exception e) {
-			LOGGER.debug(e);
-		}
 		return feature;
 	}	
 	

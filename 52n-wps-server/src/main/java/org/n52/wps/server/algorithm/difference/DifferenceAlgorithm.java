@@ -55,6 +55,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 
 
 
@@ -166,7 +168,15 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 	private SimpleFeature createFeature(String id, Geometry geometry) {
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 		typeBuilder.setName("gmlPacketFeatures");
-		typeBuilder.add( "LineString", LineString.class);
+		if(geometry instanceof LineString){
+			typeBuilder.add("LineString", Polygon.class);
+		}
+		if(geometry instanceof Polygon){
+			typeBuilder.add("Polygon", Polygon.class);
+		}
+		if(geometry instanceof Point){
+			typeBuilder.add("Point", Polygon.class);
+		}
 		SimpleFeatureType type = typeBuilder.buildFeatureType();
 		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
 		SimpleFeature feature = null;

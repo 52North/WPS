@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.feature.Feature;
+
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.IllegalAttributeException;
@@ -41,6 +41,8 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -76,11 +78,11 @@ public class TopologyPreservingSimplificationAlgorithm extends
 		}
 		Double tolerance = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
 		while(iter.hasNext()) {
-			Feature f = iter.next();
-			Object userData = f.getDefaultGeometry().getUserData();
+			SimpleFeature f = (SimpleFeature) iter.next();
+			Object userData = ((Geometry)f.getDefaultGeometry()).getUserData();
 			
 			try{
-				Geometry in = f.getDefaultGeometry();
+				Geometry in = (Geometry)f.getDefaultGeometry();
 				Geometry out = TopologyPreservingSimplifier.simplify(in, tolerance);
                 /*
                  * THIS PASSAGE WAS CONTRIBUTED BY GOBE HOBONA.
@@ -104,7 +106,7 @@ public class TopologyPreservingSimplificationAlgorithm extends
                 }
                 else
                 f.setDefaultGeometry(out);				
-				f.getDefaultGeometry().setUserData(userData);
+				((Geometry)f.getDefaultGeometry()).setUserData(userData);
 			}
 			catch(IllegalAttributeException e) {
 				throw new RuntimeException("geometrytype of result is not matching", e);
