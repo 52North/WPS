@@ -106,6 +106,9 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 			/*********************/
 			SimpleFeature fa = (SimpleFeature) ia.next();
 			Geometry ga = (Geometry) fa.getDefaultGeometry();
+			if(fa.getDefaultGeometry()==null){
+				ga = (Geometry) fa.getAttribute("Geometry");
+			}
 			Geometry result = null;
 			result = runBuffer(ga, width);
 			if (result != null || !result.getGeometryType().equals("MultiPolygon")) {

@@ -15,7 +15,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
-	protected static String[] SUPPORTED_FORMAT = {"image/tiff","image/geotiff"};
 	protected static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
 	
 	protected IData parseTiff(InputStream input) {
@@ -64,20 +63,6 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 			throw new RuntimeException(e);
 		}
 
-	}
-
-	public String[] getSupportedFormats() {
-		return SUPPORTED_FORMAT;
-	
-	}
-
-	public boolean isSupportedFormat(String format) {
-		for(String supportedFormat : SUPPORTED_FORMAT){
-			if (supportedFormat.equalsIgnoreCase(format)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public Class<?>[] getSupportedInternalOutputDataType() {

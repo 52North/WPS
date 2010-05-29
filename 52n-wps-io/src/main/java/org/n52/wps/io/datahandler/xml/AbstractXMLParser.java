@@ -35,6 +35,8 @@ Muenster, Germany
 package org.n52.wps.io.datahandler.xml;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -46,41 +48,99 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public abstract class AbstractXMLParser implements IParser {
 	protected GeometryFactory geomFactory;
 	protected Property[] properties;
+	private List<String> supportedSchemas;
+	private List<String> supportedFormats;
+	
 	
 	public AbstractXMLParser() {
-		 geomFactory = new GeometryFactory();
-		 properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+		geomFactory = new GeometryFactory();
+		supportedSchemas = new ArrayList<String>();
+		supportedFormats = new ArrayList<String>();
+		properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+		for(Property property : properties){
+			if(property.getName().equalsIgnoreCase("supportedSchema")){
+				String supportedSchema = property.getStringValue();
+				supportedSchemas.add(supportedSchema);
+			}
+			if(property.getName().equalsIgnoreCase("supportedFormat")){
+				String supportedFormat = property.getStringValue();
+				supportedFormats.add(supportedFormat);
+			}
+		}
 	}
 	
 	public AbstractXMLParser(boolean pReadWPSConfig) {
-		 geomFactory = new GeometryFactory();
-		 if (pReadWPSConfig)
-		 {
-			 properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
-			 
-		 }
-		 else
-		 {
-			 properties = new Property[0];
-		 }
+		geomFactory = new GeometryFactory();
+		supportedSchemas = new ArrayList<String>();
+		supportedFormats = new ArrayList<String>();
+		
+		
+		if (pReadWPSConfig)
+		{
+			properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+			for(Property property : properties){
+				if(property.getName().equalsIgnoreCase("supportedSchema")){
+					String supportedSchema = property.getStringValue();
+					supportedSchemas.add(supportedSchema);
+				}
+				if(property.getName().equalsIgnoreCase("supportedFormat")){
+					String supportedFormat = property.getStringValue();
+					supportedFormats.add(supportedFormat);
+				}
+			} 
+		}
+		else
+		{
+			properties = new Property[0];
+		}
 	}
 
-	public final boolean isSupportedFormat(String format) {
+	public boolean isSupportedFormat(String format) {
 		for(String f : getSupportedFormats()) {
-			if(f.equalsIgnoreCase(format)) {
+			if (f.equalsIgnoreCase(format)) {
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	public boolean supportsSchemas() {
-		return true;
-	}
+	
 	
 	public String[] getSupportedFormats() {
-		return new String[]{DEFAULT_MIMETYPE};
+		String[] resultList = new String[supportedFormats.size()];
+		for(int i = 0; i<supportedFormats.size();i++){
+			resultList[i] = supportedFormats.get(i);
+		}
+		return resultList;
+		
 	}
+	
+	/**
+	 * Returns an array having the supported schemas.
+	 */
+	public String[] getSupportedSchemas() {
+		String[] resultList = new String[supportedSchemas.size()];
+		for(int i = 0; i<supportedSchemas.size();i++){
+			resultList[i] = supportedSchemas.get(i);
+		}
+		return resultList;
+	
+	}
+
+
+	/**
+	 * Returns true if the given schema is supported, else false.
+	 */
+	public boolean isSupportedSchema(String schema) {
+		for(String supportedSchema : supportedSchemas) {
+			if(supportedSchema.equalsIgnoreCase(schema))
+				return true;
+		}
+		return false;
+	}
+	
+	
+	
 	
 	public abstract IData parseXML(String gml);
 	public abstract IData parseXML(InputStream stream);

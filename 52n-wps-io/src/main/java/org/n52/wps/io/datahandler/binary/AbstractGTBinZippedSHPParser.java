@@ -59,11 +59,7 @@ public abstract class  AbstractGTBinZippedSHPParser extends AbstractXMLParser {
 	@Override
 	public abstract IData parse(InputStream input, String mimeType);
 
-	@Override
-	public String[] getSupportedFormats() {
-		return new String[] { IOHandler.MIME_TYPE_ZIPPED_SHP };
-	}
-
+	
 	@Override
 	public String[] getSupportedSchemas() {
 		return new String[] {};

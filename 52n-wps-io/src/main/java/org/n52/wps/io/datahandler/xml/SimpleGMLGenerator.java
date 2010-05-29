@@ -73,10 +73,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreamableGenerator {
 	
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-		"http://www.opengeospatial.org/gmlpacket.xsd", 
-		"http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd"};
-
+	
 	public SimpleGMLGenerator()
 	{
 		super();
@@ -87,17 +84,6 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		super(pReadWPSConfig);
 	}
 	
-	public String[] getSupportedSchemas() {
-		return SUPPORTED_SCHEMAS;
-	}
-
-	public boolean isSupportedSchema(String schema) {
-		for(String supportedSchema : SUPPORTED_SCHEMAS) {
-			if(supportedSchema.equals(schema))
-				return true;
-		}
-		return false;
-	}
 
 	public Node generateXML(IData coll, String schema) {
 		return generateXMLObj(coll, schema).getDomNode();

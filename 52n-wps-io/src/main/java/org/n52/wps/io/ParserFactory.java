@@ -104,12 +104,8 @@ public class ParserFactory {
 			}
 
 			if(parser != null) {
-				if (parser.supportsSchemas()) {
-					LOGGER.info("Parser class registered: " + parserClass);
-				}
-				else {
-					LOGGER.info("Parser class registered: " + parserClass);
-				}
+				
+				LOGGER.info("Parser class registered: " + parserClass);
 				registeredParsers.add(parser);
 			}
 		}

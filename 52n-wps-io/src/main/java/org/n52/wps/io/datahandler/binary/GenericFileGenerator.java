@@ -48,12 +48,6 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 	
 	private static Logger LOGGER = Logger.getLogger(GenericFileGenerator.class);
 	
-	
-	public String[] getSupportedFormats() {
-		return GenericFileDataConstants.getMimeTypes();
-	}
-
-
 	public boolean isSupportedEncoding(String encoding) {
 		return true;
 	}
@@ -71,14 +65,7 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 		return ret;
 	}
 
-	public boolean isSupportedFormat(String format) {
-		for(String currentFormat : this.getSupportedFormats()){
-			if(currentFormat.equals(format)){
-				return true;
-			}
-		}
-		return false;
-	}
+	
 
 	public void writeToStream(IData outputData, OutputStream outputStream) {
 		

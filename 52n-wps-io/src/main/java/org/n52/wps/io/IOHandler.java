@@ -29,18 +29,18 @@ package org.n52.wps.io;
 
 public interface IOHandler {
 	
-	public static final String DEFAULT_MIMETYPE="text/xml";
+	
 	public static final String DEFAULT_ENCODING="UTF-8";
 	
 	public static final String ENCODING_BASE64 = "base64";
-	
+
+	public static final String DEFAULT_MIMETYPE = "text/xml";
+
 	public static final String MIME_TYPE_ZIPPED_SHP = "application/x-zipped-shp";
 	
 	boolean isSupportedSchema(String schema);
 	boolean isSupportedFormat(String format);
 	boolean isSupportedEncoding(String encoding);
-	
-	boolean supportsSchemas();
 	
 	String[] getSupportedSchemas();
 	

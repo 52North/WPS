@@ -35,6 +35,7 @@ Muenster, Germany
 package org.n52.wps.io.datahandler.xml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,25 +43,25 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
-import org.geotools.data.FeatureReader;
-import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.xml.SchemaFactory;
-import org.geotools.xml.gml.FCBuffer;
-import org.geotools.xml.gml.GMLComplexTypes;
-import org.geotools.xml.schema.Element;
-import org.geotools.xml.schema.Schema;
+import org.geotools.gml2.GMLConfiguration;
+import org.geotools.gml3.ApplicationSchemaConfiguration;
+import org.geotools.xml.Configuration;
+import org.geotools.xml.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableParser;
+import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -71,38 +72,16 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class GML2BasicParser extends AbstractXMLParser implements IStreamableParser {
 	private static Logger LOGGER = Logger.getLogger(GML2BasicParser.class);
-	private static String SUPPORTED_SCHEMA = "http://schemas.opengis.net/gml/2.1.2/feature.xsd";	
-	private int fcBufferTimeout;
-	
+		
 	public GML2BasicParser() {
-		//default
-		fcBufferTimeout = 1000000;
-		
-		for(Property property : properties){
-			if(property.getName().equalsIgnoreCase("fcBufferTimeout")){
-				fcBufferTimeout = new Integer(property.getStringValue());
-				
-			}
-		}
-		
+	 super();	
 	}
 	
 	public GML2BasicParser(boolean pReadWPSConfig) {
 		super(pReadWPSConfig);
-		fcBufferTimeout = 1000000;
-		
-		for(Property property : properties){
-			if(property.getName().equalsIgnoreCase("fcBufferTimeout")){
-				fcBufferTimeout = new Integer(property.getStringValue());
-				
-			}
-		}
 		
 	}
 
-	public String[] getSupportedSchemas() {
-		return new String[]{SUPPORTED_SCHEMA};
-	}
 
 	public GTVectorDataBinding parseXML(String gml) {
 		File f = null;
@@ -160,89 +139,64 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		}
 	}	
 
-	public boolean isSupportedSchema(String schema) {
-		return SUPPORTED_SCHEMA.equals(schema);
-	}
+	
 	
 	public GTVectorDataBinding parseXML(URI uri) {
-		FeatureReader reader;
-		FeatureCollection coll = null;
-		URL featureTypeSchemaURL = null;
-		try {
-			featureTypeSchemaURL = new URL (determineFeatureTypeSchema(uri));
-		}
-		catch(MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-		if(featureTypeSchemaURL == null) {
+		QName schematypeTuple = determineFeatureTypeSchema(uri);
+		if(schematypeTuple == null) {
 			throw new NullPointerException("featureTypeSchema null for uri: " + uri.getQuery());
 		}
-		LOGGER.debug("determinedFeatureTypeURL: " + featureTypeSchemaURL);
-		Schema schema = null;
-		InputStream stream = null;
-		try{
-			stream = featureTypeSchemaURL.openStream();
-		}
-		catch(IOException e) {
-			LOGGER.debug(e);
-			LOGGER.debug(e.getStackTrace());
-			throw new IllegalArgumentException(e);
-		}
-		try{
-			schema = SchemaFactory.getInstance(null , stream);
-		}
-		catch(SAXException e) {
-			throw new IllegalArgumentException(e);
-		}
-			
-		Element[] elems = schema.getElements();
-		try{			
-			SimpleFeatureType tempType = GMLComplexTypes.createFeatureType(elems[0]);
+		
+		//create the parser with the gml 2.0 configuration
+		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
+		
+		String schemaLocation =  schematypeTuple.getLocalPart();
 
-			
-			reader = FCBuffer.getFeatureReader(uri, 10, fcBufferTimeout, tempType);	
+		Configuration configuration = null;
+		if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
+			SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
+			configuration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+		}else{
+			 //setup the encoder with gml2 configuration
+        	configuration = new GMLConfiguration();
+        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
+        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
 
-
+		}
+		
+		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+		
+		//parse
+		FeatureCollection fc = null;
+		try {
+			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
+			fc = (FeatureCollection) parser.parse( new FileInputStream(filepath));
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
 		} catch (SAXException e) {
 			e.printStackTrace();
-			throw new IllegalArgumentException(e);
-		} 
-		
-		if(reader != null) {
-			coll = DefaultFeatureCollections.newCollection();
-			try {
-				while(reader.hasNext()) {
-					coll.add(reader.next());
-				}  
-				// coll = (FeatureCollection)collType.create(features.toArray());
-			}
-			
-			catch (IOException e) {
-				LOGGER.debug(e);e.printStackTrace();
-				throw new IllegalArgumentException(e);
-			} catch (IllegalAttributeException e) {
-				LOGGER.debug(e);
-			}
-		}
-		try {
-			stream.close();
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 		
-		return new GTVectorDataBinding(coll);
+		GTVectorDataBinding data = new GTVectorDataBinding(fc);
+		
+		return data;
 	}
 	
-	private String determineFeatureTypeSchema(URI uri) {
+	private QName determineFeatureTypeSchema(URI uri) {
 		try {
 			GML2Handler handler = new GML2Handler();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setNamespaceAware(true);
 			factory.newSAXParser().parse(uri.toASCIIString(), (DefaultHandler)handler); 
 			String schemaUrl = handler.getSchemaUrl(); 
-			return schemaUrl;
+			String namespaceURI = handler.getNameSpaceURI();
+			return new QName(namespaceURI,schemaUrl);
+			
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -270,22 +224,7 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 	}
 
 	
-	public static void main(String[] args){
-		GML2BasicParser parser = new GML2BasicParser();
-		try {
-			long start = System.currentTimeMillis();
-			parser.parse(new URL("http://giv-wps.uni-muenster.de:8080/geoserver/wfs?Request=GetFeature&typeName=topp:tasmania_roads").openStream(), DEFAULT_MIMETYPE);
-			long finish = System.currentTimeMillis();
-			System.out.println((finish-start)/1000.0);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
+	
 	public Class[] getSupportedInternalOutputDataType() {
 		Class[] supportedClasses = {GTVectorDataBinding.class};
 		return supportedClasses;

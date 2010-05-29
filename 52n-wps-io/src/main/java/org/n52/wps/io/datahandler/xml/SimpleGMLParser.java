@@ -75,21 +75,18 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class SimpleGMLParser extends AbstractXMLParser {
 	
-	private static String[] SUPPORTED_SCHEMAS = new String[]{"http://www.opengeospatial.org/gmlpacket.xsd", "http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd"};	
 	private static Logger LOGGER = Logger.getLogger(SimpleGMLParser.class);
 	private SimpleFeatureType type;
 	private SimpleFeatureBuilder featureBuilder;
 	
 	public SimpleGMLParser() {
+		super();
 	}
 	
 	public SimpleGMLParser(boolean pReadWPSConfig) {
 		super(pReadWPSConfig);
 	}
 
-	public String[] getSupportedSchemas() {
-		return SUPPORTED_SCHEMAS;
-	}
 
 	public GTVectorDataBinding parseXML(String gml) {
 		GMLPacketDocument doc;
@@ -277,15 +274,6 @@ public class SimpleGMLParser extends AbstractXMLParser {
 										coord.getY().doubleValue(), 
 										coord.getZ().doubleValue());
 		}
-	}
-
-	public boolean isSupportedSchema(String schema) {
-		for(String supportedSchema : SUPPORTED_SCHEMAS) {
-			if(supportedSchema.equals(schema)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public GTVectorDataBinding parse(InputStream input, String mimeType) {

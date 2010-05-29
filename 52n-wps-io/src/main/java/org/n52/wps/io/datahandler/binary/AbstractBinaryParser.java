@@ -27,9 +27,45 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.io.datahandler.binary;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IParser;
 
 public abstract class AbstractBinaryParser implements IParser {
+	private List<String> supportedFormats;
+	protected Property[] properties;
+	
+	public AbstractBinaryParser(){
+		supportedFormats = new ArrayList<String>();
+		properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+		for(Property property : properties){
+			if(property.getName().equalsIgnoreCase("supportedFormat")){
+				String supportedFormat = property.getStringValue();
+				supportedFormats.add(supportedFormat);
+			}
+		}
+	}
+	
+	public boolean isSupportedFormat(String format) {
+		for(String f : getSupportedFormats()) {
+			if (f.equalsIgnoreCase(format)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public String[] getSupportedFormats() {
+		String[] resultList = new String[supportedFormats.size()];
+		for(int i = 0; i<supportedFormats.size();i++){
+			resultList[i] = supportedFormats.get(i);
+		}
+		return resultList;
+		
+	}
 
 
 	public boolean isSupportedSchema(String schema) {
@@ -40,7 +76,6 @@ public abstract class AbstractBinaryParser implements IParser {
 		return null;
 	}
 	
-	public boolean supportsSchemas() {
-		return false;
-	}
+	
+	
 }

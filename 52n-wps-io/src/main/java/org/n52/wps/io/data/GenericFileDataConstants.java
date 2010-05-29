@@ -71,7 +71,7 @@ public final class GenericFileDataConstants {
 		
 		String[] returnValue = null;
 		
-		if (mimeType.equalsIgnoreCase(MIME_TYPE_ZIPPED_SHP)){
+		if (mimeType.equalsIgnoreCase("application/x-zipped-shp")){
 			returnValue = additionalSHPFileItems;
 		}
 		

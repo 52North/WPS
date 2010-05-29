@@ -35,6 +35,9 @@ Muenster, Germany
 package org.n52.wps.io.datahandler.xml;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IGenerator;
@@ -50,15 +53,43 @@ import org.w3c.dom.Node;
 
 public abstract class AbstractXMLGenerator implements IGenerator { 
 	protected Property[] properties;
+	private List<String> supportedSchemas;
+	private List<String> supportedFormats;
 	
 	public AbstractXMLGenerator() {
-		 properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+		supportedSchemas = new ArrayList<String>();
+		supportedFormats = new ArrayList<String>();
+		supportedFormats.add("text/xml");
+		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+		for(Property property : properties){
+			if(property.getName().equalsIgnoreCase("supportedSchema")){
+				String supportedSchema = property.getStringValue();
+				supportedSchemas.add(supportedSchema);
+			}
+			if(property.getName().equalsIgnoreCase("supportedFormat")){
+				String supportedFormat = property.getStringValue();
+				supportedFormats.add(supportedFormat);
+			}
+		}
 	}
 	
 	public AbstractXMLGenerator(boolean pReadWPSConfig) {
+		supportedSchemas = new ArrayList<String>();
+		supportedFormats = new ArrayList<String>();
+		supportedFormats.add("text/xml");
 		if (pReadWPSConfig)
 		{
 			properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+			for(Property property : properties){
+				if(property.getName().equalsIgnoreCase("supportedSchema")){
+					String supportedSchema = property.getStringValue();
+					supportedSchemas.add(supportedSchema);
+				}
+				if(property.getName().equalsIgnoreCase("supportedFormat")){
+					String supportedFormat = property.getStringValue();
+					supportedFormats.add(supportedFormat);
+				}
+			}
 		}
 		else
 		{
@@ -78,11 +109,39 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 		return false;
 	}
 	
-	public boolean supportsSchemas() {
-		return true;
-	}
+	
 	
 	public String[] getSupportedFormats() {
-		return new String[]{"text/xml"};
+		String[] resultList = new String[supportedFormats.size()];
+		for(int i = 0; i<supportedFormats.size();i++){
+			resultList[i] = supportedFormats.get(i);
+		}
+		return resultList;
+		
 	}
+	
+	/**
+	 * Returns an array having the supported schemas.
+	 */
+	public String[] getSupportedSchemas() {
+		String[] resultList = new String[supportedSchemas.size()];
+		for(int i = 0; i<supportedSchemas.size();i++){
+			resultList[i] = supportedSchemas.get(i);
+		}
+		return resultList;
+	
+	}
+
+
+	/**
+	 * Returns true if the given schema is supported, else false.
+	 */
+	public boolean isSupportedSchema(String schema) {
+		for(String supportedSchema : supportedSchemas) {
+			if(supportedSchema.equalsIgnoreCase(schema))
+				return true;
+		}
+		return false;
+	}
+
 }

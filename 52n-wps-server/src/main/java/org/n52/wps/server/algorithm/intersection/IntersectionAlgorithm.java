@@ -76,10 +76,10 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 	
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		/*----------------------Polygons Input------------------------------------------*/
-		if(inputData==null || !inputData.containsKey("Polygons1")){
+		if(inputData==null || !inputData.containsKey("Polygon1")){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		List<IData> dataList = inputData.get("Polygons1");
+		List<IData> dataList = inputData.get("Polygon1");
 		if(dataList == null || dataList.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
@@ -88,10 +88,10 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 		FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
 		
 		/*----------------------LineStrings Input------------------------------------------*/
-		if(inputData==null || !inputData.containsKey("Polygons2")){
+		if(inputData==null || !inputData.containsKey("Polygon2")){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		List<IData> dataListLS = inputData.get("Polygons2");
+		List<IData> dataListLS = inputData.get("Polygon2");
 		if(dataListLS == null || dataListLS.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
 		}

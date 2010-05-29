@@ -42,6 +42,7 @@ public class GML2Handler extends DefaultHandler {
 	private Logger LOGGER = Logger.getLogger(GML2Handler.class);
 	// private static String SCHEMA = "http://www.opengis.net/wfs";
 	private String  schemaUrl;
+	private String nameSpaceURI;
 	private boolean rootVisited = false;
 	private Map<String, String> namespaces = new HashMap<String, String>();
 	
@@ -68,6 +69,7 @@ public class GML2Handler extends DefaultHandler {
 		}
 		for(int i = 0; i< locationStrings.length; i++) {
 			if(i % 2 == 0 && !locationStrings[i].equals("http://www.opengis.net/wfs") && !locationStrings[i].equals("")){
+				nameSpaceURI = locationStrings[i];
 				schemaUrl = locationStrings[i + 1];
 				return;
 			}
@@ -84,6 +86,10 @@ public class GML2Handler extends DefaultHandler {
 		super.startPrefixMapping(prefix, uri);
 		namespaces.put(prefix, uri);
 		
+	}
+
+	public String getNameSpaceURI() {
+		return nameSpaceURI;
 	}
 
 	

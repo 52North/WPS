@@ -139,10 +139,7 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 		return encoding.equals(IOHandler.ENCODING_BASE64);
 	}
 
-	@Override
-	public String[] getSupportedFormats() {
-		return new String[] { IOHandler.MIME_TYPE_ZIPPED_SHP };
-	}
+	
 
 	@Override
 	public boolean isSupportedSchema(String schema) {

@@ -56,14 +56,8 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStreamableGenerator{
-	private static String[] SUPPORTED_FORMAT = {"application/tiff","image/tiff"};
 	private static Logger LOGGER = Logger.getLogger(GeotiffGenerator.class);
 	
-	
-	public String[] getSupportedFormats() {
-		return SUPPORTED_FORMAT;
-	}
-
 	
 	
 
@@ -71,15 +65,7 @@ public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStrea
 		return true;
 	}
 
-	public boolean isSupportedFormat(String format) {
-		for(String tempFormat : SUPPORTED_FORMAT){
-			if(tempFormat.equals(format)){
-				return true;
-			}
-		}
-		return false;
-	}
-
+	
 	public void writeToStream(IData raster, OutputStream outputStream) {
 		if(!(raster instanceof GTRasterDataBinding)){
 			throw new RuntimeException("Geotiff writer does not support incoming datatype");

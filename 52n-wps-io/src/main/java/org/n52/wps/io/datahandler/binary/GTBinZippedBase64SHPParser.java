@@ -22,7 +22,9 @@ import org.xml.sax.SAXException;
 public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 	
 
-	
+	public GTBinZippedBase64SHPParser() {
+		super();
+	}
 
 	/**
 	 * @throws RuntimeException

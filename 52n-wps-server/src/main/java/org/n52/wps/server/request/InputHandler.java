@@ -314,7 +314,7 @@ public class InputHandler {
 			
 			if(parser == null) {
 				LOGGER.warn("No applicable parser found. Trying simpleGMLParser");
-				parser = ParserFactory.getInstance().getSimpleParser();
+				throw new ExceptionReport("Error. No applicable parser found for " + schema + "," + mimeType + "," + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);

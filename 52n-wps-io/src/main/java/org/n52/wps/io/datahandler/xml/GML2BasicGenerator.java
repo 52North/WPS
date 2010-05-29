@@ -32,12 +32,13 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,14 +48,20 @@ import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
+import org.geotools.gml3.GMLConfiguration;
+import org.geotools.gml3.ApplicationSchemaConfiguration;
+import org.geotools.xml.Configuration;
+import org.geotools.xml.Parser;
 import org.geotools.xml.SchemaFactory;
 import org.geotools.xml.schema.Schema;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -66,10 +73,10 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 	private int featureTransformerDecimalPlaces;
 	
 	private static Logger LOGGER = Logger.getLogger(GML2BasicGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-			"http://schemas.opengis.net/gml/2.1.2/feature.xsd"};
+		
 	
 	public GML2BasicGenerator(){
+		super();
 		featureTransformerIncludeBounding = false;
 		featureTransformerDecimalPlaces = 4;
 		for(Property property : properties){
@@ -98,6 +105,7 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 				featureTransformerDecimalPlaces = new Integer(property.getStringValue());
 				
 			}
+		
 			
 		}
 	}
@@ -178,23 +186,9 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		}
 	}
 
-	/**
-	 * Returns an array having the supported schemas.
-	 */
-	public String[] getSupportedSchemas() {
-		return SUPPORTED_SCHEMAS;
-	}
+	
 
-	/**
-	 * Returns true if the given schema is supported, else false.
-	 */
-	public boolean isSupportedSchema(String schema) {
-		for(String supportedSchema : SUPPORTED_SCHEMAS) {
-			if(supportedSchema.equals(schema))
-				return true;
-		}
-		return false;
-	}
+	
 
 	public Node generateXML(IData coll, String schema) {
 		File f = null;
@@ -246,8 +240,34 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 	
 
 	public void writeToStream(IData coll, OutputStream os) {
-		OutputStreamWriter w = new OutputStreamWriter(os);
-		write (coll, w);		
+		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
+
+        //get the namespace from the features to pass into the encoder
+        SimpleFeature feature = (SimpleFeature)fc.features().next();
+        String namespace = feature.getType().getName().getNamespaceURI();
+        String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
+        Configuration configuration = null;
+        if(schemaLocation==null || namespace==null){
+            //setup the encoder with gml2 configuration
+        	configuration = new GMLConfiguration();
+        	configuration.getProperties().add( Parser.Properties.IGNORE_SCHEMA_LOCATION );
+        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+
+        }else{
+        	configuration = new ApplicationSchemaConfiguration( namespace, schemaLocation);
+        }
+        fc.features().close();
+        
+        org.geotools.xml.Encoder encoder = new org.geotools.xml.Encoder(configuration );
+
+        //use the gml namespace with the FeatureCollection element to start parsing the collectio
+        QName ns = new QName("http://www.opengis.net/gml","FeatureCollection","gml");
+        try{
+            encoder.encode(fc, ns, os);
+           
+        }catch(IOException e){
+        	throw new RuntimeException(e);
+        }
 	}
 
 	public Class[] getSupportedInternalInputDataType() {
