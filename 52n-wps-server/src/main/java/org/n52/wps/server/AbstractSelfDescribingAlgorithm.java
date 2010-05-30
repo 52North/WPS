@@ -1,5 +1,6 @@
 package org.n52.wps.server;
 
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,19 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 			for(Class implementedInterface : interfaces){
 				if(implementedInterface.equals(ILiteralData.class)){
 					LiteralInputType literalData = dataInput.addNewLiteralData();
-					String inputClassType = inputDataTypeClass.getCanonicalName();
-					literalData.addNewDataType().setReference(inputClassType);
+					String inputClassType = "";
+					
+					Constructor[] constructors = inputDataTypeClass.getConstructors();
+					for(Constructor constructor : constructors){
+						Class[] parameters = constructor.getParameterTypes();
+						if(parameters.length==1){
+							inputClassType	= parameters[0].getSimpleName();
+						}
+					}
+					
+					if(inputClassType.length()>0){
+						literalData.addNewDataType().setReference("xsi:"+inputClassType);
+					}
 					literalData.addNewAnyValue();				
 				}else if(implementedInterface.equals(IComplexData.class)){
 					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
@@ -137,10 +149,21 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 			for(Class implementedInterface : interfaces){
 						
 				if(implementedInterface.equals(ILiteralData.class)){
-					LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
-					String inputClassType = outputDataTypeClass.getCanonicalName();
-					literalData.addNewDataType().setReference(inputClassType);
-				}else if(implementedInterface.equals(IComplexData.class)){
+					LiteralInputType literalData = (LiteralInputType) dataOutput.addNewLiteralOutput();
+					String outputClassType = "";
+					
+					Constructor[] constructors = outputDataTypeClass.getConstructors();
+					for(Constructor constructor : constructors){
+						Class[] parameters = constructor.getParameterTypes();
+						if(parameters.length==1){
+							outputClassType	= parameters[0].getSimpleName();
+						}
+					}
+					
+					if(outputClassType.length()>0){
+						literalData.addNewDataType().setReference("xsi:"+outputClassType);
+					}
+					literalData.addNewAnyValue();	}else if(implementedInterface.equals(IComplexData.class)){
 					List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 					List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 					for(IGenerator generator : generators) {
