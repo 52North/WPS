@@ -53,12 +53,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
 			pdt.setStatusSupported(true);
 			pdt.setStoreSupported(true);
-			/*XmlCursor c = pdt.newCursor();
-			c.toFirstChild();
-			c.toLastAttribute();
-			c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
-			*/
-
+			
 			pdt.addNewAbstract().setStringValue(algorithm.getName());
 			pdt.addNewTitle().setStringValue(algorithm.getName());
 			pdt.addNewIdentifier().setStringValue(algorithm.getCommandLineName());

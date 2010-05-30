@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import org.geotools.feature.FeatureCollection;
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 
-public class GTVectorDataBinding implements IData{
+public class GTVectorDataBinding implements IComplexData{
 	
 	private transient FeatureCollection featureCollection;	
 	

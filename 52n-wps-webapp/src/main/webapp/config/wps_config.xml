@@ -8,8 +8,9 @@
 			<Parser name="SimpleGMLParser" className="org.n52.wps.io.datahandler.xml.SimpleGMLParser">
 				<Property name="supportedSchema">http://www.opengeospatial.org/gmlpacket.xsd</Property>
 				<Property name="supportedSchema">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
-				<Property name="supportedSchema">http:///schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			<Parser name="GML2BasicParser" className="org.n52.wps.io.datahandler.xml.GML2BasicParser">
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
@@ -17,6 +18,7 @@
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			<Parser name="GML3BasicParser" className="org.n52.wps.io.datahandler.xml.GML3BasicParser">
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
@@ -25,9 +27,11 @@
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			<Parser name="AsciiGrassParser" className="org.n52.wps.io.datahandler.binary.AsciiGrassParser">
 				<Property name="supportedFormat">application/image-ascii-grass</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			<Parser name="GenericFileParser" className="org.n52.wps.io.datahandler.binary.GenericFileParser">
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
@@ -36,30 +40,36 @@
 				<Property name="supportedFormat">application/geotiff</Property>
 				<Property name="supportedFormat">application/dbase</Property>
 				<Property name="supportedFormat">application/remap</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>	
 	
 			
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser">
 				<Property name="supportedFormat">image/tiff</Property>
 				<Property name="supportedFormat">image/geotiff</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			<Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser">
 				<Property name="supportedFormat">image/tiff</Property>
 				<Property name="supportedFormat">image/geotiff</Property>
+				<Property name="supportedEncoding">Base64</Property>
 			</Parser>
-			<Parser name="GTBinZippedSHPParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedBase64SHPParser">
+			<Parser name="GTBinZippedSHPParserBase64" className="org.n52.wps.io.datahandler.binary.GTBinZippedBase64SHPParser">
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding">Base64</Property>
 			</Parser>
 			<Parser name="GTBinZippedSHPParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser">
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 		</ParserList>
 		<GeneratorList>
 			<Generator name="SimpleGMLGenerator" className="org.n52.wps.io.datahandler.xml.SimpleGMLGenerator">
 				<Property name="supportedSchema">http://www.opengeospatial.org/gmlpacket.xsd</Property>
 				<Property name="supportedSchema">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
-				<Property name="supportedSchema">http:///schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
 			<Generator name="GML2BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator">
 				<Property name="featureTransformerIncludeBounding">false</Property>
@@ -70,6 +80,7 @@
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
 			<Generator name="GML3BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator">
 				<Property name="featureTransformerIncludeBounding">false</Property>
@@ -79,17 +90,21 @@
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
 			<Generator name="AsciiGrassGenerator" className="org.n52.wps.io.datahandler.binary.AsciiGrassGenerator">
 				<Property name="supportedFormat">application/image-ascii-grass</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
 			<Generator name="GeotiffGenerator" className="org.n52.wps.io.datahandler.binary.GeotiffGenerator">
 				<Property name="supportedFormat">image/tiff</Property>
 				<Property name="supportedFormat">image/geotiff</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>	
 			<!-- GTBinZippedSHPGenerator inherits formats etc from GMLBasic parser -->
 			<Generator name="GTBinZippedSHPGenerator" className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator">
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding">Base64</Property>
 			</Generator>	
 			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator">
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
@@ -98,7 +113,17 @@
 				<Property name="supportedFormat">application/geotiff</Property>
 				<Property name="supportedFormat">application/dbase</Property>
 				<Property name="supportedFormat">application/remap</Property>
-			</Generator>	
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Generator>
+			<Generator name="GenericFileGeneratorBase64" className="org.n52.wps.io.datahandler.binary.Base64Generator">
+				<Property name="supportedFormat">application/x-zipped-shp</Property>
+				<Property name="supportedFormat">application/img</Property>
+				<Property name="supportedFormat">application/img</Property>
+				<Property name="supportedFormat">application/geotiff</Property>
+				<Property name="supportedFormat">application/dbase</Property>
+				<Property name="supportedFormat">application/remap</Property>
+				<Property name="supportedEncoding">Base64</Property>
+			</Generator>		
 			
 			<!-- GML2BasicGenerator4Files inherits formats etc from GMLBasic parser -->
 			<Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files" />
@@ -109,7 +134,7 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
-			</Repository>
+		</Repository>
 		<!-- 
 		<Repository name="LocalUnicoreAlgorithmRepository"	className="org.n52.wps.unicore.UnicoreAlgorithmRepository">			
 			<Property name="Algorithm">org.n52.wps.unicore.algorithm.UnicoreSimpleBufferAlgorithm</Property>
@@ -141,10 +166,10 @@
 			name="DeploymentProfileClass">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
 			this should be created <SupportedDeploymentProfiles schema=""
 			repositoyName="OracleBPELRepository">
-		-->
+		
 		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
-		<!--
+		
 		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository">
 			<Property name="IP">**</Property>
 			<Property name="DOMAIN">**</Property>

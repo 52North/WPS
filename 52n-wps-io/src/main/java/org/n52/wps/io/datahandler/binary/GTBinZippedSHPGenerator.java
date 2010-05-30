@@ -134,12 +134,7 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 		return new String[] {};
 	}
 
-	@Override
-	public boolean isSupportedEncoding(String encoding) {
-		return encoding.equals(IOHandler.ENCODING_BASE64);
-	}
-
-	
+		
 
 	@Override
 	public boolean isSupportedSchema(String schema) {

@@ -280,11 +280,6 @@ public class SimpleGMLParser extends AbstractXMLParser {
 		return parseXML(input);
 	}
 
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	
 	public Class[] getSupportedInternalOutputDataType() {
 		Class[] supportedClasses = {GTVectorDataBinding.class};
 		return supportedClasses;

@@ -35,19 +35,26 @@ import java.util.List;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 
 public abstract class AbstractBinaryGenerator implements IGenerator {
 	private List<String> supportedFormats;
+	private List<String> supportedEncodings;
 	protected Property[] properties;
 	
 	public AbstractBinaryGenerator(){
 		supportedFormats = new ArrayList<String>();
+		supportedEncodings = new ArrayList<String>();
 		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 		for(Property property : properties){
 			if(property.getName().equalsIgnoreCase("supportedFormat")){
 				String supportedFormat = property.getStringValue();
 				supportedFormats.add(supportedFormat);
+			}
+			if(property.getName().equalsIgnoreCase("supportedEncoding")){
+				String supportedEncoding = property.getStringValue();
+				supportedEncodings.add(supportedEncoding);
 			}
 		}
 	}
@@ -73,6 +80,22 @@ public abstract class AbstractBinaryGenerator implements IGenerator {
 	
 	public boolean isSupportedSchema(String schema) {
 		return true;
+	}
+	
+	public boolean isSupportedEncoding(String encoding) {
+		for(String supportedEncoding : supportedEncodings) {
+			if(supportedEncoding.equalsIgnoreCase(encoding))
+				return true;
+		}
+		return false;
+	}
+	
+	public String[] getSupportedEncodings() {
+		String[] resultList = new String[supportedEncodings.size()];
+		for(int i = 0; i<supportedEncodings.size();i++){
+			resultList[i] = supportedEncodings.get(i);
+		}
+		return resultList;
 	}
 	
 	public String[] getSupportedSchemas() {

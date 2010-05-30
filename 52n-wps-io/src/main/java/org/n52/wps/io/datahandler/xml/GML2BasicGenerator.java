@@ -233,12 +233,6 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 
 	
 
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	
-
 	public void writeToStream(IData coll, OutputStream os) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 

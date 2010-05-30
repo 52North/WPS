@@ -4,8 +4,9 @@ import java.io.IOException;
 
 import org.apache.axis.utils.ByteArray;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralBase64BinaryBinding implements IData {
+public class LiteralBase64BinaryBinding implements ILiteralData {
 	private transient byte[] binary;
 
 	public LiteralBase64BinaryBinding(byte[] binary) {

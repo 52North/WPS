@@ -229,14 +229,6 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 		return baos;
 	}
 
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	
-
 	public void writeToStream(IData coll, OutputStream os) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 

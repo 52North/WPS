@@ -177,5 +177,9 @@ public class GeneratorFactory {
 	public AbstractXMLGenerator getSimpleXMLGenerator() {
 		return new SimpleGMLGenerator();
 	}
+
+	public List<IGenerator> getAllGenerators() {
+		return registeredGenerators;
+	}
 	
 }

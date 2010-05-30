@@ -66,9 +66,6 @@ public abstract class  AbstractGTBinZippedSHPParser extends AbstractXMLParser {
 	}
 
 	@Override
-	public abstract boolean isSupportedEncoding(String encoding);
-
-	@Override
 	public boolean isSupportedSchema(String schema) {
 		return schema == null;
 	}

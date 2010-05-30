@@ -2,9 +2,9 @@ package org.n52.wps.io.data.binding.complex;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.IComplexData;
 
-public class PlainStringBinding implements IData{
+public class PlainStringBinding implements IComplexData{
 	private transient String payload;
 	
 	public PlainStringBinding(String string) {

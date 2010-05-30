@@ -58,14 +58,6 @@ import org.opengis.parameter.ParameterValueGroup;
 public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStreamableGenerator{
 	private static Logger LOGGER = Logger.getLogger(GeotiffGenerator.class);
 	
-	
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	
 	public void writeToStream(IData raster, OutputStream outputStream) {
 		if(!(raster instanceof GTRasterDataBinding)){
 			throw new RuntimeException("Geotiff writer does not support incoming datatype");

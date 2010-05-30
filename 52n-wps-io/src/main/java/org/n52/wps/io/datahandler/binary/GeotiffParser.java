@@ -39,10 +39,6 @@ import org.n52.wps.io.data.IData;
 
 public class GeotiffParser extends AbstractGeotiffParser {
 	
-	public boolean isSupportedEncoding(String encoding) {
-		return encoding.equals(IOHandler.DEFAULT_ENCODING);
-	}
-
 	@Override
 	public IData parse(InputStream input, String mimeType) {
 		return parseTiff(input);

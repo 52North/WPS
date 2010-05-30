@@ -185,4 +185,8 @@ public class ParserFactory {
 	public IParser getSimpleParser() {
 		return (IParser)new SimpleGMLParser();
 	}
+
+	public List<IParser> getAllParsers() {
+		return registeredParsers;
+	}
 }

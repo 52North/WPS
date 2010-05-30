@@ -143,17 +143,18 @@ public class WebProcessingService extends HttpServlet {
 		}
 		LOGGER.info("Initialization of wps properties successful!");
 			
-		//call RepositoyManager to initialize
-		RepositoryManager.getInstance();
-		LOGGER.info("Algorithms initialized");
 		
-
 		Parser[] parsers = WPSConfig.getInstance().getRegisteredParser();
 		ParserFactory.initialize(parsers);
 				
 		Generator[] generators = WPSConfig.getInstance().getRegisteredGenerators();
 		GeneratorFactory.initialize(generators);	
 			
+		//call RepositoyManager to initialize
+		RepositoryManager.getInstance();
+		LOGGER.info("Algorithms initialized");
+		
+
 		
 		//String customWebappPath = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_WEBAPP_PATH);
 		String customWebappPath = WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath();

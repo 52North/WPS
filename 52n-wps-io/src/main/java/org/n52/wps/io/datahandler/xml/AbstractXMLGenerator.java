@@ -41,6 +41,7 @@ import java.util.List;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.w3c.dom.Node;
 
@@ -55,10 +56,12 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 	protected Property[] properties;
 	private List<String> supportedSchemas;
 	private List<String> supportedFormats;
+	private List<String> supportedEncodings;
 	
 	public AbstractXMLGenerator() {
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
+		supportedEncodings = new ArrayList<String>();
 		supportedFormats.add("text/xml");
 		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 		for(Property property : properties){
@@ -70,12 +73,17 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 				String supportedFormat = property.getStringValue();
 				supportedFormats.add(supportedFormat);
 			}
+			if(property.getName().equalsIgnoreCase("supportedEncoding")){
+				String supportedEncoding = property.getStringValue();
+				supportedEncodings.add(supportedEncoding);
+			}
 		}
 	}
 	
 	public AbstractXMLGenerator(boolean pReadWPSConfig) {
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
+		supportedEncodings = new ArrayList<String>();
 		supportedFormats.add("text/xml");
 		if (pReadWPSConfig)
 		{
@@ -88,6 +96,10 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 				if(property.getName().equalsIgnoreCase("supportedFormat")){
 					String supportedFormat = property.getStringValue();
 					supportedFormats.add(supportedFormat);
+				}
+				if(property.getName().equalsIgnoreCase("supportedEncoding")){
+					String supportedEncoding = property.getStringValue();
+					supportedEncodings.add(supportedEncoding);
 				}
 			}
 		}
@@ -144,4 +156,19 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 		return false;
 	}
 
+	public boolean isSupportedEncoding(String encoding) {
+		for(String supportedEncoding : supportedEncodings) {
+			if(supportedEncoding.equalsIgnoreCase(encoding))
+				return true;
+		}
+		return false;
+	}
+	
+	public String[] getSupportedEncodings() {
+		String[] resultList = new String[supportedEncodings.size()];
+		for(int i = 0; i<supportedEncodings.size();i++){
+			resultList[i] = supportedEncodings.get(i);
+		}
+		return resultList;
+	}
 }

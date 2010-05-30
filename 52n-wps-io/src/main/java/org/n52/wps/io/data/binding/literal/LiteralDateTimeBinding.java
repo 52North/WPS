@@ -5,9 +5,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralDateTimeBinding implements IData {
+public class LiteralDateTimeBinding implements ILiteralData {
 	private transient Date date;
 
 	public LiteralDateTimeBinding(Date date) {

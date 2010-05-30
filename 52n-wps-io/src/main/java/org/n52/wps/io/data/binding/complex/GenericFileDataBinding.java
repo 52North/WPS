@@ -28,11 +28,11 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
 package org.n52.wps.io.data.binding.complex;
 
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.IComplexData;
 
 
-public class GenericFileDataBinding implements IData {
+public class GenericFileDataBinding implements IComplexData {
 	private GenericFileData payload; 
 	
 	public GenericFileDataBinding(GenericFileData fileData){

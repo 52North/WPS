@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
 
@@ -50,12 +51,14 @@ public abstract class AbstractXMLParser implements IParser {
 	protected Property[] properties;
 	private List<String> supportedSchemas;
 	private List<String> supportedFormats;
+	private List<String> supportedEncodings;
 	
 	
 	public AbstractXMLParser() {
 		geomFactory = new GeometryFactory();
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
+		supportedEncodings = new ArrayList<String>();
 		properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
 		for(Property property : properties){
 			if(property.getName().equalsIgnoreCase("supportedSchema")){
@@ -66,6 +69,10 @@ public abstract class AbstractXMLParser implements IParser {
 				String supportedFormat = property.getStringValue();
 				supportedFormats.add(supportedFormat);
 			}
+			if(property.getName().equalsIgnoreCase("supportedEncoding")){
+				String supportedEncoding = property.getStringValue();
+				supportedEncodings.add(supportedEncoding);
+			}
 		}
 	}
 	
@@ -73,6 +80,7 @@ public abstract class AbstractXMLParser implements IParser {
 		geomFactory = new GeometryFactory();
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
+		supportedEncodings = new ArrayList<String>();
 		
 		
 		if (pReadWPSConfig)
@@ -86,6 +94,10 @@ public abstract class AbstractXMLParser implements IParser {
 				if(property.getName().equalsIgnoreCase("supportedFormat")){
 					String supportedFormat = property.getStringValue();
 					supportedFormats.add(supportedFormat);
+				}
+				if(property.getName().equalsIgnoreCase("supportedEncoding")){
+					String supportedEncoding = property.getStringValue();
+					supportedEncodings.add(supportedEncoding);
 				}
 			} 
 		}
@@ -139,7 +151,21 @@ public abstract class AbstractXMLParser implements IParser {
 		return false;
 	}
 	
+	public boolean isSupportedEncoding(String encoding) {
+		for(String supportedEncoding : supportedEncodings) {
+			if(supportedEncoding.equalsIgnoreCase(encoding))
+				return true;
+		}
+		return false;
+	}
 	
+	public String[] getSupportedEncodings() {
+		String[] resultList = new String[supportedEncodings.size()];
+		for(int i = 0; i<supportedEncodings.size();i++){
+			resultList[i] = supportedEncodings.get(i);
+		}
+		return resultList;
+	}
 	
 	
 	public abstract IData parseXML(String gml);

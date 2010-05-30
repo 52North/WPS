@@ -39,10 +39,7 @@ import org.n52.wps.io.data.IData;
 
 public abstract class AbstractXMLStringGenerator implements IGenerator {
 	public abstract String generateXML(IData stringifyable);
-	public boolean isSupportedFormat(String format) {
-		if(format.equalsIgnoreCase("text/xml")) { return true; }
-		return false;
-	}
-	public boolean supportsSchemas() { return true; }
-	public String[] getSupportedFormats() { return new String[]{"text/xml"}; }
+	
+
+	
 }

@@ -2,9 +2,9 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralLongBinding implements IData {
+public class LiteralLongBinding implements ILiteralData {
 	private transient Long payload;
 
 	public LiteralLongBinding(Long payload) {

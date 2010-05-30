@@ -2,9 +2,9 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralBooleanBinding implements IData {
+public class LiteralBooleanBinding implements ILiteralData {
 	private transient boolean payload;
 	
 	public LiteralBooleanBinding(boolean payload){

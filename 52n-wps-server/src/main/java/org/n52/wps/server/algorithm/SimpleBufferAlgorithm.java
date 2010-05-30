@@ -47,11 +47,12 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractObservableAlgorithm;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
+public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
 	private Double percentage;
 	
@@ -154,6 +155,21 @@ public class SimpleBufferAlgorithm extends AbstractObservableAlgorithm {
 
 		public Class getOutputDataType(String id) {
 			return GTVectorDataBinding.class;
+		}
+
+		@Override
+		public List<String> getInputIdentifiers() {
+			List<String> identifierList =  new ArrayList<String>();
+			identifierList.add("data");
+			identifierList.add("width");
+			return identifierList;
+		}
+
+		@Override
+		public List<String> getOutputIdentifiers() {
+			List<String> identifierList =  new ArrayList<String>();
+			identifierList.add("result");
+			return identifierList;
 		}
 
 		

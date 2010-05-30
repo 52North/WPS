@@ -66,11 +66,6 @@ public class Base64Generator extends AbstractXMLGenerator implements
 	}
 
 	@Override
-	public boolean isSupportedEncoding(String encoding) {
-		return encoding.equals(IOHandler.ENCODING_BASE64);
-	}
-
-	@Override
 	public boolean isSupportedSchema(String schema) {
 		return schema == null;
 	}
@@ -111,8 +106,4 @@ public class Base64Generator extends AbstractXMLGenerator implements
 		return Base64.encode(bytes);
 	}
 	
-	@Override
-	public boolean isSupportedFormat(String format) {
-		return true;
-	}
 }

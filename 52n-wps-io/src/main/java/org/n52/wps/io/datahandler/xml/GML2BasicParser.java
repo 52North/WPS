@@ -216,15 +216,6 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		return parseXML(input);
 	}
 
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	
-	
 	public Class[] getSupportedInternalOutputDataType() {
 		Class[] supportedClasses = {GTVectorDataBinding.class};
 		return supportedClasses;

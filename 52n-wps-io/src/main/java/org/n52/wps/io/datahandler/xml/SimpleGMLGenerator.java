@@ -276,11 +276,6 @@ public class SimpleGMLGenerator extends AbstractXMLGenerator implements IStreama
 		return baos;
 	}
 
-	
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
 	public void writeToStream(IData coll, OutputStream os) {
 		OutputStreamWriter w = new OutputStreamWriter(os);
 		write (coll, w);		

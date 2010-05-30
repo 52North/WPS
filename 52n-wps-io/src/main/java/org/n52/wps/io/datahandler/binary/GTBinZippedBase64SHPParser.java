@@ -56,15 +56,4 @@ public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 		}
 	}
 
-	
-
-	@Override
-	public boolean isSupportedEncoding(String encoding) {
-		if(encoding.equals(IOHandler.ENCODING_BASE64)){
-			return true;
-		}
-		return false;
-	}
-
-	
 }

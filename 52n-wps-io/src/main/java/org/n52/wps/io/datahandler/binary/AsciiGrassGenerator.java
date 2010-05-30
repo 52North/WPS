@@ -59,8 +59,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStreamableGenerator{
 
 	private static Logger LOGGER = Logger.getLogger(AsciiGrassGenerator.class);
-	private static String SUPPORTED_FORMAT = "application/image-ascii-grass";
-
+	
 	public OutputStream generate(IData o) {
 
 		OutputStream outputStream = null;
@@ -92,25 +91,6 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 		}
 
 		return outputStream;
-	}
-
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	public boolean isSupportedFormat(String format) {
-		if(format.equals(SUPPORTED_FORMAT)) {
-			return true;
-		}
-		return false;
-	}
-
-	
-
-	public String[] getSupportedFormats() {
-		return new String[] {SUPPORTED_FORMAT};
 	}
 
 	public void write(IData o, Writer w) {

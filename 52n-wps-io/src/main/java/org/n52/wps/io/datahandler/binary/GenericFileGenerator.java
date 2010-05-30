@@ -48,10 +48,6 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 	
 	private static Logger LOGGER = Logger.getLogger(GenericFileGenerator.class);
 	
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-	
 	public boolean isSupportedSchema(String schema) {
 		boolean ret = false;
 		if(schema == null){

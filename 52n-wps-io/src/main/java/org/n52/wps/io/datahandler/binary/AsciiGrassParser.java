@@ -69,26 +69,6 @@ public class AsciiGrassParser extends AbstractBinaryParser {
 	}
 
 	
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-
-	public boolean isSupportedFormat(String format) {
-		for(String supportedFormat : getSupportedFormats()) {
-			if(format.equals(supportedFormat)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	
-	public String[] getSupportedFormats() {
-		return new String[] { "application/image-ascii-grass" };
-	}
-
 	private File dumpToFile(InputStream inputStream)
 			throws FileNotFoundException, IOException {
 
@@ -107,11 +87,6 @@ public class AsciiGrassParser extends AbstractBinaryParser {
 		bw.close();
 
 		return outputFile;
-	}
-
-	public void init(Property[] propertyList) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public Class[] getSupportedInternalOutputDataType() {

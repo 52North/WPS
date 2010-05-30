@@ -26,10 +26,7 @@ public class GeotiffBase64Parser extends AbstractGeotiffParser {
 		}
 	}
 
-	@Override
-	public boolean isSupportedEncoding(String encoding) {
-		return encoding.equals(IOHandler.ENCODING_BASE64);
-	}
+	
 
 	
 }

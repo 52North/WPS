@@ -3,9 +3,9 @@ package org.n52.wps.io.data.binding.complex;
 import java.io.IOException;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.IComplexData;
 
-public class GTRasterDataBinding implements IData {
+public class GTRasterDataBinding implements IComplexData {
 	private GridCoverage2D payload; 
 	
 	public GTRasterDataBinding(GridCoverage2D coverage){

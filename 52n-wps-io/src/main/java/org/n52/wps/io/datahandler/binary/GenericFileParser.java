@@ -39,21 +39,7 @@ public class GenericFileParser extends AbstractBinaryParser{
 	
 	private static Logger LOGGER = Logger.getLogger(GenericFileParser.class);
 	
-	
-
-	public boolean isSupportedEncoding(String encoding) {
-		return true;
-	}
-	
-	public boolean isSupportedFormat(String format) {
-		for(String tempFormat : this.getSupportedFormats()){
-			if(tempFormat.equals(format)){
-				return true;
-			}
-		}
-		return false;
-	}
-	
+		
 	public Class[] getSupportedInternalOutputDataType() {
 		Class[] supportedClasses = {GenericFileDataBinding.class};
 		return supportedClasses;

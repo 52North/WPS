@@ -3,9 +3,9 @@ package org.n52.wps.io.data.binding.complex;
 import java.io.IOException;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.IComplexData;
 
-public class AsciiGrassDataBinding implements IData{
+public class AsciiGrassDataBinding implements IComplexData{
 
 	public AsciiGrassDataBinding(GridCoverage2D grid) {
 		// TODO Auto-generated constructor stub

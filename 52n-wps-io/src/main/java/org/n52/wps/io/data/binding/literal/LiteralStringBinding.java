@@ -3,8 +3,9 @@ package org.n52.wps.io.data.binding.literal;
 import java.io.IOException;
 
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralStringBinding implements IData {
+public class LiteralStringBinding implements ILiteralData {
 	private transient String payload;
 	
 	public LiteralStringBinding(String payload){

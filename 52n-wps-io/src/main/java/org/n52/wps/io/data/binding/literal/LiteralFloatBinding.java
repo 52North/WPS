@@ -2,9 +2,9 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 
-public class LiteralFloatBinding implements IData {
+public class LiteralFloatBinding implements ILiteralData {
 	private transient Float payload;
 
 	public LiteralFloatBinding(Float payload) {
