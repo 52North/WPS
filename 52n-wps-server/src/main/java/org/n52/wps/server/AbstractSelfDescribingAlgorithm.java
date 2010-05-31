@@ -69,7 +69,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 					}
 					
 					if(inputClassType.length()>0){
-						literalData.addNewDataType().setReference("xsi:"+inputClassType);
+						literalData.addNewDataType().setReference("xs:"+inputClassType.toLowerCase());
 					}
 					literalData.addNewAnyValue();				
 				}else if(implementedInterface.equals(IComplexData.class)){
@@ -161,7 +161,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 					}
 					
 					if(outputClassType.length()>0){
-						literalData.addNewDataType().setReference("xsi:"+outputClassType);
+						literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
 					}
 					literalData.addNewAnyValue();	}else if(implementedInterface.equals(IComplexData.class)){
 					List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
