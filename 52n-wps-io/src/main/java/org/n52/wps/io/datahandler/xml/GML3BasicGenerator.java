@@ -237,7 +237,7 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
         if(schemaLocation==null || namespace==null){
         	namespace = "http://www.opengis.net/gml";
         	schemaLocation = "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd";
-        	configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
+        	configuration = new GMLConfiguration();//new ApplicationSchemaConfiguration(namespace, schemaLocation);
             
             encoder = new org.geotools.xml.Encoder(configuration );
             encoder.setNamespaceAware(true);
