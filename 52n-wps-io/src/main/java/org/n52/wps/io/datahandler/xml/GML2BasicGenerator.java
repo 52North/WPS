@@ -243,57 +243,6 @@ public class GML2BasicGenerator extends AbstractXMLGenerator implements IStreama
 		OutputStreamWriter w = new OutputStreamWriter(os);
 		write (coll, w);		
 		
-		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
-        //get the namespace from the features to pass into the encoder
-        SimpleFeature feature = (SimpleFeature)fc.features().next();
-        String namespace = feature.getType().getName().getNamespaceURI();
-        String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
-        Configuration configuration = null;
-        org.geotools.xml.Encoder encoder = null;
-        if(schemaLocation==null || namespace==null){
-        	namespace = "http://www.opengis.net/wfs";
-        	schemaLocation = "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd";
-        	configuration = new ApplicationSchemaConfigurationGML2(namespace, schemaLocation);
-            
-            encoder = new org.geotools.xml.Encoder(configuration );
-            encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation("http://www.opengis.net/wfs", "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
-
-            //setup the encoder with gml2 configuration
-        	//configuration = new GMLConfiguration();
-        	//configuration.getProperties().add( Parser.Properties.IGNORE_SCHEMA_LOCATION );
-        	//configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
-
-        }else{
-        	/* configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
-        	    
-             encoder = new org.geotools.xml.Encoder(configuration );
-             encoder.setNamespaceAware(true);
-             encoder.setSchemaLocation("http://www.opengis.net/wfs" + " "+namespace, "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd" + " "+schemaLocation);
-             */
-        	configuration = new ApplicationSchemaConfigurationGML2(namespace, schemaLocation);
-    	    
-            encoder = new org.geotools.xml.Encoder(configuration );
-            encoder.setNamespaceAware(true);
-            encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/2.1.2/feature.xsd");
-           
-        }
-        	
-        fc.features().close();
-     /*   configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
-    
-        encoder = new org.geotools.xml.Encoder(configuration );
-        encoder.setNamespaceAware(true);
-        encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/2.1.2/feature.xsd");
-*/
-        //use the gml namespace with the FeatureCollection element to start parsing the collection
-        QName ns = new QName("http://www.opengis.net/wfs","FeatureCollection","wfs");
-        try{
-            encoder.encode(fc, ns, os);
-           
-        }catch(IOException e){
-        	throw new RuntimeException(e);
-        }
 		
 	}
 

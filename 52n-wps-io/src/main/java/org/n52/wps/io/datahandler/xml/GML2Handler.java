@@ -60,7 +60,10 @@ public class GML2Handler extends DefaultHandler {
 		String schemaLocationAttr = attributes.getValue(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
 		if(schemaLocationAttr == null) {
 			LOGGER.debug("schemaLocation attribute is not set correctly with namespace");
-			schemaLocationAttr = attributes.getValue("schemaLocation");
+			schemaLocationAttr = attributes.getValue("xsi:schemaLocation");
+			if(schemaLocationAttr == null){
+				schemaLocationAttr = attributes.getValue("schemaLocation");
+			}
 		}
 		String[] locationStrings = schemaLocationAttr.split(" ");
 		if(locationStrings.length % 2 != 0) {
@@ -68,7 +71,7 @@ public class GML2Handler extends DefaultHandler {
 			return;
 		}
 		for(int i = 0; i< locationStrings.length; i++) {
-			if(i % 2 == 0 && !locationStrings[i].equals("http://www.opengis.net/wfs") && !locationStrings[i].equals("")){
+			if(i % 2 == 0 && !locationStrings[i].equals("http://www.opengis.net/wfs") && !locationStrings[i].equals("http://www.opengis.net/gml") && !locationStrings[i].equals("")){
 				nameSpaceURI = locationStrings[i];
 				schemaUrl = locationStrings[i + 1];
 				return;
