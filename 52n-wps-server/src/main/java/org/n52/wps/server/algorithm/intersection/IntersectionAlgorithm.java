@@ -48,6 +48,7 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -59,7 +60,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 
 
-public class IntersectionAlgorithm extends AbstractAlgorithm {
+public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 	
 	private static Logger LOGGER = Logger.getLogger(IntersectionAlgorithm.class);
 	
@@ -127,23 +128,9 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 				try{
 					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
 					Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
-					Feature resultFeature = createFeature(polygon.getID(), intersection);
+					Feature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
 					if(resultFeature!=null){
-					//	Iterator featureCollectionIterator = featureCollection.iterator();
-					//	while(featureCollectionIterator.hasNext()){
-					//		Feature existsingFeature = (Feature) featureCollectionIterator.next();
-						/*	if(!existsingFeature.getDefaultGeometry().covers(intersection)){
-								featureCollection.add(resultFeature);
-							}
-							if(existsingFeature.getDefaultGeometry().coveredBy(intersection)){
-								featureCollectionIterator = null;
-								featureCollection.remove(existsingFeature);
-								featureCollection.add(resultFeature);
-								break;
-							}*/
-							
-					//	}
-						
+								
 						featureCollection.add(resultFeature);
 						System.out.println("result feature added. resultCollection = " + featureCollection.size());
 					}
@@ -165,22 +152,24 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 		return resulthash;
 	}
 	
-	private Feature createFeature(String id, Geometry geometry) {
-		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-		typeBuilder.setName("gmlPacketFeatures");
-		if(geometry instanceof LineString){
-			typeBuilder.add("LineString", Polygon.class);
+	private Feature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
+		
+		if(geometry==null || geometry.isEmpty()){
+			return null;
 		}
-		if(geometry instanceof Polygon){
-			typeBuilder.add("Polygon", Polygon.class);
-		}
-		if(geometry instanceof Point){
-			typeBuilder.add("Point", Polygon.class);
-		}
-		SimpleFeatureType type = typeBuilder.buildFeatureType();
+		SimpleFeatureType type = bluePrint.getFeatureType();
 		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
 		SimpleFeature feature = null;
-		feature = featureBuilder.buildFeature(id, new Object[]{geometry});
+		Object[] attributes = new Object[type.getAttributeCount()];
+		List<Object> originalAttributes = bluePrint.getAttributes();
+		for(int i=0;i<originalAttributes.size();i++){
+			if(i==0){
+				attributes[i] = geometry;
+			}else{
+				attributes[i] = originalAttributes.get(i);
+			}
+		}
+		feature = featureBuilder.buildFeature(id, attributes);
 		return feature;
 	}
 	
@@ -193,5 +182,21 @@ public class IntersectionAlgorithm extends AbstractAlgorithm {
 	public Class getOutputDataType(String id) {
 		return GTVectorDataBinding.class;
 	}
+	
+	@Override
+	public List<String> getInputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("Polygon1");
+		identifierList.add("Polygon2");
+		return identifierList;
+	}
+
+	@Override
+	public List<String> getOutputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("result");
+		return identifierList;
+	}
+	
 	
 }
