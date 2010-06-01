@@ -151,16 +151,16 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 		
 		String schemaLocation =  schematypeTuple.getLocalPart();
-
 		Configuration configuration = null;
+		SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
 		if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
 			SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
 			configuration = new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
 		}else{
 			 //setup the encoder with gml2 configuration
         	configuration = new GMLConfiguration();
-        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
-        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+        	//configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
+        	//configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
 
 		}
 		

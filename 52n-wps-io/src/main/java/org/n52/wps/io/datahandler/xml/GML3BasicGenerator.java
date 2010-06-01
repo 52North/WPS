@@ -27,17 +27,14 @@ Copyright � 2007 52�North Initiative for Geospatial Open Source Software Gmb
  ***************************************************************/
 package org.n52.wps.io.datahandler.xml;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -50,10 +47,9 @@ import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
-import org.geotools.gml2.GMLConfiguration;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
+import org.geotools.gml3.GMLConfiguration;
 import org.geotools.xml.Configuration;
-import org.geotools.xml.Parser;
 import org.geotools.xml.SchemaFactory;
 import org.geotools.xml.schema.Schema;
 import org.n52.wps.PropertyDocument.Property;
@@ -232,32 +228,41 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 	public void writeToStream(IData coll, OutputStream os) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 
-        //get the namespace from the features to pass into the encoder
+		//get the namespace from the features to pass into the encoder
         SimpleFeature feature = (SimpleFeature)fc.features().next();
         String namespace = feature.getType().getName().getNamespaceURI();
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
         Configuration configuration = null;
+        org.geotools.xml.Encoder encoder = null;
         if(schemaLocation==null || namespace==null){
-            //setup the encoder with gml2 configuration
-        	configuration = new GMLConfiguration();
-        	configuration.getProperties().add( Parser.Properties.IGNORE_SCHEMA_LOCATION );
-        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
-
+        	namespace = "http://www.opengis.net/gml";
+        	schemaLocation = "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd";
+        	configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
+            
+            encoder = new org.geotools.xml.Encoder(configuration );
+            encoder.setNamespaceAware(true);
+            encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+           
         }else{
-        	configuration = new ApplicationSchemaConfiguration( namespace, schemaLocation);
+        	configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
+        	    
+            encoder = new org.geotools.xml.Encoder(configuration );
+            encoder.setNamespaceAware(true);
+            encoder.setSchemaLocation("http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", namespace + " " + schemaLocation);
+             
+         
         }
+        	
         fc.features().close();
-        
-        org.geotools.xml.Encoder encoder = new org.geotools.xml.Encoder(configuration );
-
-        //use the gml namespace with the FeatureCollection element to start parsing the collectio
-        QName ns = new QName("http://www.opengis.net/gml","FeatureCollection","gml");
+        //use the gml namespace with the FeatureCollection element to start parsing the collection
+        QName ns = new QName("http://www.opengis.net/gml","FeatureCollection","wfs");
         try{
             encoder.encode(fc, ns, os);
            
         }catch(IOException e){
         	throw new RuntimeException(e);
         }
+		
 	}
 
 	public Class[] getSupportedInternalInputDataType() {
