@@ -20,6 +20,8 @@
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
+			
+			
 			<Parser name="GML3BasicParser" className="org.n52.wps.io.datahandler.xml.GML3BasicParser">
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
@@ -71,27 +73,21 @@
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
-			<Generator name="GML2BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator">
-				<Property name="featureTransformerIncludeBounding">false</Property>
-				<Property name="featureTransformerDecimalPlaces">4</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
-				<Property name="supportedFormat">text/xml</Property>
-				<Property name="supportedEncoding">UTF-8</Property>
-			</Generator>
 			<Generator name="GML3BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator">
 				<Property name="featureTransformerIncludeBounding">false</Property>
 				<Property name="featureTransformerDecimalPlaces">4</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
+			<Generator name="GML2BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator">
+				<Property name="featureTransformerIncludeBounding">false</Property>
+				<Property name="featureTransformerDecimalPlaces">4</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Generator>
+		
 			<Generator name="AsciiGrassGenerator" className="org.n52.wps.io.datahandler.binary.AsciiGrassGenerator">
 				<Property name="supportedFormat">application/image-ascii-grass</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
