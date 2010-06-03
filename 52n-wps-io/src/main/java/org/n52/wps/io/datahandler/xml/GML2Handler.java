@@ -65,7 +65,7 @@ public class GML2Handler extends DefaultHandler {
 				schemaLocationAttr = attributes.getValue("schemaLocation");
 			}
 		}
-		String[] locationStrings = schemaLocationAttr.split(" ");
+		String[] locationStrings = schemaLocationAttr.replace("  ", " ").split(" ");
 		if(locationStrings.length % 2 != 0) {
 			LOGGER.debug("schemaLocation does not reference locations correctly, odd number of whitespace separated addresses");
 			return;

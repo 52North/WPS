@@ -229,8 +229,8 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 
 		//get the namespace from the features to pass into the encoder
-        SimpleFeature feature = (SimpleFeature)fc.features().next();
-        String namespace = feature.getType().getName().getNamespaceURI();
+        
+        String namespace = fc.getSchema().getName().getNamespaceURI();
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
         Configuration configuration = null;
         org.geotools.xml.Encoder encoder = null;

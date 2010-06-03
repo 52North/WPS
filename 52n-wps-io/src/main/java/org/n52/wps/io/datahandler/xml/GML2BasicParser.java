@@ -42,9 +42,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -53,15 +53,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
+import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml2.GMLConfiguration;
-import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.xml.Configuration;
-import org.geotools.xml.Parser;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.simple.SimpleFeature;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -167,10 +166,20 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
 		
 		//parse
-		FeatureCollection fc = null;
+		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
 			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
-			fc = (FeatureCollection) parser.parse( new FileInputStream(filepath));
+			Object parsedData =  parser.parse( new FileInputStream(filepath));
+			if(parsedData instanceof FeatureCollection){
+				fc = (FeatureCollection) parsedData;
+			}else{
+				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
+				for(SimpleFeature feature : featureList){
+					fc.add(feature);
+				}
+			}
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
