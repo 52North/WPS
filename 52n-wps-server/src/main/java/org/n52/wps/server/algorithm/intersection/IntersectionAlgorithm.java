@@ -141,9 +141,7 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 				i++;
 			}
 			j++;
-			//if(featureCollection.size()>10){
-			//	break;
-			//}
+			
 		}
 		
 		
