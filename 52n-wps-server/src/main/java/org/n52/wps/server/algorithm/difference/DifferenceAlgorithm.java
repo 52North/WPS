@@ -39,28 +39,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.AttributeTypeBuilder;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.io.datahandler.xml.GTHelper;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 
 
-public class DifferenceAlgorithm extends AbstractAlgorithm {
+public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 	
 	private static Logger LOGGER = Logger.getLogger(DifferenceAlgorithm.class);
 	
@@ -96,9 +95,9 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 		if(dataListLS == null || dataListLS.size() != 1){
 			throw new RuntimeException("Error while allocating input parameters");
 		}
-		IData firstInputDataLS = dataListLS.get(0);
+		IData secondInputData = dataListLS.get(0);
 				
-		FeatureCollection lineStrings = ((GTVectorDataBinding) firstInputDataLS).getPayload();
+		FeatureCollection lineStrings = ((GTVectorDataBinding) secondInputData).getPayload();
 		
 		
 		System.out.println("****************************************************************");
@@ -110,40 +109,34 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 		
 		Iterator polygonIterator = polygons.iterator();
 		int j = 1;
+		
+		String uuid = UUID.randomUUID().toString();
 		while(polygonIterator.hasNext()){
 			SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
+
+		
 			Iterator lineStringIterator = lineStrings.iterator();
 			int i = 1;
 			System.out.println("Polygon = " + j +"/"+ polygons.size());
+			SimpleFeatureType featureType = null; 
 			while(lineStringIterator.hasNext()){
-				//System.out.println("Polygon = " + j + "LineString =" + i +"/"+lineStrings.size());
-				
 				SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
 				Geometry lineStringGeometry = null;
-				if(lineString.getDefaultGeometry()==null && lineString.getAttributeCount()>0 &&lineString.getAttribute(0) instanceof Geometry){
-					lineStringGeometry = (Geometry)lineString.getAttribute(0);
-				}else{
-					lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
-				}
-				try{
-					Geometry intersection = ((Geometry)polygon.getDefaultGeometry()).difference(lineStringGeometry);
-					Feature resultFeature = createFeature(polygon.getID(), intersection);
+				lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
+				
+				try{	
+					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
+					Geometry intersection = polygonGeometry.difference(lineStringGeometry);
+					if(i==1){
+						 featureType = GTHelper.createFeatureType(polygon.getProperties(), intersection, uuid);
+						 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+						 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+					}
+					
+				
+					Feature resultFeature = GTHelper.createFeature(""+j+"_"+i, intersection,featureType, polygon.getProperties());
 					if(resultFeature!=null){
-					//	Iterator featureCollectionIterator = featureCollection.iterator();
-					//	while(featureCollectionIterator.hasNext()){
-					//		Feature existsingFeature = (Feature) featureCollectionIterator.next();
-						/*	if(!existsingFeature.getDefaultGeometry().covers(intersection)){
-								featureCollection.add(resultFeature);
-							}
-							if(existsingFeature.getDefaultGeometry().coveredBy(intersection)){
-								featureCollectionIterator = null;
-								featureCollection.remove(existsingFeature);
-								featureCollection.add(resultFeature);
-								break;
-							}*/
-							
-					//	}
-						
+								
 						featureCollection.add(resultFeature);
 						System.out.println("result feature added. resultCollection = " + featureCollection.size());
 					}
@@ -165,24 +158,8 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 		return resulthash;
 	}
 	
-	private SimpleFeature createFeature(String id, Geometry geometry) {
-		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-		typeBuilder.setName("gmlPacketFeatures");
-		if(geometry instanceof LineString){
-			typeBuilder.add("LineString", Polygon.class);
-		}
-		if(geometry instanceof Polygon){
-			typeBuilder.add("Polygon", Polygon.class);
-		}
-		if(geometry instanceof Point){
-			typeBuilder.add("Point", Polygon.class);
-		}
-		SimpleFeatureType type = typeBuilder.buildFeatureType();
-		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
-		SimpleFeature feature = null;
-		feature = featureBuilder.buildFeature(id, new Object[]{geometry});
-		return feature;
-	}
+
+	
 	
 	
 	public Class getInputDataType(String id) {
@@ -192,6 +169,21 @@ public class DifferenceAlgorithm extends AbstractAlgorithm {
 
 	public Class getOutputDataType(String id) {
 		return GTVectorDataBinding.class;
+	}
+	
+	@Override
+	public List<String> getInputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("Polygons1");
+		identifierList.add("Polygons2");
+		return identifierList;
+	}
+
+	@Override
+	public List<String> getOutputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("result");
+		return identifierList;
 	}
 	
 }
