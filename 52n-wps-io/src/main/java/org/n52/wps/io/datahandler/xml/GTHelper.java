@@ -203,7 +203,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String hostname = "localhost";//server.getHostname();
+			String hostname = server.getHostname();
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
 			
