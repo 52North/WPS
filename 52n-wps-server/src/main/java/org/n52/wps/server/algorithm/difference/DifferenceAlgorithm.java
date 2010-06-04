@@ -128,7 +128,7 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
 					Geometry intersection = polygonGeometry.difference(lineStringGeometry);
 					if(i==1){
-						 featureType = GTHelper.createFeatureType(polygon.getProperties(), intersection, uuid);
+						 featureType = GTHelper.createFeatureType(polygon.getProperties(), intersection, uuid, polygon.getFeatureType().getCoordinateReferenceSystem());
 						 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 						 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 					}

@@ -118,7 +118,7 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 			Geometry result = runBuffer(geometry, width);;
 		
 			if(i==1){
-				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid);
+				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid, fa.getFeatureType().getCoordinateReferenceSystem());
 				 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 				
