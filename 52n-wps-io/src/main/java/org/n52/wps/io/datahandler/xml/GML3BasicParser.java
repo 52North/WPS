@@ -54,15 +54,23 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.log4j.Logger;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.GeometryAttributeImpl;
+import org.geotools.feature.type.GeometryDescriptorImpl;
+import org.geotools.feature.type.GeometryTypeImpl;
+import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
+import org.geotools.metadata.iso.IdentifierImpl;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.Parser;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.filter.identity.Identifier;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -182,9 +190,16 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 						Collection<org.opengis.feature.Property>properties = feature.getProperties();
 						for(org.opengis.feature.Property property : properties){
 							try{
+								
 								Geometry g = (Geometry)property.getValue();
 								if(g!=null){
+									GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
+									GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(oldGeometryDescriptor.getType(),property.getName(),0,1,true,null);
+									Identifier identifier = new GmlObjectIdImpl(feature.getID());
+									GeometryAttributeImpl geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
+									feature.setDefaultGeometryProperty(geo);
 									feature.setDefaultGeometry(g);
+									
 								}
 							}catch(ClassCastException e){
 								//do nothing
