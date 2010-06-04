@@ -34,12 +34,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.algorithm;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,38 +46,16 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.NameImpl;
-import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.n52.wps.ServerDocument.Server;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
+import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
-import org.n52.wps.server.WebProcessingService;
-import org.n52.wps.server.algorithm.ows7.GTHelper;
-import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.geometry.aggregate.MultiCurve;
-import org.opengis.geometry.aggregate.MultiSurface;
-import org.opengis.geometry.primitive.Curve;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 	private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
@@ -145,14 +118,15 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 			Geometry result = runBuffer(geometry, width);;
 		
 			if(i==1){
-				 featureType = GTHelper.createFeatureType(fa, result, uuid);
-				 QName qname = GTHelper.createSchemaForFeatureType(featureType);
+				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid);
+				 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 				
 			}
 
 			if (result != null) {
-				SimpleFeature feature = (SimpleFeature) GTHelper.createFeature("ID"+new Double(i).intValue(),result,(SimpleFeatureType) featureType,fa);
+				SimpleFeature feature = (SimpleFeature) GTHelper.createFeature("ID"+new Double(i).intValue(),result,(SimpleFeatureType) featureType,fa.getProperties());
+				fa.setDefaultGeometry(result);
 				featureCollection.add(feature);
 			}
 				
