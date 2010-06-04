@@ -237,8 +237,14 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 		FeatureCollection correctFeatureCollection = createCorrectFeatureCollection(fc);
 		//get the namespace from the features to pass into the encoder
         
-        String namespace = correctFeatureCollection.getSchema().getName().getNamespaceURI();
-        String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
+        FeatureType schema = correctFeatureCollection.getSchema();
+        String namespace = null;
+        String schemaLocation = null;
+        if(schema !=null){
+        	namespace = schema.getName().getNamespaceURI();
+        	schemaLocation = SchemaRepository.getSchemaLocation(namespace);
+        }
+       
         Configuration configuration = null;
         org.geotools.xml.Encoder encoder = null;
         if(schemaLocation==null || namespace==null){
@@ -284,7 +290,7 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 			SimpleFeature feature = (SimpleFeature) iterator.next();
 		
 			if(i==0){
-				featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid);
+				featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
 				QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 			}

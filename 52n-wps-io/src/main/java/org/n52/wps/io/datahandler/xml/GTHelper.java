@@ -28,6 +28,7 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -41,10 +42,13 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
 	
-	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid){
+	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
 		String namespace = "http://www.52north.org/"+uuid;
 		
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+		if(coordinateReferenceSystem!=null){
+			typeBuilder.setCRS(coordinateReferenceSystem);
+		}
 		typeBuilder.setNamespaceURI(namespace);
 		Name nameType = new NameImpl(namespace, "Feature");
 		typeBuilder.setName(nameType);
@@ -120,7 +124,7 @@ public class GTHelper {
 				i++;
 			}
 				
-			
+		
 			
 			feature = featureBuilder.buildFeature(id, newData);
 			return feature;
