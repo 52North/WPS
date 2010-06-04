@@ -36,6 +36,7 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -44,7 +45,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.log4j.Logger;
+import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
@@ -60,11 +63,14 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreamableGenerator {
 	private boolean featureTransformerIncludeBounding;
@@ -227,10 +233,11 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 
 	public void writeToStream(IData coll, OutputStream os) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
-
+		
+		FeatureCollection correctFeatureCollection = createCorrectFeatureCollection(fc);
 		//get the namespace from the features to pass into the encoder
         
-        String namespace = fc.getSchema().getName().getNamespaceURI();
+        String namespace = correctFeatureCollection.getSchema().getName().getNamespaceURI();
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
         Configuration configuration = null;
         org.geotools.xml.Encoder encoder = null;
@@ -257,11 +264,35 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
         //use the gml namespace with the FeatureCollection element to start parsing the collection
         QName ns = new QName("http://www.opengis.net/gml","FeatureCollection","wfs");
         try{
-            encoder.encode(fc, ns, os);
+            encoder.encode(correctFeatureCollection, ns, os);
            
         }catch(IOException e){
         	throw new RuntimeException(e);
         }
+		
+	}
+
+	private FeatureCollection createCorrectFeatureCollection(
+			FeatureCollection fc) {
+		
+		FeatureCollection resultFeatureCollection = DefaultFeatureCollections.newCollection();
+		SimpleFeatureType featureType = null;
+		FeatureIterator iterator = fc.features();
+		String uuid = UUID.randomUUID().toString();
+		int i = 0;
+		while(iterator.hasNext()){
+			SimpleFeature feature = (SimpleFeature) iterator.next();
+		
+			if(i==0){
+				featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid);
+				QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+			}
+			Feature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+			resultFeatureCollection.add(resultFeature);
+			i++;
+		}
+		return resultFeatureCollection;
 		
 	}
 
