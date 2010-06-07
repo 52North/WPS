@@ -2,36 +2,50 @@ package org.n52.wps.io.datahandler.binary;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.commons.io.IOUtils;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.referencing.CRS;
 import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.IOUtils;
+import org.n52.wps.io.SchemaRepository;
+
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
+import org.n52.wps.io.datahandler.xml.GTHelper;
+import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Generator to create a zipped shapefile by using GDMS drivers:
@@ -65,7 +79,17 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 			FeatureCollection collection = binding.getPayload();
 
 			// Create the text node and return it
-			String encoded = toBase64ZippedSHP(collection);
+			File file = toBaseZippedSHP(collection);
+			InputStream is = new FileInputStream(file);
+			if (file.length() > Integer.MAX_VALUE) {
+				throw new IOException("File is too large to process");
+			}
+			byte[] bytes = new byte[(int) file.length()];
+			is.read(bytes);
+			is.close();
+			file.delete();
+			
+			String encoded = Base64.encode(bytes);
 			DocumentBuilderFactory factory = DocumentBuilderFactory
 					.newInstance();
 			Document document = factory.newDocumentBuilder().newDocument();
@@ -104,10 +128,21 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 			}
 
 			GTVectorDataBinding binding = (GTVectorDataBinding) data;
-			FeatureCollection collection = binding.getPayload();
+			FeatureCollection originalCollection = binding.getPayload();
 
-			String encoded = toBase64ZippedSHP(collection);
-			os.write(encoded.getBytes());
+			FeatureCollection collection = createCorrectFeatureCollection(originalCollection);
+			
+			File zippedShpFile =toBaseZippedSHP(collection);
+			InputStream inutStream = new FileInputStream(zippedShpFile);
+			try {
+				IOUtils.copy(inutStream, os);
+				inutStream.close();
+			
+				System.gc();
+			} catch (Exception e) {
+				
+				throw new RuntimeException(e);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("An error has occurred while "
 					+ "transforming the results into a shapefile", e);
@@ -116,6 +151,32 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 					+ "transforming the results into a shapefile", e);
 		}
 	}
+	
+	private FeatureCollection createCorrectFeatureCollection(
+			FeatureCollection fc) {
+		
+		FeatureCollection resultFeatureCollection = DefaultFeatureCollections.newCollection();
+		SimpleFeatureType featureType = null;
+		FeatureIterator iterator = fc.features();
+		String uuid = UUID.randomUUID().toString();
+		int i = 0;
+		while(iterator.hasNext()){
+			SimpleFeature feature = (SimpleFeature) iterator.next();
+		
+			if(i==0){
+				featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
+				QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+			}
+			Feature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+		
+			resultFeatureCollection.add(resultFeature);
+			i++;
+		}
+		return resultFeatureCollection;
+		
+	}
+	
 
 	@Override
 	public OutputStream generate(IData coll) {
@@ -155,7 +216,7 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 	 *             If an error occurs while writing the features into the the
 	 *             shapefile
 	 */
-	private String toBase64ZippedSHP(FeatureCollection collection)
+	private File toBaseZippedSHP(FeatureCollection collection)
 			throws IOException, IllegalAttributeException {
 		File shp = File.createTempFile("shp", ".shp");
 		DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
@@ -167,8 +228,20 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 				.createNewDataStore(params);
 
 		newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
-		newDataStore.forceSchemaCRS(collection.getSchema()
+		if(collection.getSchema().getCoordinateReferenceSystem()==null){
+			try {
+				newDataStore.forceSchemaCRS(CRS.decode("4326"));
+			} catch (NoSuchAuthorityCodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else{
+			newDataStore.forceSchemaCRS(collection.getSchema()
 				.getCoordinateReferenceSystem());
+		}
 
 		Transaction transaction = new DefaultTransaction("create");
 
@@ -191,18 +264,10 @@ public class GTBinZippedSHPGenerator extends AbstractXMLGenerator implements
 		File shx = new File(baseName + ".shx");
 		File dbf = new File(baseName + ".dbf");
 		File prj = new File(baseName + ".prj");
-		File zipped = IOUtils.zip(shp, shx, dbf, prj);
+		File zipped =org.n52.wps.io.IOUtils.zip(shp, shx, dbf, prj);
 
-		// Base64 encoding of the zipped file
-		InputStream is = new FileInputStream(zipped);
-		if (zipped.length() > Integer.MAX_VALUE) {
-			throw new IOException("File is too large to process");
-		}
-		byte[] bytes = new byte[(int) zipped.length()];
-		is.read(bytes);
-		is.close();
-		zipped.delete();
-
-		return Base64.encode(bytes);
+		
+		
+		return zipped;
 	}
 }

@@ -295,6 +295,7 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 			}
 			Feature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+		
 			resultFeatureCollection.add(resultFeature);
 			i++;
 		}

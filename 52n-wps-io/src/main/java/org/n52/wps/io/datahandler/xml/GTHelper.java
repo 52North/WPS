@@ -8,28 +8,24 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.feature.type.GeometryDescriptorImpl;
-import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.opengis.feature.Feature;
-import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
@@ -59,6 +55,9 @@ public class GTHelper {
 			if(property.getValue()!=null){ 
 				String name = property.getName().getLocalPart();
 				Class binding = property.getType().getBinding();
+				if(binding.equals(Envelope.class)){
+					continue;
+				}
 				if( 
 				   (binding.equals(GeometryCollection.class) ||
 				   binding.equals(MultiCurve.class) || 
@@ -68,23 +67,40 @@ public class GTHelper {
 				   binding.equals(MultiPolygon.class) ||
 				   binding.equals(MultiSurface.class) ||
 				   binding.equals(LineString.class) ||
-				   binding.equals(LinearRing.class) ||
-				   binding.equals(Point.class) ||
-				   binding.equals(Polygon.class))&&(!name.equals("location"))){
+				   binding.equals(LinearRing.class)) 				  
+				 &&!name.equals("location")){
 				   			   
-			
 					typeBuilder.add("GEOMETRY", newGeometry.getClass());
+				}else if(binding.equals(Point.class) && (!name.equals("location"))){
+							
+					typeBuilder.add("GEOMETRY", MultiPoint.class);
+				}else if(binding.equals(LineString.class) && (!name.equals("location"))){
+					
+					typeBuilder.add("GEOMETRY", MultiLineString.class);
+				}else if( binding.equals(Polygon.class) && (!name.equals("location"))){
+					
+					typeBuilder.add("GEOMETRY", MultiPolygon.class);
 				}else if(!binding.equals(Geometry.class) && !binding.equals(Object.class)){
 					typeBuilder.add(name, property.getType().getBinding());
 				}else if(!name.equals("location")){
 					try{
 						Geometry g = (Geometry)property.getValue();
-						typeBuilder.add("GEOMETRY", newGeometry.getClass());
+						if(g instanceof Point){
+							typeBuilder.add("GEOMETRY", MultiPoint.class);
+						}else
+						if(g instanceof LineString){
+							typeBuilder.add("GEOMETRY", MultiLineString.class);
+						}else
+						if(g instanceof Polygon){
+							typeBuilder.add("GEOMETRY", MultiPolygon.class);
+						}else
+							typeBuilder.add("GEOMETRY", g.getClass());
 					}catch(ClassCastException e){
 						//do nothing
 					}
 				}
 			}
+		
 		 
 		}
 		
@@ -118,8 +134,24 @@ public class GTHelper {
 					}
 				}
 				if(propertyDescriptor instanceof GeometryDescriptor){
-					System.out.println(geometry);
-					newData[i] = geometry;
+					if(geometry.getGeometryType().equals("Point")){
+						Point[] points = new Point[1];
+						points[0] = (Point)geometry;
+						newData[i] = geometry.getFactory().createMultiPoint(points);
+					}else
+						if(geometry.getGeometryType().equals("LineString")){
+							LineString[] lineString = new LineString[1];
+							lineString[0] = (LineString)geometry;
+							newData[i] = geometry.getFactory().createMultiLineString(lineString);
+						}else
+							if(geometry.getGeometryType().equals("Polygon")){
+							Polygon[] polygons = new Polygon[1];
+							polygons[0] = (Polygon)geometry;
+							newData[i] = geometry.getFactory().createMultiPolygon(polygons);
+							}else{
+								newData[i] = geometry;
+							}
+					
 				}
 				i++;
 			}
@@ -127,6 +159,7 @@ public class GTHelper {
 		
 			
 			feature = featureBuilder.buildFeature(id, newData);
+		
 			return feature;
 	}
 	
