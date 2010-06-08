@@ -67,36 +67,22 @@ public class GTHelper {
 				   binding.equals(MultiPolygon.class) ||
 				   binding.equals(MultiSurface.class) ||
 				   binding.equals(LineString.class) ||
-				   binding.equals(LinearRing.class)) 				  
+				   binding.equals(Point.class) ||
+				   binding.equals(LineString.class) ||
+				   binding.equals(Polygon.class)) 				  
 				 &&!name.equals("location")){
-				   			   
-					typeBuilder.add("GEOMETRY", newGeometry.getClass());
-				}else if(binding.equals(Point.class) && (!name.equals("location"))){
-							
-					typeBuilder.add("GEOMETRY", MultiPoint.class);
-				}else if(binding.equals(LineString.class) && (!name.equals("location"))){
+									   
 					
-					typeBuilder.add("GEOMETRY", MultiLineString.class);
-				}else if( binding.equals(Polygon.class) && (!name.equals("location"))){
+					if(newGeometry.getClass().equals(Point.class) && (!name.equals("location"))){
+						typeBuilder.add("GEOMETRY", MultiPoint.class);
+					}else if(newGeometry.getClass().equals(LineString.class) && (!name.equals("location"))){
 					
-					typeBuilder.add("GEOMETRY", MultiPolygon.class);
-				}else if(!binding.equals(Geometry.class) && !binding.equals(Object.class)){
-					typeBuilder.add(name, property.getType().getBinding());
-				}else if(!name.equals("location")){
-					try{
-						Geometry g = (Geometry)property.getValue();
-						if(g instanceof Point){
-							typeBuilder.add("GEOMETRY", MultiPoint.class);
-						}else
-						if(g instanceof LineString){
-							typeBuilder.add("GEOMETRY", MultiLineString.class);
-						}else
-						if(g instanceof Polygon){
-							typeBuilder.add("GEOMETRY", MultiPolygon.class);
-						}else
-							typeBuilder.add("GEOMETRY", g.getClass());
-					}catch(ClassCastException e){
-						//do nothing
+						typeBuilder.add("GEOMETRY", MultiLineString.class);
+					}else if( newGeometry.getClass().equals(Polygon.class) && (!name.equals("location"))){
+					
+						typeBuilder.add("GEOMETRY", MultiPolygon.class);
+					}else if(!newGeometry.getClass().equals(Geometry.class) && !binding.equals(Object.class)){
+						typeBuilder.add(name, property.getType().getBinding());
 					}
 				}
 			}
@@ -236,7 +222,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String hostname = server.getHostname();
+			String hostname = "localhost";//server.getHostname();
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
 			
