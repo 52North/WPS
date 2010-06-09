@@ -59,7 +59,8 @@ public class GTHelper {
 					continue;
 				}
 				if( 
-				   (binding.equals(GeometryCollection.class) ||
+				   (binding.equals(Geometry.class) ||
+				    binding.equals(GeometryCollection.class) ||
 				   binding.equals(MultiCurve.class) || 
 				   binding.equals(MultiLineString.class) ||
 				   binding.equals(Curve.class) ||
@@ -81,9 +82,11 @@ public class GTHelper {
 					}else if( newGeometry.getClass().equals(Polygon.class) && (!name.equals("location"))){
 					
 						typeBuilder.add("GEOMETRY", MultiPolygon.class);
-					}else if(!newGeometry.getClass().equals(Geometry.class) && !binding.equals(Object.class)){
-						typeBuilder.add(name, property.getType().getBinding());
+					}else if(!binding.equals(Object.class)){
+						typeBuilder.add("GEOMETRY", newGeometry.getClass());
 					}
+				}else{
+					typeBuilder.add(name, binding);
 				}
 			}
 		
@@ -222,7 +225,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String hostname = "localhost";//server.getHostname();
+			String hostname = server.getHostname();
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
 			
