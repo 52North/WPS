@@ -114,10 +114,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 									supportedCreatedFormat.setMimeType(supportedFormat);
 									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
 									for(int t = 0; t<supportedSchemas.length;t++){
-										if(t==1){
+										if(t==0){
 											supportedCreatedFormat.setSchema(supportedSchemas[t]);
 										}
-										if(t>1){
+										if(t>0){
 											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
 											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
 											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
@@ -202,10 +202,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 									supportedCreatedFormat.setMimeType(supportedFormat);
 									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
 									for(int t = 0; t<supportedSchemas.length;t++){
-										if(t==1){
+										if(t==0){
 											supportedCreatedFormat.setSchema(supportedSchemas[t]);
 										}
-										if(t>1){
+										if(t>0){
 											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
 											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
 											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
