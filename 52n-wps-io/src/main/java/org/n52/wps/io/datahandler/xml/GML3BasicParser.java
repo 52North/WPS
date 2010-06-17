@@ -194,7 +194,9 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 								Geometry g = (Geometry)property.getValue();
 								if(g!=null){
 									GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
-									GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(oldGeometryDescriptor.getType(),property.getName(),0,1,true,null);
+									GeometryType type = new GeometryTypeImpl(property.getName(),(Class)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
+																		
+									GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type,property.getName(),0,1,true,null);
 									Identifier identifier = new GmlObjectIdImpl(feature.getID());
 									GeometryAttributeImpl geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
 									feature.setDefaultGeometryProperty(geo);

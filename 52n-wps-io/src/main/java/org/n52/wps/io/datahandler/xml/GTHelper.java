@@ -86,7 +86,28 @@ public class GTHelper {
 						typeBuilder.add("GEOMETRY", newGeometry.getClass());
 					}
 				}else{
-					typeBuilder.add(name, binding);
+					if(!name.equals("location") && binding.equals(Object.class)){
+						try{
+							Geometry g = (Geometry)property.getValue();
+							if(g.getClass().equals(Point.class) && (!name.equals("location"))){
+								typeBuilder.add("GEOMETRY", MultiPoint.class);
+							}else if(g.getClass().equals(LineString.class) && (!name.equals("location"))){
+							
+								typeBuilder.add("GEOMETRY", MultiLineString.class);
+							}else if( g.getClass().equals(Polygon.class) && (!name.equals("location"))){
+							
+								typeBuilder.add("GEOMETRY", MultiPolygon.class);
+							}else{
+								typeBuilder.add("GEOMETRY", g.getClass());
+							}
+							
+						}catch(ClassCastException e){
+							
+						}
+						
+					}else if(!name.equals("location")){
+						typeBuilder.add(name, binding);
+					}
 				}
 			}
 		
@@ -117,12 +138,15 @@ public class GTHelper {
 					if(propertyDescriptor.getName().getLocalPart().equals(originalProperty.getName().getLocalPart())){
 						if(propertyDescriptor instanceof GeometryDescriptor){
 							newData[i] = geometry;
+							System.out.println("Geometry");
 						}else{
 							newData[i] = originalProperty.getValue();
 						}
 					}
 				}
+				
 				if(propertyDescriptor instanceof GeometryDescriptor){
+					System.out.println("Geometry");
 					if(geometry.getGeometryType().equals("Point")){
 						Point[] points = new Point[1];
 						points[0] = (Point)geometry;
