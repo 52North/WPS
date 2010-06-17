@@ -46,6 +46,8 @@ import javax.xml.namespace.QName;
 import org.apache.log4j.Logger;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.referencing.AbstractReferenceSystem;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -54,6 +56,7 @@ import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -116,9 +119,13 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 			SimpleFeature fa = (SimpleFeature) ia.next();
 			Geometry geometry = (Geometry) fa.getDefaultGeometry();
 			Geometry result = runBuffer(geometry, width);;
-		
+			
 			if(i==1){
-				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid, fa.getFeatureType().getCoordinateReferenceSystem());
+				CoordinateReferenceSystem crs = fa.getFeatureType().getCoordinateReferenceSystem();
+				if(geometry.getUserData() instanceof CoordinateReferenceSystem){
+					crs = ((CoordinateReferenceSystem) geometry.getUserData());
+				}
+				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid, crs);
 				 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 				
