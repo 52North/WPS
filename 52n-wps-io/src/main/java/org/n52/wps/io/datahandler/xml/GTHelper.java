@@ -11,6 +11,7 @@ import javax.xml.namespace.QName;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.referencing.CRS;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.opengis.feature.Feature;
@@ -23,6 +24,8 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -43,6 +46,15 @@ public class GTHelper {
 		
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 		if(coordinateReferenceSystem!=null){
+			try {
+				coordinateReferenceSystem = CRS.decode("EPSG:4326");
+			} catch (NoSuchAuthorityCodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			typeBuilder.setCRS(coordinateReferenceSystem);
 		}
 		typeBuilder.setNamespaceURI(namespace);
@@ -249,7 +261,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String hostname = server.getHostname();
+			String hostname = "localhost";//server.getHostname();
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
 			
