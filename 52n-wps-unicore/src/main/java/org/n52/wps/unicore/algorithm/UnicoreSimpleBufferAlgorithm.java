@@ -84,4 +84,5 @@ public class UnicoreSimpleBufferAlgorithm extends AbstractUnicoreAlgorithm
 		return result;
 	}
 
+	
 }
