@@ -2,9 +2,9 @@ package org.n52.wps.server;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Observable;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
@@ -12,9 +12,10 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.io.data.IData;
+import org.n52.wps.server.oberserpattern.IObserver;
+import org.n52.wps.server.oberserpattern.ISubject;
 
-public abstract class AbstractObservableAlgorithm extends Observable implements IAlgorithm{
+public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
 
 	private ProcessDescriptionType description;
 	private final String wkName;
@@ -84,4 +85,33 @@ public abstract class AbstractObservableAlgorithm extends Observable implements 
 	public String getWellKnownName() {
 		return this.wkName;
 	}
+	
+	private List observers = new ArrayList();
+
+	private Object state = null;
+
+	public Object getState() {
+	  return state;
+	}
+
+	public void update(Object state) {
+	   this.state = state;
+	   notifyObservers();
+	}
+
+	 public void addObserver(IObserver o) {
+	   observers.add(o);
+	 }
+
+	 public void removeObserver(IObserver o) {
+	   observers.remove(o);
+	 }
+
+	 public void notifyObservers() {
+	   Iterator i = observers.iterator();
+	   while (i.hasNext()) {
+	     IObserver o = (IObserver) i.next();
+	     o.update(this);
+	   }
+	 }
 }

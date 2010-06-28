@@ -3,6 +3,7 @@ package org.n52.wps.server;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -26,9 +27,11 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
+import org.n52.wps.server.oberserpattern.IObserver;
+import org.n52.wps.server.oberserpattern.ISubject;
 
 
-public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
+public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
 
 	protected ProcessDescriptionType initializeDescription() {
 		ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
@@ -234,4 +237,33 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm{
 	public abstract List<String> getOutputIdentifiers();
 	
 
+	
+	private List observers = new ArrayList();
+
+	private Object state = null;
+
+	public Object getState() {
+	  return state;
+	}
+
+	public void update(Object state) {
+	   this.state = state;
+	   notifyObservers();
+	}
+
+	 public void addObserver(IObserver o) {
+	   observers.add(o);
+	 }
+
+	 public void removeObserver(IObserver o) {
+	   observers.remove(o);
+	 }
+
+	 public void notifyObservers() {
+	   Iterator i = observers.iterator();
+	   while (i.hasNext()) {
+	     IObserver o = (IObserver) i.next();
+	     o.update(this);
+	   }
+	 }
 }

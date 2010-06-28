@@ -54,6 +54,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
+import org.n52.wps.server.oberserpattern.ISubject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -112,9 +113,9 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 		  for (Iterator ia = fcA.iterator(); ia.hasNext(); ) {
 			/********* How to publish percentage results *************/
 			i= i+1;
-//			percentage = (i/totalNumberOfFeatures)*100;
-//			this.setChanged();
-//			this.notifyObservers(percentage.intValue());
+			percentage = (i/totalNumberOfFeatures)*100;
+			this.update(new Integer(percentage.intValue()));
+
 			/*********************/
 			SimpleFeature fa = (SimpleFeature) ia.next();
 			Geometry geometry = (Geometry) fa.getDefaultGeometry();

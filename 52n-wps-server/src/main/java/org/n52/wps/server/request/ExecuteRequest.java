@@ -36,7 +36,6 @@ package org.n52.wps.server.request;
 
 import java.util.Map;
 import java.util.Observable;
-import java.util.Observer;
 
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
@@ -54,6 +53,7 @@ import net.opengis.wps.x100.StatusType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.derby.tools.sysinfo;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -63,6 +63,8 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.oberserpattern.IObserver;
+import org.n52.wps.server.oberserpattern.ISubject;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
@@ -72,12 +74,13 @@ import org.w3c.dom.Document;
 /**
  * Handles an ExecuteRequest
  */
-public class ExecuteRequest extends Request implements Observer {
+public class ExecuteRequest extends Request implements IObserver {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
 	private Map returnResults;
 	private ExecuteResponseBuilder execRespType;
+	
 	
 
 	/**
@@ -525,9 +528,10 @@ public class ExecuteRequest extends Request implements Observer {
 			 */
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
 			
-			if(algorithm instanceof Observable){
-				Observable observable = (Observable) algorithm;
-				observable.addObserver(this);
+			if(algorithm instanceof ISubject){
+				ISubject subject = (ISubject) algorithm;
+				subject.addObserver(this);
+				
 			}
 			
 			
@@ -624,22 +628,27 @@ public class ExecuteRequest extends Request implements Observer {
 	}
 
 	
-	public void update(Observable o, Object updatedPercentage) {
+	public void update(ISubject subject) {
+		Object state = subject.getState();
+		LOGGER.info("Update received from Subject, state changed to : " + state);
 		StatusType status = StatusType.Factory.newInstance();
 		
 		int percentage = 0;
-		if (updatedPercentage instanceof Integer) {
-			percentage = (Integer) updatedPercentage;
+		if (state instanceof Integer) {
+			percentage = (Integer) state;
+			status.addNewProcessStarted().setPercentCompleted(percentage);
+		}else if(state instanceof String){
+			status.addNewProcessStarted().setStringValue((String)state);
 		}
-		status.addNewProcessStarted().setPercentCompleted(percentage);
+		
 		execRespType.setStatus(status);
 		try {
 			execRespType.update();
 			DatabaseFactory.getDatabase().storeResponse(new ExecuteResponse(this));
 			
 		} catch (ExceptionReport e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			LOGGER.debug("Update of process status failed. Reason : " + e.getMessage());
 		}
 		
 	}
