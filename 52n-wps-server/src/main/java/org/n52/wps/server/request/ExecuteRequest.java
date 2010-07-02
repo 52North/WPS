@@ -643,8 +643,10 @@ public class ExecuteRequest extends Request implements IObserver {
 		
 		execRespType.setStatus(status);
 		try {
-			execRespType.update();
-			DatabaseFactory.getDatabase().storeResponse(new ExecuteResponse(this));
+			if(this.isQuickStatus()) {
+				execRespType.update();
+				DatabaseFactory.getDatabase().storeResponse(new ExecuteResponse(this));
+			}
 			
 		} catch (ExceptionReport e) {
 			e.printStackTrace();
