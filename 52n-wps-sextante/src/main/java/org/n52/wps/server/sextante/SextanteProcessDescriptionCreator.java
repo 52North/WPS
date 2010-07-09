@@ -1,8 +1,19 @@
 package org.n52.wps.server.sextante;
 
+import java.lang.reflect.Constructor;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.n52.wps.io.GeneratorFactory;
+import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.IParser;
+import org.n52.wps.io.ParserFactory;
+import org.n52.wps.io.data.IComplexData;
+import org.n52.wps.io.data.ILiteralData;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
@@ -131,7 +142,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		}
 		else if (out instanceof OutputVectorLayer){
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
-			ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
+			addVectorOutputFormats(complexOutput);
+			/*ComplexDataDescriptionType deafult = complexOutput.addNewDefault().addNewFormat();
 			deafult.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			deafult.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
 			ComplexDataCombinationsType supported = complexOutput.addNewSupported();
@@ -140,7 +152,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			supportedFormat.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			supportedFormat = supported.addNewFormat();
 			supportedFormat.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
-			supportedFormat.setEncoding(IOHandler.ENCODING_BASE64);
+			supportedFormat.setEncoding(IOHandler.ENCODING_BASE64);*/
 		}
 		else if (out instanceof OutputTable){
 			//TODO:
@@ -186,8 +198,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			//TODO:add shape type
 			AdditionalInfoVectorLayer ai = (AdditionalInfoVectorLayer) param.getParameterAdditionalInfo();
 			SupportedComplexDataInputType complex = input.addNewComplexData();
-			ComplexDataCombinationsType supported = complex.addNewSupported();
-			ComplexDataDescriptionType format = supported.addNewFormat();
+			/*CComplexDataCombinationsType supported = complex.addNewSupported();
+			omplexDataDescriptionType format = supported.addNewFormat();
 			format.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
 			format = supported.addNewFormat();
@@ -196,6 +208,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
 			defaultFormat.setMimeType(IOHandler.DEFAULT_MIMETYPE);
 			defaultFormat.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
+			*/
 			if (ai.getIsMandatory()){
 				input.setMinOccurs(BigInteger.valueOf(1));
 			}
@@ -203,6 +216,9 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				input.setMinOccurs(BigInteger.valueOf(0));
 			}
 			input.setMaxOccurs(BigInteger.valueOf(1));
+			
+			addVectorInputsFormats(complex);
+
 		}
 		else if (param instanceof ParameterNumericalValue){
 			AdditionalInfoNumericalValue ai = (AdditionalInfoNumericalValue) param.getParameterAdditionalInfo();
@@ -241,19 +257,37 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				input.setMaxOccurs(BigInteger.valueOf(1));
 				break;
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_ANY:
+				addVectorInputsFormats(complex);
+				if (ai.getIsMandatory()){
+					input.setMinOccurs(BigInteger.valueOf(1));
+				}
+				else{
+					input.setMinOccurs(BigInteger.valueOf(0));
+				}
+				input.setMaxOccurs(BigInteger.valueOf(1));
+				break;
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_LINE:
+				addVectorInputsFormats(complex);
+				if (ai.getIsMandatory()){
+					input.setMinOccurs(BigInteger.valueOf(1));
+				}
+				else{
+					input.setMinOccurs(BigInteger.valueOf(0));
+				}
+				input.setMaxOccurs(BigInteger.valueOf(1));
+				break;
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POINT:
+				addVectorInputsFormats(complex);
+				if (ai.getIsMandatory()){
+					input.setMinOccurs(BigInteger.valueOf(1));
+				}
+				else{
+					input.setMinOccurs(BigInteger.valueOf(0));
+				}
+				input.setMaxOccurs(BigInteger.valueOf(1));
+				break;
 			case AdditionalInfoMultipleInput.DATA_TYPE_VECTOR_POLYGON:
-				//TODO:add shape type
-				ComplexDataDescriptionType format = complex.addNewDefault().addNewFormat();
-				format.setMimeType(IOHandler.DEFAULT_MIMETYPE);
-				format.setSchema("http://schemas.opengis.net/gml/2.1.2/feature.xsd");
-				ComplexDataDescriptionType supportedFormat1 = complex.addNewSupported().addNewFormat();
-				supportedFormat1.setEncoding(IOHandler.ENCODING_BASE64);
-				supportedFormat1.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
-				ComplexDataDescriptionType supportedFormat2 = complex.addNewSupported().addNewFormat();
-				supportedFormat2.setMimeType(IOHandler.DEFAULT_MIMETYPE);
-				supportedFormat2.setSchema("http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd");
+				addVectorInputsFormats(complex);
 				if (ai.getIsMandatory()){
 					input.setMinOccurs(BigInteger.valueOf(1));
 				}
@@ -331,6 +365,125 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		}
 	}
 
+	private void addVectorInputsFormats(SupportedComplexDataInputType complex) {
+
+		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+		List<IParser> foundParsers = new ArrayList<IParser>();
+		for(IParser parser : parsers) {
+			Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
+			for(Class clazz : supportedClasses){
+				if(clazz.equals(GTVectorDataBinding.class)){
+					foundParsers.add(parser);
+				}
+				
+			}
+		}
+		ComplexDataCombinationsType supported = complex.addNewSupported();
+		for(int i = 0; i<foundParsers.size(); i++){
+			IParser parser = foundParsers.get(i);
+			String[] supportedFormats = parser.getSupportedFormats();
+			String[] supportedSchemas = parser.getSupportedSchemas();
+			if(supportedSchemas == null){
+				supportedSchemas = new String[0];
+			}
+			String[] supportedEncodings = parser.getSupportedEncodings();
+		
+			for(int j=0; j<supportedFormats.length;j++){
+				for(int k=0; k<supportedEncodings.length;k++){
+					if(j==0 && k==0 && i == 0){
+						String supportedFormat = supportedFormats[j];
+						ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
+						
+						defaultFormat.setMimeType(supportedFormat);
+						defaultFormat.setEncoding(supportedEncodings[k]);
+						for(int t = 0; t<supportedSchemas.length;t++){
+							if(t==0){
+								defaultFormat.setSchema(supportedSchemas[t]);
+							}
+						}
+					}else{
+						
+						String supportedFormat = supportedFormats[j];
+						ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
+						supportedCreatedFormat.setMimeType(supportedFormat);
+						supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+						for(int t = 0; t<supportedSchemas.length;t++){
+							if(t==0){
+								supportedCreatedFormat.setSchema(supportedSchemas[t]);
+							}
+							if(t>0){
+								ComplexDataDescriptionType supportedCreatedFormatAdditional = supported.addNewFormat();
+								supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+								supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+								supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+
+	private void addVectorOutputFormats(SupportedComplexDataType complex){
+		
+					
+		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+		for(IGenerator generator : generators) {
+			Class[] supportedClasses = generator.getSupportedInternalInputDataType();
+			for(Class clazz : supportedClasses){
+				if(clazz.equals(GTVectorDataBinding.class)){
+					foundGenerators.add(generator);
+				}
+			}
+		}
+		ComplexDataCombinationsType supported = complex.addNewSupported();
+		for(int i = 0; i<foundGenerators.size(); i++){
+				IGenerator generator = foundGenerators.get(i);
+				String[] supportedFormats = generator.getSupportedFormats();
+				String[] supportedSchemas = generator.getSupportedSchemas();
+				if(supportedSchemas == null){
+					supportedSchemas = new String[0];
+				}
+				String[] supportedEncodings = generator.getSupportedEncodings();
+				
+				for(int j=0; j<supportedFormats.length;j++){
+					for(int k=0; k<supportedEncodings.length;k++){
+						if(j==0 && k==0 && i == 0){
+							String supportedFormat = supportedFormats[j];
+							ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
+							defaultFormat.setMimeType(supportedFormat);
+							defaultFormat.setEncoding(supportedEncodings[k]);
+							for(int t = 0; t<supportedSchemas.length;t++){
+								if(t==0){
+									defaultFormat.setSchema(supportedSchemas[t]);
+								}
+							}
+						}else{
+							
+							String supportedFormat = supportedFormats[j];
+							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
+							supportedCreatedFormat.setMimeType(supportedFormat);
+							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+							for(int t = 0; t<supportedSchemas.length;t++){
+								if(t==0){
+									supportedCreatedFormat.setSchema(supportedSchemas[t]);
+								}
+								if(t>0){
+									ComplexDataDescriptionType supportedCreatedFormatAdditional = supported.addNewFormat();
+									supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+									supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+									supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+								}
+							}
+						}
+					}
+				}
+			}
+					
+		
+	}
 	//This class is thrown when there is any problem creating the XML
 	//WPS file from a geoalgorithm, due to some yet unsupported feature
 	//or parameter

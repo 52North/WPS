@@ -53,6 +53,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -153,7 +154,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		return false;
 	}
 
-	public IAlgorithm getAlgorithm(String processID) {
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process");
 		}
@@ -166,10 +167,10 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		return registeredProcesses.keySet();
 	}
 
-	public Collection<IAlgorithm> getAlgorithms() {
+	public Collection<IAlgorithm> getAlgorithms(ExecuteRequest executeRequest) {
 		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcesses.size());
 		for(String processID : registeredProcesses.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID);
+			IAlgorithm algorithm = getAlgorithm(processID, null);
 			if(algorithm!=null){
 				algorithms.add(algorithm);
 			}
