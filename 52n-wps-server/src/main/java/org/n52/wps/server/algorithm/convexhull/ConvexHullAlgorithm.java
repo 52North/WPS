@@ -52,6 +52,7 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -65,7 +66,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-public class ConvexHullAlgorithm extends AbstractAlgorithm {
+public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 
 	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
 	private List<String> errors = new ArrayList<String>();
@@ -166,4 +167,17 @@ public class ConvexHullAlgorithm extends AbstractAlgorithm {
 		return feature;
 	}	
 	
+	@Override
+	public List<String> getInputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("FEATURES");
+		return identifierList;
+	}
+
+	@Override
+	public List<String> getOutputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("RESULT");
+		return identifierList;
+	}
 }
