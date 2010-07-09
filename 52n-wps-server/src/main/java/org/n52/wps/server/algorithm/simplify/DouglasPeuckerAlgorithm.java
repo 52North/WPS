@@ -48,6 +48,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -58,7 +59,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
-public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
+public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 	Logger LOGGER = Logger.getLogger(DouglasPeuckerAlgorithm.class);
 	
 	private List<String> errors = new ArrayList<String>();
@@ -153,6 +154,19 @@ public class DouglasPeuckerAlgorithm extends AbstractAlgorithm{
 		return null;
 	}
 
-	
+	@Override
+	public List<String> getInputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("FEATURES");
+		identifierList.add("TOLERANCE");
+		return identifierList;
+	}
+
+	@Override
+	public List<String> getOutputIdentifiers() {
+		List<String> identifierList =  new ArrayList<String>();
+		identifierList.add("SIMPLIFIED_FEATURES");
+		return identifierList;
+	}
 
 }
