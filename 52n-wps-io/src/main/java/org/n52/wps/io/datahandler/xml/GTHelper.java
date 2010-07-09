@@ -258,6 +258,77 @@ public class GTHelper {
 			return new QName(namespace, schemalocation);
 			
 		}
+		
+		public static QName createGML2SchemaForFeatureType(SimpleFeatureType featureType){
+			
+			String uuid = featureType.getName().getNamespaceURI().replace("http://www.52north.org/", "");
+			String namespace = "http://www.52north.org/"+uuid;
+			String schema = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xs:schema targetNamespace=\""+namespace+"\" " +
+					"xmlns:n52=\""+namespace+"\" "+
+					"xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" "+
+					"xmlns:gml=\"http://www.opengis.net/gml\" "+
+					"elementFormDefault=\"qualified\" "+
+					"version=\"1.0\"> "+
+					"<xs:import namespace=\"http://www.opengis.net/gml\" "+
+					"schemaLocation=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\"/> ";
+				
+					// add feature type definition and generic geometry
+				schema = schema + "<xs:element name=\"Feature\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
+						"<xs:complexType name=\"FeatureType\"> " +
+						"<xs:complexContent> " +
+						"<xs:extension base=\"gml:AbstractFeatureType\"> "+
+						"<xs:sequence> " +
+						"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
+						"</xs:element> ";
+				
+				//add attributes
+				Collection<PropertyDescriptor> attributes = featureType.getDescriptors();
+				for(PropertyDescriptor property : attributes){
+					String attributeName = property.getName().getLocalPart();
+					if(!(property instanceof GeometryDescriptor)){
+						
+						if(property.getType().getBinding().equals(String.class) ){
+							schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
+							"<xs:simpleType> ";
+							schema = schema + "<xs:restriction base=\"xs:string\"> "+
+							"</xs:restriction> "+
+							"</xs:simpleType> "+
+							"</xs:element> ";
+						}else if(property.getType().getBinding().equals(Integer.class)|| property.getType().getBinding().equals(BigInteger.class)){
+							schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
+							"<xs:simpleType> ";
+							schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+							"</xs:restriction> "+
+							"</xs:simpleType> "+
+							"</xs:element> ";
+						}else if(property.getType().getBinding().equals(Double.class)){
+							schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
+							"<xs:simpleType> ";
+							schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+							"</xs:restriction> "+
+							"</xs:simpleType> "+
+							"</xs:element> ";
+						}
+					}
+				}		
+				
+				//close
+				schema = schema +  "</xs:sequence> "+
+			      "</xs:extension> "+
+			      "</xs:complexContent> "+
+			    "</xs:complexType> "+
+			  "</xs:schema>";
+				String schemalocation = "";
+				try {
+					schemalocation = storeSchema(schema, uuid);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return new QName(namespace, schemalocation);
+				
+			}
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
