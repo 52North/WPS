@@ -207,7 +207,13 @@
 <dependency>
     <groupId>es.unex.sextante</groupId>
     <artifactId>sextante_gt26_bindings</artifactId>
-    <version>0.3</version>
+    <version>0.61</version>
+</dependency>
+
+<dependency>
+    <groupId>es.unex.sextante</groupId>
+    <artifactId>sextante_cmd</artifactId>
+    <version>0.6</version>
 </dependency>
 
 
