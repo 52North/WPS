@@ -1,5 +1,6 @@
 package org.n52.wps.server.sextante;
 
+import es.unex.sextante.cmd.exceptions.CommandLineException;
 import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.UnsupportedOutputChannelException;
 import es.unex.sextante.geotools.GTOutputFactory;
@@ -25,9 +26,14 @@ public class N52OutputFactory extends GTOutputFactory{
 
 		if (channel instanceof FileOutputChannel){
 			String sFilename = ((FileOutputChannel)channel).getFilename();
-			GTVectorLayer vectorLayer = new MemoryVectoryLayerFactory().create(sName, iShapeType, types, sFields, sFilename, crs);
+			GTVectorLayer vectorLayer;
+			try {
+				vectorLayer = (GTVectorLayer) new MemoryVectoryLayerFactory().create(sName, iShapeType, types, sFields, sFilename, crs);
+			} catch (CommandLineException e) {
+				throw new RuntimeException("Error while creating output layer");
+			}
 			vectorLayer.setPostProcessStrategy(new NullStrategy());
-			return vectorLayer;
+			return (IVectorLayer) vectorLayer;
 		}
 		else{
 			throw new UnsupportedOutputChannelException();
