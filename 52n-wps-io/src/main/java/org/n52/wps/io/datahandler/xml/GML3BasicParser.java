@@ -183,40 +183,47 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 			Object parsedData =  parser.parse( new FileInputStream(filepath));
 			if(parsedData instanceof FeatureCollection){
 				fc = (FeatureCollection) parsedData;
-				Iterator featureIterator = fc.iterator();
-				while(featureIterator.hasNext()){
-					SimpleFeature feature = (SimpleFeature) featureIterator.next();
-					if(feature.getDefaultGeometry()==null){
-						Collection<org.opengis.feature.Property>properties = feature.getProperties();
-						for(org.opengis.feature.Property property : properties){
-							try{
-								
-								Geometry g = (Geometry)property.getValue();
-								if(g!=null){
-									GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
-									GeometryType type = new GeometryTypeImpl(property.getName(),(Class)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
-																		
-									GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type,property.getName(),0,1,true,null);
-									Identifier identifier = new GmlObjectIdImpl(feature.getID());
-									GeometryAttributeImpl geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
-									feature.setDefaultGeometryProperty(geo);
-									feature.setDefaultGeometry(g);
-									
-								}
-							}catch(ClassCastException e){
-								//do nothing
-							}
+				
+					
+				
+			}else{
+				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
+				if(featureList!=null){
+					for(SimpleFeature feature : featureList){
+						fc.add(feature);
+					}
+				}else{
+					fc = (FeatureCollection) ((HashMap) parsedData).get("FeatureCollection");
+				}
+			}
+		
+		Iterator featureIterator = fc.iterator();
+		while(featureIterator.hasNext()){
+			SimpleFeature feature = (SimpleFeature) featureIterator.next();
+			if(feature.getDefaultGeometry()==null){
+				Collection<org.opengis.feature.Property>properties = feature.getProperties();
+				for(org.opengis.feature.Property property : properties){
+					try{
+						
+						Geometry g = (Geometry)property.getValue();
+						if(g!=null){
+							GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
+							GeometryType type = new GeometryTypeImpl(property.getName(),(Class)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
+																
+							GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type,property.getName(),0,1,true,null);
+							Identifier identifier = new GmlObjectIdImpl(feature.getID());
+							GeometryAttributeImpl geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
+							feature.setDefaultGeometryProperty(geo);
+							feature.setDefaultGeometry(g);
 							
 						}
+					}catch(ClassCastException e){
+						//do nothing
 					}
 					
 				}
-			}else{
-				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
-				for(SimpleFeature feature : featureList){
-					fc.add(feature);
-				}
 			}
+		}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
