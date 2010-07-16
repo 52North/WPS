@@ -56,9 +56,7 @@ public class ExecuteRequestBuilder {
 	ProcessDescriptionType processDesc;
 	ExecuteDocument execute;
 	String SUPPORTED_VERSION = "1.0.0";
-	String suggestedSchema;
-	String suggestedMimeType;
-	String suggestedEncoding;
+	
 
 	public ExecuteRequestBuilder(ProcessDescriptionType processDesc) {
 		this.processDesc = processDesc;
@@ -74,7 +72,7 @@ public class ExecuteRequestBuilder {
 		this.execute = execute;
 	}
 	
-	public void addComplexData(String parameterID, IData value) {
+	public void addComplexData(String parameterID, IData value, String schema, String encoding, String mimeType) {
 		GeneratorFactory fac = StaticDataHandlerRepository.getGeneratorFactory();
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if (inputDesc == null) {
@@ -83,36 +81,19 @@ public class ExecuteRequestBuilder {
 		if (inputDesc.getComplexData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
 		}
-		String schemaURL = suggestedSchema;
-		String mimeType = suggestedMimeType;
-		String encoding = suggestedEncoding;
-		ComplexDataDescriptionType defaultFormat = inputDesc.getComplexData()
-				.getDefault().getFormat();
-		if (mimeType == null) {
-			mimeType = defaultFormat.getMimeType();
-		}
-		if (encoding == null) {
-			encoding = defaultFormat.getEncoding();
-		}
+		
+			
 
-		IGenerator generator = fac.getGenerator(schemaURL, mimeType, encoding,
+		IGenerator generator = fac.getGenerator(schema, mimeType, encoding,
 				value.getClass());
-
-		if (generator == null) {
-			schemaURL = defaultFormat.getSchema();
-			mimeType = defaultFormat.getMimeType();
-			encoding = defaultFormat.getEncoding();
-			generator = fac.getGenerator(schemaURL, mimeType, encoding, value
-					.getClass());
-		}
 
 		if (generator == null) {
 			for (ComplexDataDescriptionType dataDescType : inputDesc
 					.getComplexData().getSupported().getFormatArray()) {
-				schemaURL = dataDescType.getSchema();
+				schema = dataDescType.getSchema();
 				mimeType = dataDescType.getMimeType();
 				encoding = dataDescType.getEncoding();
-				generator = fac.getGenerator(schemaURL, mimeType, encoding,
+				generator = fac.getGenerator(schema, mimeType, encoding,
 						value.getClass());
 				if (generator != null) {
 					break;
@@ -133,11 +114,15 @@ public class ExecuteRequestBuilder {
 			try {
 				ComplexDataType data = input.addNewData().addNewComplexData();
 				data.set(XmlObject.Factory.parse(node));
-				if (schemaURL != null) {
-					data.setSchema(schemaURL);
+				if (schema != null) {
+					data.setSchema(schema);
 				}
-				data.setEncoding(encoding);
-				data.setMimeType(mimeType);
+				if (mimeType != null) {
+					data.setMimeType(mimeType);
+				}
+				if (encoding != null) {
+					data.setEncoding(encoding);
+				}
 			}
 			catch(XmlException e) {
 				throw new IllegalArgumentException("problem inserting node into execute request", e);
@@ -168,7 +153,7 @@ public class ExecuteRequestBuilder {
 	 * @param parameterID
 	 * @param value
 	 */
-	public void addComplexDataReference(String parameterID, String value) {
+	public void addComplexDataReference(String parameterID, String value, String schema, String encoding, String mimetype) {
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if (inputDesc == null) {
 			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
@@ -176,37 +161,19 @@ public class ExecuteRequestBuilder {
 		if (inputDesc.getComplexData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type complexData: " + parameterID);
 		}
-		boolean isSupported = false;
-		for (ComplexDataDescriptionType dataDesc : inputDesc.getComplexData()
-				.getSupported().getFormatArray()) {
-			String enc = dataDesc.getEncoding();
-			String sch = dataDesc.getSchema();
-			String mime = dataDesc.getMimeType();
-			if ((enc == null && suggestedEncoding == null)
-					|| (enc != null && enc.equals(suggestedEncoding))
-					&& ((sch == null && suggestedSchema == null) || (sch != null && sch
-							.equals(suggestedSchema)))
-					&& ((mime == null && suggestedMimeType == null) || (mime != null && mime
-							.equals(suggestedMimeType)))) {
-				isSupported = true;
-			}
-		}
-		if (!isSupported) {
-			throw new IllegalArgumentException(
-					"complexparameter does not support the suggested encoding, schema and mimetype");
-		}
+			
 		InputType input = execute.getExecute().getDataInputs().addNewInput();
 		input.addNewIdentifier().setStringValue(parameterID);
 		input.addNewReference().setHref(value);
-		if (suggestedSchema != null) {
-			input.getReference().setSchema(suggestedSchema);
+		if (schema != null) {
+			input.getReference().setSchema(schema);
 		}
 
-		if (suggestedEncoding != null) {
-			input.getReference().setEncoding(suggestedEncoding);
+		if (encoding != null) {
+			input.getReference().setEncoding(encoding);
 		}
-		if (suggestedMimeType != null) {
-			input.getReference().setMimeType(suggestedMimeType);
+		if (mimetype != null) {
+			input.getReference().setMimeType(mimetype);
 		}
 	}
 
@@ -390,24 +357,22 @@ public class ExecuteRequestBuilder {
 		return null;
 	}
 
-	public boolean setRawData() {
+	public boolean setRawData(String schema, String encoding, String mimeType) {
 		if (processDesc.getProcessOutputs().getOutputArray().length != 1) {
 			return false;
 		}
 		OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
 		ComplexDataDescriptionType complexDesc = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat();
 		output.setIdentifier(processDesc.getProcessOutputs().getOutputArray(0).getIdentifier());
-		String schemaURL = complexDesc.getSchema();
-		if (suggestedSchema != null) {
-			schemaURL = suggestedSchema;
+		
+		if (schema != null) {
+			output.setSchema(schema);
 		}
-
-		output.setSchema(schemaURL);
-		if (complexDesc.getMimeType() != null) {
-			output.setMimeType(complexDesc.getMimeType());
+		if (mimeType != null) {
+			output.setMimeType(mimeType);
 		}
-		if (complexDesc.getEncoding() != null) {
-			output.setEncoding(complexDesc.getEncoding());
+		if (encoding != null) {
+			output.setEncoding(encoding);
 		}
 		return true;
 	}
@@ -416,22 +381,7 @@ public class ExecuteRequestBuilder {
 		return execute;
 	}
 
-	/**
-	 * sets a preferred schema for input and output! This is useful for chained processes, in which sometimes the featuretype is changing and not easy to determine, thus the client can ask for a specific schema.
-	 * @param schema
-	 */
-	public void suggestSchemaForComplexData(String schema) {
-		suggestedSchema = schema;
-	}
-
-	public void suggestMimeTypeForComplexData(String mimeType) {
-		suggestedMimeType = mimeType;
-	}
-
-	public void suggestEncodingForComplexData(String encoding) {
-		suggestedEncoding = encoding;
-	}
-
+	
 	/**
 	 * 
 	 * @param id
