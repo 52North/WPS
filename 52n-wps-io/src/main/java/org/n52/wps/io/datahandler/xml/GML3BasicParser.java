@@ -7,7 +7,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
  Copyright (C) 2006 by con terra GmbH
 
  Authors: 
-	 Bastian Schäffer, IfGI
+	 Bastian Schï¿½ffer, IfGI
 
  Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 52n@conterra.de
@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,68 +96,10 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		super(pReadWPSConfig);
 	}
 
-
-
-	public GTVectorDataBinding parseXML(String gml) {
-		File f = null;
-		FileOutputStream fos = null;
-		try{
-			f = File.createTempFile("wps", "tmp");
-			fos = new FileOutputStream(f);
-			if(gml.startsWith("<xml-fragment")) {
-				gml = gml.replaceFirst("<xml-fragment .*?>", "");
-				gml = gml.replaceFirst("</xml-fragment>", "");	
-			}
-			// TODO find a better solution. XML-beans hands in inappropriate XML, so the namespaces have to be set manually.
-			if (gml.indexOf("xmlns:xsi=") < 0)
-			{
-				gml = gml.replaceFirst("<wfs:FeatureCollection", "<wfs:FeatureCollection xmlns:xsi=\"" + XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI + "\"");
-			}
-			StringReader sr = new StringReader(gml);
-			int i = sr.read();
-			while(i != -1){
-				fos.write(i);
-				i = sr.read();
-			}
-			fos.close();
-			GTVectorDataBinding data = parseXML(f.toURI());
-			f.delete();
-			return data;
-		}
-		catch(IOException e) {
-			if (fos != null) try { fos.close(); } catch (Exception e1) { }
-			if (f != null) f.delete();
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-	}
-	
-	public GTVectorDataBinding parseXML(InputStream stream) {
-		File f = null;
-		FileOutputStream fos = null;
-		try{
-			f = File.createTempFile("wps", "tmp");
-			fos = new FileOutputStream(f);
-			int i = stream.read();
-			while(i != -1){
-				fos.write(i);
-				i = stream.read();
-			}
-			fos.close();
-			GTVectorDataBinding data = parseXML(f.toURI());
-			f.delete();
-			return data;
-		}
-		catch(IOException e) {
-			if (fos != null) try { fos.close(); } catch (Exception e1) { }
-			if (f != null) f.delete();
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-	}	
-
-	public GTVectorDataBinding parseXML(URI uri) {
-		QName schematypeTuple = determineFeatureTypeSchema(uri);
+	private GTVectorDataBinding parseXML(File file) {
+		QName schematypeTuple = determineFeatureTypeSchema(file);
 		if(schematypeTuple == null) {
-			throw new NullPointerException("featureTypeSchema null for uri: " + uri.getQuery());
+			throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
 		}
 		
 		//create the parser with the gml 2.0 configuration
@@ -179,8 +123,8 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		//parse
 		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
-			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
-			Object parsedData =  parser.parse( new FileInputStream(filepath));
+//			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
+			Object parsedData =  parser.parse( new FileInputStream(file));
 			if(parsedData instanceof FeatureCollection){
 				fc = (FeatureCollection) parsedData;
 				
@@ -239,13 +183,97 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		
 		return data;
 	}
+
+	public GTVectorDataBinding parseXML(String gml) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			if(gml.startsWith("<xml-fragment")) {
+				gml = gml.replaceFirst("<xml-fragment .*?>", "");
+				gml = gml.replaceFirst("</xml-fragment>", "");	
+			}
+			// TODO find a better solution. XML-beans hands in inappropriate XML, so the namespaces have to be set manually.
+			if (gml.indexOf("xmlns:xsi=") < 0)
+			{
+				gml = gml.replaceFirst("<wfs:FeatureCollection", "<wfs:FeatureCollection xmlns:xsi=\"" + XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI + "\"");
+			}
+			StringReader sr = new StringReader(gml);
+			int i = sr.read();
+			while(i != -1){
+				fos.write(i);
+				i = sr.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}
 	
-	private QName determineFeatureTypeSchema(URI uri) {
+	public GTVectorDataBinding parseXML(InputStream stream) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			int i = stream.read();
+			while(i != -1){
+				fos.write(i);
+				i = stream.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}	
+
+	public GTVectorDataBinding parseXML(URI uri) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			URL url = uri.toURL();
+			URLConnection connection = url.openConnection();
+			connection.setDoInput(true);
+			connection.setDoOutput(false);
+			InputStream stream = connection.getInputStream();
+			int i = stream.read();
+			while(i != -1){
+				fos.write(i);
+				i = stream.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}
+	
+	private QName determineFeatureTypeSchema(File file) {
 		try {
 			GML2Handler handler = new GML2Handler();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setNamespaceAware(true);
-			factory.newSAXParser().parse(uri.toASCIIString(), (DefaultHandler)handler); 
+			factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler)handler); 
 			String schemaUrl = handler.getSchemaUrl(); 
 			String namespaceURI = handler.getNameSpaceURI();
 			return new QName(namespaceURI,schemaUrl);
