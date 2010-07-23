@@ -336,10 +336,15 @@ public class GTHelper {
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
 			
-			String baseDirLocation = Server.class.getProtectionDomain().getCodeSource().toString();
-			int startIndex = baseDirLocation.indexOf("WEB-INF");
-			baseDirLocation = baseDirLocation.substring(0,startIndex);
-			baseDirLocation = baseDirLocation.replace("(file:/", "");
+			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+			int startIndex = domain.indexOf("WEB-INF");
+			domain = domain.substring(0,startIndex);			
+			String baseDirLocation = domain;
+			
+//			String baseDirLocation = Server.class.getProtectionDomain().getCodeSource().toString();
+//			int startIndex = baseDirLocation.indexOf("WEB-INF");
+//			baseDirLocation = baseDirLocation.substring(0,startIndex);
+//			baseDirLocation = baseDirLocation.replace("(file:/", "");
 			
 			String baseDir = baseDirLocation +  "schemas" + File.separator;
 			File folder = new File(baseDir);
