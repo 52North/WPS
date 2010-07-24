@@ -245,6 +245,7 @@ public class ExecuteRequestBuilder {
 				.getFormat().getSchema();
 		if ((defaultSchema != null && defaultSchema.equals(schema))
 				|| (defaultSchema == null && schema == null)) {
+			outputDef.setSchema(schema);
 			return true;
 		} else {
 			for (ComplexDataDescriptionType data : outputDesc
