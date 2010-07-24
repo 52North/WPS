@@ -10,10 +10,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,11 +22,10 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
+import org.apache.xpath.XPathAPI;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import org.apache.xpath.XPathAPI;
 
 public class IOUtils {
 	/**
@@ -134,11 +134,10 @@ public class IOUtils {
 	 * @throws IOException
 	 *             if the unzipping process fails
 	 */
-	public static File unzip(File file, String extension) throws IOException {
+	public static List<File> unzip(File file, String extension) throws IOException {
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
-
-		File ret = null;
+		List<File> foundFiles = new ArrayList<File>();
 		ZipInputStream zipInputStream = new ZipInputStream(
 				new BufferedInputStream(new FileInputStream(file)));
 		ZipEntry entry;
@@ -160,7 +159,8 @@ public class IOUtils {
 			dest.close();
 
 			if (entry.getName().endsWith("." + extension)) {
-				ret = entryFile;
+				foundFiles.add(entryFile);
+				
 			}
 		}
 
@@ -168,7 +168,7 @@ public class IOUtils {
 
 		deleteResources(file);
 
-		return ret;
+		return foundFiles;
 	}
 
 	/**
