@@ -338,27 +338,31 @@ public class GTHelper {
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			int startIndex = domain.indexOf("WEB-INF");
-			domain = domain.substring(0,startIndex);			
-			String baseDirLocation = domain;
+			if(startIndex<0){
+				File f = new File(uuid+".xsd");
+				FileWriter writer = new FileWriter(f);
+				writer.write(schema);
+				writer.flush();
+				writer.close();
+				return f.getAbsolutePath();
+			}else{
+				domain = domain.substring(0,startIndex);			
+				String baseDirLocation = domain;
 			
-//			String baseDirLocation = Server.class.getProtectionDomain().getCodeSource().toString();
-//			int startIndex = baseDirLocation.indexOf("WEB-INF");
-//			baseDirLocation = baseDirLocation.substring(0,startIndex);
-//			baseDirLocation = baseDirLocation.replace("(file:/", "");
-			
-			String baseDir = baseDirLocation +  "schemas" + File.separator;
-			File folder = new File(baseDir);
-			if(!folder.exists()){
-				folder.mkdirs();
+				String baseDir = baseDirLocation +  "schemas" + File.separator;
+				File folder = new File(baseDir);
+				if(!folder.exists()){
+					folder.mkdirs();
+				}
+				File f = new File(baseDir+uuid+".xsd");
+				FileWriter writer = new FileWriter(f);
+				writer.write(schema);
+				writer.flush();
+				writer.close();
+				
+				String url = "http://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
+				return url;
 			}
-			File f = new File(baseDir+uuid+".xsd");
-			FileWriter writer = new FileWriter(f);
-			writer.write(schema);
-			writer.flush();
-			writer.close();
-			
-			String url = "http://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
-			return url;
 		}
 		
 
