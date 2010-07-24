@@ -45,7 +45,7 @@ public class GTHelper {
 		String namespace = "http://www.52north.org/"+uuid;
 		
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-		if(coordinateReferenceSystem!=null){
+		if(coordinateReferenceSystem==null){
 			try {
 				coordinateReferenceSystem = CRS.decode("EPSG:4326");
 			} catch (NoSuchAuthorityCodeException e) {
