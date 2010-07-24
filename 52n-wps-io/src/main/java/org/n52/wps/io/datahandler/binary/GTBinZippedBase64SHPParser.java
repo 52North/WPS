@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -36,7 +37,17 @@ public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 	public IData parse(InputStream input, String mimeType) throws RuntimeException {
 		try {
 			File zipped = IOUtils.writeBase64ToFile(input, "zip");
-			File shp = IOUtils.unzip(zipped, "shp");
+			List<File> shpList = IOUtils.unzip(zipped, "shp");
+
+			if (shpList == null || shpList.size()==0) {
+				throw new RuntimeException(
+						"Cannot find a shapefile inside the zipped file.");
+			}
+			File shp = shpList.get(0);
+			if (shp == null) {
+				throw new RuntimeException(
+						"Cannot find a shapefile inside the zipped file.");
+			}
 
 			if (shp == null) {
 				throw new RuntimeException(
