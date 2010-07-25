@@ -215,7 +215,14 @@ public class WPSConfig  implements Serializable {
 		//truncate
 		int index = domain.indexOf("WEB-INF");
 		if(index<0){
-			throw new IOException("Could not find wps_config.xml");
+			//try to load from classpath
+			URL configPath = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
+			if(configPath==null){
+				throw new IOException("Could not find wps_config.xml");
+			}else{
+				return configPath.getFile();
+			}
+			
 		}
 		String substring = domain.substring(0,index);
 		if(!substring.endsWith("/")){
