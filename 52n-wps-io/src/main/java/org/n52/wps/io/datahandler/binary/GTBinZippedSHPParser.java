@@ -51,7 +51,7 @@ public class GTBinZippedSHPParser extends AbstractGTBinZippedSHPParser {
 				tempFile.delete();
 				throw new RuntimeException(e1);
 			}
-			File shp = IOUtils.unzip(tempFile, "shp");
+			File shp = IOUtils.unzip(tempFile, "shp").get(0);
 			DataStore store = new ShapefileDataStore(shp.toURI().toURL());
 			FeatureCollection features = store.getFeatureSource(
 					store.getTypeNames()[0]).getFeatures();
