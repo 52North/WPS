@@ -52,9 +52,12 @@ public class RepositoryManager {
 	
 	private List<IAlgorithmRepository> repositories;
 	
-	
+	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
 	
 	private RepositoryManager(){
+		
+		// clear registry
+		globalProcessIDs.clearRegistry();
 		
         // initialize all Repositories
         loadAllRepositories();
@@ -186,6 +189,20 @@ public class RepositoryManager {
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getOutputDataType(inputIdentifier);
 		
+	}
+	
+	public boolean registerAlgorithm(String id, IAlgorithmRepository repository){
+		if (globalProcessIDs.addID(id)){
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean unregisterAlgorithm(String id){
+		if (globalProcessIDs.removeID(id)){
+			return true;
+		}
+		else return false;
 	}
 	
 
