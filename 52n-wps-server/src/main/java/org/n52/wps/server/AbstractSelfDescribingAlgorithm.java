@@ -145,6 +145,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			ComplexDataCombinationsType supportedtInputFormat = complexData.addNewSupported();
 			dataOutput.addNewIdentifier().setStringValue(identifier);
 			dataOutput.addNewTitle().setStringValue(identifier);
+			dataOutput.addNewAbstract().setStringValue(identifier);
 			
 			Class outputDataTypeClass = this.getOutputDataType(identifier);
 			Class[] interfaces = outputDataTypeClass.getInterfaces();
