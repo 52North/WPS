@@ -112,6 +112,9 @@ public class CapabilitiesConfiguration {
 		ProcessOfferings processes = capsSkeleton.getCapabilities().addNewProcessOfferings();
 		for(String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
+			if(algorithm == null){
+				continue;
+			}
 			ProcessDescriptionType description = algorithm.getDescription();
 			if(description==null){
 				continue;
