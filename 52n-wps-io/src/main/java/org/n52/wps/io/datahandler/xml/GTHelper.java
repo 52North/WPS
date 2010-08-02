@@ -58,7 +58,7 @@ public class GTHelper {
 			typeBuilder.setCRS(coordinateReferenceSystem);
 		}
 		typeBuilder.setNamespaceURI(namespace);
-		Name nameType = new NameImpl(namespace, "Feature");
+		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
 		typeBuilder.setName(nameType);
 		
 		
