@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -37,7 +38,6 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
 		ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
 		ProcessDescriptionType processDescription = processDescriptions.addNewProcessDescription();
-		
 		processDescription.setStatusSupported(true);
 		processDescription.setStoreSupported(true);
 		processDescription.setProcessVersion("1.0.0");
@@ -72,9 +72,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					}
 					
 					if(inputClassType.length()>0){
-						literalData.addNewDataType().setReference("xs:"+inputClassType.toLowerCase());
+						DomainMetadataType datatype = literalData.addNewDataType();
+						datatype.setReference("xs:"+inputClassType.toLowerCase());
+						literalData.addNewAnyValue();		
 					}
-					literalData.addNewAnyValue();				
+							
 				}else if(implementedInterface.equals(IComplexData.class)){
 					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
 					ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
@@ -137,12 +139,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		
 		//3. Outputs
 		ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
-		List<String> literaloutputIdentifiers = this.getOutputIdentifiers();
-		for(String identifier : literaloutputIdentifiers){
+		List<String> outputIdentifiers = this.getOutputIdentifiers();
+		for(String identifier : outputIdentifiers){
 			OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
-			SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
-			ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
-			ComplexDataCombinationsType supportedtInputFormat = complexData.addNewSupported();
+			
+			
 			dataOutput.addNewIdentifier().setStringValue(identifier);
 			dataOutput.addNewTitle().setStringValue(identifier);
 			dataOutput.addNewAbstract().setStringValue(identifier);
@@ -151,7 +152,8 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			Class[] interfaces = outputDataTypeClass.getInterfaces();
 			
 			for(Class implementedInterface : interfaces){
-						
+					
+				
 				if(implementedInterface.equals(ILiteralData.class)){
 					LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
 					String outputClassType = "";
@@ -168,7 +170,13 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
 					}
 				
-					}else if(implementedInterface.equals(IComplexData.class)){
+					
+				}else if(implementedInterface.equals(IComplexData.class)){
+					
+						SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
+						ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
+						ComplexDataCombinationsType supportedtInputFormat = complexData.addNewSupported();
+						
 						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 						for(IGenerator generator : generators) {
