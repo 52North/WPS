@@ -40,6 +40,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.DatabaseDocument.Database;
@@ -70,7 +73,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	public static final String PROPERTY_NAME_DATABASE = "database";
 	
 	/** SQL to insert a response into the database */
-	public static final String insertionString = "INSERT INTO RESULTS VALUES (?, ?, ?, ?)";
+	public static final String insertionString = "INSERT INTO RESULTS VALUES (?, ?, ?, ?, ?)";
 
 	/** SQL to update a response, that was already stored in the database */
 	public static final String updateString = "UPDATE RESULTS SET RESPONSE = (?) WHERE REQUEST_ID = (?)";
@@ -143,7 +146,10 @@ public abstract class AbstractDatabase implements IDatabase{
 				LOGGER.error("Saving the Response threw an ErrorReport: "
 						+ e.getMessage());
 			}
+			
+			
 			return insertResultEntity(baos, Long.toString(response.getUniqueId()), response.getType(), executeResponse.getMimeType());
+			
 		}else{
 			throw new RuntimeException("Could not insert a non execute response");
 		}
@@ -168,9 +174,10 @@ public abstract class AbstractDatabase implements IDatabase{
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
 			AbstractDatabase.insertSQL.setDate(INSERT_COLUMN_REQUEST_DATE, date);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
+			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, bais.available());
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
 			// AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
-			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, bais.available());
+		
 			AbstractDatabase.insertSQL.executeUpdate();
 			getConnection().commit();
 		} catch (SQLException e) {
@@ -349,7 +356,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	
 	public String getMimeTypeForStoreResponse(String id) {
 		try {
-			AbstractDatabase.selectSQL.setString(INSERT_COLUMN_MIME_TYPE, id);
+			AbstractDatabase.selectSQL.setString(UPDATE_COLUMN_RESPONSE, id);
 		
 			ResultSet res = AbstractDatabase.selectSQL.executeQuery();
 			if (res == null || !res.next()) {
