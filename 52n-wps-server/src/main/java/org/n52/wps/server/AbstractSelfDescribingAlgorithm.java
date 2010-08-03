@@ -153,7 +153,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			for(Class implementedInterface : interfaces){
 						
 				if(implementedInterface.equals(ILiteralData.class)){
-					LiteralInputType literalData = (LiteralInputType) dataOutput.addNewLiteralOutput();
+					LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
 					String outputClassType = "";
 					
 					Constructor[] constructors = outputDataTypeClass.getConstructors();
@@ -167,17 +167,18 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					if(outputClassType.length()>0){
 						literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
 					}
-					literalData.addNewAnyValue();	}else if(implementedInterface.equals(IComplexData.class)){
-					List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
-					List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
-					for(IGenerator generator : generators) {
-						Class[] supportedClasses = generator.getSupportedInternalInputDataType();
-						for(Class clazz : supportedClasses){
-							if(clazz.equals(outputDataTypeClass)){
-								foundGenerators.add(generator);
+				
+					}else if(implementedInterface.equals(IComplexData.class)){
+						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+						for(IGenerator generator : generators) {
+							Class[] supportedClasses = generator.getSupportedInternalInputDataType();
+							for(Class clazz : supportedClasses){
+								if(clazz.equals(outputDataTypeClass)){
+									foundGenerators.add(generator);
+								}
+								
 							}
-							
-						}
 					}
 					
 					for(int i = 0; i<foundGenerators.size(); i++){
