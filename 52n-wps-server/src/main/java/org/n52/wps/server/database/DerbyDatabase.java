@@ -63,6 +63,7 @@ public class DerbyDatabase extends AbstractDatabase {
 			DerbyDatabase.connectionURL = dbDriverURI + ":" + getDatabasePath() + File.separator + getDatabaseName();
 			LOGGER.debug("Database connection URL is: " + DerbyDatabase.connectionURL);
 		} catch(ClassNotFoundException cnf_ex) {
+			LOGGER.error("Database cannot be loaded: " + connectionURL);
 			throw new UnsupportedDatabaseException("The database class could not be loaded.");
 		}
 		if(!DerbyDatabase.createConnection()) 
