@@ -174,7 +174,7 @@ public abstract class AbstractDatabase implements IDatabase{
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
 			AbstractDatabase.insertSQL.setDate(INSERT_COLUMN_REQUEST_DATE, date);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
-			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, bais.available());
+			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
 			// AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
 		
@@ -183,9 +183,7 @@ public abstract class AbstractDatabase implements IDatabase{
 		} catch (SQLException e) {
 			LOGGER.error("Could not insert Response into database: "
 					+ e.getMessage());
-		} catch(java.io.IOException io_ex) {
-			
-		}
+		} 
 		return generateRetrieveResultURL(id);
 	}
 
@@ -216,7 +214,7 @@ public abstract class AbstractDatabase implements IDatabase{
 			AbstractDatabase.updateSQL.setString(
 					UPDATE_COLUMN_REQUEST_ID, Long.toString(response.getUniqueId()));
 			AbstractDatabase.updateSQL.setAsciiStream(
-					UPDATE_COLUMN_RESPONSE, bais, b.length);
+					UPDATE_COLUMN_RESPONSE, bais);
 			AbstractDatabase.updateSQL.executeUpdate();
 			getConnection().commit();
 		} catch (SQLException e) {
@@ -348,10 +346,16 @@ public abstract class AbstractDatabase implements IDatabase{
 	}
 	
 	/**
+	 * @throws Exception 
 	 * 
 	 */
 	public void shutdown() {
-		
+		try {
+			getConnection().close();
+		} catch (SQLException e) {
+			
+			LOGGER.error("Problem encountered when closing the SQL connection", e);
+		}
 	}
 	
 	public String getMimeTypeForStoreResponse(String id) {
