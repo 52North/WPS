@@ -18,8 +18,8 @@ public class StreamUtils {
 			outputStream.close();
 			outputStream.writeTo(fileOutputStream);
 			InputStream inputStream = new FileInputStream(tempFile);
-			System.gc();
 			tempFile.delete();
+			System.gc();
 			return inputStream;
 		} catch (FileNotFoundException e) {
 			System.gc();
