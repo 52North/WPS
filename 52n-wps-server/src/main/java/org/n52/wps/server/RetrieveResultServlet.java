@@ -29,6 +29,7 @@ package org.n52.wps.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
@@ -38,6 +39,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axiom.om.util.CopyUtils;
+import org.apache.commons.io.IOUtils;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.request.ExecuteRequest;
@@ -80,14 +83,19 @@ public class RetrieveResultServlet extends HttpServlet {
 				usedMimeType = "tif";
 			}
 		}
-		File file = db.lookupResponseAsFile(id+"result."+usedMimeType);
-		String fileName = URLEncoder.encode(file.getName());
-		String redirect = "Databases/FlatFile/"+fileName;
-		
-		res.sendRedirect(redirect);
+		InputStream is = db.lookupResponse(id);
+		IOUtils.copy(is, os);
+
+		// Not Supported workaround -> removed.
+//		File file = db.lookupResponseAsFile(id+"result."+usedMimeType);
+//		String fileName = URLEncoder.encode(file.getName());
+//		String redirect = "Databases/FlatFile/"+fileName;
+//		
+//		res.sendRedirect(redirect);
+//		res.flushBuffer();
+//		
+//		
+//		db.deleteStoredResponse(id);
 		res.flushBuffer();
-		
-		
-		db.deleteStoredResponse(id);
 	}	
 }
