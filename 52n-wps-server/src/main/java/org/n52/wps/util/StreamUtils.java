@@ -16,7 +16,7 @@ public class StreamUtils {
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
 			outputStream.close();
-			outputStream.writeTo(outputStream);
+			outputStream.writeTo(fileOutputStream);
 			InputStream inputStream = new FileInputStream(tempFile);
 			System.gc();
 			tempFile.delete();
