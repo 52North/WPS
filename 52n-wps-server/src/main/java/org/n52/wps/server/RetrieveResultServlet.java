@@ -73,17 +73,12 @@ public class RetrieveResultServlet extends HttpServlet {
 			pw.write("<html><title>52n WPS - id not found</title><body><H1>ID not found: " + id + "<H1></body></html>");
 		}
 		IDatabase db = DatabaseFactory.getDatabase();
+		//set appropriate mimetype for result
 		String mimeType = db.getMimeTypeForStoreResponse(id);
 		res.setContentType(mimeType);
-		String usedMimeType = mimeType;
-		String[] splittedMimeType= mimeType.split("/");
-		if(splittedMimeType.length==2){
-			usedMimeType = splittedMimeType[1];
-			if(usedMimeType.equalsIgnoreCase("tiff")){
-				usedMimeType = "tif";
-			}
-		}
+		//look up result
 		InputStream is = db.lookupResponse(id);
+		//write result to output
 		IOUtils.copy(is, os);
 
 		// Not Supported workaround -> removed.
