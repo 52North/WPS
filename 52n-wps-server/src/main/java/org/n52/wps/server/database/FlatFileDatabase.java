@@ -119,21 +119,25 @@ public class FlatFileDatabase implements IDatabase {
 	 * @see org.n52.wps.server.database.IDatabase#lookupResponse(java.lang.String)
 	 */
 	public InputStream lookupResponse(String request_id) {
+		String mimeType= getMimeTypeForStoreResponse(request_id);
+		String[] splittedMimeType= mimeType.split("/");
+		String usedMimeType = null; 
+		if(splittedMimeType.length==2){
+			usedMimeType = splittedMimeType[1];
+			if(usedMimeType.equalsIgnoreCase("tiff")){
+				usedMimeType = "tif";
+			}
+		}
 		File f = new File(baseDir);
 		File[] allFiles = f.listFiles();
 		try {
 			for(File tempFile : allFiles){
 				String fileName = tempFile.getName();
 				if(fileName.equalsIgnoreCase(request_id)){
-					
 						return new FileInputStream(tempFile);
-					
 				}
-				String[] splittedName = fileName.split("result");
-				if(splittedName.length==2){
-					if(splittedName[0].startsWith(request_id) || (splittedName[0]+"result").startsWith(request_id)){
+				if(fileName.startsWith(request_id) && fileName.endsWith(usedMimeType)){
 						return new FileInputStream(tempFile);
-					}
 				}
 			}
 			return new FileInputStream(baseDir + File.separator + request_id);
