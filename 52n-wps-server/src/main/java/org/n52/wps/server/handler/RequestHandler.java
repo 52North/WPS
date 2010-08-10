@@ -47,9 +47,6 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.wps.x100.OutputDefinitionType;
-import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessFailedType;
 import net.opengis.wps.x100.StatusType;
 
@@ -57,7 +54,6 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
@@ -66,8 +62,6 @@ import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
-import org.n52.wps.server.response.builder.ExecuteResponseBuilder;
-import org.n52.wps.util.XMLBeansHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
