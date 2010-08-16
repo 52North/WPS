@@ -337,34 +337,18 @@ public class InputHandler {
 			}*/
 			
 			//lookup WFS
-			if(dataURLString.contains("request=GetFeatures")
-					|| dataURLString.contains("Request=GetFeature")
-					|| dataURLString.contains("REQUEST=GetFeature")
-					|| dataURLString.contains("request=getFeature")
-					|| dataURLString.contains("Request=getFeature")
-					|| dataURLString.contains("REQUEST=getFeature")
-					|| dataURLString.contains("request=getfeature")
-					|| dataURLString.contains("Request=getfeature")
-					|| dataURLString.contains("REQUEST=getfeature")
-					|| dataURLString.contains("request=GETFEATURE")
-					|| dataURLString.contains("Request=GETFEATURE")
-					|| dataURLString.contains("REQUEST=GETFEATURE")){
-				if(dataURLString.contains("service=WFS")
-						|| dataURLString.contains("Service=WFS")
-						|| dataURLString.contains("SERVICE=WFS")
-						|| dataURLString.contains("service=wfs")
-						|| dataURLString.contains("Service=wfs")
-						|| dataURLString.contains("SERVICE=wfs")){
+			if(dataURLString.toUpperCase().contains("REQUEST=GETFEATURE") &&
+				dataURLString.toUpperCase().contains("SERVICE=WFS")){
 					if(parser instanceof GML2BasicParser){
 						//make sure we get GML2
 						dataURLString = dataURLString+"&outputFormat=GML2";
 					}
 					if(parser instanceof GML3BasicParser){
-						//make sure we get GML2
+						//make sure we get GML3
 						dataURLString = dataURLString+"&outputFormat=GML3";
 					}
 					
-				}
+				
 					
 			}
 			
