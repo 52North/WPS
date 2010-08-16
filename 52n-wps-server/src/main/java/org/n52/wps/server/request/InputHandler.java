@@ -65,6 +65,8 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
+import org.n52.wps.io.datahandler.xml.GML2BasicParser;
+import org.n52.wps.io.datahandler.xml.GML3BasicParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.util.BasicXMLTypeFactory;
@@ -333,6 +335,43 @@ public class InputHandler {
 				decodedURL = decodedURL.replace("SERVICE", "&SERVICE");
 				decodedURL = decodedURL.replace("format", "&format");
 			}*/
+			
+			//lookup WFS
+			if(dataURLString.contains("request=GetFeatures")
+					|| dataURLString.contains("Request=GetFeature")
+					|| dataURLString.contains("REQUEST=GetFeature")
+					|| dataURLString.contains("request=getFeature")
+					|| dataURLString.contains("Request=getFeature")
+					|| dataURLString.contains("REQUEST=getFeature")
+					|| dataURLString.contains("request=getfeature")
+					|| dataURLString.contains("Request=getfeature")
+					|| dataURLString.contains("REQUEST=getfeature")
+					|| dataURLString.contains("request=GETFEATURE")
+					|| dataURLString.contains("Request=GETFEATURE")
+					|| dataURLString.contains("REQUEST=GETFEATURE")){
+				if(dataURLString.contains("service=WFS")
+						|| dataURLString.contains("Service=WFS")
+						|| dataURLString.contains("SERVICE=WFS")
+						|| dataURLString.contains("service=wfs")
+						|| dataURLString.contains("Service=wfs")
+						|| dataURLString.contains("SERVICE=wfs")){
+					if(parser instanceof GML2BasicParser){
+						//make sure we get GML2
+						dataURLString = dataURLString+"&outputFormat=GML2";
+					}
+					if(parser instanceof GML3BasicParser){
+						//make sure we get GML2
+						dataURLString = dataURLString+"&outputFormat=GML3";
+					}
+					
+				}
+					
+			}
+			
+			
+			
+			
+			
 			URL dataURL = new URL(dataURLString);
 			//URL dataURL = new URL("http", "proxy", 8080, dataURLString);
 			IData parsedInputData = null;
