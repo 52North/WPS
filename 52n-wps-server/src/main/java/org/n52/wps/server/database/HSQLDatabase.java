@@ -46,11 +46,7 @@ import org.n52.wps.server.response.Response;
  * @note Uses lazy initialization without synchronization  
  */
 public class HSQLDatabase extends AbstractDatabase {
-	public static final String creationString = "CREATE TABLE RESULTS (" +
-			"REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
-			"REQUEST_DATE DATE, " +
-			"RESPONSE_TYPE VARCHAR(100), " +
-			"RESPONSE LONGVARCHAR)";
+
 	private static String PROPERTY_NAME_HSQL_PROTOCOL = "hsqlProtocol";
 	private static Logger LOGGER = Logger.getLogger(HSQLDatabase.class); // Get access to the global logger.
 	private static String connectionURL = null;

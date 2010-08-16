@@ -72,6 +72,14 @@ public abstract class AbstractDatabase implements IDatabase{
 	/** Property of the path to the location of the database - name of database type: DERBY, HSQL, ...*/
 	public static final String PROPERTY_NAME_DATABASE = "database";
 	
+	/** SQL to create a response in the DB **/
+	public static final String 	creationString = "CREATE TABLE RESULTS (" +
+	"REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
+	"REQUEST_DATE DATE, " +
+	"RESPONSE_TYPE VARCHAR(100), " +
+	"RESPONSE CLOB, " +
+	"RESPONSE_MIMETYPE VARCHAR(100))";
+	
 	/** SQL to insert a response into the database */
 	public static final String insertionString = "INSERT INTO RESULTS VALUES (?, ?, ?, ?, ?)";
 
@@ -79,7 +87,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	public static final String updateString = "UPDATE RESULTS SET RESPONSE = (?) WHERE REQUEST_ID = (?)";
 
 	/** SQL to retrieve a response from the database */
-	public static final String selectionString = "SELECT RESPONSE FROM RESULTS WHERE REQUEST_ID = (?)";
+	public static final String selectionString = "SELECT RESPONSE, RESPONSE_MIMETYPE FROM RESULTS WHERE REQUEST_ID = (?)";
 
 	/** The column of "response" in the select statement. */
 	protected static final int SELECT_COLUMN_RESPONSE = 1;
@@ -360,7 +368,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	
 	public String getMimeTypeForStoreResponse(String id) {
 		try {
-			AbstractDatabase.selectSQL.setString(UPDATE_COLUMN_RESPONSE, id);
+			AbstractDatabase.selectSQL.setString(SELECT_COLUMN_RESPONSE, id);
 		
 			ResultSet res = AbstractDatabase.selectSQL.executeQuery();
 			if (res == null || !res.next()) {
@@ -369,7 +377,7 @@ public abstract class AbstractDatabase implements IDatabase{
 			} else {
 				LOGGER.info("Successfully retrieved the Mimetyoe of the response: "
 						+ id);
-				return res.getString(1);
+				return res.getString(2);
 			}
 		} catch (SQLException e) {
 			LOGGER.error("SQLException with request_id: " + id

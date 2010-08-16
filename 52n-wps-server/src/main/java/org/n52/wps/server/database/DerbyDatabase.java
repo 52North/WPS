@@ -42,12 +42,7 @@ import org.apache.log4j.Logger;
  * @note Uses lazy initialization without synchronization  
  */
 public class DerbyDatabase extends AbstractDatabase {
-	public static final String creationString = "CREATE TABLE RESULTS (" +
-			"REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
-			"REQUEST_DATE DATE, " +
-			"RESPONSE_TYPE VARCHAR(100), " +
-			"RESPONSE CLOB, " +
-			"RESPONSE_MIMETYPE VARCHAR(100))";
+
 	private static Logger LOGGER = Logger.getLogger(DerbyDatabase.class); // Get access to the global logger.
 	private static String connectionURL = null;
 	private static Connection conn = null;
