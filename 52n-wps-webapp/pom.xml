@@ -20,6 +20,13 @@
             <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
             <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
         </mailingList>
+        <mailingList>
+            <name>Geoprocessing Commits</name>
+            <archive>http://www2.52north.org/pipermail/geoprocessing-commits</archive>
+            <post>Geoprocessing-commits@52north.org</post>
+            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
+            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
+        </mailingList>
     </mailingLists>
     <developers>
         <developer>
