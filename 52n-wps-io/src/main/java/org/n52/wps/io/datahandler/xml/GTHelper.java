@@ -132,6 +132,39 @@ public class GTHelper {
 		return featureType;
 	}
 	
+	
+	
+	public static SimpleFeatureType createFeatureType(Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
+		String namespace = "http://www.52north.org/"+uuid;
+		
+		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+		if(coordinateReferenceSystem==null){
+			try {
+				coordinateReferenceSystem = CRS.decode("EPSG:4326");
+			} catch (NoSuchAuthorityCodeException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FactoryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			typeBuilder.setCRS(coordinateReferenceSystem);
+		}
+		typeBuilder.setNamespaceURI(namespace);
+		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
+		typeBuilder.setName(nameType);
+		
+		
+		
+					
+		typeBuilder.add("GEOMETRY", newGeometry.getClass());
+					
+		SimpleFeatureType featureType;
+		
+		featureType = typeBuilder.buildFeatureType();
+		return featureType;
+	}
+	
 	public static Feature createFeature(String id, Geometry geometry, SimpleFeatureType featureType, Collection<Property> originalAttributes) {
 		
 			if(geometry==null || geometry.isEmpty()){
@@ -187,6 +220,47 @@ public class GTHelper {
 		
 			return feature;
 	}
+	
+	public static Feature createFeature(String id, Geometry geometry, SimpleFeatureType featureType) {
+		
+		if(geometry==null || geometry.isEmpty()){
+			return null;
+		}
+		
+		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
+		SimpleFeature feature = null;
+		Collection<PropertyDescriptor> featureTypeAttributes = featureType.getDescriptors();
+					
+		Object[] newData = new Object[featureType.getDescriptors().size()];
+		
+		int i = 0;
+		
+			
+			
+	
+		if(geometry.getGeometryType().equals("Point")){
+			Point[] points = new Point[1];
+			points[0] = (Point)geometry;
+			newData[i] = geometry.getFactory().createMultiPoint(points);
+		}else
+			if(geometry.getGeometryType().equals("LineString")){
+				LineString[] lineString = new LineString[1];
+				lineString[0] = (LineString)geometry;
+				newData[i] = geometry.getFactory().createMultiLineString(lineString);
+			}else
+				if(geometry.getGeometryType().equals("Polygon")){
+				Polygon[] polygons = new Polygon[1];
+				polygons[0] = (Polygon)geometry;
+				newData[i] = geometry.getFactory().createMultiPolygon(polygons);
+				}else{
+					newData[i] = geometry;
+				}
+			
+		
+		feature = featureBuilder.buildFeature(id, newData);
+	
+		return feature;
+}
 	
 		public static QName createGML3SchemaForFeatureType(SimpleFeatureType featureType){
 		
