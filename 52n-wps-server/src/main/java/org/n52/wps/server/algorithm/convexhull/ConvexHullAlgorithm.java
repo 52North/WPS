@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.xml.namespace.QName;
 
 import org.apache.log4j.Logger;
 import org.geotools.feature.DefaultFeatureCollections;
@@ -49,13 +52,16 @@ import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
@@ -63,6 +69,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -105,9 +113,11 @@ public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 
 		FeatureIterator iter = featureCollection.features();
 
-		Coordinate[] coordinateArray = new Coordinate[featureCollection.size()];
+		List<Coordinate> coordinateList = new ArrayList<Coordinate>();
 		
 		int counter = 0;
+		
+		Geometry unifiedGeometry = null;
 		
 		while (iter.hasNext()) {
 			SimpleFeature  feature = (SimpleFeature) iter.next();
@@ -120,18 +130,23 @@ public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 			
 			Geometry geom = (Geometry) feature.getDefaultGeometry();
 			
-			if(geom instanceof Point){
-				coordinateArray[counter] = ((Point)geom).getCoordinate();
-				counter++;
+			Coordinate[] coordinateArray = geom.getCoordinates();
+			for(Coordinate coordinate : coordinateArray){
+				coordinateList.add(coordinate);
 			}
 			
 		}	
 		
+		Coordinate[] coordinateArray = new Coordinate[coordinateList.size()];
+		
+		for(int i = 0; i<coordinateList.size(); i++){
+			coordinateArray[i] = coordinateList.get(i);
+		}
 		ConvexHull convexHull = new ConvexHull(coordinateArray, new GeometryFactory());		
 		
 		Geometry out = convexHull.getConvexHull();
 
-		Feature feature = createFeature(out);
+		Feature feature = createFeature(out, featureCollection.getSchema().getCoordinateReferenceSystem());
 		
 		FeatureCollection fOut = DefaultFeatureCollections.newCollection();
 		
@@ -144,25 +159,12 @@ public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 		return result;
 	}
 	
-	private Feature createFeature(Geometry geometry) {
-		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-		builder.setName( "gmlPacketFeatures" );
-		builder.setNamespaceURI( "http://localhost/" );
-		if(geometry instanceof LineString){
-			builder.add("LineString", Polygon.class);
-		}
-		if(geometry instanceof Polygon){
-			builder.add("Polygon", Polygon.class);
-		}
-		if(geometry instanceof Point){
-			builder.add("Point", Polygon.class);
-		}
+	private Feature createFeature(Geometry geometry, CoordinateReferenceSystem crs) {
+		String uuid = UUID.randomUUID().toString();
+		SimpleFeatureType featureType = GTHelper.createFeatureType(geometry, uuid, crs);
+		GTHelper.createGML3SchemaForFeatureType(featureType);
 		
-
-		SimpleFeatureType FLAG = builder.buildFeatureType();
-
-		SimpleFeature feature = SimpleFeatureBuilder.build( FLAG, new Object[]{geometry},"Polygon.1");
-	
+		Feature feature = GTHelper.createFeature("0", geometry, featureType);
 		
 		return feature;
 	}	
