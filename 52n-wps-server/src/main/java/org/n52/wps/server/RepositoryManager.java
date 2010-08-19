@@ -205,5 +205,14 @@ public class RepositoryManager {
 		else return false;
 	}
 	
+	public IAlgorithmRepository getAlgorithmRepository(String name){
+	  for (IAlgorithmRepository repo : repositories ){
+		   if(repo.getClass().getName().equals(name)){
+			   return repo;
+		  }
+	  }
+	return null;
+	}
+	
 
 }
