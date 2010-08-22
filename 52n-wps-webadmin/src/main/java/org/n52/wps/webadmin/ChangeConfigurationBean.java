@@ -30,6 +30,7 @@ package org.n52.wps.webadmin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.ArrayList;
 import org.n52.wps.WPSConfigurationDocument;
@@ -71,6 +72,7 @@ public class ChangeConfigurationBean {
     private String serializedWPSConfiguraton = "";
 
     public void setSerializedWPSConfiguraton(String data){
+    	data = URLDecoder.decode(data);
         serializedWPSConfiguraton = data;
         processFormData(data);
         LOGGER.info("Saved and Activate new configuration!");
