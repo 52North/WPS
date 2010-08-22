@@ -34,6 +34,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Observable;
 
@@ -202,6 +203,7 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = inputItems[i]
 							.substring(attributePos + 1);
+					attributeValue = URLDecoder.decode(attributeValue);
 					if (attributeName.equalsIgnoreCase("encoding")) {
 						encodingAttribute = attributeValue;
 					} else if (attributeName.equalsIgnoreCase("mimeType")) {
@@ -311,6 +313,7 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = outputDataparameters[i]
 							.substring(attributePos + 1);
+					attributeValue = URLDecoder.decode(attributeValue);
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {
@@ -356,6 +359,7 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = rawDataparameters[i]
 							.substring(attributePos + 1);
+					attributeValue = URLDecoder.decode(attributeValue);
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {
