@@ -129,7 +129,13 @@ public abstract class ResponseData {
 		this.generator =  GeneratorFactory.getInstance().getGenerator(this.schema, 
 				this.mimeType, this.encoding, algorithmOutput);
 		
-		
+
+		if(this.generator == null) {
+			generator = GeneratorFactory.getInstance().getDefaultGeneratorForProcess(this.algorithmIdentifier, algorithmOutput);
+			if(generator !=null){
+				LOGGER.info("Using default generator for Schema: " + schema);
+			}
+		}
 		if(this.generator == null) {
 			LOGGER.info("Using simpleGenerator for Schema: " + schema);
 			generator = GeneratorFactory.getInstance().getSimpleXMLGenerator();

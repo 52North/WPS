@@ -40,11 +40,15 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.wps.GeneratorDocument.Generator;
+import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.OutputDescriptionType;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
+import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.RepositoryManager;
 
 
 public class GeneratorFactory {
@@ -180,6 +184,21 @@ public class GeneratorFactory {
 
 	public List<IGenerator> getAllGenerators() {
 		return registeredGenerators;
+	}
+
+	public IGenerator getDefaultGeneratorForProcess(String algorithmIdentifier, Class algorithmOutput) {
+		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
+		OutputDescriptionType[] outputs = algorithm.getDescription().getProcessOutputs().getOutputArray();
+		if(outputs[0].isSetComplexOutput()){
+			ComplexDataDescriptionType format = outputs[0].getComplexOutput().getDefault().getFormat();
+			String encoding = format.getEncoding();
+			String mimeType = format.getMimeType();
+			String schema = format.getSchema();
+			return getGenerator(schema, mimeType, encoding, algorithmOutput);
+		}else{
+			//TODO
+			return null;
+		}
 	}
 	
 }
