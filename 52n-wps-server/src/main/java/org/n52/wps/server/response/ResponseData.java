@@ -32,6 +32,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.OutputDescriptionType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -43,6 +46,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.binary.AbstractBinaryGenerator;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.w3c.dom.Node;
 
@@ -131,7 +135,7 @@ public abstract class ResponseData {
 		
 
 		if(this.generator == null) {
-			generator = GeneratorFactory.getInstance().getDefaultGeneratorForProcess(this.algorithmIdentifier, algorithmOutput);
+			generator = getDefaultGeneratorForProcess(this.algorithmIdentifier, algorithmOutput);
 			if(generator !=null){
 				LOGGER.info("Using default generator for Schema: " + schema);
 			}
@@ -139,6 +143,21 @@ public abstract class ResponseData {
 		if(this.generator == null) {
 			LOGGER.info("Using simpleGenerator for Schema: " + schema);
 			generator = GeneratorFactory.getInstance().getSimpleXMLGenerator();
+		}
+	}
+	
+	public IGenerator getDefaultGeneratorForProcess(String algorithmIdentifier, Class algorithmOutput) {
+		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
+		OutputDescriptionType[] outputs = algorithm.getDescription().getProcessOutputs().getOutputArray();
+		if(outputs[0].isSetComplexOutput()){
+			ComplexDataDescriptionType format = outputs[0].getComplexOutput().getDefault().getFormat();
+			String encoding = format.getEncoding();
+			String mimeType = format.getMimeType();
+			String schema = format.getSchema();
+			return GeneratorFactory.getInstance().getGenerator(schema, mimeType, encoding, algorithmOutput);
+		}else{
+			//TODO
+			return null;
 		}
 	}
 	
