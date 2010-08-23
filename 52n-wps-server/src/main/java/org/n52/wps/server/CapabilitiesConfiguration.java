@@ -174,11 +174,10 @@ public class CapabilitiesConfiguration {
 			}
 	
 			bufferedReader.close();
-	
+			System.out.println("Service running in AWS EC2. Hostname overridden with public DNS IP.");
 			return stringBuilder.toString();
 		} catch (Exception e) {
 			
-			e.printStackTrace();
 			return "";
 		}
 	}
