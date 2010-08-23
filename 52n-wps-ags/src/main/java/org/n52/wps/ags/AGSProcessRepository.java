@@ -145,9 +145,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		OutputDescriptionType[] outputArray = pd.getProcessOutputs().getOutputArray();
 		
 		NodeList pdNodeList = pd.getDomNode().getChildNodes();
-		int paramCount = 0;
+		int paramCount = inputArray.length + outputArray.length;
 		
-		for (int i=0; i < pdNodeList.getLength(); i++){
+		/*for (int i=0; i < pdNodeList.getLength(); i++){
 			String paramCntString;
 			
 			if(pdNodeList.item(i) instanceof Comment){
@@ -158,7 +158,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 				String helpToken = st.nextToken(" ");
 				paramCount = Integer.parseInt(helpToken.substring(1));
 			}
-		}
+		}*/
+		
+		
 		
 		//create parameter array
 		//LegacyParameter[] paramArray = new LegacyParameter[inputArray.length + outputArray.length];
