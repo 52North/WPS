@@ -28,14 +28,17 @@ Software Foundation, http://www.fsf.org.
  ***************************************************************/
 package org.n52.wps.webadmin;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletInputStream;
-import java.io.PrintWriter;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import org.n52.wps.commons.WPSConfig;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.Logger;
+import org.n52.wps.commons.WPSConfig;
 
 /**
  * This Bean handles the fileupload of the xml configuration file
@@ -46,7 +49,7 @@ public class ConfigUploadBean {
 
     private String savePath,  filepath,  filename;
     private final String filenamePrefix = "userConf_";
-
+    
     public String getFilenamePrefix(){
         return filenamePrefix;
     }
@@ -88,10 +91,15 @@ public class ConfigUploadBean {
         int boundaryLength = i - 2;
 
         String boundary = new String(line, 0, boundaryLength); //-2 discards the newline character
-
+        String realSavePath = "";
         while (i != -1) {
             String newLine = new String(line, 0, i);
+            System.out.println(newLine);
             if (newLine.startsWith("Content-Disposition: form-data; name=\"")) {
+            	if(newLine.contains("uploadProcess")){
+            		//we upload files not config docuemnts. Therefore store is somewhere else.
+            		realSavePath = new File(savePath).getParentFile().getAbsolutePath()+"/WEB-INF/classes/";
+            	}
                 if (newLine.indexOf("filename=\"") != -1) {
                     setFilename(new String(line, 0, i - 2));
                     if (filename == null) {
@@ -105,8 +113,15 @@ public class ConfigUploadBean {
                     i = in.readLine(line, 0, 128);
                     newLine = new String(line, 0, i);
                     // add the prefix to the filename
-                    filename = filenamePrefix + filename;
-                    PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter((savePath == null ? "" : savePath) + filename)));
+                  
+                    PrintWriter pw = null;
+                    if(realSavePath.length()>0){
+                    	pw = new PrintWriter(new BufferedWriter(new FileWriter((realSavePath == null ? "" : realSavePath) + filename)));
+                    }else{
+                    	filename = filenamePrefix + filename;
+                    	pw = new PrintWriter(new BufferedWriter(new FileWriter((savePath == null ? "" : savePath) + filename)));	
+                    }
+                    
                     while (i != -1 && !newLine.startsWith(boundary)) {
                         // the problem is the last line of the file content
                         // contains the new line character.
@@ -126,6 +141,12 @@ public class ConfigUploadBean {
             }
             i = in.readLine(line, 0, 128);
         } // end while
-        LOGGER.info("User Configuration file received and saved at: " + savePath + filename);
+        if(realSavePath.length()>0){
+        	LOGGER.info("User Configuration file received and saved at: " + realSavePath + filename);
+        }else{
+        	LOGGER.info("User Configuration file received and saved at: " + savePath + filename);
+        }
     }
+    
+  
 }

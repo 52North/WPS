@@ -73,6 +73,7 @@ public class ChangeConfigurationBean {
 
     public void setSerializedWPSConfiguraton(String data){
     	data = URLDecoder.decode(data);
+    	System.out.println(data);
         serializedWPSConfiguraton = data;
         processFormData(data);
         LOGGER.info("Saved and Activate new configuration!");
