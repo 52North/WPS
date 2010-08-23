@@ -16,6 +16,10 @@ fileUpload.doUpload(request);
 <html>
     <head>
         <link rel="stylesheet" href="css/ui.all.css" type="text/css" media="screen">
+        
+        <link type="text/css" rel="stylesheet" href="css/lightbox-form.css">
+		<script src="resources/lightbox-form.js" type="text/javascript"></script>
+        
         <script type="text/javascript" src="resources/jquery.js"></script>
         <script type="text/javascript" src="resources/jquery-ui.js"></script>
         <script type="text/javascript" src="resources/jquery.ajax_upload.js"></script>
@@ -59,7 +63,12 @@ fileUpload.doUpload(request);
                       loadConfiguration(relativeConfigPath + "<%=fileUpload.getFilenamePrefix()%>" + file);
                   }
                 });
-
+                
+               	
+                $("#upload_process").click(function(){
+                    openbox('Upload a WPS process', 1)
+                   
+                });
 
                 $("#loadConfBtn").click(function(){
                     loadConfiguration(relativeConfigPath + configurationFileName);
@@ -67,13 +76,18 @@ fileUpload.doUpload(request);
 
                 $("#saveConfBtn").click(function(){
                     if (confirm("Save and Activate Configuration?")) {
-                        $("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
+                        $("input[name='processFile']:first").val($("#form1").serialize());
                         $("#saveConfogurationForm").submit();
                     }
                 });
                 setTimeout
                 loadConfiguration(relativeConfigPath + configurationFileName);
             });
+            
+            function uploadFiles() {
+            	 $("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
+                 $("#saveConfogurationForm").submit();
+            }
 
             function loadConfiguration(configFile){
                 // ensure not getting cached version
@@ -205,6 +219,9 @@ fileUpload.doUpload(request);
                             <td>
                                 <input class="formButtons" type="reset" value="Reset" name="Reset"/>
                             </td>
+                            <td>
+                                <input class="formButtons" id="upload_process" type="button" value="Upload Process" name="UploadProcess"/>
+                            </td>
                         </tr>
                     </table>
                     <div id="sections">
@@ -289,5 +306,31 @@ fileUpload.doUpload(request);
                 </div>
             </div>
         </div>
+        <!-- upload form -->
+        <div id="filter"></div>
+<div id="box">
+  <span id="boxtitle"></span>
+  <form method="post" action="index.jsp" onsubmit="return uploadFiles()" enctype="multipart/form-data">
+       <input type="hidden" name="uploadProcess"/>
+    <p>
+		Please enter the name of the class implementing IAlgorithm:<br>
+		<input type="text" name="processName" size="30">
+	</p>
+	<p>
+		Please specify the .class file for the process:<br>
+		<input type="file" name="processFile" size="40">
+	</p>
+	<p>
+		Please specify the associated ProcessDescription xml file (optional):<br>
+		<input type="file" name="processDescriptionFile" size="40">
+	</p>
+ 	<p> 
+      <input type="submit" name="submit" >
+      <input type="button" name="cancel" value="Cancel" onclick="closebox()">
+    </p>
+    </form>
+</div>
+
+        
     </body>
 </html>
