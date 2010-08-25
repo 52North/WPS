@@ -58,7 +58,7 @@ public final class GenericFileDataConstants {
 		lut.put(MIME_TYPE_DBASE, "dbf");
 		lut.put(MIME_TYPE_REMAPFILE, "RMP");
 		lut.put(MIME_TYPE_PLAIN_TEXT, "txt");
-		lut.put(MIME_TYPE_TEXT_XML, "xml");
+		lut.put(MIME_TYPE_TEXT_XML, "shp");
 		
 		return lut;
 	}

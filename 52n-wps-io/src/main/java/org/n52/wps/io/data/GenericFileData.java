@@ -32,16 +32,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -53,17 +50,25 @@ import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.FeatureIterator;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
@@ -87,45 +92,82 @@ public class GenericFileData {
 	}
 	
 	private static File getShpFile(FeatureCollection collection) throws IOException, IllegalAttributeException {
-	File shp = File.createTempFile("shp", ".shp");
-	DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
-	Map<String, Serializable> params = new HashMap<String, Serializable>();
-	params.put("url", shp.toURI().toURL());
-	params.put("create spatial index", Boolean.TRUE);
+		SimpleFeatureType type = null;
+		 SimpleFeatureBuilder build = null;
+		FeatureIterator iterator = collection.features();
+		FeatureCollection modifiedFeatureCollection = null;
+		Transaction transaction = new DefaultTransaction("create");
+		FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
+		File shp = File.createTempFile("shp", ".shp");
+		while(iterator.hasNext()){
+			SimpleFeature sf = (SimpleFeature) iterator.next();
+			// create SimpleFeatureType
+			if(type==null){
+			    SimpleFeatureType inType = (SimpleFeatureType) collection.getSchema();
+			    SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+			    builder.setName(inType.getName());
+			    builder.setNamespaceURI(inType.getName().getNamespaceURI());
+			    
+			    if(collection.getSchema().getCoordinateReferenceSystem()==null){
+					builder.setCRS(DefaultGeographicCRS.WGS84);
+				}else{
+					  builder.setCRS(collection.getSchema()
+								.getCoordinateReferenceSystem());
+				}
+			    
+			    builder.setDefaultGeometry(sf.getDefaultGeometryProperty().getName().getLocalPart());
+		
+			    for (Property prop : sf.getProperties()) {
+			      if (isSupportedShapefileType(prop.getType()) && (prop.getValue() != null)) {
+			        builder.add(prop.getName().getLocalPart(), prop.getType().getBinding());
+			      }
+			    }
+		   
+			    type = builder.buildFeatureType();
+				
+			  
+			    IndexedShapefileDataStore dataStore = new IndexedShapefileDataStore(shp.toURI().toURL());
+			    dataStore.createSchema(type);
+			    dataStore.forceSchemaCRS(type.getCoordinateReferenceSystem());
+		
+			   
+		
+			    String typeName = dataStore.getTypeNames()[0];
+			   store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore.getFeatureSource(typeName);
+		
+			    store.setTransaction(transaction);
+			    FeatureCollection<SimpleFeatureType, SimpleFeature> outCollection = FeatureCollections.newCollection();
+		
+			    
+			    build = new SimpleFeatureBuilder(type);
+			    modifiedFeatureCollection = new DefaultFeatureCollection("fc", type);
+			}
+			      for (AttributeType attributeType : type.getTypes()) {
+			        build.add(sf.getProperty(attributeType.getName()).getValue());
+			        //System.out.println("value: "+attributeType.getName()+" : "+sf.getProperty(attributeType.getName()).getValue());
+			      }
+		
+			      modifiedFeatureCollection.add(build.buildFeature(sf.getIdentifier().getID()));
+			    }
+		    
 
-	ShapefileDataStore newDataStore = (ShapefileDataStore) dataStoreFactory
-			.createNewDataStore(params);
+	    
 
-	newDataStore.createSchema((SimpleFeatureType) collection.getSchema());
-	if(collection.getSchema().getCoordinateReferenceSystem()==null){
-		try {
-			newDataStore.forceSchemaCRS(CRS.decode("4326"));
-		} catch (NoSuchAuthorityCodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}else{
-		newDataStore.forceSchemaCRS(collection.getSchema()
-			.getCoordinateReferenceSystem());
-	}
+	    try {
+	      store.addFeatures(modifiedFeatureCollection);
+	      transaction.commit();
+	    } catch (Exception e1) {
+	      e1.printStackTrace();
+	      transaction.rollback();
+	    } finally {
+	      transaction.close();
+	    }
+	  
+	  
 
-	Transaction transaction = new DefaultTransaction("create");
-
-	String typeName = newDataStore.getTypeNames()[0];
-	FeatureStore<SimpleFeatureType, SimpleFeature> featureStore = (FeatureStore<SimpleFeatureType, SimpleFeature>) newDataStore
-			.getFeatureSource(typeName);
-	featureStore.setTransaction(transaction);
-	try {
-		featureStore.addFeatures(collection);
-		transaction.commit();
-	} catch (Exception problem) {
-		transaction.rollback();
-	} finally {
-		transaction.close();
-	}
+		
+		
+		
 
 	
 	String path = shp.getAbsolutePath();
@@ -139,7 +181,19 @@ public class GenericFileData {
 }
 		
 		
-		
+
+    private static boolean isSupportedShapefileType(PropertyType type) {
+    String supported[] = {
+      "String", "Integer", "Double", "Boolean", "Date",
+      "LineString", "MultiLineString", "Polygon", "MultiPolygon",
+      "Point", "MultiPoint"};
+    for (String iter : supported) {
+      if (type.getBinding().getSimpleName().equals(iter)) {
+        return true;
+      }
+    }
+    return false;
+  }
 	
 
 	public GenericFileData (File primaryFile, String mimeType) throws IOException{
