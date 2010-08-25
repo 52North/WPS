@@ -196,7 +196,11 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					this.toolParameters[i] = this.calcToolParameterString(" ", valueArray);
 				}
 				else{
-					throw new RuntimeException("Error while allocating input parameter " + currentParam.wpsInputID);
+					if(currentParam.isOptional){
+						this.toolParameters[i] = null;
+					}else{
+						throw new RuntimeException("Error while allocating input parameter " + currentParam.wpsInputID);
+					}
 				}
 			}
 			
@@ -217,8 +221,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		//execute
 		String toolName = this.processDescription.getTitle().getStringValue();
 		LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
-		
-		
+				
 		this.workspace.executeGPTool(toolName, null, this.toolParameters);
 		
 		
