@@ -32,11 +32,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
@@ -140,7 +140,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	}
 	
 	private LegacyParameter[] loadParameters(ProcessDescriptionType pd){
-		
+		if(pd.getIdentifier().getStringValue().contains("buffer")){
+			System.out.println("Buffer"); 
+		}
 		InputDescriptionType[] inputArray = pd.getDataInputs().getInputArray();
 		OutputDescriptionType[] outputArray = pd.getProcessOutputs().getOutputArray();
 		
@@ -213,7 +215,12 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 				defaultCRS = currentDesc.getBoundingBoxData().toString();
 			}
 			
-			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString);
+			boolean isOptional = false;
+			if(currentDesc.getMinOccurs().equals(new BigInteger("0"))){
+				isOptional = true;
+			}
+			
+			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString, isOptional);
 		}
 		
 		for (OutputDescriptionType currentDesc : outputArray){
@@ -264,8 +271,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 			if (currentDesc.isSetBoundingBoxOutput()){
 				defaultCRS = currentDesc.getBoundingBoxOutput().toString();
 			}
+			boolean isOptional = false;
 			
-			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString);
+			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString,isOptional);
 		}
 		
 		
