@@ -46,6 +46,7 @@ public class LegacyParameter {
 	public final boolean isComplex;
 	public final boolean isLiteral;
 	public final boolean isCRS;
+	public final boolean isOptional;
 	
 	public final boolean isInput;
 	public final boolean isOutput;
@@ -53,7 +54,7 @@ public class LegacyParameter {
 	public LegacyParameter (String wpsInputID, String wpsOutputID, String gpParameterID,
 			String wpsComplexDataSchema, String wpsMimeType,
 			String wpsLiteralDataType, String wpsDefaultCRS,
-			String prefixString, String suffixString, String separatorString){
+			String prefixString, String suffixString, String separatorString, boolean isOptional){
 		
 		this.prefixString = null2empty(prefixString);
 		this.suffixString = null2empty(suffixString);
@@ -62,6 +63,8 @@ public class LegacyParameter {
 		this.wpsInputID = null2empty(wpsInputID);
 		this.wpsOutputID = null2empty(wpsOutputID);
 		this.pameterID = null2empty(gpParameterID); 
+		
+		this.isOptional = isOptional; 
 		
 		
 		this.mimeType = null2empty(wpsMimeType);

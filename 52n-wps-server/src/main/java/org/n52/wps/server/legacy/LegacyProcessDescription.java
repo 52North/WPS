@@ -227,7 +227,7 @@ public class LegacyProcessDescription {//implements ILegacyDescription{
     	//LegacyParameter-Constructor public gesetzt
     	LegacyParameter lParam = new LegacyParameter(wpsInputID, wpsOutputID, 
     			gpParameterID, wpsComplexDataSchema, wpsMimeType, wpsLiteralDataType, 
-    			wpsDefaultCRS, prefixString, suffixString, separatorString);
+    			wpsDefaultCRS, prefixString, suffixString, separatorString, false);
     	
     	algorithmParameters.put(gpParameterID, lParam);
     }// end analyzeParameter()
