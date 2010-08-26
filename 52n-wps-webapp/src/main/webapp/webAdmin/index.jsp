@@ -75,7 +75,7 @@ fileUpload.doUpload(request);
 
                 $("#saveConfBtn").click(function(){
                     if (confirm("Save and Activate Configuration?")) {
-                        $("input[name='processFile']:first").val($("#form1").serialize());
+                        $("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
                         $("#saveConfogurationForm").submit();
                     }
                 });
@@ -129,6 +129,7 @@ fileUpload.doUpload(request);
             }
 
             function addListItem(itemType) {
+          
                 var id = document.getElementById("id").value;
                 $("#"+itemType+"_List").append
                 (
@@ -191,7 +192,7 @@ fileUpload.doUpload(request);
                       
 			function appendProcessToList() {                            			
 			
-				 itemType= "Repository-97_Property";
+				 itemType= "Repository-111_Property";
 				 var id = document.getElementById("id").value;
 				 var processNameId = document.getElementById("processNameId").value;
 				 var algorithmName = "Algorithm";
