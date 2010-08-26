@@ -66,6 +66,15 @@
 				<Property name="supportedFormat">application/x-zipped-shp</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
+			<Parser name="GML3BasicParser4Files" className="org.n52.wps.io.datahandler.xml.GML3BasicParser4Files">
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
 			<Generator name="GML3BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator">
@@ -127,6 +136,15 @@
 			
 			<!-- GML2BasicGenerator4Files inherits formats etc from GMLBasic parser -->
 			<Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files" />
+			
+			<Generator name="GML3BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator4Files">
+				<Property name="featureTransformerIncludeBounding">false</Property>
+				<Property name="featureTransformerDecimalPlaces">4</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Generator>		
+			
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
@@ -138,6 +156,11 @@
 	
 			
 		</Repository>
+		
+		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository">
+		</Repository>
+		
+		
 		<!-- 
 		<Repository name="LocalUnicoreAlgorithmRepository"	className="org.n52.wps.unicore.UnicoreAlgorithmRepository">			
 			<Property name="Algorithm">org.n52.wps.unicore.algorithm.UnicoreSimpleBufferAlgorithm</Property>
@@ -151,6 +174,8 @@
 			<Property name="OverwriteRemoteFile">false</Property>
 			<Property name="CompressInputData">true</Property>			
 		</Repository>
+		
+
 		 -->
 		<!-- 
 		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository">		
@@ -206,9 +231,21 @@
 		 
 		 <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
-			 -->
+			
+			 
+			 
+			 <Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository">
+            <Property name="IP">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
+            <Property name="DOMAIN">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
+            <Property name="USER">soknos-wps</Property>
+            <Property name="PASS">soknos-52N</Property>
+            <Property name="WORKSPACEBASE">C:\wpsworkspace</Property>
+            <Property name="ARCOBJECTSJAR">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property>
+            <Property name="DESCRIBE_PROCESS_DIR">C:\wps\xmlDescriptions</Property>
+          </Repository>
+           -->
 	</AlgorithmRepositoryList>
-	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="true" webappPath="wps">
+	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
 		     <Database/>
             
      
