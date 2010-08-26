@@ -344,15 +344,15 @@ fileUpload.doUpload(request);
   <form method="post" action="index.jsp" onsubmit="return uploadFiles()" enctype="multipart/form-data">
        <input type="hidden" name="uploadProcess"/>
     <p>
-		Please enter the name of the class implementing IAlgorithm:<br>
+		Please enter the fuly qualified name of the java class implementing IAlgorithm:<br>
 		<input type="text" name="processName" size="30" id="processNameId">
 	</p>
 	<p>
-		Please specify the .class file for the process:<br>
+		Please specify the .java file for the process:<br>
 		<input type="file" name="processFile" size="40">
 	</p>
 	<p>
-		Please specify the associated ProcessDescription xml file (optional):<br>
+		Please specify the associated ProcessDescription .xml file (optional):<br>
 		<input type="file" name="processDescriptionFile" size="40">
 	</p>
  	<p> 
