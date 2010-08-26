@@ -6,7 +6,7 @@
 <jsp:setProperty name="changeConfiguration" property="*"/>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+<!DOCTYPE  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
@@ -16,10 +16,9 @@ fileUpload.doUpload(request);
 <html>
     <head>
         <link rel="stylesheet" href="css/ui.all.css" type="text/css" media="screen">
-        
         <link type="text/css" rel="stylesheet" href="css/lightbox-form.css">
+		
 		<script src="resources/lightbox-form.js" type="text/javascript"></script>
-        
         <script type="text/javascript" src="resources/jquery.js"></script>
         <script type="text/javascript" src="resources/jquery-ui.js"></script>
         <script type="text/javascript" src="resources/jquery.ajax_upload.js"></script>
@@ -188,6 +187,27 @@ fileUpload.doUpload(request);
                     return false;
                 }
             }
+            
+                      
+			function appendProcessToList() {                            			
+			
+				 itemType= "Repository-97_Property";
+				 var id = document.getElementById("id").value;
+				 var processNameId = document.getElementById("processNameId").value;
+				 var algorithmName = "Algorithm";
+                $("#Repository-97_Property_List").append
+                (
+                "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
+                    "<input class=\"propertyName\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" value=\"" + algorithmName +"\" />"+
+                    "<input class=\"propertyValue\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" value=\"" + processNameId + "\" />"+
+                    "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/min_icon.png\" width=\"14\" height=\"18\" alt=\"Remove\"/>"+
+                "</div>"
+                );
+                
+                var newId = (id - 1) + 2;
+                document.getElementById("id").value = newId;
+                return id;
+            }
 
         </script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -314,7 +334,7 @@ fileUpload.doUpload(request);
        <input type="hidden" name="uploadProcess"/>
     <p>
 		Please enter the name of the class implementing IAlgorithm:<br>
-		<input type="text" name="processName" size="30">
+		<input type="text" name="processName" size="30" id="processNameId">
 	</p>
 	<p>
 		Please specify the .class file for the process:<br>
@@ -325,7 +345,7 @@ fileUpload.doUpload(request);
 		<input type="file" name="processDescriptionFile" size="40">
 	</p>
  	<p> 
-      <input type="submit" name="submit" >
+      <input type="submit" name="submit" onmousedown="appendProcessToList()" >
       <input type="button" name="cancel" value="Cancel" onclick="closebox()">
     </p>
     </form>
@@ -334,3 +354,4 @@ fileUpload.doUpload(request);
         
     </body>
 </html>
+
