@@ -149,8 +149,9 @@ public class GTHelper {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			typeBuilder.setCRS(coordinateReferenceSystem);
+			
 		}
+		typeBuilder.setCRS(coordinateReferenceSystem);
 		typeBuilder.setNamespaceURI(namespace);
 		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
 		typeBuilder.setName(nameType);
