@@ -34,6 +34,7 @@ import org.n52.wps.server.oberserpattern.ISubject;
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
 
+	@Override
 	protected ProcessDescriptionType initializeDescription() {
 		ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
 		ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
