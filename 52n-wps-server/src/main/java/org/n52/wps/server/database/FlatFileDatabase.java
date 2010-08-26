@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
@@ -164,8 +165,9 @@ public class FlatFileDatabase implements IDatabase {
 		// TODO enhance for multiple ProcessResults
 				
 		LargeBufferStream bufferedBytes = ((LargeBufferStream)stream);
+		String uuid = UUID.randomUUID().toString();
+		String usedMimeType = mimeType;
 		try {
-			String usedMimeType = mimeType;
 			String[] splittedMimeType= mimeType.split("/");
 			if(splittedMimeType.length==2){
 				usedMimeType = splittedMimeType[1];
@@ -174,8 +176,8 @@ public class FlatFileDatabase implements IDatabase {
 				}
 			}
 			
-			
-			File f = new File(baseDir+File.separator+id+"result."+usedMimeType);
+		
+			File f = new File(baseDir+File.separator+id+"result-"+uuid);
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
 			bufferedBytes.close();
@@ -184,7 +186,7 @@ public class FlatFileDatabase implements IDatabase {
 			fos.close();
 			
 		//	IOUtils.write(bytes, fos);
-			File f_mime = new File(baseDir+File.separator+id+"_mimeType");
+			File f_mime = new File(baseDir+File.separator+id+"result-"+uuid+"_mimeType");
 			FileOutputStream fos_mime = new FileOutputStream(f_mime);
 			IOUtils.write(mimeType, fos_mime);
 			fos_mime.close();
@@ -194,7 +196,8 @@ public class FlatFileDatabase implements IDatabase {
 			throw new RuntimeException(e);
 		}
 	
-		return generateRetrieveResultURL(id);
+		return generateRetrieveResultURL(id+"result-"+uuid);
+				
 	}
 
 	/* (non-Javadoc)
