@@ -57,26 +57,22 @@ public class ChangeConfigurationBean {
     /**
      * Types represents the different types of the Entries to proceed
      */
-    private enum Types {
-
-        Server, Repository, Parser, Generator
-    };
+    private enum Types {Server, Repository, Parser, Generator, Formelement};
+    
     private WPSConfigurationDocument wpsConfigurationDocument;
     private WPSConfiguration wpsConfiguration;
+    
     private AlgorithmRepositoryList repositoryList;
     private ParserList parserList;
     private GeneratorList generatorList;
     private Server server;
 
-
     private String serializedWPSConfiguraton = "";
 
     public void setSerializedWPSConfiguraton(String data){
-    	data = URLDecoder.decode(data);
-    	System.out.println(data);
         serializedWPSConfiguraton = data;
         processFormData(data);
-        LOGGER.info("Saved and Activate new configuration!");
+        LOGGER.info("Saved and Activated new configuration!");
     }
 
     public String getSerializedWPSConfiguraton (){
@@ -226,6 +222,7 @@ public class ChangeConfigurationBean {
                         generatorValues.put(formName[1], entryArr[1]);
                     }
                     break;
+                               	
             }
 
 
@@ -359,8 +356,9 @@ public class ChangeConfigurationBean {
 
             String processingProperty = properties.keySet().iterator().next().split("_")[0];
             String propertyName = properties.remove(processingProperty + "_Name");
+            propertyName = URLDecoder.decode(propertyName);
             String propertyValue = properties.remove(processingProperty + "_Value");
-
+            propertyValue = URLDecoder.decode(propertyValue);
             if (propertyName != null) {
                 Property prop = Property.Factory.newInstance();
                 prop.setName(propertyName);
