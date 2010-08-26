@@ -29,6 +29,9 @@ fileUpload.doUpload(request);
             var itemListTypeNr = {"Generator":0,"Parser":1,"Repository":2};
             var relativeConfigPath = "../config/";
             var configurationFileName = "wps_config.xml";
+            
+            // upload req
+            var uploadId = "";
 
             // at page load
             $(document).ready(function(){
@@ -114,6 +117,8 @@ fileUpload.doUpload(request);
                             nameEntry = $(this).attr("name");
                             className = $(this).attr("className");
                             var itemID = addListItem(listType);
+                            if (nameEntry == "UploadedAlgorithmRepository"){setUploadId(itemID);}
+                            
                             $("#" + listType + "-" + itemID + "_NameEntry").val(nameEntry);
                             $("#" + listType + "-" + itemID + "_ClassEntry").val(className);
                             $('Property',this).each(function(j) {
@@ -188,26 +193,31 @@ fileUpload.doUpload(request);
                     return false;
                 }
             }
+                
+             function setUploadId(itemID){
+             uploadId = itemID;
+             }
+            
             
                       
 			function appendProcessToList() {                            			
-			
-				 itemType= "Repository-111_Property";
-				 var id = document.getElementById("id").value;
-				 var processNameId = document.getElementById("processNameId").value;
-				 var algorithmName = "Algorithm";
-                $("#Repository-97_Property_List").append
-                (
-                "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
-                    "<input class=\"propertyName\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" value=\"" + algorithmName +"\" />"+
-                    "<input class=\"propertyValue\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" value=\"" + processNameId + "\" />"+
-                    "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/min_icon.png\" width=\"14\" height=\"18\" alt=\"Remove\"/>"+
-                "</div>"
-                );
+
+			 itemType= "Repository-" + uploadId + "_Property";
+			 listName= "Repository-" + uploadId + "_Property_List";
+			 var id = document.getElementById("id").value;
+			 processNameId = document.getElementById("processNameId").value;
+			 algorithmName = "Algorithm";
+             
+             $("#"+listName).append("<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
+                    	"<input class=\"propertyName\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" value=\"" + algorithmName +"\" />"+
+                    	"<input class=\"propertyValue\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" value=\"" + processNameId + "\" />"+
+                   	 	"<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/min_icon.png\" width=\"14\" height=\"18\" alt=\"Remove\"/>"+
+                		"</div>");
+
                 
-                var newId = (id - 1) + 2;
-                document.getElementById("id").value = newId;
-                return id;
+            var newId = (id - 1) + 2;
+            document.getElementById("id").value = newId;
+            return id;
             }
 
         </script>
