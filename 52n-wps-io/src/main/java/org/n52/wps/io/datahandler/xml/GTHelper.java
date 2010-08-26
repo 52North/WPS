@@ -278,7 +278,7 @@ public class GTHelper {
 				"schemaLocation=\"http://schemas.opengis.net/gml/3.1.1/base/gml.xsd\"/> ";
 			
 				// add feature type definition and generic geometry
-			schema = schema + "<xs:element name=\"Feature\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
+			schema = schema + "<xs:element name=\"Feature-"+uuid+"\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
 					"<xs:complexType name=\"FeatureType\"> " +
 					"<xs:complexContent> " +
 					"<xs:extension base=\"gml:AbstractFeatureType\"> "+
