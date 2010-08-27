@@ -23,7 +23,7 @@ fileUpload.doUpload(request);
         <script type="text/javascript" src="resources/jquery-ui.js"></script>
         <script type="text/javascript" src="resources/jquery.ajax_upload.js"></script>
 
-        <script type="text/javascript">
+        <script type="text/javascript"><!--
             // constants
             var itemListTypes = new Array("Generator","Parser","Repository");
             var itemListTypeNr = {"Generator":0,"Parser":1,"Repository":2};
@@ -86,10 +86,38 @@ fileUpload.doUpload(request);
                 loadConfiguration(relativeConfigPath + configurationFileName);
             });
             
+            
             function uploadFiles() {
-            	 $("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
-                 $("#saveConfogurationForm").submit();
+          	var uploadCheck = new Boolean(false);
+            var extA = document.getElementById("processFile").value;
+            var extB = document.getElementById("processDescriptionFile").value;
+  			extA = extA.substring(extA.length-3,extA.length);
+  			extA = extA.toLowerCase();
+  			extB = extB.substring(extB.length-3,extB.length);
+  			extB = extB.toLowerCase();
+ 			
+			if(extA != 'ava' & extA != 'zip' | extB != 'xml' & extB != '')
+  			{if (extA != 'ava' & extA != 'zip')
+  				{alert('You selected a .'+extA+ ' file containing the process; please select a .java or .zip file instead!');
+  				if (extB != 'xml' & extB != '') alert('You also selected a .'+extB+ ' file containing the process description; please select a .xml file instead!');
+  				}
+  				else{alert('You selected a .'+extB+ ' file containing the process description; please select a .xml file instead!');}
+  			uploadCheck=false;
+  			}
+  			else {
+  			uploadCheck=true;
+  			}
+			
+  			if (uploadCheck)
+  			{
+  			appendProcessToList();
+  			$("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
+            $("#saveConfogurationForm").submit();
+            return true;
             }
+	  		return false;
+           	}
+            
 
             function loadConfiguration(configFile){
                 // ensure not getting cached version
@@ -220,7 +248,8 @@ fileUpload.doUpload(request);
             return id;
             }
 
-        </script>
+	
+        --></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>WPS Web Admin</title>
     </head>
@@ -341,23 +370,23 @@ fileUpload.doUpload(request);
         <div id="filter"></div>
 <div id="box">
   <span id="boxtitle"></span>
-  <form method="post" action="index.jsp" onsubmit="return uploadFiles()" enctype="multipart/form-data">
+  <form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadFiles()">
        <input type="hidden" name="uploadProcess"/>
     <p>
 		Please enter the fuly qualified name of the java class implementing IAlgorithm:<br>
-		<input type="text" name="processName" size="30" id="processNameId">
+		<input type="text" name="processName" size="30" id="processNameId" >
 	</p>
 	<p>
 		Please specify the .java file for the process:<br>
-		<input type="file" name="processFile" size="40">
+		<input type="file" name="processFile" id="processFile" size="40" >
 	</p>
 	<p>
 		Please specify the associated ProcessDescription .xml file (optional):<br>
-		<input type="file" name="processDescriptionFile" size="40">
+		<input type="file" name="processDescriptionFile" id="processDescriptionFile" size="40" accept="text/xml">
 	</p>
  	<p> 
-      <input type="submit" name="submit" onmousedown="appendProcessToList()" >
-      <input type="button" name="cancel" value="Cancel" onclick="closebox()">
+      <input type="submit" name="submit" >
+      <input type="reset" name="cancel" value="Cancel" onclick="closebox()" >
     </p>
     </form>
 </div>
