@@ -47,6 +47,7 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.Feature;
@@ -146,28 +147,14 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 		
 		
 		HashMap<String,IData> resulthash = new HashMap<String,IData>();
-		resulthash.put("result", new GTVectorDataBinding(featureCollection));
+		resulthash.put("intersection_result", new GTVectorDataBinding(featureCollection));
 		return resulthash;
 	}
 	
 	private Feature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
 		
-		if(geometry==null || geometry.isEmpty()){
-			return null;
-		}
-		SimpleFeatureType type = bluePrint.getFeatureType();
-		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
-		SimpleFeature feature = null;
-		Object[] attributes = new Object[type.getAttributeCount()];
-		List<Object> originalAttributes = bluePrint.getAttributes();
-		for(int i=0;i<originalAttributes.size();i++){
-			if(i==0){
-				attributes[i] = geometry;
-			}else{
-				attributes[i] = originalAttributes.get(i);
-			}
-		}
-		feature = featureBuilder.buildFeature(id, attributes);
+		Feature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
+
 		return feature;
 	}
 	
@@ -192,7 +179,7 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 	@Override
 	public List<String> getOutputIdentifiers() {
 		List<String> identifierList =  new ArrayList<String>();
-		identifierList.add("result");
+		identifierList.add("intersection_result");
 		return identifierList;
 	}
 	
