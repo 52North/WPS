@@ -25,13 +25,16 @@ Bastian Schäffer
 
  In an initial configuration it is important to change the server's hostname to your machine's name.
 
-** WPS Web Admin Console (beta)
+** WPS Web Admin Console
 
  The WPS Web Admin Console is accessible through http://YOURHOST:YOURPORT/wps or directly through http://YOURHOST:YOURPORT/wps/webAdmin/index.jsp. It allows you to configure the WPS settings, as defined in the wps_config.xml. To use this console, it is necessary to define a user in the config/tomcat-users.xml (if you use Apache Tomcat). The role to define is wpsAdmin, userName and password can be chosen as you like. Example is:
+ 
+  \<role rolename="wpsAdmin"/\>
+  \<user username="Q" password="007" roles="wpsAdmin"/\>
 
 ** WPS ArcGIS Server Connector
 
- See the turorial {{{http://XXX}here}}
+ See the turorial {{{https://52north.org/download/Geoprocessing/documents/Exposing%20ArcGIS%20Server%20functionality%20with%2052%c2%b0North%20WPS-short-version-_v1.0.pdf} Setting up the 52°North WPS with ArcGIS Server-short version}}
 
 
 

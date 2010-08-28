@@ -3,7 +3,7 @@ Demo section
  -----
 Bastian Schäffer
  -----
- 2010-04-08
+ 2010-0828-08
  -----
 
 WPS Download section
@@ -12,7 +12,7 @@ WPS Download section
 	
 	* Binary:
 	
-		* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc4/52n-wps-webapp-2.0-rc4.war} 52n WPS 2.0 RC4}}, release date April 2010.
+		* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc5/52n-wps-webapp-2.0-rc5.war} 52n WPS 2.0 RC5}}, release date August 2010.
 		Note: Java 1.6.0_01-b06 or higher required
 		
 		Please see the user guidance for further {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/source_setup.html} instructions}}.
@@ -23,6 +23,10 @@ WPS Download section
 		
 * Former versions:
 
+
+       
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc4/52n-wps-webapp-2.0-rc4.war} 52n WPS 2.0 RC4}}, release date April 2010.
+	
 	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc3/52n-wps-webapp-2.0-rc3.war} 52n WPS 2.0 RC3}}, release date September 2009.
 	
 	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc2/52n-wps-webapp-2.0-rc2.war} 52n WPS 2.0 RC2}}, release date March 2009.
