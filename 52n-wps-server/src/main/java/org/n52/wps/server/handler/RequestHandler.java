@@ -40,12 +40,18 @@ package org.n52.wps.server.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.wps.x100.ProcessFailedType;
 import net.opengis.wps.x100.StatusType;
@@ -63,7 +69,9 @@ import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -179,7 +187,9 @@ public class RequestHandler {
 
 			// parse the InputStream to create a Document
 			doc = fac.newDocumentBuilder().parse(is);
-
+		
+		
+			
 			// Get the first non-comment child.
 			Node child = doc.getFirstChild();
 			while(child.getNodeName().compareTo("#comment")==0) {
@@ -355,6 +365,8 @@ public class RequestHandler {
 		}
 		return responseMimeType.toLowerCase();
 	}
+	
+	
 }
 
 
