@@ -111,6 +111,7 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
 			SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
 			configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+			
 		}else{
 			configuration = new GMLConfiguration();
         	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
