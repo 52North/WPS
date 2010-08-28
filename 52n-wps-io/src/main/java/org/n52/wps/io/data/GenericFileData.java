@@ -126,19 +126,15 @@ public class GenericFileData {
 			    type = builder.buildFeatureType();
 				
 			  
-			    IndexedShapefileDataStore dataStore = new IndexedShapefileDataStore(shp.toURI().toURL());
+			    ShapefileDataStore dataStore = new ShapefileDataStore(shp.toURI().toURL());
 			    dataStore.createSchema(type);
 			    dataStore.forceSchemaCRS(type.getCoordinateReferenceSystem());
-		
-			   
-		
+				
 			    String typeName = dataStore.getTypeNames()[0];
-			   store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore.getFeatureSource(typeName);
+			    store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore.getFeatureSource(typeName);
 		
 			    store.setTransaction(transaction);
-			    FeatureCollection<SimpleFeatureType, SimpleFeature> outCollection = FeatureCollections.newCollection();
-		
-			    
+			  		    
 			    build = new SimpleFeatureBuilder(type);
 			    modifiedFeatureCollection = new DefaultFeatureCollection("fc", type);
 			}
