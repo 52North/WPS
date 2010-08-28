@@ -2,11 +2,11 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>2.0-RC5</version>
+		<version>2.0-RC6-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-gridgain</artifactId>
-  <version>2.0-RC5</version>
+  <version>2.0-RC6-SNAPSHOT</version>
 	<name>52north 52n-wps-gridgain</name>
 	<description>The project 52 north 52n-wps-grid does something with
 		JAVA.</description>
