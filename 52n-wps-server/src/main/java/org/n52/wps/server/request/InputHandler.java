@@ -43,16 +43,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -70,6 +77,7 @@ import org.n52.wps.io.datahandler.xml.GML3BasicParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.util.BasicXMLTypeFactory;
+import org.w3c.dom.Node;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -123,7 +131,20 @@ public class InputHandler {
 	 */
 	protected void handleComplexData(InputType input) throws ExceptionReport{
 		String inputID = input.getIdentifier().getStringValue();
-		String complexValue = input.getData().getComplexData().xmlText();
+		
+		Node complexValueNode = input.getData().getComplexData().getDomNode().getFirstChild();
+		String complexValue = "";
+		try {
+			complexValue = nodeToString(complexValueNode);
+		} catch (TransformerFactoryConfigurationError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			complexValue = "";
+		} catch (TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			complexValue = "";
+		}
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
 			if(inputID.equals(tempDesc.getIdentifier().getStringValue())) {
@@ -442,4 +463,13 @@ public class InputHandler {
 			return conn.getInputStream();
 		}
 	}
+	
+	 private String nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+		  StringWriter stringWriter = new StringWriter();
+		  Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		  transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		  transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
+		  
+		  return stringWriter.toString();
+		 }
 }
