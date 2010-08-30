@@ -162,7 +162,8 @@ public class InputHandler {
 		IData collection = null;
 		if(parser instanceof AbstractXMLParser) {
 			try {
-				if(!complexValue.contains("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"")){
+				boolean xsiisIn = complexValue.contains("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+				if(!xsiisIn){
 						complexValue = complexValue.replace("xsi:schemaLocation", "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation");
 				}
 			
