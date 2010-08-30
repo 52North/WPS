@@ -32,7 +32,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -276,14 +275,40 @@ public class GTHelper {
 				"version=\"1.0\"> "+
 				"<xs:import namespace=\"http://www.opengis.net/gml\" "+
 				"schemaLocation=\"http://schemas.opengis.net/gml/3.1.1/base/gml.xsd\"/> ";
-			
+				
+		String typeName = featureType.getGeometryDescriptor().getType().getBinding().getName();
+		String geometryTypeName = "";
+		if(typeName.contains("Point")){
+	    	geometryTypeName = "PointPropertyType";
+	    }
+	  	     
+		 if(typeName.contains("MultiPoint")){
+			 geometryTypeName = "PointPropertyType";	
+					    }
+		 if(typeName.contains("LineString")){
+			 geometryTypeName = "CurvePropertyType";	
+		 }
+		 if(typeName.contains("MultiLineString")){
+			 geometryTypeName = "CurvePropertyType";	
+		 }
+		 if(typeName.contains("Polygon")){
+			 geometryTypeName = "SurfacePropertyType";	
+		 }
+		 if(typeName.contains("MultiPolygon")){
+			 geometryTypeName = "SurfacePropertyType";	
+		 }		
+				
 				// add feature type definition and generic geometry
 			schema = schema + "<xs:element name=\"Feature-"+uuid+"\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
 					"<xs:complexType name=\"FeatureType\"> " +
 					"<xs:complexContent> " +
 					"<xs:extension base=\"gml:AbstractFeatureType\"> "+
 					"<xs:sequence> " +
-					"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
+					//"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
+					
+					
+					
+					"<xs:element name=\"GEOMETRY\" type=\"gml:"+geometryTypeName+"\"> "+
 					"</xs:element> ";
 			
 			//add attributes
