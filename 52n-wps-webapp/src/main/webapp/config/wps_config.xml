@@ -31,7 +31,14 @@
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 			
-			
+			<Parser name="GML2BasicParser4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicParser4Files">
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Parser>
 			
 			<Parser name="AsciiGrassParser" className="org.n52.wps.io.datahandler.binary.AsciiGrassParser">
 				<Property name="supportedFormat">application/image-ascii-grass</Property>
