@@ -114,7 +114,9 @@ public class GenericFileData {
 					  builder.setCRS(collection.getSchema()
 								.getCoordinateReferenceSystem());
 				}
-			    
+			  
+			   
+							   
 			    builder.setDefaultGeometry(sf.getDefaultGeometryProperty().getName().getLocalPart());
 		
 			    for (Property prop : sf.getProperties()) {
@@ -184,7 +186,7 @@ public class GenericFileData {
       "LineString", "MultiLineString", "Polygon", "MultiPolygon",
       "Point", "MultiPoint"};
     for (String iter : supported) {
-      if (type.getBinding().getSimpleName().equals(iter)) {
+      if (type.getBinding().getSimpleName().equalsIgnoreCase(iter)) {
         return true;
       }
     }
