@@ -21,7 +21,7 @@
     </distributionManagement>
     <packaging>pom</packaging>
     <name>52north processing</name>
-	<version>2.0-RC5-SNAPSHOT</version>
+	<version>WPS 2.0-rc5</version>
     <description>
     	52 north processing provides different tools for web based
 		processing in context of the OGC WPS specification.
@@ -42,9 +42,9 @@
     <inceptionYear>2007</inceptionYear>
     <scm>
         <!-- Specification of the Source-Content-Managementsystem -->
-        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</connection>
-        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</developerConnection>
-		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4</url>
+        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</connection>
+        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</url>
   </scm>
   
       <repositories>

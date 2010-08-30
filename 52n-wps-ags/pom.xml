@@ -3,13 +3,13 @@
   <parent>
     <artifactId>52n-wps-parent</artifactId>
     <groupId>org.n52.wps</groupId>
-    <version>2.0-RC5-SNAPSHOT</version>
+    <version>WPS 2.0-rc5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.n52.wps</groupId>
   <artifactId>52n-wps-ags</artifactId>
   <name>52n-wps-ags</name>
-  <version>2.0-RC5-SNAPSHOT</version>
+  <version>WPS 2.0-rc5</version>
   <packaging>jar</packaging>
   <description>The project 52 north 52n-wps-ags lserver does something with JAVA.</description>
   <url>http://incubator.52north.org/maven/project-sites/52n-wps-server</url>
@@ -18,9 +18,9 @@
   	<url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4/52n-wps-ags</connection>
-    <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4/52n-wps-ags</developerConnection>
-    <url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc4/52n-wps-ags</url>
+    <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5/52n-wps-ags</connection>
+    <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5/52n-wps-ags</developerConnection>
+    <url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5/52n-wps-ags</url>
   </scm>
   <build>
  	<resources>

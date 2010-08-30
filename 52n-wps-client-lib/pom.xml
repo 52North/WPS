@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>2.0-RC5-SNAPSHOT</version>
+        <version>WPS 2.0-rc5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>52n-wps-client-lib</artifactId>
-  <version>2.0-RC5-SNAPSHOT</version>
+  <version>WPS 2.0-rc5</version>
     <packaging>jar</packaging>
     <name>52north 52n-wps-client library</name>
     <description>This module contains some convenient classes to interact with WPS</description>
