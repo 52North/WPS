@@ -207,8 +207,13 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			//output only parameters
 			if(currentParam.isOutput && !currentParam.isInput){
 				if(currentParam.isComplex){
-					
-					String extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(currentParam.mimeType);
+					String extension = "";
+					if(currentParam.schema != null && currentParam.schema.length()>0){
+						//we have vector data. So use a shp file.
+						extension = "shp";
+					}else{
+						extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(currentParam.mimeType);
+					}
 					String fileName = System.currentTimeMillis() + "." + extension;
 					
 					fileName = this.addOutputFile(fileName);
@@ -220,8 +225,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		
 		//execute
 		String toolName = this.processDescription.getTitle().getStringValue();
-		LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
-				
+		//LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
 		this.workspace.executeGPTool(toolName, null, this.toolParameters);
 		
 		
@@ -240,7 +244,13 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					File currentFile = new File (fileName);
 					GenericFileData outputFileData;
 					try {
-						outputFileData = new GenericFileData(currentFile, currentParam.mimeType);
+						if(currentParam.schema != null && currentParam.schema.length()>0){
+							//we have vector data. So use a shp file.
+							
+							outputFileData = new GenericFileData(currentFile, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
+						}else{
+							outputFileData = new GenericFileData(currentFile, currentParam.mimeType);
+						}
 						result.put(currentParam.wpsOutputID, new GenericFileDataBinding(outputFileData));
 					} catch (FileNotFoundException e) {
 						LOGGER.error("Could not read output file: " + fileName);
