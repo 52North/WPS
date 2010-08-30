@@ -140,10 +140,14 @@
 			<Generator name="GML3BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator4Files">
 				<Property name="featureTransformerIncludeBounding">false</Property>
 				<Property name="featureTransformerDecimalPlaces">4</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
-			</Generator>		
+			</Generator>			
 			
 		</GeneratorList>
 	</Datahandlers>
