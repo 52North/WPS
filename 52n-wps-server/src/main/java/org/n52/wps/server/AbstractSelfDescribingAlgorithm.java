@@ -102,6 +102,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 							supportedSchemas = new String[0];
 						}
 						String[] supportedEncodings = parser.getSupportedEncodings();
+						
 						for(int j=0; j<supportedFormats.length;j++){
 							for(int k=0; k<supportedEncodings.length;k++){
 								if(j==0 && k==0 && i == 0){
@@ -112,6 +113,14 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 									for(int t = 0; t<supportedSchemas.length;t++){
 										if(t==0){
 											defaultFormat.setSchema(supportedSchemas[t]);
+										}else{
+											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
+											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+											
+											
+										
 										}
 									}
 								}else{
@@ -176,7 +185,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					
 						SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
 						ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
-						ComplexDataCombinationsType supportedtInputFormat = complexData.addNewSupported();
+						ComplexDataCombinationsType supportedtOutputFormat = complexData.addNewSupported();
 						
 						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
@@ -208,11 +217,18 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 									for(int t = 0; t<supportedSchemas.length;t++){
 										if(t==0){
 											defaultFormat.setSchema(supportedSchemas[t]);
+										}else{
+												ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtOutputFormat.addNewFormat();
+												supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+												supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+												supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+												
+											
 										}
 									}
 								}else{
 									String supportedFormat = supportedFormats[j];
-									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
+									ComplexDataDescriptionType supportedCreatedFormat = supportedtOutputFormat.addNewFormat();
 									supportedCreatedFormat.setMimeType(supportedFormat);
 									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
 									for(int t = 0; t<supportedSchemas.length;t++){
@@ -220,7 +236,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 											supportedCreatedFormat.setSchema(supportedSchemas[t]);
 										}
 										if(t>0){
-											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
+											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtOutputFormat.addNewFormat();
 											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
 											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
 											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
