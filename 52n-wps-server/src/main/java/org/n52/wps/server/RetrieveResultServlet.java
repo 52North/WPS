@@ -27,19 +27,23 @@ Copyright ? 2007 52?North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.axiom.om.util.CopyUtils;
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.n52.wps.server.request.ExecuteRequest;
 
 /**
  * This is a simple servlet, which serves processed results. It serves
@@ -59,6 +63,8 @@ public class RetrieveResultServlet extends HttpServlet {
 			SERVLET_PATH = req.getContextPath();
 		}
 		String id = req.getParameter("id");
+		
+		
 		OutputStream os = res.getOutputStream();
 		if(id == null || id.equals("")) {
 			res.setContentType("text/html");
@@ -66,9 +72,25 @@ public class RetrieveResultServlet extends HttpServlet {
 			PrintWriter pw = new PrintWriter(os);
 			pw.write("<html><title>52n WPS - id not found</title><body><H1>ID not found: " + id + "<H1></body></html>");
 		}
-		res.setContentType("text/xml");
 		IDatabase db = DatabaseFactory.getDatabase();
+		//set appropriate mimetype for result
+		String mimeType = db.getMimeTypeForStoreResponse(id);
+		res.setContentType(mimeType);
+		//look up result
 		InputStream is = db.lookupResponse(id);
+		//write result to output
 		IOUtils.copy(is, os);
+
+		// Not Supported workaround -> removed.
+//		File file = db.lookupResponseAsFile(id+"result."+usedMimeType);
+//		String fileName = URLEncoder.encode(file.getName());
+//		String redirect = "Databases/FlatFile/"+fileName;
+//		
+//		res.sendRedirect(redirect);
+//		res.flushBuffer();
+//		
+//		
+//		db.deleteStoredResponse(id);
+		res.flushBuffer();
 	}	
 }

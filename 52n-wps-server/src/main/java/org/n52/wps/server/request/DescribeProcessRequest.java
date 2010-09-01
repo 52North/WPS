@@ -34,6 +34,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -92,7 +93,7 @@ public class DescribeProcessRequest extends Request {
 		XmlCursor c = document.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://geoserver:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd");
+		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
 				
 		String[] identifiers = getMapValue("identifier", true).split(",");
 		document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);

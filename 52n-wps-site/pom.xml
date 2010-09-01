@@ -3,10 +3,11 @@
   <parent>
     <artifactId>52n-wps-parent</artifactId>
     <groupId>org.n52.wps</groupId>
-    <version>1.0-rc3-SNAPSHOT</version>
+    <version>WPS 2.0-rc5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>52n-wps-site</artifactId>
+  <version>WPS 2.0-rc5</version>
   <packaging>pom</packaging>
   <name>52north processing site</name>
   <description>52 north processing provides different tools for web based processing in context of the OGC WPS specification.</description>
@@ -19,16 +20,29 @@
   <inceptionYear>2007</inceptionYear>
       <mailingLists>
         <mailingList>
-            <name>Geoprocessing</name>
+            <name>Geoprocessing Community Mailinglist</name>
             <archive>
-                http://52north.org/pipermail/geoprocessingservices/
+                http://www2.52north.org/pipermail/geoprocessingservices/
             </archive>
             <post>geoprocessingservices@52north.org</post>
             <subscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
+                http://www2.52north.org/mailman/listinfo/geoprocessingservices
             </subscribe>
             <unsubscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
+                http://www2.52north.org/mailman/listinfo/geoprocessingservices
+            </unsubscribe>
+        </mailingList>
+        <mailingList>
+            <name>Geoprocessing Commit Mailinglist</name>
+            <archive>
+                http://www2.52north.org/pipermail/geoprocessing-commits/
+            </archive>
+            <post>Geoprocessing-commits@52north.org</post>
+            <subscribe>
+                http://www2.52north.org/mailman/listinfo/geoprocessing-commits
+            </subscribe>
+            <unsubscribe>
+                http://www2.52north.org/mailman/listinfo/geoprocessing-commits
             </unsubscribe>
         </mailingList>
     </mailingLists>
@@ -52,7 +66,7 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>xmlbeans</groupId>
       <artifactId>xbean</artifactId>
       <version>2.2.0</version>
@@ -66,7 +80,7 @@
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
-    </dependency>
+    </dependency-->
 
     <!--dependency>
     	<groupId>jaxen</groupId>

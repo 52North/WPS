@@ -3,7 +3,7 @@
  -----
 Bastian Schäffer
  -----
- 2008-08-11
+ 2010-04-08
  -----
 
 Geoprocessing Community
@@ -40,7 +40,7 @@ Web Processing
 
  
 
-  Check our {{{http://52north.org/cgi-bin/viewvc.cgi/?root=geoprocessing}SVN repositories}} for the latest developments in Geoprocessing. 
+  Check our {{{http://svn.52north.org/cgi-bin/viewvc.cgi/?root=geoprocessing}SVN repositories}} for the latest developments in Geoprocessing. 
 
  
 Our Prospect
@@ -53,6 +53,8 @@ Our Prospect
     * <<GRID computing:>> Use the power of GRID networks for the purpose of complex geoprocessing
     
     * <<Process integration:>> Wrapping existing desktop frameworks (GRASS, ArcGIS Server, FME, ILWIS,...) for use in SDIs.
+    
+    * <<Cloud Computing:>> Leveraging the full potential of Cloud Computing for web based Geoprocessing
 
   
 

@@ -36,14 +36,18 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
@@ -57,6 +61,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -84,6 +89,7 @@ public class ExecuteResponseBuilder {
 	private RawData rawDataHandler = null; 
 	private ProcessDescriptionType description;
 	private static Logger LOGGER = Logger.getLogger(ExecuteResponseBuilder.class);
+	private Calendar creationTime;
 	
 	public ExecuteResponseBuilder(ExecuteRequest request) throws ExceptionReport{
 		this.request = request;
@@ -92,8 +98,8 @@ public class ExecuteResponseBuilder {
 		XmlCursor c = doc.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsExecute_response.xsd");
-		doc.getExecuteResponse().setServiceInstance(CapabilitiesConfiguration.ENDPOINT_URL+"?SERVICE=GetCapabilities&SERVICE=WPS");
+		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+		doc.getExecuteResponse().setServiceInstance(CapabilitiesConfiguration.ENDPOINT_URL+"?REQUEST=GetCapabilities&SERVICE=WPS");
 		doc.getExecuteResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		doc.getExecuteResponse().setService("WPS");
 		doc.getExecuteResponse().setVersion(Request.SUPPORTED_VERSION);
@@ -103,6 +109,7 @@ public class ExecuteResponseBuilder {
 		description = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue()).getDescription();
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
+		creationTime = Calendar.getInstance();
 	}
 	
 	public void update() throws ExceptionReport {		
@@ -132,15 +139,17 @@ public class ExecuteResponseBuilder {
 				if(desc.isSetComplexOutput()) {
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
 					String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
-					String mimeType = ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
-					generateComplexDataOutput(id, false, true, schema, mimeType, encoding, null);
+					String responseMimeType = getMimeType(rawDataOutput);
+					generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
 				}
 				
 				else if (desc.isSetLiteralOutput()) {
 					String mimeType = null;
 					String schema = null;
 					String encoding = null;
-					generateLiteralDataOutput(id, doc, desc.getLiteralOutput().getDataType().getReference(), schema, mimeType, encoding, desc.getTitle());
+					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+					String reference = dataType != null ? dataType.getReference() : null;
+					generateLiteralDataOutput(id, doc, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				return;
 			}
@@ -155,7 +164,7 @@ public class ExecuteResponseBuilder {
 					throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
 				}
 				if(desc.isSetComplexOutput()) {
-					String mimeType = ExecuteResponseBuilder.getMimeType(desc, definition);
+					String mimeType = getMimeType(definition);
 					String schema = ExecuteResponseBuilder.getSchema(desc, definition);
 					String encoding = ExecuteResponseBuilder.getEncoding(desc, definition);
 					generateComplexDataOutput(responseID, documentDef.getAsReference(), false,  schema, mimeType, encoding, desc.getTitle());
@@ -164,7 +173,9 @@ public class ExecuteResponseBuilder {
 					String mimeType = null;
 					String schema = null;
 					String encoding = null;
-					generateLiteralDataOutput(responseID, doc, desc.getLiteralOutput().getDataType().getReference(), schema, mimeType, encoding, desc.getTitle());
+					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+					String reference = dataType != null ? dataType.getReference() : null;
+					generateLiteralDataOutput(responseID, doc, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				else{
 					throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
@@ -201,6 +212,12 @@ public class ExecuteResponseBuilder {
 			schema = def.getSchema();
 		}
 		if(schema == null) {
+			ComplexDataDescriptionType[] formats = desc.getComplexOutput().getSupported().getFormatArray();
+			for (ComplexDataDescriptionType format : formats) {
+				if (format.getSchema() == null) {
+					return null;
+				}
+			}
 			// TODO Default schema will be returned. What about alternative schemas? 
 			return desc.getComplexOutput().getDefault().getFormat().getSchema();
 		}
@@ -220,30 +237,54 @@ public class ExecuteResponseBuilder {
 		return encoding;
 	}
 	
-	// TODO Rename to getMimeType... the method is a getter, not setter.
-	public static String getMimeType(OutputDescriptionType desc, OutputDefinitionType def) {
-		String mimeType = null;
-		if(def != null) {
-			mimeType = def.getMimeType();
+	public String getMimeType() {
+		return getMimeType(null);
+	}
+	
+	public String getMimeType(OutputDefinitionType def) {
+		String mimeType = "";
+		OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
+		if (request.getExecute().isSetResponseForm()) {
+			// Get the outputdescriptions from the algorithm
+			if(request.isRawData()) {
+				mimeType = request.getExecute().getResponseForm().getRawDataOutput().getMimeType();
+				
+				
+			}
+			else{
+				//mimeType = "text/xml";
+				// MSS 03/02/2009 defaulting to text/xml doesn't work when the data is a complex raster
+				if(outputDescs[0].isSetLiteralOutput()){
+					mimeType = "text/xml";
+				}else{
+					if (def != null) {
+						mimeType = def.getMimeType();
+					} else {
+						mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+					}
+				}
+			}
 		}
-		if(mimeType == null) {
+		if(mimeType==null){
 			// TODO Default MIME type will be returned. What about alternative MIME types?
-			return desc.getComplexOutput().getDefault().getFormat().getMimeType();
+			mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
 		}
+		
+		
 		return mimeType;
 	}
 
 
 
 	private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
-		Object obj = request.getAttachedResult().get(responseID);
+		IData obj = request.getAttachedResult().get(responseID);
 		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType);
+			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier);
 		}
 		else {
-			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title);
+			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
 			if(asReference) {
-				handler.updateResponseAsReference(doc, Long.toString(request.getUniqueId()));
+				handler.updateResponseAsReference(doc, Long.toString(request.getUniqueId()),mimeType);
 			}
 			else {
 				handler.updateResponseForComplexData(doc);
@@ -253,8 +294,8 @@ public class ExecuteResponseBuilder {
 	}
 
 	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) {
-		Object obj = request.getAttachedResult().get(responseID);
-		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title);
+		IData obj = request.getAttachedResult().get(responseID);
+		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
 		handler.updateResponseForLiteralData(res, dataTypeReference);
 	}
 
@@ -279,7 +320,7 @@ public class ExecuteResponseBuilder {
 	
 	public void setStatus(StatusType status) {
 		//workaround, should be generated either at the creation of the document or when the process has been finished.
-		status.setCreationTime(Calendar.getInstance());
+		status.setCreationTime(creationTime);
 		doc.getExecuteResponse().setStatus(status);
 	}
 

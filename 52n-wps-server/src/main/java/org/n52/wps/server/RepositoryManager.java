@@ -1,39 +1,42 @@
 /***************************************************************
- This implementation provides a framework to publish processes to the
+This implementation provides a framework to publish processes to the
 web through the  OGC Web Processing Service interface. The framework 
 is extensible in terms of processes and data handlers. It is compliant 
 to the WPS version 0.4.0 (OGC 05-007r4). 
 
- Copyright (C) 2006 by con terra GmbH
+Copyright (C) 2009 by con terra GmbH
 
- Authors: 
-	Bastian Schäffer, Institute for geoinformatics, University of
-Muenster, Germany
+Authors: 
+	Bastian Schäffer, University of Muenster
 
 
- Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
- 48155 Muenster, Germany, 52n@conterra.de
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
+Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
+48155 Muenster, Germany, 52n@conterra.de
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+version 2 as published by the Free Software Foundation.
 
- You should have received a copy of the GNU General Public License
- along with this program (see gnu-gpl v2.txt); if not, write to
- the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA  02111-1307, USA or visit the web page of the Free
- Software Foundation, http://www.fsf.org.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
- Created on: 23.05.2007
- ***************************************************************/
+You should have received a copy of the GNU General Public License
+along with this program (see gnu-gpl v2.txt); if not, write to
+the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA  02111-1307, USA or visit the web page of the Free
+Software Foundation, http://www.fsf.org.
+
+***************************************************************/
+
+
 package org.n52.wps.server;
 
-import java.lang.reflect.InvocationTargetException;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,30 +46,43 @@ import org.n52.wps.commons.WPSConfig;
 
 public class RepositoryManager {
 	
-	public static String PROPERTY_NAME_REGISTERED_REPOSITORIES = "registeredAlgorithmRepositories";
 
 	private static RepositoryManager instance;
 	private static Logger LOGGER = Logger.getLogger(RepositoryManager.class);
 	
 	private List<IAlgorithmRepository> repositories;
 	
-	
+	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
 	
 	private RepositoryManager(){
-		repositories = new ArrayList<IAlgorithmRepository>();
-		/*if(!WPSConfiguration.getInstance().exists(PROPERTY_NAME_REGISTERED_REPOSITORIES)) {
-			LOGGER.warn("Missing " + PROPERTY_NAME_REGISTERED_REPOSITORIES + "Property");
-			return;
-		}
-		String propertyValue = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_REGISTERED_REPOSITORIES);
-		String[] registeredRepositories = propertyValue.split(",");
-		*/
-		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
 		
+		// clear registry
+		globalProcessIDs.clearRegistry();
+		
+        // initialize all Repositories
+        loadAllRepositories();
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllRepositories();
+            }
+        });
+
+	}
+
+    private void loadAllRepositories(){
+        repositories = new ArrayList<IAlgorithmRepository>();
+
+		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
+
 		for(Repository repository : repositoryList){
 			String repositoryClassName = repository.getClassName();
 			try {
-			
+
 				IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).newInstance();
 				repositories.add(algorithmRepository);
 				LOGGER.info("Algorithm Repositories initialized");
@@ -74,30 +90,30 @@ public class RepositoryManager {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
-				try {
-					
-					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
-					repositories.add(algorithmRepository);
-				} catch (IllegalArgumentException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (SecurityException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (IllegalAccessException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (InvocationTargetException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (NoSuchMethodException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				} catch (ClassNotFoundException e1) {
-					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-				}				
-			
-				
+//				try {
+//
+//					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
+//					repositories.add(algorithmRepository);
+//				} catch (IllegalArgumentException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (SecurityException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (IllegalAccessException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (InvocationTargetException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (NoSuchMethodException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				} catch (ClassNotFoundException e1) {
+//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+//				}
+				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+
 			} catch (ClassNotFoundException e) {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Class not found");
 			}
 		}
-	}
+    }
 	
 	public static RepositoryManager getInstance(){
 		if(instance==null){
@@ -153,5 +169,50 @@ public class RepositoryManager {
 		}
 		return false;
 	}
+	
+	public IAlgorithmRepository getRepositoryForAlgorithm(String algorithmName){
+		for(IAlgorithmRepository repository : repositories){
+			if(repository.containsAlgorithm(algorithmName)){
+				return repository;
+			}
+		}
+		return null;
+	}
+	
+	public Class getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
+		return algorithm.getInputDataType(inputIdentifier);
+		
+	}
+	
+	public Class getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
+		return algorithm.getOutputDataType(inputIdentifier);
+		
+	}
+	
+	public boolean registerAlgorithm(String id, IAlgorithmRepository repository){
+		if (globalProcessIDs.addID(id)){
+			return true;
+		}
+		else return false;
+	}
+	
+	public boolean unregisterAlgorithm(String id){
+		if (globalProcessIDs.removeID(id)){
+			return true;
+		}
+		else return false;
+	}
+	
+	public IAlgorithmRepository getAlgorithmRepository(String name){
+	  for (IAlgorithmRepository repo : repositories ){
+		   if(repo.getClass().getName().equals(name)){
+			   return repo;
+		  }
+	  }
+	return null;
+	}
+	
 
 }

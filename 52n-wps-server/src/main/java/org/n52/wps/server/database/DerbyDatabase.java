@@ -27,25 +27,22 @@
  ***************************************************************/
 package org.n52.wps.server.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.File;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
 /**
  * @note Uses lazy initialization without synchronization  
  */
 public class DerbyDatabase extends AbstractDatabase {
-	public static final String creationString = "CREATE TABLE RESULTS (" +
-			"REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
-			"REQUEST_DATE DATE, " +
-			"RESPONSE_TYPE VARCHAR(100), " +
-			"RESPONSE CLOB)";
+
 	private static Logger LOGGER = Logger.getLogger(DerbyDatabase.class); // Get access to the global logger.
 	private static String connectionURL = null;
 	private static Connection conn = null;
@@ -61,6 +58,7 @@ public class DerbyDatabase extends AbstractDatabase {
 			DerbyDatabase.connectionURL = dbDriverURI + ":" + getDatabasePath() + File.separator + getDatabaseName();
 			LOGGER.debug("Database connection URL is: " + DerbyDatabase.connectionURL);
 		} catch(ClassNotFoundException cnf_ex) {
+			LOGGER.error("Database cannot be loaded: " + connectionURL);
 			throw new UnsupportedDatabaseException("The database class could not be loaded.");
 		}
 		if(!DerbyDatabase.createConnection()) 
@@ -241,4 +239,22 @@ public class DerbyDatabase extends AbstractDatabase {
 		}
 		return true;
 	}
+
+	
+	public boolean deleteStoredResponse(String id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+		
+	public File lookupResponseAsFile(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+	
+	
 }

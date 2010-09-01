@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--This example describes a buffer command that accepts polygon coordinates in GML, and used a buffer distance in meters to produce a buffered polygon feature, which is output in GML, in either UTF-8 or base64 encoding.  The polygon can be returned directly as output, or stored by the service as a web-accessible resource.  Ongoing processing status reports are not available. -->
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
-http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" storeSupported="true" statusSupported="false">
 		<ows:Identifier>org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</ows:Identifier>
 		<ows:Title>Intersect</ows:Title>
@@ -12,21 +12,21 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 		<ows:Metadata xlink:title="GML" />
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>Polygons</ows:Identifier>
-				<ows:Title>Polygons</ows:Title>
+				<ows:Identifier>Polygon1</ows:Identifier>
+				<ows:Title>Polygon1</ows:Title>
 				<ows:Abstract>Polygons</ows:Abstract>
 				<ComplexData>
 			
 				<Default>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 					</Format>
 				</Default>
 				<Supported>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 					</Format>
 				</Supported>
 				
@@ -34,14 +34,14 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 				
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>LineStrings</ows:Identifier>
-				<ows:Title>LineStrings</ows:Title>
-				<ows:Abstract>The Geometries to buffer</ows:Abstract>
+				<ows:Identifier>Polygon2</ows:Identifier>
+				<ows:Title>Polygon2</ows:Title>
+				<ows:Abstract>The Geometries to be intersected</ows:Abstract>
 				<ComplexData>
 				<Default>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 					</Format>
 				</Default>
 				<Supported>
@@ -63,7 +63,7 @@ http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.x
 				<Default>
 					<Format>
 						<MimeType>text/XML</MimeType>
-						<Schema>http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Schema>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
 					</Format>
 				</Default>
 				<Supported>

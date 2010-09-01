@@ -34,9 +34,16 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server;
 
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URL;
+import java.util.Properties;
 
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
@@ -94,6 +101,10 @@ public class CapabilitiesConfiguration {
 		if(host == null) {
 			host = InetAddress.getLocalHost().getCanonicalHostName();
 		}
+		String tempAmazonPublicIP = getAmazonPublicIP();
+		if(tempAmazonPublicIP!=null&&tempAmazonPublicIP.length()>0){
+			host = tempAmazonPublicIP;
+		}
 		
 		OperationsMetadata opMetadata = capsSkeleton.getCapabilities().getOperationsMetadata();
 		ENDPOINT_URL = "http://" + host + ":" + hostPort+ "/" + 
@@ -111,6 +122,9 @@ public class CapabilitiesConfiguration {
 		ProcessOfferings processes = capsSkeleton.getCapabilities().addNewProcessOfferings();
 		for(String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
 			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
+			if(algorithm == null){
+				continue;
+			}
 			ProcessDescriptionType description = algorithm.getDescription();
 			if(description==null){
 				continue;
@@ -136,5 +150,35 @@ public class CapabilitiesConfiguration {
 	 */
 	public static boolean ready() {
 		return capabilitiesDocumentObj != null;
+	}
+	
+	public static String getAmazonPublicIP(){
+		try {
+			URL sourceURL = new URL("http://169.254.169.254/latest/meta-data/public-ipv4");
+		
+			//obtain the connection
+			HttpURLConnection sourceConnection = (HttpURLConnection) sourceURL.openConnection();
+			
+			// Set Timeout
+			sourceConnection.setConnectTimeout(5000);
+			sourceConnection.setReadTimeout(5000);
+			
+			InputStream stream = sourceConnection.getInputStream();
+			
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+			StringBuilder stringBuilder = new StringBuilder();
+			String line = null;
+	
+			while ((line = bufferedReader.readLine()) != null) {
+				stringBuilder.append(line);
+			}
+	
+			bufferedReader.close();
+			System.out.println("Service running in AWS EC2. Hostname overridden with public DNS IP.");
+			return stringBuilder.toString();
+		} catch (Exception e) {
+			
+			return "";
+		}
 	}
 }

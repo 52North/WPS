@@ -3,10 +3,10 @@
  -----
 Bastian Schäffer
  -----
- 2008-08-11
+ 2010-02-09
  -----
 
-Geo-Processing Community Roadmap 2008
+Geo-Processing Community Roadmap 2010
 ~~~~~~~~~~~~~~~~~~
 
 
@@ -15,17 +15,17 @@ Geo-Processing Community Roadmap 2008
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| Website Update		   |Launch Joomla Based	Processing Community Website	      |			  -               |            Done	        |
-|						   |  Website				  |              		     |              			|
+| 			WPS-2.1	Release	   | Release of new features and improved data model including ArcGIS and GRID GAIN support      |			  -               |            in progress	        |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			GRID  			   |  Complete prototypical WPS Gridification				  |    OGC OGF Workshop          		     |   Done           			|
+|			WPS-ArcGIS Server Turotial  			   |  New Tutorial on how to use ArcGIS Server as backend for Geoprocessing				  |    -         		     |   in progress           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			GRID + Workflow  			   |  Create Geoprocessing Workflow Showcase with Gridified WPS  |    OGC OGF Workshop          		     |   Done           			|
+|			WPS-FME Prototype  			   |  Use Safe Soft's famous FME as a WPS Processing Backend				  |    -         		     |   in progress           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS + SOAP  			   |  		Mature WPS SOAP support		  |    OWS-5          		     |   Done           			|
+|			WPS-Developer Community Meeting  			   |  Hackathon to improve existing features and create new ones				  |    -         		     |   to be scheduled           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS + BPEL  			   | 	Create BPEL Workflow Wrapper		  |    OWS-5        		     |   Done           			|
+|			WPS+JTS  			   |  Enable JTS Feature analysis capabilities as processing backend 				  |    OWS-7          		     |    started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
+				
 
 
   <<II. Quarter>>
@@ -33,26 +33,25 @@ Geo-Processing Community Roadmap 2008
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| WPS-Transactional		   |	Present WPS-T approach      |			 GI-Days Muenster              |            Done	        |
-|						   | 				  |              		     |              			|
+| WPS OpenLayers client migration to 52n Repository	   |	Migrate the JavaScript source to the 52n SVN    |		-	              |            in progress	        |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS+GRASS  			   |  Enable GRASS processes to be performed via a WPS interface				  |    FOSSGIS, DA-Brauner          		     |   Done           			|
+| Improve 52North Udig WPS Plugin with Raste Capbilites 	   |	Raster support for process inputs and outputs    |		SLA4D-GRID	              |            in progress	        |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			Web Processing Showcase			   |  Develop showcase in order to present the capabilities of web processing in the context of 52°North  |    52°North Horizontal Showcase       		     |   In Progress           			|
+|			WPS+R  			   |  Enable R as processing backend for geostatistical analysis				  |    OWS-7          		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-
+	
+	
 
   <<III. Quarter>>
 
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |       <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| Asynchronous Workflows	   |	Research the modelling and execution of asynchronous Geoprocessing Workflows   |			 ETC-LUSI          |            In Progress	        |
-|						   | 				  |              		     |              			|
+|			FOSS4G in Barcelona  			   |  Present latest developments at the FOSS4G in Barcelona				  |     FOSS4G       		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			Raster support 			   |  Mature WPS support for Raster processing				  |           ETC-LUSI  		     |   In Progress           			|
+|			WPS Community Meeting @FOSS4G  			   |  Discuss the latest developments with 52n WPS users and devlopers				  |    FOSS4G          		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS Release 1.1		   | WPS Release with Raster support    |     ETC-LUSI    		     |   In Progress           			|
+|			WPS-GRID + GLOBUS  			   |  Create GLOBUS support for the WPS-G				  |              		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
 
 	
@@ -61,24 +60,13 @@ Geo-Processing Community Roadmap 2008
 *--------------------------*--------------------------*--------------------------+--------------------------*
 |     <<Task>>                 |  <<Description>>  			  |    <<Context>>   			 |    			   <<Status>>   |
 *--------------------------*--------------------------*--------------------------+--------------------------*
-| Licensing for Processing Services   |Research access control and licensing for processing services in cooperation with the 52°North Securtiy Community |			 OWS-6?        |           Not Started yet     |
-|						   | 				  |              		     |              			|
+|			WPS+GRASS  			   |  Enable GRASS processes to be performed via a WPS interface				  |    OWS-7/GENESIS          		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			WPS Priority		   |  Explore Priority Based processing				  |           OWS-6?		     |    Not Started yet           			|
+|			WPS+GDAL  			   |  Use GDAL for data conversion and coordiante transformation				  |    OWS-7          		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
-|			Extended Transactional Interface	   | Research an extended transactional interface, such as pause, stop or restart    |      OWS-6?   		     |    Not Started yet            			|
+|			WPS-2.2 Release  			   |  Enable GRASS processes to be performed via a WPS interface				  |             		     |   not started           			|
 *--------------------------*--------------------------*--------------------------+--------------------------*
 
  
 
-  <<Long Term>>
-
-   1. Mainstream Integration
-   
-   2. ArcGIS Server integration
-   
-   3. Ilwis integration
-   
-   4. Streaming Data Processing
-   
-   5. Rights Management in Geoprocessing Workflows
+ 

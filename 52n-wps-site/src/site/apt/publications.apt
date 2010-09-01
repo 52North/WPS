@@ -1,32 +1,127 @@
  -----
  Publications
  -----
-Theodor Foerster
+Bastian Schäffer
  -----
- 2008-07-01
+ 2010-04-08
  -----
 
 Publications in the context of the 52N Geoprocessing community
 ~~~~~~~~~~~~~~~~~~
 
  This section is meant to point you to several publications, which have been carried out by members of the Geoprocessing community at 52north
+ 
+* 2009
+	    
+	    * Schaeffer, B. (2009) Delegation in Geoprocessing Worklfows.
+          In: Proceedings of the Geoinformatics 2009 conference in
+          Washington DC, edited by Liping Di and Peisheng Zao, GMU,
+          Washington.
+          
+        * Schaeffer, B., Baranski, B, Redweik, R. (2009).
+          52°North WPS in the Clouds. In: Proceeding of the Free
+          and Open source for GIS conference, Sydney, Australia.
+          
+        * Schäffer, B. (2009). Behind the buzz of cloud computing -
+          52North Open Source Geoprocessing Software in the Google
+          Cloud. Abstract-Presented at FOSS4G, 2009 Free and open
+          source software for geospatial conference, Sydney, Australia
+          
+        * Schäffer, B. (2009). 52North Open Source WPS and SEXTANTE.
+          Abstract-Presented at FOSS4G, 2009 Free and open source
+          software for geospatial conference, Sydney, Australia
+          
+        * Schaeffer, B. (2009): Web based Geoprocesing Workflows.
+          Encyclopedia of Geography. In:  (Eds) Bary Warf. Sage.
+          Forthcoming.
+          
+        * Foerster, T., Schäffer, B., Baranski, B and Jirka,
+          S (2009). Integrating OGC web processing services into
+          geospatial mass - market applications. In: GEOWS '09 :
+          Proceedings of the International conference on advanced
+          geographic information systems & web services, Cancun,
+          Mexico, 1-7 Feb. 2009. IEEE, 2009. ISBN: 978-0-7695-3527-2
+          pp. 98 - 103.
+          
+        * Brauner, J., Foerster, T., Schaeffer, B. and Baranski,
+          B. (2009). Towards a research agenda for geoprocessing
+          services. In: AGILE 2009 : Proceedings of the 12th Agile
+          internationational conference : Advances in GISscience :
+          proceedings of the 12th AGILE conference / edited by Jan
+          Haunert, B. Kieler, and J. Milde. Hanover, Germany: IKG,
+          Leibniz University of Hanover, 2009. 12 p.
+           
+        * Baranski, B, Schaeffer, B., Redweik, R. (2009).
+          Geoprocessing in the Clouds. In: GeoInformatics, van Rees,
+          E. (ed), Vol 12. (forthcoming)
+          
+        * Baranski, Bastian: Guaranteeing Quality of Service (QoS) in
+          a Spatial Data Infrastructure (SDI) by using Service Level
+          Agreements (SLA). GSDI 11 World Conference, 2009, Rotterdam,
+          The Netherlands
+          
+        * Lan-Kun Chung, Yao-Min Fang, Yin-Huei Chang, Tien-Yin Chou,
+          Bing Jean Lee and Bastian Baranski (2009): A SOA based
+          debris flow monitoring system - Architecture and
+          proof-of-concept implementation. 2009 The first symposium on
+          Enterprise Architecture and Information Technology, Taipai,
+          Taiwan
+          
+        * Bastian Schaeffer, Bastian Baranski, Theodor Foerster and
+          Johannes Brauner: A Service-Oriented Framework for Real-time
+          and Distributed Geoprocessing, The International Opensource
+          Geospatial Research Symposium (OGRS), 2009, Nantes, France
 
 * 2008
 
-	* David Robinson (2008), Web GIS - Web Enabling VDOT's Roadway Network System GIS Data. Virginia GIS Conference. {{{http://52north.org/download/Geoprocessing/documents/Web_Enabling_RNS.pdf}slides}}.
+	* Papers and Abstracts
 	
-	* Bastian Schaeffer and Theodor Foerster (2008), Web processing services in the context of the 52North geoprocessing community : abstract. Presented at FOSS4G, 2008 Free and open source software for geospatial conference, Open source geospatial : an option for developing nations, 29 September - 4 October 2008, Cape Town, South Africa.
+		* Baranski, B. (2008). Grid Computing Enabled Web Processing Service. In: Pebesma, E., Bishr, M. & T. Bartoschek (Eds.): GI-Days 2008 - Proceedings of the 6th Geographic Information Days. IfGIprints Nr. 32, Institut für Geoinformatik, Münster.
+
+		* Brauner, J. and Schäffer, B. (2008). Integration of GRASS functionality in web based SDI service chains. In: Proceedings of the FOSS4G 2008 - 29 September - 4 October 2008, Cape Town, South Africa.
+
+		* Brauner, J. (2008). Anbindung von GIS-Funktionalitäten an eine Geodateninfrastruktur über eine Web Processing Service Schnittstelle. GIS - Zeitschrift für Geoinformatik 2008(3): 18-25. 
+
+		* Brauner, J. (2008). Providing GRASS with a Web Processing Service Interface. In: Pebesma, E., Bishr, M. & T. Bartoschek (Eds.): GI-Days 2008 - Proceedings of the 6th Geographic Information Days. IfGIprints Nr. 32, Institut für Geoinformatik, Münster.
+
+		* Schäffer, B. and Foerster, T. (2008). A client for distributed geo-processing and workflow design. In: Journal of location based services, 2(20008)3, pp. 194-210
+
+		* Schäffer, B. and Foerster, T. (2008). Web processing services in the context of the 52North geoprocessing community : abstract. Presented at FOSS4G, 2008 Free and open source software for geospatial conference, Open source geospatial: an option for developing nations, 29 September - 4 October 2008, Cape Town, South Africa. 
+
+		* Schäffer, B. and J. Brauner (2008). Integration von GRASS Funktionalitäten in web-basierten GDI Diensteketten. FOSSGIS 2008, Freiburg. 
+
+		* Schäffer, B. (2008). Towards a transactional Web Processing Service (WPS-T). In: Pebesma, E., Bishr, M. & T. Bartoschek (Eds.): GI-Days 2008 - Proceedings of the 6th Geographic Information Days. IfGIprints Nr. 32, Institut für Geoinformatik, Münster
+
+		* Schäffer, B. and Baranski, B. (2008). Orchestrating GRID Computing Enabled Web Processing Services: abstract. Presented at the Geoinformatics, Potsdam.
+
+		* Swan, J., Foerster, T., Lemmens, R.L.G. and ... [et al.] (2008). Web services test bed: discovery and invocation of schematization services : a use case for OGC - EuroSDR - Agile persistent testbed for Europe. In: GEO:connexion : serving the geoinformation community in the British isles, the Middle East and Africa, 7 (2008)10, pp. 24-27.
+		
+
+	* OGC Documents
+
+		* Schäffer, B. (2008). Transactional WPS Extension. OGC Discussion Paper OGC#08-123
+		
+		
+	* Presentations
+
+
+		* Foerster, T.; B. Schäffer, J. Brauner (2008): Web Processing with the OGC Web Processing Specification. OGC Web Processing Service Workshop for the GI Days . June 16 - 18, 2008. Muenster, Germany. 
+
+		* Schäffer, B. (2008): Towards a WPS-Transactional (WPS-T).  GI Days. June 16 - 18, 2008. Muenster, Germany.
+
+		* Baranski, B. (2008): Grid Computing enabled Web Processing Service. GI Days. June 16 - 18, 2008. Muenster, Germany.
+
+		* Schäffer B.; J. Brauner (2008) Integration von GRASS Funktionalitäten in web-basierten GDI-Diensteketten. FOSSGIS 2008. April 1 - 3, 2008. Freiburg, Germany.
+
+		* Schäffer B. (2008) Introduction to the OGC Web Processing Service. 4th Interational gvSIG Conferfence. December, 3-5, 2008, Valencia, Spain. 
+
+		* Schäffer B.; J. Brauner (2008) Integration of GRASS functionality in web based SDI service chains. FOSS4G 2008. September 29 – April 4, 2008. Cape Town, South Africa.
+
+		* Baranski, Bastian: 52° North WPS-G, A grid-enabled OGC Web Processing Service (WPS). Presentation at OGC-OGF Collaboration Workshop at The Open Grid Forum (OGF-22), 2008, Boston, USA
+
+		* David Robinson (2008), Web GIS - Web Enabling VDOT's Roadway Network System GIS Data. Virginia GIS Conference. {{{http://52north.org/download/Geoprocessing/documents/Web_Enabling_RNS.pdf}slides}}.
 	
-	* Bastian Schäffer and Johannes Brauner (2008), Integration von GRASS Funktionalitäten in web-basierten GDI Diensteketten, FOSSGIS , Freiburg, Germany, 1.-3. April 2008
-	
-	* Bastian Schäffer and Bastian Baranski (2008), Orchestrating GRID Computing Enabled Web Processing Services. Geoinformatics, Potsdam.
-	
-	* Bastian Schäffer (2008), Towards a transactional WPS (WPS-T). GI-days Muenster.
-	
-	* Johannes Brauner (2008), Providing GRASS with a Web Processing Service Interface
-	
-	* Bastian Baranski (2008), Grid Computing Enabled Web Processing Service
-	
+
 	
 * 2007
 

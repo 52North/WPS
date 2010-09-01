@@ -36,16 +36,32 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-// import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -54,10 +70,14 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
-import org.n52.wps.io.xml.AbstractXMLParser;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
+import org.n52.wps.io.datahandler.xml.GML2BasicParser;
+import org.n52.wps.io.datahandler.xml.GML3BasicParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.util.BasicXMLTypeFactory;
+import org.w3c.dom.Node;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -65,8 +85,7 @@ import org.n52.wps.util.BasicXMLTypeFactory;
 public class InputHandler {
 
 	protected static Logger LOGGER = Logger.getLogger(InputHandler.class);
-	protected Map<String, Object> inputLayers = new HashMap<String, Object>();
-	protected Map<String, Object> inputParameters = new HashMap<String, Object>();
+	protected Map<String, List<IData>> inputData = new HashMap<String, List<IData>>();
 	private ProcessDescriptionType processDesc;
 	private String algorithmIdentifier = null; // Needed to take care of handling a conflict between different parsers.
 	/**
@@ -112,7 +131,20 @@ public class InputHandler {
 	 */
 	protected void handleComplexData(InputType input) throws ExceptionReport{
 		String inputID = input.getIdentifier().getStringValue();
-		String complexValue = input.getData().getComplexData().xmlText();
+		
+		Node complexValueNode = input.getData().getComplexData().getDomNode().getFirstChild();
+		String complexValue = "";
+		try {
+			complexValue = nodeToString(complexValueNode);
+		} catch (TransformerFactoryConfigurationError e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			complexValue = "";
+		} catch (TransformerException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			complexValue = "";
+		}
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
 			if(inputID.equals(tempDesc.getIdentifier().getStringValue())) {
@@ -128,9 +160,6 @@ public class InputHandler {
 		String schema = input.getData().getComplexData().getSchema();
 		String encoding = input.getData().getComplexData().getEncoding();
 		String mimeType = input.getData().getComplexData().getMimeType();
-		if(schema == null) {
-			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		}
 		if(mimeType == null) {
 			mimeType = inputDesc.getComplexData().getDefault().getFormat().getMimeType();
 		}
@@ -142,13 +171,23 @@ public class InputHandler {
 //		if(this.algorithmIdentifier==null)
 //			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding);
 //		else
-			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, this.algorithmIdentifier);
+		try {
+			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
 		if(parser == null) {
 			parser = ParserFactory.getInstance().getSimpleParser();
 		}
-		Object collection = null;
+		IData collection = null;
 		if(parser instanceof AbstractXMLParser) {
 			try {
+				boolean xsiisIn = complexValue.contains("xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+				if(!xsiisIn){
+						complexValue = complexValue.replace("xsi:schemaLocation", "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation");
+				}
+			
 				collection = ((AbstractXMLParser)parser).parseXML(complexValue);
 			}
 			catch(RuntimeException e) {
@@ -156,10 +195,51 @@ public class InputHandler {
 						ExceptionReport.NO_APPLICABLE_CODE, e);
 			}
 		}
+		//embedded binary data
 		else {
-			throw new ExceptionReport("parser does not support operation: " + parser.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
+			File f;
+			try {
+				f = File.createTempFile("wps"+System.currentTimeMillis(), "tmp");
+				FileOutputStream fos = new FileOutputStream(f);
+				
+				if(complexValue.startsWith("<xml-fragment")){
+					int startIndex = complexValue.indexOf(">");
+					complexValue = complexValue.substring(startIndex+1);
+					
+					int endIndex = complexValue.indexOf("</xml-fragment");
+					complexValue = complexValue.substring(0,endIndex);
+					
+				}
+				StringReader sr = new StringReader(complexValue);
+				int i = sr.read();
+				while(i != -1){
+					fos.write(i);
+					i = sr.read();
+				}
+				fos.close();
+				collection = parser.parse(new FileInputStream(f), mimeType);
+				System.gc();
+				f.delete();
+			} catch (IOException e) {
+				throw new ExceptionReport("Error occured, while Base64 extracting", 
+						ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
+		
+			
+			
+
+			
 		}
-		inputLayers.put(inputID, collection);
+		//enable maxxoccurs of parameters with the same name.
+		if(inputData.containsKey(inputID)) {
+			List<IData> list = inputData.get(inputID);
+			list.add(collection);
+		}
+		else {
+			List<IData> list = new ArrayList<IData>();
+			list.add(collection);
+			inputData.put(inputID, list);
+		}
 	}
 
 	/**
@@ -179,9 +259,10 @@ public class InputHandler {
 					break;
 				}
 			}
-			xmlDataType = inputDesc.getLiteralData().getDataType().getReference();
+			DomainMetadataType dataType = inputDesc.getLiteralData().getDataType();
+			xmlDataType = dataType != null ? dataType.getReference() : null;
 		}
-		Object parameterObj = null;
+		IData parameterObj = null;
 		try {
 			parameterObj = BasicXMLTypeFactory.getBasicJavaObject(xmlDataType, parameter);
 		}
@@ -192,7 +273,16 @@ public class InputHandler {
 			throw new ExceptionReport("XML datatype as LiteralParameter is not supported by the server: dataType " + xmlDataType, 
 					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
-		inputParameters.put(inputID, parameterObj);
+		//enable maxxoccurs of parameters with the same name.
+		if(inputData.containsKey(inputID)) {
+			List<IData> list = inputData.get(inputID);
+			list.add(parameterObj);
+		}
+		else {
+			List<IData> list = new ArrayList<IData>();
+			list.add(parameterObj);
+			inputData.put(inputID, list);
+		}
 		
 	}
 	
@@ -209,6 +299,8 @@ public class InputHandler {
 			
 		}
 		String dataURLString = input.getReference().getHref();
+		//dataURLString = URLDecoder.decode(dataURLString);
+		//dataURLString = dataURLString.replace("&amp;", "");
 		LOGGER.debug("Loading data from: " + dataURLString);
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
@@ -226,11 +318,11 @@ public class InputHandler {
 		String schema = input.getReference().getSchema();
 		String encoding = input.getReference().getEncoding();
 		String mimeType = input.getReference().getMimeType();
-		if(schema == null) {
-			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
-		}
 		if(mimeType == null) {
 			mimeType = inputDesc.getComplexData().getDefault().getFormat().getMimeType();
+		}
+		if(schema == null && !(mimeType.equalsIgnoreCase("application/x-zipped-shp"))) {
+			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
 		}
 		if(encoding == null) {
 			encoding = inputDesc.getComplexData().getDefault().getFormat().getEncoding();
@@ -241,17 +333,58 @@ public class InputHandler {
 //		if(this.algorithmIdentifier==null)
 //			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding);
 //		else
-			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, this.algorithmIdentifier);
-		if(parser == null) {
-			LOGGER.warn("No applicable schema found. Trying simpleGML");
-			parser = ParserFactory.getInstance().getSimpleParser();
+		try {
+			Class algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			if(algorithmInputClass == null) {
+				throw new RuntimeException("Could not determine internal input class for input" + inputID);
+			}
+			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
+			
+			if(parser == null) {
+				LOGGER.warn("No applicable parser found. Trying simpleGMLParser");
+				throw new ExceptionReport("Error. No applicable parser found for " + schema + "," + mimeType + "," + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+			}
+		} catch (RuntimeException e) {
+			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		try {
 			
 			/****PROXY*****/
+			/*String decodedURL = URLDecoder.decode(dataURLString);
+			decodedURL = decodedURL.replace("&amp;", "&");
+			if(decodedURL.indexOf("&BBOX")==-1){
+				decodedURL = decodedURL.replace("BBOX", "&BBOX");
+				decodedURL = decodedURL.replace("outputFormat", "&outputFormat");
+				decodedURL = decodedURL.replace("SRS", "&SRS");
+				decodedURL = decodedURL.replace("REQUEST", "&REQUEST");
+				decodedURL = decodedURL.replace("VERSION", "&VERSION");
+				decodedURL = decodedURL.replace("SERVICE", "&SERVICE");
+				decodedURL = decodedURL.replace("format", "&format");
+			}*/
+			
+			//lookup WFS
+			if(dataURLString.toUpperCase().contains("REQUEST=GETFEATURE") &&
+				dataURLString.toUpperCase().contains("SERVICE=WFS")){
+					if(parser instanceof GML2BasicParser){
+						//make sure we get GML2
+						dataURLString = dataURLString+"&outputFormat=GML2";
+					}
+					if(parser instanceof GML3BasicParser){
+						//make sure we get GML3
+						dataURLString = dataURLString+"&outputFormat=GML3";
+					}
+					
+				
+					
+			}
+			
+			
+			
+			
+			
 			URL dataURL = new URL(dataURLString);
 			//URL dataURL = new URL("http", "proxy", 8080, dataURLString);
-			Object collection = null;
+			IData parsedInputData = null;
 			try {
 				// Do not give a direct inputstream.
 				// The XML handlers cannot handle slow connections
@@ -274,13 +407,22 @@ public class InputHandler {
 					input.getReference().getBody().save(conn.getOutputStream());
 				}
 				InputStream inputStream = retrievingZippedContent(conn);
-				collection = parser.parse(inputStream);				
+				parsedInputData = parser.parse(inputStream, mimeType);				
 			}
 			catch(RuntimeException e) {
 				throw new ExceptionReport("Error occured while parsing XML", 
 											ExceptionReport.NO_APPLICABLE_CODE, e);
 			}
-			inputLayers.put(inputID, collection);
+			//enable maxxoccurs of parameters with the same name.
+			if(inputData.containsKey(inputID)) {
+				List<IData> list = inputData.get(inputID);
+				list.add(parsedInputData);
+			}
+			else {
+				List<IData> list = new ArrayList<IData>();
+				list.add(parsedInputData);
+				inputData.put(inputID, list);
+			}
 		}
 		catch(MalformedURLException e) {
 			throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString, 
@@ -306,17 +448,11 @@ public class InputHandler {
 	 * Gets the resulting InputLayers from the parser
 	 * @return A map with the parsed input
 	 */
-	public HashMap<String, Object> getParsedInputLayers(){
-		return new HashMap<String, Object>(inputLayers);
+	public Map<String, List<IData>> getParsedInputData(){
+		return inputData;
 	}
 	
-	/**
-	 * Gets the resulting InputParameters from the parser
-	 * @return A map with the parsed input
-	 */
-	public HashMap<String, Object> getParsedInputParameters(){
-		return new HashMap<String, Object>(inputParameters);
-	}
+	
 	
 	private InputStream retrievingZippedContent(URLConnection conn) throws IOException{
 		String contentType = conn.getContentEncoding();
@@ -327,4 +463,13 @@ public class InputHandler {
 			return conn.getInputStream();
 		}
 	}
+	
+	 private String nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+		  StringWriter stringWriter = new StringWriter();
+		  Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		  transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		  transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
+		  
+		  return stringWriter.toString();
+		 }
 }

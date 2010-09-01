@@ -36,19 +36,23 @@
  ***************************************************************/
 package org.n52.wps.server.handler;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import net.opengis.wps.x100.OutputDefinitionType;
-import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessFailedType;
 import net.opengis.wps.x100.StatusType;
 
@@ -56,7 +60,6 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
@@ -64,11 +67,11 @@ import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
-import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
-import org.n52.wps.util.XMLBeansHelper;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -85,19 +88,22 @@ public class RequestHandler {
 
 	/** Computation timeout in seconds */
 	private static final String PROPERTY_NAME_COMPUTATION_TIMEOUT = "computationTimeoutSeconds";
-	private int sleepingTime = 0;
+	protected int sleepingTime = 0;
 	
-	private static RequestExecutor pool = new RequestExecutor();
+	protected static RequestExecutor pool = new RequestExecutor();
 
-	private OutputStream os;
+	protected OutputStream os;
 
 	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
 	
-	private String responseMimeType;
+	protected String responseMimeType;
 	
-	private Request req;
+	protected Request req;
 	
-	
+	// Empty constructor due to classes which extend the RequestHandler
+	protected RequestHandler() {
+		
+	}
 
 	/**
 	 * Handles requests of type HTTP_GET (currently capabilities and
@@ -181,7 +187,9 @@ public class RequestHandler {
 
 			// parse the InputStream to create a Document
 			doc = fac.newDocumentBuilder().parse(is);
-
+		
+		
+			
 			// Get the first non-comment child.
 			Node child = doc.getFirstChild();
 			while(child.getNodeName().compareTo("#comment")==0) {
@@ -339,19 +347,17 @@ public class RequestHandler {
 		}
 	}
 	
-	private void setResponseMimeType(ExecuteRequest req) {
+	protected void setResponseMimeType(ExecuteRequest req) {
 		if(req.isRawData()){
-			ProcessDescriptionType description = RepositoryManager.getInstance().getAlgorithm(req.getExecute().getIdentifier().getStringValue()).getDescription();
-			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			OutputDefinitionType rawDataOutput = req.getExecute().getResponseForm().getRawDataOutput();
-			String id = rawDataOutput.getIdentifier().getStringValue();
-			OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
-			responseMimeType =  ExecuteResponseBuilder.getMimeType(desc, rawDataOutput);
+			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
 		}else{
-			responseMimeType = "text/XML";
+			responseMimeType = "text/xml";
 		}
 		
+		
 	}
+	
+	
 
 	public String getResponseMimeType(){
 		if(responseMimeType == null){
@@ -359,6 +365,8 @@ public class RequestHandler {
 		}
 		return responseMimeType.toLowerCase();
 	}
+	
+	
 }
 
 
