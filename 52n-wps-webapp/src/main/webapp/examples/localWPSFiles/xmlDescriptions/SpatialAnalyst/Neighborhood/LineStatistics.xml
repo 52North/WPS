@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.neighborhood.linestatistics</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>LineStatistics_sa</ows:Title>
+		<ows:Abstract>Calculates a statistic on the attributes of lines in a circular neighborhood around each output cell. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_polyline_feature</ows:Identifier><!-- 0 -->
+				<ows:Title>in polyline feature</ows:Title>
+				<ows:Abstract>The input polyline features to calculate the Line Statistics for.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>field</ows:Identifier><!--  1 -->
+				<ows:Title>field</ows:Title>
+				<ows:Abstract>Field can be any numeric field of in_polyline_features. Field can be the shape field if in_polyline_features contains z.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 3 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>Cell size for output raster dataset. This is the value in the environment if specifically set. If not set in the environment, it is the shorter of the width or height of the extent of in_polyline_features in the output spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>search_radius</ows:Identifier><!-- 4 -->
+				<ows:Title>search radius</ows:Title>
+				<ows:Abstract>Search radius to calculate the desired statistic within, in map units. The default radius is five times the output cell size.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>statistics_type</ows:Identifier><!-- 5 -->
+				<ows:Title>statistics type</ows:Title>
+				<ows:Abstract>The Statistic type to be calculated.
+				Statistics are calculated on the value of the specified "field" for all lines in the neighborhood. MEAN  — The average value, weighted by the length. Mean = (sum of (length * field-value)) / (sum of length). Only the part of the length that falls within the neighborhood is used. MAJORITY  — The value having the greatest length of line in the neighborhood. MAXIMUM — The largest value. MEDIAN  — The median value, weighted by the length. Conceptually, all line segments in the neighborhood are sorted by value and placed end-to-end in a straight line. The value of the segment at the midpoint of the straight line is the median. MINIMUM  — The smallest value. MINORITY  — The value having the least length of line in the neighborhood. RANGE  — The range of values (maximum – minimum). STD  — The standard deviation of the values. VARIETY  — The number of unique values.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>MEAN</ows:Value>
+						<ows:Value>MAJORITY</ows:Value>
+						<ows:Value>MAXIMUM</ows:Value>
+						<ows:Value>MEDIAN</ows:Value>
+						<ows:Value>MINIMUM</ows:Value>
+						<ows:Value>MINORITY</ows:Value>
+						<ows:Value>RANGE</ows:Value>
+						<ows:Value>STD</ows:Value>
+						<ows:Value>VARIETY</ows:Value>
+					</ows:AllowedValues>		
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

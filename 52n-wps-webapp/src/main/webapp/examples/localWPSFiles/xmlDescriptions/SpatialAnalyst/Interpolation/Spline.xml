@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.spline</ows:Identifier><!-- ParameterCount=7 -->		
+		<ows:Title>Spline_sa</ows:Title>
+		<ows:Abstract>Interpolates a surface from points using a minimum curvature spline technique. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_point_features</ows:Identifier><!-- 0 -->
+				<ows:Title>in point features</ows:Title>
+				<ows:Abstract>The input point features containing the z-values to be interpolated into a surface raster.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>z_field</ows:Identifier><!-- 1 -->
+				<ows:Title>z field</ows:Title>
+				<ows:Abstract>Field that holds a height or magnitude value for each point. This can be a numeric field or the shape field, if the in_point_features contain z-values.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 3 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>The cell size at which the output raster will be created. This will be the value in the Environment if it is explicitly set. Otherwise, it is the shorter of the width or the height of the extent of in_point_features, in the input spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>spline_type</ows:Identifier><!-- 4 -->
+				<ows:Title>spline type</ows:Title>
+				<ows:Abstract>The type of spline to be used. REGULARIZED  — Yields a smooth surface and smooth first derivatives. TENSION  — Tunes the stiffness of the interpolant according to the character of the modeled phenomenon.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>REGULARIZED</ows:Value>
+						<ows:Value>TENSION</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>weight</ows:Identifier><!-- 5 -->
+				<ows:Title>weight</ows:Title>
+				<ows:Abstract>Parameter influencing the character of the surface interpolation. When the REGULARIZED option is used, it defines the weight of the third derivatives of the surface in the curvature minimization expression. If the TENSION option is used, it defines the weight of tension. The default weight is 0.1.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>number_points</ows:Identifier><!-- 6 -->
+				<ows:Title>number points</ows:Title>
+				<ows:Abstract>The number of points per region used for local approximation. The default is 12.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

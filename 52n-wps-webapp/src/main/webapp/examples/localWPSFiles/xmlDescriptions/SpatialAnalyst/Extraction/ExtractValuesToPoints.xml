@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.extraction.extractvaluestopoints</ows:Identifier><!-- ParameterCount=5 -->		
+		<ows:Title>ExtractValuesToPoints_sa</ows:Title>
+		<ows:Abstract>Extracts the cell values of a raster based on a set of points. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_point_feature</ows:Identifier><!-- 0 -->
+				<ows:Title>in point feature</ows:Title>
+				<ows:Abstract>The input point features to which you want to add raster values.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>in raster</ows:Title>
+				<ows:Abstract>The name of a raster dataset whose values you want to add to the input point features.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>interpolate_values</ows:Identifier><!-- 2 -->
+				<ows:Title>interpolatie values</ows:Title>
+				<ows:Abstract>Specifies whether or not interpolation will be used. NONE  — No interpolation will be applied; the value of the cell center will be used. INTERPOLATE  — The value of the cell will be calculated from the adjacent cells with valid values using bilinear interpolation. NoData values will be ignored in the interpolation unless all adjacent cells are NoData.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>add_attributes</ows:Identifier><!-- 3 -->
+				<ows:Title>interpolation as boolean</ows:Title>
+				<ows:Abstract>Determines if the raster attributes are written to the output point feature dataset. VALUE_ONLY  — Only the value of the input raster is added to the point attributes. This is the default. ALL  — All the fields from the input raster (except Count) will be added to the point attributes.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_point_feature</ows:Identifier><!-- 2 -->
+				<ows:Title>out point feature</ows:Title>	
+				<ows:Abstract>The output point feature dataset containing the extracted raster values.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.rastercreation.createrandomraster</ows:Identifier><!-- ParameterCount=8 -->	
+		<ows:Title>CreateRandomRaster_sa</ows:Title>
+		<ows:Abstract>Creates a raster of random floating point values between 0 and 1 on a cell-by-cell basis within the Analysis window. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>seed_value</ows:Identifier><!-- 1 -->
+				<ows:Title>seed value</ows:Title>
+				<ows:Abstract>A value to be used to reseed the random number generator. This may be an integer or floating-point number. Rasters are not permitted as input. The random number generator is automatically seeded with the current value of the system clock (seconds since January 1, 1970). The range of permissible values for {seed_value} is from -231+1 to 231 (or -2,147,483,647 to 2,147,483,648).</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell_size</ows:Identifier><!-- 2 -->
+				<ows:Title>cell size</ows:Title>
+				<ows:Abstract>Cell size for output raster dataset. This is the value in the environment if specifically set. If not specifically set, it is the shorter of the width or height of the environment extent in the output spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>extent</ows:Identifier><!-- 3 -->
+				<ows:Title>extent</ows:Title>
+				<ows:Abstract>Extent for the output raster dataset. This is the value in the environment if specifically set. If not specifically set, it is 0, 0, 250, 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The raster to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="D:/localWPSFiles/legacyDescriptions/perimeter.xslt" ?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US">
+	<ProcessDescription wps:processVersion="2" storeSupported="true" statusSupported="false">
+		<ows:Identifier>de.soknos.wps.FloodPerimeter</ows:Identifier>
+		<ows:Title>Raster to vector Conversion</ows:Title>
+		<ows:Abstract>Convert HWSIM raster data to vector data</ows:Abstract>
+		<ows:Metadata xlink:title="spatial" ></ows:Metadata>
+		<ows:Metadata xlink:title="raster" />
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>INTEGER_RASTER</ows:Identifier>
+				<ows:Title>input raster</ows:Title>
+				<ows:Abstract>cell based water levels from INTEGER_RASTER</ows:Abstract>
+				<ComplexData>
+				<Default>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>	
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/GeoTIFF</MimeType>
+						<Schema></Schema>
+					</Format>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>SIMPLIFICATION</ows:Identifier>
+				<ows:Title>simplification indicator</ows:Title>
+				<ows:Abstract>composite indicator, 5 is the suggested value</ows:Abstract>
+				<LiteralData>
+				<ows:DataType ows:reference="xs:int"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value></ows:Value>
+					</ows:AllowedValues>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>PERIMETER</ows:Identifier>
+				<ows:Title>Rough border estimates around the integer zones</ows:Title>
+				<ows:Abstract>indicates the main flooded ares</ows:Abstract>
+				<ComplexOutput>
+				<Default>
+					<Format>
+						<MimeType>application/x-zipped-shp</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/x-zipped-shp</MimeType>
+						<Schema></Schema>
+					</Format>
+					<Format>
+					  <MimeType>text/XML</MimeType>
+						<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				  </Format>
+				</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>

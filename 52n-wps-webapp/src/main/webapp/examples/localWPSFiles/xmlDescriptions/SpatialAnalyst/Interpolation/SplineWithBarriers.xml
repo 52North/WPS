@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.splinewithbarriers</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Title>SplineWithBarriers_sa</ows:Title>
+		<ows:Abstract>Interpolates a surface, using barriers, from points using a minimum curvature spline technique. The barriers are entered as either polygon or polyline features. The barriers are entered as either polygon or polyline features. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>input_point_features</ows:Identifier><!-- 0 -->
+				<ows:Title>input point features</ows:Title>
+				<ows:Abstract>The input point features containing z-values to be interpolated into a surface raster.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>z_field</ows:Identifier><!-- 1 -->
+				<ows:Title>z field</ows:Title>
+				<ows:Abstract>Field that holds a height or magnitude value for each point. This can be a numeric field or the shape field if the in_point_features contain z-values.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Output_cell_size</ows:Identifier><!-- 3 -->
+				<ows:Title>Output cell size</ows:Title>
+				<ows:Abstract>The cell size at which the output raster will be created. If a value of zero is entered the shorter of the width or the height of the extent of the input point features in the input spatial reference, divided by 250, will be used as the cell size.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>input_barrier_features</ows:Identifier><!-- 2 -->
+				<ows:Title>input barrier features</ows:Title>
+				<ows:Abstract>The optional input barrier features to constrain the interpolation.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>smoothing_factor</ows:Identifier><!-- 5 -->
+				<ows:Title>smoothing factor</ows:Title>
+				<ows:Abstract>The parameter that influences the smoothing of the output surface. No smoothing is applied when the value is zero and the maximum amount of smoothing is applied when the factor equals 1. The default is 0.0.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>Output_raster</ows:Identifier><!-- 4 -->
+				<ows:Title>Output raster</ows:Title>	
+				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

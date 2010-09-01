@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.multipleringbuffer</ows:Identifier><!-- ParameterCount=7 -->		
+		<ows:Title>MultipleRingBuffer_analysis</ows:Title>
+		<ows:Abstract>Creates a new feature class of buffer features using a set of buffer distances. The new features may be dissolved using the distance values or as a set of individual features. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Input_Features </ows:Identifier><!-- 0 -->
+				<ows:Title>Input Features</ows:Title>
+				<ows:Abstract>The feature layer or feature class to be buffered.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Distances</ows:Identifier><!-- 2 -->
+				<ows:Title>Distances</ows:Title>
+				<ows:Abstract>The distances, in ascending size, used to create buffer zones around the Input Features.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>Line_Side</ows:Identifier><!-- 3 -->
+				<ows:Title>Line Side</ows:Title>
+				<ows:Abstract>The units used with the Distance values. Default Centimeters
+				DecimalDegrees Feet Inches Kilometers Meters Miles Millimeters
+				NauticalMiles Points Yards
+				If the units are not specified, or are entered as Default, the units of the Input Features are used (or if the Output Coordinate System environment has been set, its units will be used).</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>Default</ows:Value>
+						<ows:Value>Centimeters</ows:Value>
+						<ows:Value>DecimalDegrees</ows:Value>
+						<ows:Value>Feet</ows:Value>
+						<ows:Value>Inches</ows:Value>
+						<ows:Value>Kilometers</ows:Value>
+						<ows:Value>Meters</ows:Value>
+						<ows:Value>Miles</ows:Value>
+						<ows:Value>Millimeters</ows:Value>
+						<ows:Value>NauticalMiles</ows:Value>
+						<ows:Value>Points</ows:Value>
+						<ows:Value>Yards</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>		
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>Field_Name</ows:Identifier><!-- 4 -->
+				<ows:Title>Field Name</ows:Title>
+				<ows:Abstract>The name of the field in the Output Feature Class that will store the buffer distance used to create each feature. If no value is specified, the name will be distance. The type of the field is double.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>Dissolve_Option</ows:Identifier><!-- 5 -->
+				<ows:Title>Dissolve Option</ows:Title>
+				<ows:Abstract>Specifies whether a dissolve will be performed to remove buffer feature overlap. NONE — Individual buffer for each feature is maintained, regardless of overlap. This is the default. ALL — Dissolves all the buffers together into a single feature and removes any overlap. LIST — Dissolves by a given list of fields.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>NONE</ows:Value>
+						<ows:Value>ALL</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>Outside_Polygons_Only</ows:Identifier><!-- 6 -->
+				<ows:Title>Outside Polygons Only</ows:Title>
+				<ows:Abstract>Valid only for input polygon features. FULL — Input polygon features will be given a complete buffer. This is the default. OUTSIDE_ONLY — The area inside the input polygon features will be excluded from the resulting buffer.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>Output_Feature_class</ows:Identifier><!-- 1 -->
+				<ows:Title>Output Feature class</ows:Title>	
+				<ows:Abstract>The new polygon feature class to be created.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.buffer</ows:Identifier><!-- ParameterCount=7 -->		
+		<ows:Title>Buffer_analysis</ows:Title>
+		<ows:Abstract>Creates buffer polygons to a specified distance around the Input Features. An optional dissolve can be performed to remove overlapping buffers. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Title>in features</ows:Title>
+				<ows:Abstract>The feature layer or feature class to be buffered.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>buffer_distance_or_field</ows:Identifier><!-- 1 -->
+				<ows:Title>buffer distance or field</ows:Title>
+				<ows:Abstract>The distance used to create buffer zones around Input Features. Either a value or a numeric field can be used to provide buffer distances. If a negative buffer distance is specified, the buffer offsets will be generated inside, instead of outside, of the input features. This is only valid for polygon feature classes. If the distance units are not specified, or entered as Unknown, the units of the Input Features are used (or if the Output Coordinate System environment has been set, its units will be used).</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>line_side</ows:Identifier><!-- 3 -->
+				<ows:Title>line side</ows:Title>
+				<ows:Abstract>Options to buffer to one side of a line or outside polygons: FULL — A buffer will be generated on both sides of the line. If the input is a polygon, the result will include the area inside the polygon. This is the default. LEFT — The buffer will be generated on the LEFT side of the line. RIGHT — The buffer will be generated on the RIGHT side of the line. OUTSIDE_ONLY — The area inside the input polygon features will be excluded from the resulting buffer. These options are not available with an ArcView or ArcEditor license.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>FULL</ows:Value>
+						<ows:Value>LEFT</ows:Value>
+						<ows:Value>RIGHT</ows:Value>
+						<ows:Value>OUTSIDE_ONLY</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>line_end_type</ows:Identifier><!-- 4 -->
+				<ows:Title>line end type</ows:Title>
+				<ows:Abstract>For lines, the shape of the buffer at the line end points. ROUND — End will be in the shape of a half circle. This is the default. FLAT — Creates rectangular line endings with the middle of the short side of the rectangle coincident with the end point of the line. These options are not available with an ArcView or ArcEditor license. Line buffers will always have ROUND ends.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>ROUND</ows:Value>
+						<ows:Value>FLAT</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>dissolve_option</ows:Identifier><!-- 5 -->
+				<ows:Title>dissolve option</ows:Title>
+				<ows:Abstract>Specifies whether a dissolve will be performed to remove buffer feature overlap. NONE — Individual buffer for each feature is maintained, regardless of overlap. This is the default. ALL — Dissolves all the buffers together into a single feature and removes any overlap. LIST — Dissolves by a given list of fields.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>NONE</ows:Value>
+						<ows:Value>ALL</ows:Value>
+						<ows:Value>LIST</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>dissolve_field</ows:Identifier><!-- 6 -->
+				<ows:Title>dissolve field</ows:Title>
+				<ows:Abstract>List of field(s) for the dissolve. Buffer polygons that share the same set of values in their Dissolve Field(s) will be dissolved together. The Add Field button, which is used only in ModelBuilder, allows you to add expected fields so you can complete the dialog box and continue to build your model.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_feature_class</ows:Identifier><!-- 1 -->
+				<ows:Title>out feature class</ows:Title>	
+				<ows:Abstract>The feature class that will be created and to which the resulting features will be written.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+					    <MimeType>text/XML</MimeType>
+						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+				    </Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

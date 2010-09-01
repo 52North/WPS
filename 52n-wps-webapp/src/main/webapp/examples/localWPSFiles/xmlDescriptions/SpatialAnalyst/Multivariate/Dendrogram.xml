@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.dendrogram</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Title>Dendrogram_sa</ows:Title>
+		<ows:Abstract>Constructs a tree diagram showing attribute distances between sequentially merged classes in a signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_signature_file</ows:Identifier><!-- 0 -->
+				<ows:Title>in signature file</ows:Title>
+				<ows:Abstract>Input signature file whose class signatures are used to produce a dendrogram. A ".gsg" extension is required.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>line_width</ows:Identifier><!-- 3 -->
+				<ows:Title>line width</ows:Title>
+				<ows:Abstract>Sets the width of the dendrogram in number of characters on a line. The default is 78.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>
+			</Input>
+				<Input minOccurs="0" maxOccurs="1">
+					<ows:Identifier>distance_calculation</ows:Identifier><!-- 2 -->
+					<ows:Title>distance calculation</ows:Title>
+					<ows:Abstract>Specifies the manner through which the distances between classes in the multidimensional attribute space are to be defined. If True, the distances between classes will be computed based on the variances and the Euclidean distance between the means of their signatures. If False, the distances between classes will be determined by the Euclidean distances between the means of the class signatures only.</ows:Abstract>
+					<LiteralData>
+						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					</LiteralData>	
+				</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_dendogram_file</ows:Identifier><!-- 1 -->
+				<ows:Title>out dendogram file</ows:Title>
+				<ows:Abstract>The output dendrogram ASCII file. The extension can be ".txt" or ".asc".</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -19,9 +19,16 @@
 			<item name="Installation" href="installation.html" />
 			<item name="Configuration" href="configuration.html" />
 		</menu>
-		<!--menu name="Reference Material">
-
-		</menu-->
+		<menu name="Developer Section">
+			<item name="Source setup" href="source_setup.html" />
+			<item name="Architecture" href="architecture.html" />
+			<item name="Code Snippets" href="code.html" />
+		</menu>
+		<menu name="Other Material">
+			<item name="FAQ" href="FAQ.html" />
+			<item name="Tutorials" href="tutorials.html" />
+			<item name="Demo Theater" href="demos.html" />			
+		</menu>
 		<menu ref="reports" />
 	</body>
 </project>

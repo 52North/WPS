@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.maximumlikelihoodclassification</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>MaximumLikelihoodClassification_sa</ows:Title>
+		<ows:Abstract>Performs a maximum likelihood classification on a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster bands</ows:Title>
+				<ows:Abstract>Input raster bands.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>reject_fraction</ows:Identifier><!-- 3 -->
+				<ows:Title>reject fraction</ows:Title>
+				<ows:Abstract>Portion of cells that will remain unclassified due to the lowest possibility of correct assignments. The default is 0.0; therefore, every cell will be classified. The 14 valid entries are: 0.0, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.975, 0.99, and 0.995.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_signature_file</ows:Identifier><!-- 1 -->
+				<ows:Title>in_signature_file</ows:Title>
+				<ows:Abstract>The input signature file whose class signatures are used by the maximum likelihood classifier.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>a_priori_probabilities</ows:Identifier><!-- 4 -->
+				<ows:Title>a priori probabilities</ows:Title>
+				<ows:Abstract>Specifies how a priori probabilities will be determined. EQUAL  — All classes will have the same a priori probability. SAMPLE  — A priori probabilities will be proportional to the number of cells in each class in the signature file. FILE  — The a priori probabilities will be read from the specified {in_a_priori_file} ASCII file.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>EQUAL</ows:Value>
+						<ows:Value>SAMPLE</ows:Value>
+						<ows:Value>FILE</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>in_a_priori_file</ows:Identifier><!-- 5 -->
+				<ows:Title>in a priori file</ows:Title>
+				<ows:Abstract>File containing a priori probabilities for the input signature classes. An input for the a priori probability file is only required when the FILE option is used. The extension for a priori files can be ".txt" or ".asc".</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>	
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_classified_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out classified raster</ows:Title>	
+				<ows:Abstract>Output classified raster dataset..</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

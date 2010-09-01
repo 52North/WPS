@@ -1,0 +1,44 @@
+<service name="WPS">
+	<description>
+		52n WPS
+ 	</description>
+	<parameter name="ServiceClass" locked="false">
+		org.n52.wps.server.WebProcessingServiceSoap
+ 	</parameter>
+	<module ref="addressing" />
+	<operation name="getCapabilities">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:GetCapabilities</actionMapping>
+	</operation>
+		<operation name="describeProcess">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:describeProcess</actionMapping>
+	</operation>
+	<operation name="execute">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:execute</actionMapping>
+	</operation>
+	<operation name="getJobs">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:getJobs</actionMapping>
+	</operation>
+	<operation name="cancelJob">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:cancelJob</actionMapping>
+	</operation>
+	<operation name="pauseJob">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:pauseJob</actionMapping>
+	</operation>
+	<operation name="resumeJob">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:resumeJob</actionMapping>
+	</operation>
+</service>

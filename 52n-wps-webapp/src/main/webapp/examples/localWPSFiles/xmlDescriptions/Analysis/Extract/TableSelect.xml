@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.extract.split</ows:Identifier><!-- ParameterCount=3 -->		
+		<ows:Title>TableSelect_analysis</ows:Title>
+		<ows:Abstract>This extracts selected table records or features from an input table or table view and stores them in a new output table. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_table</ows:Identifier><!-- 0 -->
+				<ows:Title>in table</ows:Title>
+				<ows:Abstract>The input table can be an INFO table, a dBASE table, a geodatabase table, a feature class, or a table view.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>where_clause</ows:Identifier><!-- 2 -->
+				<ows:Title>where clause</ows:Title>
+				<ows:Abstract>A SQL expression used to select a subset of records.
+The syntax for the expression differs slightly depending on the data source. For example, if you're querying file or ArcSDE geodatabases or dBASE or INFO tables, enclose field names in double quotes:
+"MY_FIELD" If you're querying personal geodatabases, enclose fields in square brackets:
+[MY_FIELD] For more information on SQL syntax and how it differs between data sources, see SQL Reference.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 1 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>The output table to be created. The output table can be a geodatabase table, a dBASE table, or an INFO table. If the output location is in a folder and no extension is specified, the output will be an INFO table.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

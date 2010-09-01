@@ -1,0 +1,39 @@
+ -----
+Demo section 
+ -----
+Bastian Schäffer
+ -----
+ 2010-04-08
+ -----
+ 
+52n WPS source setup
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Source download
+
+ To download the latest 52n WPS sources please visit the WPS trunk of the geoprocessing community trough your favorite SVN client.
+
+--------------------------
+https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/
+--------------------------
+
+  Stable release can be found here:
+  
+--------------------------
+https://svn.52north.org/svn/geoprocessing/main/WPS/tags/
+--------------------------	
+
+  For a detailed description, please visit the {{{source-repository.html}source repository information}}
+  
+  Build and configuration instructions can be found {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/configuration.html} here}}
+   
+
+* System requirements
+
+ The 52n WPS is tested on Tomcat 5.5 and 6.0, all applications require Java 1.6.0_01-b06 or higher!
+
+  If you have any problems running your WPS (especially if you run geoserver on the same tomcat instance), please have a look at the {{{FAQ.html} FAQ}}.
+
+* Build, Configure and Create your own WPS process
+ 
+ 	Please follow the installation {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf} tutorial}}

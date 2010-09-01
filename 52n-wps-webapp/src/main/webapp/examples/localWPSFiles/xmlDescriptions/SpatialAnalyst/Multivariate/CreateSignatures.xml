@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.createsignatures</ows:Identifier><!-- ParameterCount=5 -->	
+		<ows:Title>CreateSignatures_sa</ows:Title>
+		<ows:Abstract>Creates an ASCII signature file of classes defined by input sample data and a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster bands</ows:Title>
+				<ows:Abstract>The input raster bands to create the signatures for.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_sample_data</ows:Identifier><!-- 1 -->
+				<ows:Title>in sample data</ows:Title>
+				<ows:Abstract>The input delineating the set of class samples. The input can be an integer raster or a feature dataset.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>sample_field</ows:Identifier><!-- 4 -->
+				<ows:Title>sample field</ows:Title>
+				<ows:Abstract>Field of the input raster or feature sample data to assign values to the sampled locations (classes). Only integer fields are valid fields.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+				<Input minOccurs="0" maxOccurs="1">
+					<ows:Identifier>compute_covariance </ows:Identifier><!-- 3 -->
+					<ows:Title>compute covariance</ows:Title>
+					<ows:Abstract>Boolean specifying whether the covariance matrixes will be calculated.
+					If True, the covariance matrixes and the means for all classes of the sampleDataset will be computed. If False, only the means for all classes of the sampleDataset will be calculated.</ows:Abstract>
+					<LiteralData>
+						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					</LiteralData>	
+				</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_signature_file</ows:Identifier><!-- 2 -->
+				<ows:Title>out signature file</ows:Title>	
+				<ows:Abstract>The output signature file. A ".gsg" extension is required.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

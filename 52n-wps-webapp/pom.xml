@@ -4,26 +4,28 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>1.0-rc3-SNAPSHOT</version>
+        <version>WPS 2.0-rc5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>52n-wps-webapp</artifactId>
+    <version>WPS 2.0-rc5</version>
     <packaging>war</packaging>
     <name>52n WPS Web Application</name>
     <inceptionYear>2007</inceptionYear>
           <mailingLists>
         <mailingList>
             <name>Geoprocessing</name>
-            <archive>
-                http://52north.org/pipermail/geoprocessingservices/
-            </archive>
+            <archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
             <post>geoprocessingservices@52north.org</post>
-            <subscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
-            </subscribe>
-            <unsubscribe>
-                https://52north.org/mailman/listinfo/geoprocessingservices
-            </unsubscribe>
+            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+        </mailingList>
+        <mailingList>
+            <name>Geoprocessing Commits</name>
+            <archive>http://www2.52north.org/pipermail/geoprocessing-commits</archive>
+            <post>Geoprocessing-commits@52north.org</post>
+            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
+            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
         </mailingList>
     </mailingLists>
     <developers>
@@ -116,6 +118,7 @@
     </build>
     <profiles>
         <profile>
+            <id>default</id>
 
         </profile>
     </profiles>
@@ -125,34 +128,68 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-commons</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-io</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-server</artifactId>
+             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-unicore</artifactId>
+            <version>${project.version}</version>
+        </dependency>      
+          <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-gridgain</artifactId>
+            <version>${project.version}</version>
+        </dependency> 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-sextante</artifactId>
             <version>${project.version}</version>
         </dependency>
-         <dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-ags</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-webadmin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-transactional</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-install-wizard</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.pjl-comp-filter</groupId>
             <artifactId>pjl-comp-filter</artifactId>
             <scope>runtime</scope>
             <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <scope>provided</scope>
+            <version>2.1</version>
         </dependency>
     </dependencies>
 </project>

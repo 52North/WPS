@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>52-North</artifactId>
         <groupId>org.n52</groupId>
-        <version>2</version>
+        <version>4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
@@ -22,14 +21,17 @@
     </distributionManagement>
     <packaging>pom</packaging>
     <name>52north processing</name>
-    <version>1.0-rc3-SNAPSHOT</version>
-    <description>52 north processing provides different tools for web based processing in context of the OGC WPS
-        specification.
+	<version>WPS 2.0-rc5</version>
+    <description>
+    	52 north processing provides different tools for web based
+		processing in context of the OGC WPS specification.
     </description>
     <url>http://52north.org/maven/project-sites/wps</url>
     <issueManagement>
         <system>Bugzilla</system>
-        <url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
+        <url>
+        	https://52north.org/bugzilla/
+        </url>
     </issueManagement>
     <licenses>
         <license>
@@ -39,11 +41,58 @@
     </licenses>
     <inceptionYear>2007</inceptionYear>
     <scm>
-        <!-- Specification of the Source-Content-Managmentsystem -->
-        <connection>scm:svn:http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</connection>
-        <developerConnection>scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</developerConnection>
-      <url>http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS</url>
+        <!-- Specification of the Source-Content-Managementsystem -->
+        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</connection>
+        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-rc5</url>
   </scm>
+  
+      <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>geotools</id>
+      <name>Geotools Repo</name>
+      <url>http://download.osgeo.org/webdav/geotools</url>
+    </repository>
+    <repository>
+      <id>n52-releases</id>
+      <name>52n Releases</name>
+      <url>http://52north.org/maven/repo/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+	    <id>Refractions</id>
+	    <name>Refractions repository</name>
+	    <url>http://lists.refractions.net/m2</url>
+     </repository> 
+	<repository>
+	    <id>Apache</id>
+	    <name>Apache repository</name>
+	    <url>http://repo1.maven.org/maven2</url>
+	</repository>     
+	<repository>
+	    <id>Geoserver</id>
+	    <name>Geoserver repository</name>
+	    <url>http://repository.codehaus.org/</url>
+     </repository>
+	<repository>
+		<id>OpenGEO</id>
+		<name>opengeo repository</name>
+		<url>http://repo.opengeo.org</url>
+	</repository>    
+
+  </repositories>
+  
     <build>
 
 
@@ -51,21 +100,24 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    <descriptor>
+                    	src/main/assembly/assembly.xml
+                    </descriptor>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
+		    <encoding>ISO-8859-1</encoding>
                 </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <connectionUrl>
-                        scm:svn:https://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
+                    	scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
                     </connectionUrl>
                 </configuration>
             </plugin>
@@ -90,22 +142,34 @@
         </plugins>
     </build>
     <modules>
+	
         <module>52n-wps-commons</module>
         <module>52n-wps-io</module>
         <module>52n-wps-server</module>
-        <module>52n-wps-webapp</module>
+	<module>52n-wps-unicore</module>
+	<module>52n-wps-gridgain</module>
+	<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
         <module>52n-wps-site</module>
-        <module>52n-wps-transactional</module>
         <module>52n-wps-sextante</module>
-    </modules>
+        <module>52n-wps-transactional</module>
+        <module>52n-wps-webadmin</module>
+        <module>52n-wps-ags</module>
+  </modules>
     <dependencies>
-        <dependency>
+        <!-- <dependency>
             <groupId>xmlbeans</groupId>
             <artifactId>xbean</artifactId>
             <version>2.2.0</version>
         </dependency>
+        -->
+         <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>2.4.0</version>
+            </dependency>
+            
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jsr173_api</artifactId>
@@ -132,8 +196,8 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>52n-wps-config</artifactId>
-                <version>1.0.1</version>
+                <artifactId>52n-wps-xml-wpsconfig</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -152,6 +216,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>52n-wps-grid</artifactId>
+                <version>${project.version}</version>
+            </dependency>            
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-webapp</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -165,12 +234,29 @@
                 <artifactId>52n-wps-install-wizard</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
+			<dependency>
             	<groupId>${project.groupId}</groupId>
             	<artifactId>52n-wps-sextante</artifactId>
             	<version>${project.version}</version>
         	</dependency>
-            
+			<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-webadmin</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
+        	
+        	<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-transactional</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-ags</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
+
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-site</artifactId>
@@ -195,4 +281,3 @@
         </plugins>
     </reporting>
 </project>
-

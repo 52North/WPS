@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.groundwater.porouspuff</ows:Identifier><!-- ParameterCount=10 -->	
+		<ows:Title>PorousPuff_sa</ows:Title>
+		<ows:Abstract>Calculates the time-dependent, two-dimensional concentration distribution in mass per volume of a solute introduced instantaneously and at a discrete point into a vertically mixed aquifer. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>input_track_file</ows:Identifier><!-- 0 -->
+				<ows:Title>input track file</ows:Title>
+				<ows:Abstract>The input particle track path file. This is an ASCII text file containing information about the position, the local velocity vector, and the cumulative length and time of travel along the path. This file is generated using Particle Track.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_porosity_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>in porosity raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the effective formation porosity at that location.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_thickness_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>in thickness raster</ows:Title>
+				<ows:Abstract>The input raster where each cell value represents the saturated thickness at that location. The value for the thickness is interpreted from geological properties of the aquifer.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>mass</ows:Identifier><!-- 4 -->
+				<ows:Title>mass</ows:Title>
+				<ows:Abstract>A value for the amount of mass released instantaneously at the source point, in units of mass.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>desipersion_time</ows:Identifier><!-- 5 -->
+				<ows:Title>dispersion time</ows:Title>
+				<ows:Abstract>A value representing the time horizon for dispersion of the solute, in units of time. The time must be less than or equal to the maximum time in the track file. If the requested time exceeds the available time from the track file, the function is aborted. The default time is the latest time (corresponding to the terminal point) in the track file.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>longitudinal_dispersivity</ows:Identifier><!-- 6 -->
+				<ows:Title>longitudinal dispersivity</ows:Title>
+				<ows:Abstract>A value representing the dispersivity parallel to the flow direction. For details on how the default value is determined, and how it relates to the scale of the study, see the How Porous Puff works section in the documentation.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>dispersivity_ratio</ows:Identifier><!-- 7 -->
+				<ows:Title>dispersivity ratio</ows:Title>
+				<ows:Abstract>A value representing the ratio of longitudinal dispersivity over transverse dispersivity. Transverse dispersivity is perpendicular to the flow direction in the same horizontal plane. The default value is three.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>retardation_factor</ows:Identifier><!-- 8 -->
+				<ows:Title>retardation factor</ows:Title>
+				<ows:Abstract>A dimensionless value representing the retardation of the solute in the aquifer. Retardation varies between one and infinity, with one corresponding to no retardation. The default value is one.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>decay_coefficient</ows:Identifier><!-- 9 -->
+				<ows:Title>decay coefficient</ows:Title>
+				<ows:Abstract>Decay coefficient for solutes undergoing first order exponential decay (for example, radionuclides) in units of inverse time. The default is zero, corresponding to no decay.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_raster</ows:Identifier><!-- 3 -->
+				<ows:Title>out raster</ows:Title>	
+				<ows:Abstract>The output raster the of the concentration distribution. Each cell value represents the concentration at that location.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

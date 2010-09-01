@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.analysis.statistics.summarystatistics</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Title>SummaryStatistics_analysis</ows:Title>
+		<ows:Abstract>This calculates summary statistics for field(s) in a table. Uses ArcObjects library - Analysis</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_table</ows:Identifier><!-- 0 -->
+				<ows:Title>in table</ows:Title>
+				<ows:Abstract>The input table containing the field(s) that will be used to calculate statistics. The input can be an INFO table, a dBASE table, an OLE DB table, a VPF table, or a feature class.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>case_field</ows:Identifier><!-- 3 -->
+				<ows:Title>case fields</ows:Title>
+				<ows:Abstract>The fields in the Input Table used to calculate statistics separately for each unique attribute value (or combination of attributes values when multiple fields are specified).</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>summary_fields</ows:Identifier><!-- 2 -->
+				<ows:Title>summary fields</ows:Title>
+				<ows:Abstract>The numeric field containing attribute values used to calculate the specified statistic. Multiple statistic and field combinations may be specified. Null values are excluded from all statistical calculations. The Add Field button, which is used only in ModelBuilder, allows you to add expected field(s) so you can complete the dialog box and continue to build your model. Available statistic types are
+				SUM — Adds the total value for the specified field.
+				MEAN — Calculates the average for the specified field.
+				MIN — Finds the smallest value for all records of the specified field.
+				MAX — Finds the largest value for all records of the specified field.
+				RANGE — Finds the range of values (MAX – MIN) for the specified field.
+				STD — Finds the standard deviation on values in the specified field.
+				FIRST — Finds the first record in the Input Table and uses its specified field value.
+				LAST — Finds the last record in the Input Table and uses its specified field value.
+				COUNT — Finds the number of values included in statistical calculations. This counts each value except null values. To determine the number of null values in a field, use the COUNT statistic on the field in question, and a COUNT statistic on a different field that does not contain nulls (for example, the OID if present), then subtract the two values.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>SUM</ows:Value>
+						<ows:Value>MEAN</ows:Value>
+						<ows:Value>MIN</ows:Value>
+						<ows:Value>MAX</ows:Value>
+						<ows:Value>RANGE</ows:Value>
+						<ows:Value>STD</ows:Value>
+						<ows:Value>FIRST</ows:Value>
+						<ows:Value>LAST</ows:Value>
+						<ows:Value>COUNT</ows:Value>
+					</ows:AllowedValues>
+				</LiteralData>
+			</Input>		
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_table</ows:Identifier><!-- 1 -->
+				<ows:Title>out table</ows:Title>	
+				<ows:Abstract>The output dBASE or geodatabase table that will store the calculated statistics.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/dbf</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

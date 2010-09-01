@@ -1,21 +1,42 @@
  -----
- Download
+Demo section 
  -----
-Theodor Foerster
+Bastian Schäffer
  -----
- 2008-07-01
+ 2010-0828-08
  -----
 
 WPS Download section
 ~~~~~~~~~~~~~~~~~~
 * Latest version:
-
-	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc2/52n-wps-webapp-1.0-rc2.war} 52n WPS 1.0 RC2}}, release date August 2008.
 	
+	* Binary:
+	
+		* {{{http://52north.org/download/Geoprocessing/WPS/52n-wps-webapp-2.0-RC5.war} 52n WPS 2.0 RC5}}, release date August 2010.
+		Note: Java 1.6.0_01-b06 or higher required
+		
+		Please see the user guidance for further {{{http://52north.org/maven/project-sites/wps/52n-wps-webapp/source_setup.html} instructions}}.
+		
+	* Source:
+	
+		* See the {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf} source setup page}} for further instructions
+		
 * Former versions:
 
+
+       
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc4/52n-wps-webapp-2.0-rc4.war} 52n WPS 2.0 RC4}}, release date April 2010.
+	
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc3/52n-wps-webapp-2.0-rc3.war} 52n WPS 2.0 RC3}}, release date September 2009.
+	
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/2.0-rc2/52n-wps-webapp-2.0-rc2.war} 52n WPS 2.0 RC2}}, release date March 2009.
+	
+	* {{{http://52north.org/index.php?option=com_jdownloads&Itemid=73&task=finish&cid=94&catid=22} 52n WPS 2.0 RC1}}, release date August 2008.
+	
+	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc2/52n-wps-webapp-1.0-rc2.war} 52n WPS 1.0 RC2}}, release date August 2008.
+	
 	* {{{http://52north.org/maven/repo/releases/org/n52/wps/52n-wps-webapp/1.0-rc1/52n-wps-webapp-1.0-rc1.war} 52n WPS 1.0 RC1}}, release date July 2008.
 
 * Archive @ sourceforge
 
-	This archive at the {{{http://sourceforge.net/project/showfiles.php?group_id=183259&package_id=236086}52n sourceforge download site}} contains former releases of 52n WPS. Please only use them for trial and testing.
+	This archive at the {{{http://sourceforge.net/project/showfiles.php?group_id=183259&package_id=236086}52n sourceforge download site}} contains FORMER releases of 52n WPS. Please only use them for trial and testing.

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="D:/localWPSFiles/legacyDescriptions/dummyPython.xslt" ?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"  xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd" service="WPS" version="1.0.0" xml:lang="en-US">
+	<ProcessDescription wps:processVersion="2" storeSupported="true" statusSupported="false">
+		<ows:Identifier>org.n52.wps.ags.algorithm.DummyPython</ows:Identifier>
+		<ows:Title>dummy algorithm</ows:Title>
+		<ows:Abstract>Uses ArcGIS Server Backend</ows:Abstract>
+		<ows:Metadata xlink:title="dummyPython" ></ows:Metadata>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>INPUT_FILE</ows:Identifier>
+				<ows:Title>input file</ows:Title>
+				<ows:Abstract>some file</ows:Abstract>
+				<ComplexData>
+				<Default>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>	
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/GeoTIFF</MimeType>
+						<Schema></Schema>
+					</Format>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Supported>
+				</ComplexData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>OUTPUT_FILE</ows:Identifier>
+				<ows:Title>output file</ows:Title>
+				<ows:Abstract>another file</ows:Abstract>
+				<ComplexOutput>
+				<Default>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>application/img</MimeType>
+						<Schema></Schema>
+					</Format>
+				</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>

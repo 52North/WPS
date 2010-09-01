@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.groundwater.particletrack</ows:Identifier><!-- ParameterCount=7 -->	
+		<ows:Title>ParticleTrack_sa</ows:Title>
+		<ows:Abstract>Calculates the path of a particle through a velocity field, returning an ASCII file of particle tracking data and, optionally, a coverage of track information. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_direction_raster</ows:Identifier><!-- 0 -->
+				<ows:Title>input direction raster</ows:Title>
+				<ows:Abstract>Input direction of the velocity raster. Directions are expressed in compass coordinates, in degrees clockwise from north. This can be created by the Darcy Flow function. Direction values must be floating point.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_magnitude_raster</ows:Identifier><!-- 1 -->
+				<ows:Title>input magnitude raster</ows:Title>
+				<ows:Abstract>An input raster where each cell value represents the magnitude of the seepage velocity vector (average linear velocity) at the center of the cell. Units are length/time. This can be created by the Darcy Flow function.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>source_point</ows:Identifier><!-- 2 -->
+				<ows:Title>source point</ows:Title>
+				<ows:Abstract>The location of the source point from which to begin the particle tracking. This is entered as numbers identifying the x,y coordinates of the position in map units.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>step length</ows:Identifier><!-- 4 -->
+				<ows:Title>step_length</ows:Title>
+				<ows:Abstract>The step length to be used for calculating the particle track. The default is one half the cell size. Units are length.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>tracking_time</ows:Identifier><!-- 5 -->
+				<ows:Title>tracking time</ows:Title>
+				<ows:Abstract>Maximum elapsed time for particle tracking. Particle Track will follow the track until either this time is met or the particle migrates off the raster or into a depression. The default value is infinity. Units are time.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+				</LiteralData>	
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_track_file</ows:Identifier><!-- 3 -->
+				<ows:Title>out track file</ows:Title>	
+				<ows:Abstract>The output ASCII text file that contains the particle tracking data.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+			<Output minOccurs="0" maxOccurs="1">
+				<ows:Identifier>out_track_polyline_features</ows:Identifier><!-- 6 -->
+				<ows:Title>out track polyline features</ows:Title>	
+				<ows:Abstract>The optional output line feature class containing the particle track. This feature class contains a series of arcs with attributes for position, local velocity direction and magnitude, and cumulative length and time of travel along the path.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>	
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

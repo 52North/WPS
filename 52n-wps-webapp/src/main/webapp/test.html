@@ -1,115 +1,134 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-	<head>
-		<title>
-			WPS Test
-		</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	</head>
-	<body bgcolor="#ffffff" text="#000000">
-		<table align="center" border="0" bordercolor="#000099" height="740" width="75%">
-			<tbody>
+   <head>
+       <title>WPS Test</title>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+       <script src="js/jquery-1.4.2.min.js" type="text/javascript" language="javascript"></script>
+       <SCRIPT LANGUAGE="javascript" type="text/javascript">
+       
+        function onChange()
+        {
+                var select = $('#requestChooser')[0];
+                var choice = select.options[select.selectedIndex].value;
+                
+                switch (choice) {
+                    case 'Choose a request':
+                            $('#request')[0].value = " ";
+                            break;
+                    case 'Union':
+                            $.ajax({
+                                type: "GET",
+                                url: "requests/Unionrequest.xml",
+                                dataType: ($.browser.msie) ? "xml" : "text/xml",
+                                success: getXmlSuccess
+                            });
+                            break;
+                    case 'Intersects':
+                            $.ajax({
+                                type: "GET",
+                                url: "requests/Intersectsrequest.xml",
+                                dataType: ($.browser.msie) ? "xml" : "text/xml",
+                                success: getXmlSuccess
+                            });
+                            break;
+                    case 'Touches':
+                            $.ajax({
+                                type: "GET",
+                                url: "requests/Touchesrequest.xml",
+                                dataType: ($.browser.msie) ? "xml" : "text/xml",
+                                success: getXmlSuccess
+                            });
+                            break;
+                    default: alert('Error: Unknown choice!');
+                }
+        }
+        
+       function getXmlSuccess(xml)
+       {
+          $('#request')[0].value = xml;
+       }
 
-				<tr>
-					<td>
-						<table align="center" border="0" bordercolor="#000099" width="100%">
-							<tbody>
-								<tr bordercolor="#0000CC">
-									<td bordercolor="#000099" width="51%">
-										<h1>
-											<font color="#000080">
-												<b>
-
-													<i>
-														<font face="Verdana, Arial, Helvetica, sans-serif">
-															WPS
-														</font>
-														<font color="#000080" face="Verdana, Arial, Helvetica, sans-serif">
-															TestClient.....
-														</font>
-													</i>
-												</b>
-											</font>
-
-										</h1>
-									</td>
-									<td  width="49%">
-										<div align="right">
-														<a href="http://www.52north.org/index.php?index" target="_blank">
-															<img src="http://52north.org/joomla/templates/52north_new/images/logo.gif" height="100" width="300"/>
-															</a>
-
-													
-											</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</td>
-
-				</tr>
-				<tr>
-					<td height="528">
-						<table border="1" bordercolor="#000080" width="75%">
-							<tbody>
-								<tr bgcolor="#000080">
-									<td>
-										<font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif">
-											<b>
-
-												Server:
-											</b>
-										</font>
-									</td>
-									<td colspan="2" bgcolor="#000080">
-										<form name="form1" method="post" action="">
-											<div>
-												<input name="url" value="http://localhost:8080/wps/WebProcessingService" size="90" type="text">
-											</div>
-
-										</form>
-									</td>
-								</tr>
-								<tr bgcolor="#000080">
-									<td>
-										<font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif">
-											<b>
-												Request:
-											</b>
-
-										</font>
-									</td>
-									<td>
-										<form name="form2" method="post" action="" enctype="text/plain">
-											<div>
-												<textarea name="request" cols="80" rows="20"></textarea>
-											</div>
-											<p>
-												<input value="   Clear    " name="reset" type="reset">
-											</p>
-											<p>
-												<input value="   Send    " onclick="form2.action = form1.url.value" type="submit">
-											</p>
-										</form>
-									</td>
-								</tr>
-							</tbody>
-
-							<h1>
-								<font color="#000066">
-									<b>
-										<i></i>
-									</b>
-								</font>
-							</h1>
-							<h1>
-
-								<font color="#000066">
-									<b></b>
-								</font>
-							</h1>
-							<h1>
-								&nbsp;
-							</h1>
-	</body>
+       </SCRIPT>
+   </head>
+   <body bgcolor="#ffffff" text="#000000">
+       <table align="center" border="0" bordercolor="#000099" height="740" width="75%">
+           <tbody>
+              <tr>
+                 <td>
+                    <table align="center" border="0" bordercolor="#000099" width="100%">
+                       <tbody>
+                          <tr bordercolor="#0000CC">
+                             <td bordercolor="#000099" width="51%">
+                             <h1>
+                                <font color="#000080">
+                                   <b><i>
+                                        <font face="Verdana, Arial, Helvetica, sans-serif">
+                                                WPS
+                                        </font>
+                                        <font color="#000080" face="Verdana, Arial, Helvetica, sans-serif">
+                                                TestClient...
+                                        </font>
+                                    </i></b>
+                                </font>
+                             </h1>
+                             </td>
+                             <td  width="49%">
+                                 <div align="right">
+                                    <a href="http://www.52north.org/index.php?index" target="_blank">
+                                        <img src="http://52north.org/maven/project-sites/wps/52n-wps-site/images/logo_new.gif" height="110" width="252"/>
+                                    </a>
+                                 </div>
+                             </td>
+                           </tr>
+                       </tbody>
+                    </table>
+                  </td>
+              </tr>
+              <tr>
+                  <td height="528">
+                     <table border="1" bordercolor="#000080" width="75%">
+                        <tbody>
+                            <tr bgcolor="#000080">
+                                <td>
+                                   <font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"><b>Server:</b></font>
+                                </td>
+                                <td colspan="2" bgcolor="#000080">
+                                        <form name="form1" method="post" action="">
+                                              <div>
+                                                <input name="url" value="http://localhost:8080/wps/WebProcessingService" size="90" type="text">
+                                              </div>
+                                        </form>
+                                        <form name="form3" action="">
+                                             <select id='requestChooser' onchange='onChange();'>
+                                                <option selected="selected">Choose a request</option>
+                                                <option>Union</option>
+                                                <option>Intersects</option>
+                                                <option>Touches</option>
+                                             </select>
+                                        </form>
+                                </td>
+                            </tr>
+                            <tr bgcolor="#000080">
+                                <td>
+                                        <font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"><b>Request:</b></font>
+                                </td>
+                                <td>
+                                        <form name="form2" method="post" action="" enctype="text/plain">
+                                                <div>
+                                                        <textarea id="request" name="request" cols="80" rows="20"></textarea>
+                                                </div>
+                                                <p>
+                                                        <input value="   Clear    " name="reset" type="reset">
+                                                </p>
+                                                <p>
+                                                        <input value="   Send    " onclick="form2.action = form1.url.value" type="submit">
+                                                </p>
+                                        </form>
+                                </td>
+                            </tr>
+                          </tbody>
+                        <h1><font color="#000066"><b><i></i></b></font></h1>
+                        <h1><font color="#000066"><b></b></font></h1>
+                        <h1>&nbsp;</h1>
+    </body>
 </html>

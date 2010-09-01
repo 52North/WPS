@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.classprobability</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>ClassProbability_sa</ows:Title>
+		<ows:Abstract>Creates probability layers for each class in a signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="unbounded">
+				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
+				<ows:Title>in raster bands</ows:Title>
+				<ows:Abstract>Input raster bands. Raster bands can be integer or floating point.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>in_signature_file</ows:Identifier><!-- 1 -->
+				<ows:Title>in signature file</ows:Title>
+				<ows:Abstract>Input signature file whose class signatures are used to generate the a priori probability layers. A ".gsg" extension is required.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/txt</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maximum_output_value</ows:Identifier><!-- 3 -->
+				<ows:Title>maximum output value</ows:Title>
+				<ows:Abstract>Factor for scaling the range of values in the output probability layers. By default, the values range from 0 to 100.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+				</LiteralData>	
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>a_priori_probabilities </ows:Identifier><!-- 4 -->
+				<ows:Title>a priori probabilities</ows:Title>
+				<ows:Abstract>Specifies how a priori probabilities will be determined. EQUAL  — All classes will have the same a priori probability. SAMPLE  — A priori probabilities will be proportional to the number of cells in each class relative to the total number of cells sampled in all classes in the signature file. FILE  — A priori probabilities will be assigned to each class from an input a priori probability file.
+				</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>EQUAL</ows:Value>
+						<ows:Value>FILE</ows:Value>
+						<ows:Value>SAMPLE</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>	
+			</Input>
+				<Input minOccurs="0" maxOccurs="1">
+					<ows:Identifier>in_a_priori_file</ows:Identifier><!-- 5 -->
+					<ows:Title>in a priori file</ows:Title>
+					<ows:Abstract>A text file containing a priori probabilities for the input signature classes. An input for the a priori probability file is only required when the FILE option is used. The extension for the a priori file can be ".txt" or ".asc".</ows:Abstract>
+					<ComplexData>
+						<Default>
+							<Format>
+								<MimeType>application/txt</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Default>
+						<Supported>
+							<Format>
+								<MimeType>application/txt</MimeType>
+								<Schema></Schema>
+							</Format>
+						</Supported>
+					</ComplexData>
+				</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>out_multiband_raster</ows:Identifier><!-- 2 -->
+				<ows:Title>out multiband raster</ows:Title>	
+				<ows:Abstract>The output multiband raster dataset. The dataset filename must have less than 10 characters.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	
