@@ -34,14 +34,17 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.io;
 
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.wps.GeneratorDocument.Generator;
-
 import org.apache.log4j.Logger;
-import org.n52.wps.io.xml.AbstractXMLGenerator;
-import org.n52.wps.io.xml.SimpleGMLGenerator;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
+import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
+
 
 public class GeneratorFactory {
 	
@@ -65,7 +68,21 @@ public class GeneratorFactory {
 	}
 	
 	private GeneratorFactory(Generator[] generators) {
-		registeredGenerators = new ArrayList<IGenerator>();
+		loadAllGenerators(generators);
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getRegisteredGenerators());
+            }
+        });
+	}
+
+    private void loadAllGenerators(Generator[] generators){
+        registeredGenerators = new ArrayList<IGenerator>();
 		for(Generator currentGenerator : generators) {
 			IGenerator generator = null;
 			String generatorClass = currentGenerator.getClassName();
@@ -85,13 +102,13 @@ public class GeneratorFactory {
 				registeredGenerators.add(generator);
 			}
 		}
-	}
+    }
 
 	public static GeneratorFactory getInstance() {
 		return factory;
 	}
 	
-	public IGenerator getGenerator(String schema, String format, String encoding) {
+	private IGenerator getGenerator(String schema, String format, String encoding) {
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
 			LOGGER.debug("format is null, assume standard text/xml");
@@ -108,8 +125,8 @@ public class GeneratorFactory {
 		}
 		return null;
 	}
-	
-	public IGenerator getGenerator(String schema, String format, String encoding, String algorithmIdentifier) {
+	/*
+	public IGenerator getGenerator(String schema, String format, String encoding, String algorithmIdentifier, String outputIdentifier) {
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
 			LOGGER.debug("format is null, assume standard text/xml");
@@ -119,27 +136,36 @@ public class GeneratorFactory {
 			LOGGER.debug("encoding is null, assume standard UTF-8");
 		}
 		
-		String generatorList = IOConfiguration.getInstance().getProperty(algorithmIdentifier + ".generators");
-		if(generatorList==null)
-			return getGenerator(schema, format, encoding);
-		String[] algorithmSupportedGenerators = generatorList.split(",");
-		// If there are no explicitly defined parsers, then lets return 
-		// what would be returned without knowing the algorithm identifier.
-		if(algorithmSupportedGenerators.length==0)
-			return getGenerator(schema, format, encoding);
-		
+		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
+		Class requiredInputClass = algorithm.getOutputDataType(outputIdentifier);
+		return getGenerator(schema, format, encoding, requiredInputClass);
+	}
+	*/
+	
+	public IGenerator getGenerator(String schema, String format, String encoding, Class outputInternalClass) {
+		if(format == null) {
+			format = IOHandler.DEFAULT_MIMETYPE;
+			LOGGER.debug("format is null, assume standard text/xml");
+		}
+		if(encoding == null) {
+			encoding = IOHandler.DEFAULT_ENCODING;
+			LOGGER.debug("encoding is null, assume standard UTF-8");
+		}
+			
 		for(IGenerator generator : registeredGenerators) {
-			for(String supportedParser: algorithmSupportedGenerators) {
-				// Comparing fully-qualified names.
-				if(supportedParser.compareTo(generator.getClass().getName()) == 0) {
-					// Only parsers supported are checked out.
-					if(generator.isSupportedSchema(schema) && 
-							generator.isSupportedEncoding(encoding) &&
-							generator.isSupportedFormat(format))
+			Class[] supportedClasses = generator.getSupportedInternalInputDataType();
+			for(Class clazz : supportedClasses){
+				if(clazz.equals(outputInternalClass)) {
+					if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) &&generator.isSupportedFormat(format)){
 						return generator;
+					}
 				}
 			}
+			
+			
 		}
+		//TODO
+		//try a chaining approach, by calculation all permutations and look for matches.
 		return null;
 	}
 	
@@ -150,5 +176,11 @@ public class GeneratorFactory {
 	public AbstractXMLGenerator getSimpleXMLGenerator() {
 		return new SimpleGMLGenerator();
 	}
+
+	public List<IGenerator> getAllGenerators() {
+		return registeredGenerators;
+	}
+
+	
 	
 }

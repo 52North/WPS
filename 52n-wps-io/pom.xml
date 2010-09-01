@@ -4,11 +4,12 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>1.0-rc3-SNAPSHOT</version>
+        <version>WPS 2.0-rc5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-io</artifactId>
+  <version>WPS 2.0-rc5</version>
     <packaging>jar</packaging>
     <name>52north 52n-wps-io</name>
     <description>The project 52 north 52n-wps-io does something with JAVA.</description>
@@ -37,6 +38,7 @@
         </configuration>
       </plugin>
     </plugins>
+   
             
         <!-- build-jar should be without version number -->
         <!--finalName>52n-wps-io</finalName-->
@@ -46,23 +48,47 @@
         </testResources>
         
     </build>
+     <repositories>
+       <repository>
+        <releases>
+                <enabled>true</enabled>
+        </releases>
+        <snapshots>
+                <enabled>false</enabled>
+        </snapshots>
+        <id>ifgi.releases</id>
+        <name>Ifgi - Maven releases</name>
+        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/releases/</url>
+</repository>
+<repository>
+        <releases>
+                <enabled>false</enabled>
+        </releases>
+        <snapshots>
+                <enabled>true</enabled>
+        </snapshots>
+        <id>ifgi.snapshots</id>
+        <name>Ifgi - Maven snapshots</name>
+        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/snapshots/</url>
+</repository>      
+<repository>
+                <id>osgeo</id>
+                <name>Open Source Geospatial Foundation Repository</name>
+                <url>http://download.osgeo.org/webdav/geotools/</url>
+            </repository>
+            <repository>
+                   <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                    <id>opengeo</id>
+                    <name>OpenGeo Maven Repository</name>
+                    <url>http://repo.opengeo.org</url>
+            </repository>
+    </repositories>   
+    
  <dependencies>
- <dependency>
-<!-- junit for the unit tests -->
-   <groupId>junit</groupId>
-   <artifactId>junit</artifactId>
-   <version>3.8.1</version>
-   <scope>test</scope>
-</dependency>
-<dependency>
-    <!-- log4j the default 'use' logging library
-      the library referenced in code should be
-      commons-logging -->
-   <groupId>log4j</groupId>
-   <artifactId>log4j</artifactId>
-   <version>1.2.13</version>
-   <scope>test</scope>
-</dependency>
+ 
+ 
 <!-- Dependencies for Scope 'compile' --> <dependency>
    <groupId>commons-logging</groupId>
    <artifactId>commons-logging</artifactId>
@@ -72,7 +98,7 @@
 <dependency>
      <groupId>com.vividsolutions</groupId>
      <artifactId>jts</artifactId>
-     <version>1.8</version>
+     <version>1.10</version>
 </dependency>
 <dependency>
      <groupId>log4j</groupId>
@@ -81,55 +107,52 @@
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-main</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-main</artifactId>
+   <version>2.6.1</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-arcgrid</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-arcgrid</artifactId>
+   <version>2.6.1</version>
 </dependency>
 <dependency>
-   <groupId>org.opengis</groupId>
-   <artifactId>geoapi-nogenerics</artifactId>
-   <version>2.1.0</version>
-</dependency>
-<dependency>
-   <groupId>org.geotools</groupId>
-   <artifactId>gt2-coverage</artifactId>
-   <version>2.4.2</version>
+   <groupId>org.geotools.xsd</groupId>
+   <artifactId>gt-xsd-gml3</artifactId>
+   <version>2.6.1</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-referencing</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-coverage</artifactId>
+   <version>2.6.1</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-xml-filter</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-referencing</artifactId>
+   <version>2.6.1</version>
+</dependency>
+<dependency>
+	<groupId>org.geotools.xsd</groupId>
+	<artifactId>gt-xsd-core</artifactId>
+	<version>2.6.1</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-xml</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-xml</artifactId>
+   <version>2.6.1</version>
 </dependency>
 <dependency>
    <groupId>org.geotools</groupId>
-   <artifactId>gt2-xml-gml2</artifactId>
-   <version>2.4.2</version>
+   <artifactId>gt-geotiff</artifactId>
+   <version>2.6.1</version>
 </dependency>
-<!--
-<dependency>
-   <groupId>org.geotools</groupId>
-   <artifactId>gt2-imageio-asciigrid</artifactId>
-   <version>2.3.1-SNAPSHOT</version>
-</dependency>-->
-<!--dependency>
-   <groupId>org.geotools</groupId>
-   <artifactId>gt2-imageio-streams</artifactId>
-   <version>2.3.1-SNAPSHOT</version>
-</dependency-->
+<!-- deprecated
+	<dependency>
+  <groupId>sapience</groupId>
+  <artifactId>sapience-streams-kml</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  
+</dependency>
+-->
 <dependency>
    <groupId>org.n52.wps</groupId>
    <artifactId>gmlpacket-2.0</artifactId>
@@ -155,40 +178,8 @@
    <artifactId>jai_imageio</artifactId>
    <version>1.1</version>
 </dependency>
-<dependency>
-   <groupId>junit</groupId>
-   <artifactId>junit</artifactId>
-   <version>3.8.1</version>
-   <scope>test</scope>
-</dependency>
 
-<!-- KML support -->
-<dependency>
-    <groupId>org.n52.wps</groupId>
-    <artifactId>gmlpacket-2.0</artifactId>
-    <version>0.4</version>
-  </dependency>
-  <dependency>
-    <groupId>commons-io</groupId>
-    <artifactId>commons-io</artifactId>
-    <version>1.3.1</version>
-</dependency>
-<dependency>
-    <groupId>javax.media</groupId>
-    <artifactId>jai_codec</artifactId>
-    <version>1.1.3-alpha</version>
-</dependency>
-<dependency>
-    <groupId>javax.media</groupId>
-    <artifactId>jai_core</artifactId>
-    <version>1.1.3-alpha</version>
-</dependency>
-<dependency>
-    <groupId>javax.media</groupId>
-    <artifactId>jai_imageio</artifactId>
-    <version>1.1-alpha</version>
-</dependency>
-    <dependency>
+   <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>3.8.1</version>
@@ -198,13 +189,30 @@
 		<groupId>${project.groupId}</groupId>
   		<artifactId>52n-wps-commons</artifactId>
       </dependency>
+  
+      
 <dependency>
    <groupId>org.n52.wps</groupId>
    <artifactId>ogckml2.2</artifactId>
    <version>1.0.0</version>
 </dependency>
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-shapefile</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+ <dependency>
+    <groupId>xalan</groupId>
+    <artifactId>xalan</artifactId>
+    <version>2.7.1</version>
+</dependency>   
 
     </dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
-   
+
 </project>

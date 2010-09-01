@@ -1,10 +1,10 @@
 /***************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: Theodor Foerster, ITC
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,28 +22,34 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.io;
 
 public interface IOHandler {
 	
-	public static final String DEFAULT_MIMETYPE="text/xml";
+	
 	public static final String DEFAULT_ENCODING="UTF-8";
 	
+	public static final String ENCODING_BASE64 = "base64";
+
+	public static final String DEFAULT_MIMETYPE = "text/xml";
+
+	public static final String MIME_TYPE_ZIPPED_SHP = "application/x-zipped-shp";
 	
 	boolean isSupportedSchema(String schema);
 	boolean isSupportedFormat(String format);
 	boolean isSupportedEncoding(String encoding);
 	
-	boolean supportsSchemas();
-	
 	String[] getSupportedSchemas();
 	
 	String[] getSupportedFormats();
 	
-	boolean isSupportedRootClass(String clazzName);
-	String[] getSupportedRootClasses();
+	String[] getSupportedEncodings();
+	
+	
+	
+	
 	
 }

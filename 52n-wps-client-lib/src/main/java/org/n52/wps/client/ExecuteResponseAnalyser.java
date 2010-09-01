@@ -1,10 +1,10 @@
 /*****************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,7 +22,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.client;
@@ -37,7 +37,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
-import org.n52.wps.io.xml.AbstractXMLParser;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 
 /*
  * 
@@ -63,7 +65,7 @@ public class ExecuteResponseAnalyser {
 		this.processDesc= processDesc;		
 	}
 	
-	public Object getComplexData(String name) {
+	public IData getComplexData(String name) {
 		if(response != null) {
 			return parseProcessOutput(response);
 		}
@@ -112,7 +114,7 @@ public class ExecuteResponseAnalyser {
 		
 	
 	
-	private Object parseProcessOutput(OutputDataType output) {
+	private IData parseProcessOutput(OutputDataType output) {
 		String schemaURL = output.getData().getComplexData().getSchema();
 		if(schemaURL == null) {
 			for(OutputDescriptionType outputDesc :processDesc.getProcessOutputs().getOutputArray()) {
@@ -124,7 +126,7 @@ public class ExecuteResponseAnalyser {
 		if(schemaURL == null) {
 			throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + output.getIdentifier().getStringValue());
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
 		if(parser instanceof AbstractXMLParser) {
 			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
 			return xmlParser.parseXML(output.getData().getComplexData().newInputStream());
@@ -137,19 +139,32 @@ public class ExecuteResponseAnalyser {
 	 * @param obj
 	 * @return
 	 */
-	private Object parseProcessOutput(Object obj) {
+	private IData parseProcessOutput(Object obj) {
 		String schema = exec.getExecute().getResponseForm().getRawDataOutput().getSchema();
 		if(schema == null) {
 			schema = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getSchema();
-			if(schema == null) {
-				throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + exec.getExecute().getIdentifier().getStringValue());
+			
+		}
+		String mimeType = exec.getExecute().getResponseForm().getRawDataOutput().getMimeType();
+		if(mimeType == null) {
+			mimeType = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getMimeType();
+			if(mimeType == null) {
+				throw new IllegalArgumentException("Could not find mimeType for output: " + exec.getExecute().getIdentifier().getStringValue());
 			}
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING);
-		if(parser instanceof AbstractXMLParser) {
-			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
-			return xmlParser.parseXML((InputStream)response);
+		String encoding = exec.getExecute().getResponseForm().getRawDataOutput().getEncoding();
+		if(encoding == null) {
+			encoding = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getEncoding();
+			if(encoding == null) {
+				encoding = IOHandler.DEFAULT_ENCODING;
+				//throw new IllegalArgumentException("Could not find encoding for output: " + exec.getExecute().getIdentifier().getStringValue());
+			}
 		}
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
+		if(parser != null) {
+			return parser.parse((InputStream)response, mimeType);
+		}
+
 		return null;
 	}
 }

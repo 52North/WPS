@@ -29,6 +29,12 @@ package org.n52.wps.io;
 
 import java.io.InputStream;
 
+import org.n52.wps.io.data.IData;
+
 public interface IParser extends IOHandler{
-	Object parse(InputStream input);
+	
+	IData parse(InputStream input, String mimeType);
+	
+	Class[] getSupportedInternalOutputDataType();
+	
 }

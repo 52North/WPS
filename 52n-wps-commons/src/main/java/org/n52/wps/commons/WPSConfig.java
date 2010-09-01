@@ -29,6 +29,10 @@
 
 package org.n52.wps.commons;
 
+// FvK: added Property Change support
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,18 +56,54 @@ import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 public class WPSConfig  implements Serializable {
 	private static transient WPSConfig wpsConfig;
 	private static transient WPSConfigurationImpl wpsConfigXMLBeans;
-	
+
 	private static transient Logger LOGGER = Logger.getLogger(WPSConfig.class);
-	
-		
+    
+    // FvK: added Property Change support
+    protected final PropertyChangeSupport propertyChangeSupport;
+    // constants for the Property change event names
+    public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
+	public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
+
 	private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
 		wpsConfigXMLBeans= (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
 		
+        // FvK: added Property Change support
+        propertyChangeSupport=new PropertyChangeSupport(this);
 	}
 	
 	private WPSConfig(InputStream resourceAsStream) throws XmlException, IOException {
 		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
+
+        // FvK: added Property Change support
+        propertyChangeSupport=new PropertyChangeSupport(this);
 	}
+
+
+    /**
+     * Add an Listener to the wpsConfig
+     * @param propertyName
+     * @param listener
+     */
+    public void addPropertyChangeListener(final String propertyName,
+            final PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(propertyName,listener);
+    }
+
+    /**
+     * remove a listener from the wpsConfig
+     * @param propertyName
+     * @param listener
+     */
+    public void removePropertyChangeListener(final String propertyName,
+            final PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(propertyName,listener);
+    }
+
+    //For Testing purpose only
+    public void notifyListeners(){
+        propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,null);
+    }
 
 	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
 	{
@@ -88,23 +128,83 @@ public class WPSConfig  implements Serializable {
 	}
 	
 	public static void forceInitialization(String configPath) throws XmlException, IOException{
-		wpsConfig = new WPSConfig(configPath);
-	}
+		// temporary save all registered listeners
+        PropertyChangeListener[] listeners = {};
+        if (wpsConfig != null){
+            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
+        }
+        wpsConfig = new WPSConfig(configPath);
+        
+        //register all saved listeners to new wpsConfig Instance
+        //reversed order to keep original order of the registration!!!
+        for (int i=listeners.length-1;i>=0;i--){
+            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
+        }
 
-	public static WPSConfig getInstance() {
-		if(wpsConfig==null){
-			try {
-				wpsConfig = new WPSConfig(getConfigPath());
-			} catch (XmlException e) {
-				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
-				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
-			} catch (IOException e) {
+        // fire event
+        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
+        LOGGER.info("Configuration Reloaded, Listeners informed");
+	}
+	
+	public static void forceInitialization(InputStream stream) throws XmlException, IOException {
+        // temporary save all registered listeners
+        PropertyChangeListener[] listeners = {};
+        if (wpsConfig != null){
+            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
+        }
+
+		wpsConfig = new WPSConfig(stream);
+
+        //register all saved listeners to new wpsConfig Instance
+        //reversed order to keep original order of the registration!!!
+        for (int i=listeners.length-1;i>=0;i--){
+            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
+        }
+
+        // fire event
+        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
+        LOGGER.info("Configuration Reloaded, Listeners informed");
+	}
+    
+	public static WPSConfig getInstance()
+	{
+		if (wpsConfig == null)
+		{
+			try
+			{
+				return getInstance(getConfigPath());
+			}
+			catch (IOException e)
+			{
 				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
 				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
 			}
 		}
 		return wpsConfig;
 	}
+	
+	public static WPSConfig getInstance(String path)
+	{
+		if (wpsConfig == null)
+		{
+			try
+			{
+				wpsConfig = new WPSConfig(path);
+			}
+			catch (XmlException e)
+			{
+				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			}
+			catch (IOException e)
+			{
+				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			}
+		}
+		return wpsConfig;
+	}
+	
 	/**
 	 * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is only applicable for webapp applications. To customize this, please use directly {@link WPSConfig#forceInitialization(String)} and then getInstance().
 	 * @return
@@ -115,7 +215,14 @@ public class WPSConfig  implements Serializable {
 		//truncate
 		int index = domain.indexOf("WEB-INF");
 		if(index<0){
-			throw new IOException("Could not find wps_config.xml");
+			//try to load from classpath
+			URL configPath = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
+			if(configPath==null){
+				throw new IOException("Could not find wps_config.xml");
+			}else{
+				return configPath.getFile();
+			}
+			
 		}
 		String substring = domain.substring(0,index);
 		if(!substring.endsWith("/")){
@@ -154,7 +261,7 @@ public class WPSConfig  implements Serializable {
 				return generator.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 		
 	}
 	
@@ -166,7 +273,7 @@ public class WPSConfig  implements Serializable {
 				return parser.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 		
 	}
 	
@@ -179,7 +286,7 @@ public class WPSConfig  implements Serializable {
 			}
 		}
 		
-		return (Property[]) Array.newInstance(Property.Factory.class,0);
+		return (Property[]) Array.newInstance(Property.class,0);
 	}
 	
 	public Property getPropertyForKey(Property[] properties, String key){
