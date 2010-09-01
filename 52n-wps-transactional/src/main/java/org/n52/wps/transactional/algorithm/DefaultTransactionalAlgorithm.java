@@ -108,16 +108,22 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		//forward request
 			
 			//TODO get deploy manager class from config
-			IDeployManager deployManager = TransactionalHelper.getDeploymentManagerForSchema("whatever.xsd");
+			//IDeployManager deployManager = TransactionalHelper.getDeploymentManagerForSchema("whatever.xsd");
+                        IDeployManager deployManager = TransactionalHelper.getDeploymentManagerForSchema("BPELProfile.xsd");
+                        
 			responseDocument = deployManager.invoke(payload, getAlgorithmID());
 			
 			//1.parse results;
 			
 			//TODO make temporaryfile
 		
-			writeXmlFile(responseDocument,workspace+"\\BPEL\\serverside.xml");
-			
-			ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(new File(workspace+"\\BPEL\\serverside.xml"));
+			//writeXmlFile(responseDocument,workspace+"\\BPEL\\serverside.xml");
+			File tempFile = File.createTempFile("wpsbpelresult", ".xml", null);
+
+                        writeXmlFile(responseDocument,tempFile);
+
+			//ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(new File(workspace+"\\BPEL\\serverside.xml"));
+                        ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(tempFile);
 			
 	//			2.look at each Output Element
 			OutputDataType[] resultValues = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
@@ -187,8 +193,14 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		int searchIndex= fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:/", "");
+                String processID = getAlgorithmID();
+                //sanitize processID: strip version number and namespace if passed in
+                if (processID.contains("-"))
+                    processID = processID.split("-")[0];
+                if (processID.contains("}"))
+                    processID = processID.split("}")[1];
 		try {
-			File xmlDesc = new File(subPath+"\\WEB-INF\\ProcessDescriptions\\"+getAlgorithmID()+".xml");
+			File xmlDesc = new File(subPath+"\\WEB-INF\\ProcessDescriptions\\"+processID+".xml");
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
 			ProcessDescriptionsDocument doc = ProcessDescriptionsDocument.Factory.parse(xmlDesc, option);
@@ -197,7 +209,7 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 				return null;
 			}
 			
-			doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(getAlgorithmID());
+			doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(processID);
 
 
 			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
@@ -253,18 +265,20 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	}
 	
 
-	private static void writeXmlFile(Document doc, String filename) {
+	//private static void writeXmlFile(Document doc, String filename) {
+        private static void writeXmlFile(Document doc, File file) {
         try {
-        	if(filename==null){
-        		filename = "C:\\BPEL\\serverside.xml";
-        	}
+//        	if(filename==null){
+//        		filename = "C:\\BPEL\\serverside.xml";
+//        	}
             // Prepare the DOM document for writing
             Source source = new DOMSource(doc);
     
             // Prepare the output file
-            File file = new File(filename);
-            file.createNewFile();
-            Result result = new StreamResult(file);
+            //File file = new File(filename);
+            //file.createNewFile();
+            //Result result = new StreamResult(file);
+            Result result = new StreamResult(file.toURI().getPath());
     
             // Write the DOM document to the file
             Transformer xformer = TransformerFactory.newInstance().newTransformer();

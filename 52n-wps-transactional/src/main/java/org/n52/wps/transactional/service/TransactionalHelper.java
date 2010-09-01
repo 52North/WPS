@@ -1,6 +1,7 @@
 package org.n52.wps.transactional.service;
 
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -97,7 +98,27 @@ public class TransactionalHelper {
 		Property[] properties = repository.getPropertyArray();
 		for(Property property : properties){
 			if(property.getName().equals("DeployManager")){
-				return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
+				//return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
+                            try{
+
+                                Class depManager = Class.forName(property.getStringValue());
+                                Constructor con = depManager.getConstructor(ITransactionalAlgorithmRepository.class);
+                                Object o = con.newInstance(new Object[]{getMatchingTransactionalRepository(schema)});
+                                return (IDeployManager)o;
+                            }catch(ClassNotFoundException e){
+                                e.printStackTrace();
+                            }catch(NoSuchMethodException e){
+                                e.printStackTrace();
+                            }catch(SecurityException e){
+                                e.printStackTrace();
+                            }catch(IllegalAccessException e){
+                                e.printStackTrace();
+                            }catch(InvocationTargetException e){
+                                e.printStackTrace();
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+
 			}
 		}
 		return null;

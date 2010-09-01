@@ -79,9 +79,14 @@ public class DeployProcessRequest implements ITransactionalRequest {
 			Constructor<?> constructor;
 			constructor = Class.forName(deployManagerClass).getConstructor(
 					Node.class, String.class);
-			deploymentProfile = (DeploymentProfile) constructor.newInstance(
+                        //NH 17-12-09 we're asking for the deployment profile but also need the process request info
+			//deploymentProfile = (DeploymentProfile) constructor.newInstance(
+			//		XPathAPI.selectSingleNode(doc,
+			//				"/DeployProcessRequest/DeploymentProfile"),
+			//		processID);
+                        deploymentProfile = (DeploymentProfile) constructor.newInstance(
 					XPathAPI.selectSingleNode(doc,
-							"/DeployProcessRequest/DeploymentProfile"),
+							"/DeployProcessRequest"),
 					processID);
 		} catch (TransformerException e) {
 			throw new ExceptionReport("Error. Malformed DeployProcess request",

@@ -47,7 +47,7 @@ public class TransactionalRequestHandler {
 	 * 
 	 * @param request
 	 *            the request to handle
-	 * @return a response if the process has succeded. <code>null</code> is
+	 * @return a response if the process has succeeded. <code>null</code> is
 	 *         never returned
 	 * @throws Exception
 	 *             if an error occurs handling the request

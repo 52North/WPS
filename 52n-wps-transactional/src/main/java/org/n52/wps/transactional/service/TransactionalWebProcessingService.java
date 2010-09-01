@@ -3,6 +3,7 @@ package org.n52.wps.transactional.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -12,6 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
@@ -22,6 +30,7 @@ import org.n52.wps.transactional.request.ITransactionalRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.n52.wps.transactional.response.TransactionalResponse;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class TransactionalWebProcessingService extends HttpServlet{
@@ -34,10 +43,17 @@ public class TransactionalWebProcessingService extends HttpServlet{
 		try {
 			InputStream is = req.getInputStream();
 			//System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "com.sun.org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-			DocumentBuilderFactory documentBuiloderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder documentBuilder= documentBuiloderFactory.newDocumentBuilder();
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			boolean changeMe = false;
+			if(changeMe){
+			documentBuilderFactory.setNamespaceAware(true);//this prevents "xmlns="""
+			documentBuilderFactory.setIgnoringElementContentWhitespace(true);
+			}
+			DocumentBuilder documentBuilder= documentBuilderFactory.newDocumentBuilder();
 			Document document = documentBuilder.parse(is);
 
+			System.out.println(nodeToString(document.getFirstChild()));
+			
 			String requestType = document.getFirstChild().getNodeName();
 			ITransactionalRequest request = null;
 			if (requestType == null) {
@@ -91,5 +107,14 @@ public class TransactionalWebProcessingService extends HttpServlet{
 					new ExceptionReport("Unexpected error",
 							ExceptionReport.NO_APPLICABLE_CODE));
 		}
+	}
+	
+	private String nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+		StringWriter stringWriter = new StringWriter();
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
+		
+		return stringWriter.toString();
 	}
 }

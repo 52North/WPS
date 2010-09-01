@@ -5,29 +5,31 @@
 
 package org.n52.wps.transactional.deploy.bpel.apache;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import org.w3c.dom.Node;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
+import org.apache.xpath.XPathAPI;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -56,33 +58,36 @@ public class ZipCreator {
     return fMessages [msg_number];
   }
   
-    public static int makeZIP(String processID, Node suitcase, Node workflow, Node clientWSDL, Map<Integer, Node> wsdlList, String zipPath) throws IOException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException{
+    public static int makeZIP(String processID, Node suitcase, Node workflow, Node clientWSDL, Map<Integer, Node> wsdlList, File zipFile) throws IOException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException{
     
     
-    FileOutputStream zip_output = new FileOutputStream(zipPath);
+    FileOutputStream zip_output = new FileOutputStream(zipFile);
 
     ZipOutputStream zip_out_stream = new ZipOutputStream(zip_output);
    
     try {
       // Use the file name for the ZipEntry name.
-      ZipEntry zip_entry = new ZipEntry ("bpel.xml");
+      ZipEntry zip_entry = new ZipEntry ("deploy.xml");
       zip_out_stream.putNextEntry (zip_entry);
-      ByteArrayOutputStream outputStream = createOutputStreamFromNode(suitcase);
+      ByteArrayOutputStream outputStream = nodeToString(suitcase);
       zip_out_stream.write(outputStream.toByteArray());
       zip_out_stream.closeEntry();
-      
-      outputStream = createOutputStreamFromNode(workflow);
-      zip_out_stream.putNextEntry (new ZipEntry ("workflow.bpel"));
+
+      String bpelname = XPathAPI.selectSingleNode(workflow,"@name").getTextContent();
+      outputStream = nodeToString(workflow);
+//      outputStream = createOutputStreamFromNode(workflow);
+      zip_out_stream.putNextEntry (new ZipEntry (bpelname + ".bpel"));
       zip_out_stream.write(outputStream.toByteArray());
       zip_out_stream.closeEntry();
-      
-      outputStream = createOutputStreamFromNode(clientWSDL);
-      zip_out_stream.putNextEntry (new ZipEntry ("client.wsdl"));
+
+      String wsdlname = XPathAPI.selectSingleNode(clientWSDL,"@name").getTextContent();
+      outputStream = nodeToString(clientWSDL);
+      zip_out_stream.putNextEntry (new ZipEntry (wsdlname + ".wsdl"));
       zip_out_stream.write(outputStream.toByteArray());
       zip_out_stream.closeEntry();
       
       for (Integer index : wsdlList.keySet()){
-            outputStream = createOutputStreamFromNode(wsdlList.get(index));
+            outputStream = nodeToString(wsdlList.get(index));
             zip_out_stream.putNextEntry (new ZipEntry ("wps"+index+".wsdl"));
             zip_out_stream.write(outputStream.toByteArray());
             zip_out_stream.closeEntry();
@@ -126,5 +131,43 @@ public class ZipCreator {
         xformer.transform(source, result);
         return outputStream;
 	}
+    
+	private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+		StringWriter stringWriter = new StringWriter();
+		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
+		
+		String s = stringWriter.toString();
+		
+		s = s.replaceAll("xmlns=\"\"", "");
+		
+		stringWriter = new StringWriter();
+		
+		stringWriter.append(s);
+		
+		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+		
+		try {
+			bOut.write(s.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return bOut;
+	}
+    
+//	private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+//		Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//        
+//		// Prepare the output file
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        Result result = new StreamResult(outputStream);
+//		
+//		transformer.transform(new DOMSource(node), result);
+//		
+//		return outputStream;
+//	}
     
 }

@@ -53,8 +53,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.traversal.NodeIterator;
 
 
@@ -102,22 +106,42 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		//  3. other wsdl
 		//  4. bpel
 		//	5.create describe process
-		writeXmlFile(deployProcessDocument, "C:\\BPEL\\request.xml");
+
+                //System.out.println("deployProcessDocument: ");
+                //printNode(deployProcessDocument, "");
+		//writeXmlFile(deployProcessDocument, "C:\\BPEL\\request.xml");
 		
 		//	1. suitcase
-		suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase");
+		//suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase");
+                suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/DeploymentProfile/SuitCase/BPELSuitcase/deploy");
 		//select processName
-		String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
-			
+		//String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
+                //System.out.println("suitCase: ");
+                //printNode(suitCase, "");
+                String processName ="";
+                //Node pn;
+                //    pn = XPathAPI.selectSingleNode(suitCase, "//deploy/process");
+                try{
+                    //processName = XPathAPI.selectSingleNode(suitCase, "//process/@name").getTextContent();
+                    processName = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions/ProcessDescription/Identifier/text()").getNodeValue().trim();
+                }catch(DOMException de){
+                    de.printStackTrace();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
 		
 		
 		//	2. clientwsdl
-		clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/ProcessWSDL/definitions");
-		
+		//clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/ProcessWSDL/definitions");
+                clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/DeploymentProfile/ProcessWSDL/definitions");
+		//System.out.println("clientWSDL: ");
+                //printNode(clientWSDL, "");
 		
 		//  3. other wsdl
-		Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List");
-		NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List/definitions");
+		//Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List");
+                Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/DeploymentProfile/WSDL-List");
+		//NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List/definitions");
+                NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/DeploymentProfile/WSDL-List/definitions");
 		//Note: WSDL files are written in the correct order
 		wsdlList = new HashMap<Integer, Node>();
 		int index = 0;
@@ -132,11 +156,14 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		
 		
 		//  4. bpel
-		bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/BPEL/process");
-			
+		//bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/BPEL/process");
+                bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/DeploymentProfile/BPEL/process");
+		//System.out.println("bpel: ");
+                //printNode(bpel, "");
 		
 		//	  5. create describe process
-		Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions/ProcessDescriptions");
+		//Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions/ProcessDescriptions");
+                Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions");
 		
 		String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex= fullPath.indexOf("WEB-INF");
@@ -150,6 +177,7 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		if(!directory.exists()){
 			directory.mkdirs();
 		}
+
 		String path = subPath+"WEB-INF/ProcessDescriptions/"+processName+".xml";
 		
 //		String decodedPath = path.replaceAll("%20"," ");
@@ -218,6 +246,86 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		
 		
 	}
-	
+
+        public void printNode(Node node, String indent) {
+		switch (node.getNodeType()) {
+		case Node.DOCUMENT_NODE:
+			System.out.println(indent + "<?xml version=\"1.0\"?>");
+
+			NodeList nodes = node.getChildNodes();
+
+			if (nodes != null) {
+				for (int i = 0; i < nodes.getLength(); i++) {
+					printNode(nodes.item(i), "");
+				}
+			}
+
+			break;
+
+		case Node.ELEMENT_NODE:
+
+			String name = node.getNodeName();
+			System.out.print(indent + "<" + name);
+
+			NamedNodeMap attributes = node.getAttributes();
+
+			for (int i = 0; i < attributes.getLength(); i++) {
+				Node current = attributes.item(i);
+				System.out.print(" " + current.getNodeName() +
+				        "=\"" + current.getNodeValue() + "\"");
+			}
+
+			System.out.println(">");
+
+			NodeList children = node.getChildNodes();
+
+			if (children != null) {
+				for (int i = 0; i < children.getLength();
+					        i++) {
+					printNode(children.item(i),
+					        indent + "  ");
+				}
+			}
+
+			System.out.println(indent + "</" + name + ">");
+
+			break;
+
+		case Node.TEXT_NODE:
+		case Node.CDATA_SECTION_NODE:
+			System.out.println(indent + node.getNodeValue());
+
+			break;
+
+		case Node.PROCESSING_INSTRUCTION_NODE:
+			System.out.println(indent + "<?" + node.getNodeName() +
+			        " " + node.getNodeValue() + " ?>");
+
+			break;
+
+		case Node.ENTITY_REFERENCE_NODE:
+			System.out.println("&" + node.getNodeName() + ";");
+
+			break;
+
+		case Node.DOCUMENT_TYPE_NODE:
+
+			DocumentType docType = (DocumentType) node;
+			System.out.print("<!DOCTYPE " + docType.getName());
+
+			if (docType.getPublicId() != null) {
+				System.out.print("PUBLIC \"" +
+				        docType.getPublicId() + "\"");
+			} else {
+				System.out.print(" SYSTEM ");
+			}
+
+			System.out.println("\"" + docType.getSystemId() +
+			        "\" >");
+
+			break;
+		}
+	}
+
 
 }
