@@ -136,12 +136,22 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
 			Object parsedData =  parser.parse(stream);
-			if(parsedData instanceof FeatureCollection){
+			
+			if (parsedData instanceof FeatureCollection) {
 				fc = (FeatureCollection) parsedData;
-			}else{
-				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
-				for(SimpleFeature feature : featureList){
+			} else {
+
+				if (((HashMap) parsedData).get("featureMember") instanceof SimpleFeature) {
+					SimpleFeature feature = (SimpleFeature) ((HashMap) parsedData)
+							.get("featureMember");
 					fc.add(feature);
+				} else if (((HashMap) parsedData).get("featureMember") instanceof List) {
+
+					List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>) ((HashMap) parsedData)
+							.get("featureMember"));
+					for (SimpleFeature feature : featureList) {
+						fc.add(feature);
+					}
 				}
 			}
 			
