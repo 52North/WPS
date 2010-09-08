@@ -7,10 +7,10 @@
 		<ParserList>
 		
 		<Parser name="GML3BasicParser" className="org.n52.wps.io.datahandler.xml.GML3BasicParser">
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
@@ -166,6 +166,16 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 	
 			
+		</Repository>		
+		
+		<Repository name="ApacheBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository">
+			<Property name="GenericAlgorithm">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
+			<Property name="DeployManager">org.n52.wps.transactional.deploy.bpel.apache.ApacheBPELManager</Property>
+			<Property name="WorkspaceLocationRoot"></Property>
+			<Property name="supportedFormat">BPELProfile.xsd</Property>
+			<Property name="DeploymentProfileClass">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
+			<Property name="ODE-Engine_DeploymentEndpoint">http://localhost:8181/ode/WEB-INF/processes</Property>
+			<Property name="ODE-Engine_ProcessManagerEndpoint">http://localhost:8181/ode/processes/ProcessManagement</Property>
 		</Repository>
 		
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository">
