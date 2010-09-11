@@ -25,7 +25,7 @@ import org.apache.xmlbeans.XmlOptions;
  */
 public abstract class AbstractAlgorithm implements IAlgorithm 
 {
-	private ProcessDescriptionType description;
+	protected ProcessDescriptionType description;
 	private final String wkName;
 	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
 	
