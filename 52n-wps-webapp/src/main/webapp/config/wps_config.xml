@@ -87,7 +87,11 @@
 			<Generator name="GML3BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator">
 				<Property name="featureTransformerIncludeBounding">false</Property>
 				<Property name="featureTransformerDecimalPlaces">4</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
@@ -154,7 +158,28 @@
 				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat">text/xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
+			</Generator>
+			
+			<Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.ows.WMSGenerator">
+				<Property name="supportedFormat">application/WMS</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+				<Property name="Geoserver_username">admin</Property>
+				<Property name="Geoserver_password">geoserver</Property>
+				<Property name="Geoserver_host">localhost</Property>
+				<Property name="Geoserver_port">8080</Property>
+			</Generator>
+			
+			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.ows.WFSGenerator">
+				<Property name="supportedFormat">application/WFS</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+				<Property name="Geoserver_username">admin</Property>
+				<Property name="Geoserver_password">geoserver</Property>
+				<Property name="Geoserver_host">localhost</Property>
+				<Property name="Geoserver_port">8080</Property>
+		
 			</Generator>			
+			
+				
 			
 		</GeneratorList>
 	</Datahandlers>
@@ -164,6 +189,7 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
+			<Property name="Algorithm">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
 	
 			
 		</Repository>
@@ -171,8 +197,13 @@
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository">
 		</Repository>
 		
+	
 		
 		<!-- 
+		
+			<Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository">
+		</Repository>
+		
 		<Repository name="LocalUnicoreAlgorithmRepository"	className="org.n52.wps.unicore.UnicoreAlgorithmRepository">			
 			<Property name="Algorithm">org.n52.wps.unicore.algorithm.UnicoreSimpleBufferAlgorithm</Property>
 
@@ -238,12 +269,6 @@
 			
 		</Repository> 
 		
-	
-		 
-		 <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
-		</Repository>
-			
-			 
 			 
 			 <Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository">
             <Property name="IP">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
@@ -254,7 +279,11 @@
             <Property name="ARCOBJECTSJAR">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property>
             <Property name="DESCRIBE_PROCESS_DIR">C:\wps\xmlDescriptions</Property>
           </Repository>
+            <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
            -->
+           
+           
+		</Repository>
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
 		     <Database/>
