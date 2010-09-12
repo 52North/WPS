@@ -30,6 +30,7 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
@@ -122,6 +123,7 @@ public class OutputDataItem extends ResponseData {
 				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
 		} catch(RuntimeException e) {
+			e.printStackTrace();
 			throw new ExceptionReport("Error while generating XML out of the process result", 
 												ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
@@ -185,16 +187,16 @@ public class OutputDataItem extends ResponseData {
 					xmlObj.save(baos);
 				}
 				catch(XmlException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
+					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
 				}
 				catch(IOException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
+					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
 				}
 				catch(RuntimeException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream", ExceptionReport.NO_APPLICABLE_CODE);
+					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream. Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
 				}
-			} if(generator instanceof AbstractBinaryGenerator) {
-				// OutputStream stream = ((AbstractBinaryGenerator)generator).generate(obj);
+			} else if(generator instanceof AbstractBinaryGenerator) {
+				 OutputStream stream = ((AbstractBinaryGenerator)generator).generate(obj);
 			} else {
 				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			}

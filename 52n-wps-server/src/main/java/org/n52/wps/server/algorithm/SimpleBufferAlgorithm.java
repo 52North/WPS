@@ -68,6 +68,8 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 	public SimpleBufferAlgorithm() {
 		super();
 		
+		
+		
 	}
 
 	private List<String> errors = new ArrayList<String>();

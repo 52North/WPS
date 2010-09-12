@@ -39,10 +39,12 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultTransaction;
@@ -63,6 +65,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.datahandler.binary.GeotiffGenerator;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -79,6 +82,8 @@ public class GenericFileData {
 	public final InputStream dataStream;
 	public final String fileExtension; 
 	public final String mimeType;
+	private File primaryFile;
+	
 	
 	public GenericFileData (InputStream stream, String mimeType){
 		this.dataStream = stream;
@@ -93,12 +98,13 @@ public class GenericFileData {
 	
 	private static File getShpFile(FeatureCollection collection) throws IOException, IllegalAttributeException {
 		SimpleFeatureType type = null;
-		 SimpleFeatureBuilder build = null;
+		SimpleFeatureBuilder build = null;
 		FeatureIterator iterator = collection.features();
 		FeatureCollection modifiedFeatureCollection = null;
 		Transaction transaction = new DefaultTransaction("create");
 		FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
-		File shp = File.createTempFile("shp", ".shp");
+		String uuid = UUID.randomUUID().toString();
+		File shp = new File("Shape_"+uuid+".shp");
 		while(iterator.hasNext()){
 			SimpleFeature sf = (SimpleFeature) iterator.next();
 			// create SimpleFeatureType
@@ -194,7 +200,8 @@ public class GenericFileData {
   }
 	
 
-	public GenericFileData (File primaryFile, String mimeType) throws IOException{
+	public GenericFileData (File primaryTempFile, String mimeType) throws IOException{
+		primaryFile = primaryTempFile;
 		this.mimeType = mimeType;
 		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
 		
@@ -204,7 +211,8 @@ public class GenericFileData {
 			
 			String baseFile = primaryFile.getName(); 
 			baseFile = baseFile.substring(0, baseFile.lastIndexOf("."));
-			File directory = new File(primaryFile.getParent());
+			File temp = new File(primaryFile.getAbsolutePath());
+			File directory = new File(temp.getParent());
 			String[] extensions = GenericFileDataConstants.getIncludeFilesByMimeType(mimeType);
 			
 			File[] allFiles = new File[extensions.length + 1];
@@ -224,6 +232,14 @@ public class GenericFileData {
 		
 	}
 	
+	public GenericFileData(GridCoverage2D payload, String mimeType) {
+		GeotiffGenerator generator = new GeotiffGenerator();
+		primaryFile = generator.generateFile(new GTRasterDataBinding(payload), mimeType);
+		dataStream = null;
+		fileExtension = "tiff";
+		this.mimeType = mimeType;
+	}
+
 	public String writeData (File workspaceDir){
 		
 		String fileName = null;
@@ -355,7 +371,9 @@ public class GenericFileData {
 		return null;
 	}
 	
-	
+	public File getBaseFile(){
+		return primaryFile;
+	}
 	
 	
 }

@@ -54,9 +54,9 @@ import org.w3c.dom.Node;
 
 public abstract class AbstractXMLGenerator implements IGenerator { 
 	protected Property[] properties;
-	private List<String> supportedSchemas;
-	private List<String> supportedFormats;
-	private List<String> supportedEncodings;
+	protected List<String> supportedSchemas;
+	protected List<String> supportedFormats;
+	protected List<String> supportedEncodings;
 	
 	public AbstractXMLGenerator() {
 		supportedSchemas = new ArrayList<String>();
