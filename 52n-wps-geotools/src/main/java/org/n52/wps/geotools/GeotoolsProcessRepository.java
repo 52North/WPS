@@ -13,7 +13,7 @@ import org.geotools.process.ProcessFactory;
 import org.geotools.process.Processors;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.sextante.GenericSextanteProcessDelegator;
+
 
 
 /*
