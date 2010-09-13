@@ -176,7 +176,15 @@
 				<Property name="Geoserver_password">geoserver</Property>
 				<Property name="Geoserver_host">localhost</Property>
 				<Property name="Geoserver_port">8080</Property>
-		
+			</Generator>
+			
+			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.ows.WCSGenerator">
+				<Property name="supportedFormat">application/WCS</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+				<Property name="Geoserver_username">admin</Property>
+				<Property name="Geoserver_password">geoserver</Property>
+				<Property name="Geoserver_host">localhost</Property>
+				<Property name="Geoserver_port">8080</Property>
 			</Generator>			
 			
 				
