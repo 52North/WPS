@@ -152,10 +152,10 @@ public class WCSGenerator extends AbstractXMLGenerator{
 		
 		System.out.println(result);
 				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.0";
+		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
 		
 		
-		Document doc = createXML("N52:"+storeName, capabilitiesLink);
+		Document doc = createXML(storeName, capabilitiesLink);
 		return doc;
 	
 	}
