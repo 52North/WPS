@@ -1,5 +1,6 @@
 package org.n52.wps.geotools;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,9 +11,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.geotools.process.ProcessFactory;
 import org.geotools.process.Processors;
-import org.geotools.process.feature.BufferFeatureCollectionFactory;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.sextante.GenericSextanteProcessDelegator;
 
 
 /*
@@ -32,43 +33,61 @@ public class GeotoolsProcessRepository implements IAlgorithmRepository{
 	public GeotoolsProcessRepository(){
 		Set<ProcessFactory> processFactories = Processors.getProcessFactories();
 		Iterator<ProcessFactory> iterator = processFactories.iterator();
+		
+		GeotoolsProcessDescriptionCreator processDescriptionCreator = new GeotoolsProcessDescriptionCreator();
+		
 		while (iterator.hasNext()) {
 		    
 		    ProcessFactory processFactory = (ProcessFactory) iterator.next();
-
-		   
+		    ProcessDescriptionType processDescription = processDescriptionCreator.createDescribeProcessType(processFactory);
+		    if(processDescription!=null){
+		    	registeredProcesses.put(processDescription.getIdentifier().stringValue(), processDescription);
+				LOGGER.info("Sextante Process " + processDescription.getIdentifier().stringValue() + " added.");
+		    }
+		    
+			 
 		}
+	
 
 		
 		LOGGER.info("Initialization of Geotools Repository successfull");
 	}
 
 
-	@Override
 	public boolean containsAlgorithm(String processID) {
-		// TODO Auto-generated method stub
+		if(registeredProcesses.containsKey(processID)){
+			return true;
+		}
+		LOGGER.warn("Could not find Geotools Process " + processID, null);
 		return false;
 	}
 
-
 	@Override
 	public IAlgorithm getAlgorithm(String processID) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!containsAlgorithm(processID)){
+			throw new RuntimeException("Could not allocate Process");
+		}
+		return new GenericGeotoolsProcessDelegator(processID, registeredProcesses.get(processID));
+		
 	}
 
 
 	@Override
 	public Collection<String> getAlgorithmNames() {
-		// TODO Auto-generated method stub
-		return null;
+		return registeredProcesses.keySet();
 	}
 
 
 	@Override
 	public Collection<IAlgorithm> getAlgorithms() {
-		// TODO Auto-generated method stub
-		return null;
+		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcesses.size());
+		for(String processID : registeredProcesses.keySet()){
+			IAlgorithm algorithm = getAlgorithm(processID);
+			if(algorithm!=null){
+				algorithms.add(algorithm);
+			}
+		}
+		return algorithms;
 	}
 	
 	
