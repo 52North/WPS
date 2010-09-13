@@ -48,8 +48,6 @@ public class GeotoolsProcessRepository implements IAlgorithmRepository{
 			 
 		}
 	
-
-		
 		LOGGER.info("Initialization of Geotools Repository successfull");
 	}
 
