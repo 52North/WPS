@@ -180,10 +180,10 @@ public class WMSGenerator extends AbstractXMLGenerator{
 		
 		System.out.println(result);
 				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/oms?Service=WMS&Request=GetCapabilities&Version=1.1.1";
+		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wms?Service=WMS&Request=GetCapabilities&Version=1.1.1";
 		//String directLink = geoserverBaseURL + "?Service=WMS&Request=GetMap&Version=1.1.0&Layers=N52:"+wmsLayerName+"&WIDTH=300&HEIGHT=300";;
 		
-		Document doc = createXML("N52:"+wmsLayerName, capabilitiesLink);
+		Document doc = createXML("N52:"+storeName, capabilitiesLink);
 		return doc;
 	
 	}
