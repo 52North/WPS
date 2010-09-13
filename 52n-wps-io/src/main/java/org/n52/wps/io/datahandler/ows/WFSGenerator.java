@@ -138,7 +138,7 @@ public class WFSGenerator extends AbstractXMLGenerator{
 		System.out.println(result);
 		
 		
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/ows?Service=WFS&Request=GetCapabilities&Version=1.1.0";
+		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Request=GetCapabilities&Version=1.1.0";
 		//String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
 		
 		//delete shp files

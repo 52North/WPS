@@ -20,6 +20,8 @@ import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.complex.GeotiffBinding;
+import org.n52.wps.io.data.binding.complex.ShapefileBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.w3c.dom.Attr;
@@ -148,6 +150,19 @@ public class WMSGenerator extends AbstractXMLGenerator{
 			wmsLayerName = file.getName().substring(0, lastIndex);
 			
 		}
+		if(coll instanceof ShapefileBinding){
+			ShapefileBinding data = (ShapefileBinding) coll;
+			file = data.getZippedPayload();
+			String path = file.getAbsolutePath();
+			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
+			
+		}
+		if(coll instanceof GeotiffBinding){
+			GeotiffBinding data = (GeotiffBinding) coll;
+			file = (File) data.getPayload();
+			String path = file.getAbsolutePath();
+			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
+		}
 		storeName = file.getName();			
 	
 		storeName = storeName +"_"+ System.currentTimeMillis();
@@ -165,7 +180,7 @@ public class WMSGenerator extends AbstractXMLGenerator{
 		
 		System.out.println(result);
 				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/ows?Service=WMS&Request=GetCapabilities&Version=1.1.0";
+		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/oms?Service=WMS&Request=GetCapabilities&Version=1.1.1";
 		//String directLink = geoserverBaseURL + "?Service=WMS&Request=GetMap&Version=1.1.0&Layers=N52:"+wmsLayerName+"&WIDTH=300&HEIGHT=300";;
 		
 		Document doc = createXML("N52:"+wmsLayerName, capabilitiesLink);
