@@ -119,42 +119,13 @@ public class WCSGenerator extends AbstractXMLGenerator{
 		File file = null;
 		String storeName = "";
 		String wcsLayerName = "";
-		if(coll instanceof GTVectorDataBinding){
-			GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
-			
-			try {
-				GenericFileData fileData = new GenericFileData(gtData.getPayload());
-				file = fileData.getBaseFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-				throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
-			}
-			
-			//zip shp file
-			String path = file.getAbsolutePath();
-			String baseName = path.substring(0, path.length() - ".shp".length());
-			File shx = new File(baseName + ".shx");
-			File dbf = new File(baseName + ".dbf");
-			File prj = new File(baseName + ".prj");
-			File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
-
-			file = zipped;
-			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
-			
-		}
+		
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
 			file = fileData.getBaseFile();
 			int lastIndex = file.getName().lastIndexOf(".");
 			wcsLayerName = file.getName().substring(0, lastIndex);
-			
-		}
-		if(coll instanceof ShapefileBinding){
-			ShapefileBinding data = (ShapefileBinding) coll;
-			file = data.getZippedPayload();
-			String path = file.getAbsolutePath();
-			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 			
 		}
 		if(coll instanceof GeotiffBinding){
