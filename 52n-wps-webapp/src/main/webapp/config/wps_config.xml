@@ -288,10 +288,11 @@
             <Property name="DESCRIBE_PROCESS_DIR">C:\wps\xmlDescriptions</Property>
           </Repository>
             <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
+          </Repository>
            -->
            
            
-		</Repository>
+		
 	</AlgorithmRepositoryList>
 	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
 		     <Database/>
