@@ -31,14 +31,14 @@ import org.w3c.dom.Node;
 
 
 
-public class WMSGenerator extends AbstractXMLGenerator{
+public class WCSGenerator extends AbstractXMLGenerator{
 	
 	private String username;
 	private String password;
 	private String host;
 	private String port;
 	
-	public WMSGenerator() {
+	public WCSGenerator() {
 		
 		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 		for(Property property : properties){
@@ -118,7 +118,7 @@ public class WMSGenerator extends AbstractXMLGenerator{
 	private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
 		File file = null;
 		String storeName = "";
-		String wmsLayerName = "";
+		String wcsLayerName = "";
 		if(coll instanceof GTVectorDataBinding){
 			GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
 			
@@ -139,7 +139,7 @@ public class WMSGenerator extends AbstractXMLGenerator{
 			File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
 
 			file = zipped;
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
+			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 			
 		}
 		if(coll instanceof GTRasterDataBinding){
@@ -147,22 +147,23 @@ public class WMSGenerator extends AbstractXMLGenerator{
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
 			file = fileData.getBaseFile();
 			int lastIndex = file.getName().lastIndexOf(".");
-			wmsLayerName = file.getName().substring(0, lastIndex);
+			wcsLayerName = file.getName().substring(0, lastIndex);
 			
 		}
 		if(coll instanceof ShapefileBinding){
 			ShapefileBinding data = (ShapefileBinding) coll;
 			file = data.getZippedPayload();
 			String path = file.getAbsolutePath();
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
+			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 			
 		}
 		if(coll instanceof GeotiffBinding){
 			GeotiffBinding data = (GeotiffBinding) coll;
 			file = (File) data.getPayload();
 			String path = file.getAbsolutePath();
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
+			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 		}
+		
 		storeName = file.getName();			
 	
 		storeName = storeName +"_"+ System.currentTimeMillis();
@@ -180,10 +181,10 @@ public class WMSGenerator extends AbstractXMLGenerator{
 		
 		System.out.println(result);
 				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/oms?Service=WMS&Request=GetCapabilities&Version=1.1.1";
-		//String directLink = geoserverBaseURL + "?Service=WMS&Request=GetMap&Version=1.1.0&Layers=N52:"+wmsLayerName+"&WIDTH=300&HEIGHT=300";;
+		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.0";
 		
-		Document doc = createXML("N52:"+wmsLayerName, capabilitiesLink);
+		
+		Document doc = createXML("N52:"+storeName, capabilitiesLink);
 		return doc;
 	
 	}
@@ -214,7 +215,7 @@ public class WMSGenerator extends AbstractXMLGenerator{
 
 	@Override
 	public Class[] getSupportedInternalInputDataType() {
-		Class[] supportedClasses = {GTRasterDataBinding.class, GTVectorDataBinding.class, ShapefileBinding.class, GeotiffBinding.class};
+		Class[] supportedClasses = {GTRasterDataBinding.class, ShapefileBinding.class, GeotiffBinding.class};
 		return supportedClasses;
 	}
 	
