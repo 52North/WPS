@@ -54,14 +54,14 @@ import org.n52.wps.server.response.Response;
  */
 public class FlatFileDatabase implements IDatabase {
 
-	String baseDir = null;
+	protected String baseDir = null;
 	private static IDatabase db;
 	
 	/**
 	 * File pattern: WPS base directory/Databases/FlatFile/{id}
 	 *
 	 */
-	private FlatFileDatabase() {
+	protected FlatFileDatabase() {
 		baseDir = WebProcessingService.BASE_DIR + File.separator + "Databases" + File.separator + "FlatFile";
 		File f = new File(baseDir);
 		f.mkdirs();
