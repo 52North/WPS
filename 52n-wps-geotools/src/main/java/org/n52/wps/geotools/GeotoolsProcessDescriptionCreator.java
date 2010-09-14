@@ -1,4 +1,5 @@
 package org.n52.wps.geotools;
+import java.awt.Dimension;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -40,6 +41,11 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.Envelope;
+
+
+
+
 
 
 public class GeotoolsProcessDescriptionCreator {
@@ -47,7 +53,7 @@ public class GeotoolsProcessDescriptionCreator {
 	public ProcessDescriptionType createDescribeProcessType(ProcessFactory processFactory){
 		
 		 Name name = processFactory.getNames().iterator().next();
-		   
+		 System.out.println(name.getLocalPart());
 		 Map<String, Parameter<?>> inputParameterInfo = processFactory.getParameterInfo(name);
 		 Map<String, Parameter<?>> outputParameterInfo = processFactory.getResultInfo(name, null);
 		 return initializeDescription(name.getLocalPart(), inputParameterInfo, outputParameterInfo);
@@ -77,7 +83,7 @@ public class GeotoolsProcessDescriptionCreator {
 				return null;
 			}
 			//ignore envelope input. set to max extend for input data
-			if(inputDataTypeClass.equals(Envelope2D.class)){
+			if(inputDataTypeClass.equals(Envelope2D.class) || inputDataTypeClass.equals(Envelope.class) ){
 				continue;
 			}
 			InputDescriptionType dataInput = dataInputs.addNewInput();
@@ -181,6 +187,14 @@ public class GeotoolsProcessDescriptionCreator {
 		ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
 		Set<String> outputIdentifiers = outputs.keySet();
 		for(String identifier : outputIdentifiers){
+			Parameter<?> parameter = outputs.get(identifier);
+			Class outputDataTypeClass = this.getDataTypeForParameter(identifier, parameter);
+			if(outputDataTypeClass==null){
+				return null;
+			}
+			if(outputDataTypeClass.equals(Dimension.class) || outputDataTypeClass.equals(Object.class) ){
+				continue;
+			}
 			OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
 			
 			
@@ -188,8 +202,6 @@ public class GeotoolsProcessDescriptionCreator {
 			dataOutput.addNewTitle().setStringValue(identifier);
 			dataOutput.addNewAbstract().setStringValue(identifier);
 			
-			Parameter<?> parameter = outputs.get(identifier);
-			Class outputDataTypeClass = this.getDataTypeForParameter(identifier, parameter);
 			if(outputDataTypeClass==null){
 				return null;
 			}
@@ -308,6 +320,13 @@ public class GeotoolsProcessDescriptionCreator {
     		return LiteralBooleanBinding.class;
     	}
     	if(type.equals(Envelope2D.class)){
+    		return type;
+    	}if(type.equals(Envelope.class)){
+    		return type;
+    	}
+    	if(type.equals(Dimension.class)){
+    		return type;
+    	}if(type.equals(Object.class)){
     		return type;
     	}
     	return null;

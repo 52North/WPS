@@ -30,6 +30,8 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.feature.type.Name;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 public class GenericGeotoolsProcessDelegator implements IAlgorithm {
 
 	protected String processID;
@@ -98,6 +100,27 @@ public class GenericGeotoolsProcessDelegator implements IAlgorithm {
 							GridCoverage2D grid = (GridCoverage2D) value;
 							Envelope2D envelope = grid.getEnvelope2D();
 							geotoolsInputs.put(key, envelope);
+						}else{
+							throw new RuntimeException("Execution of process " + processID + " failed. Reason: Could not derive required input envelope from inputdata");
+						}
+					}
+			 }
+			 if(parameter.type.equals(Envelope.class)){
+				 Set<String> inputKeys = inputData.keySet();
+				 for(String key : inputKeys){
+						//only one input per identifier is allowed
+						Object value = inputData.get(key).get(0).getPayload();
+						if(value instanceof FeatureCollection){
+							FeatureCollection fc = (FeatureCollection) value;
+							ReferencedEnvelope envelope = fc.getBounds();
+							Envelope envelopeSimple = new Envelope(envelope);
+							geotoolsInputs.put(key, envelopeSimple);
+						}else if(value instanceof GridCoverage2D){
+							GridCoverage2D grid = (GridCoverage2D) value;
+							org.opengis.geometry.Envelope envelope = grid.getEnvelope();
+							ReferencedEnvelope r = new ReferencedEnvelope(envelope);
+							Envelope envelopeSimple = new Envelope(r);
+							geotoolsInputs.put(key, envelopeSimple);
 						}else{
 							throw new RuntimeException("Execution of process " + processID + " failed. Reason: Could not derive required input envelope from inputdata");
 						}

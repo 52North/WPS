@@ -43,7 +43,7 @@ public class GeotoolsProcessRepository implements IAlgorithmRepository{
 		    ProcessDescriptionType processDescription = processDescriptionCreator.createDescribeProcessType(processFactory);
 		    if(processDescription!=null){
 		    	registeredProcesses.put(processDescription.getIdentifier().stringValue(), processDescription);
-				LOGGER.info("Sextante Process " + processDescription.getIdentifier().stringValue() + " added.");
+				LOGGER.info("Geotools Process " + processDescription.getIdentifier().stringValue() + " added.");
 		    }
 		    
 			 
