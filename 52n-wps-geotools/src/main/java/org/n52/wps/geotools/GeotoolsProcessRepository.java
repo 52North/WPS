@@ -2,6 +2,7 @@ package org.n52.wps.geotools;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class GeotoolsProcessRepository implements IAlgorithmRepository{
 		Iterator<ProcessFactory> iterator = processFactories.iterator();
 		
 		GeotoolsProcessDescriptionCreator processDescriptionCreator = new GeotoolsProcessDescriptionCreator();
-		
+		registeredProcesses = new HashMap<String, ProcessDescriptionType>();
 		while (iterator.hasNext()) {
 		    
 		    ProcessFactory processFactory = (ProcessFactory) iterator.next();
