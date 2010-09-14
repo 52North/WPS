@@ -47,8 +47,14 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
 		processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
 		//2. Inputs
-		DataInputs dataInputs = processDescription.addNewDataInputs();
+	
+		
 		List<String> identifiers = this.getInputIdentifiers();
+		DataInputs dataInputs = null;
+		if(identifiers.size()>0){
+			dataInputs = processDescription.addNewDataInputs();
+		}
+		
 		for(String identifier : identifiers){
 			InputDescriptionType dataInput = dataInputs.addNewInput();
 			dataInput.setMinOccurs(getMinOccurs(identifier));
