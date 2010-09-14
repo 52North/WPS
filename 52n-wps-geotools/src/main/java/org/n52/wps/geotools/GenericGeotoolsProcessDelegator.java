@@ -29,8 +29,8 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.Envelope;
 
-import com.vividsolutions.jts.geom.Envelope;
 
 public class GenericGeotoolsProcessDelegator implements IAlgorithm {
 
@@ -76,51 +76,31 @@ public class GenericGeotoolsProcessDelegator implements IAlgorithm {
 	@Override
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		Map<String, Object> geotoolsInputs = new HashMap<String, Object>();
-		Name name = new NameImpl("gt:",processID.replace("gt:", ""));
+		Name name = new NameImpl("gt",processID.replace("gt:", ""));
 		Process process = Processors.createProcess(name);
 		ProcessFactory processFactory = Processors.createProcessFactory(name);
 		//special case. if envelope is required, set to the max extend of the input.
 		Name processName = processFactory.getNames().iterator().next();
-		   
+		Set<String> inputKeys = inputData.keySet();   
 		 Map<String, Parameter<?>> inputParameterInfo = processFactory.getParameterInfo(processName);
 		 Set<String> parameterIDs = inputParameterInfo.keySet();
 		 for(String parameterID : parameterIDs){
 			 Parameter<?> parameter = inputParameterInfo.get(parameterID);
-			 if(parameter.type.equals(Envelope2D.class)){
-				 Set<String> inputKeys = inputData.keySet();
-				 for(String key : inputKeys){
-						//only one input per identifier is allowed
-						Object value = inputData.get(key).get(0).getPayload();
-						if(value instanceof FeatureCollection){
-							FeatureCollection fc = (FeatureCollection) value;
-							ReferencedEnvelope envelope = fc.getBounds();
-							Envelope2D envelope2d = new Envelope2D(envelope);
-							geotoolsInputs.put(key, envelope);
-						}else if(value instanceof GridCoverage2D){
-							GridCoverage2D grid = (GridCoverage2D) value;
-							Envelope2D envelope = grid.getEnvelope2D();
-							geotoolsInputs.put(key, envelope);
-						}else{
-							throw new RuntimeException("Execution of process " + processID + " failed. Reason: Could not derive required input envelope from inputdata");
-						}
-					}
-			 }
+			 
 			 if(parameter.type.equals(Envelope.class)){
-				 Set<String> inputKeys = inputData.keySet();
+				
 				 for(String key : inputKeys){
 						//only one input per identifier is allowed
 						Object value = inputData.get(key).get(0).getPayload();
 						if(value instanceof FeatureCollection){
 							FeatureCollection fc = (FeatureCollection) value;
 							ReferencedEnvelope envelope = fc.getBounds();
-							Envelope envelopeSimple = new Envelope(envelope);
-							geotoolsInputs.put(key, envelopeSimple);
+							geotoolsInputs.put(parameter.title.toString(), envelope);
 						}else if(value instanceof GridCoverage2D){
 							GridCoverage2D grid = (GridCoverage2D) value;
 							org.opengis.geometry.Envelope envelope = grid.getEnvelope();
-							ReferencedEnvelope r = new ReferencedEnvelope(envelope);
-							Envelope envelopeSimple = new Envelope(r);
-							geotoolsInputs.put(key, envelopeSimple);
+							Envelope envelopeSimple = envelope;
+							geotoolsInputs.put(parameter.title.toString(), envelopeSimple);
 						}else{
 							throw new RuntimeException("Execution of process " + processID + " failed. Reason: Could not derive required input envelope from inputdata");
 						}
@@ -128,7 +108,7 @@ public class GenericGeotoolsProcessDelegator implements IAlgorithm {
 			 }
 		 }
 		
-		Set<String> inputKeys = inputData.keySet();
+	
 		for(String key : inputKeys){
 			//only one input per identifier is allowed
 			Object value = inputData.get(key).get(0).getPayload();
