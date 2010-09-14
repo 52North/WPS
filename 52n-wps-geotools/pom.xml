@@ -83,7 +83,7 @@
 	<dependency>
 		<groupId>org.geotools</groupId>
 	 	<artifactId>gt-process</artifactId>
-	 	 <version>2.6.1</version>
+	 	 <version>2.6.5</version>
 	  </dependency>
     </dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
