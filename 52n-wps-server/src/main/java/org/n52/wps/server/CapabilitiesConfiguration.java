@@ -68,6 +68,7 @@ public class CapabilitiesConfiguration {
 	private static CapabilitiesDocument capabilitiesDocumentObj;
 	private static String filePath;
 	public static String ENDPOINT_URL;
+	public static String tempAmazonPublicIP = getAmazonPublicIP();
 	
 	
 	private CapabilitiesConfiguration() {/*nothing here*/}
@@ -101,7 +102,7 @@ public class CapabilitiesConfiguration {
 		if(host == null) {
 			host = InetAddress.getLocalHost().getCanonicalHostName();
 		}
-		String tempAmazonPublicIP = getAmazonPublicIP();
+		
 		if(tempAmazonPublicIP!=null&&tempAmazonPublicIP.length()>0){
 			host = tempAmazonPublicIP;
 		}
