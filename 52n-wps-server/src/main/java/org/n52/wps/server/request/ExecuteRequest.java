@@ -428,83 +428,86 @@ public class ExecuteRequest extends Request implements IObserver {
 		}
 
 		// Get the inputdescriptions of the algorithm
-		InputDescriptionType[] inputDescs = desc.getDataInputs()
-				.getInputArray();
+		
+		if(desc.getDataInputs()!=null){
+			InputDescriptionType[] inputDescs = desc.getDataInputs().getInputArray();
+		
 
-		// For each input supplied by the client
-		for (InputType input : getExecute().getDataInputs().getInputArray()) {
-			boolean identifierMatched = false;
-			// Try to match the input with one of the descriptions
-			for (InputDescriptionType inputDesc : inputDescs) {
-				// If found, then process:
-				if (inputDesc.getIdentifier().getStringValue().equals(
-						input.getIdentifier().getStringValue())) {
-					identifierMatched = true;
-					// If it is a literal value,
-					if (input.getData() != null
-							&& input.getData().getLiteralData() != null) {
-						// then check if the desription is also of type literal
-						if (inputDesc.getLiteralData() == null) {
-							throw new ExceptionReport(
-									"Inputtype LiteralData is not supported",
-									ExceptionReport.INVALID_PARAMETER_VALUE);
-						}
-						// literalValue.getDataType ist optional
-						if (input.getData().getLiteralData().getDataType() != null) {
-							if (inputDesc.getLiteralData() != null)
-								if (inputDesc.getLiteralData().getDataType() != null)
-									if (inputDesc.getLiteralData()
-											.getDataType().getReference() != null)
-										if (!input
-												.getData()
-												.getLiteralData()
-												.getDataType()
-												.equals(
-														inputDesc
-																.getLiteralData()
-																.getDataType()
-																.getReference())) {
-											throw new ExceptionReport(
-													"Specified dataType is not supported "
-															+ input
-																	.getData()
+			// For each input supplied by the client
+			for (InputType input : getExecute().getDataInputs().getInputArray()) {
+				boolean identifierMatched = false;
+				// Try to match the input with one of the descriptions
+				for (InputDescriptionType inputDesc : inputDescs) {
+					// If found, then process:
+					if (inputDesc.getIdentifier().getStringValue().equals(
+							input.getIdentifier().getStringValue())) {
+						identifierMatched = true;
+						// If it is a literal value,
+						if (input.getData() != null
+								&& input.getData().getLiteralData() != null) {
+							// then check if the desription is also of type literal
+							if (inputDesc.getLiteralData() == null) {
+								throw new ExceptionReport(
+										"Inputtype LiteralData is not supported",
+										ExceptionReport.INVALID_PARAMETER_VALUE);
+							}
+							// literalValue.getDataType ist optional
+							if (input.getData().getLiteralData().getDataType() != null) {
+								if (inputDesc.getLiteralData() != null)
+									if (inputDesc.getLiteralData().getDataType() != null)
+										if (inputDesc.getLiteralData()
+												.getDataType().getReference() != null)
+											if (!input
+													.getData()
+													.getLiteralData()
+													.getDataType()
+													.equals(
+															inputDesc
 																	.getLiteralData()
 																	.getDataType()
-															+ " for input "
-															+ input
-																	.getIdentifier()
-																	.getStringValue(),
-													ExceptionReport.INVALID_PARAMETER_VALUE);
-										}
+																	.getReference())) {
+												throw new ExceptionReport(
+														"Specified dataType is not supported "
+																+ input
+																		.getData()
+																		.getLiteralData()
+																		.getDataType()
+																+ " for input "
+																+ input
+																		.getIdentifier()
+																		.getStringValue(),
+														ExceptionReport.INVALID_PARAMETER_VALUE);
+											}
+							}
 						}
+						// Excluded, because ProcessDescription validation should be
+						// done on startup!
+						// else if (input.getComplexValue() != null) {
+						// if(ParserFactory.getInstance().getParser(input.getComplexValue().getSchema())
+						// == null) {
+						// LOGGER.warn("Request validation message: schema attribute
+						// null, so the simple one will be used!");
+						// }
+						// }
+						// else if (input.getComplexValueReference() != null) {
+						// // we found a complexvalue input, try to get the parser.
+						// if(ParserFactory.getInstance().getParser(input.getComplexValueReference().getSchema())
+						// == null) {
+						// LOGGER.warn("Request validation message: schema attribute
+						// null, so the simple one will be used!");
+						// }
+						// }
+						break;
 					}
-					// Excluded, because ProcessDescription validation should be
-					// done on startup!
-					// else if (input.getComplexValue() != null) {
-					// if(ParserFactory.getInstance().getParser(input.getComplexValue().getSchema())
-					// == null) {
-					// LOGGER.warn("Request validation message: schema attribute
-					// null, so the simple one will be used!");
-					// }
-					// }
-					// else if (input.getComplexValueReference() != null) {
-					// // we found a complexvalue input, try to get the parser.
-					// if(ParserFactory.getInstance().getParser(input.getComplexValueReference().getSchema())
-					// == null) {
-					// LOGGER.warn("Request validation message: schema attribute
-					// null, so the simple one will be used!");
-					// }
-					// }
-					break;
 				}
-			}
-			// if the identifier did not match one of the descriptions, it is
-			// invalid
-			if (!identifierMatched) {
-				throw new ExceptionReport("Input Identifier is not valid: "
-						+ input.getIdentifier().getStringValue(),
-						ExceptionReport.INVALID_PARAMETER_VALUE,
-						"input identifier");
+				// if the identifier did not match one of the descriptions, it is
+				// invalid
+				if (!identifierMatched) {
+					throw new ExceptionReport("Input Identifier is not valid: "
+							+ input.getIdentifier().getStringValue(),
+							ExceptionReport.INVALID_PARAMETER_VALUE,
+							"input identifier");
+				}
 			}
 		}
 		return true;
@@ -518,7 +521,10 @@ public class ExecuteRequest extends Request implements IObserver {
 	public Response call() throws ExceptionReport {
 		LOGGER.debug("started with execution");
 		// parse the input
-		InputType[] inputs = getExecute().getDataInputs().getInputArray();
+		InputType[] inputs = new InputType[0];
+		if( getExecute().getDataInputs()!=null){
+			inputs = getExecute().getDataInputs().getInputArray();
+		}
 		InputHandler parser = new InputHandler(inputs, getAlgorithmIdentifier());
 		
 		// we got so far:
