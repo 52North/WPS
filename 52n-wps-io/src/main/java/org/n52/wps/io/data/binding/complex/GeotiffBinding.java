@@ -1,12 +1,10 @@
 package org.n52.wps.io.data.binding.complex;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.data.IComplexData;
+import org.n52.wps.io.data.IComplexRasterData;
 
-public class GeotiffBinding implements IComplexData{
+public class GeotiffBinding implements IComplexRasterData{
 
 	protected File geotiff;
 	protected String mimeType;
