@@ -96,7 +96,7 @@ public class GenericFileData {
 		
 	}
 	
-	private static File getShpFile(FeatureCollection collection) throws IOException, IllegalAttributeException {
+	public static File getShpFile(FeatureCollection collection) throws IOException, IllegalAttributeException {
 		SimpleFeatureType type = null;
 		SimpleFeatureBuilder build = null;
 		FeatureIterator iterator = collection.features();

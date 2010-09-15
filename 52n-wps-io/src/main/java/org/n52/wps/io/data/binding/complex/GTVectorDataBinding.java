@@ -1,9 +1,11 @@
 package org.n52.wps.io.data.binding.complex;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 
 import org.geotools.feature.FeatureCollection;
+import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IComplexVectorData;
 import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
@@ -37,5 +39,17 @@ public class GTVectorDataBinding implements IComplexVectorData{
 		SimpleGMLParser parser = new SimpleGMLParser(false);
 		this.featureCollection = parser.parseXML((String) oos.readObject()).getPayload();
 	}
+	
+	public File getPayloadAsShpFile(){
+		try {
+			return GenericFileData.getShpFile(featureCollection);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not transform Feature Collection into shp file. Reason " +e.getMessage());
+		}
+		
+	}
+	
+	
 
 }
