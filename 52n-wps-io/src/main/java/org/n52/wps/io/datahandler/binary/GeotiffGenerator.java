@@ -33,6 +33,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
 package org.n52.wps.io.datahandler.binary;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.io.OutputStream;
 
 import javax.media.jai.JAI;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
@@ -50,8 +52,8 @@ import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GeotiffBinding;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.coverage.grid.GridCoverageWriter;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -59,18 +61,36 @@ public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStrea
 	private static Logger LOGGER = Logger.getLogger(GeotiffGenerator.class);
 	
 	public void writeToStream(IData raster, OutputStream outputStream) {
-		if(!(raster instanceof GTRasterDataBinding)){
-			throw new RuntimeException("Geotiff writer does not support incoming datatype");
+		if((raster instanceof GTRasterDataBinding)){
+			
+			GridCoverage coverage = ((GTRasterDataBinding)raster).getPayload();
+			//BufferedOutputStream outPutStream = new BufferedOutputStream(new FileOutputStream(outputFile));
+			GeoTiffWriter geoTiffWriter = null;
+			try {
+				geoTiffWriter = new GeoTiffWriter(outputStream);
+				writeGeotiff(geoTiffWriter, coverage);
+			} catch (IOException e) {
+				LOGGER.error(e);
+				throw new RuntimeException(e);
+			}
 		}
-		GridCoverage coverage = ((GTRasterDataBinding)raster).getPayload();
-		//BufferedOutputStream outPutStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-		GeoTiffWriter geoTiffWriter = null;
-		try {
-			geoTiffWriter = new GeoTiffWriter(outputStream);
-			writeGeotiff(geoTiffWriter, coverage);
-		} catch (IOException e) {
-			LOGGER.error(e);
-			throw new RuntimeException(e);
+		if(raster instanceof GeotiffBinding){
+			File geotiff = ((GeotiffBinding)raster).getPayload();
+			FileInputStream inputStream;
+			try {
+				inputStream = new FileInputStream(geotiff);
+			
+				IOUtils.copy(inputStream, outputStream);
+				inputStream.close();
+				outputStream.flush();
+				outputStream.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			throw new RuntimeException("Error while generating geotiff. Reason " +e.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException("Error while generating geotiff. Reason " +e.getMessage());
+			}
 		}
 	}
 	
@@ -143,7 +163,7 @@ public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStrea
 	}
 	
 	public Class[] getSupportedInternalInputDataType() {
-		Class[] supportedClasses = {GTRasterDataBinding.class};
+		Class[] supportedClasses = {GTRasterDataBinding.class, GeotiffBinding.class};
 		return supportedClasses;
 	}
 
