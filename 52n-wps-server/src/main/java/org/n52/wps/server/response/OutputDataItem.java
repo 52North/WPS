@@ -31,6 +31,10 @@ package org.n52.wps.server.response;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
@@ -53,7 +57,10 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.util.BasicXMLTypeFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /*
  * @author foerster
@@ -152,7 +159,23 @@ public class OutputDataItem extends ResponseData {
 		if (dataTypeReference != null) {
 			literalData.setDataType(dataTypeReference);
 		}
-		literalData.setStringValue(processValue);
+		InputSource is = new InputSource();
+	    is.setCharacterStream(new StringReader(processValue));
+
+		try {
+			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+			XmlObject xmlObj = XmlObject.Factory.parse(doc);
+			literalData.set(xmlObj);
+		} catch (SAXException e) {
+			literalData.setStringValue(processValue);
+		} catch (IOException e) {
+			literalData.setStringValue(processValue);
+		} catch (ParserConfigurationException e) {
+			literalData.setStringValue(processValue);
+		} catch (XmlException e) {
+			literalData.setStringValue(processValue);
+		}
+		
 	}
 	
 	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
