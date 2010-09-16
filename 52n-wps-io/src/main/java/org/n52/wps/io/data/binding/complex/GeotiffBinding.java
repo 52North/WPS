@@ -15,7 +15,7 @@ public class GeotiffBinding implements IComplexRasterData{
 	}
 	
 	@Override
-	public Object getPayload() {
+	public File getPayload() {
 		return geotiff;
 	}
 
