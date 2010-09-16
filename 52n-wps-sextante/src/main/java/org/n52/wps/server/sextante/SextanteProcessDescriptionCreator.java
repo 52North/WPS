@@ -1,19 +1,8 @@
 package org.n52.wps.server.sextante;
 
-import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.n52.wps.io.GeneratorFactory;
-import org.n52.wps.io.IGenerator;
-import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.IParser;
-import org.n52.wps.io.ParserFactory;
-import org.n52.wps.io.data.IComplexData;
-import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
@@ -28,6 +17,14 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
+
+import org.n52.wps.io.GeneratorFactory;
+import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.IParser;
+import org.n52.wps.io.ParserFactory;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
 import es.unex.sextante.additionalInfo.AdditionalInfoRasterLayer;
