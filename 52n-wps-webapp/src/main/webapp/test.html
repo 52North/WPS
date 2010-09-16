@@ -1,134 +1,253 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-   <head>
-       <title>WPS Test</title>
-       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-       <script src="js/jquery-1.4.2.min.js" type="text/javascript" language="javascript"></script>
-       <SCRIPT LANGUAGE="javascript" type="text/javascript">
-       
-        function onChange()
-        {
-                var select = $('#requestChooser')[0];
-                var choice = select.options[select.selectedIndex].value;
-                
-                switch (choice) {
-                    case 'Choose a request':
-                            $('#request')[0].value = " ";
-                            break;
-                    case 'Union':
-                            $.ajax({
-                                type: "GET",
-                                url: "requests/Unionrequest.xml",
-                                dataType: ($.browser.msie) ? "xml" : "text/xml",
-                                success: getXmlSuccess
-                            });
-                            break;
-                    case 'Intersects':
-                            $.ajax({
-                                type: "GET",
-                                url: "requests/Intersectsrequest.xml",
-                                dataType: ($.browser.msie) ? "xml" : "text/xml",
-                                success: getXmlSuccess
-                            });
-                            break;
-                    case 'Touches':
-                            $.ajax({
-                                type: "GET",
-                                url: "requests/Touchesrequest.xml",
-                                dataType: ($.browser.msie) ? "xml" : "text/xml",
-                                success: getXmlSuccess
-                            });
-                            break;
-                    default: alert('Error: Unknown choice!');
-                }
-        }
-        
-       function getXmlSuccess(xml)
-       {
-          $('#request')[0].value = xml;
-       }
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-       </SCRIPT>
-   </head>
-   <body bgcolor="#ffffff" text="#000000">
-       <table align="center" border="0" bordercolor="#000099" height="740" width="75%">
-           <tbody>
-              <tr>
-                 <td>
-                    <table align="center" border="0" bordercolor="#000099" width="100%">
-                       <tbody>
-                          <tr bordercolor="#0000CC">
-                             <td bordercolor="#000099" width="51%">
-                             <h1>
-                                <font color="#000080">
-                                   <b><i>
-                                        <font face="Verdana, Arial, Helvetica, sans-serif">
-                                                WPS
-                                        </font>
-                                        <font color="#000080" face="Verdana, Arial, Helvetica, sans-serif">
-                                                TestClient...
-                                        </font>
-                                    </i></b>
-                                </font>
-                             </h1>
-                             </td>
-                             <td  width="49%">
-                                 <div align="right">
-                                    <a href="http://www.52north.org/index.php?index" target="_blank">
-                                        <img src="http://52north.org/maven/project-sites/wps/52n-wps-site/images/logo_new.gif" height="110" width="252"/>
-                                    </a>
-                                 </div>
-                             </td>
-                           </tr>
-                       </tbody>
-                    </table>
-                  </td>
-              </tr>
-              <tr>
-                  <td height="528">
-                     <table border="1" bordercolor="#000080" width="75%">
-                        <tbody>
-                            <tr bgcolor="#000080">
-                                <td>
-                                   <font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"><b>Server:</b></font>
-                                </td>
-                                <td colspan="2" bgcolor="#000080">
-                                        <form name="form1" method="post" action="">
-                                              <div>
-                                                <input name="url" value="http://localhost:8080/wps/WebProcessingService" size="90" type="text">
-                                              </div>
-                                        </form>
-                                        <form name="form3" action="">
-                                             <select id='requestChooser' onchange='onChange();'>
-                                                <option selected="selected">Choose a request</option>
-                                                <option>Union</option>
-                                                <option>Intersects</option>
-                                                <option>Touches</option>
-                                             </select>
-                                        </form>
-                                </td>
-                            </tr>
-                            <tr bgcolor="#000080">
-                                <td>
-                                        <font color="#ffffff" face="Verdana, Arial, Helvetica, sans-serif"><b>Request:</b></font>
-                                </td>
-                                <td>
-                                        <form name="form2" method="post" action="" enctype="text/plain">
-                                                <div>
-                                                        <textarea id="request" name="request" cols="80" rows="20"></textarea>
-                                                </div>
-                                                <p>
-                                                        <input value="   Clear    " name="reset" type="reset">
-                                                </p>
-                                                <p>
-                                                        <input value="   Send    " onclick="form2.action = form1.url.value" type="submit">
-                                                </p>
-                                        </form>
-                                </td>
-                            </tr>
-                          </tbody>
-                        <h1><font color="#000066"><b><i></i></b></font></h1>
-                        <h1><font color="#000066"><b></b></font></h1>
-                        <h1>&nbsp;</h1>
-    </body>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>WPS Client</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<style type="text/css">
+body {
+	padding: 0;
+	margin: 0;
+	background-color: #fff;
+	color: #000;
+}
+
+#content {
+	margin-top: 10px;
+	margin-right: auto;
+	margin-left: auto;
+	width: 780px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#header {
+	position: relative;
+	height: 80px;
+	margin-bottom: 20px;
+}
+
+#healine {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#logo {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+#url-form {
+	float: none;
+	margin-top: 8em;
+}
+
+#requestTextarea {
+	width: 780px;
+	height: 320px;
+	/* border-color: #63C4E4; */
+}
+
+h1, .title {
+	color: #5D5D49;
+	font-size: 20pt;
+	margin-right: 6pt;
+}
+
+h3 {
+	color: #5D5D49;
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.infotext {
+	color: #5D5D49;
+	font-size: 10pt;
+}
+
+.request-form {
+	margin-bottom: 12px;
+}
+
+.request-form-buttons {
+	margin: 6px;
+}
+
+.editorBorder {
+	border: 1px solid #eee;
+	padding: 0px;
+}
+
+.CodeMirror-line-numbers {
+	width: 2.2em;
+	color: #aaa;
+	background-color: #eee;
+	text-align: right;
+	padding-right: .3em;
+	font-size: 10pt;
+	font-family: monospace;
+	padding-top: .4em;
+}
+</style>
+
+<script src="codemirror/codemirror.js" type="text/javascript"></script>
+
+<script language="JavaScript" type="text/javascript">
+
+	var datafolder = window.location.href.substring(0,
+		     window.location.href.lastIndexOf("/") + 1) +
+		     "requests/";
+
+	var editor = null;
+	var defaultString = "<!-- Insert your request here or select one of the examples from the menu above. -->";
+	
+	function load()
+	{
+		if(editor == null) {
+			initEditor();
+		}
+		
+		var placeholderIndex = "PLACEHOLDER";
+		//load files
+		var requests=new Array();
+		requests[0]=datafolder+"SimpleBuffer.xml";
+		requests[1]=datafolder+"Intersectsrequest.xml";	
+		requests[2]=datafolder+"Unionrequest.xml";
+		requests[2]=datafolder+"Unionrequest.xml";
+		requests[2]=datafolder+"Unionrequest.xml";		
+
+		//fill the select element
+		var selRequest = document.getElementById("selRequest");
+		
+		l = requests.length;
+		for (var i=0; i<l; i++ ){
+			var requestString = "";
+			if(requests[i] == placeholderIndex) {
+				//skip this one
+			}
+			else {
+				try {
+					
+					var name = requests[i].substring(requests[i].lastIndexOf("/") + 1, requests[i].length);
+
+					selRequest.add(new Option(name, requests[i]), null);
+				} catch(err) {
+					var txt="";
+					txt+="Error loading file: " + requests[i];
+					txt+="Error: " + err + "\n\n";
+					var requestTextarea = document.getElementById('requestTextarea').value = "";
+					requestTextarea.value+=txt;
+				}
+			}
+		}
+	}
+		
+	function insertSelected() {
+		try {
+			var selObj = document.getElementById('selRequest');
+			var requestTextarea = document.getElementById('requestTextarea');
+			var requestString = "";
+
+			if(selObj.selectedIndex != 0) // Handle selection of empty drop down entry.
+				requestString = getFile(selObj.options[selObj.selectedIndex].value);
+			
+      		if(requestString == null){
+      			requestString = "Sorry! There is a problem, please refresh the page.";
+      		}
+
+		  	editor.setCode(requestString);
+		  	
+			} catch(err) {
+				var txt="";
+				txt+="Error loading file: " + selObj.options[selObj.selectedIndex].value;
+				txt+="Error: " + err + "\n\n";
+				requestTextarea.value+=txt;
+			}
+  
+	}
+  
+  	function getFile(fileName){
+     	oxmlhttp = null;
+     	try{
+       		oxmlhttp = new XMLHttpRequest();
+       		oxmlhttp.overrideMimeType("text/xml");
+     	}
+     	catch(e){
+       		try{
+         		oxmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+       		}
+       		catch(e){
+         		return null;
+       		}
+     	}
+     	if(!oxmlhttp) return null;
+     	try{
+       		oxmlhttp.open("GET",fileName,false);
+       		oxmlhttp.send(null);
+     	}
+     	catch(e){
+       		return null;
+     	}
+     	return oxmlhttp.responseText;
+  	}
+
+	function initEditor() {
+		editor = CodeMirror.fromTextArea("requestTextarea", {
+			height: "380px",
+			parserfile: "parsexml.js",
+			stylesheet: "codemirror/xmlcolors.css",
+			path: "codemirror/",
+			lineNumbers: true,
+			content: defaultString
+		});
+	}
+
+</script>
+
+</head>
+<body bgcolor="#ffffff" text="#000000" onload="load()">
+
+<div id="content">
+	<div id="header">
+		<div id="headline">
+			<span class="title">WPS TestClient</span>
+			<div class="infotext"><br/><br/>For more information about the 52&deg; North Web Processing Service visit <a href="http://52north.org/wps">http://52north.org/wps</a>.</div>
+		</div>
+		<div id="logo"><a href="http://www.52north.org/" target="_blank"><img
+			src="http://52north.org/joomla/templates/52nci/images/logo.gif"
+			border="0" alt="52North Logo" /></a>
+		</div>
+	</div>
+
+	<form name="urlform" method="post" action="">
+		<h3>Service URL:&nbsp;&nbsp; <span> <input name="url"
+			value="http://localhost:8080/wps/WebProcessingService" size="80"
+			type="text" /> </span></h3>
+	</form>
+
+	<h3>Request Examples:&nbsp;&nbsp; <select id="selRequest"
+		onchange="insertSelected();">
+		<option value=" "></option>
+	</select></h3>
+
+	<div class="request-form">
+		<form name="requestform" method="post" action="">
+			<div class="editorBorder">
+				<textarea name="request" id="requestTextarea"></textarea>
+			</div>
+			<div class="request-form-buttons">
+				<input value="Send" onclick="requestform.action = urlform.url.value" type="submit" />
+				<input value="Clear" name="reset" type="reset" onclick="document.getElementById('selRequest').selectedIndex = 0; insertSelected();" />
+			</div>
+		</form>
+		
+		<p class="infotext">This TestClient was successfully tested in Firefox 3.5.2, Safari 4.0.3, Opera 9.64 and InternetExplorer 8.0.6001.18702 and 
+			should work properly in Firefox 1.0 or higher, Safari 1.2 or higher, Opera 8 or higher and InternetExplorer 5 or higher.</p>
+	</div>
+</div>
+
+</body>
 </html>
