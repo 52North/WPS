@@ -175,7 +175,7 @@ public class OutputDataItem extends ResponseData {
 		} catch (XmlException e) {
 			literalData.setStringValue(processValue);
 		}
-		
+			
 	}
 	
 	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {

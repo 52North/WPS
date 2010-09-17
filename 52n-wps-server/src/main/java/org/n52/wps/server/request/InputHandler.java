@@ -74,6 +74,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.io.datahandler.xml.GML2BasicParser;
 import org.n52.wps.io.datahandler.xml.GML3BasicParser;
+import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.util.BasicXMLTypeFactory;
@@ -132,18 +133,17 @@ public class InputHandler {
 	protected void handleComplexData(InputType input) throws ExceptionReport{
 		String inputID = input.getIdentifier().getStringValue();
 		
-		Node complexValueNode = input.getData().getComplexData().getDomNode().getFirstChild();
+		Node complexValueNode = input.getData().getComplexData().getDomNode();
+		
 		String complexValue = "";
 		try {
 			complexValue = nodeToString(complexValueNode);
+			//remove complexvalue element. getFirstChild
+			complexValue = complexValue.substring(complexValue.indexOf(">")+1,complexValue.lastIndexOf("</"));
 		} catch (TransformerFactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			complexValue = "";
+			throw new RuntimeException("Could not parse inline data. Reason " +e1);
 		} catch (TransformerException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			complexValue = "";
+			throw new RuntimeException("Could not parse inline data. Reason " +e1);
 		}
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
@@ -365,6 +365,9 @@ public class InputHandler {
 			//lookup WFS
 			if(dataURLString.toUpperCase().contains("REQUEST=GETFEATURE") &&
 				dataURLString.toUpperCase().contains("SERVICE=WFS")){
+					if(parser instanceof SimpleGMLParser){
+						parser = new GML2BasicParser();
+					}
 					if(parser instanceof GML2BasicParser){
 						//make sure we get GML2
 						dataURLString = dataURLString+"&outputFormat=GML2";
