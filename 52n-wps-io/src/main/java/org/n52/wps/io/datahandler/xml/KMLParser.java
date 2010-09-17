@@ -7,9 +7,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
  Copyright (C) 2006 by con terra GmbH
 
  Authors: 
-	Kristof Lange, Institute for Geoinformatics, University of
-Muenster, Germany
-
+	 Bastian Sch�ffer, IfGI
 
  Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 52n@conterra.de
@@ -31,286 +29,267 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-
 package org.n52.wps.io.datahandler.xml;
-/*
- * 
- * 
- * Deprecated due to the fact, that Sapience, as the underlying KML engine is no longer supported.
- * 
- *
-import java.io.ByteArrayInputStream;
+
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
-import org.geotools.data.DataUtilities;
+import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.FeatureType;
-import org.geotools.feature.IllegalAttributeException;
-import org.geotools.feature.SchemaException;
-import org.n52.wps.io.data.IData;
+import org.geotools.feature.GeometryAttributeImpl;
+import org.geotools.feature.type.GeometryDescriptorImpl;
+import org.geotools.feature.type.GeometryTypeImpl;
+import org.geotools.filter.identity.GmlObjectIdImpl;
+import org.geotools.kml.KMLConfiguration;
+import org.geotools.xml.Configuration;
+import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
+import org.opengis.filter.identity.Identifier;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import sapience.annotations.model.KeyValueProperty;
-import sapience.features.Feature;
-import sapience.features.streams.Streams;
-import sapience.features.streams.kml.KMLStream;
-
 import com.vividsolutions.jts.geom.Geometry;
 
-public class KMLParser extends AbstractXMLParser {
 
-	private static Logger LOGGER = Logger.getLogger(KMLParser.class);
-	private int fcBufferTimeout;
-	private static String SUPPORTED_SCHEMA = "http://localhost:8081/schemas/kmlschema.xsd";
+/**
+ * This parser handles xml files compliant to gmlpacket.xsd 
+ * @author schaeffer
+ *
+ */
+public class KMLParser extends AbstractXMLParser implements IStreamableParser {
+	//private static Logger LOGGER = Logger.getLogger(GML3BasicParser.class);
 
+	
 	public KMLParser() {
-		fcBufferTimeout = 1000000;
+		super();
+	}
+	
+	public KMLParser(boolean pReadWPSConfig) {
+		super(pReadWPSConfig);
 	}
 
-	@Override
-	public Class[] getSupportedInternalOutputDataType() {
-		// TODO Auto-generated method stub
-		Class[] supportedClasses = { GTVectorDataBinding.class };
-		return supportedClasses;
-	}
+	private GTVectorDataBinding parseXML(File file) {
+		QName schematypeTuple = determineFeatureTypeSchema(file);
+		if(schematypeTuple == null) {
+			throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
+		}
+		
+		//create the parser with the gml 2.0 configuration
+		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
+		
+		String schemaLocation =  schematypeTuple.getLocalPart();
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public IData parse(InputStream input, String mimeType) {
-		GTVectorDataBinding kmlBinding = null;
-		Streams kml = new KMLStream();
-
+		Configuration configuration = null;
+			configuration = new KMLConfiguration();
+		
+		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+		
+		//parse
+		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
-			Collection<Feature> list = kml.read(input)
-					.listFeaturesRecursively();
-
-			kmlBinding = createGTVectorBinding(list);
-
-		}
-
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if (kmlBinding != null)
-			return kmlBinding;
-		else
-			return null;
-	}
-
-	private GTVectorDataBinding createGTVectorBinding(Collection<Feature> list) {
-		GTVectorDataBinding kmlBinding = null;
-		String annotations = "";
-		FeatureCollection features = FeatureCollections.newCollection();
-		int counter = 0;
-		for (Feature f : list) {
-			
-			Object[] attributes = f.listAnnotations().toArray();
-			int size = attributes.length;
-			ArrayList<String> stringKeys=new ArrayList<String>();
-				for (int i = 0; i < size; i++) {
-					if (attributes[i].getClass().equals(KeyValueProperty.class)) {
-						KeyValueProperty keyValue = (KeyValueProperty) attributes[i];
-						
-						String key=keyValue.getKey();
-						if(stringKeys.contains(key))
-						key+="_";
-						stringKeys.add(key);
-						annotations += key
-								+ ":"
-								+ keyValue.getValue().getClass()
-										.getSimpleName() + ",";
-					} else {
-						annotations += attributes[i].getClass().getSimpleName()
-								+ ":"
-								+ attributes[i].getClass().getSimpleName()
-										.getClass().getSimpleName() + ",";
+//			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
+			Object parsedData =  parser.parse( new FileInputStream(file));
+			if(parsedData instanceof FeatureCollection){
+				fc = (FeatureCollection) parsedData;
+				
+					
+				
+			}else{
+				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
+				if(featureList!=null){
+					for(SimpleFeature feature : featureList){
+						fc.add(feature);
 					}
+				}else{
+					fc = (FeatureCollection) ((HashMap) parsedData).get("FeatureCollection");
 				}
-			
-
-			Geometry geom = f.getGeometry();
-			annotations += "Location:" + geom.getClass().getSimpleName() + ","
-					+ "ID:" + int.class.getSimpleName();
-			Object[] attributes2 = new Object[size + 2];
-			for (int i = 0; i < size; i++) {
-				attributes2[i] = attributes[i];
 			}
-			attributes2[size] = geom;
-			attributes2[size + 1] = counter;
-			FeatureType type = null;
-			try {
-				type = DataUtilities.createType("ID", annotations);
-			} catch (SchemaException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		
+		Iterator featureIterator = fc.iterator();
+		while(featureIterator.hasNext()){
+			SimpleFeature feature = (SimpleFeature) featureIterator.next();
+			if(feature.getDefaultGeometry()==null){
+				Collection<org.opengis.feature.Property>properties = feature.getProperties();
+				for(org.opengis.feature.Property property : properties){
+					try{
+						
+						Geometry g = (Geometry)property.getValue();
+						if(g!=null){
+							GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
+							GeometryType type = new GeometryTypeImpl(property.getName(),(Class)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
+																
+							GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type,property.getName(),0,1,true,null);
+							Identifier identifier = new GmlObjectIdImpl(feature.getID());
+							GeometryAttributeImpl geo = new GeometryAttributeImpl((Object)g,newGeometryDescriptor, identifier);
+							feature.setDefaultGeometryProperty(geo);
+							feature.setDefaultGeometry(g);
+							
+						}
+					}catch(ClassCastException e){
+						//do nothing
+					}
+					
+				}
 			}
-
-			try {
-				org.geotools.feature.Feature feature = type.create(attributes2,
-						"Flag." + Integer.toString(counter));
-				features.add(feature);
-				System.out.println(feature.toString());
-
-			} catch (IllegalAttributeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			counter += 1;
-			annotations = "";
-
 		}
-		kmlBinding = new GTVectorDataBinding(features);
-
-		return kmlBinding;
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} catch (SAXException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+		
+		GTVectorDataBinding data = new GTVectorDataBinding(fc);
+		
+		return data;
 	}
 
-	private String determineFeatureTypeSchema(URI uri) {
+	public GTVectorDataBinding parseXML(String gml) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			if(gml.startsWith("<xml-fragment")) {
+				gml = gml.replaceFirst("<xml-fragment .*?>", "");
+				gml = gml.replaceFirst("</xml-fragment>", "");	
+			}
+			// TODO find a better solution. XML-beans hands in inappropriate XML, so the namespaces have to be set manually.
+			if (gml.indexOf("xmlns:xsi=") < 0)
+			{
+				gml = gml.replaceFirst("<wfs:FeatureCollection", "<wfs:FeatureCollection xmlns:xsi=\"" + XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI + "\"");
+			}
+			StringReader sr = new StringReader(gml);
+			int i = sr.read();
+			while(i != -1){
+				fos.write(i);
+				i = sr.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}
+	
+	public GTVectorDataBinding parseXML(InputStream stream) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			int i = stream.read();
+			while(i != -1){
+				fos.write(i);
+				i = stream.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}	
+
+	public GTVectorDataBinding parseXML(URI uri) {
+		File f = null;
+		FileOutputStream fos = null;
+		try{
+			f = File.createTempFile("wps", "tmp");
+			fos = new FileOutputStream(f);
+			URL url = uri.toURL();
+			URLConnection connection = url.openConnection();
+			connection.setDoInput(true);
+			connection.setDoOutput(false);
+			InputStream stream = connection.getInputStream();
+			int i = stream.read();
+			while(i != -1){
+				fos.write(i);
+				i = stream.read();
+			}
+			fos.close();
+			GTVectorDataBinding data = parseXML(f);
+			f.delete();
+			return data;
+		}
+		catch(IOException e) {
+			if (fos != null) try { fos.close(); } catch (Exception e1) { }
+			if (f != null) f.delete();
+			throw new IllegalArgumentException("Error while creating tempFile", e);
+		}
+	}
+	
+	private QName determineFeatureTypeSchema(File file) {
 		try {
 			GML2Handler handler = new GML2Handler();
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setNamespaceAware(true);
-			factory.newSAXParser().parse(uri.toASCIIString(),
-					(DefaultHandler) handler);
-			String schemaUrl = handler.getSchemaUrl();
-			return schemaUrl;
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		} catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		} catch (SAXException e) {
-			throw new IllegalArgumentException(e);
-		} catch (ParserConfigurationException e) {
-			throw new IllegalArgumentException(e);
-		}
-		// return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public GTVectorDataBinding parseXML(URI uri) {
-		KMLStream kml = new KMLStream();
-		GTVectorDataBinding kmlBinding = null;
-		URL featureTypeSchemaURL = null;
-		FeatureCollection features = null;
-		try {
-			featureTypeSchemaURL = new URL(determineFeatureTypeSchema(uri));
+			factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler)handler); 
+			String schemaUrl = handler.getSchemaUrl(); 
+			String namespaceURI = handler.getNameSpaceURI();
+			return new QName(namespaceURI,schemaUrl);
+			
 		} catch (MalformedURLException e) {
 			throw new IllegalArgumentException(e);
 		}
-		if (featureTypeSchemaURL == null) {
-			throw new NullPointerException("featureTypeSchema null for uri: "
-					+ uri.getQuery());
+		catch (IOException e) {
+			throw new IllegalArgumentException(e);
 		}
-		LOGGER.debug("determinedFeatureTypeURL: " + featureTypeSchemaURL);
-		try {
-			Collection<Feature> coll = kml.read(
-					featureTypeSchemaURL.openStream())
-					.listFeaturesRecursively();
-			Iterator<Feature> iter = coll.iterator();
-			while (iter.hasNext()) {
-
-				Feature feature = iter.next();
-				features.add(feature);
-
-			}
-			kmlBinding = new GTVectorDataBinding(features);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch (SAXException e) {
+			throw new IllegalArgumentException(e);
 		}
-
-		return kmlBinding;
-
-	}
-
-	@Override
-	public String[] getSupportedSchemas() {
-		return new String[] { SUPPORTED_SCHEMA };
-	}
-
-	@Override
-	public boolean isSupportedSchema(String schema) {
-		return SUPPORTED_SCHEMA.equals(schema);
-	}
-
-	@Override
-	public boolean supportsSchemas() {
-		if (SUPPORTED_SCHEMA.isEmpty() == true)
-			return false;
-		else
-			return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public IData parseXML(String kml) {
-
-		GTVectorDataBinding kmlBinding = null;
-		FeatureCollection features = null;
-		try {
-
-			KMLStream kmlParser = new KMLStream();
-			Collection<Feature> coll = kmlParser.read(
-					new ByteArrayInputStream(kml.getBytes("UTF-8")))
-					.listFeaturesRecursively();
-
-			Iterator<Feature> iter = coll.iterator();
-			while (iter.hasNext()) {
-
-				Feature feature = iter.next();
-				features.add(feature);
-
-			}
-			kmlBinding = new GTVectorDataBinding(features);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		catch(ParserConfigurationException e) {
+			throw new IllegalArgumentException(e);
 		}
-
-		return kmlBinding;
+		//return null;
 	}
 
-	@Override
-	public IData parseXML(InputStream stream) {
-		parse(stream, null);
-		return null;
+	public GTVectorDataBinding parse(InputStream input, String mimeType) {
+		return parseXML(input);
 	}
 
-	@Override
-	public boolean isSupportedEncoding(String encoding) {
-		// TODO Auto-generated method stub
-		return true;
+	public Class[] getSupportedInternalOutputDataType() {
+		Class[] supportedClasses = {GTVectorDataBinding.class};
+		return supportedClasses;
+	
 	}
 
-	public static void main(String[] args) {
-		KMLParser parser = new KMLParser();
-		FileInputStream is = null;
-		try {
-			is = new FileInputStream(
-					"C:/Program Files/Apache Software Foundation/apache-tomcat-5.5.27/webapps/data/adressen.kml");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		parser.parseXML(is);
-	}
+	
 
-}*/
+
+}
