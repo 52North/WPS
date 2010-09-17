@@ -210,7 +210,16 @@
     <groupId>xalan</groupId>
     <artifactId>xalan</artifactId>
     <version>2.7.1</version>
-</dependency>   
+</dependency>  
+
+<dependency>
+    <groupId>commons-httpclient</groupId>
+    <artifactId>commons-httpclient</artifactId>
+    <version>3.1</version>
+</dependency>
+
+
+ 
 
     </dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
