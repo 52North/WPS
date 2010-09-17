@@ -136,6 +136,11 @@
 	<version>2.6.1</version>
 </dependency>
 <dependency>
+	<groupId>org.geotools.xsd</groupId>
+	<artifactId>gt-xsd-kml</artifactId>
+	<version>2.6.1</version>
+</dependency>
+<dependency>
    <groupId>org.geotools</groupId>
    <artifactId>gt-xml</artifactId>
    <version>2.6.1</version>
@@ -188,6 +193,7 @@
 	<dependency>
 		<groupId>${project.groupId}</groupId>
   		<artifactId>52n-wps-commons</artifactId>
+                <version>${project.version}</version>
       </dependency>
   
       
