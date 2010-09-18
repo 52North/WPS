@@ -133,7 +133,7 @@ public abstract class ResponseData {
 		this.generator =  GeneratorFactory.getInstance().getGenerator(this.schema, 
 				this.mimeType, this.encoding, algorithmOutput);
 		
-
+		LOGGER.info("Using generator " + generator.getClass().getName() + " for Schema: " + schema);
 		if(this.generator == null) {
 			generator = getDefaultGeneratorForProcess(this.algorithmIdentifier, algorithmOutput);
 			if(generator !=null){
