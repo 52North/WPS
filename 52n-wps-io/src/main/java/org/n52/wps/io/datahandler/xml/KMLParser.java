@@ -52,6 +52,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import net.opengis.kml.x22.KmlDocument;
+
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.GeometryAttributeImpl;
@@ -62,7 +64,9 @@ import org.geotools.kml.KMLConfiguration;
 import org.geotools.xml.Configuration;
 import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.opengis.feature.Feature;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
@@ -79,7 +83,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public class KMLParser extends AbstractXMLParser implements IStreamableParser {
-	//private static Logger LOGGER = Logger.getLogger(GML3BasicParser.class);
+
 
 	
 	public KMLParser() {
@@ -91,19 +95,7 @@ public class KMLParser extends AbstractXMLParser implements IStreamableParser {
 	}
 
 	private GTVectorDataBinding parseXML(File file) {
-		QName schematypeTuple = determineFeatureTypeSchema(file);
-		if(schematypeTuple == null) {
-			throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
-		}
-		
-		//create the parser with the gml 2.0 configuration
-		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
-		
-		String schemaLocation =  schematypeTuple.getLocalPart();
-
-		Configuration configuration = null;
-			configuration = new KMLConfiguration();
-		
+		Configuration configuration = new KMLConfiguration();
 		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
 		
 		//parse
@@ -116,7 +108,7 @@ public class KMLParser extends AbstractXMLParser implements IStreamableParser {
 				
 					
 				
-			}else{
+			}else if(parsedData instanceof HashMap){
 				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
 				if(featureList!=null){
 					for(SimpleFeature feature : featureList){
@@ -125,6 +117,23 @@ public class KMLParser extends AbstractXMLParser implements IStreamableParser {
 				}else{
 					fc = (FeatureCollection) ((HashMap) parsedData).get("FeatureCollection");
 				}
+			}else if(parsedData instanceof SimpleFeature){
+				
+				Collection<? extends Property> values = ((SimpleFeature) parsedData).getValue();
+				for(Property value : values){
+					Object tempValue = value.getValue();
+					if(value.getType().getBinding().isAssignableFrom(FeatureCollection.class)){
+						if(tempValue instanceof ArrayList){
+							ArrayList list = (ArrayList) tempValue;
+							for(Object listValue : list){
+								if(listValue instanceof SimpleFeature){
+									fc.add((Feature) listValue);
+								}
+							}
+						}
+					}
+				}
+				
 			}
 		
 		Iterator featureIterator = fc.iterator();
@@ -254,31 +263,6 @@ public class KMLParser extends AbstractXMLParser implements IStreamableParser {
 		}
 	}
 	
-	private QName determineFeatureTypeSchema(File file) {
-		try {
-			GML2Handler handler = new GML2Handler();
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler)handler); 
-			String schemaUrl = handler.getSchemaUrl(); 
-			String namespaceURI = handler.getNameSpaceURI();
-			return new QName(namespaceURI,schemaUrl);
-			
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch (SAXException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch(ParserConfigurationException e) {
-			throw new IllegalArgumentException(e);
-		}
-		//return null;
-	}
-
 	public GTVectorDataBinding parse(InputStream input, String mimeType) {
 		return parseXML(input);
 	}
