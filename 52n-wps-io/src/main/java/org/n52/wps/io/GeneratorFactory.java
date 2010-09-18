@@ -99,6 +99,7 @@ public class GeneratorFactory {
 				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
 			}
 			if(generator != null) {
+				LOGGER.info("Generator class registered: " + generatorClass);
 				registeredGenerators.add(generator);
 			}
 		}
