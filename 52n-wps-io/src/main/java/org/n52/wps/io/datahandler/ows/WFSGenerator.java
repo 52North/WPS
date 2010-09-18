@@ -55,6 +55,12 @@ public class WFSGenerator extends AbstractXMLGenerator{
 		}
 		port = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
 		
+		for(String supportedFormat : supportedFormats){
+			if(supportedFormat.equals("text/xml")){
+				supportedFormats.remove(supportedFormat);
+			}
+		}
+		
 	}
 	
 
