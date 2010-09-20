@@ -18,9 +18,10 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 	protected static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
 	
 	protected IData parseTiff(InputStream input) {
-		String fileName = "tempfile" + System.currentTimeMillis();
-		File tempFile = new File(fileName);
+		//String fileName = "tempfile" + System.currentTimeMillis();
+		File tempFile;
 		try {
+                        tempFile = File.createTempFile("tempfile" + System.currentTimeMillis(),"tmp");
 			FileOutputStream outputStream = new FileOutputStream(tempFile);
 			byte buf[] = new byte[4096];
 			int len;
@@ -31,12 +32,12 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 			input.close();
 		} catch (FileNotFoundException e) {
 			System.gc();
-			tempFile.delete();
+			//tempFile.delete();
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		} catch (IOException e1) {
 			System.gc();
-			tempFile.delete();
+			//tempFile.delete();
 			LOGGER.error(e1);
 			throw new RuntimeException(e1);
 		}
