@@ -6,11 +6,12 @@ import java.io.StringWriter;
 
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.IComplexVectorData;
+
 import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
+import org.n52.wps.io.data.IComplexData;
 
-public class GTVectorDataBinding implements IComplexVectorData{
+public class GTVectorDataBinding implements IComplexData{
 	
 	private transient FeatureCollection featureCollection;	
 	

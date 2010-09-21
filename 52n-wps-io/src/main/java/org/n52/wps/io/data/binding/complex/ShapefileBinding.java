@@ -9,9 +9,10 @@ import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.data.IComplexVectorData;
+import org.n52.wps.io.data.IComplexData;
 
-public class ShapefileBinding implements IComplexVectorData{
+
+public class ShapefileBinding implements IComplexData{
 	private static Logger LOGGER = Logger.getLogger(ShapefileBinding.class);
 	
 	
