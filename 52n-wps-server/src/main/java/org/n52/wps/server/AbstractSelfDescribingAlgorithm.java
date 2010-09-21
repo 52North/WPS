@@ -27,8 +27,6 @@ import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IComplexData;
-import org.n52.wps.io.data.IComplexRasterData;
-import org.n52.wps.io.data.IComplexVectorData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.oberserpattern.IObserver;
 import org.n52.wps.server.oberserpattern.ISubject;
@@ -86,7 +84,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						literalData.addNewAnyValue();		
 					}
 							
-				}else if(implementedInterface.equals(IComplexVectorData.class) || implementedInterface.equals(IComplexRasterData.class)){
+				}else if(implementedInterface.equals(IComplexData.class)){
 					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
 					ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
 					ComplexDataCombinationsType supportedtInputFormat = complexData.addNewSupported();
@@ -189,7 +187,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					}
 				
 					
-				}else if(implementedInterface.equals(IComplexVectorData.class) || implementedInterface.equals(IComplexRasterData.class)){
+				}else if(implementedInterface.equals(IComplexData.class)){
 					
 						SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
 						ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
