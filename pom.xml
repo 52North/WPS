@@ -156,7 +156,7 @@
         <module>52n-wps-transactional</module>
         <module>52n-wps-webadmin</module>
         <module>52n-wps-ags</module>
-        <module>52n-wps-geotools</module>
+    
        
   </modules>
     <dependencies>
@@ -264,11 +264,15 @@
                 <artifactId>52n-wps-site</artifactId>
                 <version>${project.version}</version>
             </dependency>
+        
+        <!--
              <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-geotools</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        -->
         </dependencies>
     </dependencyManagement>
     <reporting>

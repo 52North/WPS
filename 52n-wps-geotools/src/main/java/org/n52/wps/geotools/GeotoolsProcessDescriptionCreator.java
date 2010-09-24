@@ -1,5 +1,5 @@
 package org.n52.wps.geotools;
-import java.awt.Dimension;
+/*import java.awt.Dimension;
 import java.lang.reflect.Constructor;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -331,4 +331,4 @@ public class GeotoolsProcessDescriptionCreator {
     	}
     	return null;
 	}
-}
+}*/

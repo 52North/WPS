@@ -1,5 +1,5 @@
 package org.n52.wps.geotools;
-
+/*
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,13 +17,6 @@ import org.n52.wps.server.IAlgorithmRepository;
 
 
 
-/*
- * A container, which allows the 52n WPS to recognize the sextante library.
- * Basic initialization is performed here.
- * 
- * Whenever a getcapabilities request comes in, the process names are extraced based on the available process description documents for sextante processes.
- * This should be changed in the future, when process descriptions should be generated automatically. When a execute process request comes in, a generic GenericSextanteProcessDelegator is created. 
- */
 
 
 public class GeotoolsProcessRepository implements IAlgorithmRepository{
@@ -91,4 +84,4 @@ public class GeotoolsProcessRepository implements IAlgorithmRepository{
 	
 	
 
-}
+}*/

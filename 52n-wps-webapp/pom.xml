@@ -179,13 +179,13 @@
             <artifactId>52n-wps-install-wizard</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+     <!--   
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-geotools</artifactId>
             <version>${project.version}</version>
         </dependency>
-       
+       -->
         <dependency>
             <groupId>net.sourceforge.pjl-comp-filter</groupId>
             <artifactId>pjl-comp-filter</artifactId>
