@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Process for Inverse Distance Weighted Interpolation with R
+	-->
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.server.algorithm.r.Idw</ows:Identifier>
+		<ows:Title>Inverse Distance Interpolation in R</ows:Title>
+		<ows:Abstract>Calculates Inverse Distance Interpolation for given point values on a specified grid</ows:Abstract>
+		<ows:Metadata xlink:title="spatial"/>
+		<ows:Metadata xlink:title="geometry"/>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>raster</ows:Identifier>
+				<ows:Title>Raster defining the output space</ows:Title>
+				<ows:Abstract/>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>text/XML</MimeType>
+							<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>points</ows:Identifier>
+				<ows:Title/>
+				<ows:Abstract>Points for IDW</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped shape file</MimeType>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>text/XML</MimeType>
+							<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>attributename</ows:Identifier>
+				<ows:Title>Name of point attribute for calculation</ows:Title>
+				<ows:Abstract>Attribute should be written correctly</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"/>
+					<ows:AllowedValues>
+						<ows:Value/>
+					</ows:AllowedValues>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>maxdist</ows:Identifier>
+				<ows:Title>Only observations within a distance of maxdist from the prediction location are used for prediction</ows:Title>
+				<ows:Abstract/>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"/>
+					<ows:AllowedValues>
+						<ows:Value/>
+					</ows:AllowedValues>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>nmax</ows:Identifier>
+				<ows:Title>Maximum number of nearest observations that should be used for prediction</ows:Title>
+				<ows:Abstract/>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:int"/>
+					<ows:AllowedValues>
+						<ows:Value/>
+					</ows:AllowedValues>
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>output</ows:Identifier>
+				<ows:Title/>
+				<ows:Abstract>Raster output</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>text/XML</MimeType>
+							<Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>

@@ -1,0 +1,16 @@
+error = try({
+
+options(digits=12)
+input=readShapePoly(data)
+sum = sum(input@data[attribute])
+
+#other functions may be: 
+#mean = mean(input@data[attribute])
+#median = median((input@data[attribute])[!is.na(input@data[attribut])])
+#max = max(input@data[attribute])
+#min = min(input@data[attribute])
+#quList = quantile(input@data[attribute], probs = seq(0, 1, 0.25), na.rm=T)
+
+})
+hasError = class(error) == "try-error"
+if(hasError) error_message = as.character(error)
