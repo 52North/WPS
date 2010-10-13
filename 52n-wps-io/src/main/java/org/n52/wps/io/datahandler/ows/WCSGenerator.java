@@ -55,7 +55,9 @@ public class WCSGenerator extends AbstractXMLGenerator{
 				port = property.getStringValue();
 			}
 		}
-		port = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
+		if(port == null){
+			port = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
+		}
 		
 		for(String supportedFormat : supportedFormats){
 			if(supportedFormat.equals("text/xml")){
