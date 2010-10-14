@@ -32,7 +32,12 @@ public class GeoServerUploader {
 	
 	public String uploadGeotiff(File file, String storeName) throws HttpException, IOException{
 		String target = "http://localhost:"+port+"/geoserver/rest/workspaces/N52/coveragestores/"+storeName+"/external.geotiff?configure=first&coverageName="+storeName;
-		String request = "file:/"+file.getAbsolutePath();
+		String request;
+                if(file.getAbsolutePath().startsWith("/")){ //tried with request.replaceAll("//","/"); but didn't seem to work...
+                    request = "file:"+file.getAbsolutePath();
+                }else{
+                    request = "file:/"+file.getAbsolutePath();
+                }
 		String result =	sendRasterRequest(target, request, "PUT", username, password);
 		return result;
 	}
