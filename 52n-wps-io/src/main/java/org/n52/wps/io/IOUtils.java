@@ -170,6 +170,41 @@ public class IOUtils {
 
 		return foundFiles;
 	}
+	
+	public static List<File> unzipAll(File file) throws IOException {
+		int bufferLength = 2048;
+		byte buffer[] = new byte[bufferLength];
+		List<File> foundFiles = new ArrayList<File>();
+		ZipInputStream zipInputStream = new ZipInputStream(
+				new BufferedInputStream(new FileInputStream(file)));
+		ZipEntry entry;
+		File tempDir = File.createTempFile("unzipped"+System.currentTimeMillis(), "", new File(System
+				.getProperty("java.io.tmpdir")));
+		tempDir.delete();
+		tempDir.mkdir();
+		while ((entry = zipInputStream.getNextEntry()) != null) {
+			int count;
+			File entryFile = new File(tempDir, entry.getName());
+			entryFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(entryFile);
+			BufferedOutputStream dest = new BufferedOutputStream(fos,
+					bufferLength);
+			while ((count = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
+				dest.write(buffer, 0, count);
+			}
+			dest.flush();
+			dest.close();
+
+			foundFiles.add(entryFile);
+			
+		}
+
+		zipInputStream.close();
+
+		deleteResources(file);
+
+		return foundFiles;
+	}
 
 	/**
 	 * Delete the given files and all the files with the same name but different
