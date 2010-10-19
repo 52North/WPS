@@ -100,6 +100,13 @@
 				<Property name="supportedFormat">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
+			
+			<Parser name="WKTParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedWKT64Parser">
+				<Property name="supportedFormat">application/x-zipped-wkt</Property>
+				<Property name="supportedEncoding">Base64</Property>
+			</Parser>
+			
+			
 		</ParserList>
 		<GeneratorList>
 		 
@@ -227,7 +234,6 @@
 			<Property name="Algorithm">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-			
 		</Repository>
 		
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository">
