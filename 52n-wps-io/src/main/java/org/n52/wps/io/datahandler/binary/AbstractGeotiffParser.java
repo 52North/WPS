@@ -21,7 +21,7 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 		//String fileName = "tempfile" + System.currentTimeMillis();
 		File tempFile;
 		try {
-                        tempFile = File.createTempFile("tempfile" + System.currentTimeMillis(),"tmp");
+            tempFile = File.createTempFile("tempfile" + System.currentTimeMillis(),"tmp");
 			FileOutputStream outputStream = new FileOutputStream(tempFile);
 			byte buf[] = new byte[4096];
 			int len;
@@ -42,24 +42,29 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 			throw new RuntimeException(e1);
 		}
 
+		return parseTiff(tempFile);
+
+	}
+	
+	public IData parseTiff(File file){
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
 		GeoTiffReader reader;
 		try {
-			reader = new GeoTiffReader(tempFile, hints);
+			reader = new GeoTiffReader(file, hints);
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
 
 			System.gc();
-			tempFile.delete();
+			file.delete();
 			return new GTRasterDataBinding(coverage);
 		} catch (DataSourceException e) {
 			System.gc();
-			tempFile.delete();
+			file.delete();
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			System.gc();
-			tempFile.delete();
+			file.delete();
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
