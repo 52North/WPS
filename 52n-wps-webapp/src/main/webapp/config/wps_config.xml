@@ -62,6 +62,13 @@
 				<Property name="supportedFormat">image/geotiff</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
+			
+			<Parser name="GeotiffParserZipped" className="org.n52.wps.io.datahandler.binary.GeotiffZippedParser">
+				<Property name="supportedFormat">image/x-zipped-tiff</Property>
+				<Property name="supportedFormat">image/x-zipped-geotiff</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Parser>
+						
 			<Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser">
 				<Property name="supportedFormat">image/tiff</Property>
 				<Property name="supportedFormat">image/geotiff</Property>
@@ -90,7 +97,7 @@
 			
 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.xml.KMLParser">
 				<Property name="supportedSchema">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
-				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedFormat">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Parser>
 		</ParserList>
@@ -206,7 +213,7 @@
 			
 			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.xml.KMLGenerator">
 				<Property name="supportedSchema">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
-				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedFormat">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding">UTF-8</Property>
 			</Generator>
 				
