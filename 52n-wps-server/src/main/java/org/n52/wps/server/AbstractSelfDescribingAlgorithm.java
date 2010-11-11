@@ -146,6 +146,23 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 										}
 									}
 								}
+								if(supportedFormats.length==1 && supportedEncodings.length==1){
+									String supportedFormat = supportedFormats[j];
+									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
+									supportedCreatedFormat.setMimeType(supportedFormat);
+									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+									for(int t = 0; t<supportedSchemas.length;t++){
+										if(t==0){
+											supportedCreatedFormat.setSchema(supportedSchemas[t]);
+										}
+										if(t>0){
+											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
+											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+										}
+									}
+								}
 							}
 						}
 					}
