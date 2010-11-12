@@ -12,8 +12,8 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.server.oberserpattern.IObserver;
-import org.n52.wps.server.oberserpattern.ISubject;
+import org.n52.wps.server.observerpattern.IObserver;
+import org.n52.wps.server.observerpattern.ISubject;
 
 public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
 

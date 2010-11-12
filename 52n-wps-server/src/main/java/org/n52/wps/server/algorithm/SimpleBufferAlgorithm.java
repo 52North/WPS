@@ -54,7 +54,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.datahandler.xml.GTHelper;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
-import org.n52.wps.server.oberserpattern.ISubject;
+import org.n52.wps.server.observerpattern.ISubject;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
