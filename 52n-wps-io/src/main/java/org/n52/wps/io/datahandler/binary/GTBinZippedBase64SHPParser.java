@@ -44,10 +44,6 @@ public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 						"Cannot find a shapefile inside the zipped file.");
 			}
 			File shp = shpList.get(0);
-			if (shp == null) {
-				throw new RuntimeException(
-						"Cannot find a shapefile inside the zipped file.");
-			}
 
 			if (shp == null) {
 				throw new RuntimeException(
@@ -58,7 +54,7 @@ public class GTBinZippedBase64SHPParser extends AbstractGTBinZippedSHPParser {
 			FeatureCollection features = store.getFeatureSource(
 					store.getTypeNames()[0]).getFeatures();
 			zipped.delete();
-			shp.delete();
+			//shp.delete();		//TODO; workspace concept
 			
 			return new GTVectorDataBinding(features);
 		} catch (IOException e) {
