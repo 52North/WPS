@@ -15,12 +15,12 @@ import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.LiteralOutputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-import net.opengis.wps.x100.SupportedComplexDataInputType;
-import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
+import net.opengis.wps.x100.SupportedComplexDataInputType;
+import net.opengis.wps.x100.SupportedComplexDataType;
 
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
@@ -28,8 +28,8 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.server.observerpattern.IObserver;
-import org.n52.wps.server.observerpattern.ISubject;
+import org.n52.wps.server.oberserpattern.IObserver;
+import org.n52.wps.server.oberserpattern.ISubject;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
@@ -263,6 +263,23 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
 											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
 											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+										}
+									}
+								}
+								if(supportedFormats.length==1 && supportedEncodings.length==1){
+									String supportedFormat = supportedFormats[j];
+									ComplexDataDescriptionType supportedCreatedFormat = supportedtOutputFormat.addNewFormat();
+									supportedCreatedFormat.setMimeType(supportedFormat);
+									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+									for(int t = 0; t<supportedSchemas.length;t++){
+										if(t==0){
+											supportedCreatedFormat.setSchema(supportedSchemas[t]);
+										}
+										if(t>0){
+											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtOutputFormat.addNewFormat();
+											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
 										}
 									}
 								}
