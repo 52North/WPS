@@ -28,8 +28,8 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.server.oberserpattern.IObserver;
-import org.n52.wps.server.oberserpattern.ISubject;
+import org.n52.wps.server.observerpattern.IObserver;
+import org.n52.wps.server.observerpattern.ISubject;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
