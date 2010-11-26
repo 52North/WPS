@@ -36,8 +36,8 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 
 public abstract class AbstractBinaryParser implements IParser {
-	private List<String> supportedFormats;
-	private List<String> supportedEncodings;
+	protected List<String> supportedFormats;
+	protected List<String> supportedEncodings;
 	protected Property[] properties;
 	
 	

@@ -48,9 +48,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 public abstract class AbstractXMLParser implements IParser {
 	protected GeometryFactory geomFactory;
 	protected Property[] properties;
-	private List<String> supportedSchemas;
-	private List<String> supportedFormats;
-	private List<String> supportedEncodings;
+	protected List<String> supportedSchemas;
+	protected List<String> supportedFormats;
+	protected List<String> supportedEncodings;
 	
 	
 	public AbstractXMLParser() {

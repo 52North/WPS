@@ -39,8 +39,8 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 
 public abstract class AbstractBinaryGenerator implements IGenerator {
-	private List<String> supportedFormats;
-	private List<String> supportedEncodings;
+	protected List<String> supportedFormats;
+	protected List<String> supportedEncodings;
 	protected Property[] properties;
 	
 	public AbstractBinaryGenerator(){
