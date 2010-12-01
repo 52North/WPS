@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.w3c.dom.Document;
@@ -56,6 +58,11 @@ public class SOAPRequestHandler extends RequestHandler {
 			nodeName = child.getNodeName();
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
+
+		// get the request type
+		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)
+				&& localName.equals("Execute")) {
+			
 			Node versionNode = child.getAttributes().getNamedItem("version");
 			if (versionNode == null) {
 				throw new ExceptionReport("No version parameter supplied.",
@@ -64,31 +71,25 @@ public class SOAPRequestHandler extends RequestHandler {
 			version = child.getAttributes().getNamedItem("version")
 					.getNodeValue();
 
-		if (version == null) {
-			throw new ExceptionReport("version is null: ",
-					ExceptionReport.MISSING_PARAMETER_VALUE);
-		}
-		if (!version.equals(Request.SUPPORTED_VERSION)) {
-			throw new ExceptionReport("version is null: ",
-					ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
-		// get the request type
-		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)
-				&& localName.equals("Execute")) {
+			if (version == null) {
+				throw new ExceptionReport("version is null: ",
+						ExceptionReport.MISSING_PARAMETER_VALUE);
+			}
+			if (!version.equals(Request.SUPPORTED_VERSION)) {
+				throw new ExceptionReport("version is null: ",
+						ExceptionReport.INVALID_PARAMETER_VALUE);
+			}
+
 			req = new ExecuteRequest(inputDoc);
 			if (req instanceof ExecuteRequest) {
 				setResponseMimeType((ExecuteRequest) req);
 			} else {
 				this.responseMimeType = "text/xml";
 			}
-		} else if (nodeName.equals("Capabilities")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for getCapabilitiies supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
-		} else if (nodeName.equals("DescribeProcess")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for describeProcess supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+		} else if (localName.equals("GetCapabilities")) {
+			req = new CapabilitiesRequest(inputDoc);
+		} else if (localName.equals("DescribeProcess")) {
+			req = new DescribeProcessRequest(inputDoc);
 		} else if (!localName.equals("Execute")) {
 			throw new ExceptionReport("specified operation is not supported: "
 					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);

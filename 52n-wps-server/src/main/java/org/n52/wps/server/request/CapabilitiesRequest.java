@@ -34,10 +34,16 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.util.ArrayList;
+
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.CapabilitiesResponse;
 import org.n52.wps.server.response.Response;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Handles a CapabilitesRequest
@@ -53,6 +59,49 @@ public class CapabilitiesRequest extends Request {
 		super(ciMap);
 	}
 
+	public CapabilitiesRequest(Document doc) throws ExceptionReport{
+		super(doc);
+		
+		//put the respective elements of the document in the map
+		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
+		
+		map = new CaseInsensitiveMap();
+		
+		for (int i = 0; i < nnm.getLength(); i++) {
+			
+			Node n = nnm.item(i);
+			if(n.getLocalName().equalsIgnoreCase("service")){
+			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			}
+		}	
+		
+		NodeList nList = doc.getFirstChild().getChildNodes();
+		
+		ArrayList<String> versionList = new ArrayList<String>();
+		
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node n = nList.item(i);
+			if(n.getLocalName() != null){
+				
+				if(n.getLocalName().equalsIgnoreCase("AcceptVersions")){
+					
+					NodeList nList2 = n.getChildNodes();
+					
+					for (int j = 0; j < nList2.getLength(); j++) {
+						Node n2 = nList2.item(i);
+						
+						if(n2.getLocalName() != null && n2.getLocalName().equalsIgnoreCase("Version")){
+							versionList.add(n2.getTextContent());
+						}
+					}
+					break;
+				}
+			}
+		}		
+		map.put("version", versionList.toArray(new String []{}));		
+		
+	}
+	
 	/**
 	 * Validates the client input
 	 * @throws ExceptionReport

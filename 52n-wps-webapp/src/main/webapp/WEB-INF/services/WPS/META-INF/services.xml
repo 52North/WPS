@@ -9,7 +9,7 @@
 	<operation name="getCapabilities">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
-		<actionMapping>urn:GetCapabilities</actionMapping>
+		<actionMapping>urn:getCapabilities</actionMapping>
 	</operation>
 		<operation name="describeProcess">
 		<messageReceiver

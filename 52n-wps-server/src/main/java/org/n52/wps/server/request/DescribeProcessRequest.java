@@ -35,6 +35,8 @@ Muenster, Germany
 package org.n52.wps.server.request;
 
 
+import java.util.ArrayList;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -47,6 +49,10 @@ import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.response.DescribeProcessResponse;
 import org.n52.wps.server.response.Response;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Handles a DescribeProcessRequest
@@ -64,6 +70,43 @@ public class DescribeProcessRequest extends Request {
 	public DescribeProcessRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
 		super(ciMap);
 	}
+	
+	/**
+	 * Creates a DescribeProcessRequest based on a Document (SOAP?)
+	 * @param doc The client input
+	 * @throws ExceptionReport
+	 */
+	public DescribeProcessRequest(Document doc) throws ExceptionReport{
+		super(doc);
+		
+		//put the respective elements of the document in the map
+		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
+		
+		map = new CaseInsensitiveMap();
+		
+		for (int i = 0; i < nnm.getLength(); i++) {
+			
+			Node n = nnm.item(i);
+			if(n.getLocalName().equalsIgnoreCase("service")){
+			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			}
+		}
+		//get identifier
+		String identifierList = "";		
+		
+		NodeList nList = doc.getFirstChild().getChildNodes();
+		
+		for (int i = 0; i < nList.getLength(); i++) {
+			Node n = nList.item(i);
+			if(n.getLocalName() != null && n.getLocalName().equalsIgnoreCase("identifier")){
+				String s = n.getTextContent();
+				identifierList = identifierList.concat(s + ",");
+			}
+		}		
+		map.put("identifier", new String[]{identifierList});
+		
+	}
+	
 
 	/**
 	 * Validates the client input
