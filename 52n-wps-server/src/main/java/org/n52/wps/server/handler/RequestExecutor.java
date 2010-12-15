@@ -102,7 +102,7 @@ public class RequestExecutor extends ThreadPoolExecutor {
 		t.setPriority(Thread.MIN_PRIORITY);
 		LOGGER.debug("beforeExecute called");
 		StatusType status = StatusType.Factory.newInstance();
-		status.addNewProcessStarted().setPercentCompleted(33);
+		status.addNewProcessStarted().setPercentCompleted(0);
 		((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
 	}
 
