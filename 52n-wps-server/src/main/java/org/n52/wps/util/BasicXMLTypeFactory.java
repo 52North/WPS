@@ -82,10 +82,9 @@ public class BasicXMLTypeFactory {
 			return new LiteralFloatBinding(Float.parseFloat(obj));
 		} else if (xmlDataTypeURI.equals(DOUBLE_URI)) {
 			return new LiteralDoubleBinding(Double.parseDouble(obj));
-		} else if (xmlDataTypeURI.equals(LONG_URI)
-				|| xmlDataTypeURI.equals(INTEGER_URI)) {
+		} else if (xmlDataTypeURI.equals(LONG_URI)) {
 			return new LiteralLongBinding(Long.parseLong(obj));
-		} else if (xmlDataTypeURI.equals(INT_URI)) {
+		} else if (xmlDataTypeURI.equals(INT_URI) || xmlDataTypeURI.equals(INTEGER_URI)) {
 			return new LiteralIntBinding(Integer.parseInt(obj));
 		} else if (xmlDataTypeURI.equals(SHORT_URI)) {
 			return new LiteralShortBinding(Short.parseShort(obj));
