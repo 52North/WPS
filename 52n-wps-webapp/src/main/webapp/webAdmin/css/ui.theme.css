@@ -16,7 +16,7 @@
 input.formButtons {margin-left: 0.2em; margin-bottom: 0.2em }
 
 div.sectionContent {height:300px; overflow:auto}
-div.lists{width:700px;}
+div.lists{width:900px;}
 
 p.listItem a     { width:20px; color:inherit; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 1em;}
 p.listItem label { width: 20em; margin-left: 0.2em;   margin-right: 1em;   text-align: left; color:inherit; }

@@ -58,13 +58,18 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	public LocalAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
 		
-		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-		for(Property property : propertyArray){
-			if(property.getName().equalsIgnoreCase("Algorithm")){
-				addAlgorithm(property.getStringValue());
+		// check if the repository is active
+		if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
+			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+			for(Property property : propertyArray){
+				// check the name and active state
+				if(property.getName().equalsIgnoreCase("Algorithm") && property.getActive()){
+					addAlgorithm(property.getStringValue());
+				}
 			}
+		} else {
+			LOGGER.debug("Local Algorithm Repository is inactive.");
 		}
-		
 	}
 	
 	public boolean addAlgorithms(String[] algorithms)  {

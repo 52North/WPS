@@ -39,7 +39,6 @@ package org.n52.wps.server;
 // FvK: added Property Change Listener support
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,7 +46,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.URLClassLoader;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -62,10 +60,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
@@ -144,11 +140,11 @@ public class WebProcessingService extends HttpServlet {
 		LOGGER.info("Initialization of wps properties successful!");
 			
 		
-		Parser[] parsers = WPSConfig.getInstance().getRegisteredParser();
+		Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
 		ParserFactory.initialize(parsers);
 				
-		Generator[] generators = WPSConfig.getInstance().getRegisteredGenerators();
-		GeneratorFactory.initialize(generators);	
+		Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();
+		GeneratorFactory.initialize(generators);
 			
 		//call RepositoyManager to initialize
 		RepositoryManager.getInstance();

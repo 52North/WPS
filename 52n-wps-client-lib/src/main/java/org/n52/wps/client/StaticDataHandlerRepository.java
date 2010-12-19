@@ -54,7 +54,8 @@ public class StaticDataHandlerRepository {
 			String location = new File(StaticDataHandlerRepository.class.getClassLoader().getResource("wps_config.xml").getFile()).getAbsolutePath();
 			location = URLDecoder.decode(location);
 			
-			Generator[] generators = WPSConfig.getInstance(location).getRegisteredGenerators();
+			Generator[] generators = WPSConfig.getInstance(location).getActiveRegisteredGenerator();		
+			
 			GeneratorFactory.initialize(generators);
 			genFactory = GeneratorFactory.getInstance();
 			
@@ -68,8 +69,10 @@ public class StaticDataHandlerRepository {
 		if(parserFactory == null) {
 			String location = new File(StaticDataHandlerRepository.class.getClassLoader().getResource("wps_config.xml").getFile()).getAbsolutePath();
 			location = URLDecoder.decode(location);
-			Parser[] parsers = WPSConfig.getInstance(location).getRegisteredParser();
+
+			Parser[] parsers = WPSConfig.getInstance(location).getActiveRegisteredParser();
 			ParserFactory.initialize(parsers);
+			
 			parserFactory = ParserFactory.getInstance();
 		}
 		return parserFactory;

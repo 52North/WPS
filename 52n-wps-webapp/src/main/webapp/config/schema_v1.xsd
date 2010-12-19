@@ -56,18 +56,20 @@
 	<xs:element name="Repository">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element ref="Property" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Property" minOccurs="0"
+					maxOccurs="unbounded" />
 			</xs:choice>
 			<xs:attribute name="name" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name="className" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
+			<xs:attribute name="active" type="xs:boolean" use="required"></xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Property">
@@ -76,8 +78,11 @@
 				<xs:extension base="T_Property">
 					<xs:attribute name="name" use="required">
 						<xs:simpleType>
-							<xs:restriction base="xs:string"/>
+							<xs:restriction base="xs:string" />
 						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="active"
+						type="xs:boolean" use="required">
 					</xs:attribute>
 				</xs:extension>
 			</xs:simpleContent>
@@ -93,18 +98,20 @@
 	<xs:element name="Parser">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Property" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Property" minOccurs="0"
+					maxOccurs="unbounded" />
 			</xs:sequence>
 			<xs:attribute name="name" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name="className" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
+			<xs:attribute name="active" type="xs:boolean" use="required"></xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="GeneratorList">
@@ -117,18 +124,20 @@
 	<xs:element name="Generator">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="Property" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="Property" minOccurs="0"
+					maxOccurs="unbounded" />
 			</xs:sequence>
 			<xs:attribute name="name" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
 			<xs:attribute name="className" use="required">
 				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
+					<xs:restriction base="xs:string" />
 				</xs:simpleType>
 			</xs:attribute>
+			<xs:attribute name="active" type="xs:boolean" use="required"></xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="Datahandlers">

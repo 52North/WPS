@@ -42,6 +42,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
@@ -79,7 +80,7 @@ public class ParserFactory {
             public void propertyChange(
                     final PropertyChangeEvent propertyChangeEvent) {
                 LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getRegisteredParser());
+                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredParser());
             }
         });
 	}
@@ -87,6 +88,17 @@ public class ParserFactory {
     private void loadAllParsers(Parser[] parsers){
         registeredParsers = new ArrayList<IParser>();
 		for(Parser currentParser : parsers) {
+			
+			// remove inactive parser
+			Property[] activeProperties = {};
+			ArrayList<Property> activePars = new ArrayList<Property>();
+			for(int i=0; i<currentParser.getPropertyArray().length; i++){
+				if(currentParser.getPropertyArray()[i].getActive()){
+					activePars.add(currentParser.getPropertyArray()[i]);					
+				}
+			}
+			currentParser.setPropertyArray(activePars.toArray(activeProperties));
+			
 			String parserClass = currentParser.getClassName();
 			IParser parser = null;
 			try {

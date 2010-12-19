@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.io.StringBufferInputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -238,13 +239,35 @@ public class WPSConfig  implements Serializable {
 	}
 	
 	public Parser[] getRegisteredParser(){
-		return wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
-		
+		return wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();		
 	}
 	
-	public Generator[] getRegisteredGenerators(){
+	public Parser[] getActiveRegisteredParser(){
+		Parser[] parsers = getRegisteredParser();
+		ArrayList<Parser> activeParsers = new ArrayList<Parser>();
+		for(int i=0; i<parsers.length; i++){
+			if(parsers[i].getActive()){
+				activeParsers.add(parsers[i]);
+			}
+		}		
+		Parser[] parArr = {};
+		return activeParsers.toArray(parArr);
+	}
+	
+	public Generator[] getRegisteredGenerator(){
 		return wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
-		
+	}
+	
+	public Generator[] getActiveRegisteredGenerator(){
+		Generator[] generators = getRegisteredGenerator();
+		ArrayList<Generator> activeGenerators = new ArrayList<Generator>(); 
+		for(int i=0; i<generators.length; i++){
+			if(generators[i].getActive()){
+				activeGenerators.add(generators[i]);
+			}
+		}			
+		Generator[] genArr = {};
+		return activeGenerators.toArray(genArr);
 	}
 	
 	public Repository[] getRegisterdAlgorithmRepositories(){
@@ -275,6 +298,18 @@ public class WPSConfig  implements Serializable {
 		}
 		return (Property[]) Array.newInstance(Property.class,0);
 		
+	}
+	
+	public boolean isRepositoryActive(String className){
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for(int i = 0; i<repositories.length; i++) {
+			Repository repository = repositories[i];
+			if(repository.getClassName().equals(className)){
+				return repository.getActive();
+			}
+		}
+
+		return false;
 	}
 	
 	public Property[] getPropertiesForRepositoryClass(String className){

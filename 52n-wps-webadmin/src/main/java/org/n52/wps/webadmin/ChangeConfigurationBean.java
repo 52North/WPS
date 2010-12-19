@@ -8,6 +8,7 @@ Copyright (C) 2007 by con terra GmbH
 
 Authors:
 Florian van Keulen, ITC Student, ITC Enschede, the Netherlands
+Raphael Rupprecht, IFGI Student, IFGI Münster, Germany
 
 
 This program is free software; you can redistribute it and/or
@@ -292,10 +293,23 @@ public class ChangeConfigurationBean {
         if (repositoryEntries.isEmpty() || !repositoryEntries.containsKey("Name") || !repositoryEntries.containsKey("Class")) {
             return;
         }
-        // get new repository and add Name and Class
+        // get new repository and add Name and Class and Active state
         Repository repository = repositoryList.addNewRepository();
         repository.setName(repositoryEntries.remove("Name"));
         repository.setClassName(repositoryEntries.remove("Class"));
+        
+        String activeString = repositoryEntries.remove("Activator");
+        boolean active = true;
+        if(activeString == null){	// Activator=off will only be recognized when activeString is null, the jQuery form.serialize() method won't insert "Activator=off"!
+        	active = false;
+        } else {
+        	if(activeString.equals("on")){
+        		// everything is fine
+        	} else {
+        		LOGGER.error("Error - the Activator seems not to be set.");
+        	}
+        }
+        repository.setActive(active);
 
         // if the map has more entries, Properties are present and will be proceed
         if (!repositoryEntries.isEmpty()) {
@@ -317,6 +331,19 @@ public class ChangeConfigurationBean {
         Parser parser = parserList.addNewParser();
         parser.setName(parserEntries.remove("Name"));
         parser.setClassName(parserEntries.remove("Class"));
+        
+        String activeString = parserEntries.remove("Activator");
+        boolean active = true;
+        if(activeString == null){	// Activator=off will only be recognized when activeString is null, the jQuery form.serialize() method won't insert "Activator=off"!
+        	active = false;
+        } else {
+        	if(activeString.equals("on")){
+        		// everything is fine
+        	} else {
+        		LOGGER.error("Error - the Activator seems not to be set.");
+        	}
+        }
+        parser.setActive(active);       
 
         // if the map has more entries, Properties are present and will be proceed
         if (!parserEntries.isEmpty()) {
@@ -339,6 +366,19 @@ public class ChangeConfigurationBean {
         generator.setName(generatorEntries.remove("Name"));
         generator.setClassName(generatorEntries.remove("Class"));
 
+        String activeString = generatorEntries.remove("Activator");
+        boolean active = true;
+        if(activeString == null){	// Activator=off will only be recognized when activeString is null, the jQuery form.serialize() method won't insert "Activator=off"!
+        	active = false;
+        } else {
+        	if(activeString.equals("on")){
+        		// everything is fine
+        	} else {
+        		LOGGER.error("Error - the Activator seems not to be set.");
+        	}
+        }
+        generator.setActive(active);             
+        
         // if the map has more entries, Properties are present and will be proceed
         if (!generatorEntries.isEmpty()) {
             generator.setPropertyArray(getPropertyArray(generatorEntries));
@@ -359,12 +399,23 @@ public class ChangeConfigurationBean {
             propertyName = URLDecoder.decode(propertyName);
             String propertyValue = properties.remove(processingProperty + "_Value");
             propertyValue = URLDecoder.decode(propertyValue);
+            String propertyActiveString = properties.remove(processingProperty + "_Activator");
+            
+            boolean proptertyActive = false;
+            if(propertyActiveString != null){
+            	if(propertyActiveString.equals("on")){
+            		proptertyActive = true;
+            	}
+            }
+            
             if (propertyName != null) {
                 Property prop = Property.Factory.newInstance();
                 prop.setName(propertyName);
+                prop.setActive(proptertyActive);
                 if (propertyValue != null) {
                     prop.setStringValue(propertyValue);
                 }
+               
                 propArr.add(prop);
             }
         }

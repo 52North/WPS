@@ -59,12 +59,16 @@
 		public UploadedAlgorithmRepository() {
 			algorithmMap = new HashMap<String, String>();
 			
-			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-			for(Property property : propertyArray){
-				if(property.getName().equalsIgnoreCase("Algorithm")){
-					addAlgorithm(property.getStringValue());
+			if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
+				Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+				for(Property property : propertyArray){
+					if(property.getName().equalsIgnoreCase("Algorithm") && property.getActive()){
+						addAlgorithm(property.getStringValue());
+					}
 				}
-			}
+			} else {
+				LOGGER.debug("Local Algorithm Repository is inactive.");
+			}			
 			
 		}
 		

@@ -42,6 +42,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
 
@@ -76,7 +77,7 @@ public class GeneratorFactory {
             public void propertyChange(
                     final PropertyChangeEvent propertyChangeEvent) {
                 LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getRegisteredGenerators());
+                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredGenerator());
             }
         });
 	}
@@ -84,6 +85,17 @@ public class GeneratorFactory {
     private void loadAllGenerators(Generator[] generators){
         registeredGenerators = new ArrayList<IGenerator>();
 		for(Generator currentGenerator : generators) {
+
+			// remove inactive properties
+			Property[] activeProperties = {};
+			ArrayList<Property> activeProps = new ArrayList<Property>();
+			for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
+				if(currentGenerator.getPropertyArray()[i].getActive()){
+					activeProps.add(currentGenerator.getPropertyArray()[i]);
+				}
+			}			
+			currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
+			
 			IGenerator generator = null;
 			String generatorClass = currentGenerator.getClassName();
 			try {
