@@ -134,96 +134,101 @@ public class ChangeConfigurationBean {
             String dataStr = dataArr[i];
             // splits name and value
             String[] entryArr = dataStr.split("=");
-            // extracts the actual processing item type (enum Types)
-            processingItemType = Types.valueOf(entryArr[0].split("-", 2)[0]);
-
-            // which type is the entry
-            switch (processingItemType) {
-
-                case Server:
-                    serverValues.put(entryArr[0].split("-", 2)[1], entryArr[1]);
-                    break;
-
-                case Repository:
-                    // splits the formname to the type with number
-                    // as identifier
-                    formName = entryArr[0].split("_", 2);
-
-                    // the first item to proceed
-                    if (processingItemName == null) {
-                        processingItemName = formName[0];
-                        repositoryValues.put(formName[1], entryArr[1]);
-
-                    // this item belongs to the same entry as the one before
-                    } else if (processingItemName.equals(formName[0])) {
-                        repositoryValues.put(formName[1], entryArr[1]);
-
-                    // new item, does not belong to the one before
-                    } else {
-                        //checks if the one before was also the same type
-                        if (processingItemName.startsWith("Repository")) {
-                            // adds the colected repository values to WPSConfig
-                            createRepository(repositoryValues);
-                            repositoryValues.clear();
-                        }
-                        processingItemName = formName[0];
-                        repositoryValues.put(formName[1], entryArr[1]);
-                    }
-                    break;
-
-                case Parser:
-                    // splits the formname to the type with number
-                    // as identifier
-                    formName = entryArr[0].split("_", 2);
-
-                    // the first item to proceed
-                    if (processingItemName == null) {
-                        processingItemName = formName[0];
-                        parserValues.put(formName[1], entryArr[1]);
-
-                    // this item belongs to the same entry as the one before
-                    } else if (processingItemName.equals(formName[0])) {
-                        parserValues.put(formName[1], entryArr[1]);
-
-                    // new item, does not belong to the one before
-                    } else {
-                        //checks if the one before was also the same type
-                        if (processingItemName.startsWith("Parser")) {
-                            // adds the colected parser values to WPSConfig
-                            createParser(parserValues);
-                            parserValues.clear();
-                        }
-                        processingItemName = formName[0];
-                        parserValues.put(formName[1], entryArr[1]);
-                    }
-                    break;
-                case Generator:
-                    // splits the formname to the type with number
-                    // as identifier
-                    formName = entryArr[0].split("_", 2);
-
-                    // the first item to proceed
-                    if (processingItemName == null) {
-                        processingItemName = formName[0];
-                        generatorValues.put(formName[1], entryArr[1]);
-
-                    // this item belongs to the same entry as the one before
-                    } else if (processingItemName.equals(formName[0])) {
-                        generatorValues.put(formName[1], entryArr[1]);
-
-                    // new item, does not belong to the one before
-                    } else {
-                        //checks if the one before was also the same type
-                        if (processingItemName.startsWith("Generator")) {
-                            // adds the colected generator values to WPSConfig
-                            createGenerator(generatorValues);
-                            generatorValues.clear();
-                        }
-                        processingItemName = formName[0];
-                        generatorValues.put(formName[1], entryArr[1]);
-                    }
-                    break;
-                               	
+            if(entryArr.length==2){
+	            // extracts the actual processing item type (enum Types)
+	            processingItemType = Types.valueOf(entryArr[0].split("-", 2)[0]);
+	
+	            // which type is the entry
+	            switch (processingItemType) {
+	
+	                case Server:
+	                    serverValues.put(entryArr[0].split("-", 2)[1], entryArr[1]);
+	                    break;
+	
+	                case Repository:
+	                    // splits the formname to the type with number
+	                    // as identifier
+	                    formName = entryArr[0].split("_", 2);
+	                    if(formName.length==2){
+		                    // the first item to proceed
+		                    if (processingItemName == null) {
+		                        processingItemName = formName[0];
+		                        repositoryValues.put(formName[1], entryArr[1]);
+		
+		                    // this item belongs to the same entry as the one before
+		                    } else if (processingItemName.equals(formName[0])) {
+		                        repositoryValues.put(formName[1], entryArr[1]);
+		
+		                    // new item, does not belong to the one before
+		                    } else {
+		                        //checks if the one before was also the same type
+		                        if (processingItemName.startsWith("Repository")) {
+		                            // adds the colected repository values to WPSConfig
+		                            createRepository(repositoryValues);
+		                            repositoryValues.clear();
+		                        }
+		                        processingItemName = formName[0];
+		                        repositoryValues.put(formName[1], entryArr[1]);
+		                    }
+		                    break;
+	                    }
+	
+	                case Parser:
+	                    // splits the formname to the type with number
+	                    // as identifier
+	                    formName = entryArr[0].split("_", 2);
+	                    if(formName.length==2){
+		                    // the first item to proceed
+		                    if (processingItemName == null) {
+		                        processingItemName = formName[0];
+		                        parserValues.put(formName[1], entryArr[1]);
+		
+		                    // this item belongs to the same entry as the one before
+		                    } else if (processingItemName.equals(formName[0])) {
+		                        parserValues.put(formName[1], entryArr[1]);
+		
+		                    // new item, does not belong to the one before
+		                    } else {
+		                        //checks if the one before was also the same type
+		                        if (processingItemName.startsWith("Parser")) {
+		                            // adds the colected parser values to WPSConfig
+		                            createParser(parserValues);
+		                            parserValues.clear();
+		                        }
+		                        processingItemName = formName[0];
+		                        parserValues.put(formName[1], entryArr[1]);
+		                    }
+		                    break;
+	                    }
+	                case Generator:
+	                    // splits the formname to the type with number
+	                    // as identifier
+	                    formName = entryArr[0].split("_", 2);
+	                    if(formName.length==2){
+		                    // the first item to proceed
+		                    if (processingItemName == null) {
+		                        processingItemName = formName[0];
+		                        generatorValues.put(formName[1], entryArr[1]);
+		
+		                    // this item belongs to the same entry as the one before
+		                    } else if (processingItemName.equals(formName[0])) {
+		                        generatorValues.put(formName[1], entryArr[1]);
+		
+		                    // new item, does not belong to the one before
+		                    } else {
+		                        //checks if the one before was also the same type
+		                        if (processingItemName.startsWith("Generator")) {
+		                            // adds the colected generator values to WPSConfig
+		                            createGenerator(generatorValues);
+		                            generatorValues.clear();
+		                        }
+		                        processingItemName = formName[0];
+		                        generatorValues.put(formName[1], entryArr[1]);
+		                    }
+		                    break;
+	                    }
+	                               	
+	            }
             }
 
 
