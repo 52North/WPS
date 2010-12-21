@@ -106,7 +106,7 @@ public class ExecuteResponseBuilder {
 		this.identifier = request.getExecute().getIdentifier().getStringValue();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
-		description = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue()).getDescription();
+		description = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue(), request).getDescription();
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
@@ -187,7 +187,7 @@ public class ExecuteResponseBuilder {
 			
 			// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
 				
-			OutputDescriptionType [] d = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue()).getDescription().getProcessOutputs().getOutputArray();
+			OutputDescriptionType [] d = RepositoryManager.getInstance().getAlgorithm(request.getExecute().getIdentifier().getStringValue(), request).getDescription().getProcessOutputs().getOutputArray();
 			for (int i = 0; i < d.length; i++)
 			{
 				if(d[i].isSetComplexOutput()) {

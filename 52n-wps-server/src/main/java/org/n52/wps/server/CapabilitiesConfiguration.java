@@ -122,7 +122,7 @@ public class CapabilitiesConfiguration {
 		}
 		ProcessOfferings processes = capsSkeleton.getCapabilities().addNewProcessOfferings();
 		for(String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
+			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName, null);
 			if(algorithm == null){
 				continue;
 			}

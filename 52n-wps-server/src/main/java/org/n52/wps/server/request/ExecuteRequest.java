@@ -147,7 +147,7 @@ public class ExecuteRequest extends Request implements IObserver {
 					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
 		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(
-				processID);
+				processID, this);
 		execute.addNewIdentifier().setStringValue(processID);
 		DataInputsType dataInputs = execute.addNewDataInputs();
 		String dataInputString = getMapValue("DataInputs", true);
@@ -421,7 +421,7 @@ public class ExecuteRequest extends Request implements IObserver {
 
 		// validate if the process can be executed
 		ProcessDescriptionType desc = RepositoryManager.getInstance()
-				.getAlgorithm(getAlgorithmIdentifier()).getDescription();
+				.getAlgorithm(getAlgorithmIdentifier(), this).getDescription();
 		// We need a description of the inputs for the algorithm
 		if (desc == null) {
 			LOGGER.warn("desc == null");
@@ -536,7 +536,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			 * returnResults = algorithm.run((Map)parser.getParsedInputLayers(),
 			 * (Map)parser.getParsedInputParameters());
 			 */
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
+			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier(), this);
 			
 			if(algorithm instanceof ISubject){
 				ISubject subject = (ISubject) algorithm;

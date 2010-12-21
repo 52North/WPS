@@ -154,7 +154,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		return false;
 	}
 
-	public IAlgorithm getAlgorithm(String processID) {
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process");
 		}
@@ -170,7 +170,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	public Collection<IAlgorithm> getAlgorithms() {
 		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcesses.size());
 		for(String processID : registeredProcesses.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID);
+			IAlgorithm algorithm = getAlgorithm(processID, null);
 			if(algorithm!=null){
 				algorithms.add(algorithm);
 			}

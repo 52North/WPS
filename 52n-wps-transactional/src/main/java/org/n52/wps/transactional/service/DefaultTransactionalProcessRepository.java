@@ -11,6 +11,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
 import org.n52.wps.transactional.deploy.IDeployManager;
 import org.n52.wps.transactional.request.DeployProcessRequest;
@@ -74,7 +75,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		} 
 	}
 
-	public IAlgorithm getAlgorithm(String processID) {
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
 		return new DefaultTransactionalAlgorithm(processID, this.getClass());
 		
 	}

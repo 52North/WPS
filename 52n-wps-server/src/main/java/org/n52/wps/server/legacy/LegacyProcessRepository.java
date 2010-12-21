@@ -47,6 +47,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.request.ExecuteRequest;
 
 public class LegacyProcessRepository implements IAlgorithmRepository{
 	
@@ -157,7 +158,7 @@ public class LegacyProcessRepository implements IAlgorithmRepository{
 		return null;
 	}
 	
-	public IAlgorithm getAlgorithm(String processID) {
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
 		
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process " + processID);
@@ -174,7 +175,7 @@ public class LegacyProcessRepository implements IAlgorithmRepository{
 	public Collection<IAlgorithm> getAlgorithms() {
 		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcessDescriptions.size());
 		for(String processID : registeredProcessDescriptions.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID);
+			IAlgorithm algorithm = getAlgorithm(processID, null);
 			if(algorithm!=null){
 				algorithms.add(algorithm);
 			}

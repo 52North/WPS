@@ -148,7 +148,7 @@ public class DescribeProcessRequest extends Request {
 											ExceptionReport.INVALID_PARAMETER_VALUE, 
 											"parameter: identifier | value: " + algorithmName);
 			}
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName);
+			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName, null);
 			document.getProcessDescriptions().addNewProcessDescription().set(algorithm.getDescription());
 		}
 		

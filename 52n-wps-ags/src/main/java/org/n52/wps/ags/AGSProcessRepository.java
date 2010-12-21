@@ -49,6 +49,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.legacy.LegacyParameter;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -98,7 +99,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	 * @param processID
 	 * @return
 	*/
-	public IAlgorithm getAlgorithm(String processID) {
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}
@@ -131,7 +132,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	public Collection<IAlgorithm> getAlgorithms() {
 		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcessDescriptions.size());
 		for(String processID : registeredProcessDescriptions.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID);
+			IAlgorithm algorithm = getAlgorithm(processID, null);
 			if(algorithm!=null){
 				algorithms.add(algorithm);
 			}

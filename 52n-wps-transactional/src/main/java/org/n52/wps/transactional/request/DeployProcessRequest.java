@@ -56,7 +56,7 @@ public class DeployProcessRequest implements ITransactionalRequest {
 					"/DeployProcessRequest/ProcessDescriptions/"
 							+ "ProcessDescription/Identifier/text()")
 					.getNodeValue().trim();
-			if (RepositoryManager.getInstance().getAlgorithm(processID) != null) {
+			if (RepositoryManager.getInstance().getAlgorithm(processID, null) != null) {
 				throw new ExceptionReport(
 						"A process with that ID already exists",
 						ExceptionReport.INVALID_PARAMETER_VALUE);

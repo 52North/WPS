@@ -42,7 +42,8 @@
 
 	import org.apache.log4j.Logger;
 	import org.n52.wps.PropertyDocument.Property;
-	import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.request.ExecuteRequest;
 
 
 
@@ -81,7 +82,7 @@
 			
 		}
 		
-		public IAlgorithm getAlgorithm(String className) {
+		public IAlgorithm getAlgorithm(String className, ExecuteRequest executeRequest) {
 			try {
 				return loadAlgorithm(algorithmMap.get(className));
 			} catch (Exception e) {

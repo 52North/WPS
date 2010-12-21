@@ -149,7 +149,7 @@ public abstract class ResponseData {
 	}
 	
 	public IGenerator getDefaultGeneratorForProcess(String algorithmIdentifier, Class algorithmOutput) {
-		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
+		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier, null);
 		OutputDescriptionType[] outputs = algorithm.getDescription().getProcessOutputs().getOutputArray();
 		if(outputs[0].isSetComplexOutput()){
 			ComplexDataDescriptionType format = outputs[0].getComplexOutput().getDefault().getFormat();

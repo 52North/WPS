@@ -11,6 +11,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.request.ExecuteRequest;
 
 public class GridGainAlgorithmRepository implements IAlgorithmRepository
 {
@@ -179,7 +180,7 @@ public class GridGainAlgorithmRepository implements IAlgorithmRepository
 		return algorithmMap.containsKey(processID);
 	}
 
-	public IAlgorithm getAlgorithm(String processID)
+	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest)
 	{
 		return algorithmMap.get(processID);
 	}

@@ -46,13 +46,20 @@
 				<Property name="supportedFormat" active="true">application/image-ascii-grass</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>
+			
 			<Parser name="GenericFileParser" className="org.n52.wps.io.datahandler.binary.GenericFileParser" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
 				<Property name="supportedFormat" active="true">application/img</Property>
-				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
 				<Property name="supportedFormat" active="true">application/geotiff</Property>
 				<Property name="supportedFormat" active="true">application/dbase</Property>
 				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>	
 	
@@ -90,6 +97,12 @@
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
 				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			
+			<Parser name="GRASSKMLParser" className="org.n52.wps.io.datahandler.xml.GRASSKMLParser" active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
+				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>
  
@@ -154,22 +167,39 @@
 			</Generator>	
 			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedFormat" active="true">application/shp</Property>
 				<Property name="supportedFormat" active="true">application/img</Property>
-				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
 				<Property name="supportedFormat" active="true">application/geotiff</Property>
 				<Property name="supportedFormat" active="true">application/dbase</Property>
 				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Generator>
 			<Generator name="GenericFileGeneratorBase64" className="org.n52.wps.io.datahandler.binary.Base64Generator" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
 				<Property name="supportedFormat" active="true">application/img</Property>
 				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
 				<Property name="supportedFormat" active="true">application/geotiff</Property>
 				<Property name="supportedFormat" active="true">application/dbase</Property>
 				<Property name="supportedFormat" active="true">application/remap</Property>
 				<Property name="supportedEncoding" active="true">Base64</Property>
-			</Generator>		
+			</Generator>	
+			
+			<Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.xml.GRASSXMLGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>	
 			
 			<!-- GML2BasicGenerator4Files inherits formats etc from GMLBasic parser -->
 			<Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files" active="true" />
@@ -233,6 +263,24 @@
 		</Repository>
 		
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
+		</Repository>
+		
+		<Repository name="GrassRepository"
+			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
+			<!--Property name="Grass_Home" active="false">/usr/local/grass-7.0.svn</Property>
+			<Property name="ModuleStarter_Home" active="false">/usr/share/wps-grass-bridge/gms/</Property>
+			<Property name="Python_Home" active="false">/usr/bin/</Property>
+			<Property name="TMP_Dir" active="false">/tmp/tomcat6-tmp</Property>
+			<Property name="GISRC_Dir" active="false">/usr/local/grass-7.0.svn/demolocation/.grassrc70</Property-->
+			<Property name="Grass_Home" active="true">c:\programme\grass-70-svn</Property>
+			<Property name="Python_Home" active="true">c:\programme\grass-70-svn\extrabin</Property>
+			<Property name="ModuleStarter_Home" active="true">C:\wps-grass-bridge\gms\</Property>
+			<Property name="GISRC_Dir" active="true">c:\programme\grass-70-svn\\demolocation\.grassrc70</Property>
+			<Property name="TMP_Dir" active="true">C:\tmp\grass_tmp</Property>
+			<Property name="DONT_USE_PROCESSES" active="true">v.out.ascii;v.out.dxf;v.out.ogr;v.out.pov;v.out.svg;v.out.vtk;v.in.ascii;v.in.db;v.in.dxf;v.in.ogr;v.in.region;v.in.sites;r3.out.ascii;r3.out.v5d;r3.out.vtk;r.out.arc;r.out.ascii;r.out.bin;r.out.gdal;r.out.gridatb;r.out.mat;r.out.mpeg;r.out.png;r.out.pov;r.out.ppm;r.out.ppm3;r.out.tiff;r.out.vrml;r.out.vtk;r.in.arc;r.in.ascii;
+			r.in.bin;r.in.gdal;r.in.gridatb;r.in.mat;r.in.png;r.in.poly;r.in.xyzdb.columns;db.connect;db.copy;db.createdb;db.databases;db.describe;db.drivers;db.dropdb;db.droptable;dbcute;db.login;db.select;db.tables;g.access;g.copy;g.dirseps;g.filename;g.findetc;g.findfile;g.gisenv;g.gui;g.list;g.mapset;g.mapsets;g.message;g.mkfontcap;g.mlist;g.mremove;
+			g.parser;g.pnmcomp;g.proj;nviz;nviz_cmd;d.rast.numd.barscale;d.colorlist;d.colortable;d.erase;d.font;d.fontlist;d.geodesic;d.graph;d.grid;d.his;d.histogram;d.info;d.labels;d.legend;d.linegraph;d.nviz;d.path;d.profile;d.rast.arrow;d.rast;d.rgb;d.rhumbline;d.text;d.thematic.area;d.title;d.vect.chart;d.vect;d.where;g.region;g.remove;
+			g.rename;g.tempfile;g.version;r3.cross.rast;r3.in.v5d;r3.mkdspf;r.external;r.external.out;v.info;r.gegion;r.colors;i.group;r3.in.ascii;v.external;i.albedo;g.transform;r.info;v.db.select;v.db.connect;r.what;r.what.color;r.composite;r.colors.out;ps.map;g.ppmtopng;v.what;v.what.rast</Property>
 		</Repository>
 		
 		<!-- 
@@ -303,8 +351,6 @@
 				<Property name="BACKEND" active="true">urn:n52:esri:arcgis:9.3.1</Property>
 				<Property name="BACKEND" active="true">urn:n52:esri:arcgis:9.3</Property>
 			</Delegator>
-			
-			
 		</Repository> 
 		
 			 

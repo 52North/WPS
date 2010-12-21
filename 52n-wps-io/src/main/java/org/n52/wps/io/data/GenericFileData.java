@@ -76,27 +76,73 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 public class GenericFileData {
-	
+
 	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
-	
+
 	public final InputStream dataStream;
-	public final String fileExtension; 
+	public final String fileExtension;
 	public final String mimeType;
 	private File primaryFile;
-	
-	
-	public GenericFileData (InputStream stream, String mimeType){
+
+	public GenericFileData(InputStream stream, String mimeType) {
 		this.dataStream = stream;
 		this.mimeType = mimeType;
-		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
+		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT()
+				.get(mimeType);
 	}
-	
-	public GenericFileData (FeatureCollection featureCollection) throws IOException{
+
+	public GenericFileData(FeatureCollection featureCollection)
+			throws IOException {
 		this(getShpFile(featureCollection), IOHandler.MIME_TYPE_ZIPPED_SHP);
-		
+
 	}
-	
-	public static File getShpFile(FeatureCollection collection) throws IOException, IllegalAttributeException {
+
+	public GenericFileData(File primaryTempFile, String mimeType)
+			throws IOException {
+		primaryFile = primaryTempFile;
+		this.mimeType = mimeType;
+		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT()
+				.get(mimeType);
+
+		InputStream is = null;
+
+		if (GenericFileDataConstants.getIncludeFilesByMimeType(mimeType) != null) {
+
+			String baseFile = primaryFile.getName();
+			baseFile = baseFile.substring(0, baseFile.lastIndexOf("."));
+			File temp = new File(primaryFile.getAbsolutePath());
+			File directory = new File(temp.getParent());
+			String[] extensions = GenericFileDataConstants
+					.getIncludeFilesByMimeType(mimeType);
+
+			File[] allFiles = new File[extensions.length + 1];
+
+			for (int i = 0; i < extensions.length; i++)
+				allFiles[i] = new File(directory, baseFile + "."
+						+ extensions[i]);
+
+			allFiles[extensions.length] = primaryFile;
+
+			is = new FileInputStream(IOUtils.zip(allFiles));
+		} else {
+			is = new FileInputStream(primaryFile);
+		}
+
+		this.dataStream = is;
+
+	}
+
+	public GenericFileData(GridCoverage2D payload, String mimeType) {
+		GeotiffGenerator generator = new GeotiffGenerator();
+		primaryFile = generator.generateFile(new GTRasterDataBinding(payload),
+				mimeType);
+		dataStream = null;
+		fileExtension = "tiff";
+		this.mimeType = mimeType;
+	}
+
+	public static File getShpFile(FeatureCollection collection)
+			throws IOException, IllegalAttributeException {
 		SimpleFeatureType type = null;
 		SimpleFeatureBuilder build = null;
 		FeatureIterator iterator = collection.features();
@@ -104,276 +150,234 @@ public class GenericFileData {
 		Transaction transaction = new DefaultTransaction("create");
 		FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
 		String uuid = UUID.randomUUID().toString();
-		File shp = new File("Shape_"+uuid+".shp");
-		while(iterator.hasNext()){
+		String tmpDirPath = System.getProperty("java.io.tmpdir");
+		File shp = new File(tmpDirPath + File.separator + "Shape_" + uuid + ".shp");
+		while (iterator.hasNext()) {
 			SimpleFeature sf = (SimpleFeature) iterator.next();
 			// create SimpleFeatureType
-			if(type==null){
-			    SimpleFeatureType inType = (SimpleFeatureType) collection.getSchema();
-			    SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-			    builder.setName(inType.getName());
-			    builder.setNamespaceURI(inType.getName().getNamespaceURI());
-			    
-			    if(collection.getSchema().getCoordinateReferenceSystem()==null){
+			if (type == null) {
+				SimpleFeatureType inType = (SimpleFeatureType) collection
+						.getSchema();
+				SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+				builder.setName(inType.getName());
+				builder.setNamespaceURI(inType.getName().getNamespaceURI());
+
+				if (collection.getSchema().getCoordinateReferenceSystem() == null) {
 					builder.setCRS(DefaultGeographicCRS.WGS84);
-				}else{
-					  builder.setCRS(collection.getSchema()
-								.getCoordinateReferenceSystem());
+				} else {
+					builder.setCRS(collection.getSchema()
+							.getCoordinateReferenceSystem());
 				}
-			  
-			   
-							   
-			    builder.setDefaultGeometry(sf.getDefaultGeometryProperty().getName().getLocalPart());
-		
-			    for (Property prop : sf.getProperties()) {
-			      if (isSupportedShapefileType(prop.getType()) && (prop.getValue() != null)) {
-			        builder.add(prop.getName().getLocalPart(), prop.getType().getBinding());
-			      }
-			    }
-		   
-			    type = builder.buildFeatureType();
-				
-			  
-			    ShapefileDataStore dataStore = new ShapefileDataStore(shp.toURI().toURL());
-			    dataStore.createSchema(type);
-			    dataStore.forceSchemaCRS(type.getCoordinateReferenceSystem());
-				
-			    String typeName = dataStore.getTypeNames()[0];
-			    store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore.getFeatureSource(typeName);
-		
-			    store.setTransaction(transaction);
-			  		    
-			    build = new SimpleFeatureBuilder(type);
-			    modifiedFeatureCollection = new DefaultFeatureCollection("fc", type);
+
+				builder.setDefaultGeometry(sf.getDefaultGeometryProperty()
+						.getName().getLocalPart());
+
+				for (Property prop : sf.getProperties()) {
+					if (isSupportedShapefileType(prop.getType())
+							&& (prop.getValue() != null)) {
+						builder.add(prop.getName().getLocalPart(), prop
+								.getType().getBinding());
+					}
+				}
+
+				type = builder.buildFeatureType();
+
+				ShapefileDataStore dataStore = new ShapefileDataStore(shp
+						.toURI().toURL());
+				dataStore.createSchema(type);
+				dataStore.forceSchemaCRS(type.getCoordinateReferenceSystem());
+
+				String typeName = dataStore.getTypeNames()[0];
+				store = (FeatureStore<SimpleFeatureType, SimpleFeature>) dataStore
+						.getFeatureSource(typeName);
+
+				store.setTransaction(transaction);
+
+				build = new SimpleFeatureBuilder(type);
+				modifiedFeatureCollection = new DefaultFeatureCollection("fc",
+						type);
 			}
-			      for (AttributeType attributeType : type.getTypes()) {
-			        build.add(sf.getProperty(attributeType.getName()).getValue());
-			        //System.out.println("value: "+attributeType.getName()+" : "+sf.getProperty(attributeType.getName()).getValue());
-			      }
-		
-			      modifiedFeatureCollection.add(build.buildFeature(sf.getIdentifier().getID()));
-			    }
-		    
+			for (AttributeType attributeType : type.getTypes()) {
+				build.add(sf.getProperty(attributeType.getName()).getValue());
+				// System.out.println("value: "+attributeType.getName()+" : "+sf.getProperty(attributeType.getName()).getValue());
+			}
 
-	    
-
-	    try {
-	      store.addFeatures(modifiedFeatureCollection);
-	      transaction.commit();
-	    } catch (Exception e1) {
-	      e1.printStackTrace();
-	      transaction.rollback();
-	    } finally {
-	      transaction.close();
-	    }
-	  
-	  
-
-		
-		
-		
-
-	
-	String path = shp.getAbsolutePath();
-	String baseName = path.substring(0, path.length() - ".shp".length());
-	File shx = new File(baseName + ".shx");
-	File dbf = new File(baseName + ".dbf");
-	File prj = new File(baseName + ".prj");
-	
-	
-	return shp;
-}
-		
-		
-
-    private static boolean isSupportedShapefileType(PropertyType type) {
-    String supported[] = {
-      "String", "Integer", "Double", "Boolean", "Date",
-      "LineString", "MultiLineString", "Polygon", "MultiPolygon",
-      "Point", "MultiPoint"};
-    for (String iter : supported) {
-      if (type.getBinding().getSimpleName().equalsIgnoreCase(iter)) {
-        return true;
-      }
-    }
-    return false;
-  }
-	
-
-	public GenericFileData (File primaryTempFile, String mimeType) throws IOException{
-		primaryFile = primaryTempFile;
-		this.mimeType = mimeType;
-		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
-		
-		InputStream is = null;
-		
-		if (GenericFileDataConstants.getIncludeFilesByMimeType(mimeType) != null){
-			
-			String baseFile = primaryFile.getName(); 
-			baseFile = baseFile.substring(0, baseFile.lastIndexOf("."));
-			File temp = new File(primaryFile.getAbsolutePath());
-			File directory = new File(temp.getParent());
-			String[] extensions = GenericFileDataConstants.getIncludeFilesByMimeType(mimeType);
-			
-			File[] allFiles = new File[extensions.length + 1];
-			
-			for (int i = 0; i < extensions.length; i++)
-				allFiles[i] = new File(directory, baseFile + "." + extensions[i]);
-			
-			allFiles[extensions.length] = primaryFile;
-			
-			is = new FileInputStream(IOUtils.zip(allFiles));
+			modifiedFeatureCollection.add(build.buildFeature(sf.getIdentifier()
+					.getID()));
 		}
-		else {
-			is = new FileInputStream(primaryFile);
+
+		try {
+			store.addFeatures(modifiedFeatureCollection);
+			transaction.commit();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			transaction.rollback();
+		} finally {
+			transaction.close();
 		}
-		
-		this.dataStream = is;
-		
-	}
-	
-	public GenericFileData(GridCoverage2D payload, String mimeType) {
-		GeotiffGenerator generator = new GeotiffGenerator();
-		primaryFile = generator.generateFile(new GTRasterDataBinding(payload), mimeType);
-		dataStream = null;
-		fileExtension = "tiff";
-		this.mimeType = mimeType;
+
+		String path = shp.getAbsolutePath();
+		String baseName = path.substring(0, path.length() - ".shp".length());
+		File shx = new File(baseName + ".shx");
+		File dbf = new File(baseName + ".dbf");
+		File prj = new File(baseName + ".prj");
+
+		return shp;
 	}
 
-	public String writeData (File workspaceDir){
-		
+	private static boolean isSupportedShapefileType(PropertyType type) {
+		String supported[] = { "String", "Integer", "Double", "Boolean",
+				"Date", "LineString", "MultiLineString", "Polygon",
+				"MultiPolygon", "Point", "MultiPoint" };
+		for (String iter : supported) {
+			if (type.getBinding().getSimpleName().equalsIgnoreCase(iter)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String writeData(File workspaceDir) {
+
 		String fileName = null;
-		if (GenericFileDataConstants.getIncludeFilesByMimeType(this.mimeType) != null){
+		if (GenericFileDataConstants.getIncludeFilesByMimeType(this.mimeType) != null) {
 			try {
-				fileName = this.unzipData(this.dataStream, this.fileExtension, workspaceDir);
+				fileName = this.unzipData(this.dataStream, this.fileExtension,
+						workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not unzip the archive to " + workspaceDir);
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			try {
-				fileName = this.justWriteData(this.dataStream, this.fileExtension, workspaceDir);
+				fileName = this.justWriteData(this.dataStream,
+						this.fileExtension, workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not write the input to " + workspaceDir);
 				e.printStackTrace();
 			}
 		}
-		
+
 		return fileName;
 	}
-	
-	
-	private String unzipData (InputStream is, String extension, File writeDirectory) throws IOException {
+
+	private String unzipData(InputStream is, String extension,
+			File writeDirectory) throws IOException {
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
-		String baseFileName = new Long (System.currentTimeMillis()).toString();
-		
-		ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(is));
+		String baseFileName = new Long(System.currentTimeMillis()).toString();
+
+		ZipInputStream zipInputStream = new ZipInputStream(
+				new BufferedInputStream(is));
 		ZipEntry entry;
-		
+
 		String returnFile = null;
-		
+
 		while ((entry = zipInputStream.getNextEntry()) != null) {
-			
-			
+
 			String currentExtension = entry.getName();
 			int beginIndex = currentExtension.lastIndexOf(".") + 1;
 			currentExtension = currentExtension.substring(beginIndex);
-			
+
 			String fileName = baseFileName + "." + currentExtension;
 			File currentFile = new File(writeDirectory, fileName);
 			currentFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(currentFile);
-			BufferedOutputStream bos = new BufferedOutputStream(fos, bufferLength);
-			
+			BufferedOutputStream bos = new BufferedOutputStream(fos,
+					bufferLength);
+
 			int cnt;
 			while ((cnt = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
 				bos.write(buffer, 0, cnt);
 			}
-			
+
 			bos.flush();
 			bos.close();
-			
+
 			if (currentExtension.equalsIgnoreCase(extension)) {
 				returnFile = currentFile.getAbsolutePath();
 			}
-			
+
 			System.gc();
 		}
 		zipInputStream.close();
 		return returnFile;
 	}
-	
-	private String justWriteData (InputStream is, String extension, File writeDirectory) throws IOException {
-		
+
+	private String justWriteData(InputStream is, String extension,
+			File writeDirectory) throws IOException {
+
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
 		String fileName = null;
-		String baseFileName = new Long (System.currentTimeMillis()).toString();
-		
+		String baseFileName = new Long(System.currentTimeMillis()).toString();
+
 		fileName = baseFileName + "." + extension;
 		File currentFile = new File(writeDirectory, fileName);
 		currentFile.createNewFile();
-		
-		//alter FileName for return
+
+		// alter FileName for return
 		fileName = currentFile.getAbsolutePath();
-		
+
 		FileOutputStream fos = new FileOutputStream(currentFile);
 		BufferedOutputStream bos = new BufferedOutputStream(fos, bufferLength);
-		
+
 		int cnt;
 		while ((cnt = is.read(buffer, 0, bufferLength)) != -1) {
 			bos.write(buffer, 0, cnt);
 		}
-		
+
 		bos.flush();
 		bos.close();
-		
+
 		System.gc();
-		
+
 		return fileName;
 	}
-	
-	public GTVectorDataBinding getAsGTVectorDataBinding(){
-		String dirName = "tmp" + System.currentTimeMillis();
+
+	public GTVectorDataBinding getAsGTVectorDataBinding() {
+		String tmpDirPath = System.getProperty("java.io.tmpdir");
+		String dirName = tmpDirPath + File.separator + "tmp" + System.currentTimeMillis();
 		File tempDir = null;
-		
-		if(new File(dirName).mkdir()){
+
+		if (new File(dirName).mkdir()) {
 			tempDir = new File(dirName);
 		}
-		
+
 		LOGGER.info("Writing temp data to: " + tempDir);
 		String fileName = writeData(tempDir);
 		LOGGER.info("Temp file is: " + fileName);
 		File shpFile = new File(fileName);
-		
+
 		try {
 			DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
-			FeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
+			FeatureCollection features = store.getFeatureSource(
+					store.getTypeNames()[0]).getFeatures();
 			System.gc();
 			tempDir.delete();
 			return new GTVectorDataBinding(features);
 		} catch (MalformedURLException e) {
 			LOGGER.error("Something went wrong while creating data store.");
 			e.printStackTrace();
-			throw new RuntimeException("Something went wrong while creating data store.", e);
+			throw new RuntimeException(
+					"Something went wrong while creating data store.", e);
 		} catch (IOException e) {
 			LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
 			e.printStackTrace();
-			throw new RuntimeException("Something went wrong while converting shapefile to FeatureCollection", e);
+			throw new RuntimeException(
+					"Something went wrong while converting shapefile to FeatureCollection",
+					e);
 		}
 	}
-	
-	private GTRasterDataBinding getAsGTRasterDataBinding(){
-		
-		//not implemented
+
+	private GTRasterDataBinding getAsGTRasterDataBinding() {
+
+		// not implemented
 		return null;
 	}
-	
-	public File getBaseFile(){
+
+	public File getBaseFile() {
 		return primaryFile;
 	}
-	
-	
+
 }

@@ -43,6 +43,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.request.ExecuteRequest;
 
 public class RepositoryManager {
 	
@@ -139,10 +140,10 @@ public class RepositoryManager {
 	 * @return IAlgorithm or null
 	 * @throws Exception
 	 */
-	public IAlgorithm getAlgorithm(String className){
+	public IAlgorithm getAlgorithm(String className, ExecuteRequest executeRequest){
 		for(IAlgorithmRepository repository : repositories){
 			if(repository.containsAlgorithm(className)){
-				return repository.getAlgorithm(className);
+				return repository.getAlgorithm(className, executeRequest);
 			}
 		}
 		return null;
@@ -180,13 +181,13 @@ public class RepositoryManager {
 	}
 	
 	public Class getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
-		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier, null);
 		return algorithm.getInputDataType(inputIdentifier);
 		
 	}
 	
 	public Class getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
-		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier, null);
 		return algorithm.getOutputDataType(inputIdentifier);
 		
 	}

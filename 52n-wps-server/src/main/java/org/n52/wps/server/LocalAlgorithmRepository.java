@@ -42,6 +42,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.request.ExecuteRequest;
 
 
 
@@ -81,11 +82,10 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		
 	}
 	
-	public IAlgorithm getAlgorithm(String className) {
+	public IAlgorithm getAlgorithm(String className, ExecuteRequest executeRequest) {
 		try {
 			return loadAlgorithm(algorithmMap.get(className));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -98,7 +98,6 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 				resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}

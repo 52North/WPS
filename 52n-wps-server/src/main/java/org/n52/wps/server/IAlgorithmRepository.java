@@ -36,6 +36,8 @@ package org.n52.wps.server;
 
 import java.util.Collection;
 
+import org.n52.wps.server.request.ExecuteRequest;
+
 public interface IAlgorithmRepository {
 
 
@@ -44,7 +46,7 @@ public interface IAlgorithmRepository {
 	
 	Collection<String> getAlgorithmNames();
 	
-	IAlgorithm getAlgorithm(String processID);
+	IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest);
 	Collection<IAlgorithm> getAlgorithms();
 	
 	boolean containsAlgorithm(String processID);

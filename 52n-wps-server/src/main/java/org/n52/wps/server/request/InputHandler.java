@@ -99,7 +99,7 @@ public class InputHandler {
 	 */
 	public InputHandler(InputType[] inputs, String algorithmIdentifier) throws ExceptionReport{
 		this. algorithmIdentifier = algorithmIdentifier;
-		this.processDesc = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier).getDescription();
+		this.processDesc = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier, null).getDescription();
 		for(InputType input : inputs) {
 			String inputID = input.getIdentifier().getStringValue();
 			
