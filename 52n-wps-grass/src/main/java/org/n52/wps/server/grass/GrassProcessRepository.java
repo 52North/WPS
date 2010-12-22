@@ -56,12 +56,11 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	public static String gisrcDir;
 
 	public GrassProcessRepository() {
-
+		registeredProcesses = new HashMap<String, ProcessDescriptionType>();
 		// check if the repository is active
 		if (WPSConfig.getInstance().isRepositoryActive(
 				this.getClass().getCanonicalName())) {
 			LOGGER.info("Initializing Grass Repository");
-			registeredProcesses = new HashMap<String, ProcessDescriptionType>();
 
 			String dontUseProcesses = "";
 
