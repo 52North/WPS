@@ -67,7 +67,6 @@ public class GrassIOHandler {
 	private String uuid;	
 	private String pythonName = "python.exe";	
 	private String[] envp;
-	private static GrassIOHandler instance;	
 	private static Logger LOGGER = Logger.getLogger(GrassIOHandler.class);
 	
 	private final String logFilename = ".log";
@@ -158,14 +157,6 @@ public class GrassIOHandler {
 		}finally{
 			inputTxtFilename = null;
 		}		
-	}
-	
-	private static GrassIOHandler getInstance(){
-		
-		if(instance == null){
-			instance = new GrassIOHandler();
-		}
-		return instance;
 	}
 	
 	private String getCommand() {

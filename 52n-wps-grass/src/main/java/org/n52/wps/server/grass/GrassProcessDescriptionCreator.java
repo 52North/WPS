@@ -53,7 +53,6 @@ public class GrassProcessDescriptionCreator {
 	private final String lineSeparator = System.getProperty("line.separator");
 	private String grassHome = "c:\\programme\\grass-70-svn";
 	private String pythonHome = "c:\\programme\\grass-70-svn";
-	private String projShareDir = "c:\\programme\\grass-70-svn";
 
 	private String[] envp = null;
 	
