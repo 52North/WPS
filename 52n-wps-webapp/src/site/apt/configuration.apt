@@ -14,33 +14,34 @@ Bastian Schäffer
 
 ** Service metadata configuration
 
- First the configuration of the service meta data (i.e. provider information & contact details) in the GetCapabilities file.
- This will be configured using a XML skeleton of the original GetCapabilities. This makes it straight-forward to imagine, how the XML file finally looks like.
+ The configuration of the service meta data (i.e. provider information & contact details) in the GetCapabilities file can be configured using a XML skeleton of the original GetCapabilities. This makes it straight-forward to imagine, how the XML file finally looks like.
  The skeleton is located at WPS_WEBAPP_ROOT/config/wpsCapabilitiesSkeleton.xml.
-
-** Operational WPS settings
-
- Second there is the configuration of your developed processes and the configuration of the WPS instance itself. This configuration file (which called wps.properties in former versions)
- is located at WPS_WEBAPP_ROOT/config/wps_config.xml. The schema for the configuration file can be found at {{{http://52north.org/svn/geoprocessing/main/WPS/trunk/WPS/52n-wps-webapp/src/main/webapp/config/schema_v1.xsd}here}}.
-
- In an initial configuration it is important to change the server's hostname to your machine's name.
 
 ** WPS Web Admin Console
 
- The WPS Web Admin Console is accessible through http://YOURHOST:YOURPORT/wps or directly through http://YOURHOST:YOURPORT/wps/webAdmin/index.jsp. It allows you to configure the WPS settings, as defined in the wps_config.xml. To use this console, it is necessary to define a user in the config/tomcat-users.xml (if you use Apache Tomcat). The role to define is wpsAdmin, userName and password can be chosen as you like. Example is:
+ The WPS Web Admin Console is accessible through http://YOURHOST:YOURPORT/wps or directly through http://YOURHOST:YOURPORT/wps/webAdmin/index.jsp. It allows you to configure the WPS settings, as defined in the wps_config.xml. 
  
-  \<role rolename="wpsAdmin"/\>
-  \<user username="Q" password="007" roles="wpsAdmin"/\>
+  The default username is: wps
+  
+  The default password is: wps
+
+  You can change the username and password in WPS_WEBAPP_ROOT\WEB-INF\classes\users.xml
+
+** WPS GRASS Connector
+
+  See the turorial (Windows) {{{https://52north.org/download/Geoprocessing/documents/WPS-GRASS-Win.pdf} Setting up the 52°North WPS with GRASS-Windows}}
+ 
+  See the turorial (Linux) {{{https://52north.org/download/Geoprocessing/documents/WPS-GRASS-Linux.pdf} Setting up the 52°North WPS with GRASS-Linux}}
 
 ** WPS ArcGIS Server Connector
 
- See the turorial {{{https://52north.org/download/Geoprocessing/documents/Exposing%20ArcGIS%20Server%20functionality%20with%2052%c2%b0North%20WPS-short-version-_v1.0.pdf} Setting up the 52°North WPS with ArcGIS Server-short version}}
+   See the turorial {{{https://52north.org/download/Geoprocessing/documents/Exposing%20ArcGIS%20Server%20functionality%20with%2052%c2%b0North%20WPS-short-version-_v1.0.pdf} Setting up the 52°North WPS with ArcGIS Server-short version}}
 
 
 
 * Development Version settings
 
-	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{http://52north.org/download/Geoprocessing/documents/Website/WPS_Tutorial.pdf}here}}.
+	A short manual about how to set up WPS as a multi module project in eclipse using Maven 2 is linked {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf}here}}.
 	
 	Please look at the Tomcat documentation how to deal with installing and compiling web applications in general. In the end the service has to be accessible through http://localhost:[YOUR_PORT]/wps/WebProcessingService.
 	

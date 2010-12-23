@@ -64,6 +64,9 @@ Bastian Schäffer
 		* Full GML2 support for ComplexData (i.e. FeatureCollections)
 		
 	* Extensions
+	
+		* GRASS out of the box extension  ***new***
+			
 		* 220+ SEXTANTE Processes
 		
 		* Unicore GRID Middleware support 
@@ -72,15 +75,21 @@ Bastian Schäffer
 		
 		* Web GUI to maintain the service
 		
-		* ArcGIS Server Connector ***new***
+		* ArcGIS Server Connector
 	
+	* Result Storage
+		
+		* All Results can be stored as simple web accessible resource with an URL
+		
+		* Raster/Vector results can be stored directly as WMS layer
+		
+		* Vector results can be stored directly as WFS layer
 	
-	
+		* Raster results can be stored directly as WCS layer
 
 
 * Future directions
 
-    * GRASS Connector
-    
     * R Connector
+    
 
