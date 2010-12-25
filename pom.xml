@@ -21,7 +21,7 @@
     </distributionManagement>
     <packaging>pom</packaging>
     <name>52north processing</name>
-	<version>2.0-RC6-SNAPSHOT</version>
+	<version>2.0-RC6</version>
     <description>
     	52 north processing provides different tools for web based
 		processing in context of the OGC WPS specification.
