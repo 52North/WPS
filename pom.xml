@@ -30,7 +30,7 @@
     <issueManagement>
         <system>Bugzilla</system>
         <url>
-        	https://52north.org/bugzilla/
+        	https://bugzilla.52north.org/
         </url>
     </issueManagement>
     <licenses>
