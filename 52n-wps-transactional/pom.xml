@@ -13,12 +13,8 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-transactional</name>
     <description>The project 52 north 52n-wps-transactionalserver does something with JAVA.</description>
-    <url>http://incubator.52north.org/maven/project-sites/52n-wps-server</url>
     <inceptionYear>2007</inceptionYear>
-    <issueManagement>
-        <system>Bugzilla</system>
-        <url>https://incubator.52north.org/cgi-bin/bugzilla/index.cgi</url>
-    </issueManagement>
+   
         
     <build>
          <!--resources>

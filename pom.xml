@@ -42,9 +42,9 @@
     <inceptionYear>2007</inceptionYear>
     <scm>
         <!-- Specification of the Source-Content-Managementsystem -->
-        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/2.0-RC6</connection>
-        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/2.0-RC6</developerConnection>
-		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/2.0-RC6</url>
+        <connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-RC6</connection>
+        <developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-RC6</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS 2.0-RC6</url>
   </scm>
   
       <repositories>
