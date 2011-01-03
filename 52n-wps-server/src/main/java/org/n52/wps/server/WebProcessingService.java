@@ -249,7 +249,7 @@ public class WebProcessingService extends HttpServlet {
 //			}
 
 //			 WORKAROUND	cut the parameter name "request" of the stream		
-			BufferedReader br=new BufferedReader(new InputStreamReader(is,"UTF-8"));
+		/*	BufferedReader br=new BufferedReader(new InputStreamReader(is,"UTF-8"));
     	    StringWriter sw=new StringWriter();
     	    int k;
     	    while((k=br.read())!=-1){
@@ -270,8 +270,10 @@ public class WebProcessingService extends HttpServlet {
     	    	s = sw.toString();
     	    }
 
-    	    
+    	   
     	    is = new ByteArrayInputStream(s.getBytes("UTF-8"));
+    	     */
+			
 			if(is != null) {
 				
 				RequestHandler handler = new RequestHandler(is, out);
