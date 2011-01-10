@@ -258,8 +258,17 @@ public class ApacheBPELManager extends AbstractDeployManager {
         
     	   while (pi.hasNext()) {
     		   OMElement omPID = pi.next();
-    		   allProcesses.add(omPID.getFirstChildWithName(
-                            new QName("http://www.apache.org/ode/pmapi/types/2006/08/02/","pid")).getText());
+    		   
+    		   String fullName = omPID.getFirstChildWithName(
+                       new QName("http://www.apache.org/ode/pmapi/types/2006/08/02/","pid")).getText();
+    		   
+    		   /*just take the name as defined by the user...
+    		    * whats returned originally was something like
+    		    * {http://xy.z}ProcessName-XXX (-XXX is attached due to the ODE-versioning)
+    		    * this lead to problems with the processdescription, which
+    		    * has the name "ProcessName"
+    		    */
+    		   allProcesses.add(fullName.substring(fullName.indexOf("}") + 1, fullName.indexOf("-")));
     	   }
     	   return allProcesses;
        }catch(Exception e){
