@@ -139,7 +139,21 @@
 				<Property name="supportedFormat">application/dbase</Property>
 				<Property name="supportedFormat">application/remap</Property>
 				<Property name="supportedEncoding">Base64</Property>
-			</Generator>		
+			</Generator>	
+			
+			<Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.xml.GRASSXMLGenerator">
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat">text/xml</Property>
+				<Property name="supportedEncoding">UTF-8</Property>
+			</Generator>			
 			
 			<!-- GML2BasicGenerator4Files inherits formats etc from GMLBasic parser -->
 			<Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files" />
