@@ -173,17 +173,30 @@ public class GrassIOHandler {
 	private String[] getEnvp() {
 
 		if (envp == null) {
-			envp = new String[] {					
-					"GDAL_DATA=" + grassHome + "\\etc\\ogr_csv",
-					"PWD=" + grassHome,
-					"PYTHONPATH=" + grassHome + "\\etc\\python",
-					"GRASS_CONFIG_DIR=.grass7",
-					"GRASS_GNUPLOT=gnuplot -persist",
-					"GRASS_PAGER=less",
-					"GRASS_PYTHON=python", 
-					"GRASS_SH=/bin/sh",
-					"GRASS_VERSION=7.0.svn",
-					"WINGISBASE=" + grassHome };
+
+			if (!OS_Name.startsWith("Windows")) {
+
+				envp = new String[] {
+						"GDAL_DATA=" + grassHome + "\\etc\\ogr_csv",
+						"PWD=" + grassHome,
+						"PYTHONPATH=" + grassHome + "\\etc\\python",
+						"GRASS_CONFIG_DIR=.grass7",
+						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+						"GRASS_VERSION=7.0.svn",
+						"WINGISBASE=" + grassHome };
+			} else {
+
+				envp = new String[] {
+						"GDAL_DATA=" + grassHome + "\\etc\\ogr_csv",
+						"PWD=" + grassHome,
+						"PYTHONPATH=" + grassHome + "\\etc\\python",
+						"GRASS_CONFIG_DIR=.grass7",
+						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+						"GRASS_VERSION=7.0.svn", "SystemRoot=" + System.getenv("SystemRoot"),
+						"WINGISBASE=" + grassHome };
+			}
 		}
 
 		return envp;
