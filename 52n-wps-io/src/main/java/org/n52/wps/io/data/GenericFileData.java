@@ -380,4 +380,11 @@ public class GenericFileData {
 		return primaryFile;
 	}
 
+	protected void finalize(){
+		try{
+			primaryFile.delete();
+		}catch(Exception e){
+			
+		}
+	}
 }

@@ -27,4 +27,12 @@ public class GeotiffBinding implements IComplexData{
 	public String getMimeType() {
 		return mimeType;
 	}
+	
+	protected void finalize(){
+		try{
+			geotiff.delete();
+		}catch(Exception e){
+			
+		}
+	}
 }

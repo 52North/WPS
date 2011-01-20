@@ -75,6 +75,14 @@ public class ShapefileBinding implements IComplexData{
 		}
 	}
 	
+	protected void finalize(){
+		try{
+			shpFile.delete();
+		}catch(Exception e){
+			
+		}
+	}
+	
 	
 	
 }

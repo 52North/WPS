@@ -31,4 +31,12 @@ public class FileDataBinding implements IComplexData {
 	{
 		throw new RuntimeException("Deserialization of 'FileDataBinding' data type not implemented yet.");
 	}
+	
+	protected void finalize(){
+		try{
+			file.delete();
+		}catch(Exception e){
+			
+		}
+	}
 }
