@@ -81,6 +81,9 @@ public class RepositoryManager {
 		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
 
 		for(Repository repository : repositoryList){
+			if(repository.getActive()==false){
+				continue;
+			}
 			String repositoryClassName = repository.getClassName();
 			try {
 
