@@ -97,8 +97,11 @@ public class CapabilitiesRequest extends Request {
 					break;
 				}
 			}
-		}		
-		map.put("version", versionList.toArray(new String []{}));		
+		}
+		
+		if(!versionList.isEmpty()){			
+			map.put("version", versionList.toArray(new String []{}));	
+		}	
 		
 	}
 	
