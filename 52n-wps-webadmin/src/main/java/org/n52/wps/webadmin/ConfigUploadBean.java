@@ -48,6 +48,8 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 
@@ -239,11 +241,14 @@ public class ConfigUploadBean {
 				e.printStackTrace();
 			}
 		}
-
+		
 		StringBuffer sb = new StringBuffer();
 		for (URL jar : classpath) {
-			sb.append(jar.getPath().substring(1));
-			sb.append(File.pathSeparatorChar);
+			if (SystemUtils.IS_OS_WINDOWS==false){
+				sb.append(jar.getPath());
+			}else{ sb.append(jar.getPath().substring(1));
+				sb.append(File.pathSeparatorChar);
+			}
 		}
 		String ops[] = new String[] { "-classpath", sb.toString() };
 
