@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>BandCollectionStatistics_sa</ows:Title>
 		<ows:Abstract>Calculates the statistics for a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
 				<ows:Title>in raster bands</ows:Title>
 				<ows:Abstract>Input raster bands.</ows:Abstract>
@@ -35,6 +35,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Determines whether covariance and correlation matrices are calculated. False  — Only the basic statistical measures (minimum, maximum, mean, and standard deviation) will be calculated for every layer. True  — In addition to the standard statistics calculated with False, the covariance and correlation matrices will also be determined. The default is False. </ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

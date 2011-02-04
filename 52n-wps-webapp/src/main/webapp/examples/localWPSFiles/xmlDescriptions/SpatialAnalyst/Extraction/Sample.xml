@@ -22,20 +22,18 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
 						</Format>
-						<Supported>
-							<Format>
-								<MimeType>application/GeoTIFF</MimeType>
-								<Schema></Schema>
-							</Format>
-							<Format>
-								<MimeType>application/img</MimeType>
-								<Schema></Schema>
-							</Format>	
-						</Supported>	
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>		
 					</Supported>
 				</ComplexData>
 			</Input>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_rasters</ows:Identifier><!-- 0 -->
 				<ows:Title>in rasters</ows:Title>
 				<ows:Abstract>The rasters whose values will be sampled based on the input location data.</ows:Abstract>

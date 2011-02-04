@@ -29,12 +29,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexData>
 			</Input>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>contour_values</ows:Identifier><!-- 2 -->
 				<ows:Title>contour values</ows:Title>
 				<ows:Abstract>List of z-values for which to create contours</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

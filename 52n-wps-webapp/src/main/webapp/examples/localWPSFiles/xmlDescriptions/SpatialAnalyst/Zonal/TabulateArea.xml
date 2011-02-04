@@ -35,6 +35,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The field that holds the values that define each zone. It can be an integer or a string field of the in_zone_data.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
@@ -66,6 +67,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The field that holds the class values. It can be an integer or a string field of the in_class_data.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -74,6 +76,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The processing cell size for the operation. This is the value in the environment if specifically set. If the environment is not set and in_zone_data is raster, the cell size is the same as in_zone_data. If the environment is not set and in_zone_data is feature, the cell size is the shorter of the width or height of the extent of in_zone_data in the output spatial reference, divided by 250.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

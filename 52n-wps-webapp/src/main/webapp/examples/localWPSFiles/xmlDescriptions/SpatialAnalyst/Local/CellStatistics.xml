@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>CellStatistics_sa</ows:Title>
 		<ows:Abstract>Calculates a per-cell statistics from multiple rasters. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="2" maxOccurs="unbounded">
+			<Input minOccurs="2" maxOccurs="1000">
 				<ows:Identifier>in_rasters_or_constants</ows:Identifier><!-- 0 -->
 				<ows:Title>in rasters or constants</ows:Title>
 				<ows:Abstract>A list of input rasters for which a statistic will be calculated for each cell within the Analysis window. A number can be input as an argument, but it will be converted to a raster at the current window and cell size set in the analysis environment, with each location containing the input number.</ows:Abstract>

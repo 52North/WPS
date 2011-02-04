@@ -34,7 +34,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Title>treshold value</ows:Title>
 				<ows:Abstract>Defines a value that constitutes the threshold, which must be equaled or exceeded before flow can occur. If the difference between the value at a neighboring cell location and the value of the processing cell is less than or equal to the threshold value, the output will be zero (or no flow).</ows:Abstract>
 				<LiteralData>
-					<ows:DataType ows:reference="xs:integer"></ows:DataType>	
+					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

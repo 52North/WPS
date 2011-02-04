@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>PrincipalComponents_sa</ows:Title>
 		<ows:Abstract>Performs principal components analysis on a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
 				<ows:Title>in raster bands</ows:Title>
 				<ows:Abstract>Input raster bands.</ows:Abstract>
@@ -35,6 +35,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Number of principal components. Must be greater than zero and less than or equal to the total number of raster bands in in_raster_bands. The default is the total number of rasters in the input.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>
@@ -62,7 +63,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_data_file</ows:Identifier><!-- 3 -->
 				<ows:Title>out data file</ows:Title>	
 				<ows:Abstract>Output ASCII data file storing principal component parameters. The extension for the output file can be ".txt" or ".asc".</ows:Abstract>

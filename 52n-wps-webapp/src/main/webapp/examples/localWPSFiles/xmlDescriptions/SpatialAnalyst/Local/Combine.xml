@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>Combine_sa</ows:Title>
 		<ows:Abstract>Combines multiple rasters so a unique output value is assigned to each unique combination of input values. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="2" maxOccurs="unbounded">
+			<Input minOccurs="2" maxOccurs="1000">
 				<ows:Identifier>in_rasters</ows:Identifier><!-- 0 -->
 				<ows:Title>in rasters</ows:Title>
 				<ows:Abstract>The list of input rasters to be combined.</ows:Abstract>

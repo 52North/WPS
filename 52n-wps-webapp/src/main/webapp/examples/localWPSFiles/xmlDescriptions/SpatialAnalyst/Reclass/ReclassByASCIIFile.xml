@@ -55,6 +55,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</ows:Abstract>
 					<LiteralData>
 						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+						<ows:AnyValue/>
 					</LiteralData>
 				</Input>
 		</DataInputs>

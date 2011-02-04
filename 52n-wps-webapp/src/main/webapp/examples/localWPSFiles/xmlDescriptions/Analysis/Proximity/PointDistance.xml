@@ -50,6 +50,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Distances will only be calculated for those Near Features that are within the Search Radius of the Input Features.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>		
 		</DataInputs>

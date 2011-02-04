@@ -31,6 +31,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The distances, in ascending size, used to create buffer zones around the Input Features.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -64,6 +65,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The name of the field in the Output Feature Class that will store the buffer distance used to create each feature. If no value is specified, the name will be distance. The type of the field is double.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -84,6 +86,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Valid only for input polygon features. FULL — Input polygon features will be given a complete buffer. This is the default. OUTSIDE_ONLY — The area inside the input polygon features will be excluded from the resulting buffer.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

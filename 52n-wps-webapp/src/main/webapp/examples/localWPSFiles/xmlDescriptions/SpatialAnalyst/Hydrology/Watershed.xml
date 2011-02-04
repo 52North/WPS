@@ -58,6 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Field used to assign values to the pour point locations. If in_pour_point_data is raster, use Value. If in_pour_point_data is feature, use the first numeric field.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

@@ -58,6 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Field used to assign values to the pour point locations. If in_pour_point_data is a raster, use Value. If in_pour_point_data is a feature, use a numeric field. If the field contains floating-point values, they will be truncated into integers.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
@@ -66,6 +67,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Maximum distance, in map units, to search for a cell of higher accumulated flow.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>	
 		</DataInputs>

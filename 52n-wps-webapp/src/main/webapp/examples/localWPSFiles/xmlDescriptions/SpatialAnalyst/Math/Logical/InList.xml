@@ -29,7 +29,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexData>
 			</Input>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_or_constants</ows:Identifier><!-- 1 -->
 				<ows:Title>in raster or constants</ows:Title>
 				<ows:Abstract>A list of input rasters or constant values in which the first input values will be looked for. Each item in the list should be separated by a semi-colon (;). Spaces in item names must be enclosed in single quotes. A number can be input as an argument, but it will be converted to a raster at the current window and cell size set in the analysis environment, with each location containing the input number.</ows:Abstract>

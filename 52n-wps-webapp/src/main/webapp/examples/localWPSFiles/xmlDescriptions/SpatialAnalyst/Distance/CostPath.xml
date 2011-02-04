@@ -31,6 +31,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The field used to obtain values for the destination locations. Input feature data must contain at least one valid field.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">

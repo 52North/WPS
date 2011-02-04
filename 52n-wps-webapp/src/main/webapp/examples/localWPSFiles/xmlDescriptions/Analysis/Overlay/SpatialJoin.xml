@@ -62,6 +62,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Determine if the join will be an inner or outer join. KEEP_ALL — All records in the input layer or table view will be included in the output; also known as an outer join. This is the default. KEEP_COMMON — Only those records in the input that match to a row in the join table will be present in the result; also known as an inner join.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -96,6 +97,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The name of a new field to be added to the output feature class. This field will be of type Double and will contain distances between the Target and the closest Join Features. This option is only available when the Match Option parameter is set to CLOSEST. A value of -1 in the Distance Field means there were no Join Features within the distance specified in the Search Radius parameter. If no Distance Field Name is specified, then no field will be added to the output to capture this information.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">

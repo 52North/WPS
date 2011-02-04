@@ -31,6 +31,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Field denoting population values for each feature. the population field is the count or quantity to be spread across the landscape to create continuous surface. values may be integer or floating point. a valid field name of the input features is required.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -39,6 +40,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The cell size at which the output raster will be created. If the environment is not set, then cell size is the shorter of the width or height of the extent of input point or polyline features in the output spatial reference, divided by 250.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -47,6 +49,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The search radius within which to calculate density. Units are based on the linear unit of the projection of the output spatial reference. The default is the shortest of the width or height of the extent of in_features in the output spatial reference, divided by 30.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">

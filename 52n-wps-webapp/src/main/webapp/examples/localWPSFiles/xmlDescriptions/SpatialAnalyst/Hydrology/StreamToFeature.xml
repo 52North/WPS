@@ -58,6 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Specifies whether weeding is used. SIMPLIFY  — The feature is weeded to reduce the number of vertices. The Douglas-Puecker algorithm for line generalization is used, with a tolerance of sqrt(0.5) * cell size. NO_SIMPLIFY  — No weeding is applied. By default, weeding is applied.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>	
 		</DataInputs>

@@ -62,11 +62,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Defines the threshold that the accumulative cost values cannot exceed. If an accumulative cost distance value exceeds the {max_distance}, the output value for the cell location will be NoData. The {max_distance} defines the extent for which the accumulative cost distances are calculated. The default distance is to the edge of the output raster.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_distance_raster</ows:Identifier><!-- 2 -->
 				<ows:Title>out distance raster</ows:Title>	
 				<ows:Abstract>The name of the output cost distance raster. The cost distance raster identifies, for each cell, the least accumulative cost distance over a cost surface to the identified source locations. A source can be a cell, a set of cells, or one or more feature locations.</ows:Abstract>
@@ -89,7 +90,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_backlink_raster</ows:Identifier><!-- 4 -->
 				<ows:Title>out backlink raster</ows:Title>	
 				<ows:Abstract>The name of the output cost backlink raster. The backlink raster contains values of 0 through 8, which define the direction or identify the next neighboring cell (the succeeding cell) along the least accumulative cost path from a cell to reach its least cost source. If the path is to pass into the right neighbor, the cell will be assigned the value 1, 2 for the lower right diagonal cell, and continuing clockwise. The value 0 is reserved for source cells.</ows:Abstract>

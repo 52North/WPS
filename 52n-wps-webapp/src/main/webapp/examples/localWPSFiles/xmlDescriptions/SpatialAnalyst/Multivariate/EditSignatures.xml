@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>EditSignatures_sa</ows:Title>
 		<ows:Abstract>Edits and updates a signature file by merging, renumbering, and deleting class signatures. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
 				<ows:Title>in raster bands</ows:Title>
 				<ows:Abstract>The input raster bands to edit the signatures for.</ows:Abstract>
@@ -73,6 +73,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The interval to be used for sampling. The default is 10.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>	
 		</DataInputs>

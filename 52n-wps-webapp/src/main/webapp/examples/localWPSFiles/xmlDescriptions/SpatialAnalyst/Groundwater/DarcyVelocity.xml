@@ -100,7 +100,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_direction_raster</ows:Identifier><!-- 4 -->
 				<ows:Title>out direction raster</ows:Title>	
 				<ows:Abstract>The output raster where each cell value represents the direction of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the out_magnitude_raster to describe the flow vector.</ows:Abstract>
@@ -123,7 +123,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-				<Output minOccurs="0" maxOccurs="1">
+				<Output>
 					<ows:Identifier>out_magnitude_raster</ows:Identifier><!-- 5 -->
 					<ows:Title>out magnitude raster</ows:Title>	
 					<ows:Abstract>The output raster where each cell value represents the magnitude of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the out_direction_raster to describe the flow vector.</ows:Abstract>

@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>CreateSignatures_sa</ows:Title>
 		<ows:Abstract>Creates an ASCII signature file of classes defined by input sample data and a set of raster bands. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
 				<ows:Title>in raster bands</ows:Title>
 				<ows:Abstract>The input raster bands to create the signatures for.</ows:Abstract>
@@ -58,6 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Field of the input raster or feature sample data to assign values to the sampled locations (classes). Only integer fields are valid fields.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 				<Input minOccurs="0" maxOccurs="1">
@@ -67,6 +68,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					If True, the covariance matrixes and the means for all classes of the sampleDataset will be computed. If False, only the means for all classes of the sampleDataset will be calculated.</ows:Abstract>
 					<LiteralData>
 						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+						<ows:AnyValue/>
 					</LiteralData>	
 				</Input>
 		</DataInputs>

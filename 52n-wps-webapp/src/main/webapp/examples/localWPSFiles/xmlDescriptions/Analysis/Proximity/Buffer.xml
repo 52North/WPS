@@ -31,6 +31,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The distance used to create buffer zones around Input Features. Either a value or a numeric field can be used to provide buffer distances. If a negative buffer distance is specified, the buffer offsets will be generated inside, instead of outside, of the input features. This is only valid for polygon feature classes. If the distance units are not specified, or entered as Unknown, the units of the Input Features are used (or if the Output Coordinate System environment has been set, its units will be used).</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -78,6 +79,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>List of field(s) for the dissolve. Buffer polygons that share the same set of values in their Dissolve Field(s) will be dissolved together. The Add Field button, which is used only in ModelBuilder, allows you to add expected fields so you can complete the dialog box and continue to build your model.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

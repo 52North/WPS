@@ -12,6 +12,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>A value to be used to reseed the random number generator. This may be an integer or floating-point number. Rasters are not permitted as input. The random number generator is automatically seeded with the current value of the system clock (seconds since January 1, 1970). The range of permissible values for {seed_value} is from -231+1 to 231 (or -2,147,483,647 to 2,147,483,648).</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -20,6 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Cell size for output raster dataset. This is the value in the environment if specifically set. If not specifically set, it is the shorter of the width or height of the environment extent in the output spatial reference, divided by 250.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -28,6 +30,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Extent for the output raster dataset. This is the value in the environment if specifically set. If not specifically set, it is 0, 0, 250, 250.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

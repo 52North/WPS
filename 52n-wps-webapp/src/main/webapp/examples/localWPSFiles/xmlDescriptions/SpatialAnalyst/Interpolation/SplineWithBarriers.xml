@@ -31,6 +31,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Field that holds a height or magnitude value for each point. This can be a numeric field or the shape field if the in_point_features contain z-values.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
@@ -39,6 +40,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The cell size at which the output raster will be created. If a value of zero is entered the shorter of the width or the height of the extent of the input point features in the input spatial reference, divided by 250, will be used as the cell size.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -66,6 +68,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The parameter that influences the smoothing of the output surface. No smoothing is applied when the value is zero and the maximum amount of smoothing is applied when the factor equals 1. The default is 0.0.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

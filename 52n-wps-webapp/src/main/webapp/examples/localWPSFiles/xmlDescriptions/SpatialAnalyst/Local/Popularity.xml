@@ -29,7 +29,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexData>
 			</Input>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_rasters</ows:Identifier><!-- 1 -->
 				<ows:Title>in rasters</ows:Title>
 				<ows:Abstract>Input rasters. The input defines the argument list to evaluate the popularity of the values for each cell location. A number can be input as an argument, but it will be converted to a raster at the current extent and its cell size will be set in the analysis environment, with each location containing the input number.</ows:Abstract>

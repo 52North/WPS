@@ -35,6 +35,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Center coordinate (x,y) of circle defining the area to be extracted. The coordinates are specified in the same map units as the in_raster.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
@@ -43,6 +44,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Radius of circle defining the area to be extracted. The radius is specified in map units and is in the same units as the in_raster.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>	
 			<Input minOccurs="0" maxOccurs="1">

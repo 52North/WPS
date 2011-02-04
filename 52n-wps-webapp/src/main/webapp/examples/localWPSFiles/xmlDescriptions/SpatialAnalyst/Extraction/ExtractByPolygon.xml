@@ -29,12 +29,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexData>
 			</Input>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>polygon</ows:Identifier><!-- 1 -->
 				<ows:Title>polygon</ows:Title>
 				<ows:Abstract>Polygon that defines the area to be extracted. X,Y coordinates define the vertices of the polygon.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">

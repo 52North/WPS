@@ -49,6 +49,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -69,6 +70,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The maximum thickness, in map units, of linear features in the input grid. The default thickness is ten times the cell size.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

@@ -98,6 +98,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Base contour value. Contours are generated above and below this value as needed to cover the entire value range of the input raster. The default is zero.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>	
 			<Input minOccurs="0" maxOccurs="1">
@@ -106,6 +107,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Interval of contours. This can be any positive number.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -114,14 +116,16 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Contours will also be generated for this interval and will be flagged accordingly in the output feature class.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
-			<Input minOccurs="0" maxOccurs="unbounded">
+			<Input minOccurs="0" maxOccurs="1000">
 				<ows:Identifier>contour_values</ows:Identifier><!-- 9 -->
 				<ows:Title>contour values</ows:Title>
 				<ows:Abstract>Explicit values at which to create contours.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -130,6 +134,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Multiplication factor. For example, if your z units are feet and your contours should be in meters, you would use a z-factor of 0.3048 to convert your z units from feet to meters (1 foot = 0.3048 meter).</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

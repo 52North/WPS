@@ -35,14 +35,16 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The number of cells to expand each specified zone by.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
-			<Input minOccurs="2" maxOccurs="unbounded">
+			<Input minOccurs="2" maxOccurs="1000">
 				<ows:Identifier>zone_values</ows:Identifier><!-- 3 -->
 				<ows:Title>zone values</ows:Title>
 				<ows:Abstract>The list of zone values to expand.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

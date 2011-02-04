@@ -50,7 +50,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_stream_features</ows:Identifier><!-- 2 -->
 				<ows:Title>out stream features</ows:Title>	
 				<ows:Abstract>Output feature class of stream polyline features.</ows:Abstract>
@@ -69,7 +69,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_sink_features</ows:Identifier><!-- 3 -->
 				<ows:Title>out sink features</ows:Title>	
 				<ows:Abstract>Output feature class of remaining sink point features.</ows:Abstract>

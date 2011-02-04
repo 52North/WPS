@@ -35,7 +35,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Specifies if edge cells will always flow outward or follow normal flow rules.  NORMAL — If the maximum drop on the inside of an edge cell is greater than zero, the flow direction will be determined as usual; otherwise, the flow direction will be toward the edge. Cells that should flow from the edge of the surface raster inward will do so. FORCE — All cells at the edge of the surface raster will flow outward from the surface raster.
 				</ows:Abstract>
 				<LiteralData>
-					<ows:DataType ows:reference="xs:boolean"></ows:DataType>	
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>
@@ -63,7 +64,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_drop_raster</ows:Identifier><!-- 3 -->
 				<ows:Title>out drop raster</ows:Title>	
 				<ows:Abstract>An optional output drop raster. The drop raster shows the ratio of the maximum change in elevation from each cell along the direction of flow to the path length between centers of cells, expressed in percentages.</ows:Abstract>

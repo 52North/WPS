@@ -59,7 +59,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Title>add link</ows:Title>
 				<ows:Abstract>Specifies whether a link field is added to the table of the output. ADD_LINK  — An ADD_LINK item will be added to the table of the output raster. The ADD_LINK item stores the original values for each newly created zone, from disconnected regions, from the input raster before they are regrouped. NO_LINK  — The attribute table for the output grid will only contain the Value and Count items.</ows:Abstract>
 				<LiteralData>
-					<ows:DataType ows:reference="xs:boolean"></ows:DataType>	
+					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -68,6 +69,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Identifies a value such that if a cell location contains the value, no spatial connectivity will be evaluated regardless of the keyword specified (FOUR or EIGHT). Cells with the excluded value will be treated as NoData and are eliminated from calculations. Cell locations that contain an excluded value will receive zero for the location on the output raster. The excluded value is similar to the concept of a background value or setting a mask for a single function on the Environment Settings/Raster Settings dialog box. It is particularly useful in conjunction with the CROSS keyword and must be specified if the CROSS keyword is specified.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>	
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

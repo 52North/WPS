@@ -50,6 +50,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The maximum distance between Input Features and Near Features for which distance and FID will be determined. If no Search Radius is specified, all Near Features will be used.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>		
 			<Input minOccurs="0" maxOccurs="1">
@@ -58,6 +59,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Determines whether the x,y coordinates of the nearest feature are added to the Input Features as well as NEAR_FID and NEAR_DIST. The new fields are NEAR_X and NEAR_Y. NO_LOCATION — The x,y coordinates or the nearest point are not saved. This is the default. LOCATION — Additional fields named NEAR_X and NEAR_Y will be added to the result. These fields will contain the x- and y-coordinates of the Near Features.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -66,6 +68,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Determines whether the angle between the near feature will be calculated and stored in the NEAR_ANGLE field. The angle value is measured in degrees, where one degree represents 1/360 of a circle, and fractions of a degree are represented as decimal points. Angles are measured from 180° to -180° ; 0° to the east, 90° to the north, 180° (-180° ) to the west, and -90° to the south. NO_ANGLE — The angle between the nearest point will not be saved. This is the default. ANGLE — A field named NEAR_ANGLE will be added to the result and will contain the angle from the Input to the nearest point on the Near Feature.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>

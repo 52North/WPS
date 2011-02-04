@@ -39,6 +39,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Defines the threshold that the accumulative distance values cannot exceed. If an accumulative Euclidean distance value exceeds the {maximum_distance}, the output value for the cell location will be NoData. The {maximum_distance} defines the extent for which the accumulative Euclidean distances are calculated. The default distance is to the edge of the output raster.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -47,6 +48,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The cell size at which the output raster will be created. This will be the value in the environment if it is explicitly set. If it's not set in the environment, and if the in_source_data is a raster, the cell size will default to that of the in_source_data. If the in_source_data is a feature dataset, the cell size will default to the shorter of the width or height of the extent of input features in the input spatial reference, divided by 250.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>
 			</Input>
 		</DataInputs>
@@ -74,7 +76,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					</Supported>
 				</ComplexOutput>
 			</Output>
-			<Output minOccurs="0" maxOccurs="1">
+			<Output>
 				<ows:Identifier>out_direction_raster</ows:Identifier><!-- 4 -->
 				<ows:Title>out direction raster</ows:Title>	
 				<ows:Abstract>The name of the output Euclidean direction raster. The direction raster contains the calculated direction, in degrees, each cell center is from the closest source cell center. The range of values is 0 to 360 degrees, with 0 reserved for the source cells. Due east (right) is 90, and the values increase clockwise (180 is south, 270 is west, and 360 is north).</ows:Abstract>

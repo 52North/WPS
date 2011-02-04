@@ -6,7 +6,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Title>ClassProbability_sa</ows:Title>
 		<ows:Abstract>Creates probability layers for each class in a signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
-			<Input minOccurs="1" maxOccurs="unbounded">
+			<Input minOccurs="1" maxOccurs="1000">
 				<ows:Identifier>in_raster_bands</ows:Identifier><!-- 0 -->
 				<ows:Title>in raster bands</ows:Title>
 				<ows:Abstract>Input raster bands. Raster bands can be integer or floating point.</ows:Abstract>
@@ -54,6 +54,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Factor for scaling the range of values in the output probability layers. By default, the values range from 0 to 100.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">

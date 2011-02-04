@@ -38,7 +38,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ComplexOutput>
 					<Default>
 						<Format>
-							<MimeType>application/img</MimeType>s
+							<MimeType>application/img</MimeType>
 							<Schema></Schema>
 						</Format>
 					</Default>

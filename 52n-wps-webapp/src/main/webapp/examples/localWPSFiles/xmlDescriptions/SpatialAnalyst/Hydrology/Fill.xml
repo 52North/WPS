@@ -35,6 +35,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>Maximum elevation difference between a sink and its pour point to be filled. If the difference in z-values between a sink and its pour point is greater than the {z_limit}, that sink will not be filled. The default is to fill all sinks, regardless of depth.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>

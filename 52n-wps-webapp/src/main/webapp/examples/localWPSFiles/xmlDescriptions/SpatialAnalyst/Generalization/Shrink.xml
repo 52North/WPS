@@ -35,14 +35,16 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Abstract>The number of cells by which to shrink each specified zone.</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
-			<Input minOccurs="2" maxOccurs="unbounded"><!-- 3 -->
+			<Input minOccurs="2" maxOccurs="1000"><!-- 3 -->
 				<ows:Identifier>zone_values</ows:Identifier>
 				<ows:Title>zone values</ows:Title>
 				<ows:Abstract>List of zone values to shrink.</ows:Abstract>
 				<LiteralData>
-					<ows:DataType ows:reference="xs:ling"></ows:DataType>
+					<ows:DataType ows:reference="xs:long"></ows:DataType>
+					<ows:AnyValue/>
 				</LiteralData>	
 			</Input>
 		</DataInputs>
