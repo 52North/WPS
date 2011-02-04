@@ -246,6 +246,7 @@ public class ConfigUploadBean {
 		for (URL jar : classpath) {
 			if (SystemUtils.IS_OS_WINDOWS==false){
 				sb.append(jar.getPath());
+				sb.append(File.pathSeparatorChar);
 			}else{ sb.append(jar.getPath().substring(1));
 				sb.append(File.pathSeparatorChar);
 			}
