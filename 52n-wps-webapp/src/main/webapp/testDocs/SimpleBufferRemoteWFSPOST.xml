@@ -17,9 +17,9 @@
   xsi:schemaLocation="http://www.opengis.net/wfs
                       http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd">
   <wfs:Query typeName="topp:states">
-    <wfs:PropertyName>topp:STATE_NAME</wfs:PropertyName>
-    <wfs:PropertyName>topp:PERSONS</wfs:PropertyName>
-    <wfs:PropertyName>the_geom</wfs:PropertyName>
+    <ogc:PropertyName>topp:STATE_NAME</ogc:PropertyName>
+    <ogc:PropertyName>topp:PERSONS</ogc:PropertyName>
+    <ogc:PropertyName>the_geom</ogc:PropertyName>
     <ogc:Filter>
       <ogc:BBOX>
         <ogc:PropertyName>the_geom</ogc:PropertyName>

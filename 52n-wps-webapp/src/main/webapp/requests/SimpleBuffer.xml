@@ -14,7 +14,7 @@
 		</wps:Input>
 	</wps:DataInputs>
 	<wps:ResponseForm>
-		<wps:ResponseDocument store="false" lineage="false" status="false">
+		<wps:ResponseDocument storeExecuteResponse="false" lineage="false" status="false">
 			<wps:Output asReference="false" schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" mimeType="text/xml" encoding="UTF-8">
 				<ows:Identifier>result</ows:Identifier>
 				<ows:Title>result</ows:Title>
