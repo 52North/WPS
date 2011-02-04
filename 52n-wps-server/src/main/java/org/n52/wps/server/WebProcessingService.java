@@ -244,12 +244,12 @@ public class WebProcessingService extends HttpServlet {
 		OutputStream out = res.getOutputStream();
 		try {
 			InputStream is = req.getInputStream();
-//			if (req.getParameterMap().containsKey("request")){
-//				is = new ByteArrayInputStream(req.getParameter("request").getBytes("UTF-8"));
-//			}
+			if (req.getParameterMap().containsKey("request")){
+				is = new ByteArrayInputStream(req.getParameter("request").getBytes("UTF-8"));
+			}
 
 //			 WORKAROUND	cut the parameter name "request" of the stream		
-		/*	BufferedReader br=new BufferedReader(new InputStreamReader(is,"UTF-8"));
+			BufferedReader br=new BufferedReader(new InputStreamReader(is,"UTF-8"));
     	    StringWriter sw=new StringWriter();
     	    int k;
     	    while((k=br.read())!=-1){
@@ -272,7 +272,7 @@ public class WebProcessingService extends HttpServlet {
 
     	   
     	    is = new ByteArrayInputStream(s.getBytes("UTF-8"));
-    	     */
+    	     
 			
 			if(is != null) {
 				
