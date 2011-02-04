@@ -77,6 +77,7 @@ import org.n52.wps.io.datahandler.xml.GML3BasicParser;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
 import org.n52.wps.util.BasicXMLTypeFactory;
 import org.w3c.dom.Node;
 
@@ -294,10 +295,9 @@ public class InputHandler {
 	protected void handleComplexValueReference(InputType input) throws ExceptionReport{
 		String inputID = input.getIdentifier().getStringValue();
 		
-		// OutputStream postContent = null;
-		if(input.getReference().isSetBody()) {
-			
-		}
+		ReferenceStrategyRegister register = ReferenceStrategyRegister.getInstance();
+		InputStream stream = register.resolveReference(input);
+		
 		String dataURLString = input.getReference().getHref();
 		//dataURLString = URLDecoder.decode(dataURLString);
 		//dataURLString = dataURLString.replace("&amp;", "");
@@ -347,7 +347,7 @@ public class InputHandler {
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
-		try {
+		
 			
 			/****PROXY*****/
 			/*String decodedURL = URLDecoder.decode(dataURLString);
@@ -381,41 +381,9 @@ public class InputHandler {
 					
 			}
 			
+						
+			IData parsedInputData = parser.parse(stream, mimeType);				
 			
-			
-			
-			
-			URL dataURL = new URL(dataURLString);
-			//URL dataURL = new URL("http", "proxy", 8080, dataURLString);
-			IData parsedInputData = null;
-			try {
-				// Do not give a direct inputstream.
-				// The XML handlers cannot handle slow connections
-				URLConnection conn = dataURL.openConnection();
-				conn.setRequestProperty("Accept-Encoding", "gzip");
-				conn.setRequestProperty("Content-type", mimeType);
-				//Handling POST with referenced document
-				if(input.getReference().isSetBodyReference()) {
-					String bodyReference = input.getReference().getBodyReference().getHref();
-					URL bodyReferenceURL = new URL (bodyReference);
-					URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
-					bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
-					InputStream referenceInputStream = retrievingZippedContent(bodyReferenceConn);
-					IOUtils.copy(referenceInputStream, conn.getOutputStream());
-				}
-				//Handling POST with inline message
-				else if (input.getReference().isSetBody()) {
-					conn.setDoOutput(true);
-					
-					input.getReference().getBody().save(conn.getOutputStream());
-				}
-				InputStream inputStream = retrievingZippedContent(conn);
-				parsedInputData = parser.parse(inputStream, mimeType);				
-			}
-			catch(RuntimeException e) {
-				throw new ExceptionReport("Error occured while parsing XML", 
-											ExceptionReport.NO_APPLICABLE_CODE, e);
-			}
 			//enable maxxoccurs of parameters with the same name.
 			if(inputData.containsKey(inputID)) {
 				List<IData> list = inputData.get(inputID);
@@ -426,15 +394,8 @@ public class InputHandler {
 				list.add(parsedInputData);
 				inputData.put(inputID, list);
 			}
-		}
-		catch(MalformedURLException e) {
-			throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString, 
-										ExceptionReport.INVALID_PARAMETER_VALUE );
-		}
-		catch(IOException e) {
-			 throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString, 
-					 				ExceptionReport.INVALID_PARAMETER_VALUE );
-		}
+		
+		
 	}
 	
 	
