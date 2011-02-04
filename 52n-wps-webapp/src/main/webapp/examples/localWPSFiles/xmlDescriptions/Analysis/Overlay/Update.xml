@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
-	xmlns:ows="http://www.opengis.net/ows/1.1"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://geoserver.itc.nl:8080/wps/schemas/wps/1.0.0/wpsDescribeProcess_response.xsd"
-	xml:lang="en-US" service="WPS" version="1.0.0">
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
 		<ows:Identifier>org.n52.wps.ags.analysis.overlay.update</ows:Identifier><!-- ParameterCount=5 -->		
 		<ows:Title>Union_analysis</ows:Title>
