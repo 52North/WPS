@@ -27,7 +27,10 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.grass;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,15 +51,19 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	private static Logger LOGGER = Logger
 			.getLogger(GrassProcessRepository.class);
 	private Map<String, ProcessDescriptionType> registeredProcesses;
+	private Map<String, Boolean> processesAddonFlagMap;
 	private final String fileSeparator = System.getProperty("file.separator");
 	public static String tmpDir;
 	public static String grassHome;
 	public static String pythonHome;
+	public static String pythonPath;
 	public static String grassModuleStarterHome;
 	public static String gisrcDir;
+	public static String addonPath;
 
 	public GrassProcessRepository() {
 		registeredProcesses = new HashMap<String, ProcessDescriptionType>();
+		processesAddonFlagMap = new HashMap<String, Boolean>();
 		// check if the repository is active
 		if (WPSConfig.getInstance().isRepositoryActive(
 				this.getClass().getCanonicalName())) {
@@ -87,6 +94,12 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				} else if (property.getName().equalsIgnoreCase(
 						GRASSWPSConfigVariables.GISRC_Dir.toString())) {
 					gisrcDir = property.getStringValue();
+				}else if (property.getName().equalsIgnoreCase(
+						GRASSWPSConfigVariables.Addon_Dir.toString())) {
+					addonPath = property.getStringValue();
+				}else if (property.getName().equalsIgnoreCase(
+						GRASSWPSConfigVariables.Python_Path.toString())) {
+					pythonPath = property.getStringValue();
 				}
 			}
 
@@ -102,14 +115,16 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 					pythonHome);
 			variableMap.put(GRASSWPSConfigVariables.GISRC_Dir.toString(),
 					gisrcDir);
+			variableMap.put(GRASSWPSConfigVariables.Python_Path.toString(),
+					pythonPath);
 
 			for (String variable : variableMap.keySet()) {
 				if (variableMap.get(variable) == null) {
 					throw new RuntimeException("Variable " + variable
 							+ " not initialized.");
 				}
-			}
-
+			}			
+			
 			File tmpDirectory = new File(tmpDir);
 
 			if (tmpDirectory.exists()) {
@@ -133,7 +148,28 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				}
 			}
 
-			// initialize after properties are feched
+			try {
+				
+				File n52appDataDir = new File(System.getenv("APPDATA") + fileSeparator + "52nWPS");
+				
+				if(!n52appDataDir.exists()){
+					n52appDataDir.mkdir();
+				}
+				
+				BufferedWriter bwrite = new BufferedWriter(new FileWriter(n52appDataDir + fileSeparator + "config.txt"));
+				
+				bwrite.write("Python_Home = " + pythonHome + "\n");
+				bwrite.write("Addon_Dir = " + addonPath);
+				
+				bwrite.flush();
+				bwrite.close();
+				
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
+			
+			// initialize after properties are fetched
 			GrassProcessDescriptionCreator creator = new GrassProcessDescriptionCreator();
 
 			File processDirectory = new File(grassHome + fileSeparator + "bin");
@@ -154,9 +190,10 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 						ProcessDescriptionType pDescType;
 						try {
 							pDescType = creator
-									.createDescribeProcessType(process);
+									.createDescribeProcessType(process, false);
 							if (pDescType != null) {
 								registeredProcesses.put(process, pDescType);
+								processesAddonFlagMap.put(process, false);
 								LOGGER.info("GRASS Process " + process
 										+ " added.");
 							}
@@ -178,6 +215,60 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				}
 
 			}
+			
+			if(addonPath != null){
+			
+			File addonDirectory = new File(addonPath);
+
+			if (addonDirectory.isDirectory()) {
+
+				String[] processes = addonDirectory.list();
+
+				for (String process : processes) {
+
+					if (process.endsWith(".py")) {
+						process = process.replace(".py", "");
+					}
+					if (process.endsWith(".bat")) {
+						process = process.replace(".bat", "");
+					}
+					if (process.endsWith(".exe")) {
+						process = process.replace(".exe", "");
+					}
+					if (!dontUseProcesses.contains(process)) {
+
+						ProcessDescriptionType pDescType;
+						try {
+							if(registeredProcesses.keySet().contains(process)){
+								LOGGER.info("Skipping duplicate Process " + process);
+								continue;
+							}
+							pDescType = creator
+									.createDescribeProcessType(process, true);
+							if (pDescType != null) {
+								registeredProcesses.put(process, pDescType);
+								processesAddonFlagMap.put(process, true);
+								LOGGER.info("GRASS Addon Process " + process
+										+ " added.");
+							}
+						} catch (Exception e) {
+							LOGGER.warn("Could not add Grass Addon Process : "
+									+ process
+									+ ". Errors while creating describe Process");
+							LOGGER.error(e);
+						}
+
+					} else {
+						dontUseProcesses = dontUseProcesses.replace(process
+								+ ";", "");
+					}
+
+				}
+
+			}
+		}
+			
+			
 
 		} else {
 			LOGGER.debug("Local Algorithm Repository is inactive.");
@@ -199,7 +290,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 			throw new RuntimeException("Could not allocate Process");
 		}
 		return new GrassProcessDelegator(processID,
-				registeredProcesses.get(processID), executeRequest);
+				registeredProcesses.get(processID), executeRequest, processesAddonFlagMap.get(processID));
 
 	}
 

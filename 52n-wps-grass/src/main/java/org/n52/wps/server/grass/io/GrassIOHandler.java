@@ -55,6 +55,7 @@ public class GrassIOHandler {
 	
 	private String grassHome;
 	private String pythonHome;	
+	private String pythonPath;	
 	private String grassModuleStarterHome;	
 	private String tmpDir;
 	private String inputTxtFilename;
@@ -66,7 +67,9 @@ public class GrassIOHandler {
 	private String outputDataBlock;	
 	private String uuid;	
 	private String pythonName = "python.exe";	
+	private String addonPath;	
 	private String[] envp;
+	private boolean isAddon;
 	private static Logger LOGGER = Logger.getLogger(GrassIOHandler.class);
 	
 	private final String logFilename = ".log";
@@ -74,7 +77,9 @@ public class GrassIOHandler {
 	private final String stdOutFilename = "_stdout.log ";	
 	private final String fileSeparator = System.getProperty("file.separator");
 	private final String lineSeparator = System.getProperty("line.separator");
+	private final String appDataDir = System.getenv("APPDATA");
 	
+	public static final String GRASS_ADDON_PATH = "§addonPath§";	
 	public static final String PROCESS_IDENTIFIER = "§process_identifier§";
 	public static final String INPUT_IDENTIFIER = "§input_identifier§";
 	public static final String INPUT_PATH = "§input_path§";
@@ -99,6 +104,8 @@ public class GrassIOHandler {
 		grassModuleStarterHome = GrassProcessRepository.grassModuleStarterHome;
 		tmpDir = GrassProcessRepository.tmpDir;
 		pythonHome = GrassProcessRepository.pythonHome;
+		pythonPath = GrassProcessRepository.pythonPath;
+		addonPath = GrassProcessRepository.addonPath;
 
 		File tmpDirectory = new File(tmpDir);
 		
@@ -118,9 +125,11 @@ public class GrassIOHandler {
 	 * @param outputSchema the schema of the output
 	 * @return a GenericFileDataBinding containing the generated ouput
 	 */
-	public IData executeGrassProcess(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputMimeType, String outputSchema){
+	public IData executeGrassProcess(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
 		
 		String outputFileName = "";
+		
+		this.isAddon = isAddon;
 		
 		outputFileName = tmpDir + fileSeparator + "out" + UUID.randomUUID().toString().substring(0, 5) + "." + GenericFileDataConstants.mimeTypeFileTypeLUT().get(outputMimeType);
 		
@@ -177,25 +186,40 @@ public class GrassIOHandler {
 			if (!OS_Name.startsWith("Windows")) {
 
 				envp = new String[] {
-						"GDAL_DATA=" + grassHome + "\\etc\\ogr_csv",
+						"GDAL_DATA=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "ogr_csv",
+						"PATH=" + grassHome + fileSeparator + "lib:"
+								+ grassHome + fileSeparator + "bin:"
+								+ grassHome + fileSeparator + "scripts:"
+								+ pythonHome + ":" + grassHome + fileSeparator
+								+ "extralib:" + grassHome + fileSeparator
+								+ "extrabin",
+						"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
 						"PWD=" + grassHome,
-						"PYTHONPATH=" + grassHome + "\\etc\\python",
+						"PYTHONHOME=" + pythonHome,
+						"PYTHONPATH=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "python" + ":" + pythonPath,
 						"GRASS_CONFIG_DIR=.grass7",
 						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
 						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
-						"GRASS_VERSION=7.0.svn",
-						"WINGISBASE=" + grassHome };
+						"GRASS_VERSION=7.0.svn"};		
+				
 			} else {
 
 				envp = new String[] {
+						"APPDATA=" + appDataDir,
 						"GDAL_DATA=" + grassHome + "\\etc\\ogr_csv",
 						"PWD=" + grassHome,
-						"PYTHONPATH=" + grassHome + "\\etc\\python",
+//						"PATH=C:\\grass\\wps-grass-bridge2\\gms\\Testing\\Python\\GrassAddons;C:\\Programme\\GRASS-70-SVN\\lib;C:\\Programme\\GRASS-70-SVN\\bin;C:\\Programme\\GRASS-70-SVN\\scripts;C:\\OSGeo4W\\bin;",
+//						"PYTHONPATH=" + grassHome + "\\etc\\python;c:\\python25",
+//						"PYTHONHOME=C:\\OSGeo4W\\apps\\Python25",
+						"PYTHONHOME=" + pythonHome,
 						"GRASS_CONFIG_DIR=.grass7",
 						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
 						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
 						"GRASS_VERSION=7.0.svn", "SystemRoot=" + System.getenv("SystemRoot"),
-						"WINGISBASE=" + grassHome };
+						"WINGISBASE=" + grassHome 
+						};				
 			}
 		}
 
@@ -228,7 +252,7 @@ public class GrassIOHandler {
 			grassBlock = "[GRASS]"
 				+ lineSeparator
 				+ " GISBASE=" + grassHome
-				+ lineSeparator + " GRASS_ADDON_PATH=" + lineSeparator + " GRASS_VERSION=7.0.svn"
+				+ lineSeparator + " GRASS_ADDON_PATH=" + GRASS_ADDON_PATH  + lineSeparator + " GRASS_VERSION=7.0.svn"
 				+ lineSeparator + " Module=" + PROCESS_IDENTIFIER + lineSeparator + " LOCATION="
 				+ lineSeparator + " LinkInput=FALSE" + lineSeparator + " IgnoreProjection=FALSE"
 				+ lineSeparator + " UseXYLocation=FALSE" + lineSeparator;
@@ -308,7 +332,12 @@ public class GrassIOHandler {
 			inputTxtWriter.write(tmpBlock);
 			inputTxtWriter.write(lineSeparator);
 			
-			tmpBlock  = getGrassBlock().replace(PROCESS_IDENTIFIER, processID); 			
+			tmpBlock  = getGrassBlock().replace(PROCESS_IDENTIFIER, processID); 
+			if(isAddon){
+				tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, addonPath); 			
+			}else{				
+				tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, ""); 			
+			}
 			
 			inputTxtWriter.write(tmpBlock);
 			inputTxtWriter.write(lineSeparator);

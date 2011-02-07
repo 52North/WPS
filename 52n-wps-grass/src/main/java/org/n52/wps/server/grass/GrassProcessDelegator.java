@@ -59,6 +59,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	private static Logger LOGGER = Logger.getLogger(GrassProcessDelegator.class);
 
 	private String processID;
+	private boolean isAddon;
 	private ProcessDescriptionType processDescription;
 	private List<String> errors;	
 	private HashMap<String, Class<?>> complexInputTypes;	
@@ -73,9 +74,10 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	private final String dataTypeDouble = "double";
 	
 	
-	public GrassProcessDelegator(String processID, ProcessDescriptionType processDescriptionType, ExecuteRequest executeRequest){
+	public GrassProcessDelegator(String processID, ProcessDescriptionType processDescriptionType, ExecuteRequest executeRequest, boolean isAddon){
 		super(executeRequest);
 		this.processID = processID;
+		this.isAddon = isAddon;
 		this.processDescription = processDescriptionType;
 		this.errors = new ArrayList<String>();
 		this.executeRequest = executeRequest;
@@ -221,7 +223,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 		}
 		
 		IData outputFileDB = new GrassIOHandler().executeGrassProcess(
-				processID, firstInputMap, secondInputMap, outputIdentifier, outputMimeType, outputSchema);
+				processID, firstInputMap, secondInputMap, outputIdentifier, outputMimeType, outputSchema, isAddon);
 		
 		if(outputIdentifier == null || outputIdentifier.equals("")){
 			outputIdentifier = "output";

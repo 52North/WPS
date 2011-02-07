@@ -51,8 +51,10 @@ public class GrassProcessDescriptionCreator {
 	
 	private final String fileSeparator = System.getProperty("file.separator");
 	private final String lineSeparator = System.getProperty("line.separator");
-	private String grassHome = "c:\\programme\\grass-70-svn";
-	private String pythonHome = "c:\\programme\\grass-70-svn";
+	private String grassHome = "";
+	private String pythonHome = "";	
+	private String pythonPath = "";	
+	private String addonPath = "";	
 
 	private String[] envp = null;
 	
@@ -66,22 +68,42 @@ public class GrassProcessDescriptionCreator {
 
 		grassHome = GrassProcessRepository.grassHome;
 		pythonHome = GrassProcessRepository.pythonHome;
+		pythonPath = GrassProcessRepository.pythonPath;
 		gisrcDir = GrassProcessRepository.gisrcDir;
+		addonPath = GrassProcessRepository.addonPath;
 	}
 
-	public ProcessDescriptionType createDescribeProcessType(String identifier)
+	public ProcessDescriptionType createDescribeProcessType(String identifier, boolean addon)
 			throws IOException, XmlException {
 
 		Process proc = null;
 
-		if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
-			proc = rt.exec(grassHome + fileSeparator + "bin" + fileSeparator
-					+ identifier + wpsProcessDescCmd, getEnvp());
-		} else {
-			proc = rt.exec(grassHome + fileSeparator + "bin" + fileSeparator
-					+ identifier + ".exe" + wpsProcessDescCmd, getEnvp());
-		}
+		//addons have their own directory and are python scripts
+		if(addon){
 
+			if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
+				proc = rt.exec(addonPath + fileSeparator +
+						identifier + wpsProcessDescCmd,
+						getEnvp());
+			} else {
+				proc = rt.exec(pythonHome  + fileSeparator + "python.exe " + addonPath
+						+ fileSeparator + identifier + ".py"
+						+ wpsProcessDescCmd, getEnvp());
+			}			
+			
+		} else {
+
+			if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
+				proc = rt.exec(grassHome + fileSeparator + "bin"
+						+ fileSeparator + identifier + wpsProcessDescCmd,
+						getEnvp());
+			} else {
+				proc = rt.exec(grassHome + fileSeparator + "bin"
+						+ fileSeparator + identifier + ".exe"
+						+ wpsProcessDescCmd, getEnvp());
+			}
+		}
+		
 		PipedOutputStream pipedOut = new PipedOutputStream();
 
 		PipedInputStream pipedIn = new PipedInputStream(pipedOut);
@@ -126,9 +148,9 @@ public class GrassProcessDescriptionCreator {
 
 		String errors = "";
 
-		while (line != null) {
+		while (errorLine != null) {
 
-			errors = xml.concat(errorLine + lineSeparator);
+			errors = errors.concat(errorLine + lineSeparator);
 
 			errorLine = errorReader.readLine();
 		}
@@ -208,7 +230,7 @@ public class GrassProcessDescriptionCreator {
 		ProcessDescriptionType type;
 		try {
 			type = new GrassProcessDescriptionCreator()
-					.createDescribeProcessType("v.buffer");
+					.createDescribeProcessType("v.buffer", false);
 
 			for (int i = 0; i < type.getDataInputs().getInputArray().length; i++) {
 
@@ -230,29 +252,55 @@ public class GrassProcessDescriptionCreator {
 
 		if (envp == null) {
 
-			envp = new String[] {
-					"GISRC=" + gisrcDir,
-					"GDAL_DATA=" + grassHome + fileSeparator + "etc"
-							+ fileSeparator + "ogr_csv",
-					"GISBASE=" + grassHome,
-					"PATH=" + grassHome + fileSeparator + "lib;" + grassHome
-							+ fileSeparator + "bin;" + grassHome
-							+ fileSeparator + "scripts;" + pythonHome + ";"
-							+ grassHome + fileSeparator + "extralib;"
-							+ grassHome + fileSeparator + "extrabin",
-					"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
-					"PWD=" + grassHome,
-					"PYTHONHOME=" + pythonHome,
-					"PYTHONPATH=" + grassHome + fileSeparator + "etc"
-							+ fileSeparator + "python",
-					"GRASS_CONFIG_DIR=.grass7",
-					"GRASS_GNUPLOT=gnuplot -persist", 
-					"GRASS_PAGER=less",
-					"GRASS_PYTHON=python",
-					"GRASS_SH=/bin/sh", "GRASS_VERSION=7.0.svn",
-					"WINGISBASE=" + grassHome };
+			
+			if (GrassIOHandler.OS_Name.startsWith("Windows")) {
+
+				envp = new String[] {
+						"GISRC=" + gisrcDir,
+						"GDAL_DATA=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "ogr_csv",
+						"GISBASE=" + grassHome,
+						"PATH=" + grassHome + fileSeparator + "lib;"
+								+ grassHome + fileSeparator + "bin;"
+								+ grassHome + fileSeparator + "scripts;"
+								+ pythonHome + ";" + grassHome + fileSeparator
+								+ "extralib;" + grassHome + fileSeparator
+								+ "extrabin",
+						"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
+						"PWD=" + grassHome,
+						"PYTHONHOME=" + pythonHome,
+						"PYTHONPATH=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "python",
+						"GRASS_CONFIG_DIR=.grass7",
+						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+						"GRASS_VERSION=7.0.svn", "WINGISBASE=" + grassHome };
+			}else{
+				
+				envp = new String[] {
+						"GISRC=" + gisrcDir,
+						"GDAL_DATA=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "ogr_csv",
+						"GISBASE=" + grassHome,
+						"PATH=" + grassHome + fileSeparator + "lib:"
+								+ grassHome + fileSeparator + "bin:"
+								+ grassHome + fileSeparator + "scripts:"
+								+ pythonHome + ":" + grassHome + fileSeparator
+								+ "extralib:" + grassHome + fileSeparator
+								+ "extrabin",
+						"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
+						"PWD=" + grassHome,
+						"PYTHONHOME=" + pythonHome,
+						"PYTHONPATH=" + grassHome + fileSeparator + "etc"
+								+ fileSeparator + "python" + ":" + pythonPath,
+						"GRASS_CONFIG_DIR=.grass7",
+						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+						"GRASS_VERSION=7.0.svn"};
+				
+			}
 		}
 		return envp;
 	}
-
+	
 }
