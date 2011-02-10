@@ -62,17 +62,17 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			dataInput.addNewIdentifier().setStringValue(identifier);
 			dataInput.addNewTitle().setStringValue(identifier);
 			
-			Class inputDataTypeClass = this.getInputDataType(identifier);
-			Class[] interfaces = inputDataTypeClass.getInterfaces();
+			Class<?> inputDataTypeClass = this.getInputDataType(identifier);
+			Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
 						
-			for(Class implementedInterface : interfaces){
+			for(Class<?> implementedInterface : interfaces){
 				if(implementedInterface.equals(ILiteralData.class)){
 					LiteralInputType literalData = dataInput.addNewLiteralData();
 					String inputClassType = "";
 					
-					Constructor[] constructors = inputDataTypeClass.getConstructors();
-					for(Constructor constructor : constructors){
-						Class[] parameters = constructor.getParameterTypes();
+					Constructor<?>[] constructors = inputDataTypeClass.getConstructors();
+					for(Constructor<?> constructor : constructors){
+						Class<?>[] parameters = constructor.getParameterTypes();
 						if(parameters.length==1){
 							inputClassType	= parameters[0].getSimpleName();
 						}
@@ -91,8 +91,8 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 					List<IParser> foundParsers = new ArrayList<IParser>();
 					for(IParser parser : parsers) {
-						Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
-						for(Class clazz : supportedClasses){
+						Class<?>[] supportedClasses = parser.getSupportedInternalOutputDataType();
+						for(Class<?> clazz : supportedClasses){
 							if(clazz.equals(inputDataTypeClass)){
 								foundParsers.add(parser);
 							}
@@ -146,23 +146,23 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 										}
 									}
 								}
-								if(supportedFormats.length==1 && supportedEncodings.length==1){
-									String supportedFormat = supportedFormats[j];
-									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
-									supportedCreatedFormat.setMimeType(supportedFormat);
-									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-									for(int t = 0; t<supportedSchemas.length;t++){
-										if(t==0){
-											supportedCreatedFormat.setSchema(supportedSchemas[t]);
-										}
-										if(t>0){
-											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
-											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
-											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
-											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
-										}
-									}
-								}
+//								if(supportedFormats.length==1 && supportedEncodings.length==1){
+//									String supportedFormat = supportedFormats[j];
+//									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
+//									supportedCreatedFormat.setMimeType(supportedFormat);
+//									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+//									for(int t = 0; t<supportedSchemas.length;t++){
+//										if(t==0){
+//											supportedCreatedFormat.setSchema(supportedSchemas[t]);
+//										}
+//										if(t>0){
+//											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtInputFormat.addNewFormat();
+//											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+//											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+//											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+//										}
+//									}
+//								}
 							}
 						}
 					}
@@ -181,19 +181,19 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			dataOutput.addNewTitle().setStringValue(identifier);
 			dataOutput.addNewAbstract().setStringValue(identifier);
 			
-			Class outputDataTypeClass = this.getOutputDataType(identifier);
-			Class[] interfaces = outputDataTypeClass.getInterfaces();
+			Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
+			Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
 			
-			for(Class implementedInterface : interfaces){
+			for(Class<?> implementedInterface : interfaces){
 					
 				
 				if(implementedInterface.equals(ILiteralData.class)){
 					LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
 					String outputClassType = "";
 					
-					Constructor[] constructors = outputDataTypeClass.getConstructors();
-					for(Constructor constructor : constructors){
-						Class[] parameters = constructor.getParameterTypes();
+					Constructor<?>[] constructors = outputDataTypeClass.getConstructors();
+					for(Constructor<?> constructor : constructors){
+						Class<?>[] parameters = constructor.getParameterTypes();
 						if(parameters.length==1){
 							outputClassType	= parameters[0].getSimpleName();
 						}
@@ -213,8 +213,8 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 						for(IGenerator generator : generators) {
-							Class[] supportedClasses = generator.getSupportedInternalInputDataType();
-							for(Class clazz : supportedClasses){
+							Class<?>[] supportedClasses = generator.getSupportedInternalInputDataType();
+							for(Class<?> clazz : supportedClasses){
 								if(clazz.equals(outputDataTypeClass)){
 									foundGenerators.add(generator);
 								}
@@ -266,23 +266,23 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 										}
 									}
 								}
-								if(supportedFormats.length==1 && supportedEncodings.length==1){
-									String supportedFormat = supportedFormats[j];
-									ComplexDataDescriptionType supportedCreatedFormat = supportedtOutputFormat.addNewFormat();
-									supportedCreatedFormat.setMimeType(supportedFormat);
-									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-									for(int t = 0; t<supportedSchemas.length;t++){
-										if(t==0){
-											supportedCreatedFormat.setSchema(supportedSchemas[t]);
-										}
-										if(t>0){
-											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtOutputFormat.addNewFormat();
-											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
-											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
-											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
-										}
-									}
-								}
+//								if(supportedFormats.length==1 && supportedEncodings.length==1){
+//									String supportedFormat = supportedFormats[j];
+//									ComplexDataDescriptionType supportedCreatedFormat = supportedtOutputFormat.addNewFormat();
+//									supportedCreatedFormat.setMimeType(supportedFormat);
+//									supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+//									for(int t = 0; t<supportedSchemas.length;t++){
+//										if(t==0){
+//											supportedCreatedFormat.setSchema(supportedSchemas[t]);
+//										}
+//										if(t>0){
+//											ComplexDataDescriptionType supportedCreatedFormatAdditional = supportedtOutputFormat.addNewFormat();
+//											supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
+//											supportedCreatedFormatAdditional.setMimeType(supportedFormat);
+//											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
+//										}
+//									}
+//								}
 							}
 						}
 					}

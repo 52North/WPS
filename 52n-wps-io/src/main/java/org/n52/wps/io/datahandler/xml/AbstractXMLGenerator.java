@@ -62,7 +62,7 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
 		supportedEncodings = new ArrayList<String>();
-		supportedFormats.add("text/xml");
+//		supportedFormats.add("text/xml");
 		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 		for(Property property : properties){
 			if(property.getName().equalsIgnoreCase("supportedSchema")){
@@ -84,7 +84,7 @@ public abstract class AbstractXMLGenerator implements IGenerator {
 		supportedSchemas = new ArrayList<String>();
 		supportedFormats = new ArrayList<String>();
 		supportedEncodings = new ArrayList<String>();
-		supportedFormats.add("text/xml");
+//		supportedFormats.add("text/xml");
 		if (pReadWPSConfig)
 		{
 			properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
