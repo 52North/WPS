@@ -157,6 +157,7 @@
         <module>52n-wps-transactional</module>
         <module>52n-wps-webadmin</module>
         <module>52n-wps-ags</module>
+        <module>52n-wps-python</module>
     
        
   </modules>
@@ -262,6 +263,12 @@
 			<dependency>
             	<groupId>${project.groupId}</groupId>
             	<artifactId>52n-wps-ags</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
+			
+			<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-python</artifactId>
             	<version>${project.version}</version>
 			</dependency>
 
