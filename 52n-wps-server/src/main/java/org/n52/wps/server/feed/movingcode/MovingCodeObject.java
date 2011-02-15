@@ -1,3 +1,31 @@
+/***************************************************************
+Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
+
+ Author: Matthias Mueller, TU Dresden
+ 
+ Contact: Andreas Wytzisk, 
+ 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ Martin-Luther-King-Weg 24,
+ 48155 Muenster, Germany, 
+ info@52north.org
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License
+ version 2 as published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; even without the implied WARRANTY OF
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program (see gnu-gpl v2.txt). If not, write to
+ the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ Boston, MA 02111-1307, USA or visit the Free
+ Software Foundation’s web page, http://www.fsf.org.
+
+ ***************************************************************/
+
 package org.n52.wps.server.feed.movingcode;
 
 import java.io.File;
@@ -7,6 +35,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -23,6 +52,8 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 
+import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -76,7 +107,7 @@ public class MovingCodeObject {
 	
 	public boolean isSupportedContainer(URI containerURN){
 		String str = containerURN.toString();
-		if (str.equalsIgnoreCase(algorithmDescription.containerType)){
+		if (str.equalsIgnoreCase(algorithmDescription.getContainerType())){
 			return true;
 		} else {
 			return false;
@@ -104,6 +135,41 @@ public class MovingCodeObject {
 			}
 		}
 		return check;
+	}
+	
+	public ProcessDescriptionType getProcessDescription(){
+		return processDescription;
+	}
+	
+	public File getInstanceWorkspace(){
+		return algorithmWorkspace;
+	}
+	
+	public AlgorithmURL getAlgorithmURL(){
+		return new AlgorithmURL(algorithmDescription.getAlgorithmLocation());
+	}
+	
+	public  List<AlgorithmParameterType> getParameters(){
+		return algorithmDescription.getAlgorithmParameters().getParameter();
+	}
+	
+	public String getDefaultMimeType(String paramID){
+		String mimeType = null;
+		
+		// check inputs for a match
+		for (InputDescriptionType currentInput : processDescription.getDataInputs().getInputArray()){
+			if (currentInput.getIdentifier().toString().equalsIgnoreCase(paramID)){
+				mimeType = currentInput.getComplexData().getDefault().getFormat().getMimeType();
+			}
+		}
+		
+		for (OutputDescriptionType currentOutput : processDescription.getProcessOutputs().getOutputArray()){
+			if (currentOutput.getIdentifier().toString().equalsIgnoreCase(paramID)){
+				mimeType = currentOutput.getComplexOutput().getDefault().getFormat().getMimeType();
+			}
+		}
+		
+		return mimeType;
 	}
 	
 	private String getWorkspacePathFragment(){

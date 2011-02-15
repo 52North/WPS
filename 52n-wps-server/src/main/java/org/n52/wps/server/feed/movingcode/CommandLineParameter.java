@@ -28,50 +28,48 @@ Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
 
 package org.n52.wps.server.feed.movingcode;
 
-import java.net.URI;
-import java.util.StringTokenizer;
+import java.util.LinkedList;
 
-public class AlgorithmURL {
+public class CommandLineParameter {
 	
-	private final URI uri;
-	private final String publicPath;
-	private final String privatePath;
-	private static final String SCHEME = "algorithm://";
-	private static final String TOKEN = "?";
+	private String prefix;
+	private String suffix;
+	private String separator;
 	
-	public AlgorithmURL (String str){
-		uri = URI.create(str);
-		if (isValid()){
-			StringTokenizer st = new StringTokenizer(uri.getSchemeSpecificPart(), TOKEN);
-			if (st.hasMoreTokens()){
-				publicPath = st.nextToken();
+	private LinkedList<String> values;
+	
+	public CommandLineParameter (String prefixString, String suffixString, String separatorString){
+		prefix = prefixString;
+		suffix = suffixString;
+		separator = separatorString;
+		
+		values = new LinkedList<String>();
+		
+	}
+	
+	public void addValue(String value){
+		values.add(value);
+	}
+	
+	public String getAsCommandString(){
+		String str = prefix;
+		
+		boolean firstrun = true;
+		for (String currentValue : values){
+			if (!firstrun){
+				str = str + separator + currentValue;
 			} else {
-				publicPath = null;
+				str = str + currentValue;
 			}
-			if (st.hasMoreTokens()){
-				privatePath = st.nextToken();
-			} else {
-				privatePath = null;
-			}
-		} else {
-			publicPath = null;
-			privatePath = null;
 		}
+		
+		str = str + suffix;
+		return str;
 	}
 	
-	public boolean isValid(){
-		if (uri.getScheme().equalsIgnoreCase(SCHEME)){
-			return true;
-		}
-		else return false;
+	public String getAsPlainString(){
+		return values.get(0);
 	}
 	
-	public String getPublicPath(){
-		return publicPath;
-	}
-	
-	public String getPrivatePath(){
-		return privatePath;
-	}
 	
 }
