@@ -170,6 +170,12 @@
         
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-python</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-webadmin</artifactId>
             <version>${project.version}</version>
         </dependency>
