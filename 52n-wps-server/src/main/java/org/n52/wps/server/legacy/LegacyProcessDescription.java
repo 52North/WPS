@@ -62,6 +62,7 @@ import org.xml.sax.SAXException;
 
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class LegacyProcessDescription {//implements ILegacyDescription{
 	
 	private static Logger LOGGER = Logger.getLogger(LegacyProcessDescription.class);

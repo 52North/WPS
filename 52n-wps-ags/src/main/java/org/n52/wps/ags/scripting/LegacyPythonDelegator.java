@@ -52,6 +52,7 @@ import org.n52.wps.server.legacy.AbstractLegacyProcessDelegator;
 import org.n52.wps.server.legacy.LegacyParameter;
 import org.n52.wps.server.legacy.LegacyProcessDescription;
 
+@Deprecated
 public class LegacyPythonDelegator extends AbstractLegacyProcessDelegator{
 	
 	private static final String[] BACKEND_NAMES = {"urn:n52:esri:arcgis:9.3.1", "urn:n52:esri:arcgis:9.3"};

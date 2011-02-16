@@ -49,6 +49,7 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 
+@Deprecated
 public class LegacyProcessRepository implements IAlgorithmRepository{
 	
 	private static Logger LOGGER = Logger.getLogger(LegacyProcessRepository.class);

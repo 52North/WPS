@@ -35,6 +35,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.IAlgorithm;
 
+@Deprecated
 public interface ILegacyProcessDelegator extends IAlgorithm{
 	
 	public URI[] getSupportedBackends();

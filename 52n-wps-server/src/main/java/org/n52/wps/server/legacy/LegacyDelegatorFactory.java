@@ -38,7 +38,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 
-
+@Deprecated
 public class LegacyDelegatorFactory {
 
 	public static final String PROPERTY_NAME_REGISTERED_DELEGATOR = "DELEGATOR";

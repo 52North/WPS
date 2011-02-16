@@ -28,6 +28,7 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
 package org.n52.wps.server.legacy;
 
+@Deprecated
 public class LegacyParameter {
 	
 	public final String mimeType;

@@ -52,7 +52,7 @@ import org.n52.wps.server.legacy.AbstractLegacyProcessDelegator;
 import org.n52.wps.server.legacy.LegacyParameter;
 import org.n52.wps.server.legacy.LegacyProcessDescription;
 
-
+@Deprecated
 public class LegacyAGSProcessDelegator extends AbstractLegacyProcessDelegator{
 	
 	private static Logger LOGGER = Logger.getLogger(LegacyAGSProcessDelegator.class);

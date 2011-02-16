@@ -47,6 +47,7 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+@Deprecated
 public abstract class AbstractLegacyProcessDelegator implements ILegacyProcessDelegator{
 	
 	private String processID;
