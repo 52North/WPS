@@ -29,10 +29,6 @@ Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.server.feed.movingcode;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;

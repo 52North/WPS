@@ -178,7 +178,9 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}
 		try {
-			return new PythonScriptDelegator(registeredAlgorithms.get(processID), workspaceBase);
+			// create a unique directory for each instance
+			String randomDirName = workspaceBase + File.separator + System.currentTimeMillis();
+			return new PythonScriptDelegator(registeredAlgorithms.get(processID), new File (randomDirName));
 		} catch (IOException e) {
 			LOGGER.error(processID + ": Instantiation failed!");
 			e.printStackTrace();

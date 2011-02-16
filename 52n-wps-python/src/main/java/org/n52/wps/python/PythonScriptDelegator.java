@@ -39,6 +39,7 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -56,6 +57,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 	private static Logger LOGGER = Logger.getLogger(PythonScriptDelegator.class);
 	
 	private final File instanceWorkspace;
+	private final File workspaceBase;
 	
 	private CommandLineParameter[] scriptParameters;
 	
@@ -63,6 +65,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 	protected List<String> errors;
 
 	public PythonScriptDelegator(MovingCodeObject templateMCO, File workspaceBase) throws IOException{
+		this.workspaceBase = workspaceBase;
 		this.errors = new ArrayList<String>();
 		mco = templateMCO.createChild(workspaceBase);
 		this.scriptParameters = new CommandLineParameter[mco.getParameters().size()];
@@ -210,4 +213,13 @@ public class PythonScriptDelegator implements IAlgorithm{
 		}
 	}
 	
+	//delete the current workspace
+	protected void finalize(){
+		try {
+			FileUtils.deleteDirectory(workspaceBase);
+		} catch (IOException e) {
+			LOGGER.error("Could not delete dead workspace:\n" + instanceWorkspace.getAbsolutePath());
+			e.printStackTrace();
+		}
+	}
 }
