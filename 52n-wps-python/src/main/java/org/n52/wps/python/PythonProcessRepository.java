@@ -36,6 +36,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
@@ -61,6 +62,8 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	private File workspaceBase = null;
 	private File inventoryDir = null;
 	
+	private Random rng;
+	
 	
 	public PythonProcessRepository (){
 		LOGGER.info("Initializing Python Process Repository ...");
@@ -74,6 +77,9 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 		} catch (Exception e){
 			LOGGER.error("Could not initialize PythonProcessRepository.");
 		}
+		
+		// initialize rng
+		 rng = new Random();
 	}
 	
 	private void loadConfiguration() throws Exception{
@@ -179,7 +185,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 		}
 		try {
 			// create a unique directory for each instance
-			String randomDirName = workspaceBase + File.separator + System.currentTimeMillis();
+			String randomDirName = workspaceBase + File.separator + System.currentTimeMillis() + "_" + rng.nextInt(1000);
 			return new PythonScriptDelegator(registeredAlgorithms.get(processID), new File (randomDirName));
 		} catch (IOException e) {
 			LOGGER.error(processID + ": Instantiation failed!");

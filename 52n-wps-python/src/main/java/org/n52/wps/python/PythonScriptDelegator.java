@@ -75,13 +75,10 @@ public class PythonScriptDelegator implements IAlgorithm{
 	
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		
-		
-		
-		String instanceExecutable = instanceWorkspace + mco.getAlgorithmURL().getPublicPath();
-		
+		String instanceExecutable = instanceWorkspace.getAbsolutePath() + mco.getAlgorithmURL().getPublicPath();
 		List<AlgorithmParameterType> params = mco.getParameters();
-		
 		HashMap<String, String> outputs = new HashMap<String,String>();
+		System.gc();
 		
 		for (AlgorithmParameterType currentParam : params){
 			String wpsInputID = currentParam.getWpsInputID();
