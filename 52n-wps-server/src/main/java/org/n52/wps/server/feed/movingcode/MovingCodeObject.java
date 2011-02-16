@@ -158,13 +158,13 @@ public class MovingCodeObject {
 		
 		// check inputs for a match
 		for (InputDescriptionType currentInput : processDescription.getDataInputs().getInputArray()){
-			if (currentInput.getIdentifier().toString().equalsIgnoreCase(paramID)){
+			if (currentInput.getIdentifier().getStringValue().equalsIgnoreCase(paramID)){
 				mimeType = currentInput.getComplexData().getDefault().getFormat().getMimeType();
 			}
 		}
 		
 		for (OutputDescriptionType currentOutput : processDescription.getProcessOutputs().getOutputArray()){
-			if (currentOutput.getIdentifier().toString().equalsIgnoreCase(paramID)){
+			if (currentOutput.getIdentifier().getStringValue().equalsIgnoreCase(paramID)){
 				mimeType = currentOutput.getComplexOutput().getDefault().getFormat().getMimeType();
 			}
 		}

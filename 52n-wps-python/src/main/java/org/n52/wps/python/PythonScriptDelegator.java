@@ -55,21 +55,26 @@ public class PythonScriptDelegator implements IAlgorithm{
 	
 	private static Logger LOGGER = Logger.getLogger(PythonScriptDelegator.class);
 	
+	private final File instanceWorkspace;
+	
 	private CommandLineParameter[] scriptParameters;
 	
 	private MovingCodeObject mco;
 	protected List<String> errors;
 
-	public PythonScriptDelegator(MovingCodeObject mco, File workspaceBase) throws IOException{
+	public PythonScriptDelegator(MovingCodeObject templateMCO, File workspaceBase) throws IOException{
 		this.errors = new ArrayList<String>();
-		this.mco = mco.createChild(workspaceBase);
+		mco = templateMCO.createChild(workspaceBase);
 		this.scriptParameters = new CommandLineParameter[mco.getParameters().size()];
+		instanceWorkspace = new File(mco.getInstanceWorkspace().getCanonicalPath());
 	}
 	
 	
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
-		File instanceWorkspace = new File(mco.getInstanceWorkspace().getAbsolutePath());
-		String instanceExecutable = instanceWorkspace + File.separator + mco.getAlgorithmURL().getPublicPath();
+		
+		
+		
+		String instanceExecutable = instanceWorkspace + mco.getAlgorithmURL().getPublicPath();
 		
 		List<AlgorithmParameterType> params = mco.getParameters();
 		
@@ -78,13 +83,12 @@ public class PythonScriptDelegator implements IAlgorithm{
 		for (AlgorithmParameterType currentParam : params){
 			String wpsInputID = currentParam.getWpsInputID();
 			String wpsOutputID = currentParam.getWpsOutputID();
-			String prefixString = currentParam.getPrefixString();
 			int positionID = currentParam.getPositionID().intValue();
 			
 			CommandLineParameter cmdParam = null;
 			
 			// input parameters
-			if(wpsInputID != null){
+			if(!wpsInputID.equalsIgnoreCase("")){
 				if(inputData.containsKey(wpsInputID)){
 					//open the IData list and iterate through it
 					List<IData> dataItemList = inputData.get(wpsInputID);
@@ -97,10 +101,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 						cmdParam.addValue((MovingCodeUtils.loadSingleDataItem(currentItem, instanceWorkspace)));
 					}
 				}
-			} 
-			
-			// output only parameters !!ONLY SINGLE OUTPUT ITEMS SUPPORTED BY WPS!!
-			else if (wpsOutputID != null){
+			} else if (!wpsOutputID.equalsIgnoreCase("")){ // output only parameters !!ONLY SINGLE OUTPUT ITEMS SUPPORTED BY WPS!!
 				// create CommanLineParameter Object
 				cmdParam = new CommandLineParameter(currentParam.getPrefixString(), currentParam.getSuffixString(), currentParam.getSeparatorString());
 				
@@ -115,7 +116,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 			}
 			
 			//prepare the output - files only
-			if (wpsOutputID != null){
+			if (!wpsOutputID.equalsIgnoreCase("")){
 				String fileName = cmdParam.getAsPlainString();
 				outputs.put(wpsOutputID, fileName);
 			}
