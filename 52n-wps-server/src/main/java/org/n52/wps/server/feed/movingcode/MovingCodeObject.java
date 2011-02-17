@@ -105,36 +105,28 @@ public class MovingCodeObject {
 		return processDescription.getIdentifier().getStringValue();
 	}
 	
-	public boolean isSupportedContainer(URI containerURN){
+	public boolean isContainer(URI containerURN){
 		String str = containerURN.toString();
 		if (str.equalsIgnoreCase(algorithmDescription.getContainerType())){
 			return true;
 		} else {
 			return false;
 		}
-		
 	}
 	
-	public boolean isSupportedRuntime(URI runtimeURN){
-		String str = runtimeURN.toString();
-		boolean check = false;
+	public boolean isSufficientRuntimeEnvironment (URI[] runtimeURNs){
+		boolean doublecheck = true;
+		for (String myCurrentRuntime : algorithmDescription.getRequiredRuntimeComponent()){
+			boolean check = false;
+			for (URI yourCurrentRuntime : runtimeURNs){
+				if (yourCurrentRuntime.toString().equalsIgnoreCase(myCurrentRuntime)){
+					check = true;
+				}
+			}
+			doublecheck = check && doublecheck;
+		}
 		
-		for (String currentRuntime : algorithmDescription.getRequiredRuntimeComponent()){
-			if (str.equalsIgnoreCase(currentRuntime)){
-				check = true;
-			}
-		}
-		return check;
-	}
-	
-	public boolean isSupportedRuntimeEnvironment (URI[] runtimeURNs){
-		boolean check = true;
-		for (URI currentRuntime : runtimeURNs){
-			if (isSupportedRuntime(currentRuntime)){
-				check = check && true;
-			}
-		}
-		return check;
+		return doublecheck;
 	}
 	
 	public ProcessDescriptionType getProcessDescription(){
@@ -245,4 +237,5 @@ public class MovingCodeObject {
 		}
 		return null;
     }
+    
 }

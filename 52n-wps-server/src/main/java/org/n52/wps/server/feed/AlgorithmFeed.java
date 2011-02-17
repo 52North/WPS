@@ -71,7 +71,7 @@ public class AlgorithmFeed {
 		ArrayList<MovingCodeObject> mcoList = new ArrayList<MovingCodeObject>();
 		
 		for (MovingCodeObject currentMCO : feedAlgorithms){
-			if (currentMCO.isSupportedContainer(containerURN) && currentMCO.isSupportedRuntimeEnvironment(providedComponentURN)){
+			if (currentMCO.isContainer(containerURN) && currentMCO.isSufficientRuntimeEnvironment(providedComponentURN)){
 				mcoList.add(currentMCO);
 			}
 		}

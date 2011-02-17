@@ -127,7 +127,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			if (isSupportedScript(currentMCO)){
 				registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
 			} else {
-				LOGGER.info(currentMCO.getProcessID() + "is not supported by this repository. - Dropping algorithm.");
+				LOGGER.info(currentMCO.getProcessID() + " is not supported by this repository. - Dropping algorithm.");
 				currentMCO = null;
 			}
 		}
@@ -141,12 +141,12 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 		boolean rightContainer = false;
 		boolean rightBackends = false;
 		for (URI currentContainer : supportedContainers){
-			if (mco.isSupportedContainer(currentContainer)){
+			if (mco.isContainer(currentContainer)){
 				rightContainer = true;
 			}
 		}
 		
-		if (mco.isSupportedRuntimeEnvironment(supportedBackends)){
+		if (mco.isSufficientRuntimeEnvironment(supportedBackends)){
 			rightBackends = true;
 		}
 		
