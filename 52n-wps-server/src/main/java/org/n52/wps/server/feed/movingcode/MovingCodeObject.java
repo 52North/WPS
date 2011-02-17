@@ -114,6 +114,15 @@ public class MovingCodeObject {
 		}
 	}
 	
+	public boolean isContainer(URI[] containerURNs){
+		for(URI currentContainer : containerURNs){
+			if (isContainer(currentContainer)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean isSufficientRuntimeEnvironment (URI[] runtimeURNs){
 		boolean doublecheck = true;
 		for (String myCurrentRuntime : algorithmDescription.getRequiredRuntimeComponent()){
