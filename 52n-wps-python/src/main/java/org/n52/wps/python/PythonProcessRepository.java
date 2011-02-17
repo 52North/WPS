@@ -43,6 +43,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.feed.FeedRepository;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 import org.n52.wps.server.request.ExecuteRequest;
 
@@ -78,8 +79,25 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			LOGGER.error("Could not initialize PythonProcessRepository.");
 		}
 		
-		// initialize rng
-		 rng = new Random();
+		// check if workspaceBase is specified
+		if (workspaceBase == null){
+			LOGGER.error("Workspace base is missing: Clearing my Process Inventory");
+			registeredAlgorithms = new HashMap<String, MovingCodeObject>();
+		}
+		
+		// log active Processes ...
+		LOGGER.info("Algorithms loaded by Python Process Repository:");
+		for (String currentKey : registeredAlgorithms.keySet()){
+			LOGGER.info(currentKey);
+		}
+		
+		// ... or state that there arent't any
+		if (registeredAlgorithms.size()==0){
+			LOGGER.info("No applicable algorithms fond");
+		}
+		
+		// initialize RNG
+		rng = new Random();
 	}
 	
 	private void loadConfiguration() throws Exception{
@@ -105,7 +123,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 					}
 				}
 			} catch (URISyntaxException e){
-				LOGGER.error("Invalid URI - offending item is " + currentProp.getStringValue());
+				LOGGER.error("Invalid container or backend URN - offending item is " + currentProp.getStringValue());
 			}
 		}
 		
@@ -117,8 +135,13 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	}
 	
 	private void loadLocalProcesses(){
+		
+		// abort loading if inventoryDir is empty
+		if (inventoryDir == null){
+			return;
+		}
+		
 		String[] describeProcessFiles = retrieveProcessDescriptions(inventoryDir);
-		registeredAlgorithms = new HashMap<String, MovingCodeObject>();
 		
 		// create new MovingCodeObjects
 		for (String currentFileName : describeProcessFiles){
@@ -134,7 +157,12 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	}
 	
 	private void loadFeedProcesses(){
-		// TODO: implement
+		// retrieve supported MCOs from the feed
+		MovingCodeObject[] feedMCOs = FeedRepository.getInstance().getMovingCodeObjects(supportedContainers, supportedBackends);
+		for (MovingCodeObject currentMCO : feedMCOs){
+			// add those algorithms to this Repository
+			registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
+		}
 	}
 	
 	private boolean isSupportedScript(MovingCodeObject mco){

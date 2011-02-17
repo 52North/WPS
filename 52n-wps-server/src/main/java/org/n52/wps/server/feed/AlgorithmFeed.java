@@ -67,11 +67,11 @@ public class AlgorithmFeed {
 		initializeFeed();
 	}
 	
-	public ArrayList<MovingCodeObject> getMovingCodeObjects (URI containerURN, URI[] providedComponentURN){
+	public ArrayList<MovingCodeObject> getMovingCodeObjects (URI supportedContainerURNs[], URI[] providedComponentURN){
 		ArrayList<MovingCodeObject> mcoList = new ArrayList<MovingCodeObject>();
 		
 		for (MovingCodeObject currentMCO : feedAlgorithms){
-			if (currentMCO.isContainer(containerURN) && currentMCO.isSufficientRuntimeEnvironment(providedComponentURN)){
+			if (currentMCO.isContainer(supportedContainerURNs) && currentMCO.isSufficientRuntimeEnvironment(providedComponentURN)){
 				mcoList.add(currentMCO);
 			}
 		}

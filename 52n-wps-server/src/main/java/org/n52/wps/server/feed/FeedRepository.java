@@ -75,10 +75,10 @@ public class FeedRepository {
 		registeredFeeds = feedList.toArray(new AlgorithmFeed[0]);
 	}
 	
-	public MovingCodeObject[] getMovingCodeObjects (URI containerURN, URI[] providedComponentURN){
+	public MovingCodeObject[] getMovingCodeObjects (URI[] supportedContainerURNs, URI[] providedComponentURN){
 		ArrayList<MovingCodeObject> mocList = new ArrayList<MovingCodeObject>();
 		for (AlgorithmFeed currentFeed : registeredFeeds){
-			mocList.addAll(currentFeed.getMovingCodeObjects(containerURN, providedComponentURN));
+			mocList.addAll(currentFeed.getMovingCodeObjects(supportedContainerURNs, providedComponentURN));
 		}
 		
 		MovingCodeObject[] mocArray = mocList.toArray(new MovingCodeObject[0]);
