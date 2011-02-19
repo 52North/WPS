@@ -12,7 +12,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
+import org.n52.wps.transactional.algorithm.BPELTransactionalAlgorithm;
 import org.n52.wps.transactional.deploy.IDeployManager;
 import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
@@ -76,7 +76,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 	}
 
 	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
-		return new DefaultTransactionalAlgorithm(processID, this.getClass());
+		return new BPELTransactionalAlgorithm(processID, this.getClass());
 		
 	}
 
@@ -100,7 +100,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 			return new ArrayList<IAlgorithm>();
 		} 
 		for(String processID : allAlgorithms){
-			result.add(new DefaultTransactionalAlgorithm(processID, this.getClass()));
+			result.add(new BPELTransactionalAlgorithm(processID, this.getClass()));
 		}
 		return result;
 	}

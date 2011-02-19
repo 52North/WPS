@@ -52,7 +52,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.xpath.XPathAPI;
-import org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm;
+import org.n52.wps.transactional.algorithm.BPELTransactionalAlgorithm;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.traversal.NodeIterator;
@@ -138,7 +138,7 @@ public class BPELDeploymentProfile extends DeploymentProfile{
 		//	  5. create describe process
 		Node describeProcess = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/ProcessDescriptions/ProcessDescriptions");
 		
-		String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
+		String fullPath =  BPELTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex= fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
