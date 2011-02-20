@@ -1,14 +1,27 @@
 package org.n52.wps.transactional.service;
 
 
+import java.io.File;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
-import org.n52.wps.transactional.deploy.IDeployManager;
+import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.transactional.deploy.IProcessManager;
+import org.w3c.dom.Node;
 
 public class TransactionalHelper {
 
@@ -31,52 +44,15 @@ public class TransactionalHelper {
 		return null;
 	}
 	
+
 	public static ITransactionalAlgorithmRepository getMatchingTransactionalRepository(String schema){
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		String className = repository.getClassName();
-		Object instance = null;
-		try {
-			//in case of a assumed singleton
-			Class<?> clazz = Class.forName(className);
-			
-			Method[] methods = clazz.getMethods();
-			
-			for(Method method : methods){
-				if(method.getName().equals("getInstance")){
-					instance = method.invoke(null, new Object[0]);
-					break;
-				}
+		IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForClassName(className);
+		if(algorithmRepository!=null){
+			if(algorithmRepository instanceof ITransactionalAlgorithmRepository){
+				return (ITransactionalAlgorithmRepository) algorithmRepository;
 			}
-			
-			//Class cls = Class.forName(className);
-			//Method method1 = cls.getMethod("getInstance", new Class[0]);
-			//Object o = method1.invoke(cls, new Object[0]);
-			
-			//in case it is not a singleton
-			if(instance == null){
-				instance = Class.forName(className).newInstance();
-			}
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		if(instance != null){
-			return (ITransactionalAlgorithmRepository) instance;
 		}
 		return null;
 	}
@@ -92,14 +68,52 @@ public class TransactionalHelper {
 		return null;
 	}
 	
-	public static IDeployManager getDeploymentManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
+	public static IProcessManager getProcessManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		Property[] properties = repository.getPropertyArray();
 		for(Property property : properties){
 			if(property.getName().equals("DeployManager")){
-				return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
+				//return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
+                            try{
+
+                                Class depManager = Class.forName(property.getStringValue());
+                                Constructor con = depManager.getConstructor(ITransactionalAlgorithmRepository.class);
+                                Object o = con.newInstance(new Object[]{getMatchingTransactionalRepository(schema)});
+                                return (IProcessManager)o;
+                            }catch(ClassNotFoundException e){
+                                e.printStackTrace();
+                            }catch(NoSuchMethodException e){
+                                e.printStackTrace();
+                            }catch(SecurityException e){
+                                e.printStackTrace();
+                            }catch(IllegalAccessException e){
+                                e.printStackTrace();
+                            }catch(InvocationTargetException e){
+                                e.printStackTrace();
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+
 			}
 		}
 		return null;
 	}
+	
+	public static void writeXmlFile(Node node, String filename) {
+	    try {
+	        // Prepare the DOM document for writing
+	        Source source = new DOMSource(node);
+
+	        // Prepare the output file
+	        File file = new File(filename);
+	        Result result = new StreamResult(file);
+
+	        // Write the DOM document to the file
+	        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+	        xformer.transform(source, result);
+	    } catch (TransformerConfigurationException e) {
+	    } catch (TransformerException e) {
+	    }
+	}
+
 }

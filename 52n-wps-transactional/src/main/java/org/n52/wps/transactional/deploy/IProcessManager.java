@@ -39,7 +39,7 @@ import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 
-public interface IDeployManager {
+public interface IProcessManager {
 
 	
 	boolean unDeployProcess(UndeployProcessRequest request) throws Exception;

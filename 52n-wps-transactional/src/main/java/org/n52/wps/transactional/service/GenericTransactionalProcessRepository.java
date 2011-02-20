@@ -3,6 +3,8 @@ package org.n52.wps.transactional.service;
 
 
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,21 +14,23 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.transactional.algorithm.BPELTransactionalAlgorithm;
-import org.n52.wps.transactional.deploy.IDeployManager;
+import org.n52.wps.transactional.algorithm.GenericTransactionalAlgorithm;
+import org.n52.wps.transactional.deploy.AbstractProcessManager;
+import org.n52.wps.transactional.deploy.IProcessManager;
 import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 
 
 
 
-public class DefaultTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
-	private static Logger LOGGER = Logger.getLogger(DefaultTransactionalProcessRepository.class);
+public class GenericTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
+	private static Logger LOGGER = Logger.getLogger(GenericTransactionalProcessRepository.class);
 	
 	
-	private IDeployManager deployManager;
+	private IProcessManager deployManager;
 	
-	public DefaultTransactionalProcessRepository(){
+	
+	public GenericTransactionalProcessRepository(String format){
 		Property[] properties = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getName());
 		//TODO think of multiple instance of this class registered (yet not possible since singleton)
 		Property deployManagerXML = WPSConfig.getInstance().getPropertyForKey(properties, "DeployManager");
@@ -35,7 +39,15 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		}
 		String className = deployManagerXML.getStringValue();
 		try {
-			deployManager = (IDeployManager) Class.forName(className).newInstance();
+			
+			Class deployManagerClass = Class.forName(className);
+			if(deployManagerClass.asSubclass(AbstractProcessManager.class).equals(deployManagerClass)){
+				Constructor constructor = deployManagerClass.getConstructor(ITransactionalAlgorithmRepository.class);
+				deployManager = (IProcessManager) constructor.newInstance(this);
+			}else{
+				deployManager = (IProcessManager) deployManagerClass.newInstance();
+			}
+			
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error. Could not find matching DeployManager");
@@ -45,7 +57,21 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error. Could not find matching DeployManager");
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		
 		
 	}
 		
@@ -76,7 +102,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 	}
 
 	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
-		return new BPELTransactionalAlgorithm(processID, this.getClass());
+		return new GenericTransactionalAlgorithm(processID, this.getClass());
 		
 	}
 
@@ -100,7 +126,7 @@ public class DefaultTransactionalProcessRepository implements ITransactionalAlgo
 			return new ArrayList<IAlgorithm>();
 		} 
 		for(String processID : allAlgorithms){
-			result.add(new BPELTransactionalAlgorithm(processID, this.getClass()));
+			result.add(new GenericTransactionalAlgorithm(processID, this.getClass()));
 		}
 		return result;
 	}

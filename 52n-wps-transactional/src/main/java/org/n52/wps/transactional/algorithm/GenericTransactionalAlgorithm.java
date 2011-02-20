@@ -33,7 +33,6 @@ package org.n52.wps.transactional.algorithm;
 
 import java.io.File;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,43 +49,43 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.ExecuteDocument;
-import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.apache.log4j.Logger;
+import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.apache.xpath.XPathAPI;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
-import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.transactional.deploy.IDeployManager;
+import org.n52.wps.transactional.deploy.IProcessManager;
 import org.n52.wps.transactional.service.TransactionalHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
+public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	
 	private List<String> errors;
-	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
+	private static Logger LOGGER = Logger.getLogger(GenericTransactionalAlgorithm.class);
 	private ProcessDescriptionType processDescription;
 	private String workspace;
 	
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
 	
-	public BPELTransactionalAlgorithm(String processID, Class<?> registeredRepository){
+	public GenericTransactionalAlgorithm(String processID, Class<?> registeredRepository){
 		super(processID);
 		WPSConfig wpsConfig = WPSConfig.getInstance();
 		Property[] properties = wpsConfig.getPropertiesForRepositoryClass(registeredRepository.getName());
@@ -101,73 +100,82 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	}
 	
 	
-	public HashMap run(ExecuteDocument payload){
+	public HashMap<String, IData> run(ExecuteDocument payload){
 		Document responseDocument;
 		HashMap<String,IData> resultHash = new HashMap<String,IData>();
 		try {	
 		//forward request
 			
 			//TODO get deploy manager class from config
-			IDeployManager deployManager = TransactionalHelper.getDeploymentManagerForSchema("whatever.xsd");
+			IProcessManager deployManager = TransactionalHelper.getProcessManagerForSchema("BPELProfile.xsd");
+                        
 			responseDocument = deployManager.invoke(payload, getAlgorithmID());
 			
 			//1.parse results;
 			
 			//TODO make temporaryfile
 		
-			writeXmlFile(responseDocument,workspace+"\\BPEL\\serverside.xml");
+			//writeXmlFile(responseDocument,workspace+"\\BPEL\\serverside.xml");
+			File tempFile = File.createTempFile("wpsbpelresult", ".xml", null);
 			
-			ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(new File(workspace+"\\BPEL\\serverside.xml"));
+			File tempFile2 = File.createTempFile("wpsbpelresult", ".xml", null);
+			//
+            writeXmlFile(responseDocument,tempFile2);
+
+            Document d = new DocumentBuilderFactoryImpl().newDocumentBuilder().parse(tempFile2);
+            
+			GenericFileData data = new GenericFileData(tempFile, "text/xml");
 			
-	//			2.look at each Output Element
-			OutputDataType[] resultValues = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
-			for(int i = 0; i<resultValues.length;i++){
-				OutputDataType ioElement  = resultValues[i];
-				//3.get the identifier as key
-				String key = ioElement.getIdentifier().getStringValue();
-				//4.the the literal value as String
-				if(ioElement.getData().getLiteralData()!=null){
-					resultHash.put(key, OutputParser.handleLiteralValue(ioElement));
-				}
-				//5.parse the complex value
-				if(ioElement.getData().getComplexData()!=null){
-					
-					resultHash.put(key,  OutputParser.handleComplexValue(ioElement, getDescription()));
-						
-					
-				}
-				//6.parse the complex value reference
-				if(ioElement.getReference()!=null){
-					//TODO handle this
-					//download the data, parse it and put it in the hashmap
-					//resultHash.put(key, OutputParser.handleComplexValueReference(ioElement));
-				}
-				
-				//7.parse Bounding Box value
-				if(ioElement.getData().getBoundingBoxData()!=null){
-					resultHash.put(key, OutputParser.handleBBoxValue(ioElement));
-				}
-				
-				
-		}
+			Node gml = XPathAPI.selectSingleNode(d, "//Output/Data/ComplexData/FeatureCollection");
+			
+			String identifier = XPathAPI.selectSingleNode(d, "//Output/Identifier").getFirstChild().getNodeValue().trim();
+			
+			writeXmlFile(gml, tempFile);
+			
+			GenericFileDataBinding binding = new GenericFileDataBinding(data);
+			
+			resultHash.put(identifier, binding);
+			
+			//ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(new File(workspace+"\\BPEL\\serverside.xml"));
+//            ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(tempFile);
+//			
+//	//			2.look at each Output Element
+//			OutputDataType[] resultValues = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
+//			for(int i = 0; i<resultValues.length;i++){
+//				OutputDataType ioElement  = resultValues[i];
+//				//3.get the identifier as key
+//				String key = ioElement.getIdentifier().getStringValue();
+//				//4.the the literal value as String
+//				if(ioElement.getData().getLiteralData()!=null){
+//					resultHash.put(key, OutputParser.handleLiteralValue(ioElement));
+//				}
+//				//5.parse the complex value
+//				if(ioElement.getData().getComplexData()!=null){
+//					
+//					resultHash.put(key,  OutputParser.handleComplexValue(ioElement, getDescription()));
+//						
+//					
+//				}
+//				//6.parse the complex value reference
+//				if(ioElement.getReference()!=null){
+//					//TODO handle this
+//					//download the data, parse it and put it in the hashmap
+//					//resultHash.put(key, OutputParser.handleComplexValueReference(ioElement));
+//				}
+//				
+//				//7.parse Bounding Box value
+//				if(ioElement.getData().getBoundingBoxData()!=null){
+//					resultHash.put(key, OutputParser.handleBBoxValue(ioElement));
+//				}
+//				
+//				
+//		}
 		
-		} catch (XmlException e) {
+		} catch (Exception e) {
 			String error = "Could not create ExecuteResponseDocument";
 			errors.add(error);
 			LOGGER.warn(error + " Reason: " +e.getMessage());
 			throw new RuntimeException(error,e);
-		} catch (ExceptionReport e) {
-			errors.add(e.getMessage());
-			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException("Error processing results",e);
-		} catch (RemoteException e) {
-			errors.add(e.getMessage());
-			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException("Error processing results",e);
-		} catch (Exception e) {
-			errors.add(e.getMessage());
-			LOGGER.warn("Error processing results. Reason: " +e.getMessage());
-			throw new RuntimeException("Error processing results",e);
 		} 
 		
 		//add response id
@@ -183,12 +191,18 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 
 
 	protected ProcessDescriptionType initializeDescription() {
-		String fullPath =  BPELTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
+		String fullPath =  GenericTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex= fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:/", "");
+                String processID = getAlgorithmID();
+                //sanitize processID: strip version number and namespace if passed in
+                if (processID.contains("-"))
+                    processID = processID.split("-")[0];
+                if (processID.contains("}"))
+                    processID = processID.split("}")[1];
 		try {
-			File xmlDesc = new File(subPath+"\\WEB-INF\\ProcessDescriptions\\"+getAlgorithmID()+".xml");
+			File xmlDesc = new File(subPath+File.separator+"WEB-INF"+File.separator+"ProcessDescriptions"+File.separator+processID+".xml");
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
 			ProcessDescriptionsDocument doc = ProcessDescriptionsDocument.Factory.parse(xmlDesc, option);
@@ -197,7 +211,7 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 				return null;
 			}
 			
-			doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(getAlgorithmID());
+			doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(processID);
 
 
 			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
@@ -218,13 +232,7 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 		return processDescription.validate();
 	}
 
-	/**
-	 * Do nothing. Do everything in run(Document payload)
-	 */
-	public HashMap run(HashMap layers, HashMap parameters) {
-		return new HashMap();
-		
-	}
+	
 	
 	private Document checkResultDocument(Document doc){
 		if(getFirstElementNode(doc.getFirstChild()).getNodeName().equals("ExceptionReport") && getFirstElementNode(doc.getFirstChild()).getNamespaceURI().equals(OGC_OWS_URI)) {
@@ -253,18 +261,20 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	}
 	
 
-	private static void writeXmlFile(Document doc, String filename) {
+	//private static void writeXmlFile(Document doc, String filename) {
+        private static void writeXmlFile(Document doc, File file) {
         try {
-        	if(filename==null){
-        		filename = "C:\\BPEL\\serverside.xml";
-        	}
+//        	if(filename==null){
+//        		filename = "C:\\BPEL\\serverside.xml";
+//        	}
             // Prepare the DOM document for writing
             Source source = new DOMSource(doc);
     
             // Prepare the output file
-            File file = new File(filename);
-            file.createNewFile();
-            Result result = new StreamResult(file);
+            //File file = new File(filename);
+            //file.createNewFile();
+            //Result result = new StreamResult(file);
+            Result result = new StreamResult(file.toURI().getPath());
     
             // Write the DOM document to the file
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
@@ -280,6 +290,35 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 		
 	}
 
+        
+	private static void writeXmlFile(Node n, File file) {
+		try {
+			// if(filename==null){
+			// filename = "C:\\BPEL\\serverside.xml";
+			// }
+			// Prepare the DOM document for writing
+			Source source = new DOMSource(n);
+
+			// Prepare the output file
+			// File file = new File(filename);
+			// file.createNewFile();
+			// Result result = new StreamResult(file);
+			Result result = new StreamResult(file.toURI().getPath());
+
+			// Write the DOM document to the file
+			Transformer xformer = TransformerFactory.newInstance()
+					.newTransformer();
+			xformer.transform(source, result);
+		} catch (TransformerConfigurationException e) {
+			System.out.println("error");
+		} catch (TransformerException e) {
+			System.out.println("error");
+		} catch (Exception e) {
+			System.out.println("error");
+		}
+
+	}
+        
 	public String getWellKnownName() {
 		return "";
 	}
@@ -339,9 +378,9 @@ public class BPELTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 			if(output.isSetComplexOutput()){
 				String mimeType = output.getComplexOutput().getDefault().getFormat().getMimeType();
 				if(mimeType.contains("xml") || (mimeType.contains("XML"))){
-					return GTVectorDataBinding.class;
+					return GenericFileDataBinding.class;
 				}else{
-					return GTRasterDataBinding.class;
+					return GenericFileDataBinding.class;
 				}
 			}
 		}

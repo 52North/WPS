@@ -30,6 +30,7 @@ is extensible in terms of processes and data handlers.
 
 package org.n52.wps.transactional.request;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
@@ -53,19 +54,15 @@ public class DeployProcessRequest implements ITransactionalRequest {
 		try {
 			String processID = XPathAPI.selectSingleNode(
 					doc,
-					"/DeployProcessRequest/ProcessDescriptions/"
+					"/DeployProcess/ProcessDescriptions/"
 							+ "ProcessDescription/Identifier/text()")
 					.getNodeValue().trim();
-			if (RepositoryManager.getInstance().getAlgorithm(processID, null) != null) {
-				throw new ExceptionReport(
-						"A process with that ID already exists",
-						ExceptionReport.INVALID_PARAMETER_VALUE);
-			}
+			
 			processDescription = XPathAPI.selectSingleNode(doc,
-					"/DeployProcessRequest/ProcessDescriptions");
+					"/DeployProcess/ProcessDescriptions");
 			schema = XPathAPI
 					.selectSingleNode(doc,
-							"/DeployProcessRequest/DeploymentProfile/Schema/attribute::href")
+							"/DeployProcess/DeploymentProfile/Schema/attribute::href")
 					.getNodeValue();
 			if (schema == null) {
 				throw new ExceptionReport(
@@ -79,9 +76,14 @@ public class DeployProcessRequest implements ITransactionalRequest {
 			Constructor<?> constructor;
 			constructor = Class.forName(deployManagerClass).getConstructor(
 					Node.class, String.class);
-			deploymentProfile = (DeploymentProfile) constructor.newInstance(
+                        //NH 17-12-09 we're asking for the deployment profile but also need the process request info
+			//deploymentProfile = (DeploymentProfile) constructor.newInstance(
+			//		XPathAPI.selectSingleNode(doc,
+			//				"/DeployProcessRequest/DeploymentProfile"),
+			//		processID);
+                        deploymentProfile = (DeploymentProfile) constructor.newInstance(
 					XPathAPI.selectSingleNode(doc,
-							"/DeployProcessRequest/DeploymentProfile"),
+							"/DeployProcess"),
 					processID);
 		} catch (TransformerException e) {
 			throw new ExceptionReport("Error. Malformed DeployProcess request",
@@ -128,6 +130,7 @@ public class DeployProcessRequest implements ITransactionalRequest {
 	}
 	
 	 
+
 	
 	
 

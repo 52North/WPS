@@ -31,6 +31,25 @@ is extensible in terms of processes and data handlers.
 
 package org.n52.wps.transactional.deploymentprofiles;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.n52.wps.transactional.service.TransactionalHelper;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class DeploymentProfile {
@@ -38,11 +57,10 @@ public abstract class DeploymentProfile {
 	private Object payload;
 	private String processID;
 	
-	
-
 	public DeploymentProfile(Node payload, String processID){
 		this.processID = processID;
 		this.payload = payload;
+		
 	}
 
 	public String getProcessID() {
@@ -53,4 +71,6 @@ public abstract class DeploymentProfile {
 		return payload;
 	}
 
+	
+	
 }
