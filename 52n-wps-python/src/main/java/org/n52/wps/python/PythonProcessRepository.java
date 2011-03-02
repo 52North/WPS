@@ -240,10 +240,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	}
 	
 	public ProcessDescriptionType getProcessDescription(String processID) {
-		if(!registeredAlgorithms.containsKey(processID)){
-			registeredAlgorithms.put(processID, getAlgorithm(processID, null).getDescription());
-		}
-		return registeredAlgorithms.get(processID);
+		return registeredAlgorithms.get(processID).getProcessDescription();
 	}
 	
 }
