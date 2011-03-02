@@ -193,7 +193,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			} else {
 				inputItems = inputString.split("@");
 			}
-			if (inputItems.length > 1) {
+			if (inputItemstemp.length > 1) {
 				for (int i = 0; i < inputItems.length; i++) {
 					int attributePos = inputItems[i].indexOf("=");
 					if (attributePos == -1
@@ -220,7 +220,7 @@ public class ExecuteRequest extends Request implements IObserver {
 					}
 
 				}
-
+			}
 				if (inputDesc.isSetComplexData()) {
 					// TODO: check for different attributes
 					// handling ComplexReference
@@ -250,7 +250,7 @@ public class ExecuteRequest extends Request implements IObserver {
 					else {
 						// TODO
 					}
-				}
+				
 			} else if (inputDesc.isSetLiteralData()) {
 				LiteralDataType data = input.addNewData().addNewLiteralData();
 				if (value == null) {
