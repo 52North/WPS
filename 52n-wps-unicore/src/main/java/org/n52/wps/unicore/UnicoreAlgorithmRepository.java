@@ -1,10 +1,14 @@
 
 package org.n52.wps.unicore;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
@@ -28,12 +32,13 @@ public class UnicoreAlgorithmRepository implements IAlgorithmRepository
 
 	private static UnicoreAlgorithmRepository instance;
 
-	private Map<String, IAlgorithm> algorithmMap;
+	//private Map<String, IAlgorithm> algorithmMap;
 	private Properties unicoreProperties;
+	protected Map<String, ProcessDescriptionType> processDescriptionMap;
 
 	public UnicoreAlgorithmRepository()
 	{
-		algorithmMap = new HashMap<String, IAlgorithm>();
+		processDescriptionMap = new HashMap<String, ProcessDescriptionType>();
 
 		if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
 			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
@@ -50,7 +55,7 @@ public class UnicoreAlgorithmRepository implements IAlgorithmRepository
 
 	public UnicoreAlgorithmRepository(String wpsConfigPath)
 	{
-		algorithmMap = new HashMap<String, IAlgorithm>();
+		processDescriptionMap = new HashMap<String, ProcessDescriptionType>();
 
 		Property[] propertyArray = WPSConfig.getInstance(wpsConfigPath).getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
 
@@ -149,13 +154,13 @@ public class UnicoreAlgorithmRepository implements IAlgorithmRepository
 				LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);
 				return false;
 			}
-
-			algorithmMap.put(algorithmClassName, algorithm);
+			
+			processDescriptionMap.put(algorithmClassName, algorithm.getDescription());
 			LOGGER.info("Algorithm class registered: " + algorithmClassName);
 
 			if (algorithm.getWellKnownName().length() != 0)
 			{
-				algorithmMap.put(algorithm.getWellKnownName(), algorithm);
+				processDescriptionMap.put(algorithm.getWellKnownName(), algorithm.getDescription());
 			}
 		}
 		catch (ClassNotFoundException e)
@@ -178,22 +183,66 @@ public class UnicoreAlgorithmRepository implements IAlgorithmRepository
 
 	public boolean containsAlgorithm(String processID)
 	{
-		return algorithmMap.containsKey(processID);
+		return processDescriptionMap.containsKey(processID);
 	}
 
 	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest)
 	{
-		return algorithmMap.get(processID);
+		try
+		{
+			IUnicoreAlgorithm algorithm = (IUnicoreAlgorithm) UnicoreAlgorithmRepository.class.getClassLoader().loadClass(processID).newInstance();
+
+			return algorithm;
+		}
+		catch (ClassNotFoundException e)
+		{
+			LOGGER.warn("Could not find algorithm class: " + processID, e);
+			throw new RuntimeException(e);
+		}
+		catch (IllegalAccessException e)
+		{
+			LOGGER.warn("Access error occured while registering algorithm: " + processID);
+			throw new RuntimeException(e);
+		}
+		catch (InstantiationException e)
+		{
+			LOGGER.warn("Could not instantiate algorithm: " + processID);
+			throw new RuntimeException(e);
+		}
 	}
 
 	public Collection<String> getAlgorithmNames()
 	{
-		return algorithmMap.keySet();
+		return processDescriptionMap.keySet();
 	}
 
 	public Collection<IAlgorithm> getAlgorithms()
 	{
-		return algorithmMap.values();
+		List<IAlgorithm> algorithmList = new ArrayList<IAlgorithm>();
+		for(String algorithmName : getAlgorithmNames()){
+			try
+			{
+				IUnicoreAlgorithm algorithm = (IUnicoreAlgorithm) UnicoreAlgorithmRepository.class.getClassLoader().loadClass(algorithmName).newInstance();
+
+				algorithmList.add(algorithm);
+			}
+			catch (ClassNotFoundException e)
+			{
+				LOGGER.warn("Could not find algorithm class: " + algorithmName, e);
+				throw new RuntimeException(e);
+			}
+			catch (IllegalAccessException e)
+			{
+				LOGGER.warn("Access error occured while registering algorithm: " + algorithmName);
+				throw new RuntimeException(e);
+			}
+			catch (InstantiationException e)
+			{
+				LOGGER.warn("Could not instantiate algorithm: " + algorithmName);
+				throw new RuntimeException(e);
+			}
+		}
+		return algorithmList;
 	}
 
 	public boolean removeAlgorithm(Object processID)
@@ -203,12 +252,20 @@ public class UnicoreAlgorithmRepository implements IAlgorithmRepository
 			return false;
 		}
 		String className = (String) processID;
-		if (algorithmMap.containsKey(className))
+		if (processDescriptionMap.containsKey(className))
 		{
-			algorithmMap.remove(className);
+			processDescriptionMap.remove(className);
 			return true;
 		}
 		return false;
 	}
 
+	
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!processDescriptionMap.containsKey(processID)){
+			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return processDescriptionMap.get(processID);
+	}
+	
 }

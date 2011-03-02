@@ -7,6 +7,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
@@ -25,9 +29,9 @@ import org.n52.wps.transactional.request.UndeployProcessRequest;
 
 public class GenericTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
 	private static Logger LOGGER = Logger.getLogger(GenericTransactionalProcessRepository.class);
+	protected Map<String, ProcessDescriptionType> processDescriptionMap;
 	
-	
-	private IProcessManager deployManager;
+	protected IProcessManager deployManager;
 	
 	
 	public GenericTransactionalProcessRepository(String format){
@@ -37,6 +41,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		if(deployManagerXML==null){
 			throw new RuntimeException("Error. Could not find matching DeployManager");
 		}
+		processDescriptionMap = new HashMap<String, ProcessDescriptionType>();
 		String className = deployManagerXML.getStringValue();
 		try {
 			
@@ -143,8 +148,17 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 			e.printStackTrace();
 			return false;
 		}
+		processDescriptionMap.remove(request.getProcessID());
 		return true;
 		
+	}
+	
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!processDescriptionMap.containsKey(processID)){
+			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return processDescriptionMap.get(processID);
 	}
 
 }
