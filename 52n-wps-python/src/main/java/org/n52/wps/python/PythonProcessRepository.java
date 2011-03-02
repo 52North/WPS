@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
+import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -235,6 +237,13 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			}
 		}
 		return algorithms;
+	}
+	
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!registeredAlgorithms.containsKey(processID)){
+			registeredAlgorithms.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return registeredAlgorithms.get(processID);
 	}
 	
 }
