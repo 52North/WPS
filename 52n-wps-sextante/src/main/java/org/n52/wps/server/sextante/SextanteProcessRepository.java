@@ -207,5 +207,13 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		System.out.println(processDescriptionList);
 		System.out.println("done");
 	}
+	
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!registeredProcesses.containsKey(processID)){
+			registeredProcesses.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return registeredProcesses.get(processID);
+	}
 
 }
