@@ -42,6 +42,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
@@ -253,5 +255,13 @@ public class RepositoryManager {
 		return null;
 	}
 	
+	public ProcessDescriptionType getProcessDescription(String processClassName){
+		for(IAlgorithmRepository repository : repositories){
+			if(repository.containsAlgorithm(processClassName)){
+				return repository.getProcessDescription(processClassName);
+			}
+		}
+		return null;
+	}
 
 }

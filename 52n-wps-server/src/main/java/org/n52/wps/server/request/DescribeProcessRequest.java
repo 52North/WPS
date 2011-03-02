@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
+import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
@@ -148,8 +149,8 @@ public class DescribeProcessRequest extends Request {
 											ExceptionReport.INVALID_PARAMETER_VALUE, 
 											"parameter: identifier | value: " + algorithmName);
 			}
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName, null);
-			document.getProcessDescriptions().addNewProcessDescription().set(algorithm.getDescription());
+			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
+			document.getProcessDescriptions().addNewProcessDescription().set(description);
 		}
 		
 		LOGGER.info("Handled Request successfully for: " + getMapValue("identifier", true));

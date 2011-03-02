@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
@@ -60,6 +61,7 @@ public class LegacyProcessRepository implements IAlgorithmRepository{
 	private HashMap<String, LegacyProcessDescription> registeredLegacyDescriptions;
 	private HashMap<String, File> registeredTemplateWorkspaces;
 	private static LegacyDelegatorFactory DELEGATOR_FACTORY;
+	
 	
 	
 	public LegacyProcessRepository() {
@@ -186,6 +188,14 @@ public class LegacyProcessRepository implements IAlgorithmRepository{
 	
 	private void updateLocalAlgorithm(String id){
 		// not yet implemented
+	}
+	
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!registeredProcessDescriptions.containsKey(processID)){
+			registeredProcessDescriptions.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return registeredProcessDescriptions.get(processID);
 	}
 	
 }

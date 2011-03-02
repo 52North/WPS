@@ -34,6 +34,7 @@ import java.io.OutputStream;
 
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -149,8 +150,8 @@ public abstract class ResponseData {
 	}
 	
 	public IGenerator getDefaultGeneratorForProcess(String algorithmIdentifier, Class algorithmOutput) {
-		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier, null);
-		OutputDescriptionType[] outputs = algorithm.getDescription().getProcessOutputs().getOutputArray();
+		ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier);
+		OutputDescriptionType[] outputs = description.getProcessOutputs().getOutputArray();
 		if(outputs[0].isSetComplexOutput()){
 			ComplexDataDescriptionType format = outputs[0].getComplexOutput().getDefault().getFormat();
 			String encoding = format.getEncoding();

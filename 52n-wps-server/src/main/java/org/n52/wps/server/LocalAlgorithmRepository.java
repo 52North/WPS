@@ -39,6 +39,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -55,9 +57,11 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	
 	private static Logger LOGGER = Logger.getLogger(LocalAlgorithmRepository.class);
 	private Map<String, String> algorithmMap;
+	private Map<String, ProcessDescriptionType> processDescriptionMap;
 	
 	public LocalAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
+		processDescriptionMap = new HashMap<String, ProcessDescriptionType>(); 
 		
 		// check if the repository is active
 		if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
@@ -146,6 +150,14 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!processDescriptionMap.containsKey(processID)){
+			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return processDescriptionMap.get(processID);
 	}
 
 	

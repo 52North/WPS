@@ -172,8 +172,9 @@ public class ExecuteRequest extends Request implements IObserver {
 					value = inputString.substring(position + 1);
 				}
 			}
+			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
 			InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(key,
-					algorithm.getDescription().getDataInputs());
+					description.getDataInputs());
 			if (inputDesc == null) {
 				throw new ExceptionReport("Data Identifier not supported: "
 						+ key, ExceptionReport.MISSING_PARAMETER_VALUE);
@@ -288,9 +289,9 @@ public class ExecuteRequest extends Request implements IObserver {
 				} else {
 					outputDataInput = outputID;
 				}
+				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
 				OutputDescriptionType outputDesc = XMLBeansHelper
-						.findOutputByID(outputDataInput, algorithm
-								.getDescription().getProcessOutputs()
+						.findOutputByID(outputDataInput, description.getProcessOutputs()
 								.getOutputArray());
 				if (outputDesc == null) {
 					throw new ExceptionReport(
@@ -334,9 +335,10 @@ public class ExecuteRequest extends Request implements IObserver {
 			} else {
 				rawDataInput = rawData;
 			}
+			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
 			OutputDescriptionType outputDesc = XMLBeansHelper.findOutputByID(
-					rawDataInput, algorithm.getDescription()
-							.getProcessOutputs().getOutputArray());
+					rawDataInput, 
+							description.getProcessOutputs().getOutputArray());
 			if (outputDesc == null) {
 				throw new ExceptionReport(
 						"Data output Identifier not supported: " + rawData,
@@ -420,8 +422,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		}
 
 		// validate if the process can be executed
-		ProcessDescriptionType desc = RepositoryManager.getInstance()
-				.getAlgorithm(getAlgorithmIdentifier(), this).getDescription();
+		ProcessDescriptionType desc = RepositoryManager.getInstance().getProcessDescription(getAlgorithmIdentifier());
 		// We need a description of the inputs for the algorithm
 		if (desc == null) {
 			LOGGER.warn("desc == null");

@@ -122,11 +122,7 @@ public class CapabilitiesConfiguration {
 		}
 		ProcessOfferings processes = capsSkeleton.getCapabilities().addNewProcessOfferings();
 		for(String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmName, null);
-			if(algorithm == null){
-				continue;
-			}
-			ProcessDescriptionType description = algorithm.getDescription();
+			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
 			if(description==null){
 				continue;
 			}
@@ -134,7 +130,7 @@ public class CapabilitiesConfiguration {
 			CodeType ct = process.addNewIdentifier();
 			ct.setStringValue(algorithmName);
 			LanguageStringType title = description.getTitle();
-			String processVersion = algorithm.getDescription().getProcessVersion();
+			String processVersion = description.getProcessVersion();
 			process.setProcessVersion(processVersion);
 			process.setTitle(title);
 		}

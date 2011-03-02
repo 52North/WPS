@@ -36,18 +36,17 @@ package org.n52.wps.server;
 
 import java.util.Collection;
 
+import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.n52.wps.server.request.ExecuteRequest;
 
 public interface IAlgorithmRepository {
-
-
-	
-	
-	
 	Collection<String> getAlgorithmNames();
 	
 	IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest);
 	Collection<IAlgorithm> getAlgorithms();
+	ProcessDescriptionType getProcessDescription(String processID);
+	
 	
 	boolean containsAlgorithm(String processID);
 	
