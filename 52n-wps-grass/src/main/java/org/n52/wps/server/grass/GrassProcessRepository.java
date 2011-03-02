@@ -334,4 +334,12 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 
 	}
 
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!registeredProcesses.containsKey(processID)){
+			registeredProcesses.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return registeredProcesses.get(processID);
+	}
+	
 }

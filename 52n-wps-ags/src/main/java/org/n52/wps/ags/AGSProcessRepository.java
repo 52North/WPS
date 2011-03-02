@@ -281,10 +281,6 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		return paramArray;
 	}
 	
-	protected ProcessDescriptionType getProcessDescription(String processID){
-		return this.registeredProcessDescriptions.get(processID);
-	}
-	
 	private ArrayList<File> listAllFiles(File rootDir, boolean includeDirNames) {
 		ArrayList<File> result = new ArrayList<File>();
 		try {
@@ -327,5 +323,13 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 			LOGGER.warn("Could not initialize algorithm, parsing error! " + describeProcessFile.getName(), e);
 		}
 		return null;
+	}
+	
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		if(!registeredProcessDescriptions.containsKey(processID)){
+			registeredProcessDescriptions.put(processID, getAlgorithm(processID, null).getDescription());
+		}
+		return registeredProcessDescriptions.get(processID);
 	}
 }
