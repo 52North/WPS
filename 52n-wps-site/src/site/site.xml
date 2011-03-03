@@ -20,6 +20,7 @@
 			<item name="WPS client OpenLayers" href="../52n-wps-client-ol/" collapse="false"/>
 			<item name="Client API" href="../52n-wps-client-lib" collapse="false"/>
 			<item name="Cloud Computing" href="CloudComputing.html" collapse="false"/>
+			<item name="Geoprocessing Workflows" href="../52n-wps-orchestration-site" collapse="false"/>
     </menu>
     <menu name="Resources">
 			<item name="Bugzilla" href="https://52north.org/bugzilla/" />
