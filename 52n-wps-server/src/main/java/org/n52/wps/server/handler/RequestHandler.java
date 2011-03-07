@@ -273,7 +273,7 @@ public class RequestHandler {
 			WPSTask<Response> task = new WPSTask<Response>(req);
 
 			//add process status before execution to enables clients to see the status
-			status.addNewProcessStarted();
+			//status.addNewProcessStarted();
 			task.getRequest().getExecuteResponseBuilder().setStatus(status);
 			
 			ExceptionReport exceptionReport = null;
