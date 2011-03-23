@@ -29,7 +29,6 @@
 package org.n52.wps.server.database;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -40,7 +39,6 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hsqldb.DatabaseManager;
-import org.n52.wps.server.response.Response;
 
 /**
  * @note Uses lazy initialization without synchronization  
@@ -80,7 +78,7 @@ public class HSQLDatabase extends AbstractDatabase {
 		}
 	}
 	
-	public static HSQLDatabase getInstance() { 
+	public static synchronized HSQLDatabase getInstance() { 
 		if (HSQLDatabase.conn == null) {
 			// These should not be needed, because of the static loading.
 			if(!HSQLDatabase.createConnection()) {

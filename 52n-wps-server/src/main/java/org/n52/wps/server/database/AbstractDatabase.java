@@ -33,16 +33,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.DatabaseDocument.Database;
@@ -75,7 +71,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	/** SQL to create a response in the DB **/
 	public static final String 	creationString = "CREATE TABLE RESULTS (" +
 	"REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
-	"REQUEST_DATE DATE, " +
+	"REQUEST_DATE TIMESTAMP, " +
 	"RESPONSE_TYPE VARCHAR(100), " +
 	"RESPONSE CLOB, " +
 	"RESPONSE_MIMETYPE VARCHAR(100))";
@@ -173,14 +169,14 @@ public abstract class AbstractDatabase implements IDatabase{
 			LargeBufferStream baos, String id, String type, String mimeType) {
 		// store the contents of the (finite) outputstream into a bytes array
 		InputStream bais = StreamUtils.convertOutputStreamToInputStream(baos);
-		// Use Calendar to get the current date.
+		// Use Calendar to get the current timestamp.
 		// Uses java.sql.Date !
-		Date date = new Date(Calendar.getInstance().getTimeInMillis());
+		Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
 
 		// try to insert a row of data into the database.
 		try {
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
-			AbstractDatabase.insertSQL.setDate(INSERT_COLUMN_REQUEST_DATE, date);
+			AbstractDatabase.insertSQL.setTimestamp(INSERT_COLUMN_REQUEST_DATE, timestamp);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
 			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);

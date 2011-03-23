@@ -34,8 +34,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Connection;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -67,7 +65,7 @@ public class FlatFileDatabase implements IDatabase {
 		f.mkdirs();
 	}
 	
-	public static IDatabase getInstance() {
+	public static synchronized IDatabase getInstance() {
 		if(db == null) {
 			db = new FlatFileDatabase();
 		}
@@ -82,22 +80,6 @@ public class FlatFileDatabase implements IDatabase {
 		WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":" + 
 		WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/" + 
 		WebProcessingService.WEBAPP_PATH + "/" + RetrieveResultServlet.SERVLET_PATH + "?id=" + id;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.n52.wps.server.database.IDatabase#getConnection()
-	 */
-	public Connection getConnection() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.n52.wps.server.database.IDatabase#getConnectionURL()
-	 */
-	public String getConnectionURL() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	/* (non-Javadoc)

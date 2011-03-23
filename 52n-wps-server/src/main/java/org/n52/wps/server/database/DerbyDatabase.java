@@ -69,7 +69,7 @@ public class DerbyDatabase extends AbstractDatabase {
 				throw new RuntimeException("Creating prepared statements failed.");
 	}
 	
-	public static DerbyDatabase getInstance() { 
+	public static synchronized DerbyDatabase getInstance() { 
 		if (DerbyDatabase.conn == null) {
 			if(!DerbyDatabase.createConnection()) 
 					throw new RuntimeException("Creating database connection failed.");

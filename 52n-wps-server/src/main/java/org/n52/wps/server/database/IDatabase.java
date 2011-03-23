@@ -30,11 +30,8 @@
  ***************************************************************/
 package org.n52.wps.server.database;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Connection;
 
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.response.Response;
@@ -47,12 +44,6 @@ import org.n52.wps.server.response.Response;
 * 
 */
 public interface IDatabase {
-	// Returns the connection.
-	public Connection getConnection();
-	
-	// Returns the connection url.
-	public String getConnectionURL();
-	
 	// Closes the database connections etc.
 	public void shutdown();
 	

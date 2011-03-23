@@ -30,13 +30,10 @@ package org.n52.wps.server.database;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
@@ -181,20 +178,6 @@ public class DatabaseFactory implements IDatabase
 	 */	
 	public String generateRetrieveResultURL(String id) {
 		return DatabaseFactory.database.generateRetrieveResultURL(id);
-	}
-	
-	/** 
-	 * Returns the connection.
-	 */
-	public Connection getConnection() {
-		return DatabaseFactory.database.getConnection();
-	}
-	
-	/** 
-	 * Returns the connection url.
-	 */
-	public String getConnectionURL() {
-		return DatabaseFactory.database.getConnectionURL();
 	}
 	
 	/** 
