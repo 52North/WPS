@@ -106,7 +106,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	/** The column of "request_id" in the update statement. */
 	protected static final int UPDATE_COLUMN_REQUEST_ID = 2;
 
-	private static final int INSERT_COLUMN_MIME_TYPE = 5;
+	protected static final int INSERT_COLUMN_MIME_TYPE = 5;
 	
 	/** get access to the global logger. */
 	private static Logger LOGGER = Logger.getLogger(AbstractDatabase.class);
@@ -165,7 +165,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 * @param id
 	 * @param type
 	 */
-	private synchronized String insertResultEntity(
+	protected synchronized String insertResultEntity(
 			LargeBufferStream baos, String id, String type, String mimeType) {
 		// store the contents of the (finite) outputstream into a bytes array
 		InputStream bais = StreamUtils.convertOutputStreamToInputStream(baos);
