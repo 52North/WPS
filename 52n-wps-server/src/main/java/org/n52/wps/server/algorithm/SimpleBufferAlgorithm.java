@@ -119,25 +119,25 @@ public class SimpleBufferAlgorithm extends AbstractSelfDescribingAlgorithm {
 			this.update(new Integer(percentage.intValue()));
 
 			/*********************/
-			SimpleFeature fa = (SimpleFeature) ia.next();
-			Geometry geometry = (Geometry) fa.getDefaultGeometry();
+			SimpleFeature feature = (SimpleFeature) ia.next();
+			Geometry geometry = (Geometry) feature.getDefaultGeometry();
 			Geometry result = runBuffer(geometry, width);;
 			
 			if(i==1){
-				CoordinateReferenceSystem crs = fa.getFeatureType().getCoordinateReferenceSystem();
+				CoordinateReferenceSystem crs = feature.getFeatureType().getCoordinateReferenceSystem();
 				if(geometry.getUserData() instanceof CoordinateReferenceSystem){
 					crs = ((CoordinateReferenceSystem) geometry.getUserData());
 				}
-				 featureType = GTHelper.createFeatureType(fa.getProperties(), result, uuid, crs);
+				 featureType = GTHelper.createFeatureType(feature.getProperties(), result, uuid, crs);
 				 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 				
 			}
 
 			if (result != null) {
-				SimpleFeature feature = (SimpleFeature) GTHelper.createFeature("ID"+new Double(i).intValue(),result,(SimpleFeatureType) featureType,fa.getProperties());
-				fa.setDefaultGeometry(result);
-				featureCollection.add(feature);
+				SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID"+new Double(i).intValue(),result,(SimpleFeatureType) featureType,feature.getProperties());
+				feature.setDefaultGeometry(result);
+				featureCollection.add(createdFeature);
 			}
 				
 			
