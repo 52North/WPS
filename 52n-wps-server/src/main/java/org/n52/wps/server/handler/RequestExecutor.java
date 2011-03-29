@@ -155,14 +155,7 @@ public class RequestExecutor extends ThreadPoolExecutor {
 			// throw exception?
 			//throw report;
 			
-		} else {
-			// store to database?
-//			try {
-//				new ExecuteResponse(((WPSTask<?>) r).getRequest());
-//			} catch (ExceptionReport e) {
-//				LOGGER.error(e.getMessage());
-//			}
-		}
+		} 
 
 	}
 }
