@@ -46,7 +46,7 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 
 	}
 	
-	public IData parseTiff(File file){
+	protected IData parseTiff(File file){
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
 		GeoTiffReader reader;

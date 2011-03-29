@@ -6,7 +6,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.n52.wps.io.data.IComplexData;
 
 public class GTRasterDataBinding implements IComplexData {
-	private GridCoverage2D payload; 
+	protected GridCoverage2D payload; 
 	
 	public GTRasterDataBinding(GridCoverage2D coverage){
 		this.payload = coverage;

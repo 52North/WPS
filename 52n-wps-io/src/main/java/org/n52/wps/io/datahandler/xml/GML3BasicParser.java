@@ -185,6 +185,7 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		return data;
 	}
 
+	@Override
 	public GTVectorDataBinding parseXML(String gml) {
 		File f = null;
 		FileOutputStream fos = null;
@@ -218,6 +219,7 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 		}
 	}
 	
+	@Override
 	public GTVectorDataBinding parseXML(InputStream stream) {
 		File f = null;
 		FileOutputStream fos = null;

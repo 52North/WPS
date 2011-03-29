@@ -33,7 +33,7 @@ import org.n52.wps.io.data.IComplexData;
 
 
 public class GenericFileDataBinding implements IComplexData {
-	private GenericFileData payload; 
+	protected GenericFileData payload; 
 	
 	public GenericFileDataBinding(GenericFileData fileData){
 		this.payload = fileData;

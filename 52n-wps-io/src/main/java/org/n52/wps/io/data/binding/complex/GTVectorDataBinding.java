@@ -13,7 +13,7 @@ import org.n52.wps.io.data.IComplexData;
 
 public class GTVectorDataBinding implements IComplexData{
 	
-	private transient FeatureCollection featureCollection;	
+	protected transient FeatureCollection featureCollection;	
 	
 	public GTVectorDataBinding(FeatureCollection payload) {
 		this.featureCollection = payload;

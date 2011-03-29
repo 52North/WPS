@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.n52.wps.io.data.IComplexData;
 
 public class FileDataBinding implements IComplexData {
-	private File file;
+	protected File file;
 
 	public FileDataBinding(File file) {
 		this.file = file;

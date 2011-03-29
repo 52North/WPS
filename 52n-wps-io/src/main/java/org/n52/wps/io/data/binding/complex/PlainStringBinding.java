@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.n52.wps.io.data.IComplexData;
 
 public class PlainStringBinding implements IComplexData{
-	private transient String payload;
+	protected transient String payload;
 	
 	public PlainStringBinding(String string) {
 		payload = string;

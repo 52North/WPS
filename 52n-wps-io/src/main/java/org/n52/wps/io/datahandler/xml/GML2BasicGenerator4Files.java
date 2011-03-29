@@ -11,9 +11,9 @@ import org.w3c.dom.Node;
 public class GML2BasicGenerator4Files extends GML2BasicGenerator{
 
 	
-	public void write(IData outputData, Writer writer) {
+	protected void write(IData outputData, Writer writer) {
 		if(outputData instanceof GTVectorDataBinding){
-			new GML2BasicGenerator().write(outputData, writer);
+			super.write(outputData, writer);
 		}else{
 			if (outputData instanceof GenericFileDataBinding) {
 				//convert and recall write
@@ -30,7 +30,7 @@ public class GML2BasicGenerator4Files extends GML2BasicGenerator{
 	public Node generateXML(IData outputData, String schema) {
 		
 		if(outputData instanceof GTVectorDataBinding){
-			return new GML2BasicGenerator().generateXML(outputData, schema);
+			return super.generateXML(outputData, schema);
 		}else{
 			if (outputData instanceof GenericFileDataBinding) {
 				//convert and recall generateXML
@@ -46,7 +46,7 @@ public class GML2BasicGenerator4Files extends GML2BasicGenerator{
 	public OutputStream generate(IData outputData) {
 		
 		if(outputData instanceof GTVectorDataBinding){
-			return new GML2BasicGenerator().generate(outputData);
+			return super.generate(outputData);
 		}else{
 			if (outputData instanceof GenericFileDataBinding) {
 				//convert and recall generate
@@ -62,7 +62,7 @@ public class GML2BasicGenerator4Files extends GML2BasicGenerator{
 	public void writeToStream(IData outputData, OutputStream os) {
 		
 		if(outputData instanceof GTVectorDataBinding){
-			new GML2BasicGenerator().writeToStream(outputData, os);
+			super.writeToStream(outputData, os);
 		}else{
 			if (outputData instanceof GenericFileDataBinding) {
 				//convert and recall writeToStream

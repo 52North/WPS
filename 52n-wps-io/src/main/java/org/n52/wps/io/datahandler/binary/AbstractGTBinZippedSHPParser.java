@@ -50,16 +50,7 @@ public abstract class  AbstractGTBinZippedSHPParser extends AbstractXMLParser {
 		return new Class<?>[] { GTVectorDataBinding.class };
 	}
 
-	/**
-	 * @throws RuntimeException
-	 *             if an error occurs while writing the stream to disk or
-	 *             unzipping the written file
-	 * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
-	 */
-	@Override
-	public abstract IData parse(InputStream input, String mimeType);
-
-	
+		
 	@Override
 	public String[] getSupportedSchemas() {
 		return new String[] {};

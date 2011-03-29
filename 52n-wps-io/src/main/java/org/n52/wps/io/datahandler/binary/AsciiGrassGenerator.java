@@ -93,35 +93,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 		return outputStream;
 	}
 
-	public void write(IData o, Writer w) {
-		OutputStream outputStream = null;
-		if (o instanceof GridCoverage2D) {
-			try {
-				GridCoverage2D grid = (GridCoverage2D) o;
-				String fileName = "temp"+grid.hashCode()+".tmp";
-				File outputFile = new File(fileName);
-				GridCoverageWriter writer = new ArcGridWriter(outputFile);
-				// setting write parameters
-				ParameterValueGroup params = writer.getFormat().getWriteParameters();
-				params.parameter("GRASS").setValue(true);
-				GeneralParameterValue[] gpv = { params.parameter("GRASS") };
-				writer.write(grid, gpv);
-				FileReader reader = new FileReader(fileName);
-				LOGGER.debug(outputFile.getAbsolutePath());
-				IOUtils.copy(reader, w);
-				outputFile.delete();
-			} catch (Exception e) {
-				LOGGER.error(e);
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
-	public void init(Property[] propertyArray) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	public void writeToStream(IData data, OutputStream os) {
 		if(!(data instanceof GTRasterDataBinding)){
 			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
@@ -156,7 +128,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 
 
 
-	@Override
+	
 	public File generateFile(IData data, String mimeType) {
 		if(!(data instanceof GTRasterDataBinding)){
 			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");

@@ -31,14 +31,14 @@ import org.w3c.dom.Node;
 
 
 
-public class WMSGenerator extends AbstractXMLGenerator{
+public class GeoserverWMSGenerator extends AbstractXMLGenerator{
 	
 	private String username;
 	private String password;
 	private String host;
 	private String port;
 	
-	public WMSGenerator() {
+	public GeoserverWMSGenerator() {
 		
 		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
 		for(Property property : properties){

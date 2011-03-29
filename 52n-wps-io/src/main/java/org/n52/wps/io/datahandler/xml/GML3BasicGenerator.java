@@ -112,7 +112,7 @@ public class GML3BasicGenerator extends AbstractXMLGenerator implements IStreama
 		}
 	}
 	
-	public void write(IData coll, Writer writer) {
+	protected void write(IData coll, Writer writer) {
 		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
 		// this might be a workaround... 
 		if(fc == null || fc.size() == 0) {
