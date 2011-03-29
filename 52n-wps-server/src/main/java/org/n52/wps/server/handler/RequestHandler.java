@@ -293,6 +293,7 @@ public class RequestHandler {
 						resp = task.get();
 						Thread.sleep(this.sleepingTime);
 						status.setProcessSucceeded("Process has succeeded");
+						task.getRequest().getExecuteResponseBuilder().setStatus(status);
 					}
 					catch (ExecutionException ee) {
 						// the computation threw an error
