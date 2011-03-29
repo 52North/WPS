@@ -300,8 +300,9 @@ public class LegacyProcessDescription {//implements ILegacyDescription{
 	}
 
 	public final void setLegacyBackends(URI[] legacyBackends) {
+		URI[] clonedBackendLost = legacyBackends.clone();
 		this.legacyBackends = new ArrayList<URI>();
-		for (URI currentURI : legacyBackends){
+		for (URI currentURI : clonedBackendLost){
 			this.legacyBackends.add(currentURI);
 		}
 	}
