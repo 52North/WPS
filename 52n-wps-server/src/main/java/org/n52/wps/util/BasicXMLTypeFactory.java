@@ -55,18 +55,24 @@ public class BasicXMLTypeFactory {
 	
 	private static Logger LOGGER = Logger.getLogger(BasicXMLTypeFactory.class);
 	// List of supported basic XML datatypes.
-	public static String DOUBLE_URI = "xs:double";
-	public static String FLOAT_URI = "xs:float";
-	public static String INTEGER_URI = "xs:integer";
-	public static String LONG_URI = "xs:long";
-	public static String INT_URI = "xs:int";
-	public static String SHORT_URI = "xs:short";
-	public static String BYTE_URI = "xs:byte";
-	public static String BOOLEAN_URI = "xs:boolean";
-	public static String STRING_URI = "xs:string";
-	public static String DATETIME_URI = "xs:dateTime";
-	public static String BASE64BINARY_URI = "xs:base64Binary";
+	public static final String DOUBLE_URI = "xs:double";
+	public static final String FLOAT_URI = "xs:float";
+	public static final String INTEGER_URI = "xs:integer";
+	public static final String LONG_URI = "xs:long";
+	public static final String INT_URI = "xs:int";
+	public static final String SHORT_URI = "xs:short";
+	public static final String BYTE_URI = "xs:byte";
+	public static final String BOOLEAN_URI = "xs:boolean";
+	public static final String STRING_URI = "xs:string";
+	public static final String DATETIME_URI = "xs:dateTime";
+	public static final String DATE_URI = "xs:date";
+	public static final String BASE64BINARY_URI = "xs:base64Binary";
 
+	
+	private BasicXMLTypeFactory(){
+		
+	}
+	
 	/**
 	 * This is a helper method to create always the correct Java Type out of a string. 
 	 * It is based on the basic schema datatypes.
@@ -94,7 +100,7 @@ public class BasicXMLTypeFactory {
 			return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
 		} else if (xmlDataTypeURI.equals(STRING_URI)) {
 			return new LiteralStringBinding(obj);
-		} else if (xmlDataTypeURI.equals(DATETIME_URI)) {
+		} else if (xmlDataTypeURI.equals(DATETIME_URI) || xmlDataTypeURI.equals(DATE_URI)) {
 			try {
 				return new LiteralDateTimeBinding(new XmlSchemaDateFormat()
 						.parse(obj));
