@@ -24,10 +24,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 
 	@Override
 	public InputStream fetchData(InputType input) throws ExceptionReport {
-		// OutputStream postContent = null;
-		if(input.getReference().isSetBody()) {
-			
-		}
+		
 		String dataURLString = input.getReference().getHref();
 	
 		String schema = input.getReference().getSchema();
