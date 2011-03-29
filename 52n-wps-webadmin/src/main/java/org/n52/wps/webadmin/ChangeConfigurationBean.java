@@ -402,7 +402,13 @@ public class ChangeConfigurationBean {
             String processingProperty = properties.keySet().iterator().next().split("_")[0];
             String propertyName = properties.remove(processingProperty + "_Name");
             propertyName = URLDecoder.decode(propertyName);
+            if(propertyName == null){
+            	continue;
+            }
             String propertyValue = properties.remove(processingProperty + "_Value");
+            if(propertyValue == null){
+            	continue;
+            }
             propertyValue = URLDecoder.decode(propertyValue);
             String propertyActiveString = properties.remove(processingProperty + "_Activator");
             
