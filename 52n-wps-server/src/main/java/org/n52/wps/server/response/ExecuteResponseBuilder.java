@@ -197,7 +197,7 @@ public class ExecuteResponseBuilder {
 					generateComplexDataOutput(d[i].getIdentifier().getStringValue(), false, false, schema, mimeType, encoding, d[i].getTitle());
 				}
 				else if(d[i].isSetLiteralOutput()) {
-					
+					generateLiteralDataOutput(d[i].getIdentifier().getStringValue(), doc, d[i].getLiteralOutput().getDataType().getReference(), null, null, null, d[i].getTitle());
 				}
 			}
 		}
