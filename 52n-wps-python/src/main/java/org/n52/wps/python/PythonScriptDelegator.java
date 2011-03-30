@@ -56,7 +56,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 	
 	private static Logger LOGGER = Logger.getLogger(PythonScriptDelegator.class);
 	
-	private final File instanceWorkspace;
+	private final File scriptWorkspace;
 	private final File workspaceBase;
 	
 	private CommandLineParameter[] scriptParameters;
@@ -69,13 +69,13 @@ public class PythonScriptDelegator implements IAlgorithm{
 		this.errors = new ArrayList<String>();
 		mco = templateMCO.createChild(workspaceBase);
 		this.scriptParameters = new CommandLineParameter[mco.getParameters().size()];
-		instanceWorkspace = new File(mco.getInstanceWorkspace().getCanonicalPath());
+		scriptWorkspace = new File(mco.getInstanceWorkspace().getCanonicalPath());
 	}
 	
 	
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		
-		String instanceExecutable = instanceWorkspace.getAbsolutePath() + mco.getAlgorithmURL().getPublicPath();
+		String instanceExecutable = scriptWorkspace.getAbsolutePath() + mco.getAlgorithmURL().getPublicPath();
 		List<AlgorithmParameterType> params = mco.getParameters();
 		HashMap<String, String> outputs = new HashMap<String,String>();
 		System.gc();
@@ -98,7 +98,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 					while (it.hasNext()){
 						IData currentItem = it.next();
 						// load as file and add to CommanLineParameter
-						cmdParam.addValue((MovingCodeUtils.loadSingleDataItem(currentItem, instanceWorkspace)));
+						cmdParam.addValue((MovingCodeUtils.loadSingleDataItem(currentItem, scriptWorkspace)));
 					}
 				}
 			} else if (!wpsOutputID.equalsIgnoreCase("")){ // output only parameters !!ONLY SINGLE OUTPUT ITEMS SUPPORTED BY WPS!!
@@ -111,7 +111,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 				// prepare output filename
 				String extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
 				String fileName = System.currentTimeMillis() + "." + extension;
-				fileName = instanceWorkspace.getAbsolutePath() + File.separator + fileName;
+				fileName = scriptWorkspace.getAbsolutePath() + File.separator + fileName;
 				cmdParam.addValue(fileName);
 			}
 			
@@ -136,7 +136,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 		
 		// execute
 		LOGGER.info("Executing " + command);
-		executeScript(command, instanceWorkspace);
+		executeScript(command, scriptWorkspace);
 		
 		//create the output - files only
 		HashMap<String, IData> result = new HashMap<String, IData>();
@@ -215,7 +215,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 		try {
 			FileUtils.deleteDirectory(workspaceBase);
 		} catch (IOException e) {
-			LOGGER.error("Could not delete dead workspace:\n" + instanceWorkspace.getAbsolutePath());
+			LOGGER.error("Could not delete dead workspace:\n" + workspaceBase.getAbsolutePath());
 			e.printStackTrace();
 		}
 	}
