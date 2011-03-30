@@ -34,7 +34,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	 */
 	public AbstractAlgorithm() {
 		this.description = initializeDescription();
-		this.wkName = "";
+		this.wkName = this.getClass().getName();
 	}
 	
 	/** 
