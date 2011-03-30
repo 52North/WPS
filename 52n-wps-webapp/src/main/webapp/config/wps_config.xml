@@ -325,7 +325,9 @@
 		
 		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
+		-->
 		
+		<!-- 
 		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
 			<Property name="IP" active="true">**</Property>
 			<Property name="DOMAIN" active="true">**</Property>
@@ -335,26 +337,19 @@
 			<Property name="ARCOBJECTSJAR" active="true">**</Property>
 			<Property name="DESCRIBE_PROCESS_DIR" active="true">D:\development\xmlDescriptions</Property>
 		</Repository>
+		 -->
 		
-		<Repository name="LegacyProcessRepository" className="org.n52.wps.server.legacy.LegacyProcessRepository" active="true">
-			
-			<Property name="DESCRIBE_PROCESS_DIR" active="true">D:\development\legacyDescriptions</Property>
-			<Property name="TEMPLATE_WORKSPACE_DIR" active="true">D:\development\templateWS</Property>
-			
-			
-			<Property name="DELEGATOR" active="true">org.n52.wps.ags.LegacyAGSProcessDelegator</Property>
-			<Property name="DELEGATOR" active="true">org.n52.wps.ags.scripting.LegacyPythonDelegator</Property>
-			
-			 
-			<Delegator name="LegacyAGSProcessDelegator" className="org.n52.wps.ags.LegacyAGSProcessDelegator">
-				<Property name="CONTAINER" active="true">urn:n52:esri:arctoolbox:9.3</Property>
-				<Property name="BACKEND" active="true">urn:n52:esri:arcgis:9.3.1</Property>
-				<Property name="BACKEND" active="true">urn:n52:esri:arcgis:9.3</Property>
-			</Delegator>
-		</Repository> 
+		<!-- 
+		<Repository name="ArcToolboxProcessRepository" className="org.n52.wps.ags.ArcToolboxProcessRepository" active="true">
+			<Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\arctoolboxProcesses</Property>
+			<Property name="CONTAINER_URN" active="true">urn:n52:esri:arctoolbox:9.3.1</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property>
+			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
+		</Repository>
+		 -->
 		
-			 
-			 <Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
+		<!-- 	 
+		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
             <Property name="IP" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
             <Property name="DOMAIN" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
             <Property name="USER" active="true">soknos-wps</Property>
@@ -362,26 +357,29 @@
             <Property name="WORKSPACEBASE" active="true">C:\wpsworkspace</Property>
             <Property name="ARCOBJECTSJAR" active="true">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property>
             <Property name="DESCRIBE_PROCESS_DIR" active="true">C:\wps\xmlDescriptions</Property>
-          </Repository>
-            <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository" active="true">
-          </Repository>
-           -->
-        <!--   
+        </Repository>
+        -->
+		
+		<!--        
+        <Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository" active="true"/>
+        -->
+		
+		<!-- 
 		<Repository name="PythonProcessRepository" className="org.n52.wps.python.PythonProcessRepository" active="true">
-			
-			<Property name="PROCESS_INVENTORY_DIR" active="true">D:\development\pythonProcesses</Property>
+			<Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\pythonProcesses</Property>
 			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.5</Property>
 			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.6</Property>
 			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property>
 			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:gdal:1.8.0</Property>
 			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
-			
 		</Repository>
         -->   
            
 		
 	</AlgorithmRepositoryList>
-	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
+	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="52n-wps-webapp">
 		<Database/>
 	</Server>
 </WPSConfiguration>

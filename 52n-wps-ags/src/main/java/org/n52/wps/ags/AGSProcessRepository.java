@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
@@ -48,7 +49,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.legacy.LegacyParameter;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
@@ -59,15 +59,16 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	private static Logger LOGGER = Logger.getLogger(AGSProcessRepository.class);
 	
 	private Map<String, ProcessDescriptionType> registeredProcessDescriptions;
-	private Map<String, LegacyParameter[]> registeredAlgorithmParameters;
+	private Map<String, ToolParameter[]> registeredAlgorithmParameters;
 	
-	//constructor for Repository Manager
+	private Random rng;
+	
 	public AGSProcessRepository() {
 		LOGGER.info("Initializing ArcGIS Server Repository ...");
 		
 		//initialize local variables
 		this.registeredProcessDescriptions = new HashMap<String, ProcessDescriptionType>();
-		this.registeredAlgorithmParameters = new HashMap<String, LegacyParameter[]>();
+		this.registeredAlgorithmParameters = new HashMap<String, ToolParameter[]>();
 		
 		String describeProcessPathString = AGSProperties.getInstance().getProcessDescriptionDir();
 		LOGGER.info("Loading AGS process descriptions from: " + describeProcessPathString);
@@ -78,6 +79,10 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		for (File currentFile : describeProcessFiles){
 			addAlgorithm(currentFile);
 		}
+		
+		// initialize RNG
+		rng = new Random();
+		
 	}
 	
 	
@@ -103,8 +108,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}
-		
-		return new GenericAGSProcessDelegator(processID, registeredAlgorithmParameters.get(processID), registeredProcessDescriptions.get(processID));
+		// create a unique directory for each instance
+		String randomDirName = AGSProperties.getInstance().getWorkspaceBase() + File.separator + System.currentTimeMillis() + "_" + rng.nextInt(1000);
+		return new GenericAGSProcessDelegator(new File (randomDirName), processID, registeredAlgorithmParameters.get(processID), registeredProcessDescriptions.get(processID));
 	}
 	
 	
@@ -114,7 +120,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		String processID = pd.getIdentifier().getStringValue();
 		LOGGER.info("Registering: " + processID);
 		this.registeredProcessDescriptions.put(processID, pd);
-		LegacyParameter[] params = this.loadParameters(pd);
+		ToolParameter[] params = this.loadParameters(pd);
 		this.registeredAlgorithmParameters.put(processID, params);
 		
 		if (!pd.validate()){
@@ -140,7 +146,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		return algorithms;
 	}
 	
-	private LegacyParameter[] loadParameters(ProcessDescriptionType pd){
+	private ToolParameter[] loadParameters(ProcessDescriptionType pd){
 		if(pd.getIdentifier().getStringValue().contains("buffer")){
 			System.out.println("Buffer"); 
 		}
@@ -167,7 +173,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		
 		//create parameter array
 		//LegacyParameter[] paramArray = new LegacyParameter[inputArray.length + outputArray.length];
-		LegacyParameter[] paramArray = new LegacyParameter[paramCount];
+		ToolParameter[] paramArray = new ToolParameter[paramCount];
 		
 		
 		for (InputDescriptionType currentDesc : inputArray){
@@ -221,7 +227,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 				isOptional = true;
 			}
 			
-			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString, isOptional);
+			paramArray[index] = new ToolParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString, isOptional);
 		}
 		
 		for (OutputDescriptionType currentDesc : outputArray){
@@ -274,7 +280,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 			}
 			boolean isOptional = false;
 			
-			paramArray[index] = new LegacyParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString,isOptional);
+			paramArray[index] = new ToolParameter(wpsInputID, wpsOutputID, pameterID, schema, mimeType, literalDataType, defaultCRS, prefixString, suffixString, separatorString,isOptional);
 		}
 		
 		
@@ -332,4 +338,6 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		}
 		return registeredProcessDescriptions.get(processID);
 	}
+	
+	
 }

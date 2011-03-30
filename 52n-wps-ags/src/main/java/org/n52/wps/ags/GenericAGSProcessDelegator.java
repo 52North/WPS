@@ -41,6 +41,7 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
@@ -52,7 +53,6 @@ import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.legacy.LegacyParameter;
 
 
 public class GenericAGSProcessDelegator implements IAlgorithm{
@@ -61,20 +61,22 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	private final String processID;
 	private List<String> errors;
 	private AGSWorkspace workspace;
-	protected final LegacyParameter[] parameterDescriptions;
+	protected final ToolParameter[] parameterDescriptions;
 	private String[] toolParameters;
 	private final int parameterCount;
 	private final ProcessDescriptionType processDescription;
+	private final File instanceWorkspace;
 	
 	
 	
-	public GenericAGSProcessDelegator(String processID, LegacyParameter[] legacyParameters, ProcessDescriptionType processDescription) {
+	public GenericAGSProcessDelegator(File workspace, String processID, ToolParameter[] legacyParameters, ProcessDescriptionType processDescription) {
 		errors = new ArrayList<String>();
 		this.processID = processID;
 		this.parameterDescriptions = legacyParameters;
 		this.parameterCount = legacyParameters.length;
 		this.processDescription = processDescription;
 		this.toolParameters = new String[this.parameterCount];
+		this.instanceWorkspace = workspace;
 		
 	}
 	
@@ -172,12 +174,12 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		AGSProperties.getInstance().bootstrapArcobjectsJar();
 		
 		//create the workspace
-		this.workspace = new AGSWorkspace();
+		this.workspace = new AGSWorkspace(instanceWorkspace);
 		
 		//Assign the parameters
 		for (int i=0; i<this.parameterCount; i++){
 			
-			LegacyParameter currentParam = this.parameterDescriptions[i];
+			ToolParameter currentParam = this.parameterDescriptions[i];
 			
 			// input parameters
 			if(currentParam.isInput){
@@ -233,7 +235,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		HashMap<String, IData> result = new HashMap<String, IData>();
 		
 		for (int i=0; i<this.parameterCount; i++){
-			LegacyParameter currentParam = this.parameterDescriptions[i];
+			ToolParameter currentParam = this.parameterDescriptions[i];
 			
 			if(currentParam.isOutput){
 				
@@ -327,5 +329,13 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		return newFileName;
 	}
 	
-
+	//delete the current workspace
+	protected void finalize(){
+		try {
+			FileUtils.deleteDirectory(instanceWorkspace);
+		} catch (IOException e) {
+			LOGGER.error("Could not delete dead workspace:\n" + instanceWorkspace.getAbsolutePath());
+			e.printStackTrace();
+		}
+	}
 }

@@ -85,15 +85,15 @@
   		<dependency>
 	  	  <groupId>org.n52.wps</groupId>
 	  	  <artifactId>52n-wps-legacy-arcobjects</artifactId>
-      	  <version>1.0.0</version>
+      	  <version>1.1.0</version>
 		</dependency>
   		
-  		<!-- dependencies for arcobjects code -->
-  		 <!-- 
+  		<!-- dependencies for arcobjects code, see AGSWorkspace.java.txt -->
+  		 <!--
   		 <dependency>
    			<groupId>esri</groupId>
    			<artifactId>arcobjects</artifactId>
-   			<version>9.3</version>
+   			<version>9.3.1</version>
    			<scope>provided</scope>
 		</dependency>
 		-->

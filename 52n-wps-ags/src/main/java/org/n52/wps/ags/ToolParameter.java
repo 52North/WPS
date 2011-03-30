@@ -26,33 +26,33 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
  ***************************************************************/
 
-package org.n52.wps.server.legacy;
+package org.n52.wps.ags;
 
-@Deprecated
-public class LegacyParameter {
+
+public class ToolParameter {
 	
-	public final String mimeType;
-	public final String schema;
+	protected final String mimeType;
+	protected final String schema;
 	
-	public final String literalDataType;
-	public final String defaultCRS;
+	protected final String literalDataType;
+	protected final String defaultCRS;
 	
-	public final String prefixString;
-	public final String suffixString;
-	public final String separatorString;
-	public final String wpsInputID;
-	public final String wpsOutputID;
-	public final String pameterID;
+	protected final String prefixString;
+	protected final String suffixString;
+	protected final String separatorString;
+	protected final String wpsInputID;
+	protected final String wpsOutputID;
+	protected final String pameterID;
 	
-	public final boolean isComplex;
-	public final boolean isLiteral;
-	public final boolean isCRS;
-	public final boolean isOptional;
+	protected final boolean isComplex;
+	protected final boolean isLiteral;
+	protected final boolean isCRS;
+	protected final boolean isOptional;
 	
-	public final boolean isInput;
-	public final boolean isOutput;
+	protected final boolean isInput;
+	protected final boolean isOutput;
 	
-	public LegacyParameter (String wpsInputID, String wpsOutputID, String gpParameterID,
+	protected ToolParameter (String wpsInputID, String wpsOutputID, String gpParameterID,
 			String wpsComplexDataSchema, String wpsMimeType,
 			String wpsLiteralDataType, String wpsDefaultCRS,
 			String prefixString, String suffixString, String separatorString, boolean isOptional){
@@ -92,7 +92,7 @@ public class LegacyParameter {
 		
 	}
 	
-	public static final String null2empty(String str){
+	private static final String null2empty(String str){
 		if (str == null) str = "";
 		return str;
 	}
