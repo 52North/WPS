@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import javax.media.jai.JAI;
 
@@ -152,7 +153,7 @@ public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStrea
 		//File file = new File("tempFile"+System.currentTimeMillis()+".temp");
                 File tempfile = null;
                 try{
-                    String filename =  Long.toString(System.currentTimeMillis(),10);
+                    String filename =  UUID.randomUUID().toString();
                     tempfile = File.createTempFile("wps" + filename,".tmp");
 
 			OutputStream outputStream = new FileOutputStream(tempfile);

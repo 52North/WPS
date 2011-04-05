@@ -35,10 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -46,20 +43,15 @@ import java.util.zip.ZipInputStream;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
-import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShapefileDataStoreFactory;
-import org.geotools.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
-import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;
@@ -72,8 +64,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.PropertyType;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 public class GenericFileData {
 
@@ -265,7 +255,7 @@ public class GenericFileData {
 			File writeDirectory) throws IOException {
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
-		String baseFileName = new Long(System.currentTimeMillis()).toString();
+		String baseFileName = UUID.randomUUID().toString();
 
 		ZipInputStream zipInputStream = new ZipInputStream(
 				new BufferedInputStream(is));
@@ -310,7 +300,7 @@ public class GenericFileData {
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
 		String fileName = null;
-		String baseFileName = new Long(System.currentTimeMillis()).toString();
+		String baseFileName = UUID.randomUUID().toString();
 
 		fileName = baseFileName + "." + extension;
 		File currentFile = new File(writeDirectory, fileName);
@@ -337,7 +327,7 @@ public class GenericFileData {
 
 	public GTVectorDataBinding getAsGTVectorDataBinding() {
 		String tmpDirPath = System.getProperty("java.io.tmpdir");
-		String dirName = tmpDirPath + File.separator + "tmp" + System.currentTimeMillis();
+		String dirName = tmpDirPath + File.separator + "tmp" + UUID.randomUUID();
 		File tempDir = null;
 
 		if (new File(dirName).mkdir()) {

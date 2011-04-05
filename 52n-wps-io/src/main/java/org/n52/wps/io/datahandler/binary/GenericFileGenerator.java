@@ -33,6 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -120,7 +121,7 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 			data = new GenericFileDataBinding(convertFile(currentFD));
 		
 		//create a tempfile for the output
-		tempfile = new File("tempFile"+System.currentTimeMillis()+".temp");
+		tempfile = new File("tempFile" + UUID.randomUUID() + ".temp");
 		try {
 			OutputStream outputStream = new FileOutputStream(tempfile);
 			writeToStream(data, outputStream);

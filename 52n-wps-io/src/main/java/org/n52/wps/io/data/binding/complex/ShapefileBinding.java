@@ -3,6 +3,7 @@ package org.n52.wps.io.data.binding.complex;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
@@ -55,7 +56,7 @@ public class ShapefileBinding implements IComplexData{
 	}
 	
 	public GTVectorDataBinding getPayloadAsGTVectorDataBinding(){
-		String dirName = "tmp" + System.currentTimeMillis();
+		String dirName = "tmp" + UUID.randomUUID();
 		File tempDir = null;
 		
 		try {

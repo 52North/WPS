@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -18,10 +19,9 @@ public abstract class AbstractGeotiffParser extends AbstractBinaryParser {
 	protected static Logger LOGGER = Logger.getLogger(GeotiffParser.class);
 	
 	protected IData parseTiff(InputStream input) {
-		//String fileName = "tempfile" + System.currentTimeMillis();
 		File tempFile;
 		try {
-            tempFile = File.createTempFile("tempfile" + System.currentTimeMillis(),"tmp");
+            tempFile = File.createTempFile("tempfile" + UUID.randomUUID(),"tmp");
 			FileOutputStream outputStream = new FileOutputStream(tempFile);
 			byte buf[] = new byte[4096];
 			int len;

@@ -1,25 +1,19 @@
 package org.n52.wps.io.datahandler.binary;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
-import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
-import org.w3c.dom.DOMException;
-import org.xml.sax.SAXException;
 
 public class GTBinZippedSHPParser extends AbstractGTBinZippedSHPParser {
 		/**
@@ -31,7 +25,7 @@ public class GTBinZippedSHPParser extends AbstractGTBinZippedSHPParser {
 	@Override
 	public IData parse(InputStream input, String mimeType) throws RuntimeException {
 		try {
-			String fileName = "tempfile" + System.currentTimeMillis()+".zip";
+			String fileName = "tempfile" + UUID.randomUUID() + ".zip";
 			File tempFile = new File(fileName);
 			try {
 				FileOutputStream outputStream = new FileOutputStream(tempFile);

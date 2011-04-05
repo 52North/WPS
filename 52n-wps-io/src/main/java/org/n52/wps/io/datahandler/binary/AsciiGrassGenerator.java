@@ -37,18 +37,14 @@ package org.n52.wps.io.datahandler.binary;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.util.UUID;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataSourceException;
 import org.geotools.gce.arcgrid.ArcGridWriter;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -134,7 +130,7 @@ public class AsciiGrassGenerator extends AbstractBinaryGenerator implements IStr
 			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
 		}
 		GridCoverage2D grid = ((GTRasterDataBinding) data).getPayload();
-		String fileName = "temp"+System.currentTimeMillis()+".tmp";
+		String fileName = "temp" + UUID.randomUUID() + ".tmp";
 		File outputFile = new File(fileName);
 		GridCoverageWriter writer;
 		try {
