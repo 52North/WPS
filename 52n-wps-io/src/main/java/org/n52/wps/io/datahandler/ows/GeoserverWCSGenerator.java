@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,7 +25,6 @@ import org.n52.wps.io.data.binding.complex.GeotiffBinding;
 import org.n52.wps.io.data.binding.complex.ShapefileBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -139,7 +139,7 @@ public class GeoserverWCSGenerator extends AbstractXMLGenerator{
 		
 		storeName = file.getName();			
 	
-		storeName = storeName +"_"+ System.currentTimeMillis();
+		storeName = storeName +"_" + UUID.randomUUID();
 		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, port);
 		
 		String result = geoserverUploader.createWorkspace();

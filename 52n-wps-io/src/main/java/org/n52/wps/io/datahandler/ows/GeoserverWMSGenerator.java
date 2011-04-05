@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -166,7 +167,7 @@ public class GeoserverWMSGenerator extends AbstractXMLGenerator{
 		}
 		storeName = file.getName();			
 	
-		storeName = storeName +"_"+ System.currentTimeMillis();
+		storeName = storeName +"_" + UUID.randomUUID();
 		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, port);
 		
 		String result = geoserverUploader.createWorkspace();
