@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.transform.OutputKeys;
@@ -200,7 +201,7 @@ public class InputHandler {
 		else {
 			File f;
 			try {
-				f = File.createTempFile("wps"+System.currentTimeMillis(), "tmp");
+				f = File.createTempFile("wps" + UUID.randomUUID(), "tmp");
 				FileOutputStream fos = new FileOutputStream(f);
 				
 				if(complexValue.startsWith("<xml-fragment")){

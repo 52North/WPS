@@ -6,13 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 
 public class StreamUtils {
 
 	public static InputStream convertOutputStreamToInputStream(LargeBufferStream outputStream){
-		File tempFile = new File("tempFile"+System.currentTimeMillis());
+		File tempFile = new File("tempFile" + UUID.randomUUID());
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(tempFile);
 			outputStream.close();
