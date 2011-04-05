@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
@@ -216,7 +217,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					}else{
 						extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(currentParam.mimeType);
 					}
-					String fileName = System.currentTimeMillis() + "." + extension;
+					String fileName = UUID.randomUUID() + "." + extension;
 					
 					fileName = this.addOutputFile(fileName);
 					this.toolParameters[i] = fileName;

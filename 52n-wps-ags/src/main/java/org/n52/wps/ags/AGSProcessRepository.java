@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.UUID;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
@@ -61,7 +61,6 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	private Map<String, ProcessDescriptionType> registeredProcessDescriptions;
 	private Map<String, ToolParameter[]> registeredAlgorithmParameters;
 	
-	private Random rng;
 	
 	public AGSProcessRepository() {
 		LOGGER.info("Initializing ArcGIS Server Repository ...");
@@ -79,9 +78,6 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		for (File currentFile : describeProcessFiles){
 			addAlgorithm(currentFile);
 		}
-		
-		// initialize RNG
-		rng = new Random();
 		
 	}
 	
@@ -109,7 +105,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}
 		// create a unique directory for each instance
-		String randomDirName = AGSProperties.getInstance().getWorkspaceBase() + File.separator + System.currentTimeMillis() + "_" + rng.nextInt(1000);
+		String randomDirName = AGSProperties.getInstance().getWorkspaceBase() + File.separator + UUID.randomUUID();
 		return new GenericAGSProcessDelegator(new File (randomDirName), processID, registeredAlgorithmParameters.get(processID), registeredProcessDescriptions.get(processID));
 	}
 	

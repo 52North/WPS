@@ -36,7 +36,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.UUID;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -64,8 +64,6 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	private URI[] supportedBackends;
 	private File workspaceBase = null;
 	private File inventoryDir = null;
-	
-	private Random rng;
 	
 	
 	public PythonProcessRepository (){
@@ -98,8 +96,6 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			LOGGER.info("No applicable algorithms fond");
 		}
 		
-		// initialize RNG
-		rng = new Random();
 	}
 	
 	private void loadConfiguration() throws Exception{
@@ -215,7 +211,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 		}
 		try {
 			// create a unique directory for each instance
-			String randomDirName = workspaceBase + File.separator + System.currentTimeMillis() + "_" + rng.nextInt(1000);
+			String randomDirName = workspaceBase + File.separator + UUID.randomUUID();
 			return new PythonScriptDelegator(registeredAlgorithms.get(processID), new File (randomDirName));
 		} catch (IOException e) {
 			LOGGER.error(processID + ": Instantiation failed!");

@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -110,7 +111,7 @@ public class PythonScriptDelegator implements IAlgorithm{
 				
 				// prepare output filename
 				String extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
-				String fileName = System.currentTimeMillis() + "." + extension;
+				String fileName = UUID.randomUUID() + "." + extension;
 				fileName = scriptWorkspace.getAbsolutePath() + File.separator + fileName;
 				cmdParam.addValue(fileName);
 			}
