@@ -36,11 +36,11 @@ package org.n52.wps.server.request;
 
 import java.net.URLDecoder;
 import java.util.Map;
-import java.util.Observable;
 
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteDocument.Execute;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
@@ -51,13 +51,13 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ResponseDocumentType;
 import net.opengis.wps.x100.ResponseFormType;
 import net.opengis.wps.x100.StatusType;
-import net.opengis.wps.x100.ExecuteDocument.Execute;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.derby.tools.sysinfo;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.context.ExecutionContext;
+import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
@@ -520,17 +520,23 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * @throws ExceptionReport
 	 */
 	public Response call() throws ExceptionReport {
-		LOGGER.debug("started with execution");
-		// parse the input
-		InputType[] inputs = new InputType[0];
-		if( getExecute().getDataInputs()!=null){
-			inputs = getExecute().getDataInputs().getInputArray();
-		}
-		InputHandler parser = new InputHandler(inputs, getAlgorithmIdentifier());
-		
-		// we got so far:
-		// get the algorithm, and run it with the clients input
 		try{
+			ExecutionContext context = new ExecutionContext();
+	
+				// register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
+			ExecutionContextFactory.registerContext(context);
+				
+			LOGGER.debug("started with execution");
+			// parse the input
+			InputType[] inputs = new InputType[0];
+			if( getExecute().getDataInputs()!=null){
+				inputs = getExecute().getDataInputs().getInputArray();
+			}
+			InputHandler parser = new InputHandler(inputs, getAlgorithmIdentifier());
+			
+			// we got so far:
+			// get the algorithm, and run it with the clients input
+		
 			/*
 			 * IAlgorithm algorithm =
 			 * RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
@@ -571,6 +577,9 @@ public class ExecuteRequest extends Request implements IObserver {
 		}catch(RuntimeException e) {
 			LOGGER.debug("RuntimeException:" + e.getMessage());
 			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+		} finally {
+			//  you ***MUST*** call this or else you will have a PermGen ClassLoader memory leak due to ThreadLocal use
+			ExecutionContextFactory.unregisterContext();
 		}
 		LOGGER.info("Handled ExecuteRequest successfully for Process: " + getAlgorithmIdentifier());
 		StatusType status = StatusType.Factory.newInstance();
