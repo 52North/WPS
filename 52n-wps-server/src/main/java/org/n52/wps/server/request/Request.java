@@ -35,6 +35,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -54,7 +55,7 @@ abstract public class Request implements Callable <Response> {
 	protected CaseInsensitiveMap map = null;
 	protected Document doc = null;
 	protected static Logger LOGGER = Logger.getLogger(Request.class);
-	protected long id = 0;
+	protected UUID id = null;
 	public static final String SUPPORTED_VERSION = "1.0.0";
 	
 	/**
@@ -188,9 +189,9 @@ abstract public class Request implements Callable <Response> {
 		return sb.toString();
 	}
 	
-	public long getUniqueId(){
-		if (id == 0) {
-			this.id = System.currentTimeMillis();
+	public UUID getUniqueId(){
+		if (id == null) {
+			this.id = UUID.randomUUID();
 		}
 		return id;
 	}

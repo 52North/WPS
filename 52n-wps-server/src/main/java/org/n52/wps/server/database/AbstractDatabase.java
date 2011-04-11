@@ -152,7 +152,7 @@ public abstract class AbstractDatabase implements IDatabase{
 			}
 			
 			
-			return insertResultEntity(baos, Long.toString(response.getUniqueId()), response.getType(), executeResponse.getMimeType());
+			return insertResultEntity(baos, (response.getUniqueId()).toString(), response.getType(), executeResponse.getMimeType());
 			
 		}else{
 			throw new RuntimeException("Could not insert a non execute response");
@@ -216,7 +216,7 @@ public abstract class AbstractDatabase implements IDatabase{
 		// Try to update the row of data into the database.
 		try {
 			AbstractDatabase.updateSQL.setString(
-					UPDATE_COLUMN_REQUEST_ID, Long.toString(response.getUniqueId()));
+					UPDATE_COLUMN_REQUEST_ID, (response.getUniqueId()).toString());
 			AbstractDatabase.updateSQL.setAsciiStream(
 					UPDATE_COLUMN_RESPONSE, bais);
 			AbstractDatabase.updateSQL.executeUpdate();
@@ -235,7 +235,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 *            The Response to store.
 	 */
 	public synchronized String storeResponse(Response response) {
-		if (lookupResponse(Long.toString(response.getUniqueId())) == null) {
+		if (lookupResponse((response.getUniqueId()).toString()) == null) {
 			return insertResponse(response);
 		} else {
 			updateResponse(response);

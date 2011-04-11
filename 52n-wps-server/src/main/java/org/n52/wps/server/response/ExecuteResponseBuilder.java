@@ -116,7 +116,7 @@ public class ExecuteResponseBuilder {
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		if(request.isQuickStatus() && responseElem.getStatus().getProcessSucceeded() == null) {
-			responseElem.setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL(Long.toString(request.getUniqueId())));
+			responseElem.setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
 			return;
 		}
 		
@@ -284,7 +284,7 @@ public class ExecuteResponseBuilder {
 		else {
 			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
 			if(asReference) {
-				handler.updateResponseAsReference(doc, Long.toString(request.getUniqueId()),mimeType);
+				handler.updateResponseAsReference(doc, (request.getUniqueId()).toString(),mimeType);
 			}
 			else {
 				handler.updateResponseForComplexData(doc);
@@ -305,7 +305,7 @@ public class ExecuteResponseBuilder {
 			return;
 		}
 		if(request.isStoreResponse()) {
-			doc.getExecuteResponse().setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL(Long.toString(request.getUniqueId())));
+			doc.getExecuteResponse().setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
 		}
 		try {
 			//Forces XMLBeans to write the namespaces in front of all other attributes. Otherwise the xml is not valid

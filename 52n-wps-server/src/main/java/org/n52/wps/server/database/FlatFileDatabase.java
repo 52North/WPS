@@ -221,7 +221,7 @@ public class FlatFileDatabase implements IDatabase {
 			e.printStackTrace();
 		}
 		
-		return generateRetrieveResultURL(Long.toString(response.getUniqueId()));
+		return generateRetrieveResultURL((response.getUniqueId()).toString());
 	}
 
 	/* (non-Javadoc)

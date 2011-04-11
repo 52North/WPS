@@ -36,6 +36,7 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.OutputStream;
+import java.util.UUID;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
@@ -48,7 +49,7 @@ abstract public class Response {
 		this.request = request;
 	}
 	
-	public long getUniqueId(){
+	public UUID getUniqueId(){
 		return this.request.getUniqueId();
 	}
 	
