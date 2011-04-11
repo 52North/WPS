@@ -91,7 +91,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	}
 	
 	
-	public Class getInputDataType(String id) {
+	public Class<?> getInputDataType(String id) {
 		InputDescriptionType[] inputs = this.getDescription().getDataInputs().getInputArray();
 		
 		for(InputDescriptionType input : inputs){
@@ -99,20 +99,23 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			//Literal Input
 			if(input.isSetLiteralData()){
 				String datatype = input.getLiteralData().getDataType().getStringValue();
-				if(datatype.contains("tring")){
+				if(datatype.equalsIgnoreCase("string")){
 					return LiteralStringBinding.class;
 				}
-				if(datatype.contains("oolean")){
+				if(datatype.equalsIgnoreCase("boolean")){
 					return LiteralBooleanBinding.class;
 				}
-				if(datatype.contains("loat")){
+				if(datatype.equalsIgnoreCase("float")){
 					return LiteralFloatBinding.class;
 				}
-				if(datatype.contains("nt")){
+				if(datatype.equalsIgnoreCase("double")){
+					return LiteralDoubleBinding.class;
+				}
+				if(datatype.equalsIgnoreCase("int")){
 					return LiteralIntBinding.class;
 				}
-				if(datatype.contains("ouble")){
-					return LiteralDoubleBinding.class;
+				if(datatype.equalsIgnoreCase("integer")){
+					return LiteralIntBinding.class;
 				}
 			}
 			
@@ -125,7 +128,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		return null;
 	}
 
-	public Class getOutputDataType(String id) {
+	public Class<?> getOutputDataType(String id) {
 		OutputDescriptionType[] outputs = this.getDescription().getProcessOutputs().getOutputArray();
 		
 		for(OutputDescriptionType output : outputs){
@@ -133,19 +136,22 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			//Literal Output
 			if(output.isSetLiteralOutput()){
 				String datatype = output.getLiteralOutput().getDataType().getStringValue();
-				if(datatype.contains("tring")){
+				if(datatype.equalsIgnoreCase("string")){
 					return LiteralStringBinding.class;
 				}
-				if(datatype.contains("oolean")){
+				if(datatype.equalsIgnoreCase("boolean")){
 					return LiteralBooleanBinding.class;
 				}
-				if(datatype.contains("loat")){
+				if(datatype.equalsIgnoreCase("float")){
 					return LiteralFloatBinding.class;
 				}
-				if(datatype.contains("ouble")){
+				if(datatype.equalsIgnoreCase("double")){
 					return LiteralDoubleBinding.class;
 				}
-				if(datatype.contains("nt")){
+				if(datatype.equalsIgnoreCase("int")){
+					return LiteralIntBinding.class;
+				}
+				if(datatype.equalsIgnoreCase("integer")){
 					return LiteralIntBinding.class;
 				}
 			}

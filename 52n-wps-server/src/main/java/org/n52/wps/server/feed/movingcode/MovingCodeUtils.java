@@ -54,20 +54,23 @@ public class MovingCodeUtils {
 				//Literal Input
 				if(input.isSetLiteralData()){
 					String datatype = input.getLiteralData().getDataType().getStringValue();
-					if(datatype.contains("tring")){
+					if(datatype.equalsIgnoreCase("string")){
 						return LiteralStringBinding.class;
 					}
-					if(datatype.contains("oolean")){
+					if(datatype.equalsIgnoreCase("boolean")){
 						return LiteralBooleanBinding.class;
 					}
-					if(datatype.contains("loat")){
+					if(datatype.equalsIgnoreCase("float")){
 						return LiteralFloatBinding.class;
 					}
-					if(datatype.contains("nt")){
+					if(datatype.equalsIgnoreCase("double")){
+						return LiteralDoubleBinding.class;
+					}
+					if(datatype.equalsIgnoreCase("int")){
 						return LiteralIntBinding.class;
 					}
-					if(datatype.contains("ouble")){
-						return LiteralDoubleBinding.class;
+					if(datatype.equalsIgnoreCase("integer")){
+						return LiteralIntBinding.class;
 					}
 				}
 				
@@ -91,19 +94,22 @@ public class MovingCodeUtils {
 				//Literal Output
 				if(output.isSetLiteralOutput()){
 					String datatype = output.getLiteralOutput().getDataType().getStringValue();
-					if(datatype.contains("tring")){
+					if(datatype.equalsIgnoreCase("string")){
 						return LiteralStringBinding.class;
 					}
-					if(datatype.contains("oolean")){
+					if(datatype.equalsIgnoreCase("boolean")){
 						return LiteralBooleanBinding.class;
 					}
-					if(datatype.contains("loat")){
+					if(datatype.equalsIgnoreCase("float")){
 						return LiteralFloatBinding.class;
 					}
-					if(datatype.contains("ouble")){
+					if(datatype.equalsIgnoreCase("double")){
 						return LiteralDoubleBinding.class;
 					}
-					if(datatype.contains("nt")){
+					if(datatype.equalsIgnoreCase("int")){
+						return LiteralIntBinding.class;
+					}
+					if(datatype.equalsIgnoreCase("integer")){
 						return LiteralIntBinding.class;
 					}
 				}

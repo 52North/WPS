@@ -195,11 +195,11 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 		return mco.getProcessDescription().validate();
 	}
 
-	public Class getInputDataType(String id) {
+	public Class<?> getInputDataType(String id) {
 		return MovingCodeUtils.getInputDataType(mco, id);
 	}
 
-	public Class getOutputDataType(String id) {
+	public Class<?> getOutputDataType(String id) {
 		return MovingCodeUtils.getOutputDataType(mco, id);
 	}
 	
