@@ -47,7 +47,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.binary.AbstractBinaryGenerator;
 import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.w3c.dom.Node;
 

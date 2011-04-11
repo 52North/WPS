@@ -35,7 +35,6 @@ Muenster, Germany
 package org.n52.wps.server.request;
 
 
-import java.util.ArrayList;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -45,7 +44,6 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.response.DescribeProcessResponse;

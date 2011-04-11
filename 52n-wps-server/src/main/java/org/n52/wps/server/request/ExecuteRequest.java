@@ -79,7 +79,7 @@ public class ExecuteRequest extends Request implements IObserver {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
-	private Map returnResults;
+	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilder execRespType;
 	
 	
@@ -134,7 +134,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * @param ciMap
 	 */
 	private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
-		String version = this.getMapValue("version", ciMap, true);
+		String version = getMapValue("version", ciMap, true);
 		if (!version.equals(Request.SUPPORTED_VERSION)) {
 			throw new ExceptionReport("request version is not supported: "
 					+ version, ExceptionReport.VERSION_NEGOTIATION_FAILED);
@@ -146,8 +146,6 @@ public class ExecuteRequest extends Request implements IObserver {
 			throw new ExceptionReport("Process does not exist",
 					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
-		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(
-				processID, this);
 		execute.addNewIdentifier().setStringValue(processID);
 		DataInputsType dataInputs = execute.addNewDataInputs();
 		String dataInputString = getMapValue("DataInputs", true);
@@ -225,11 +223,6 @@ public class ExecuteRequest extends Request implements IObserver {
 					// TODO: check for different attributes
 					// handling ComplexReference
 					if (!(hrefAttribute == null) && !hrefAttribute.equals("")) {
-						if (hrefAttribute == null) {
-							throw new ExceptionReport(
-									"No complex data nor reference to complex data supplied.",
-									ExceptionReport.MISSING_PARAMETER_VALUE);
-						}
 						InputReferenceType reference = input.addNewReference();
 						reference.setHref(hrefAttribute);
 						if (schemaAttribute != null) {

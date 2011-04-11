@@ -44,15 +44,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.zip.GZIPInputStream;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -67,7 +63,6 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
@@ -419,15 +414,15 @@ public class InputHandler {
 	
 	
 	
-	private InputStream retrievingZippedContent(URLConnection conn) throws IOException{
-		String contentType = conn.getContentEncoding();
-		if(contentType != null && contentType.equals("gzip")) {
-			return new GZIPInputStream(conn.getInputStream());
-		}
-		else{
-			return conn.getInputStream();
-		}
-	}
+//	private InputStream retrievingZippedContent(URLConnection conn) throws IOException{
+//		String contentType = conn.getContentEncoding();
+//		if(contentType != null && contentType.equals("gzip")) {
+//			return new GZIPInputStream(conn.getInputStream());
+//		}
+//		else{
+//			return conn.getInputStream();
+//		}
+//	}
 	
 	 private String nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
 		  StringWriter stringWriter = new StringWriter();
