@@ -7,7 +7,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Abstract>Computes a geometric intersection of the input and update features. Features or portions of features in the input and update features which do not overlap will be written to the Output Feature Class. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>in_features</ows:Identifier><!-- 0 -->
 				<ows:Title>in features</ows:Title>
 				<ows:Abstract>The input feature class or layer. Geometry type must be polygon.</ows:Abstract>
 				<ComplexData>
@@ -26,7 +26,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ComplexData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>update_features </ows:Identifier><!-- 1 -->
+				<ows:Identifier>update_features</ows:Identifier><!-- 1 -->
 				<ows:Title>update features</ows:Title>
 				<ows:Abstract>The update feature class or layer. Geometry type must be polygon.</ows:Abstract>
 				<ComplexData>

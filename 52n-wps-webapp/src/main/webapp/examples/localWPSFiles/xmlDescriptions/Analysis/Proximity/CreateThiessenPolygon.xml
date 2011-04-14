@@ -8,7 +8,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		Thiessen polygons have the unique property that each polygon contains only one input point, and any location within a polygon is closer to its associated point than to the point of any other polygon. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>in_features</ows:Identifier><!-- 0 -->
 				<ows:Title>in features</ows:Title>
 				<ows:Abstract>The points for which the Thiessen polygons will be generated.</ows:Abstract>
 				<ComplexData>

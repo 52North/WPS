@@ -62,7 +62,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</LiteralData>	
 			</Input>
 				<Input minOccurs="0" maxOccurs="1">
-					<ows:Identifier>compute_covariance </ows:Identifier><!-- 3 -->
+					<ows:Identifier>compute_covariance</ows:Identifier><!-- 3 -->
 					<ows:Title>compute covariance</ows:Title>
 					<ows:Abstract>Boolean specifying whether the covariance matrixes will be calculated.
 					If True, the covariance matrixes and the means for all classes of the sampleDataset will be computed. If False, only the means for all classes of the sampleDataset will be calculated.</ows:Abstract>

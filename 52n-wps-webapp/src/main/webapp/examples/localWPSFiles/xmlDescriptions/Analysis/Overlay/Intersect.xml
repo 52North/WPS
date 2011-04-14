@@ -7,7 +7,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Abstract>Computes a geometric intersection of the Input Features. Features or portions of features which overlap in all layers and/or feature classes will be written to the Output Feature Class. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1000">
-				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>in_features</ows:Identifier><!-- 0 -->
 				<ows:Title>in features</ows:Title>
 				<ows:Abstract>A list of the input feature classes or layers. When the distance between features is less than the cluster tolerance, the features with the lower rank will snap to the feature with the higher rank. The highest rank is one. For more information, see Priority ranks and Geoprocessing tools. With ArcView and ArcEditor licenses, the number of input feature classes or layers is limited to two.</ows:Abstract>
 				<ComplexData>

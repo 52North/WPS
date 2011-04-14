@@ -7,7 +7,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Abstract>This determines the distances between point features in the Input Features to all points in the Near Features within the Search Radius. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>in_features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>in_features</ows:Identifier><!-- 0 -->
 				<ows:Title>in features</ows:Title>
 				<ows:Abstract>The point features from which distances to the Near Features will be calculated.</ows:Abstract>
 				<ComplexData>
@@ -26,7 +26,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ComplexData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>near_features </ows:Identifier><!-- 1 -->
+				<ows:Identifier>near_features</ows:Identifier><!-- 1 -->
 				<ows:Title>near features</ows:Title>
 				<ows:Abstract>The points to which distances from the Input Features will be determined. Distances between points within the same feature class or layer can be determined by specifying the same feature class or layer for the Input Features and Near Features.</ows:Abstract>
 				<ComplexData>

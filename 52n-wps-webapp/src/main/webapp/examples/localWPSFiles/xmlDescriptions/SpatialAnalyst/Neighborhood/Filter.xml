@@ -30,7 +30,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ComplexData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
-				<ows:Identifier>filter_type </ows:Identifier><!-- 2 -->
+				<ows:Identifier>filter_type</ows:Identifier><!-- 2 -->
 				<ows:Title>filter type</ows:Title>
 				<ows:Abstract>The type of Filter operation to perform. LOW  — Traverses a low pass filter over the raster. This option smoothes the entire in_raster and reduces the significance of anomalous cells. This is the default option. HIGH  — Traverses a high pass filter over the raster. This option enhances the edges of subdued features in a raster.
 				</ows:Abstract>

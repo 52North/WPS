@@ -7,7 +7,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Abstract>Creates a new feature class of buffer features using a set of buffer distances. The new features may be dissolved using the distance values or as a set of individual features. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>Input_Features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>Input_Features</ows:Identifier><!-- 0 -->
 				<ows:Title>Input Features</ows:Title>
 				<ows:Abstract>The feature layer or feature class to be buffered.</ows:Abstract>
 				<ComplexData>

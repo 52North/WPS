@@ -7,7 +7,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ows:Abstract>This creates a table join in which fields from one layer's attribute table are appended to another layer's attribute table based on the relative locations of the features in the two layers. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>target_features </ows:Identifier><!-- 0 -->
+				<ows:Identifier>target_features</ows:Identifier><!-- 0 -->
 				<ows:Title>target features</ows:Title>
 				<ows:Abstract>The dataset that you are joining to. The output of the join operation will contain the features from this feature class with appended columns from the join feature class. It can be any spatial data source (shapefiles, SDE feature classes, coverages, SDC, query tables, etc.) supported by ArcGIS. It can also be read-only.</ows:Abstract>
 				<ComplexData>
@@ -26,7 +26,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ComplexData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>join_features </ows:Identifier><!-- 1 -->
+				<ows:Identifier>join_features</ows:Identifier><!-- 1 -->
 				<ows:Title>join features</ows:Title>
 				<ows:Abstract>The dataset that you are joining from. The attributes from this dataset are appended to the attributes of the target feature class in the output based on a spatial relation. It can be any spatial data source (shapefiles, SDE feature classes, coverages, SDC, query tables, etc.) supported by ArcGIS. It can also be read-only.</ows:Abstract>
 				<ComplexData>

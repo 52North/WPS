@@ -58,7 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</LiteralData>	
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
-				<ows:Identifier>a_priori_probabilities </ows:Identifier><!-- 4 -->
+				<ows:Identifier>a_priori_probabilities</ows:Identifier><!-- 4 -->
 				<ows:Title>a priori probabilities</ows:Title>
 				<ows:Abstract>Specifies how a priori probabilities will be determined. EQUAL  — All classes will have the same a priori probability. SAMPLE  — A priori probabilities will be proportional to the number of cells in each class relative to the total number of cells sampled in all classes in the signature file. FILE  — A priori probabilities will be assigned to each class from an input a priori probability file.
 				</ows:Abstract>
