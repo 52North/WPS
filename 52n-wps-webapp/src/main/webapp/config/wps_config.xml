@@ -216,7 +216,7 @@
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Generator>
 			
-			<Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.ows.WMSGenerator" active="true">
+			<Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWMSGenerator" active="true">
 				<Property name="supportedFormat" active="true">application/WMS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>
@@ -225,7 +225,7 @@
 				<Property name="Geoserver_port" active="true">8080</Property>
 			</Generator>
 			
-			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.ows.WFSGenerator" active="true">
+			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWFSGenerator" active="true">
 				<Property name="supportedFormat" active="true">application/WFS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>
@@ -234,7 +234,7 @@
 				<Property name="Geoserver_port" active="true">8080</Property>
 			</Generator>
 			
-			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.ows.WCSGenerator" active="true">
+			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWCSGenerator" active="true">
 				<Property name="supportedFormat" active="true">application/WCS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>

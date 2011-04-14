@@ -102,13 +102,13 @@ public class GeneratorFactory {
 				 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
 			}
 			catch (ClassNotFoundException e) {
-				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
+				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
 			}
 			catch(IllegalAccessException e) {
-				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
+				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
 			}
 			catch(InstantiationException e) {
-				LOGGER.error("One of the parsers could not be loaded: " + generatorClass, e);
+				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
 			}
 			if(generator != null) {
 				LOGGER.info("Generator class registered: " + generatorClass);
