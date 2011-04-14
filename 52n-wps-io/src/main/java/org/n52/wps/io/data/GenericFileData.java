@@ -271,6 +271,9 @@ public class GenericFileData {
 
 			String fileName = baseFileName + "." + currentExtension;
 			File currentFile = new File(writeDirectory, fileName);
+			if (!writeDirectory.exists()){
+				writeDirectory.mkdir();
+			}
 			currentFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(currentFile);
 			BufferedOutputStream bos = new BufferedOutputStream(fos,
