@@ -40,10 +40,7 @@ public class AlgorithmURL {
 	}
 	
 	public boolean isValid(){
-		if (uri.getScheme().equalsIgnoreCase(SCHEME)){
-			return true;
-		}
-		else return false;
+		return uri.getScheme().equalsIgnoreCase(SCHEME);
 	}
 	
 	public String getPublicPath(){

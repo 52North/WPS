@@ -80,7 +80,7 @@ public class ProcessIDRegistry {
 	}
 	
 	public String[] getIDs(){
-		return idList.toArray(new String[0]);
+		return idList.toArray(new String[idList.size()]);
 	}
 	
 	protected void clearRegistry(){

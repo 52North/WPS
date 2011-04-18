@@ -72,7 +72,7 @@ public class FeedRepository {
 			feedList.add(feed);
 		}
 		
-		registeredFeeds = feedList.toArray(new AlgorithmFeed[0]);
+		registeredFeeds = feedList.toArray(new AlgorithmFeed[feedList.size()]);
 	}
 	
 	public MovingCodeObject[] getMovingCodeObjects (URI[] supportedContainerURNs, URI[] providedComponentURN){
@@ -81,8 +81,7 @@ public class FeedRepository {
 			mocList.addAll(currentFeed.getMovingCodeObjects(supportedContainerURNs, providedComponentURN));
 		}
 		
-		MovingCodeObject[] mocArray = mocList.toArray(new MovingCodeObject[0]);
-		mocList = null;
+		MovingCodeObject[] mocArray = mocList.toArray(new MovingCodeObject[mocList.size()]);
 		
 		return mocArray;
 	}

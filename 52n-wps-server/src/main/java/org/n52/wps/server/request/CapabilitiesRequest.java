@@ -100,7 +100,7 @@ public class CapabilitiesRequest extends Request {
 		}
 		
 		if(!versionList.isEmpty()){			
-			map.put("version", versionList.toArray(new String []{}));	
+			map.put("version", versionList.toArray(new String [versionList.size()]));	
 		}	
 		
 	}

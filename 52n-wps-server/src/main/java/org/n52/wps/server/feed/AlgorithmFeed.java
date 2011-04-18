@@ -112,8 +112,7 @@ public class AlgorithmFeed {
 			File currentFile = new File (localPath.getAbsolutePath() + File.separator + currentFileName);
 			mcoList.add(new MovingCodeObject(currentFile, localPath));
 		}
-		feedAlgorithms = mcoList.toArray(new MovingCodeObject[0]);
-		mcoList = null;
+		feedAlgorithms = mcoList.toArray(new MovingCodeObject[mcoList.size()]);
 	}
 	
 	private void createLocalCopy() throws IOException{
@@ -150,8 +149,6 @@ public class AlgorithmFeed {
 				LOGGER.warn("Uncommon MimeType found at Feed URL: " + contentType);
 			}
 			lastFeedUpdate = conn.getLastModified();
-			//conn.disconnect();
-			conn = null;
 		} catch (MalformedURLException e) {
 			LOGGER.error("Invalid feedURL: " + feedURL);
 			throw new IOException();
