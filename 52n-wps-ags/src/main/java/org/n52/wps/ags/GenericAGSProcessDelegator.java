@@ -208,7 +208,9 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					if(currentParam.isOptional){
 						this.toolParameters[i] = null;
 					}else{
+						errors.add("Error while allocating input parameter " + currentParam.wpsInputID);
 						throw new RuntimeException("Error while allocating input parameter " + currentParam.wpsInputID);
+						
 					}
 				}
 			}
@@ -235,7 +237,12 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		//execute
 		String toolName = this.processDescription.getTitle().getStringValue();
 		//LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
-		this.workspace.executeGPTool(toolName, null, this.toolParameters);
+		try {
+			workspace.executeGPTool(toolName, null, this.toolParameters);
+		} catch (IOException e1) {
+			LOGGER.error(e1.getMessage());
+			errors.add(e1.getMessage());
+		}
 		
 		
 		//create the output
@@ -263,9 +270,10 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 						result.put(currentParam.wpsOutputID, new GenericFileDataBinding(outputFileData));
 					} catch (FileNotFoundException e) {
 						LOGGER.error("Could not read output file: " + fileName);
-						e.printStackTrace();
+						errors.add("Could not read output file: " + fileName);
 					} catch (IOException e) {
 						LOGGER.error("Could not create output file from: " + fileName);
+						errors.add("Could not create output file from: " + fileName);
 						e.printStackTrace();
 					}
 				}

@@ -45,6 +45,7 @@ public final class AGSProperties {
 	private static String ip;
 	private static String arcObjectsJar;
 	private static String processDescriptionDir;
+	private static boolean nativeDCOM;
 	
 	private static Logger LOGGER = Logger.getLogger(AGSProperties.class);
 	private static AGSProperties theProperties;
@@ -53,6 +54,12 @@ public final class AGSProperties {
 		
 		LOGGER.info("Reading AGS configuration ...");
 		readAGSProperties();
+		
+		if (nativeDCOM){
+			// switch to JINTEGRA native mode
+			LOGGER.info("Switching to JINTEGRA_NATIVE_MODE");
+			System.setProperty("JINTEGRA_NATIVE_MODE", "");
+		}
 	}
 	
 	public static synchronized AGSProperties getInstance(){
@@ -91,24 +98,38 @@ public final class AGSProperties {
 		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass("org.n52.wps.ags.AGSProcessRepository");
 		
 		for(Property property : propertyArray){
+			// get IP adress of ArcGIS Server instance
 			if(property.getName().equalsIgnoreCase("IP")){
 				ip=property.getStringValue();
 			}
+			// get Domain of ArcGIS Server instance; without a DC: Worstation Name (Windows)
 			if(property.getName().equalsIgnoreCase("DOMAIN")){
 				domain=property.getStringValue();
 			}
+			// get user with access permissions to ArcGIS Server
 			if(property.getName().equalsIgnoreCase("USER")){
 				user=property.getStringValue();
 			}
+			// get the corresponding pass
 			if(property.getName().equalsIgnoreCase("PASS")){
 				pass=property.getStringValue();
 			}
+			// get property for DCOM Native Mode
+			if(property.getName().equalsIgnoreCase("DCOM_NATIVE")){
+				String value = property.getStringValue();
+				if (value.equalsIgnoreCase("TRUE")){
+					nativeDCOM = true;
+				}
+			}
+			// get Workspace base
 			if(property.getName().equalsIgnoreCase("WORKSPACEBASE")){
 				workspaceBase=property.getStringValue();
 			}
+			// get path to arcobjects.jar
 			if(property.getName().equalsIgnoreCase("ARCOBJECTSJAR")){
 				arcObjectsJar=property.getStringValue();
 			}
+			// get path to process description directory
 			if(property.getName().equalsIgnoreCase("DESCRIBE_PROCESS_DIR")){
 				processDescriptionDir=property.getStringValue();
 			}
@@ -117,23 +138,21 @@ public final class AGSProperties {
 		}
 		
 		//log the access data
-		
 		LOGGER.info("  IP: " + ip);
 		LOGGER.info("  DOMAIN: " + domain);
 		
 		if (user != null) LOGGER.info("  USER: ***");
-		else LOGGER.info("  USER: missing");
+		else LOGGER.info("  USER: missing!");
 		
 		if (pass != null) LOGGER.info("  PASS: ***");
-		else LOGGER.info("  PASS: missing");
+		else LOGGER.info("  PASS: missing!");
 		
 		LOGGER.info("  WORKSPACEBASE: " + workspaceBase);
 	}
 	
-	public void bootstrapArcobjectsJar() {
+	protected void bootstrapArcobjectsJar() {
 		
 		//bootstrap arcobjects.jar
-		
 		LOGGER.info("Bootstrapping ArcObjects: " + arcObjectsJar);
 		
 		File aoFile = new File(arcObjectsJar);

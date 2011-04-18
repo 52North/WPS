@@ -52,7 +52,7 @@ public class AGSWorkspace{
 	private final AGSProperties agsProps;
 	
 	
-	public AGSWorkspace(File workspace){
+	protected AGSWorkspace(File workspace){
 		
 		//initialize workspace and server props
 		LOGGER.info("Creating AGS props ...");
@@ -61,16 +61,18 @@ public class AGSWorkspace{
 		
 	}
 	
-	public final void executeGPTool(String toolName, String toolboxPath, String[] parameters){
+	protected final void executeGPTool(String toolName, String toolboxPath, String[] parameters) throws IOException {
 		
-		//bootstrap AO
-		//AGSProperties.bootstrapArcobjectsJar();
-		
-		//get a connection to the server
-		LOGGER.info("Getting AGS connection object ...");
-		ServerConnection connection = getAGSConnection();
+		if (System.getProperty("JINTEGRA_NATIVE_MODE")==null) {
+			LOGGER.info("Running geoprocessor in DCOM Mode");
+		} else {
+			LOGGER.info("Running geoprocessor in Native Mode");
+		} 
 		
 		try{
+			//get a connection to the server
+			LOGGER.info("Getting AGS connection object ...");
+			ServerConnection connection = getAGSConnection();
 			// Get reference to ServerObjectManager
 			IServerObjectManager som = connection.getServerObjectManager();
 			IServerContext context = som.createServerContext("", "");
@@ -105,20 +107,21 @@ public class AGSWorkspace{
 			LOGGER.error("Caught J-Integra AutomationException: " + ae.getMessage() + "\n");
 			LOGGER.error(ae.getDescription());
 			ae.printStackTrace();
+			throw new IOException("Error executing ArcGIS Server geoprocessor.");
 		}
 			
 		catch (IOException e){
 			LOGGER.error("Caught IOException: " + e.getMessage() + "\n");
 			e.printStackTrace();
+			throw new IOException("Error executing ArcGIS Server geoprocessor.");
 		}
 	}
 	
 	
 	
-	private final ServerConnection getAGSConnection(){
+	private final ServerConnection getAGSConnection() throws IOException{
 		
 		// Initialize server
-		//agsProps.bootstrapArcobjectsJar();
 		LOGGER.info("initializing server ...");
 		ServerInitializer serverInitializer = new ServerInitializer();
 		serverInitializer.initializeServer(agsProps.getDomain(), agsProps.getUser(), agsProps.getPass());
@@ -130,17 +133,21 @@ public class AGSWorkspace{
 			LOGGER.info("server initialized!");
 
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
+			LOGGER.error("UnknownHostException - Could not connect to AGS host " + agsProps.getDomain() + " with user " + agsProps.getUser());
+			LOGGER.info("Please check connection parameters and firewall setup!");
 			e.printStackTrace();
+			throw new IOException("Error connecting to ArcGIS Server.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			LOGGER.error("IOException - Could not connect to AGS host " + agsProps.getDomain() + " with user " + agsProps.getUser());
+			LOGGER.info("Please check firewall setup! - and maybe the folder permissions, too");
 			e.printStackTrace();
+			throw new IOException("Error connecting to ArcGIS Server.");
 		}
 
 		return connection;
 	}
 	
-	public final File getWorkspace(){
+	protected final File getWorkspace(){
 		return this.workspaceDir;
 	}
 	

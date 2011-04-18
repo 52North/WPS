@@ -328,11 +328,12 @@
 		-->
 		
 		<!-- 
-		<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
+		<Repository name="AGSProcessRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
 			<Property name="IP" active="true">**</Property>
 			<Property name="DOMAIN" active="true">**</Property>
 			<Property name="USER" active="true">**</Property>
 			<Property name="PASS" active="true">**</Property>
+			<Property name="DCOM_NATIVE" active="true">FALSE</Property>
 			<Property name="WORKSPACEBASE" active="true">**</Property>
 			<Property name="ARCOBJECTSJAR" active="true">**</Property>
 			<Property name="DESCRIBE_PROCESS_DIR" active="true">D:\development\xmlDescriptions</Property>

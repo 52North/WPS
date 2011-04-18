@@ -68,10 +68,6 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 	private String[] toolParameters;
 	
 	
-	//private String[] toolParameters;
-	
-	
-	
 	protected ArcToolboxProcessDelegator(MovingCodeObject templateMCO, File workspaceBase) throws IOException{
 		this.workspaceBase = workspaceBase;
 		errors = new ArrayList<String>();
@@ -150,11 +146,14 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 			
 		}
 		
-		// create Array of Strings for script
-		
 		//execute
 		LOGGER.info("Executing ArcGIS tool " + toolbox + File.pathSeparator + tool + " . Parameter array contains " + toolParameters.length + " parameters.");
-		agsWorkspace.executeGPTool(tool, toolbox, toolParameters);
+		try {
+			agsWorkspace.executeGPTool(tool, toolbox, toolParameters);
+		} catch (IOException e1) {
+			LOGGER.error(e1.getMessage());
+			errors.add(e1.getMessage());
+		}
 		
 		//create the output - files only
 		HashMap<String, IData> result = new HashMap<String, IData>();
