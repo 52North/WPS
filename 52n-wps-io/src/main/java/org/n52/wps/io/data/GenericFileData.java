@@ -230,9 +230,9 @@ public class GenericFileData {
 	public String writeData(File workspaceDir) {
 
 		String fileName = null;
-		if (GenericFileDataConstants.getIncludeFilesByMimeType(this.mimeType) != null) {
+		if (GenericFileDataConstants.getIncludeFilesByMimeType(mimeType) != null) {
 			try {
-				fileName = this.unzipData(this.dataStream, this.fileExtension,
+				fileName = unzipData(dataStream, fileExtension,
 						workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not unzip the archive to " + workspaceDir);
@@ -240,8 +240,7 @@ public class GenericFileData {
 			}
 		} else {
 			try {
-				fileName = this.justWriteData(this.dataStream,
-						this.fileExtension, workspaceDir);
+				fileName = justWriteData(dataStream, fileExtension, workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not write the input to " + workspaceDir);
 				e.printStackTrace();
@@ -297,8 +296,7 @@ public class GenericFileData {
 		return returnFile;
 	}
 
-	private String justWriteData(InputStream is, String extension,
-			File writeDirectory) throws IOException {
+	private String justWriteData(InputStream is, String extension, File writeDirectory) throws IOException {
 
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
@@ -307,6 +305,9 @@ public class GenericFileData {
 
 		fileName = baseFileName + "." + extension;
 		File currentFile = new File(writeDirectory, fileName);
+		if (!writeDirectory.exists()){
+			writeDirectory.mkdir();
+		}
 		currentFile.createNewFile();
 
 		// alter FileName for return

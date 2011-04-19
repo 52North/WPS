@@ -150,7 +150,6 @@ public class GeotiffGenerator  extends AbstractBinaryGenerator implements IStrea
 		if(!(data instanceof GTRasterDataBinding)){
 			throw new RuntimeException("ArcGridWriter  does not support incoming datatype");
 		}
-		//File file = new File("tempFile"+System.currentTimeMillis()+".temp");
                 File tempfile = null;
                 try{
                     String filename =  UUID.randomUUID().toString();
