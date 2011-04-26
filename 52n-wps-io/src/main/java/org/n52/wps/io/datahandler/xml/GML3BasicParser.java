@@ -41,7 +41,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -62,9 +61,10 @@ import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
-import org.geotools.metadata.iso.IdentifierImpl;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.Parser;
+import org.n52.wps.commons.context.ExecutionContext;
+import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -222,6 +222,7 @@ public class GML3BasicParser extends AbstractXMLParser implements IStreamablePar
 	@Override
 	public GTVectorDataBinding parseXML(InputStream stream) {
 		File f = null;
+		ExecutionContext context = ExecutionContextFactory.getContext();
 		FileOutputStream fos = null;
 		try{
 			f = File.createTempFile("wps", "tmp");
