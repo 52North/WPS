@@ -49,7 +49,7 @@ import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
-import org.apache.rampart.util.Axis2Util;
+import org.apache.axis2.saaj.util.SAAJUtil;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
@@ -237,7 +237,7 @@ public class ApacheBPELManager extends AbstractProcessManager {
 
         //TODO: Parse SoapEnvelope to DOM Document
 
-       Document result = Axis2Util.getDocumentFromSOAPEnvelope(response, true);
+       Document result = SAAJUtil.getDocumentFromSOAPEnvelope(response);
            
 		if (client != null) {
 			try {
