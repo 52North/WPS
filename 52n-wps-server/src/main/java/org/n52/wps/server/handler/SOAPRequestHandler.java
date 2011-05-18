@@ -48,7 +48,7 @@ public class SOAPRequestHandler extends RequestHandler {
 		if (sleepTime == null || sleepTime.equals("")) {
 			sleepTime = "5";
 		}
-		this.sleepingTime = new Integer(sleepTime);
+		//this.sleepingTime = new Integer(sleepTime);
 
 	
 			Node child = inputDoc.getFirstChild();

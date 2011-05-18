@@ -87,9 +87,6 @@ import org.xml.sax.SAXException;
 public class RequestHandler {
 
 	/** Computation timeout in seconds */
-	private static final String PROPERTY_NAME_COMPUTATION_TIMEOUT = "computationTimeoutSeconds";
-	protected int sleepingTime = 0;
-	
 	protected static RequestExecutor pool = new RequestExecutor();
 
 	protected OutputStream os;
@@ -122,12 +119,10 @@ public class RequestHandler {
 		//sleepingTime is 0, by default.
 		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
 			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
-		}*/
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-		if(sleepTime==null || sleepTime.equals("")){
-			sleepTime = "5";
 		}
-		this.sleepingTime = new Integer(sleepTime);
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
+		*/
+		
 		
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
@@ -177,7 +172,7 @@ public class RequestHandler {
 		if(sleepTime==null || sleepTime.equals("")){
 			sleepTime = "5";
 		}
-		this.sleepingTime = new Integer(sleepTime);
+		
 		
 		try {
 			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
@@ -291,8 +286,9 @@ public class RequestHandler {
 					// retrieve status with timeout enabled
 					try {
 						resp = task.get();
-						Thread.sleep(this.sleepingTime);
+						//Thread.sleep(this.sleepingTime);
 						status.setProcessSucceeded("Process has succeeded");
+						status.unsetProcessAccepted();
 						task.getRequest().getExecuteResponseBuilder().setStatus(status);
 					}
 					catch (ExecutionException ee) {
@@ -323,9 +319,9 @@ public class RequestHandler {
 						throw exceptionReport;
 					}
 					// send the result to the outputstream of the client.
-					if(((ExecuteRequest) req).isQuickStatus()) {
+				/*	if(((ExecuteRequest) req).isQuickStatus()) {
 						resp = new ExecuteResponse(execReq);
-					}
+					}*/
 					else if(resp == null) {
 						LOGGER.debug("repsonse object is null");
 						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
