@@ -13,11 +13,12 @@
             <name>52n WPS repository</name>
             <url>dav://http://52north.org/maven/repo/releases</url>
         </repository-->
-        <site>
+       <!--  <site>
             <id>n52-repo</id>
             <name>52n WPS site location</name>
             <url>dav:https://52north.org/maven/project-sites/wps/</url>
         </site>
+        -->
     </distributionManagement>
     <packaging>pom</packaging>
     <name>52north processing</name>
@@ -131,14 +132,14 @@
                     <!--checkoutDirectory>${basedir}/src</checkoutDirectory-->
                 </configuration>
             </plugin>
-            <plugin>
+          <!--    <plugin>
     			<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-site-plugin</artifactId>
-    			<!--version>2.0-beta-6</version-->
     			<configuration>
       				<outputEncoding>UTF-8</outputEncoding>
    				</configuration>
  			</plugin>	
+ 			-->
         </plugins>
     </build>
     <modules>
@@ -151,7 +152,6 @@
 		<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps-install-wizard</module>
-        <module>52n-wps-site</module>
         <module>52n-wps-sextante</module>
         <module>52n-wps-grass</module>
         <module>52n-wps-transactional</module>
@@ -272,11 +272,7 @@
             	<version>${project.version}</version>
 			</dependency>
 
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>52n-wps-site</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+           
         
         <!--
              <dependency>
