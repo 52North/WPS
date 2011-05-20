@@ -2,17 +2,17 @@
     <parent>
         <artifactId>52-North</artifactId>
         <groupId>org.n52</groupId>
-        <version>4</version>
+        <version>5.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-parent</artifactId>
     <distributionManagement>
-        <repository>
+        <!--<repository>
             <id>n52-repo</id>
             <name>52n WPS repository</name>
-            <url>dav://http://52north.org/maven/repo/releases</url>
-        </repository>
+            <url>dav:http://52north.org/maven/repo/releases</url>
+        </repository-->
        <!--  <site>
             <id>n52-repo</id>
             <name>52n WPS site location</name>
