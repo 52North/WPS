@@ -68,7 +68,11 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 		
 		
 		if(!(outputData instanceof GenericFileDataBinding)){
-			throw new RuntimeException("GenericFileGenerator writer does not support incoming datatype");
+			if(outputData==null){
+				throw new RuntimeException("GenericFileGenerator writer does not support incoming datatype.");
+			}else{
+				throw new RuntimeException("GenericFileGenerator writer does not support incoming datatype. Datatyüe is " + outputData.getClass());
+			}
 		}
 		LOGGER.info("Generating tempfile ...");
 		InputStream theStream = ((GenericFileDataBinding)outputData).getPayload().dataStream;
