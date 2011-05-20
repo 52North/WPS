@@ -3,12 +3,12 @@
     <parent>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-parent</artifactId>
-        <version>WPS 2.0-RC7</version>
+        <version>WPS 2.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-webadmin</artifactId>
-  <version>WPS 2.0-RC7</version>
+  <version>WPS 2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>52north Web admin interface</name>
     <description>Provides the Web admin UI for maintaining WPS.</description>
