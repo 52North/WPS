@@ -262,16 +262,11 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
 		</Repository>
 		
-		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
+		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="true">
 		</Repository>
-		
+		<!-- 
 		<Repository name="GrassRepository"
 			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
-			<!--Property name="Grass_Home" active="false">/usr/local/grass-7.0.svn</Property>
-			<Property name="ModuleStarter_Home" active="false">/usr/share/wps-grass-bridge/gms/</Property>
-			<Property name="Python_Home" active="false">/usr/bin/</Property>
-			<Property name="TMP_Dir" active="false">/tmp/tomcat6-tmp</Property>
-			<Property name="GISRC_Dir" active="false">/usr/local/grass-7.0.svn/demolocation/.grassrc70</Property-->
 			<Property name="Grass_Home" active="true">c:\programme\grass-70-svn</Property>
 			<Property name="Python_Home" active="true">c:\programme\grass-70-svn\extrabin</Property>
 			<Property name="ModuleStarter_Home" active="true">C:\wps-grass-bridge\gms\</Property>
@@ -283,7 +278,7 @@
 			g.rename;g.tempfile;g.version;r3.cross.rast;r3.in.v5d;r3.mkdspf;r.external;r.external.out;v.info;r.gegion;r.colors;i.group;r3.in.ascii;v.external;i.albedo;g.transform;r.info;v.db.select;v.db.connect;r.what;r.what.color;r.composite;r.colors.out;ps.map;g.ppmtopng;v.what;v.what.rast</Property>
 		</Repository>
 		
-		<!-- 
+		 
 		
 		
 		<Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository" active="false">
@@ -304,8 +299,7 @@
 		</Repository>
 		
 
-		 -->
-		<!-- 
+		 
 		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository" active="true">		
 			<Property name="Algorithm" active="true">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
 		</Repository>
