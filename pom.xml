@@ -71,11 +71,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-    <repository>
-	    <id>Refractions</id>
-	    <name>Refractions repository</name>
-	    <url>http://lists.refractions.net/m2</url>
-     </repository> 
 	<repository>
 	    <id>Apache</id>
 	    <name>Apache repository</name>
