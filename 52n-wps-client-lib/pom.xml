@@ -10,7 +10,6 @@
     <artifactId>52n-wps-client-lib</artifactId>
     <packaging>jar</packaging>
     <name>52north 52n-wps-client library</name>
-    <version>2.0-RC8-SNAPSHOT</version>
     <description>This module contains some convenient classes to interact with WPS</description>
     <build>
         <plugins>
