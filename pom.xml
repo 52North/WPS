@@ -144,7 +144,6 @@
 		<module>52n-wps-gridgain</module>
 		<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
-        <module>52n-wps-install-wizard</module>
         <module>52n-wps-sextante</module>
         <module>52n-wps-grass</module>
         <module>52n-wps-transactional</module>
@@ -227,11 +226,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>52n-wps-install-wizard</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-			<dependency>
             	<groupId>${project.groupId}</groupId>
             	<artifactId>52n-wps-sextante</artifactId>
             	<version>${project.version}</version>
