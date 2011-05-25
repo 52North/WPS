@@ -277,7 +277,7 @@ public class RequestHandler {
 				pool.execute(task);
 				// set status to accepted
 				status.setProcessAccepted("Request is queued for execution.");
-				if (((ExecuteRequest) req).isQuickStatus()) {
+				if (((ExecuteRequest) req).isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
 					resp.save(os);
 					return;
