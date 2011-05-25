@@ -326,7 +326,7 @@ public class RequestHandler {
 						LOGGER.debug("repsonse object is null");
 						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
 					}
-					if(!((ExecuteRequest) req).isQuickStatus()) {
+					if(!((ExecuteRequest) req).isStoreResponse()) {
 						resp.save(this.os);
 						LOGGER.info("Served ExecuteRequest.");
 					}
