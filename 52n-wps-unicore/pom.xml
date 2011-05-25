@@ -4,7 +4,7 @@
 		<artifactId>52n-wps-parent</artifactId>
 		<version>2.0-RC8-SNAPSHOT</version>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-unicore</artifactId>
 	<name>52north 52n-wps-unicore</name>
 	<description>The project 52 north 52n-wps-grid does something with
@@ -17,9 +17,6 @@
 			<url>http://zam904.zam.kfa-juelich.de/maven</url>
 		</repository>
 	</repositories>
-	<profiles>
-		<profile />
-	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

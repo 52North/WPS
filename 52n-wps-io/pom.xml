@@ -7,46 +7,10 @@
         <version>2.0-RC8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-io</artifactId>
     <packaging>jar</packaging>
     <name>52north 52n-wps-io</name>
     <description>The project 52 north 52n-wps-io does something with JAVA.</description>
-    <build>
-    <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-scm-plugin</artifactId>
-              <configuration>
-              <excludes>/WEB-INF/</excludes>
-              </configuration>
-            </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-            <includes>
-            <include>
-            org/n52/wps/io/**
-            </include>
-            <include>
-            org/n52/wps/util/**
-            </include>
-            </includes>
-          
-        </configuration>
-      </plugin>
-    </plugins>
-   
-            
-        <!-- build-jar should be without version number -->
-        <!--finalName>52n-wps-io</finalName-->
-        <!-- resources for tests (log4j.xml,...)-->
-        <testResources>
-       
-        </testResources>
-        
-    </build>
      <repositories>
        <repository>
         <releases>

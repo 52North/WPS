@@ -10,8 +10,7 @@
     <artifactId>52n-wps-webapp</artifactId>
     <packaging>war</packaging>
     <name>52n WPS Web Application</name>
-    <inceptionYear>2007</inceptionYear>
-          <mailingLists>
+    <mailingLists>
         <mailingList>
             <name>Geoprocessing</name>
             <archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
@@ -102,25 +101,7 @@
     <organizationUrl>http://openroadsconsulting.com</organizationUrl>
     </contributor>
     </contributors>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <profiles>
-        <profile>
-            <id>default</id>
 
-        </profile>
-    </profiles>
     <!-- here are the dependencies of the project -->
     <dependencies>
         <!-- Dependencies for Scope 'test' -->
@@ -224,18 +205,5 @@
 		      <scope>compile</scope>
 		</dependency>   
     </dependencies>
-    
-    <repositories>
-  		<repository>
-			<id>n52-releases</id>
-			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>    
-    </repositories>			
+    		
 </project>
