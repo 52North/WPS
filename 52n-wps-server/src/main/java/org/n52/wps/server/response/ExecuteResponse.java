@@ -51,7 +51,7 @@ public class ExecuteResponse extends Response {
 		super(request);
 		alreadyStored = false;
 		this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
-		if(request.isQuickStatus()){
+		if(request.isStoreResponse()){
 			LOGGER.debug("Store Response in Database");
 			
 			DatabaseFactory.getDatabase().storeResponse(this);

@@ -114,7 +114,7 @@ public class ExecuteResponseBuilder {
 	public void update() throws ExceptionReport {		
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();
-		if(request.isQuickStatus() && responseElem.getStatus().getProcessSucceeded() == null) {
+		if(request.isStoreResponse() && responseElem.getStatus().getProcessSucceeded() == null) {
 			responseElem.setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
 			return;
 		}

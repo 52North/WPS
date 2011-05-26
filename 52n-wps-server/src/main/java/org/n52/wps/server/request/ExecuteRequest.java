@@ -656,7 +656,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		
 		execRespType.setStatus(status);
 		try {
-			if(this.isQuickStatus()) {
+			if(this.isStoreResponse()) {
 				execRespType.update();
 				DatabaseFactory.getDatabase().storeResponse(new ExecuteResponse(this));
 			}
