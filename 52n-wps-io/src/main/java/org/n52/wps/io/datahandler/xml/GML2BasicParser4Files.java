@@ -123,7 +123,17 @@ public class GML2BasicParser4Files extends AbstractXMLParser implements IStreama
 		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
 //			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
-			Object parsedData =  parser.parse( new FileInputStream(file));
+			Object parsedData = null;
+			try{
+			parsedData =  parser.parse( new FileInputStream(file));
+			}catch(SAXException e5){
+				//assume the xsd containing the schema was not found
+				configuration = new GMLConfiguration();
+	        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
+	        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+	        	parser = new org.geotools.xml.Parser(configuration);
+	        	parsedData =  parser.parse( new FileInputStream(file));
+			}
 			if(parsedData instanceof FeatureCollection){
 				fc = (FeatureCollection) parsedData;
 				

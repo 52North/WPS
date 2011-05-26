@@ -593,13 +593,19 @@ public class GrassIOHandler {
 				        if (fos != null) fos.close();
 				    }
 
+				}else{
+					BufferedWriter bufWrite = new BufferedWriter(new FileWriter(serverLog));
+					bufWrite.write(errors);
+					bufWrite.flush();
+					bufWrite.close();
 				}
 				LOGGER.error("An error occured while executing the GRASS GIS process.");
 				throw new RuntimeException("An error occured while executing the GRASS GIS process. See the log under " + "http://" + host + ":" + hostPort+ "/" + WebProcessingService.WEBAPP_PATH + "/GRASS_LOGS/" + uuid + logFilename + " for more details.");
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error("An error occured while executing the GRASS GIS process.", e);
+			throw new RuntimeException(e);
 		}
 	}
 	
