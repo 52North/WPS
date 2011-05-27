@@ -100,7 +100,6 @@
                     <connectionUrl>
                     	scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
                     </connectionUrl>
-                    <tag>WPS-${releaseVersion}</tag>
                 </configuration>
             </plugin>
             <plugin>
@@ -292,6 +291,32 @@
                     <url>dav:https://52north.org/maven/project-sites/wps/</url>
                 </site>
             </distributionManagement>
+        </profile>
+        <profile>
+            <id>env-ci</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>ci</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <configuration>
+                            <connectionUrl>
+                                scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
+                            </connectionUrl>
+                            <!-- make use of system prop set by hudson -->
+                            <tag>WPS-${project.rel.org.n52.wps:52n-wps-parent}</tag>
+                            <remoteTagging>false</remoteTagging>
+                            <suppressCommitBeforeTag>true</suppressCommitBeforeTag>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>
