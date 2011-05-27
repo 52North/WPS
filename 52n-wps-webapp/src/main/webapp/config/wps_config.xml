@@ -374,7 +374,7 @@
            
 		
 	</AlgorithmRepositoryList>
-	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="52n-wps-webapp">
+	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
 		<Database/>
 	</Server>
 </WPSConfiguration>
