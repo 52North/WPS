@@ -168,7 +168,9 @@ public class ConfigUploadBean {
 						if (xmlFilename == null) {
 							return;
 						}
-
+						
+						if(!xmlFilename.equals("")){
+						
 						// this is the file content
 						i = in.readLine(line, 0, 128);
 						// next line
@@ -214,6 +216,7 @@ public class ConfigUploadBean {
 							newLine = new String(line, 0, i);
 						}
 						pw.close();
+					}
 
 					}
 
