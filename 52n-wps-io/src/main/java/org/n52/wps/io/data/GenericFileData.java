@@ -69,10 +69,10 @@ public class GenericFileData {
 
 	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
 
-	public final InputStream dataStream;
-	public final String fileExtension;
-	public final String mimeType;
-	private File primaryFile;
+	protected final InputStream dataStream;
+	protected final String fileExtension;
+	protected final String mimeType;
+	protected File primaryFile;
 
 	public GenericFileData(InputStream stream, String mimeType) {
 		this.dataStream = stream;
@@ -84,6 +84,7 @@ public class GenericFileData {
 	public GenericFileData(FeatureCollection featureCollection)
 			throws IOException {
 		this(getShpFile(featureCollection), IOHandler.MIME_TYPE_ZIPPED_SHP);
+		
 
 	}
 
@@ -380,5 +381,17 @@ public class GenericFileData {
 		}catch(Exception e){
 			
 		}
+	}
+	
+	public String getMimeType(){
+		return mimeType;
+	}
+	
+	public String getFileExtension(){
+		return fileExtension;
+	}
+
+	public InputStream getDataStream() {
+		return dataStream;
 	}
 }

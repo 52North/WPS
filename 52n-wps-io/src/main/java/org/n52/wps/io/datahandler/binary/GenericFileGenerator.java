@@ -75,7 +75,7 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 			}
 		}
 		LOGGER.info("Generating tempfile ...");
-		InputStream theStream = ((GenericFileDataBinding)outputData).getPayload().dataStream;
+		InputStream theStream = ((GenericFileDataBinding)outputData).getPayload().getDataStream();
 		
 		try {
 			IOUtils.copy(theStream, outputStream);
@@ -97,7 +97,7 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 			throw new RuntimeException("GenericFileGenerator does not support incoming datatype");
 		}
 		
-		InputStream theStream = ((GenericFileDataBinding)data).getPayload().dataStream;
+		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
 		
 		try {
 			IOUtils.copy(theStream, outputStream);
@@ -121,7 +121,7 @@ public class GenericFileGenerator extends AbstractBinaryGenerator implements ISt
 		GenericFileData currentFD = (GenericFileData)data.getPayload();
 		
 		//check for necessary conversions
-		if (currentFD.mimeType != mimeType)
+		if (currentFD.getMimeType() != mimeType)
 			data = new GenericFileDataBinding(convertFile(currentFD));
 		
 		//create a tempfile for the output

@@ -350,7 +350,7 @@ public class GrassIOHandler {
 					continue;
 				}
 				
-				String mimetype = ((GenericFileDataBinding)data).getPayload().mimeType;
+				String mimetype = ((GenericFileDataBinding)data).getPayload().getMimeType();
 				
 				if(mimetype.equals(GenericFileDataConstants.MIME_TYPE_TIFF)){					
 					tmpBlock = getComplexInputDataBlock().replace(MIMETYPE, mimetype);

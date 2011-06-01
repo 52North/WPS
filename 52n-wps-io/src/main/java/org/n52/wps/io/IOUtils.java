@@ -242,7 +242,7 @@ public class IOUtils {
 					if (parent != null
 							&& !(parent.getAbsolutePath().equals(System
 									.getProperty("java.io.tmpdir")))) {
-						parent.delete();
+						parent.deleteOnExit();
 					}
 				}
 			}
@@ -270,10 +270,10 @@ public class IOUtils {
 							}
 						});
 				for (File f : list) {
-					f.delete();
+					f.deleteOnExit();
 				}
 
-				file.delete();
+				file.deleteOnExit();
 			}
 		}
 	}

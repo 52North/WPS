@@ -37,7 +37,7 @@ public class GRASSXMLGenerator extends AbstractXMLGenerator {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			Node node = builder.parse(fileData.dataStream);
+			Node node = builder.parse(fileData.getDataStream());
 //			if (f != null) f.delete();
 			return node;
 			}catch(Exception e){
