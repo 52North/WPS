@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="52n Web Processing Service">
+    <!-- $Id:  $ -->
+  <publishDate format="yyyy-MM-dd" />
+  <version position="left" />
+    
+	<body>
+	<breadcrumbs>
+      <item name="52North" href="../../../../"/>
+      <item name="Geoprocessing" href="../52n-wps-site/"/>
+      <item name="52n WPS" href="index.html"/>
+    </breadcrumbs>
+	
+		<menu name="Overview">
+			<item name="About" href="index.html" />
+			<item name="Download" href="download.html" />
+		</menu>
+		<menu name="User Guide">
+			<item name="Installation" href="installation.html" />
+			<item name="Configuration" href="configuration.html" />
+		</menu>
+		<menu name="Developer Section">
+			<item name="Source setup" href="source_setup.html" />
+			<item name="Architecture" href="architecture.html" />
+			<item name="Code Snippets" href="code.html" />
+		</menu>
+		<menu name="Other Material">
+			<item name="FAQ" href="FAQ.html" />
+			<item name="Tutorials" href="tutorials.html" />
+			<item name="Demo Theater" href="demos.html" />			
+		</menu>
+		<menu ref="reports" />
+	</body>
+</project>

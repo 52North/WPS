@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified">
+	<xs:element name="GPAlgorithmDescription">
+		<xs:annotation>
+			<xs:documentation>Comment describing your root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="algorithmWorkspaceLocation" type="xs:anyURI">
+					<xs:annotation>
+						<xs:documentation>URL pointing to the workspace root</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="algorithmContainerLocation" type="xs:anyURI">
+					<xs:annotation>
+						<xs:documentation>URL pointing to the algorithm; relative to the workspace root. If appropriate, this location can point to some location within the container</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="algorithmLocation" type="xs:anyURI" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Optional URL pointing to a location within the algorithm container. This is e.g. useful to acces tools inside ArcGIS Toolboxes</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="algorithmContainerURN" type="xs:anyURI">
+					<xs:annotation>
+						<xs:documentation>URN referencing the specific container, e.g. urn:n52:wps:algorithmcontainer:arctoolbox:9.3</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="processingSystemURN" type="xs:anyURI" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>URN referencing a required processing backend, e.g. urn:n52:wps:gpsystem:arcgis:9.3</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="algorithmParameters">
+					<xs:annotation>
+						<xs:documentation>A collection of the algorithm parameters</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="parameter" type="AlgorithmParameterType" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>The tool's parameters</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="sequential" type="xs:boolean">
+							<xs:annotation>
+								<xs:documentation>If true, this tool's parameters are indexed through their position as integers. Otherwise, the mapping from the ows:Identifier to the respective LegacyID is done via name strings.</xs:documentation>
+							</xs:annotation>
+						</xs:attribute>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<!-- ========================================================================== -->
+	<xs:complexType name="AlgorithmParameterType">
+		<xs:sequence>
+			<xs:element name="prefixString" type="xs:string" minOccurs="0"/>
+			<xs:element name="suffixString" type="xs:string" minOccurs="0"/>
+			<xs:element name="separatorString" type="xs:string" minOccurs="0"/>
+			<xs:choice>
+				<xs:annotation>
+					<xs:documentation>The Legacy ID by which the parameters are defined in the Legacy environment. Use legacyIntID for sequential parameters, legacyStrindID for parameters name strings</xs:documentation>
+				</xs:annotation>
+				<xs:element name="legacyIntID" type="legacyIntIDType"/>
+				<xs:element name="legacyStrindID" type="legacyStrindIDType"/>
+			</xs:choice>
+			<xs:element name="wpsInputID" type="xs:string" minOccurs="0"/>
+			<xs:element name="wpsOutputID" type="xs:string" minOccurs="0"/>
+			<xs:element name="wpsDataSchema" type="xs:string" minOccurs="0"/>
+			<xs:element name="wpsMimeType" type="xs:string" minOccurs="0"/>
+			<xs:element name="wpsLiteralDataTye" type="xs:string" minOccurs="0"/>
+			<xs:element name="wpsDefaultCRS" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- ========================================================================== -->
+	<xs:simpleType name="legacyIntIDType">
+		<xs:restriction base="xs:int"/>
+	</xs:simpleType>
+	<!-- ========================================================================== -->
+	<xs:simpleType name="legacyStrindIDType">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+</xs:schema>

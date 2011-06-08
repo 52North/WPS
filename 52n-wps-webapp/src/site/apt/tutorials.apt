@@ -1,0 +1,29 @@
+ -----
+Tutorials section 
+ -----
+Bastian Schäffer
+ -----
+ 2010-04-08
+ -----
+ 
+WPS Tutorials Section
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ In this section you can find tutorials for installing and developing the 52North WPS.
+ 
+
+	* Tutorial about {{{https://52north.org/download/Geoprocessing/documents/Setting_up_the_WPS_as_a_Multiple_Module_Eclipse_Project_2.1.pdf} Setting up and compiling the 52North WPS sources}}.
+
+	* Tutorial about {{{https://52north.org/twiki/bin/viewfile/Processing/52nWebProcessingService?rev=1;filename=WPS_Tutorial.pdf} 52North WPS process development}}.
+	
+    * Tutorial about {{{https://52north.org/twiki/pub/Processing/52nWebProcessingService/52n_WPS_Grid_Computing_Hands_On.pdf} Distributed Computing with GridGain and UNICORE}}.
+    
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/configuring_arcgis_support_for_the_52n_wps-long_version-v1.0.pdf} Setting up the 52North WPS with ArcGIS Server and Python scripts-long version}}.
+    
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/exposing_arcgis_server_functionality_with_52north_wps-short-version-_v1.0.pdf} Setting up the 52North WPS with ArcGIS Server-short version}}.
+    
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/WPS-GRASS-Win.pdf} Setting up the 52North WPS with GRASS-Windows version}}.
+    
+    * Tutorial about {{{https://52north.org/download/Geoprocessing/documents/WPS-GRASS-Linux.pdf} Setting up the 52North WPS with GRASS-Linux version}}.
+ 		
+ 		

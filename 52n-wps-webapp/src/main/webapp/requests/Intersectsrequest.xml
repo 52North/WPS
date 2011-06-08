@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+	<ows:Identifier>org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</ows:Identifier>
+	<wps:DataInputs>
+	<wps:Input>
+			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">LAYER1</ows:Identifier>
+			<wps:Data>
+				<wps:ComplexData schema="http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd">
+					<pac:GMLPacket xmlns:pac="http://www.opengis.net/examples/packet">
+						<pac:packetMember>
+							<pac:StaticFeature>
+								<gml:polygonProperty xmlns:gml="http://www.opengis.net/gml">
+									<gml:Polygon>
+										<gml:outerBoundaryIs>
+											<gml:LinearRing>
+<gml:coord>
+<gml:X>684400.725342893</gml:X>
+<gml:Y>5872892.869645119</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684555.866221742</gml:X>
+<gml:Y>5872896.952097639</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684559.949186481</gml:X>
+<gml:Y>5872745.893671299</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684412.973212655</gml:X>
+<gml:Y>5872721.397931769</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684400.725342893</gml:X>
+<gml:Y>5872892.869645119</gml:Y>
+</gml:coord>			
+											</gml:LinearRing>
+										</gml:outerBoundaryIs>
+										<gml:innerBoundaryIs/>
+									</gml:Polygon>
+								</gml:polygonProperty>
+								<pac:property>
+								<pac:propertyName>test</pac:propertyName>
+								<pac:value dataType="double">4.0</pac:value>
+								</pac:property>
+							</pac:StaticFeature>
+						</pac:packetMember>																				
+					</pac:GMLPacket>
+				</wps:ComplexData>
+			</wps:Data>
+		</wps:Input>
+<wps:Input>
+			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">LAYER2</ows:Identifier>
+			<wps:Data>
+				<wps:ComplexData schema="http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd">
+					<pac:GMLPacket xmlns:pac="http://www.opengis.net/examples/packet">
+						<pac:packetMember>
+							<pac:StaticFeature>
+								<gml:polygonProperty xmlns:gml="http://www.opengis.net/gml">
+									<gml:Polygon>
+										<gml:outerBoundaryIs>
+											<gml:LinearRing>
+
+
+
+
+<gml:coord>
+<gml:X>684245.584464044</gml:X>
+<gml:Y>5872901.034550149</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684641.602334531</gml:X>
+<gml:Y>5873137.829089269</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684772.247473857</gml:X>
+<gml:Y>5872713.232514519</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684343.568446594</gml:X>
+<gml:Y>5872472.355522879</gml:Y>
+</gml:coord>
+
+<gml:coord>
+<gml:X>684245.584464044</gml:X>
+<gml:Y>5872901.034550149</gml:Y>
+</gml:coord>
+
+																			
+											</gml:LinearRing>
+										</gml:outerBoundaryIs>
+										<gml:innerBoundaryIs/>
+									</gml:Polygon>
+								</gml:polygonProperty>
+								<pac:property>
+								<pac:propertyName>test2</pac:propertyName>
+								<pac:value dataType="double">2.0</pac:value>
+								</pac:property>
+							</pac:StaticFeature>
+						</pac:packetMember>																				
+					</pac:GMLPacket>
+				</wps:ComplexData>
+			</wps:Data>
+		</wps:Input>
+	
+		<!-- Hier kommen die einzelnen InputParameter hinein, alle untereinander - PROCESS_NAME nicht vergessen (s.o.) -->
+	</wps:DataInputs>
+	<wps:ResponseForm>
+		<wps:ResponseDocument>
+		<wps:Output>
+			<ows:Identifier>RESULT</ows:Identifier>
+		</wps:Output>
+		</wps:ResponseDocument>
+	</wps:ResponseForm>
+</wps:Execute>

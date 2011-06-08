@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+	<ows:Identifier>org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</ows:Identifier>
+	<wps:DataInputs>
+	<wps:Input>
+			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">LAYER1</ows:Identifier>
+			<wps:Data>
+				<wps:ComplexData schema="http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd">
+					<pac:GMLPacket xmlns:pac="http://www.opengis.net/examples/packet">
+						<pac:packetMember>
+							<pac:StaticFeature>
+								<gml:lineStringProperty xmlns:gml="http://www.opengis.net/gml">
+								<gml:LineString srsName="http://www.opengis.net/gml/srs/epsg.xml#26986">									
+								<gml:coord>
+<gml:X>683697.275748053</gml:X>
+<gml:Y>5873012.481405889</gml:Y>
+</gml:coord>
+<gml:coord>
+<gml:X>683940.379904</gml:X>
+<gml:Y>5872932.797260029</gml:Y>
+</gml:coord>
+                        		</gml:LineString>
+								</gml:lineStringProperty>
+								<pac:property>
+								<pac:propertyName>test</pac:propertyName>
+								<pac:value dataType="double">2.0</pac:value>
+								</pac:property>
+							</pac:StaticFeature>
+						</pac:packetMember>																				
+					</pac:GMLPacket>
+				</wps:ComplexData>
+			</wps:Data>
+		</wps:Input>
+<wps:Input>
+			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">LAYER2</ows:Identifier>
+			<wps:Data>
+				<wps:ComplexData schema="http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd">
+					<pac:GMLPacket xmlns:pac="http://www.opengis.net/examples/packet">
+						<pac:packetMember>
+							<pac:StaticFeature>
+								<gml:lineStringProperty xmlns:gml="http://www.opengis.net/gml">
+									<gml:LineString>
+									<gml:coord>
+<gml:X>683697.275748053</gml:X>
+<gml:Y>5873012.481405889</gml:Y>
+</gml:coord>
+<gml:coord>
+<gml:X>683807.222801922</gml:X>
+<gml:Y>5872862.734793969</gml:Y>
+</gml:coord>
+                        			</gml:LineString>
+								</gml:lineStringProperty>
+								<pac:property>
+								<pac:propertyName>test2</pac:propertyName>
+								<pac:value dataType="double">2.0</pac:value>
+								</pac:property>
+							</pac:StaticFeature>
+						</pac:packetMember>																				
+					</pac:GMLPacket>
+				</wps:ComplexData>
+			</wps:Data>
+		</wps:Input>
+	
+		<!-- Hier kommen die einzelnen InputParameter hinein, alle untereinander - PROCESS_NAME nicht vergessen (s.o.) -->
+	</wps:DataInputs>
+	<wps:ResponseForm>
+		<wps:ResponseDocument>
+		<wps:Output>
+			<ows:Identifier>RESULT</ows:Identifier>
+		</wps:Output>
+		</wps:ResponseDocument>
+	</wps:ResponseForm>
+</wps:Execute>
