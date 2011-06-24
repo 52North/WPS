@@ -2,25 +2,26 @@ package org.n52.wps.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAP12Constants;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultText;
+import org.apache.axiom.soap.SOAPFaultValue;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.XMLUtils;
 import org.n52.wps.server.handler.SOAPRequestHandler;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
@@ -94,8 +95,41 @@ public class WebProcessingServiceSoap {
 			serviceException.getExceptionDocument().save(outputStream);
 			InputStream instream = new ByteArrayInputStream(outputStream
 					.toByteArray());
-			OMElement result = (OMElement) XMLUtils.toOM(instream);
-			return result;
+			OMElement omException = (OMElement) XMLUtils.toOM(instream);
+			
+			SOAPFactory soapFactory;
+			
+			if (m_msgCtx.isSOAP11()) {
+			soapFactory = OMAbstractFactory.getSOAP11Factory();
+		
+			} else {
+			soapFactory = OMAbstractFactory.getSOAP12Factory();
+			
+			}
+			SOAPFault soapFault = soapFactory.createSOAPFault();
+			
+			SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode();
+			SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
+			soapFaultValue.setText(new QName("http://52north.org", "WPS Fault", "WPS fault"));
+
+			SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason();
+			SOAPFaultText soapFaultText = soapFactory.createSOAPFaultText(soapFaultReason);
+			soapFaultText.setText(serviceException.getMessage());
+
+			SOAPFaultDetail soapFaultDetail = soapFactory.createSOAPFaultDetail();
+			QName qName = new QName("http://www.opengis.net/ows/1.1", "ExceptionReport");
+			OMElement detail = soapFactory.createOMElement(qName, soapFaultDetail);
+			detail.addChild(omException);
+			
+			soapFault.setDetail(soapFaultDetail);
+			soapFault.setCode(soapFaultCode);
+			soapFault.setReason(soapFaultReason);
+			        
+			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
+			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
+			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
+			
+			throw new AxisFault(soapFault);
 		}
 		InputStream instream = new ByteArrayInputStream(outputStream
 				.toByteArray());
