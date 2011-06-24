@@ -283,19 +283,19 @@ public class GTHelper {
 	    }
 	  	     
 		 if(typeName.contains("MultiPoint")){
-			 geometryTypeName = "PointPropertyType";	
+			 geometryTypeName = "MultiPointPropertyType";	
 					    }
 		 if(typeName.contains("LineString")){
 			 geometryTypeName = "CurvePropertyType";	
 		 }
 		 if(typeName.contains("MultiLineString")){
-			 geometryTypeName = "CurvePropertyType";	
+			 geometryTypeName = "MultiCurvePropertyType";	
 		 }
 		 if(typeName.contains("Polygon")){
 			 geometryTypeName = "SurfacePropertyType";	
 		 }
 		 if(typeName.contains("MultiPolygon")){
-			 geometryTypeName = "SurfacePropertyType";	
+			 geometryTypeName = "MultiSurfacePropertyType";	
 		 }		
 				
 				// add feature type definition and generic geometry
