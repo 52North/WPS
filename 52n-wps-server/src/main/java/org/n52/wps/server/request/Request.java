@@ -41,6 +41,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.handler.WPSTask;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
 
@@ -189,11 +190,20 @@ abstract public class Request implements Callable <Response> {
 		return sb.toString();
 	}
 	
+	public String getId(){
+		return this.id.toString();
+	}
+	
 	public UUID getUniqueId(){
 		if (id == null) {
 			this.id = UUID.randomUUID();
 		}
 		return id;
+	}
+
+	public void setUniqueId(UUID taskId){
+			this.id = taskId;
+		return;
 	}
 
 	
@@ -204,6 +214,7 @@ abstract public class Request implements Callable <Response> {
 	 * This handling could contain a lot of computations. These computations should
 	 * be called from within this method.
 	 * @return A Reponse to the client Request
+	 * @throws InterruptedException 
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	abstract public Response call() throws ExceptionReport;
@@ -213,6 +224,7 @@ abstract public class Request implements Callable <Response> {
 	 * @return True if the clients Request can be handled without problems, False otherwise
 	 */
 	abstract public boolean validate() throws ExceptionReport;
+
 
 }
 	

@@ -29,7 +29,7 @@ is extensible in terms of processes and data handlers.
  ***************************************************************/
 
 
-package org.n52.wps.transactional.algorithm;
+package org.n52.wps.server.profiles;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -71,21 +63,21 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
-import org.n52.wps.transactional.deploy.IProcessManager;
-import org.n52.wps.transactional.service.TransactionalHelper;
+import org.n52.wps.server.repository.TransactionalRepositoryManager;
+import org.n52.wps.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
+public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	
 	private List<String> errors;
-	private static Logger LOGGER = Logger.getLogger(GenericTransactionalAlgorithm.class);
+	private static Logger LOGGER = Logger.getLogger(DefaultTransactionalAlgorithm.class);
 	private ProcessDescriptionType processDescription;
 	private String workspace;
 	
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
 	
-	public GenericTransactionalAlgorithm(String processID, Class<?> registeredRepository){
+	public DefaultTransactionalAlgorithm(String processID, Class<?> registeredRepository){
 		super(processID);
 		WPSConfig wpsConfig = WPSConfig.getInstance();
 		Property[] properties = wpsConfig.getPropertiesForRepositoryClass(registeredRepository.getName());
@@ -99,7 +91,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		return processDescription;
 	}
 	
-	
+	// TODO : BPEL has nothing to do here...
 	public HashMap<String, IData> run(ExecuteDocument payload){
 		Document responseDocument;
 		HashMap<String,IData> resultHash = new HashMap<String,IData>();
@@ -107,7 +99,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		//forward request
 			
 			//TODO get deploy manager class from config
-			IProcessManager deployManager = TransactionalHelper.getProcessManagerForSchema("BPELProfile.xsd");
+			IProcessManager deployManager = TransactionalRepositoryManager.getProcessManagerForSchema("BPELProfile.xsd");
                         
 			responseDocument = deployManager.invoke(payload, getAlgorithmID());
 			
@@ -120,7 +112,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 			
 			File tempFile2 = File.createTempFile("wpsbpelresult", ".xml", null);
 			//
-            writeXmlFile(responseDocument,tempFile2);
+            XMLUtils.writeXmlFile(responseDocument,tempFile2);
 
             Document d = new DocumentBuilderFactoryImpl().newDocumentBuilder().parse(tempFile2);
             
@@ -130,7 +122,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 			
 			String identifier = XPathAPI.selectSingleNode(d, "//Output/Identifier").getFirstChild().getNodeValue().trim();
 			
-			writeXmlFile(gml, tempFile);
+			XMLUtils.writeXmlFile(gml, tempFile);
 			
 			GenericFileDataBinding binding = new GenericFileDataBinding(data);
 			
@@ -191,7 +183,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 
 
 	protected ProcessDescriptionType initializeDescription() {
-		String fullPath =  GenericTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
+		String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex= fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:/", "");
@@ -261,63 +253,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	}
 	
 
-	//private static void writeXmlFile(Document doc, String filename) {
-        private static void writeXmlFile(Document doc, File file) {
-        try {
-//        	if(filename==null){
-//        		filename = "C:\\BPEL\\serverside.xml";
-//        	}
-            // Prepare the DOM document for writing
-            Source source = new DOMSource(doc);
-    
-            // Prepare the output file
-            //File file = new File(filename);
-            //file.createNewFile();
-            //Result result = new StreamResult(file);
-            Result result = new StreamResult(file.toURI().getPath());
-    
-            // Write the DOM document to the file
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(source, result);
-        } catch (TransformerConfigurationException e) {
-        	System.out.println("error");
-        } catch (TransformerException e) {
-        	System.out.println("error");
-        } catch (Exception e) {
-        	System.out.println("error");
-        }
-		
-		
-	}
 
-        
-	private static void writeXmlFile(Node n, File file) {
-		try {
-			// if(filename==null){
-			// filename = "C:\\BPEL\\serverside.xml";
-			// }
-			// Prepare the DOM document for writing
-			Source source = new DOMSource(n);
-
-			// Prepare the output file
-			// File file = new File(filename);
-			// file.createNewFile();
-			// Result result = new StreamResult(file);
-			Result result = new StreamResult(file.toURI().getPath());
-
-			// Write the DOM document to the file
-			Transformer xformer = TransformerFactory.newInstance()
-					.newTransformer();
-			xformer.transform(source, result);
-		} catch (TransformerConfigurationException e) {
-			System.out.println("error");
-		} catch (TransformerException e) {
-			System.out.println("error");
-		} catch (Exception e) {
-			System.out.println("error");
-		}
-
-	}
         
 	public String getWellKnownName() {
 		return "";

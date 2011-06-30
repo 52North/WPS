@@ -314,6 +314,9 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 	}
 
 	public void update(Object state) {
+		if(Thread.currentThread().isInterrupted()){
+			return;
+		}
 	   this.state = state;
 	   notifyObservers();
 	}

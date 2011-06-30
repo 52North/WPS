@@ -21,15 +21,25 @@
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
 		<actionMapping>urn:execute</actionMapping>
 	</operation>
-	<operation name="getJobs">
+	<operation name="getStatus">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
-		<actionMapping>urn:getJobs</actionMapping>
+		<actionMapping>urn:getStatus</actionMapping>
 	</operation>
-	<operation name="cancelJob">
+	<operation name="cancel">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
-		<actionMapping>urn:cancelJob</actionMapping>
+		<actionMapping>urn:cancel</actionMapping>
+	</operation>
+	<operation name="deployProcess">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:deploy</actionMapping>
+	</operation>
+	<operation name="undeployProcess">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:undeploy</actionMapping>
 	</operation>
 	<operation name="pauseJob">
 		<messageReceiver

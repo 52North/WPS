@@ -42,7 +42,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.n52.wps.io.data.IData;
 
 public interface IAlgorithm  {
-		
+	// run method must be cancellable	
 	Map<String, IData> run(Map<String, List<IData>> inputData);
 	List<String> getErrors();
 	ProcessDescriptionType getDescription();
@@ -60,5 +60,6 @@ public interface IAlgorithm  {
 	
 	Class getInputDataType(String id);
 	Class getOutputDataType(String id);
+	
 	
 }

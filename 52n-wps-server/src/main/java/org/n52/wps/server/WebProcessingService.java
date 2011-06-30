@@ -67,6 +67,7 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
+import org.n52.wps.server.repository.RepositoryManager;
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
  * @author foerster

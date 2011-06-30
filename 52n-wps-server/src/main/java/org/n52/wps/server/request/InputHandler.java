@@ -72,7 +72,7 @@ import org.n52.wps.io.datahandler.xml.GML2BasicParser;
 import org.n52.wps.io.datahandler.xml.GML3BasicParser;
 import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.repository.RepositoryManager;
 import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
 import org.n52.wps.util.BasicXMLTypeFactory;
 import org.w3c.dom.Node;

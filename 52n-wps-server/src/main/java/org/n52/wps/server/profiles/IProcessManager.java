@@ -29,13 +29,13 @@ is extensible in terms of processes and data handlers.
  ***************************************************************/
 
 
-package org.n52.wps.transactional.deploy;
+package org.n52.wps.server.profiles;
 
 import java.util.Collection;
 
 import net.opengis.wps.x100.ExecuteDocument;
 
-import org.n52.wps.transactional.request.DeployProcessRequest;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 

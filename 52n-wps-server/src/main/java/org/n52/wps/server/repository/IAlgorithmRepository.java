@@ -31,13 +31,14 @@ Software Foundation, http://www.fsf.org.
 
 ***************************************************************/
 
-package org.n52.wps.server;
+package org.n52.wps.server.repository;
 
 
 import java.util.Collection;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.request.ExecuteRequest;
 
 public interface IAlgorithmRepository {

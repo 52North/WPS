@@ -35,6 +35,8 @@
  ***************************************************************/
 package org.n52.wps.server.handler;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -46,6 +48,7 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.response.Response;
 
 
 /*
@@ -74,9 +77,9 @@ public class RequestExecutor extends ThreadPoolExecutor {
 	// time that excess idle threads will wait for new tasks before terminating.
 	public static final int KEEP_ALIVE_SECONDS = 1000;
 	public static final int MAX_QUEUED_TASKS = 100;
-
 	private static Logger LOGGER = Logger.getLogger(RequestExecutor.class);
 
+	private Map<String,WPSTask<Response>> taskRegistry = new HashMap<String, WPSTask<Response>>();
 	/**
 	 * Create a RequestExecutor.
 	 */
@@ -124,15 +127,23 @@ public class RequestExecutor extends ThreadPoolExecutor {
 			errMsg = t.getMessage();
 		} else {
 			try {
-				// do nothing with result here
+				try {
+				removeTaskFromRegistry(((WPSTask<Response>)r).getRequest().getId());
+				LOGGER.info("Removed task from registry");
+				}
+				catch (Exception e) {
+					LOGGER.error("After execute remove from registry the task failed (maybe a cast problem)");
+				}
+				// do nothing with result here 
 				// only need to check for the status of the computation
 				((WPSTask<?>) r).get();
 				StatusType status = StatusType.Factory.newInstance();
 				status.setProcessSucceeded("The service succesfully processed the request.");
 				((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
 			} catch (CancellationException ce) {
-				LOGGER.error("Task cancelled: " + ce.getMessage());
-				errMsg = ce.getMessage();
+				LOGGER.info("Task cancelled: " + ce.getMessage());
+				// nothing happens if the task was cancelled 
+				//errMsg = ce.getMessage();
 			} catch (ExecutionException ee) {
 				LOGGER.error("Task execution failed: " + ee.getMessage());
 				errMsg = ee.getMessage();
@@ -157,5 +168,48 @@ public class RequestExecutor extends ThreadPoolExecutor {
 			
 		} 
 
+	}
+
+	/**
+	 * Add task to the task registry, then add the task to the pool
+	 * @param task
+	 */
+	public void addTask(WPSTask<Response> task) {
+		addTaskToRegistry(task);
+		execute(task);
+	}
+
+	public void addTaskToRegistry(WPSTask<Response> task) {
+		try {
+			getTaskRegistry().put(task.getRequest().getId(), task);
+		}
+		catch (Exception e) {
+			LOGGER.error("Put in registry failed!", e);
+		}
+	}
+	public void removeTaskFromRegistry(String id) {
+		try {
+		getTaskRegistry().remove(id);
+		}
+		catch (Exception e) {
+			LOGGER.error("Remove from registry failed!", e);
+		}
+	}
+	public void setTaskRegistry(Map<String,WPSTask<Response>> taskRegistry) {
+		this.taskRegistry = taskRegistry;
+	}
+
+	public Map<String,WPSTask<Response>> getTaskRegistry() {
+		return this.taskRegistry;
+	}
+
+	/**
+	 * Use to get a WPSTask from the registry
+	 * @param id
+	 * @return
+	 * @throws ExceptionReport 
+	 */
+	public WPSTask<Response> getTask(String id) throws ExceptionReport {
+			return this.taskRegistry.get(id);
 	}
 }

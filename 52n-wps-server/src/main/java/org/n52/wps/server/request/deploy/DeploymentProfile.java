@@ -29,7 +29,7 @@ is extensible in terms of processes and data handlers.
  ***************************************************************/
 
 
-package org.n52.wps.transactional.deploymentprofiles;
+package org.n52.wps.server.request.deploy;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -48,7 +48,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.wps.transactional.service.TransactionalHelper;
+import net.opengis.wps.x100.DeployProcessDocument;
+
+import org.n52.wps.server.repository.TransactionalRepositoryManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -57,7 +59,7 @@ public abstract class DeploymentProfile {
 	private Object payload;
 	private String processID;
 	
-	public DeploymentProfile(Node payload, String processID){
+	public DeploymentProfile(DeployProcessDocument deployDom, String processID){
 		this.processID = processID;
 		this.payload = payload;
 		

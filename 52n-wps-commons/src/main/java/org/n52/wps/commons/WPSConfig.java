@@ -324,6 +324,19 @@ public class WPSConfig  implements Serializable {
 		return (Property[]) Array.newInstance(Property.class,0);
 	}
 	
+	public Property[] getPropertiesForRepositoryName(String repName){
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for(int i = 0; i<repositories.length; i++) {
+			Repository repository = repositories[i];
+			if(repository.getName().equals(repName)){
+				return repository.getPropertyArray();
+			}
+		}
+		
+		return (Property[]) Array.newInstance(Property.class,0);
+	}
+
+	
 	public Property getPropertyForKey(Property[] properties, String key){
 		for(Property property: properties){
 			if(property.getName().equalsIgnoreCase(key)){

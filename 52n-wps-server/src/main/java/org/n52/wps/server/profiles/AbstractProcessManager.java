@@ -1,6 +1,6 @@
-package org.n52.wps.transactional.deploy;
+package org.n52.wps.server.profiles;
 
-import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 
 public abstract class AbstractProcessManager implements IProcessManager{
 	private ITransactionalAlgorithmRepository parentRepository;

@@ -30,11 +30,13 @@ Software Foundation, http://www.fsf.org.
 
 ***************************************************************/
 
-package org.n52.wps.server;
+package org.n52.wps.server.repository;
+
 
 
 public interface ITransactionalAlgorithmRepository extends IAlgorithmRepository{
 	boolean addAlgorithm(Object className);
 	boolean removeAlgorithm(Object className);
+	
 }
 

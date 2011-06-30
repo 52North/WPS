@@ -1,4 +1,4 @@
-package org.n52.wps.transactional.service;
+package org.n52.wps.server.repository;
 
 
 
@@ -16,41 +16,49 @@ import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.profiles.AbstractProcessManager;
+import org.n52.wps.server.profiles.DefaultTransactionalAlgorithm;
+import org.n52.wps.server.profiles.IProcessManager;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.transactional.algorithm.GenericTransactionalAlgorithm;
-import org.n52.wps.transactional.deploy.AbstractProcessManager;
-import org.n52.wps.transactional.deploy.IProcessManager;
-import org.n52.wps.transactional.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 
 
 
-
-public class GenericTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
-	private static Logger LOGGER = Logger.getLogger(GenericTransactionalProcessRepository.class);
+/**
+ * DefaultTransactionalProcessRepository is a default repository 
+ * which include :
+ * -profile deployement class
+ * - process manager class
+ * - schema related to the profile
+ * - algorithm class
+ * 
+ */
+public class DefaultTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
+	private static Logger LOGGER = Logger.getLogger(DefaultTransactionalProcessRepository.class);
 	protected Map<String, ProcessDescriptionType> processDescriptionMap;
 	
-	protected IProcessManager deployManager;
+	protected IProcessManager processManager;
 	
 	
-	public GenericTransactionalProcessRepository(String format){
+	public DefaultTransactionalProcessRepository(String format){
 		Property[] properties = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getName());
 		//TODO think of multiple instance of this class registered (yet not possible since singleton)
-		Property deployManagerXML = WPSConfig.getInstance().getPropertyForKey(properties, "DeployManager");
-		if(deployManagerXML==null){
-			throw new RuntimeException("Error. Could not find matching DeployManager");
+		Property processManagerXML = WPSConfig.getInstance().getPropertyForKey(properties, "ProcessManager");
+		if(processManagerXML==null){
+			throw new RuntimeException("Error. Could not find matching ProcessManager");
 		}
 		processDescriptionMap = new HashMap<String, ProcessDescriptionType>();
-		String className = deployManagerXML.getStringValue();
+		String className = processManagerXML.getStringValue();
 		try {
-			
-			Class deployManagerClass = Class.forName(className);
-			if(deployManagerClass.asSubclass(AbstractProcessManager.class).equals(deployManagerClass)){
-				Constructor constructor = deployManagerClass.getConstructor(ITransactionalAlgorithmRepository.class);
-				deployManager = (IProcessManager) constructor.newInstance(this);
+			LOGGER.info("Process Manager class: "+processManagerXML.getStringValue());
+			Class<?> processManagerClass = Class.forName(className);
+			if(processManagerClass.asSubclass(AbstractProcessManager.class).equals(processManagerClass)){
+				Constructor constructor = processManagerClass.getConstructor(ITransactionalAlgorithmRepository.class);
+				processManager = (IProcessManager) constructor.newInstance(this);
+				LOGGER.info("asSubclass");
 			}else{
-				deployManager = (IProcessManager) deployManagerClass.newInstance();
+				processManager = (IProcessManager) processManagerClass.newInstance();
 			}
 			
 		} catch (InstantiationException e) {
@@ -86,7 +94,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		}
 		DeployProcessRequest request = (DeployProcessRequest) process;
 		try {
-			deployManager.deployProcess(request);
+			processManager.deployProcess(request);
 		} catch (Exception e) {
 			LOGGER.warn("Could not instantiate algorithm: " + request);
 			e.printStackTrace();
@@ -99,7 +107,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 	
 	public boolean containsAlgorithm(String processID) {
 		try {
-			return deployManager.containsProcess(processID);
+			return processManager.containsProcess(processID);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -107,13 +115,13 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 	}
 
 	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
-		return new GenericTransactionalAlgorithm(processID, this.getClass());
+		return new DefaultTransactionalAlgorithm(processID, this.getClass());
 		
 	}
 
 	public Collection<String> getAlgorithmNames() {
 		try {
-			return deployManager.getAllProcesses();
+			return processManager.getAllProcesses();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<String>();
@@ -125,13 +133,13 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		Collection<IAlgorithm> result = new ArrayList<IAlgorithm>();
 		Collection<String> allAlgorithms;
 		try {
-			allAlgorithms = deployManager.getAllProcesses();
+			allAlgorithms = processManager.getAllProcesses();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ArrayList<IAlgorithm>();
 		} 
 		for(String processID : allAlgorithms){
-			result.add(new GenericTransactionalAlgorithm(processID, this.getClass()));
+			result.add(new DefaultTransactionalAlgorithm(processID, this.getClass()));
 		}
 		return result;
 	}
@@ -142,7 +150,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		}
 		UndeployProcessRequest request = (UndeployProcessRequest) process;
 		try {
-			deployManager.unDeployProcess(request);
+			processManager.unDeployProcess(request);
 		} catch (Exception e) {
 			LOGGER.warn("Could not remove algorithm: " + request);
 			e.printStackTrace();

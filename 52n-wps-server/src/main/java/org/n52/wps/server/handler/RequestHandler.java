@@ -36,7 +36,6 @@
  ***************************************************************/
 package org.n52.wps.server.handler;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,7 +60,9 @@ import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.request.CancelRequest;
 import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
@@ -92,14 +93,14 @@ public class RequestHandler {
 	protected OutputStream os;
 
 	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
-	
+
 	protected String responseMimeType;
-	
+
 	protected Request req;
-	
+
 	// Empty constructor due to classes which extend the RequestHandler
 	protected RequestHandler() {
-		
+
 	}
 
 	/**
@@ -116,14 +117,16 @@ public class RequestHandler {
 	public RequestHandler(Map<String, String[]> params, OutputStream os)
 			throws ExceptionReport {
 		this.os = os;
-		//sleepingTime is 0, by default.
-		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
-			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
-		}
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-		*/
-		
-		
+		// sleepingTime is 0, by default.
+		/*
+		 * if(WPSConfiguration.getInstance().exists(
+		 * PROPERTY_NAME_COMPUTATION_TIMEOUT)) { this.sleepingTime =
+		 * Integer.parseInt(WPSConfiguration.getInstance().getProperty(
+		 * PROPERTY_NAME_COMPUTATION_TIMEOUT)); } String sleepTime =
+		 * WPSConfig.getInstance
+		 * ().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
+		 */
+
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
 
@@ -131,17 +134,13 @@ public class RequestHandler {
 		String requestType = Request.getMapValue("request", ciMap, true);
 		if (requestType.equalsIgnoreCase("GetCapabilities")) {
 			req = new CapabilitiesRequest(ciMap);
-		} 
-		else if (requestType.equalsIgnoreCase("DescribeProcess")) {
+		} else if (requestType.equalsIgnoreCase("DescribeProcess")) {
 			req = new DescribeProcessRequest(ciMap);
-		}
-		else if (requestType.equalsIgnoreCase("Execute")) {
+		} else if (requestType.equalsIgnoreCase("Execute")) {
 			req = new ExecuteRequest(ciMap);
-		} 
-		else if (requestType.equalsIgnoreCase("RetrieveResult")) {
+		} else if (requestType.equalsIgnoreCase("RetrieveResult")) {
 			req = new RetrieveResultRequest(ciMap);
-		} 
-		else {
+		} else {
 			throw new ExceptionReport(
 					"The requested Operation is for HTTP GET not supported or not applicable to the specification: "
 							+ requestType,
@@ -167,37 +166,38 @@ public class RequestHandler {
 		String nodeName, localName, nodeURI, version;
 		Document doc;
 		this.os = os;
-		
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-		if(sleepTime==null || sleepTime.equals("")){
+
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer()
+				.getComputationTimeoutMilliSeconds();
+		if (sleepTime == null || sleepTime.equals("")) {
 			sleepTime = "5";
 		}
-		
-		
+
 		try {
-			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-		
+			System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
+					"org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			fac.setNamespaceAware(true);
 
 			// parse the InputStream to create a Document
 			doc = fac.newDocumentBuilder().parse(is);
-		
-		
-			
+
 			// Get the first non-comment child.
 			Node child = doc.getFirstChild();
-			while(child.getNodeName().compareTo("#comment")==0) {
+			while (child.getNodeName().compareTo("#comment") == 0) {
 				child = child.getNextSibling();
 			}
 			nodeName = child.getNodeName();
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
 			Node versionNode = child.getAttributes().getNamedItem("version");
-			if(versionNode == null) {
-				throw new ExceptionReport("No version parameter supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
+			if (versionNode == null) {
+				throw new ExceptionReport("No version parameter supplied.",
+						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-			version = child.getAttributes().getNamedItem("version").getNodeValue();
+			version = child.getAttributes().getNamedItem("version")
+					.getNodeValue();
 		} catch (SAXException e) {
 			throw new ExceptionReport(
 					"There went something wrong with parsing the POST data: "
@@ -212,20 +212,26 @@ public class RequestHandler {
 					"There is a internal parser configuration error",
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
-		if(version == null ) {
-			throw new ExceptionReport("version is null: " , ExceptionReport.MISSING_PARAMETER_VALUE);
+		if (version == null) {
+			throw new ExceptionReport("version is null: ",
+					ExceptionReport.MISSING_PARAMETER_VALUE);
 		}
-		if(!version.equals(Request.SUPPORTED_VERSION)) {
-			throw new ExceptionReport("version is null: " , ExceptionReport.INVALID_PARAMETER_VALUE);
+		if (!version.equals(Request.SUPPORTED_VERSION)) {
+			throw new ExceptionReport("version is null: ",
+					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
 		// get the request type
-		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
+		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)
+				&& localName.equals("Execute")) {
 			req = new ExecuteRequest(doc);
-			if(req instanceof ExecuteRequest){
-				setResponseMimeType((ExecuteRequest)req);
-			}else{
-					this.responseMimeType = "text/xml";
+			if (req instanceof ExecuteRequest) {
+				setResponseMimeType((ExecuteRequest) req);
+			} else {
+				this.responseMimeType = "text/xml";
 			}
+		} else if (nodeName.equals("DeployProcess")) {
+			req = new DeployProcessRequest(doc);
+			
 		} else if (nodeName.equals("Capabilities")) {
 			throw new ExceptionReport(
 					"Just HTTP GET is for getCapabilitiies supported for now",
@@ -234,11 +240,10 @@ public class RequestHandler {
 			throw new ExceptionReport(
 					"Just HTTP GET is for describeProcess supported for now",
 					ExceptionReport.OPERATION_NOT_SUPPORTED);
-		}  else if(!localName.equals("Execute")){
+		} else if (!localName.equals("Execute")) {
 			throw new ExceptionReport("specified operation is not supported: "
 					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);
-		}
-		else if(nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
+		} else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
 			throw new ExceptionReport("specified namespace is not supported: "
 					+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
@@ -250,13 +255,14 @@ public class RequestHandler {
 	 * be served immediately. If time runs out, the client will be asked to come
 	 * back later with a reference to the result.
 	 * 
-	 * @param req The request of the client.
+	 * @param req
+	 *            The request of the client.
 	 * @throws ExceptionReport
 	 */
 	public void handle() throws ExceptionReport {
 		Response resp = null;
-		if(req ==null){
-			throw new ExceptionReport("Internal Error","");
+		if (req == null) {
+			throw new ExceptionReport("Internal Error", "");
 		}
 		if (req instanceof ExecuteRequest) {
 			// cast the request to an executerequest
@@ -267,14 +273,15 @@ public class RequestHandler {
 			// create a task for this request
 			WPSTask<Response> task = new WPSTask<Response>(req);
 
-			//add process status before execution to enables clients to see the status
-			//status.addNewProcessStarted();
+			// add process status before execution to enables clients to see the
+			// status
+			// status.addNewProcessStarted();
 			task.getRequest().getExecuteResponseBuilder().setStatus(status);
-			
+
 			ExceptionReport exceptionReport = null;
 			try {
 				// submit the task for execution
-				pool.execute(task);
+				pool.addTask(task);
 				// set status to accepted
 				status.setProcessAccepted("Request is queued for execution.");
 				if (((ExecuteRequest) req).isStoreResponse()) {
@@ -286,17 +293,16 @@ public class RequestHandler {
 					// retrieve status with timeout enabled
 					try {
 						resp = task.get();
-						//Thread.sleep(this.sleepingTime);
+						// Thread.sleep(this.sleepingTime);
 						status.setProcessSucceeded("Process has succeeded");
 						status.unsetProcessAccepted();
-						task.getRequest().getExecuteResponseBuilder().setStatus(status);
-					}
-					catch (ExecutionException ee) {
+						task.getRequest().getExecuteResponseBuilder()
+								.setStatus(status);
+					} catch (ExecutionException ee) {
 						// the computation threw an error
 						// probably the client input is not valid
 						if (ee.getCause() instanceof ExceptionReport) {
-							exceptionReport = (ExceptionReport) ee
-									.getCause();
+							exceptionReport = (ExceptionReport) ee.getCause();
 						} else {
 							exceptionReport = new ExceptionReport(
 									"An error occurred in the computation: "
@@ -311,22 +317,29 @@ public class RequestHandler {
 					}
 				} finally {
 					if (exceptionReport != null) {
-						LOGGER.debug("ExceptionReport not null: " + exceptionReport.getMessage());
-						ProcessFailedType statusFailed = ProcessFailedType.Factory.newInstance();
-						statusFailed.setExceptionReport(exceptionReport.getExceptionDocument().getExceptionReport());
+						LOGGER.debug("ExceptionReport not null: "
+								+ exceptionReport.getMessage());
+						ProcessFailedType statusFailed = ProcessFailedType.Factory
+								.newInstance();
+						statusFailed.setExceptionReport(exceptionReport
+								.getExceptionDocument().getExceptionReport());
 						status.setProcessFailed(statusFailed);
-						// NOT SURE, if this exceptionReport is also written to the DB, if required... test please!
+						// NOT SURE, if this exceptionReport is also written to
+						// the DB, if required... test please!
 						throw exceptionReport;
 					}
 					// send the result to the outputstream of the client.
-				/*	if(((ExecuteRequest) req).isQuickStatus()) {
-						resp = new ExecuteResponse(execReq);
-					}*/
-					else if(resp == null) {
+					/*
+					 * if(((ExecuteRequest) req).isQuickStatus()) { resp = new
+					 * ExecuteResponse(execReq); }
+					 */
+					else if (resp == null) {
 						LOGGER.debug("repsonse object is null");
-						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
+						throw new ExceptionReport(
+								"Problem with handling threads in RequestHandler",
+								ExceptionReport.NO_APPLICABLE_CODE);
 					}
-					if(!((ExecuteRequest) req).isStoreResponse()) {
+					if (!((ExecuteRequest) req).isStoreResponse()) {
 						resp.save(this.os);
 						LOGGER.info("Served ExecuteRequest.");
 					}
@@ -337,34 +350,53 @@ public class RequestHandler {
 						"The requested process was rejected. Maybe the server is flooded with requests.",
 						ExceptionReport.SERVER_BUSY);
 			}
+		} else if (req instanceof CancelRequest) {
+			ExceptionReport exceptionReport = null;
+			try {
+				// CancelRequest is called with the WPSTask retrieved from the
+				// tasks registry
+				String taskId = ((CancelRequest) req).getCancelDom()
+						.getCancel().getProcessInstanceIdentifier()
+						.getInstanceId();
+				WPSTask<Response> task = pool.getTask(taskId);
+				resp = ((CancelRequest) req).call(task);
+			} catch (Exception e) {
+				if (e.getCause() instanceof ExceptionReport) {
+					exceptionReport = (ExceptionReport) e.getCause();
+				} else {
+					exceptionReport = new ExceptionReport(
+							"An error occurred in the computation: "
+									+ e.getMessage(),
+							ExceptionReport.NO_APPLICABLE_CODE);
+				}
+				throw exceptionReport;
+			}
+			resp.save(os);
+		} else if (req instanceof DeployProcessRequest) {
+			resp= req.call();
+			resp.save(os);
 		} else {
-			// for GetCapabilities and DescribeProcess:
+			// for GetCapabilities and DescribeProcess, and GetStatus:
+
 			resp = req.call();
 			resp.save(os);
 		}
 	}
-	
+
 	protected void setResponseMimeType(ExecuteRequest req) {
-		if(req.isRawData()){
+		if (req.isRawData()) {
 			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
-		}else{
+		} else {
 			responseMimeType = "text/xml";
 		}
-		
-		
-	}
-	
-	
 
-	public String getResponseMimeType(){
-		if(responseMimeType == null){
+	}
+
+	public String getResponseMimeType() {
+		if (responseMimeType == null) {
 			return "text/xml";
 		}
 		return responseMimeType.toLowerCase();
 	}
-	
-	
+
 }
-
-
-

@@ -39,19 +39,22 @@ public class WebProcessingServiceSoap {
 
 	}
 
-	public OMElement cancelJob(OMElement input) throws Exception {
+	/**
+	 * Christophe Noël (Spacebel) - June 2011 : updated to WPS 2.0 operations
+	 */
+	public OMElement cancel(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
 
-	public OMElement getJobs(OMElement input) throws Exception {
+	public OMElement getStatus(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
 
-	public OMElement pauseJob(OMElement input) throws Exception {
+	public OMElement deployProcess(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
 
-	public OMElement resumeJob(OMElement input) throws Exception {
+	public OMElement undeployProcess(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
 

@@ -52,7 +52,7 @@ import org.geotools.io.DefaultFileFilter;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.repository.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
 import org.w3c.dom.Document;

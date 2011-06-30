@@ -49,15 +49,15 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.ITransactionalAlgorithmRepository;
-import org.n52.wps.server.RepositoryManager;
-import org.n52.wps.transactional.algorithm.GenericTransactionalAlgorithm;
-import org.n52.wps.transactional.request.DeployProcessRequest;
+import org.n52.wps.server.profiles.DefaultTransactionalAlgorithm;
+import org.n52.wps.server.repository.IAlgorithmRepository;
+import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.repository.RepositoryManager;
+import org.n52.wps.server.repository.TransactionalRepositoryManager;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.transactional.request.ITransactionalRequest;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.n52.wps.transactional.response.TransactionalResponse;
-import org.n52.wps.transactional.service.TransactionalHelper;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -93,7 +93,7 @@ public class TransactionalRequestHandler {
 		storeDescribeProcess(request);
 		
 		try {
-			ITransactionalAlgorithmRepository repository = TransactionalHelper
+			ITransactionalAlgorithmRepository repository = TransactionalRepositoryManager
 					.getMatchingTransactionalRepository(request.getSchema());
 
 			if (repository == null) {
@@ -117,7 +117,7 @@ public class TransactionalRequestHandler {
 	private void storeDescribeProcess(DeployProcessRequest request) {
 		 String processName ="";
           try{
-             processName = XPathAPI.selectSingleNode(request.getProcessDescription(), "/DeployProcess/ProcessDescriptions/ProcessDescription/Identifier/text()").getNodeValue().trim();
+             processName = XPathAPI.selectSingleNode(request.getProcessDescription().getDomNode(), "/DeployProcess/ProcessDescriptions/ProcessDescription/Identifier/text()").getNodeValue().trim();
          }catch(DOMException de){
              de.printStackTrace();
          }catch(Exception e){
@@ -127,12 +127,12 @@ public class TransactionalRequestHandler {
 		
 		 Node describeProcess = null;
 		try {
-			describeProcess = XPathAPI.selectSingleNode(request.getProcessDescription(), "/DeployProcess/ProcessDescriptions");
+			describeProcess = XPathAPI.selectSingleNode(request.getProcessDescription().getDomNode(), "/DeployProcess/ProcessDescriptions");
 		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
 			
-			String fullPath =  GenericTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
+			String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
 			int searchIndex= fullPath.indexOf("WEB-INF");
 			String subPath = fullPath.substring(0, searchIndex);
 			subPath = subPath.replaceFirst("file:", "");

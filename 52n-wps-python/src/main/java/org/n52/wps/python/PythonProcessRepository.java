@@ -44,9 +44,9 @@ import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.feed.FeedRepository;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
+import org.n52.wps.server.repository.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 
 public class PythonProcessRepository implements IAlgorithmRepository {

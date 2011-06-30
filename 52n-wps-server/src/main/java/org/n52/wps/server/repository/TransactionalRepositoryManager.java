@@ -1,4 +1,4 @@
-package org.n52.wps.transactional.service;
+package org.n52.wps.server.repository;
 
 
 import java.io.File;
@@ -17,13 +17,17 @@ import javax.xml.transform.stream.StreamResult;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.ITransactionalAlgorithmRepository;
-import org.n52.wps.server.RepositoryManager;
-import org.n52.wps.transactional.deploy.IProcessManager;
+import org.n52.wps.server.profiles.IProcessManager;
 import org.w3c.dom.Node;
 
-public class TransactionalHelper {
+/**
+ * The repository manager is an utility class use to facilitate the
+ * load / search of a repository or load of a process manager class.
+ * TODO this should be merged with the RepositoryManager (which is only focused
+ * on (non transactional) java algorithm (local repository, uploaded repository)
+ *
+ */
+public class TransactionalRepositoryManager {
 
 	public static Repository getMatchingTransactionalRepositoryClassName(String schema){
 		WPSConfig config = WPSConfig.getInstance();
@@ -32,7 +36,7 @@ public class TransactionalHelper {
 		for(Repository repository : repositories){
 			Property[] properties = repository.getPropertyArray();
 			for(Property property : properties){
-				if(property.getName().equals("supportedFormat")){
+				if(property.getName().equals("SupportedFormat")){
 					if(property.getStringValue().equals(schema)){
 						return repository;
 					}
@@ -61,7 +65,7 @@ public class TransactionalHelper {
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		Property[] properties = repository.getPropertyArray();
 		for(Property property : properties){
-			if(property.getName().equals("DeploymentProfileClass")){
+			if(property.getName().equals("DeploymentProfile")){ 
 				return property.getStringValue();
 			}
 		}
@@ -72,10 +76,10 @@ public class TransactionalHelper {
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		Property[] properties = repository.getPropertyArray();
 		for(Property property : properties){
-			if(property.getName().equals("DeployManager")){
+			System.out.println("Property : "+property.getName()+"-"+property.getStringValue());
+			if(property.getName().equals("ProcessManager")){
 				//return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
                             try{
-
                                 Class depManager = Class.forName(property.getStringValue());
                                 Constructor con = depManager.getConstructor(ITransactionalAlgorithmRepository.class);
                                 Object o = con.newInstance(new Object[]{getMatchingTransactionalRepository(schema)});

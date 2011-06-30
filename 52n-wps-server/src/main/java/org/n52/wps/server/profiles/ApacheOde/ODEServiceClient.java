@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.n52.wps.transactional.deploy.bpel.apache;
+package org.n52.wps.server.profiles.ApacheOde;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -43,13 +43,13 @@ public class ODEServiceClient{
         EndpointReference target = new EndpointReference(url);
         options.setTo(target);
         options.setTimeOutInMilliSeconds(timeout);
+        options.setAction("deployAssembly");
         OMElement result = null;
         ServiceClient serviceClient = null;
 
         try {
             serviceClient = new ServiceClient();
             serviceClient.setOptions(options);
-
             result = serviceClient.sendReceive(msg);
         }catch(AxisFault af){
             af.printStackTrace();

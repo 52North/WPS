@@ -29,7 +29,7 @@ is extensible in terms of processes and data handlers.
  ***************************************************************/
 
 
-package org.n52.wps.transactional.algorithm;
+package org.n52.wps.server.profiles;
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;

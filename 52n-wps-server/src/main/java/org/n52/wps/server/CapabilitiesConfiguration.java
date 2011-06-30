@@ -57,6 +57,7 @@ import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.repository.RepositoryManager;
 
 
 /**

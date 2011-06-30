@@ -1,6 +1,5 @@
 package org.n52.wps.commons.context;
 
-import java.io.File;
 import java.util.UUID;
 
 public class ExecutionContext {
@@ -11,10 +10,15 @@ public class ExecutionContext {
 		tempFolderName = UUID.randomUUID().toString();
 	}
 	
-    public String getTempDirectoryPath() {
+    public ExecutionContext(String id2) {
+    	this.tempFolderName = id2;
+	}
+
+	public String getTempDirectoryPath() {
     	
         return System.getProperty("java.io.tmpdir")+tempFolderName;
-    } 
+    }
+
     
     // add more as needed...
 }

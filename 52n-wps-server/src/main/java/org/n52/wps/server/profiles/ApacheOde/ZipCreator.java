@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.n52.wps.transactional.deploy.bpel.apache;
+package org.n52.wps.server.profiles.ApacheOde;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

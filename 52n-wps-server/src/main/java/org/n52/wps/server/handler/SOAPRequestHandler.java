@@ -9,10 +9,14 @@ import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.request.CancelRequest;
 import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.GetStatusRequest;
 import org.n52.wps.server.request.Request;
+import org.n52.wps.server.request.UndeployRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -90,10 +94,30 @@ public class SOAPRequestHandler extends RequestHandler {
 			req = new CapabilitiesRequest(inputDoc);
 		} else if (localName.equals("DescribeProcess")) {
 			req = new DescribeProcessRequest(inputDoc);
-		} else if (!localName.equals("Execute")) {
+		} 
+		/**
+		 * Christophe Noël - Spacebel June 2011 : added new WPS 2.0 operations
+		 */
+		
+		else if (localName.equals("GetStatus")) {
+			req = new GetStatusRequest(inputDoc);
+		} else if (localName.equals("Cancel")) {
+			req = new CancelRequest(inputDoc);
+		}
+		else if (localName.equals("DeployProcess")) {
+			req = new DeployProcessRequest(inputDoc);
+		}
+		/**else if (localName.equals("UndeployProcess")) {
+			req = new UndeployProcessRequest(inputDoc);
+			}
+		 */
+		
+		// fix : gardians were not correct...
+		else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
 			throw new ExceptionReport("specified operation is not supported: "
 					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);
-		} else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
+		}
+		else if (!nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
 			throw new ExceptionReport("specified namespace is not supported: "
 					+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
 		}

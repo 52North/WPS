@@ -65,6 +65,10 @@ public class ExceptionReport extends Exception {
 	public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
 	/** An error occurs during remote and distributed computation process. */
 	public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
+	/** The cancellation fails */
+	public static final String CANCELLATION_FAILED = "CancellationError";
+	/** The process instance identifier (taskid) is not valid */
+	public static final String INVALID_TASKID = "InvalidProcessInstanceIdentifier";
 	
 	protected String errorKey;
 	protected String locator;

@@ -1,4 +1,4 @@
-package org.n52.wps.server;
+package org.n52.wps.server.repository;
 
 import java.io.File;
 

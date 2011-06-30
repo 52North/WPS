@@ -36,6 +36,7 @@ package org.n52.wps.server.request;
 
 import java.net.URLDecoder;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
@@ -62,10 +63,10 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
+import org.n52.wps.server.repository.RepositoryManager;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
@@ -81,8 +82,8 @@ public class ExecuteRequest extends Request implements IObserver {
 	private ExecuteDocument execDom;
 	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilder execRespType;
-	
-	
+	private IAlgorithm algorithm;
+
 
 	/**
 	 * Creates an ExecuteRequest based on a Document (HTTP_POST)
@@ -93,6 +94,17 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public ExecuteRequest(Document doc) throws ExceptionReport {
 		super(doc);
+		/**
+		 * Remark Christophe Noel (Spacebel)
+		 * - context must be set here because a process instance identifier 
+		 * must be returned even if task is not started (see WPS 2.0 CR)...
+		 * - There is a kind of doublon (context  Request.id)
+		 * I decided to ignore the Context (I don't know where it is relevant but
+		 * anyway Request.getUniqueId is used for the statusLocation in the current location
+		 * In order to keep the Context.id equilavent the Context id is initialized
+		 * later with getUniqueId
+		 * 	 */
+		getUniqueId();
 		try {
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
@@ -128,6 +140,14 @@ public class ExecuteRequest extends Request implements IObserver {
 		// create an initial response
 		execRespType = new ExecuteResponseBuilder(this);
 
+	}
+
+	public IAlgorithm getAlgorithm() {
+		return algorithm;
+	}
+
+	public void setAlgorithm(IAlgorithm algorithm) {
+		this.algorithm = algorithm;
 	}
 
 	/**
@@ -511,12 +531,13 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * Actually serves the Request.
 	 * 
 	 * @throws ExceptionReport
+	 * @throws InterruptedException 
 	 */
 	public Response call() throws ExceptionReport {
 		try{
-			ExecutionContext context = new ExecutionContext();
 	
 				// register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
+			ExecutionContext context = new ExecutionContext(getId());
 			ExecutionContextFactory.registerContext(context);
 				
 			LOGGER.debug("started with execution");
@@ -536,7 +557,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			 * returnResults = algorithm.run((Map)parser.getParsedInputLayers(),
 			 * (Map)parser.getParsedInputParameters());
 			 */
-			IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier(), this);
+			 algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier(), this);
 			
 			if(algorithm instanceof ISubject){
 				ISubject subject = (ISubject) algorithm;
@@ -562,11 +583,19 @@ public class ExecuteRequest extends Request implements IObserver {
 //					throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
 //				}
 //			}
-			if(returnResults==null)
+			if(returnResults==null && !(algorithm instanceof AbstractTransactionalAlgorithm))
 			{
 				returnResults = algorithm.run(parser.getParsedInputData());
 			} 
-
+			/** Check if the thread was cancelled (exception is generated
+			 * here to avoid to change the run() inteface of IAlgorithm
+			 * but it would be better to throw a CancellationException
+			 */
+			if(Thread.currentThread().isInterrupted())
+			{
+				throw new CancellationException("Task Cancelled");
+			}
+			
 		}catch(RuntimeException e) {
 			LOGGER.debug("RuntimeException:" + e.getMessage());
 			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
@@ -667,6 +696,5 @@ public class ExecuteRequest extends Request implements IObserver {
 		}
 		
 	}
-
-
+	
 }

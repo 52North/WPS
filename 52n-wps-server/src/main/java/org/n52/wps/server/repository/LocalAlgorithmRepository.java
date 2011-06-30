@@ -31,7 +31,7 @@ Software Foundation, http://www.fsf.org.
 
 ***************************************************************/
 
-package org.n52.wps.server;
+package org.n52.wps.server.repository;
 
 
 import java.util.ArrayList;
@@ -44,6 +44,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.request.ExecuteRequest;
 
 

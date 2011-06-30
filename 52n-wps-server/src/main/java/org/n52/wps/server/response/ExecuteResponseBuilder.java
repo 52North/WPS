@@ -63,9 +63,9 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.repository.RepositoryManager;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
@@ -109,8 +109,18 @@ public class ExecuteResponseBuilder {
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
+		responseElem.addNewProcessInstanceIdentifier();
+		responseElem.getProcessInstanceIdentifier().setInstanceId(request.getId());
 	}
 	
+	public ExecuteResponseDocument getDoc() {
+		return doc;
+	}
+
+	public void setDoc(ExecuteResponseDocument doc) {
+		this.doc = doc;
+	}
+
 	public void update() throws ExceptionReport {		
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();

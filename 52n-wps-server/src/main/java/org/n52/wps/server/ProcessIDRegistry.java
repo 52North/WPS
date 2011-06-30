@@ -83,7 +83,7 @@ public class ProcessIDRegistry {
 		return idList.toArray(new String[idList.size()]);
 	}
 	
-	protected void clearRegistry(){
+	public void clearRegistry(){
 		while (lock){
 			//spin
 		}

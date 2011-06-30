@@ -55,8 +55,8 @@
 			<scope>compile</scope>
 		</dependency>
 				<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-xml</artifactId>
+			<groupId>be.spacebel.wps</groupId>
+			<artifactId>wpsg-xml</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>

@@ -32,7 +32,7 @@ Software Foundation, http://www.fsf.org.
 ***************************************************************/
 
 
-package org.n52.wps.server;
+package org.n52.wps.server.repository;
 
 
 import java.beans.PropertyChangeEvent;
@@ -48,6 +48,8 @@ import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessIDRegistry;
 import org.n52.wps.server.request.ExecuteRequest;
 
 public class RepositoryManager {

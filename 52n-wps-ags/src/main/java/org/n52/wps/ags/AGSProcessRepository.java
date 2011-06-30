@@ -48,7 +48,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.repository.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Node;

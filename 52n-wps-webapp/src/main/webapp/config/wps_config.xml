@@ -260,6 +260,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.ssegrid.algorithm.Delay</Property>
 		</Repository>
 		
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="true">
@@ -304,19 +305,19 @@
 			<Property name="Algorithm" active="true">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
 		</Repository>
  		-->
-		<!--
-			<Repository name="OracleBPELRepository"
-			className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository" active="true">
-			<Property
-			name="GenericAlgorithm" active="true">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
-			<Property
-			name="DeployManager" active="true">org.n52.wps.transactional.deploy.bpel.oracle.OracleBPELManager</Property>
-			<Property name="WorkspaceLocationRoot"></Property> <Property
-			name="supportedFormat" active="true">whatever.xsd</Property> <Property
-			name="DeploymentProfileClass" active="true">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
-			this should be created <SupportedDeploymentProfiles schema=""
-			repositoyName="OracleBPELRepository">
 		
+		<Repository name="ApacheOdeRepository"
+			className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
+			<Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.ApacheOde.ApacheOdeProcessManager</Property>
+			<Property name="WorkspaceLocationRoot" active="true"></Property> 
+			<Property name="SupportedFormat" active="true">apacheode.xsd</Property> 
+			<Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.ApacheOde.BPELDeploymentProfile</Property>
+			<Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito:8080/axis2/services/DeploymentService</Property>
+			<Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito:8080/ode/processes/ProcessManagement</Property>
+			</Repository>
+		
+		<!-- 
 		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>
 		-->

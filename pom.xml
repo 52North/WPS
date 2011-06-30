@@ -73,6 +73,11 @@
 		<name>opengeo repository</name>
 		<url>http://repo.opengeo.org</url>
 	</repository>    
+    <repository>
+        <id>gai-vito</id>
+        <name>gai-vito-releases</name>
+        <url>http://gai-vito:8081/artifactory/libs-release-local</url>
+    </repository>
 
   </repositories>
   
