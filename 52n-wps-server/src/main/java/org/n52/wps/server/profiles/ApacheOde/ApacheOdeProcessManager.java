@@ -50,6 +50,7 @@ import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.saaj.util.SAAJUtil;
+import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
@@ -62,6 +63,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class ApacheOdeProcessManager extends AbstractProcessManager {
+
+	private static Logger LOGGER = Logger.getLogger(ApacheOdeProcessManager.class);
 
 	private ODEServiceClient _client;
 	private OMFactory _factory;
@@ -114,7 +117,7 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		BPELDeploymentProfile deploymentProfile = (BPELDeploymentProfile) profile;
 		String processID = deploymentProfile.getProcessID();
 		byte[] archive = deploymentProfile.getArchive();
-		System.out.println("Archive:"+archive);
+		LOGGER.info("Archive:"+archive);
 		OMElement result = null;
 		try {
 			OMNamespace ins = _factory.createOMNamespace(
@@ -140,6 +143,11 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 			zipElmt.addChild(zipContent);
 			deployRequestOde.addChild(activeElem);
 			result = sendToDeployment(deployRequestOde);
+			
+			// TODO throw Exception if result is not correct
+			LOGGER.info("--");
+			LOGGER.info(result.getText());
+			LOGGER.info("--");
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new ExceptionReport("Backend error during deployement", ExceptionReport.REMOTE_COMPUTATION_ERROR, e);
