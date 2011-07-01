@@ -36,6 +36,8 @@ package org.n52.wps.server.request;
 
 
 
+import java.util.List;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -141,6 +143,15 @@ public class DescribeProcessRequest extends Request {
 		document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		document.getProcessDescriptions().setService("WPS");
 		document.getProcessDescriptions().setVersion(Request.SUPPORTED_VERSION);
+		
+		if(identifiers.length==1 && identifiers[0].equalsIgnoreCase("all")){
+			List<String> identifierList = RepositoryManager.getInstance().getAlgorithms();
+			identifiers = new String[identifierList.size()];
+			for(int i = 0;i<identifierList.size();i++){
+				identifiers[i] = identifierList.get(i);
+			}
+		}
+		
 		for(String algorithmName : identifiers) {
 			if(!RepositoryManager.getInstance().containsAlgorithm(algorithmName)) {
 				throw new ExceptionReport("Algorithm does not exist: " + algorithmName, 
