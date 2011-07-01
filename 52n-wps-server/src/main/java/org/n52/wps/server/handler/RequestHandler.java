@@ -194,10 +194,14 @@ public class RequestHandler {
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
 			Node versionNode = child.getAttributes().getNamedItem("version");
-			if(versionNode == null) {
+			if(versionNode == null && !nodeName.contains("apabilities")) {
 				throw new ExceptionReport("No version parameter supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-			version = child.getAttributes().getNamedItem("version").getNodeValue();
+			if(nodeName.contains("apabilities")){
+				version = child.getFirstChild().getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
+			}else{
+				version = child.getAttributes().getNamedItem("version").getNodeValue();
+			}
 		} catch (SAXException e) {
 			throw new ExceptionReport(
 					"There went something wrong with parsing the POST data: "
@@ -226,10 +230,10 @@ public class RequestHandler {
 			}else{
 					this.responseMimeType = "text/xml";
 			}
-		} else if (nodeName.equals("Capabilities")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for getCapabilitiies supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+		} else if (nodeName.contains("apabilities")) {
+			req = new CapabilitiesRequest(doc);
+			this.responseMimeType = "text/xml";
+			
 		} else if (nodeName.equals("DescribeProcess")) {
 			throw new ExceptionReport(
 					"Just HTTP GET is for describeProcess supported for now",
