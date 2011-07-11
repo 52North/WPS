@@ -42,11 +42,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.namespace.QName;
+
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
+import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.request.ExecuteRequest;
 
@@ -59,6 +62,9 @@ public class RepositoryManager {
 	private List<IAlgorithmRepository> repositories;
 	
 	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
+	
+	private static final String PROCESS_UPDATE_HOURS = "UPDATE_PROCESS_INTERVAL_HOURS";
+	private UpdateThread updateThread;
 	
 	private RepositoryManager(){
 		
@@ -77,11 +83,30 @@ public class RepositoryManager {
                 loadAllRepositories();
             }
         });
+        
+        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+        String value = server.selectAttribute(new QName("repoReloadInterval")).getDomNode().getNodeValue();
+        		
+        // be careful - parsing the value might result in an exception
+        try {
+        	Double d = Double.parseDouble(value);
+            if (! (d == 0)){
+	        	d = d * 3600 * 1000; // make milliseconds
+	        	long updateInterval = d.longValue();
+	        	this.updateThread = new UpdateThread(updateInterval);
+	        	updateThread.start();
+        	}
+        }
+        catch (Exception e) {
+        	LOGGER.info("Could not start Update Thread. Have you assigned a valid decimal value?");
+        }
+        		
 
 	}
 
     private void loadAllRepositories(){
         repositories = new ArrayList<IAlgorithmRepository>();
+        System.gc();
 
 		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
 
@@ -162,7 +187,15 @@ public class RepositoryManager {
 	}
 	
 	/**
-	 * Methods looks for Algorithhm in all Repositories.
+	 * Allows to reInitialize the Repositories
+	 *
+	 */
+	protected void reloadRepositories() {
+		loadAllRepositories();
+	}
+	
+	/**
+	 * Methods looks for Algorithm in all Repositories.
 	 * The first match is returned.
 	 * If no match could be found, null is returned
 	 *
@@ -263,5 +296,48 @@ public class RepositoryManager {
 		}
 		return null;
 	}
+	
+    static class UpdateThread extends Thread {
+        
+    	private final long interval;
+    	private boolean firstrun = true;
+    	
+    	public UpdateThread (long interval){
+    		this.interval = interval;
+    	}
+    	
+        @Override
+        public void run() {
+        	LOGGER.debug("UpdateThread started");
+        	
+        	try {
+        		// never terminate the run method
+        		while (true){
+        			// do not update on first run!
+        			if (!firstrun){
+        				LOGGER.info("Reloading repositories - this might take a while ...");
+            			long timestamp = System.currentTimeMillis();
+            			RepositoryManager.getInstance().reloadRepositories();
+            			LOGGER.info("Repositories reloaded - going to sleep. Took " + (System.currentTimeMillis()-timestamp) / 1000 + " seconds.");
+        			} else {
+        				firstrun = false;
+        			}
+        			
+        			// sleep for a given INTERVAL
+        			sleep(interval);
+        		}
+			} catch (InterruptedException e) {
+				LOGGER.debug("Interrupt received - Terminating the UpdateThread.");
+			}
+        }
+       
+    }
+    
+    // shut down the update thread
+    public void finalize(){
+    	if (updateThread != null){
+    		updateThread.interrupt();
+    	}
+    }
 
 }
