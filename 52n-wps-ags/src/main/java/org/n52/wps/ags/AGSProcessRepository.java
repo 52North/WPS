@@ -114,7 +114,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		
 		ProcessDescriptionType pd = this.loadProcessDescription(processDescriptionFile);
 		String processID = pd.getIdentifier().getStringValue();
-		LOGGER.info("Registering: " + processID);
+		LOGGER.debug("Registering: " + processID);
 		this.registeredProcessDescriptions.put(processID, pd);
 		ToolParameter[] params = this.loadParameters(pd);
 		this.registeredAlgorithmParameters.put(processID, params);
