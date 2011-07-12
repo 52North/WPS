@@ -28,21 +28,24 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-
 package org.n52.wps.server.profiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -52,6 +55,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
@@ -63,228 +67,214 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
+import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
 import org.n52.wps.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
-	
+public class DefaultTransactionalAlgorithm extends
+		AbstractTransactionalAlgorithm {
+
 	private List<String> errors;
-	private static Logger LOGGER = Logger.getLogger(DefaultTransactionalAlgorithm.class);
+	private static Logger LOGGER = Logger
+			.getLogger(DefaultTransactionalAlgorithm.class);
 	private ProcessDescriptionType processDescription;
 	private String workspace;
-	
+	private IProcessManager processManager;
+
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
-	
-	public DefaultTransactionalAlgorithm(String processID, Class<?> registeredRepository){
+
+	public DefaultTransactionalAlgorithm(String processID) {
 		super(processID);
 		WPSConfig wpsConfig = WPSConfig.getInstance();
-		Property[] properties = wpsConfig.getPropertiesForRepositoryClass(registeredRepository.getName());
-		this.workspace = wpsConfig.getPropertyForKey(properties,"WorkspaceLocationRoot").getStringValue();
+		Property[] properties = wpsConfig.getPropertiesForAlgorithm(processID);
+		setWorkspace(wpsConfig.getPropertyForKey(properties,
+				"WorkspaceLocationRoot").getStringValue());
+		try {
+			setProcessManager(TransactionalRepositoryManager
+					.getProcessManagerForSchema(wpsConfig.getPropertyForKey(
+							properties, "supportedFormat").getStringValue()));
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		this.errors = new ArrayList<String>();
 		processDescription = initializeDescription();
-		
 	}
-	
-	public ProcessDescriptionType getDescription()  {
+
+	public ProcessDescriptionType getDescription() {
 		return processDescription;
 	}
-	
-	// TODO : BPEL has nothing to do here...
-	public HashMap<String, IData> run(ExecuteDocument payload){
-		Document responseDocument;
-		HashMap<String,IData> resultHash = new HashMap<String,IData>();
-		try {	
-		//forward request
-			
-			//TODO get deploy manager class from config
-			IProcessManager deployManager = TransactionalRepositoryManager.getProcessManagerForSchema("BPELProfile.xsd");
-                        
-			responseDocument = deployManager.invoke(payload, getAlgorithmID());
-			
-			//1.parse results;
-			
-			//TODO make temporaryfile
-		
-			//writeXmlFile(responseDocument,workspace+"\\BPEL\\serverside.xml");
-			File tempFile = File.createTempFile("wpsbpelresult", ".xml", null);
-			
-			File tempFile2 = File.createTempFile("wpsbpelresult", ".xml", null);
-			//
-            XMLUtils.writeXmlFile(responseDocument,tempFile2);
 
-            Document d = new DocumentBuilderFactoryImpl().newDocumentBuilder().parse(tempFile2);
-            
-			GenericFileData data = new GenericFileData(tempFile, "text/xml");
-			
-			Node gml = XPathAPI.selectSingleNode(d, "//Output/Data/ComplexData/FeatureCollection");
-			
-			String identifier = XPathAPI.selectSingleNode(d, "//Output/Identifier").getFirstChild().getNodeValue().trim();
-			
-			XMLUtils.writeXmlFile(gml, tempFile);
-			
-			GenericFileDataBinding binding = new GenericFileDataBinding(data);
-			
-			resultHash.put(identifier, binding);
-			
-			//ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(new File(workspace+"\\BPEL\\serverside.xml"));
-//            ExecuteResponseDocument executeResponseDocument = ExecuteResponseDocument.Factory.parse(tempFile);
-//			
-//	//			2.look at each Output Element
-//			OutputDataType[] resultValues = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray();
-//			for(int i = 0; i<resultValues.length;i++){
-//				OutputDataType ioElement  = resultValues[i];
-//				//3.get the identifier as key
-//				String key = ioElement.getIdentifier().getStringValue();
-//				//4.the the literal value as String
-//				if(ioElement.getData().getLiteralData()!=null){
-//					resultHash.put(key, OutputParser.handleLiteralValue(ioElement));
-//				}
-//				//5.parse the complex value
-//				if(ioElement.getData().getComplexData()!=null){
-//					
-//					resultHash.put(key,  OutputParser.handleComplexValue(ioElement, getDescription()));
-//						
-//					
-//				}
-//				//6.parse the complex value reference
-//				if(ioElement.getReference()!=null){
-//					//TODO handle this
-//					//download the data, parse it and put it in the hashmap
-//					//resultHash.put(key, OutputParser.handleComplexValueReference(ioElement));
-//				}
-//				
-//				//7.parse Bounding Box value
-//				if(ioElement.getData().getBoundingBoxData()!=null){
-//					resultHash.put(key, OutputParser.handleBBoxValue(ioElement));
-//				}
-//				
-//				
-//		}
-		
+	// TODO : BPEL has nothing to do here...
+	public HashMap<String, IData> run(ExecuteDocument payload) {
+		ExecuteResponseDocument responseDocument;
+		HashMap<String, IData> resultHash = new HashMap<String, IData>();
+		try {
+			/**
+			 * Note cnl : The DefaultTransactionAlgorithm receives an
+			 * ExecuteResponseDocument from the backend process manager If the
+			 * process manager returns another kind of DOM document, another
+			 * TransactionalAlgorithm should handle this.
+			 */
+			responseDocument = ExecuteResponseDocument.Factory
+					.parse(getProcessManager()
+							.invoke(payload, getAlgorithmID()));
+			/**
+			 * Parsing
+			 */
+			OutputDataType[] resultValues = responseDocument
+					.getExecuteResponse().getProcessOutputs().getOutputArray();
+			for (int i = 0; i < resultValues.length; i++) {
+				OutputDataType ioElement = resultValues[i];
+				String key = ioElement.getIdentifier().getStringValue();
+				if (ioElement.getData().isSetLiteralData()) {
+					resultHash.put(key,
+							OutputParser.handleLiteralValue(ioElement));
+				}
+				if (ioElement.getData().isSetComplexData()) {
+					resultHash.put(key, OutputParser.handleComplexValue(
+							ioElement, getDescription()));
+				}
+				/**
+				 * TODO
+				 * if(ioElement.isSetReference()){ resultHash.put(key,
+				 * OutputParser.handleComplexValueReference(ioElement)); }
+				 */
+				if (ioElement.getData().getBoundingBoxData() != null) {
+					resultHash
+							.put(key, OutputParser.handleBBoxValue(ioElement));
+				}
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			String error = "Could not create ExecuteResponseDocument";
 			errors.add(error);
-			LOGGER.warn(error + " Reason: " +e.getMessage());
-			throw new RuntimeException(error,e);
-		} 
-		
-		//add response id
-		
-
+			LOGGER.warn(error + " Reason: " + e.getMessage());
+			throw new RuntimeException(error, e);
+		}
 		return resultHash;
 	}
-
 
 	public List<String> getErrors() {
 		return errors;
 	}
 
-
 	protected ProcessDescriptionType initializeDescription() {
-		String fullPath =  DefaultTransactionalAlgorithm.class.getProtectionDomain().getCodeSource().getLocation().toString();
-		int searchIndex= fullPath.indexOf("WEB-INF");
+		String fullPath = DefaultTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:/", "");
-                String processID = getAlgorithmID();
-                //sanitize processID: strip version number and namespace if passed in
-                if (processID.contains("-"))
-                    processID = processID.split("-")[0];
-                if (processID.contains("}"))
-                    processID = processID.split("}")[1];
+		String processID = getAlgorithmID();
+		// sanitize processID: strip version number and namespace if passed in
+		if (processID.contains("-"))
+			processID = processID.split("-")[0];
+		if (processID.contains("}"))
+			processID = processID.split("}")[1];
 		try {
-			File xmlDesc = new File(subPath+File.separator+"WEB-INF"+File.separator+"ProcessDescriptions"+File.separator+processID+".xml");
+			File xmlDesc = new File(subPath + File.separator + "WEB-INF"
+					+ File.separator + "ProcessDescriptions" + File.separator
+					+ processID + ".xml");
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
-			ProcessDescriptionsDocument doc = ProcessDescriptionsDocument.Factory.parse(xmlDesc, option);
-			if(doc.getProcessDescriptions().getProcessDescriptionArray().length == 0) {
+			ProcessDescriptionDocument doc = ProcessDescriptionDocument.Factory
+					.parse(xmlDesc, option);
+			if (doc == null) {
 				LOGGER.warn("ProcessDescription does not contain any description");
 				return null;
 			}
-			
-			doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(processID);
 
+			doc.getProcessDescription().getIdentifier()
+					.setStringValue(processID);
 
-			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
-		}
-		catch(IOException e) {
-			LOGGER.warn("Could not initialize algorithm, parsing error: " + getAlgorithmID(), e);
-		}
-		catch(XmlException e) {
-			LOGGER.warn("Could not initialize algorithm, parsing error: " +getAlgorithmID(), e);
+			return doc.getProcessDescription();
+		} catch (IOException e) {
+			LOGGER.warn("Could not initialize algorithm, parsing error: "
+					+ getAlgorithmID(), e);
+		} catch (XmlException e) {
+			LOGGER.warn("Could not initialize algorithm, parsing error: "
+					+ getAlgorithmID(), e);
 		}
 		return null;
-		
-	}
-		
 
+	}
 
 	public boolean processDescriptionIsValid() {
 		return processDescription.validate();
 	}
 
-	
-	
-	private Document checkResultDocument(Document doc){
-		if(getFirstElementNode(doc.getFirstChild()).getNodeName().equals("ExceptionReport") && getFirstElementNode(doc.getFirstChild()).getNamespaceURI().equals(OGC_OWS_URI)) {
+	private Document checkResultDocument(Document doc) {
+		if (getFirstElementNode(doc.getFirstChild()).getNodeName().equals(
+				"ExceptionReport")
+				&& getFirstElementNode(doc.getFirstChild()).getNamespaceURI()
+						.equals(OGC_OWS_URI)) {
 			try {
-				ExceptionReportDocument exceptionDoc = ExceptionReportDocument.Factory.parse(doc);
-				throw new RuntimeException("Error occured while executing query");
-			}
-			catch(Exception e) {
-				throw new RuntimeException("Error while parsing ExceptionReport retrieved from server", e);
+				ExceptionReportDocument exceptionDoc = ExceptionReportDocument.Factory
+						.parse(doc);
+				throw new RuntimeException(
+						"Error occured while executing query");
+			} catch (Exception e) {
+				throw new RuntimeException(
+						"Error while parsing ExceptionReport retrieved from server",
+						e);
 			}
 		}
 		return doc;
 	}
 
 	private Node getFirstElementNode(Node node) {
-		if(node == null) {
+		if (node == null) {
 			return null;
 		}
-		if(node.getNodeType() == Node.ELEMENT_NODE) {
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			return node;
-		}
-		else {
+		} else {
 			return getFirstElementNode(node.getNextSibling());
 		}
-		
+
 	}
-	
 
-
-        
 	public String getWellKnownName() {
 		return "";
 	}
 
 	public Class getInputDataType(String id) {
-		InputDescriptionType[] inputs = processDescription.getDataInputs().getInputArray();
-		for(InputDescriptionType input : inputs){
-			if(input.getIdentifier().getStringValue().equals(id)){
-				if(input.isSetLiteralData()){
-					String datatype = input.getLiteralData().getDataType().getStringValue();
-					if(datatype.contains("tring")){
-							return LiteralStringBinding.class;
+		InputDescriptionType[] inputs = processDescription.getDataInputs()
+				.getInputArray();
+		for (InputDescriptionType input : inputs) {
+			if (input.getIdentifier().getStringValue().equals(id)) {
+				if (input.isSetLiteralData()) {
+					String datatype = input.getLiteralData().getDataType()
+							.getStringValue();
+					if (datatype.contains("tring")) {
+						return LiteralStringBinding.class;
 					}
-					if(datatype.contains("ollean")){
+					if (datatype.contains("ollean")) {
 						return LiteralBooleanBinding.class;
 					}
-					if(datatype.contains("loat") || datatype.contains("ouble")){
+					if (datatype.contains("loat") || datatype.contains("ouble")) {
 						return LiteralDoubleBinding.class;
 					}
-					if(datatype.contains("nt")){
+					if (datatype.contains("nt")) {
 						return LiteralIntBinding.class;
 					}
 				}
-				if(input.isSetComplexData()){
-					 String mimeType = input.getComplexData().getDefault().getFormat().getMimeType();
-					 if(mimeType.contains("xml") || (mimeType.contains("XML"))){
-						 return GTVectorDataBinding.class;
-					 }else{
-						 return GTRasterDataBinding.class;
-					 }
+				if (input.isSetComplexData()) {
+					String mimeType = input.getComplexData().getDefault()
+							.getFormat().getMimeType();
+					if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
+						return GTVectorDataBinding.class;
+					} else {
+						return GTRasterDataBinding.class;
+					}
 				}
 			}
 		}
@@ -292,30 +282,33 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 	}
 
 	public Class getOutputDataType(String id) {
-		OutputDescriptionType[] outputs = processDescription.getProcessOutputs().getOutputArray();
-		
-		for(OutputDescriptionType output : outputs){
-			
-			if(output.isSetLiteralOutput()){
-				String datatype = output.getLiteralOutput().getDataType().getStringValue();
-				if(datatype.contains("tring")){
+		OutputDescriptionType[] outputs = processDescription
+				.getProcessOutputs().getOutputArray();
+
+		for (OutputDescriptionType output : outputs) {
+
+			if (output.isSetLiteralOutput()) {
+				String datatype = output.getLiteralOutput().getDataType()
+						.getStringValue();
+				if (datatype.contains("tring")) {
 					return LiteralStringBinding.class;
 				}
-				if(datatype.contains("ollean")){
+				if (datatype.contains("ollean")) {
 					return LiteralBooleanBinding.class;
 				}
-				if(datatype.contains("loat") || datatype.contains("ouble")){
+				if (datatype.contains("loat") || datatype.contains("ouble")) {
 					return LiteralDoubleBinding.class;
 				}
-				if(datatype.contains("nt")){
+				if (datatype.contains("nt")) {
 					return LiteralIntBinding.class;
 				}
 			}
-			if(output.isSetComplexOutput()){
-				String mimeType = output.getComplexOutput().getDefault().getFormat().getMimeType();
-				if(mimeType.contains("xml") || (mimeType.contains("XML"))){
+			if (output.isSetComplexOutput()) {
+				String mimeType = output.getComplexOutput().getDefault()
+						.getFormat().getMimeType();
+				if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
 					return GenericFileDataBinding.class;
-				}else{
+				} else {
 					return GenericFileDataBinding.class;
 				}
 			}
@@ -325,17 +318,24 @@ public class DefaultTransactionalAlgorithm extends AbstractTransactionalAlgorith
 
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		// TODO Auto-generated method stub
+		// processManager
 		return null;
 	}
 
-	
-	
+	public void setProcessManager(IProcessManager o) {
+		this.processManager = o;
+	}
 
-	
-	
-	
-	
-	
-	
-	
+	public IProcessManager getProcessManager() {
+		return processManager;
+	}
+
+	public void setWorkspace(String workspace) {
+		this.workspace = workspace;
+	}
+
+	public String getWorkspace() {
+		return workspace;
+	}
+
 }

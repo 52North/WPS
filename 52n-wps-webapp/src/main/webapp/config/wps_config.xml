@@ -254,16 +254,15 @@
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
-		<Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+		<Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.repository.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.ssegrid.algorithm.Delay</Property>
 		</Repository>
 		
-		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="true">
+		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.repository.UploadedAlgorithmRepository" active="true">
 		</Repository>
 		<!-- 
 		<Repository name="GrassRepository"
@@ -308,13 +307,14 @@
 		
 		<Repository name="ApacheOdeRepository"
 			className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
-			<Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
-			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.ApacheOde.ApacheOdeProcessManager</Property>
+			<Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.BPELTransactionalAlgorithm</Property>
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.IntalioBPMS.ApacheOdeProcessManager</Property>
 			<Property name="WorkspaceLocationRoot" active="true"></Property> 
-			<Property name="SupportedFormat" active="true">apacheode.xsd</Property> 
-			<Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.ApacheOde.BPELDeploymentProfile</Property>
+			<Property name="supportedFormat" active="true">apacheode.xsd</Property> 
+			<Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property>
 			<Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito:8080/axis2/services/DeploymentService</Property>
 			<Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito:8080/ode/processes/ProcessManagement</Property>
+			<Property name="Ode_ProcessesPrefix" active="true">http://mpi-vito:8080/ode/processes/</Property>
 			</Repository>
 		
 		<!-- 

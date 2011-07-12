@@ -1,4 +1,4 @@
-package org.n52.wps.server.profiles.ApacheOde;
+package org.n52.wps.server.profiles.IntalioBPMS;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
@@ -32,7 +34,9 @@ import javax.xml.xpath.XPathFactory;
 
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.OutputDataType;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMAttribute;
@@ -44,34 +48,59 @@ import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.saaj.util.SAAJUtil;
+import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.profiles.AbstractProcessManager;
+import org.n52.wps.server.profiles.OutputParser;
 import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
+import org.n52.wps.server.response.OutputDataItem;
 import org.n52.wps.transactional.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.ibm.wsdl.extensions.http.HTTPConstants;
+
+
+/**
+ * TODO this class was based on transactional branch implementation. However the invoke method was reimplemented
+ * Therefore there is a doublon implementation for sending request. * 
+ * @author cnl
+ *
+ */
 public class ApacheOdeProcessManager extends AbstractProcessManager {
 
-	private static Logger LOGGER = Logger.getLogger(ApacheOdeProcessManager.class);
+	private static Logger LOGGER = Logger
+			.getLogger(ApacheOdeProcessManager.class);
 
 	private ODEServiceClient _client;
 	private OMFactory _factory;
 	private String deploymentEndpoint;
 	private String processManagerEndpoint;
 	private OMElement deployRequestOde;
-
+	private String processesPrefix;
+	private ExecuteResponseDocument executeResponse;
+	// Asychronous execute client must be shared between threads
+	public static ServiceClient executeClient;
+	/**
+	 * @param repository
+	 */
 	public ApacheOdeProcessManager(ITransactionalAlgorithmRepository repository) {
 		super(repository);
 		/**
@@ -96,13 +125,35 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		}
 		processManagerEndpoint = processManagerEndpointProperty
 				.getStringValue();
-
+		Property processesPrefixProperty = WPSConfig.getInstance()
+				.getPropertyForKey(properties, "Ode_ProcessesPrefix");
+		if (processesPrefixProperty == null) {
+			throw new RuntimeException(
+					"Error. Could not find OdE_ProcessManagerEndpoint");
+		}
+		setProcessesPrefix(processesPrefixProperty.getStringValue());
 		try {
 			_factory = OMAbstractFactory.getOMFactory();
 			_client = new ODEServiceClient();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static ServiceClient getExecuteClient() {
+		if(executeClient == null)	{
+			try {
+				executeClient = new ServiceClient();
+			} catch (AxisFault e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return executeClient;
+	}
+
+	public static void setExecuteClient(ServiceClient executeClient) {
+		ApacheOdeProcessManager.executeClient = executeClient;
 	}
 
 	/**
@@ -117,19 +168,15 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		BPELDeploymentProfile deploymentProfile = (BPELDeploymentProfile) profile;
 		String processID = deploymentProfile.getProcessID();
 		byte[] archive = deploymentProfile.getArchive();
-		LOGGER.info("Archive:"+archive);
+		LOGGER.info("Archive:" + archive);
 		OMElement result = null;
 		try {
 			OMNamespace ins = _factory.createOMNamespace(
-					"http://tempo.intalio.org/deploy/deploymentService", "deploy");
+					"http://tempo.intalio.org/deploy/deploymentService",
+					"deploy");
 			deployRequestOde = _factory.createOMElement("deployAssembly", ins); // qualified
-																		// operation
-																		// name
 			OMElement namePart = _factory.createOMElement("assemblyName", ins);
 			namePart.setText(processID);
-			 //OMElement zipPart = _factory.createOMElement("package", null);
-			//OMElement zipPart = _factory.createOMElement("package", ins);
-			// OMElement zipElmt = _factory.createOMElement("zip", null);
 			OMElement zipElmt = _factory.createOMElement("zip", ins);
 			// Need to re-encode the archive
 			String base64Enc = Base64.encode(archive);
@@ -139,24 +186,25 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 			activeElem.setText("true");
 			deployRequestOde.addChild(namePart);
 			deployRequestOde.addChild(zipElmt);
-			//zipPart.addChild(zipElmt);
+			// zipPart.addChild(zipElmt);
 			zipElmt.addChild(zipContent);
 			deployRequestOde.addChild(activeElem);
 			result = sendToDeployment(deployRequestOde);
-			
 			// TODO throw Exception if result is not correct
 			LOGGER.info("--");
 			LOGGER.info(result.getText());
 			LOGGER.info("--");
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new ExceptionReport("Backend error during deployement", ExceptionReport.REMOTE_COMPUTATION_ERROR, e);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ExceptionReport("Backend error during deployement",
+					ExceptionReport.REMOTE_COMPUTATION_ERROR, e);
 		}
 		return true;
 	}
 
 	/**
 	 * TODO
+	 * 
 	 * @param processID
 	 * @return
 	 * @throws Exception
@@ -181,86 +229,47 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 	public Document invoke(ExecuteDocument doc, String algorithmID)
 			throws Exception {
 
-		Node domNode = doc.getDomNode();
-
-		// doc.save(new File("d:\\tmp\\execdoc.xml"));
-		// String serializedXML = writeXMLToStream(new
-		// DOMSource(domNode)).toString();
-
-		// serializedXML =
-		// serializedXML.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","");
-		// serializedXML =
-		// serializedXML.replace("<Execute xmlns=\"http://www.opengis.net/wps/1.0.0\">","<Execute xmlns=\"http://www.opengis.net/wps/1.0.0\" version=\"1.0.0\" service=\"WPS\">");
-		// serializedXML =
-		// serializedXML.replace(" href"," xmlns:xlin=\"http://www.w3.org/1999/xlink\" xlin:href");
-		ServiceClient client = null;
+		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		SOAPEnvelope response = null;
 		try {
-			client = new ServiceClient();
-			OperationClient operationClient = client
-					.createClient(ServiceClient.ANON_OUT_IN_OP);
-			// creating message context
-			MessageContext outMsgCtx = new MessageContext();
-			// assigning message context’s option object into instance variable
-			Options opts = outMsgCtx.getOptions();
-			// setting properties into option
-
-			// TODO is this correct?
-
-			opts.setTo(new EndpointReference(deploymentEndpoint.replace(
-					"DeploymentService", algorithmID)));
-			opts.setAction("");
-			outMsgCtx.setEnvelope(createSOAPEnvelope(doc));
-			operationClient.addMessageContext(outMsgCtx);
-			operationClient.execute(true);
-			MessageContext inMsgtCtx = operationClient.getMessageContext("In");
-			response = inMsgtCtx.getEnvelope();
-
+			Options options = new Options();
+			// set the workflow endpoint
+			options.setTo(new EndpointReference(processesPrefix+algorithmID));
+			options.setUseSeparateListener(true);
+			options.setAction("urn:executeResponseCallback");
+			options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+			String hostname = null;
+			String address = getExecuteClient().getMyEPR(Constants.TRANSPORT_HTTP).getAddress();
+			System.out.println(address);
+			Matcher matcher = Pattern.compile("(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*").matcher(address);
+			if(matcher.find()) {
+				hostname = matcher.group(1);
+			}
+			System.out.println(hostname);
+			//String hostname = (String) context.getProperty(MessageContext.TRANSPORT_ADDR); 
+			//String port = context.getProperty(MessageContext.P)
+			options.setReplyTo(new EndpointReference(hostname+"/wps/services/executeResponseCallback"));
+			// use WS-Adressing (to perform asynchronous request)
+			getExecuteClient().engageModule("addressing");
+			getExecuteClient().setOptions(options);
+			// get the callback manager
+			CallbackManager callback = new CallbackManager(this);
+			// send the request
+			// Following doesnt work
+			getExecuteClient().sendReceiveNonBlocking(XMLUtils.toOM( ((Document)doc.getDomNode()).getDocumentElement()), callback);
+			waitCallback();
+			LOGGER.info("Received callback response.");
 		} catch (AxisFault af) {
+			af.printStackTrace();
 
-		} finally {
-			// if (client != null){
-			// try{
-			// client.cleanupTransport();
-			//
-			// }catch(Exception e){
-			// e.printStackTrace();
-			// }
-			// try{
-			// client.cleanup();
-			// }catch(Exception e){
-			// e.printStackTrace();
-			// }
-			// }
+		} 
+		if(getExecuteResponse()==null) {
+			throw new ExceptionReport("Callback problem", ExceptionReport.REMOTE_COMPUTATION_ERROR);
 		}
 
-		// TODO: Parse SoapEnvelope to DOM Document
-
-		Document result = SAAJUtil.getDocumentFromSOAPEnvelope(response);
-
-		if (client != null) {
-			try {
-				client.cleanupTransport();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				client.cleanup();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		// Document result =
-		// builder.parse((InputStream)response.getXMLStreamReader());
-
-		// System.out.print(result.toString());
-		return result;
-		// throw new UnsupportedOperationException("Not supported yet.");
-
+		return (Document)getExecuteResponse().getDomNode();
 	}
 
 	public Collection<String> getAllProcesses() throws Exception {
@@ -552,4 +561,38 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		return envelope;
 
 	}
+
+	public void setProcessesPrefix(String processesPrefix) {
+		this.processesPrefix = processesPrefix;
+	}
+
+	public String getProcessesPrefix() {
+		return processesPrefix;
+	}
+	/**
+	 * Wait the asynchronousCallback
+	 */
+	public synchronized void waitCallback() {
+		try {
+			LOGGER.info("Waiting callback");
+			wait();
+			LOGGER.info("Callback received");
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return;
+	}
+
+	public synchronized void notifyRequestManager() {
+		notify();
+	}
+
+	public void setExecuteResponse(ExecuteResponseDocument executeResponse) {
+		this.executeResponse = executeResponse;
+	}
+
+	public ExecuteResponseDocument getExecuteResponse() {
+		return executeResponse;
+	}
+	
 }

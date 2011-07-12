@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.n52.wps.server.profiles.ApacheOde;
+package org.n52.wps.server.profiles.IntalioBPMS;
 
 import java.net.MalformedURLException;
 import java.net.URL;

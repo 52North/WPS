@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
@@ -29,14 +30,16 @@ import org.w3c.dom.Node;
  */
 public class TransactionalRepositoryManager {
 
+	private static Logger LOGGER = Logger.getLogger(TransactionalRepositoryManager.class);
+	
 	public static Repository getMatchingTransactionalRepositoryClassName(String schema){
+		LOGGER.info(schema);
 		WPSConfig config = WPSConfig.getInstance();
 		Repository[] repositories = config.getRegisterdAlgorithmRepositories();
-		
 		for(Repository repository : repositories){
 			Property[] properties = repository.getPropertyArray();
 			for(Property property : properties){
-				if(property.getName().equals("SupportedFormat")){
+				if(property.getName().equals("supportedFormat")){
 					if(property.getStringValue().equals(schema)){
 						return repository;
 					}
@@ -50,8 +53,11 @@ public class TransactionalRepositoryManager {
 	
 
 	public static ITransactionalAlgorithmRepository getMatchingTransactionalRepository(String schema){
+		LOGGER.info("schema:"+schema);
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		String className = repository.getClassName();
+		LOGGER.info("classname:"+className);
+		
 		IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForClassName(className);
 		if(algorithmRepository!=null){
 			if(algorithmRepository instanceof ITransactionalAlgorithmRepository){

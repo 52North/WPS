@@ -121,6 +121,22 @@ public class ExecuteResponseBuilder {
 		this.doc = doc;
 	}
 
+	public ExecuteRequest getRequest() {
+		return request;
+	}
+
+	public void setRequest(ExecuteRequest request) {
+		this.request = request;
+	}
+
+	public ProcessDescriptionType getDescription() {
+		return description;
+	}
+
+	public void setDescription(ProcessDescriptionType description) {
+		this.description = description;
+	}
+
 	public void update() throws ExceptionReport {		
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();
@@ -193,10 +209,9 @@ public class ExecuteResponseBuilder {
 		}
 		else {
 			LOGGER.info("OutputDefinitions are not stated explicitly in request");
-			
 			// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
-				
-			OutputDescriptionType [] d = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue()).getProcessOutputs().getOutputArray();
+			// cnl : ??
+			OutputDescriptionType [] d = getDescription().getProcessOutputs().getOutputArray();
 			for (int i = 0; i < d.length; i++)
 			{
 				if(d[i].isSetComplexOutput()) {

@@ -100,6 +100,11 @@
     <organization>Open Roads Consulting, Inc.</organization>
     <organizationUrl>http://openroadsconsulting.com</organizationUrl>
     </contributor>
+    <contributor>
+    <name>Christophe Noel</name>
+    <organization>Spacebel</organization>
+    <organizationUrl>http://www.spacebel.be</organizationUrl>
+    </contributor>
     </contributors>
 
     <!-- here are the dependencies of the project -->

@@ -8,14 +8,22 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.util.XMLUtils;
 
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 
 	protected String algorithmID;
+	private static Logger LOGGER = Logger
+	.getLogger(DefaultTransactionalProcessRepository.class);
 
 	public AbstractTransactionalAlgorithm(String algorithmID) {
 		this.algorithmID = algorithmID;
@@ -74,4 +82,37 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 
 	}
 
+	// TODO enhance code (repeated code)
+	/**
+	 * Read the Process Description for the given Process Id.
+	 */
+	public static ProcessDescriptionType getDescription(String processId) {
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
+				+ ".xml";
+		LOGGER.info(path);
+		try {
+			XmlOptions option = new XmlOptions();
+			option.setLoadTrimTextBuffer();
+			File descFile = new File(path);
+			ProcessDescriptionDocument descDom = ProcessDescriptionDocument.Factory.parse(descFile,option);
+			return descDom.getProcessDescription();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		} catch (XmlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

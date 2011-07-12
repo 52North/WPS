@@ -585,6 +585,7 @@ public class ExecuteRequest extends Request implements IObserver {
 //			}
 			if(returnResults==null && !(algorithm instanceof AbstractTransactionalAlgorithm))
 			{
+				// TODO maybe this method signature should disappear (getParsedInputData can be called later)
 				returnResults = algorithm.run(parser.getParsedInputData());
 			} 
 			/** Check if the thread was cancelled (exception is generated
@@ -597,6 +598,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			}
 			
 		}catch(RuntimeException e) {
+			e.printStackTrace();
 			LOGGER.debug("RuntimeException:" + e.getMessage());
 			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
 		} finally {

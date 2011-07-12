@@ -53,297 +53,412 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 
-
-public class WPSConfig  implements Serializable {
+public class WPSConfig implements Serializable {
 	private static transient WPSConfig wpsConfig;
 	private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 
 	private static transient Logger LOGGER = Logger.getLogger(WPSConfig.class);
-    
-    // FvK: added Property Change support
-    protected final PropertyChangeSupport propertyChangeSupport;
-    // constants for the Property change event names
-    public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
+
+	// FvK: added Property Change support
+	protected final PropertyChangeSupport propertyChangeSupport;
+	// constants for the Property change event names
+	public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
 	public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
 
 	private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
-		wpsConfigXMLBeans= (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
-		
-        // FvK: added Property Change support
-        propertyChangeSupport=new PropertyChangeSupport(this);
-	}
-	
-	private WPSConfig(InputStream resourceAsStream) throws XmlException, IOException {
-		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
+		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory
+				.parse(new File(wpsConfigPath)).getWPSConfiguration();
 
-        // FvK: added Property Change support
-        propertyChangeSupport=new PropertyChangeSupport(this);
+		// FvK: added Property Change support
+		propertyChangeSupport = new PropertyChangeSupport(this);
 	}
 
+	private WPSConfig(InputStream resourceAsStream) throws XmlException,
+			IOException {
+		wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory
+				.parse(resourceAsStream).getWPSConfiguration();
 
-    /**
-     * Add an Listener to the wpsConfig
-     * @param propertyName
-     * @param listener
-     */
-    public void addPropertyChangeListener(final String propertyName,
-            final PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(propertyName,listener);
-    }
+		// FvK: added Property Change support
+		propertyChangeSupport = new PropertyChangeSupport(this);
+	}
 
-    /**
-     * remove a listener from the wpsConfig
-     * @param propertyName
-     * @param listener
-     */
-    public void removePropertyChangeListener(final String propertyName,
-            final PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(propertyName,listener);
-    }
+	/**
+	 * Add an Listener to the wpsConfig
+	 * 
+	 * @param propertyName
+	 * @param listener
+	 */
+	public void addPropertyChangeListener(final String propertyName,
+			final PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
 
-    //For Testing purpose only
-    public void notifyListeners(){
-        propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,null);
-    }
+	/**
+	 * remove a listener from the wpsConfig
+	 * 
+	 * @param propertyName
+	 * @param listener
+	 */
+	public void removePropertyChangeListener(final String propertyName,
+			final PropertyChangeListener listener) {
+		propertyChangeSupport.removePropertyChangeListener(propertyName,
+				listener);
+	}
 
-	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-	{
+	// For Testing purpose only
+	public void notifyListeners() {
+		propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME,
+				null, null);
+	}
+
+	private synchronized void writeObject(java.io.ObjectOutputStream oos)
+			throws IOException {
 		oos.writeObject(wpsConfigXMLBeans.xmlText());
 	}
-	
-	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-	{		
-		try
-		{
+
+	private synchronized void readObject(java.io.ObjectInputStream oos)
+			throws IOException, ClassNotFoundException {
+		try {
 			String wpsConfigXMLBeansAsXml = (String) oos.readObject();
-			XmlObject configXmlObject = XmlObject.Factory.parse(wpsConfigXMLBeansAsXml);
-			WPSConfigurationDocument configurationDocument = WPSConfigurationDocument.Factory.newInstance();
+			XmlObject configXmlObject = XmlObject.Factory
+					.parse(wpsConfigXMLBeansAsXml);
+			WPSConfigurationDocument configurationDocument = WPSConfigurationDocument.Factory
+					.newInstance();
 			configurationDocument.addNewWPSConfiguration().set(configXmlObject);
-			wpsConfig = new WPSConfig(new StringBufferInputStream(configurationDocument.xmlText()));
-		}
-		catch (XmlException e)
-		{
+			wpsConfig = new WPSConfig(new StringBufferInputStream(
+					configurationDocument.xmlText()));
+		} catch (XmlException e) {
 			LOGGER.error(e.getMessage());
 			throw new IOException(e.getMessage());
 		}
 	}
-	
-	public static void forceInitialization(String configPath) throws XmlException, IOException{
-		// temporary save all registered listeners
-        PropertyChangeListener[] listeners = {};
-        if (wpsConfig != null){
-            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
-        }
-        wpsConfig = new WPSConfig(configPath);
-        
-        //register all saved listeners to new wpsConfig Instance
-        //reversed order to keep original order of the registration!!!
-        for (int i=listeners.length-1;i>=0;i--){
-            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
-        }
 
-        // fire event
-        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
-        LOGGER.info("Configuration Reloaded, Listeners informed");
+	public static void forceInitialization(String configPath)
+			throws XmlException, IOException {
+		// temporary save all registered listeners
+		PropertyChangeListener[] listeners = {};
+		if (wpsConfig != null) {
+			listeners = wpsConfig.propertyChangeSupport
+					.getPropertyChangeListeners();
+		}
+		wpsConfig = new WPSConfig(configPath);
+
+		// register all saved listeners to new wpsConfig Instance
+		// reversed order to keep original order of the registration!!!
+		for (int i = listeners.length - 1; i >= 0; i--) {
+			wpsConfig.propertyChangeSupport
+					.addPropertyChangeListener(listeners[i]);
+		}
+
+		// fire event
+		wpsConfig.propertyChangeSupport.firePropertyChange(
+				WPSCONFIG_PROPERTY_EVENT_NAME, null, wpsConfig);
+		LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
-	
-	public static void forceInitialization(InputStream stream) throws XmlException, IOException {
-        // temporary save all registered listeners
-        PropertyChangeListener[] listeners = {};
-        if (wpsConfig != null){
-            listeners = wpsConfig.propertyChangeSupport.getPropertyChangeListeners();
-        }
+
+	public static void forceInitialization(InputStream stream)
+			throws XmlException, IOException {
+		// temporary save all registered listeners
+		PropertyChangeListener[] listeners = {};
+		if (wpsConfig != null) {
+			listeners = wpsConfig.propertyChangeSupport
+					.getPropertyChangeListeners();
+		}
 
 		wpsConfig = new WPSConfig(stream);
 
-        //register all saved listeners to new wpsConfig Instance
-        //reversed order to keep original order of the registration!!!
-        for (int i=listeners.length-1;i>=0;i--){
-            wpsConfig.propertyChangeSupport.addPropertyChangeListener(listeners[i]);
-        }
+		// register all saved listeners to new wpsConfig Instance
+		// reversed order to keep original order of the registration!!!
+		for (int i = listeners.length - 1; i >= 0; i--) {
+			wpsConfig.propertyChangeSupport
+					.addPropertyChangeListener(listeners[i]);
+		}
 
-        // fire event
-        wpsConfig.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null,wpsConfig);
-        LOGGER.info("Configuration Reloaded, Listeners informed");
+		// fire event
+		wpsConfig.propertyChangeSupport.firePropertyChange(
+				WPSCONFIG_PROPERTY_EVENT_NAME, null, wpsConfig);
+		LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
-    
-	public static WPSConfig getInstance()
-	{
-		if (wpsConfig == null)
-		{
-			try
-			{
+
+	public static WPSConfig getInstance() {
+		if (wpsConfig == null) {
+			try {
 				return getInstance(getConfigPath());
-			}
-			catch (IOException e)
-			{
-				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
-				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			} catch (IOException e) {
+				LOGGER.error("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
 			}
 		}
 		return wpsConfig;
 	}
-	
-	public static WPSConfig getInstance(String path)
-	{
-		if (wpsConfig == null)
-		{
-			try
-			{
+
+	public static WPSConfig getInstance(String path) {
+		if (wpsConfig == null) {
+			try {
 				wpsConfig = new WPSConfig(path);
-			}
-			catch (XmlException e)
-			{
-				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
-				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
-			}
-			catch (IOException e)
-			{
-				LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
-				throw new RuntimeException("Failed to initialize WPS. Reason: " + e.getMessage());
+			} catch (XmlException e) {
+				LOGGER.error("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
+			} catch (IOException e) {
+				LOGGER.error("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
+				throw new RuntimeException("Failed to initialize WPS. Reason: "
+						+ e.getMessage());
 			}
 		}
 		return wpsConfig;
 	}
-	
+
 	/**
-	 * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is only applicable for webapp applications. To customize this, please use directly {@link WPSConfig#forceInitialization(String)} and then getInstance().
+	 * This method retrieves the full path for the file (wps_config.xml),
+	 * searching in WEB-INF/config. This is only applicable for webapp
+	 * applications. To customize this, please use directly
+	 * {@link WPSConfig#forceInitialization(String)} and then getInstance().
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
 	public static String getConfigPath() throws IOException {
-		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-		//truncate
+		String domain = WPSConfig.class.getProtectionDomain().getCodeSource()
+				.getLocation().getFile();
+		// truncate
 		int index = domain.indexOf("WEB-INF");
-		if(index<0){
-			//try to load from classpath
-			URL configPath = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
-			if(configPath==null){
+		if (index < 0) {
+			// try to load from classpath
+			URL configPath = WPSConfig.class.getClassLoader().getResource(
+					"wps_config.xml");
+			if (configPath == null) {
 				throw new IOException("Could not find wps_config.xml");
-			}else{
+			} else {
 				return configPath.getFile();
 			}
-			
+
 		}
-		String substring = domain.substring(0,index);
-		if(!substring.endsWith("/")){
+		String substring = domain.substring(0, index);
+		if (!substring.endsWith("/")) {
 			substring = substring + "/";
 		}
 		substring = substring + "config/wps_config.xml";
-		
+
 		return substring;
 	}
 
-	public WPSConfigurationImpl getWPSConfig(){
+	public WPSConfigurationImpl getWPSConfig() {
 		return wpsConfigXMLBeans;
 	}
-	
-	public Parser[] getRegisteredParser(){
-		return wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();		
+
+	public Parser[] getRegisteredParser() {
+		return wpsConfigXMLBeans.getDatahandlers().getParserList()
+				.getParserArray();
 	}
+
+	/** 
+	 * Use to update (save) the config on disk
+	 */
+	public void save() {
+        String configurationPath;
+		try {
+			configurationPath = WPSConfig.getConfigPath();
+		
+        File XMLFile = new File(configurationPath);
+        WPSConfigurationDocument wpsConfigDom = WPSConfigurationDocument.Factory.newInstance();
+        wpsConfigDom.addNewWPSConfiguration().set(wpsConfigXMLBeans);
+         wpsConfigDom.save(XMLFile, new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
+        WPSConfig.forceInitialization(configurationPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 	
-	public Parser[] getActiveRegisteredParser(){
+	public Parser[] getActiveRegisteredParser() {
 		Parser[] parsers = getRegisteredParser();
 		ArrayList<Parser> activeParsers = new ArrayList<Parser>();
-		for(int i=0; i<parsers.length; i++){
-			if(parsers[i].getActive()){
+		for (int i = 0; i < parsers.length; i++) {
+			if (parsers[i].getActive()) {
 				activeParsers.add(parsers[i]);
 			}
-		}		
+		}
 		Parser[] parArr = {};
 		return activeParsers.toArray(parArr);
 	}
-	
-	public Generator[] getRegisteredGenerator(){
-		return wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
+
+	public Generator[] getRegisteredGenerator() {
+		return wpsConfigXMLBeans.getDatahandlers().getGeneratorList()
+				.getGeneratorArray();
 	}
-	
-	public Generator[] getActiveRegisteredGenerator(){
+
+	public Generator[] getActiveRegisteredGenerator() {
 		Generator[] generators = getRegisteredGenerator();
-		ArrayList<Generator> activeGenerators = new ArrayList<Generator>(); 
-		for(int i=0; i<generators.length; i++){
-			if(generators[i].getActive()){
+		ArrayList<Generator> activeGenerators = new ArrayList<Generator>();
+		for (int i = 0; i < generators.length; i++) {
+			if (generators[i].getActive()) {
 				activeGenerators.add(generators[i]);
 			}
-		}			
+		}
 		Generator[] genArr = {};
 		return activeGenerators.toArray(genArr);
 	}
-	
-	public Repository[] getRegisterdAlgorithmRepositories(){
-		return wpsConfigXMLBeans.getAlgorithmRepositoryList().getRepositoryArray();
-			
-		
+
+	public Repository[] getRegisterdAlgorithmRepositories() {
+		return wpsConfigXMLBeans.getAlgorithmRepositoryList()
+				.getRepositoryArray();
+
 	}
-	
-	public Property[] getPropertiesForGeneratorClass(String className){
-		Generator[] generators = wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
-		for(int i = 0; i<generators.length; i++) {
+
+	public Property[] getPropertiesForGeneratorClass(String className) {
+		Generator[] generators = wpsConfigXMLBeans.getDatahandlers()
+				.getGeneratorList().getGeneratorArray();
+		for (int i = 0; i < generators.length; i++) {
 			Generator generator = generators[i];
-			if(generator.getClassName().equals(className)){
+			if (generator.getClassName().equals(className)) {
 				return generator.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.class,0);
-		
+		return (Property[]) Array.newInstance(Property.class, 0);
+
 	}
-	
-	public Property[] getPropertiesForParserClass(String className){
-		Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
-		for(int i = 0; i<parsers.length; i++) {
+
+	public Property[] getPropertiesForParserClass(String className) {
+		Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList()
+				.getParserArray();
+		for (int i = 0; i < parsers.length; i++) {
 			Parser parser = parsers[i];
-			if(parser.getClassName().equals(className)){
+			if (parser.getClassName().equals(className)) {
 				return parser.getPropertyArray();
 			}
 		}
-		return (Property[]) Array.newInstance(Property.class,0);
-		
+		return (Property[]) Array.newInstance(Property.class, 0);
+
 	}
-	
-	public boolean isRepositoryActive(String className){
+
+	public boolean isRepositoryActive(String className) {
 		Repository[] repositories = getRegisterdAlgorithmRepositories();
-		for(int i = 0; i<repositories.length; i++) {
+		for (int i = 0; i < repositories.length; i++) {
 			Repository repository = repositories[i];
-			if(repository.getClassName().equals(className)){
+			if (repository.getClassName().equals(className)) {
 				return repository.getActive();
 			}
 		}
 
 		return false;
 	}
-	
-	public Property[] getPropertiesForRepositoryClass(String className){
+
+	public Property[] getPropertiesForRepositoryClass(String className) {
 		Repository[] repositories = getRegisterdAlgorithmRepositories();
-		for(int i = 0; i<repositories.length; i++) {
+		for (int i = 0; i < repositories.length; i++) {
 			Repository repository = repositories[i];
-			if(repository.getClassName().equals(className)){
+			if (repository.getClassName().equals(className)) {
 				return repository.getPropertyArray();
 			}
 		}
-		
-		return (Property[]) Array.newInstance(Property.class,0);
+
+		return (Property[]) Array.newInstance(Property.class, 0);
+	}
+
+	public Property[] getPropertiesForRepositoryName(String repName) {
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for (int i = 0; i < repositories.length; i++) {
+			Repository repository = repositories[i];
+			if (repository.getName().equals(repName)) {
+				return repository.getPropertyArray();
+			}
+		}
+		return (Property[]) Array.newInstance(Property.class, 0);
+	}
+
+	public Property[] getPropertiesForRepositoryFormat(String repFormat) {
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for (int i = 0; i < repositories.length; i++) {
+			Repository repository = repositories[i];
+			Property[] properties = repositories[i].getPropertyArray();
+			for (Property property : properties) {
+				if (property.getName().equals("supportedFormat")) {
+					if (property.getStringValue().equals(repFormat)) {
+						return repository.getPropertyArray();
+					}
+				}
+			}
+		}
+		return (Property[]) Array.newInstance(Property.class, 0);
 	}
 	
-	public Property[] getPropertiesForRepositoryName(String repName){
+	public Property[] getPropertiesForAlgorithm(String algoID) {
 		Repository[] repositories = getRegisterdAlgorithmRepositories();
-		for(int i = 0; i<repositories.length; i++) {
+		for (int i = 0; i < repositories.length; i++) {
 			Repository repository = repositories[i];
-			if(repository.getName().equals(repName)){
-				return repository.getPropertyArray();
+			Property[] properties = repositories[i].getPropertyArray();
+			for (Property property : properties) {
+				if (property.getName().equals("Algorithm")) {
+					if (property.getStringValue().equals(algoID)) {
+						return repository.getPropertyArray();
+					}
+				}
 			}
 		}
-		
-		return (Property[]) Array.newInstance(Property.class,0);
+		return (Property[]) Array.newInstance(Property.class, 0);
+	}
+	
+	/**
+	 * Get the Repository relative to given Format (profile)
+	 * @param repFormat
+	 * @return
+	 */
+	public Repository getRepositoryForFormat(String repFormat) {
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for (int i = 0; i < repositories.length; i++) {
+			Repository repository = repositories[i];
+			Property[] properties = repositories[i].getPropertyArray();
+			for (Property property : properties) {
+				if (property.getName().equals("supportedFormat")) {
+					if (property.getStringValue().equals(repFormat)) {
+						return repository;
+					}
+				}
+			}
+		}
+		// TODO check if should return null instead of new repository
+		LOGGER.warn("no repository returned");
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param algoId
+	 * @return
+	 */
+	public Repository getRepositoryForAlgorithm(String algoId) {
+		Repository[] repositories = getRegisterdAlgorithmRepositories();
+		for (int i = 0; i < repositories.length; i++) {
+			Repository repository = repositories[i];
+			Property[] properties = repositories[i].getPropertyArray();
+			for (Property property : properties) {
+				if (property.getName().equals("Algorithm")) {
+					if (property.getStringValue().equals(algoId)) {
+						return repository;
+					}
+				}
+			}
+		}
+		// TODO check if should return null instead of new repository
+		return null;
 	}
 
 	
-	public Property getPropertyForKey(Property[] properties, String key){
-		for(Property property: properties){
-			if(property.getName().equalsIgnoreCase(key)){
+	public Property getPropertyForKey(Property[] properties, String key) {
+		for (Property property : properties) {
+			if (property.getName().equalsIgnoreCase(key)) {
 				return property;
 			}
 		}
 		return null;
 	}
-	
+
 }

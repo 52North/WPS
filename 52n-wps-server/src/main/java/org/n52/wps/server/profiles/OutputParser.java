@@ -150,7 +150,7 @@ public class OutputParser {
 		throw new RuntimeException("Could not determie internal inputDataType");
 	}
 
-	protected static IData handleLiteralValue(OutputDataType output) throws ExceptionReport {
+	public static IData handleLiteralValue(OutputDataType output) throws ExceptionReport {
 		
 		String parameter = output.getData().getLiteralData().getStringValue();
 		String xmlDataType = output.getData().getLiteralData().getDataType();

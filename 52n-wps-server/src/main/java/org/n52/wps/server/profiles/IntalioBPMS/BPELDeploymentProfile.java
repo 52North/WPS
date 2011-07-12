@@ -28,7 +28,7 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-package org.n52.wps.server.profiles.ApacheOde;
+package org.n52.wps.server.profiles.IntalioBPMS;
 
 import java.util.Map;
 
@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
+import org.ogf.saga.job.Job;
 import org.w3c.dom.Node;
 
 /** 
@@ -48,7 +49,6 @@ import org.w3c.dom.Node;
 public class BPELDeploymentProfile extends DeploymentProfile {
 
 	private static Logger LOGGER = Logger.getLogger(BPELDeploymentProfile.class);
-
 	private Node suitCase;
 	private Node bpel;
 	private Node clientWSDL;
@@ -90,16 +90,12 @@ public class BPELDeploymentProfile extends DeploymentProfile {
 	private void extractInformation(DeployProcessDocument deployDom)
 			throws Exception {
 		
-		LOGGER.info("dom:"+deployDom.getDeployProcess().getDeploymentProfile().toString());
 		ApacheOdeDeploymentProfileType deployProfile = (ApacheOdeDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile().changeType(ApacheOdeDeploymentProfileType.type);
-		  /** **/
 		setProcessId(deployDom.getDeployProcess().getProcessDescription()
 				.getIdentifier().getStringValue());
-		LOGGER.info("isSetArchive:"+deployProfile.isSetArchive());
 		if (deployProfile.isSetArchive()) {
 			// Note that XMLBeans automatically decodes base64
 			setArchive(deployProfile.getArchive());
-			LOGGER.info("setArchive of : "+deployProfile.getArchive().toString());
 			setReference(false);
 		} else if (deployProfile.isSetArchiveReference()) {
 			setArchiveRef(deployProfile.getArchiveReference().getHref());
