@@ -45,7 +45,7 @@ public class GeoServerUploader {
 	public String uploadShp(File file, String storeName) throws HttpException, IOException{
 		String target = "http://localhost:"+port+"/geoserver/rest/workspaces/N52/datastores/"+storeName+"/file.shp";
 		InputStream request = new BufferedInputStream( new FileInputStream(file));
-		String result =	sendShpRequest(target, request, "PUT", "admin", "geoserver");
+		String result =	sendShpRequest(target, request, "PUT", username, password);
 		return result;
 	
 	}
