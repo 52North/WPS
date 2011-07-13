@@ -122,6 +122,11 @@
 			<artifactId>saga-api</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>be.spacebel.wps</groupId>
+			<artifactId>saga-impl-T2</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>
 
