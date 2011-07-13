@@ -157,11 +157,15 @@ public class InputHandler {
 		String schema = input.getData().getComplexData().getSchema();
 		String encoding = input.getData().getComplexData().getEncoding();
 		String mimeType = input.getData().getComplexData().getMimeType();
+		
 		if(mimeType == null) {
 			mimeType = inputDesc.getComplexData().getDefault().getFormat().getMimeType();
 		}
 		if(encoding == null) {
 			encoding = inputDesc.getComplexData().getDefault().getFormat().getEncoding();
+		}
+		if(schema == null && inputDesc.getComplexData().getDefault().getFormat().isSetSchema()){
+			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
 		}
 		
 		IParser parser = null;
