@@ -118,8 +118,9 @@
 			</Parser>
 			
 			<Parser name="WCPSQueryParser" className="org.n52.wps.io.datahandler.xml.WCPSQueryParser" active="true">
-				<Property name="supportedFormat" active="true">text/xml</Property>
-				<Property name="supportedEncoding" active="true">http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd</Property>
+				<Property name="supportedFormat" active="true">text/plain</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>
 			
 			
@@ -265,6 +266,8 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.ProcessCoverages</Property>
+			
 			
 		</Repository>
 		
