@@ -117,6 +117,11 @@
 				<Property name="supportedEncoding" active="true">Base64</Property>
 			</Parser>
 			
+			<Parser name="WCPSQueryParser" className="org.n52.wps.io.datahandler.xml.WCPSQueryParser" active="true">
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd</Property>
+			</Parser>
+			
 			
 		</ParserList>
 		<GeneratorList>
@@ -222,7 +227,7 @@
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8080</Property>
+				<Property name="Geoserver_port" active="true">8081</Property>
 			</Generator>
 			
 			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWFSGenerator" active="true">
@@ -231,7 +236,7 @@
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8080</Property>
+				<Property name="Geoserver_port" active="true">8081</Property>
 			</Generator>
 			
 			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWCSGenerator" active="true">
@@ -240,7 +245,7 @@
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8080</Property>
+				<Property name="Geoserver_port" active="true">8081</Property>
 			</Generator>			
 			
 			
@@ -260,6 +265,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
+			
 		</Repository>
 		
 		<Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.UploadedAlgorithmRepository" active="true">
@@ -374,7 +380,9 @@
            
 		
 	</AlgorithmRepositoryList>
+
 	<Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+
 		<Database/>
 	</Server>
 </WPSConfiguration>
