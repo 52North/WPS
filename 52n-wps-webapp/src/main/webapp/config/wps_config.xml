@@ -256,6 +256,12 @@
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Generator>
 				
+				
+			<Generator name="WCPSGenerator" className="org.n52.wps.io.datahandler.binary.WCPSGenerator" active="true">
+				<Property name="supportedFormat" active="true">application/octet-stream</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Generator>
 			
 		</GeneratorList>
 	</Datahandlers>
@@ -266,7 +272,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.ProcessCoverages</Property>
+			
 			
 			
 		</Repository>
