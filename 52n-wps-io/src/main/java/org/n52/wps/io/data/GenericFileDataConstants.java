@@ -56,6 +56,7 @@ public final class GenericFileDataConstants {
 	public static final String MIME_TYPE_X_NETCDF = "application/x-netcdf";
 	public static final String MIME_TYPE_DGN = "application/dgn";	
 	public static final String MIME_TYPE_KML = "application/vnd.google-earth.kml+xml";	
+	public static final String MIME_TYPE_HDF4EOS = "application/hdf4-eos";
 	
 	
 	public static final HashMap<String, String> mimeTypeFileTypeLUT(){
@@ -81,6 +82,7 @@ public final class GenericFileDataConstants {
 		lut.put(MIME_TYPE_X_NETCDF, "nc");
 		lut.put(MIME_TYPE_DGN, "dgn");
 		lut.put(MIME_TYPE_KML, "kml");
+		lut.put(MIME_TYPE_HDF4EOS, "hdf");
 		
 		return lut;
 	}

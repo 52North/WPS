@@ -31,7 +31,6 @@ package org.n52.wps.io.datahandler.binary;
 import java.io.InputStream;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
 
