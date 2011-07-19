@@ -60,6 +60,7 @@ public class CommandLineParameter {
 				str = str + separator + currentValue;
 			} else {
 				str = str + currentValue;
+				firstrun = false;
 			}
 		}
 		
