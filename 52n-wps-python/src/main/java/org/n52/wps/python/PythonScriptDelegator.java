@@ -132,7 +132,10 @@ public class PythonScriptDelegator implements IAlgorithm{
 		// build the execution command
 		String command = COMMAND + " " + instanceExecutable;
 		for (CommandLineParameter currentParam : scriptParameters){
-			command = command + " " + currentParam.getAsCommandString();
+			// check for empty (possibly optional) parameters
+			if (currentParam != null){
+				command = command + " " + currentParam.getAsCommandString();
+			}
 		}
 		
 		// execute
