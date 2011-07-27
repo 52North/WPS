@@ -32,21 +32,24 @@ package org.n52.wps.webadmin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.n52.wps.AlgorithmRepositoryListDocument.AlgorithmRepositoryList;
+import org.n52.wps.DatahandlersDocument.Datahandlers;
+import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.GeneratorListDocument.GeneratorList;
+import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.ParserListDocument.ParserList;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RemoteRepositoryDocument.RemoteRepository;
+import org.n52.wps.RemoteRepositoryListDocument.RemoteRepositoryList;
+import org.n52.wps.RepositoryDocument.Repository;
+import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.ServerDocument.Server;
-import org.n52.wps.AlgorithmRepositoryListDocument.AlgorithmRepositoryList;
-import org.n52.wps.ParserListDocument.ParserList;
-import org.n52.wps.GeneratorListDocument.GeneratorList;
-import org.n52.wps.RepositoryDocument.Repository;
-import org.n52.wps.GeneratorDocument.Generator;
-import org.n52.wps.ParserDocument.Parser;
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.DatahandlersDocument.Datahandlers;
-import org.apache.log4j.Logger;
 
 /**
  * This Bean changes the WPSConfiguration of the Application by processing formdata
@@ -58,12 +61,13 @@ public class ChangeConfigurationBean {
     /**
      * Types represents the different types of the Entries to proceed
      */
-    private enum Types {Server, Repository, Parser, Generator, Formelement};
+    private enum Types {Server, Repository, Parser, Generator, Formelement, RemoteRepository};
     
     private WPSConfigurationDocument wpsConfigurationDocument;
     private WPSConfiguration wpsConfiguration;
     
     private AlgorithmRepositoryList repositoryList;
+    private RemoteRepositoryList remoteRepositoryList;
     private ParserList parserList;
     private GeneratorList generatorList;
     private Server server;
@@ -110,6 +114,7 @@ public class ChangeConfigurationBean {
         server = wpsConfiguration.addNewServer();
         server.addNewDatabase();
         repositoryList = wpsConfiguration.addNewAlgorithmRepositoryList();
+        remoteRepositoryList = wpsConfiguration.addNewRemoteRepositoryList();
         Datahandlers datahandlers = wpsConfiguration.addNewDatahandlers();
         parserList = datahandlers.addNewParserList();
         generatorList = datahandlers.addNewGeneratorList();
@@ -117,6 +122,7 @@ public class ChangeConfigurationBean {
         //temporary maps to store data in order to proceed
         HashMap<String, String> serverValues = new HashMap<String, String>();
         HashMap<String, String> repositoryValues = new HashMap<String, String>();
+        HashMap<String, String> remoteRepositoryValues = new HashMap<String, String>();
         HashMap<String, String> parserValues = new HashMap<String, String>();
         HashMap<String, String> generatorValues = new HashMap<String, String>();
 
@@ -169,6 +175,34 @@ public class ChangeConfigurationBean {
 		                        }
 		                        processingItemName = formName[0];
 		                        repositoryValues.put(formName[1], entryArr[1]);
+		                    }
+		                    break;
+	                    }
+	
+	                case RemoteRepository:
+	                    // splits the formname to the type with number
+	                    // as identifier
+	                    formName = entryArr[0].split("_", 2);
+	                    if(formName.length==2){
+		                    // the first item to proceed
+		                    if (processingItemName == null) {
+		                        processingItemName = formName[0];
+		                        remoteRepositoryValues.put(formName[1], entryArr[1]);
+		
+		                    // this item belongs to the same entry as the one before
+		                    } else if (processingItemName.equals(formName[0])) {
+		                    	remoteRepositoryValues.put(formName[1], entryArr[1]);
+		
+		                    // new item, does not belong to the one before
+		                    } else {
+		                        //checks if the one before was also the same type
+		                        if (processingItemName.startsWith("RemoteRepository")) {
+		                            // adds the colected repository values to WPSConfig
+		                            createRemoteRepository(remoteRepositoryValues);
+		                            remoteRepositoryValues.clear();
+		                        }
+		                        processingItemName = formName[0];
+		                        remoteRepositoryValues.put(formName[1], entryArr[1]);
 		                    }
 		                    break;
 	                    }
@@ -241,6 +275,11 @@ public class ChangeConfigurationBean {
             createRepository(repositoryValues);
         }
 
+        //adds the last not yet added remote repository to the WPSConfig
+        if (!remoteRepositoryValues.isEmpty()) {
+            createRemoteRepository(remoteRepositoryValues);
+        }
+        
         //adds the last not yet added parser to the WPSConfig
         if (!parserValues.isEmpty()) {
             createParser(parserValues);
@@ -287,6 +326,9 @@ public class ChangeConfigurationBean {
         if (serverEntries.containsKey("webappPath")) {
             server.setWebappPath(serverEntries.get("webappPath"));
         }
+        if (serverEntries.containsKey("repoReloadInterval")) {
+            server.setRepoReloadInterval(Double.parseDouble(serverEntries.get("repoReloadInterval")));
+        }
     }
 
     /**
@@ -322,6 +364,38 @@ public class ChangeConfigurationBean {
         }
     }
 
+    /**
+     * adds the name value pairs to the RepositoryList instance of the WPSconfig
+     * @param repositoryEntries map with the name value pairs belonging to one Repository
+     */
+    private void createRemoteRepository(HashMap<String, String> repositoryEntries) {
+        // if Name or Class does not exist, Repository is not added
+        if (repositoryEntries.isEmpty() || !repositoryEntries.containsKey("Name")) {
+            return;
+        }
+        // get new repository and add Name and Class and Active state
+        RemoteRepository repository = remoteRepositoryList.addNewRemoteRepository();
+        repository.setName(repositoryEntries.remove("Name"));
+        
+        String activeString = repositoryEntries.remove("Activator");
+        boolean active = true;
+        if(activeString == null){	// Activator=off will only be recognized when activeString is null, the jQuery form.serialize() method won't insert "Activator=off"!
+        	active = false;
+        } else {
+        	if(activeString.equals("on")){
+        		// everything is fine
+        	} else {
+        		LOGGER.error("Error - the Activator seems not to be set.");
+        	}
+        }
+        repository.setActive(active);
+
+        // if the map has more entries, Properties are present and will be proceed
+        if (!repositoryEntries.isEmpty()) {
+            repository.setPropertyArray(getPropertyArray(repositoryEntries));
+        }
+    }    
+    
     /**
      * adds the name value pairs to the ParserList instance of the WPSconfig
      * @param parserEntries map with the name value pairs belonging to one Parser
@@ -391,7 +465,7 @@ public class ChangeConfigurationBean {
     }
 
     /**
-     * geneartes a Property[] of the name value pairs in the map
+     * generates a Property[] of the name value pairs in the map
      * @param properties map with name value pairs belonging to one entry
      * @return Property[]
      */
