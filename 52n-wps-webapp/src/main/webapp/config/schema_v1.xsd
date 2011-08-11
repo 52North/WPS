@@ -11,6 +11,7 @@
 			<xs:sequence>
 				<xs:element ref="Datahandlers"/>
 				<xs:element ref="AlgorithmRepositoryList"/>
+				<xs:element ref="RemoteRepositoryList"/>
 				<xs:element ref="Server"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -170,6 +171,26 @@
 			<xs:sequence>
 				<xs:element ref="Repository" maxOccurs="unbounded"/>
 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RemoteRepositoryList">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="RemoteRepository" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RemoteRepository">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="Property" minOccurs="0" maxOccurs="unbounded" />
+			</xs:choice>
+			<xs:attribute name="name" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string" />
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="active" type="xs:boolean" use="required"></xs:attribute>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
