@@ -30,8 +30,11 @@ package org.n52.wps.server.feed;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.RemoteRepositoryDocument.RemoteRepository;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 
@@ -39,37 +42,58 @@ public class FeedRepository {
 	private static FeedRepository instance = new FeedRepository();
 	private static final String FEED = "FEED";
 	private static final String LOCAL_FEED_MIRROR = "LOCAL_FEED_MIRROR";
-	private String localFeedPath; //"D:/development/localFeedMirror";
-	private ArrayList<String> feedsURLs; //{"http://test.org/feed.zip","http://test2.org/feed.zip"};
 	private AlgorithmFeed[] registeredFeeds;
 	
 	private FeedRepository(){
 		
-		feedsURLs = new ArrayList<String>();
+		HashMap<String,String> feeds = new HashMap<String,String>();
+		RemoteRepository[] remoteRepositories = WPSConfig.getInstance().getWPSConfig().getRemoteRepositoryList().getRemoteRepositoryArray();
 		
-		Property[] props = WPSConfig.getInstance().getWPSConfig().getServer().getPropertyArray();
-		for (Property currentProp : props){
-			
-			if (currentProp.getActive() && currentProp.getName().equalsIgnoreCase(FEED)){
-				feedsURLs.add(currentProp.getStringValue());
+		for (int i = 0; i < remoteRepositories.length; i++){
+			Property[] props = remoteRepositories[i].getPropertyArray();
+			String url = null;
+			String localPath = null;
+			for (Property currentProp : props){
+				if (currentProp.getActive() && currentProp.getName().equalsIgnoreCase(FEED)){
+					url = currentProp.getStringValue();
+				}
+				if (currentProp.getActive() && currentProp.getName().equalsIgnoreCase(LOCAL_FEED_MIRROR)){
+					localPath = currentProp.getStringValue();
+				}
 			}
-			if (currentProp.getActive() && currentProp.getName().equalsIgnoreCase(LOCAL_FEED_MIRROR)){
-				localFeedPath = currentProp.getStringValue();
+			
+			// eventually occurring duplicate feeds are silently eliminated by the HashMap (unique URL!)
+			if (url != null && localPath != null){
+				feeds.put(url, localPath);
 			}
 		}
 		
-		registerFeeds();
+		registerFeeds(feeds);
 	}
 	
 	public static FeedRepository getInstance(){
 		return instance;
 	}
 	
-	private void registerFeeds(){
+	private void registerFeeds(HashMap<String,String> feedsMap){
 		ArrayList<AlgorithmFeed> feedList = new ArrayList<AlgorithmFeed>();
-		for (String currentURL : feedsURLs){
-			AlgorithmFeed feed = new AlgorithmFeed(currentURL, localFeedPath);
-			feedList.add(feed);
+		
+		Set<String> allUrls = feedsMap.keySet();
+		
+		for (String url : allUrls){
+			AlgorithmFeed feed = null;
+			
+			// try to instantiate an AlgorithmFeed
+			try {
+				feed = new AlgorithmFeed(url, feedsMap.get(url));
+			} catch (Exception e) {
+				// do nothing
+			}
+			
+			// be careful not to add NULL feeds
+			if (feed != null){
+				feedList.add(feed);
+			}
 		}
 		
 		registeredFeeds = feedList.toArray(new AlgorithmFeed[feedList.size()]);
