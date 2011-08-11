@@ -42,14 +42,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.request.ExecuteRequest;
 
@@ -79,24 +76,17 @@ public class RepositoryManager {
             }
         });
         
-        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-        String value = server.selectAttribute(new QName("repoReloadInterval")).getDomNode().getNodeValue();
-        		
-        // be careful - parsing the value might result in an exception
-        try {
-        	Double d = Double.parseDouble(value);
-            if (! (d == 0)){
-	        	d = d * 3600 * 1000; // make milliseconds
-	        	long updateInterval = d.longValue();
-	        	this.updateThread = new UpdateThread(updateInterval);
-	        	updateThread.start();
-        	}
+        Double updateHours = WPSConfig.getInstance().getWPSConfig().getServer().getRepoReloadInterval();
+        
+        if (updateHours != 0){
+        	LOGGER.info("Setting repository update period to " + updateHours + " hours.");
+        	updateHours = updateHours * 3600 * 1000; // make milliseconds
+            long updateInterval = updateHours.longValue();
+            this.updateThread = new UpdateThread(updateInterval);
+        	updateThread.start();
         }
-        catch (Exception e) {
-        	LOGGER.info("Could not start Update Thread. Have you assigned a valid decimal value?");
-        }
-        		
-
+        
+    	
 	}
 
     private void loadAllRepositories(){
