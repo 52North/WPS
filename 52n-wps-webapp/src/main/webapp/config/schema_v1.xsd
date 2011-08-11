@@ -176,7 +176,7 @@
 	<xs:element name="RemoteRepositoryList">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="RemoteRepository" maxOccurs="unbounded"/>
+				<xs:element ref="RemoteRepository" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
