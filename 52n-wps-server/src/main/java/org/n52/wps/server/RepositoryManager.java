@@ -55,15 +55,10 @@ import org.n52.wps.server.request.ExecuteRequest;
 
 public class RepositoryManager {
 	
-
 	private static RepositoryManager instance;
 	private static Logger LOGGER = Logger.getLogger(RepositoryManager.class);
-	
 	private List<IAlgorithmRepository> repositories;
-	
 	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
-	
-	private static final String PROCESS_UPDATE_HOURS = "UPDATE_PROCESS_INTERVAL_HOURS";
 	private UpdateThread updateThread;
 	
 	private RepositoryManager(){
@@ -133,7 +128,7 @@ public class RepositoryManager {
 				
 				
 				repositories.add(algorithmRepository);
-				LOGGER.info("Algorithm Repositories initialized");
+				LOGGER.info("Algorithm Repository "+ repositoryClassName + " initialized");
 			} catch (InstantiationException e) {
 				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 			} catch (IllegalAccessException e) {
