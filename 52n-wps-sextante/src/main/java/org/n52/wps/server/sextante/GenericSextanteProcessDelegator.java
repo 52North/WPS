@@ -35,15 +35,23 @@ package org.n52.wps.server.sextante;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import net.opengis.ows.x11.DomainMetadataType;
+import net.opengis.ows.x11.RangeType;
+import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
+import net.opengis.wps.x100.ComplexDataCombinationsType;
+import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.SupportedComplexDataInputType;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -51,6 +59,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.feature.FeatureCollection;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.FileDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -60,11 +69,15 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
 import org.opengis.coverage.grid.GridCoverage;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
+import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
+import es.unex.sextante.additionalInfo.AdditionalInfoRasterLayer;
 import es.unex.sextante.additionalInfo.AdditionalInfoSelection;
+import es.unex.sextante.additionalInfo.AdditionalInfoVectorLayer;
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
@@ -83,6 +96,17 @@ import es.unex.sextante.outputs.FileOutputChannel;
 import es.unex.sextante.outputs.Output;
 import es.unex.sextante.parameters.FixedTableModel;
 import es.unex.sextante.parameters.Parameter;
+import es.unex.sextante.parameters.ParameterBand;
+import es.unex.sextante.parameters.ParameterBoolean;
+import es.unex.sextante.parameters.ParameterFixedTable;
+import es.unex.sextante.parameters.ParameterMultipleInput;
+import es.unex.sextante.parameters.ParameterNumericalValue;
+import es.unex.sextante.parameters.ParameterPoint;
+import es.unex.sextante.parameters.ParameterRasterLayer;
+import es.unex.sextante.parameters.ParameterSelection;
+import es.unex.sextante.parameters.ParameterString;
+import es.unex.sextante.parameters.ParameterTableField;
+import es.unex.sextante.parameters.ParameterVectorLayer;
 import es.unex.sextante.rasterWrappers.GridExtent;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteConstants {
@@ -155,9 +179,39 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 				 *
 				 * we probably have to refactor the input stuff and add some metadata to know what koind of input is fed in (for instance vector or raster etc)
 				 */
-				Object wrappedInput = wrapSextanteInputs(parameter, inputData.get(parameterName), parameterName, type);
-				if(wrappedInput !=null){
-					parameter.setParameterValue(wrappedInput);
+				
+				boolean missingMandatoryParameter = false;
+				
+				if (parameter instanceof ParameterRasterLayer){
+					AdditionalInfoRasterLayer ai = (AdditionalInfoRasterLayer) parameter.getParameterAdditionalInfo();
+					if (ai.getIsMandatory() && (inputData.get(parameterName) == null) ){
+						missingMandatoryParameter = true;
+					}
+				}
+				else if (parameter instanceof ParameterVectorLayer){
+					AdditionalInfoVectorLayer ai = (AdditionalInfoVectorLayer) parameter.getParameterAdditionalInfo();
+					if (ai.getIsMandatory() && (inputData.get(parameterName) == null) ){
+						missingMandatoryParameter = true;
+					}
+
+				}else if (parameter instanceof ParameterMultipleInput) {
+					AdditionalInfoMultipleInput ai = (AdditionalInfoMultipleInput) parameter
+							.getParameterAdditionalInfo();
+					if (ai.getIsMandatory() && (inputData.get(parameterName) == null) ){
+						missingMandatoryParameter = true;
+					}
+				}
+				
+				if(missingMandatoryParameter){
+					LOGGER.error("Missing parameter: " + parameterName);
+					throw new RuntimeException("Error while executing process " + processID + ". Missing parameter: " + parameterName);
+				}	
+				if(!(inputData.get(parameterName) == null)){
+					Object wrappedInput = wrapSextanteInputs(parameter, inputData.get(parameterName), parameterName, type);
+
+					if(wrappedInput !=null){
+						parameter.setParameterValue(wrappedInput);
+					}
 				}
 			}
 
