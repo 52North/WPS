@@ -282,6 +282,7 @@ public class ExecuteRequest extends Request implements IObserver {
 				} else {
 					outputDataInput = outputID;
 				}
+				outputDataInput = outputDataInput.replace("=", "");
 				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
 				OutputDescriptionType outputDesc = XMLBeansHelper
 						.findOutputByID(outputDataInput, description.getProcessOutputs()
@@ -294,9 +295,9 @@ public class ExecuteRequest extends Request implements IObserver {
 				}
 				DocumentOutputDefinitionType output = responseDoc
 						.addNewOutput();
-				output.addNewIdentifier().setStringValue(outputID);
+				output.addNewIdentifier().setStringValue(outputDataInput);
 
-				for (int i = 0; i < outputDataparameters.length; i++) {
+				for (int i = 1; i < outputDataparameters.length; i++) {
 					int attributePos = outputDataparameters[i].indexOf("=");
 					if (attributePos == -1
 							|| attributePos + 1 >= outputDataparameters[i]
