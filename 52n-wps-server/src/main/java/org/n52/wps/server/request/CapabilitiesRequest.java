@@ -67,13 +67,11 @@ public class CapabilitiesRequest extends Request {
 		
 		map = new CaseInsensitiveMap();
 		
-		for (int i = 0; i < nnm.getLength(); i++) {
+		String[] serviceArray = {"WPS"};
 			
-			Node n = nnm.item(i);
-			if(n.getLocalName().equalsIgnoreCase("service")){
-			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
-			}
-		}	
+		map.put("service", serviceArray);
+			
+			
 		
 		NodeList nList = doc.getFirstChild().getChildNodes();
 		
