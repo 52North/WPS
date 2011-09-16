@@ -475,10 +475,11 @@ public class ChangeConfigurationBean {
 
             String processingProperty = properties.keySet().iterator().next().split("_")[0];
             String propertyName = properties.remove(processingProperty + "_Name");
-            propertyName = URLDecoder.decode(propertyName);
             if(propertyName == null){
             	continue;
             }
+            propertyName = URLDecoder.decode(propertyName);
+          
             String propertyValue = properties.remove(processingProperty + "_Value");
             if(propertyValue == null){
             	continue;
