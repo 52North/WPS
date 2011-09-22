@@ -38,11 +38,12 @@ import java.util.UUID;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
-public class GenericFileGeneratorBase64 {
+public class GenericFileGeneratorBase64 extends AbstractBinaryGenerator implements IStreamableGenerator{
 	private File tempfile;
 	
 	private static Logger LOGGER = Logger.getLogger(GenericFileGeneratorBase64.class);

@@ -63,7 +63,22 @@
 				<Property name="supportedFormat" active="true">application/hdf4-eos</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>	
-	
+			<Parser name="GenericFileParserBase64" className="org.n52.wps.io.datahandler.binary.GenericFileParserBase64" active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">application/geotiff</Property>
+				<Property name="supportedFormat" active="true">application/dbase</Property>
+				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
+				<Property name="supportedFormat" active="true">application/hdf4-eos</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Parser>
 			
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser" active="true">
 				<Property name="supportedFormat" active="true">image/tiff</Property>
@@ -188,16 +203,22 @@
 				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Generator>
-			<Generator name="GenericFileGeneratorBase64" className="org.n52.wps.io.datahandler.binary.Base64Generator" active="true">
+			<Generator name="GenericFileGeneratorBase64" className="org.n52.wps.io.datahandler.binary.GenericFileGeneratorBase64" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">application/shp</Property>
 				<Property name="supportedFormat" active="true">application/img</Property>
 				<Property name="supportedFormat" active="true">image/tiff</Property>
 				<Property name="supportedFormat" active="true">application/geotiff</Property>
 				<Property name="supportedFormat" active="true">application/dbase</Property>
 				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
 				<Property name="supportedEncoding" active="true">Base64</Property>
-			</Generator>	
+			</Generator>
 			
 			<Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.xml.GRASSXMLGenerator" active="true">
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>

@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
-public class GenericFileParserBase64 {
+public class GenericFileParserBase64 extends AbstractBinaryParser{
 	private static Logger LOGGER = Logger.getLogger(GenericFileParserBase64.class);
 	
 	
