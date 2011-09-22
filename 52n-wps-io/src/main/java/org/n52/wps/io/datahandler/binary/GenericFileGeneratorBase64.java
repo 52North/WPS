@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64InputStream;
+import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IStreamableGenerator;
@@ -64,7 +64,7 @@ public class GenericFileGeneratorBase64 extends AbstractBinaryGenerator implemen
 	
 
 	public void writeToStream(IData outputData, OutputStream outputStream) {
-		
+		Base64OutputStream base64OS = new Base64OutputStream(outputStream);
 		
 		if(!(outputData instanceof GenericFileDataBinding)){
 			if(outputData==null){
@@ -74,10 +74,10 @@ public class GenericFileGeneratorBase64 extends AbstractBinaryGenerator implemen
 			}
 		}
 		LOGGER.info("Generating tempfile ...");
-		InputStream theStream = new Base64InputStream(((GenericFileDataBinding)outputData).getPayload().getDataStream(), true);
+		InputStream theStream = ((GenericFileDataBinding)outputData).getPayload().getDataStream();
 		
 		try {
-			IOUtils.copy(theStream, outputStream);
+			IOUtils.copy(theStream, base64OS);
 			theStream.close();
 			LOGGER.info("Tempfile generated!");
 			System.gc();
@@ -90,23 +90,23 @@ public class GenericFileGeneratorBase64 extends AbstractBinaryGenerator implemen
 
 	public OutputStream generate(IData data) {
 		LargeBufferStream outputStream = new LargeBufferStream();
-
+		Base64OutputStream base64OS = new Base64OutputStream(outputStream);
 		
 		if(!(data instanceof GenericFileDataBinding)){
 			throw new RuntimeException("GenericFileGenerator does not support incoming datatype");
 		}
 		
-		InputStream theStream = new Base64InputStream(((GenericFileDataBinding)data).getPayload().getDataStream(),true);
+		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
 		
 		try {
-			IOUtils.copy(theStream, outputStream);
+			IOUtils.copy(theStream, base64OS);
 			theStream.close();
 			System.gc();
 		} catch (Exception e) {
 			LOGGER.error(e);
 			throw new RuntimeException(e);
 		}
-		return outputStream;
+		return base64OS;
 		
 	}
 	
