@@ -125,7 +125,11 @@ public class OutputDataItem extends ResponseData {
 				} 
 			} else if(generator instanceof AbstractBinaryGenerator){
 				//TODO based64 encoding
-				throw new ExceptionReport("This generator does not support base64 encoding: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
+				// workaround: generator has to support base64
+				complexData = output.addNewData().addNewComplexData();
+				generator.generate(super.obj);
+				
+				//throw new ExceptionReport("This generator does not support base64 encoding: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			} else {
 				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
