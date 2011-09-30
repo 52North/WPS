@@ -190,8 +190,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				input.setMinOccurs(BigInteger.valueOf(0));
 			}
 			input.setMaxOccurs(BigInteger.valueOf(1));
-		}
-		if (param instanceof ParameterVectorLayer){
+		}else if (param instanceof ParameterVectorLayer){
 			//TODO:add shape type
 			AdditionalInfoVectorLayer ai = (AdditionalInfoVectorLayer) param.getParameterAdditionalInfo();
 			SupportedComplexDataInputType complex = input.addNewComplexData();
