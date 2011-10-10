@@ -62,11 +62,17 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CancelRequest;
 import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.DeployDataRequest;
 import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.DescribeDataRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.GetAuditRequest;
+import org.n52.wps.server.request.GetStatusRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
+import org.n52.wps.server.request.UndeployDataRequest;
+import org.n52.wps.server.request.UndeployProcessRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
@@ -191,6 +197,7 @@ public class RequestHandler {
 			nodeName = child.getNodeName();
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
+			if(!localName.equals("GetCapabilities")) {
 			Node versionNode = child.getAttributes().getNamedItem("version");
 			if (versionNode == null) {
 				throw new ExceptionReport("No version parameter supplied.",
@@ -198,6 +205,11 @@ public class RequestHandler {
 			}
 			version = child.getAttributes().getNamedItem("version")
 					.getNodeValue();
+			if (!version.equals(Request.SUPPORTED_VERSION)) {
+				throw new ExceptionReport("version is null: ",
+						ExceptionReport.INVALID_PARAMETER_VALUE);
+			}
+			}
 		} catch (SAXException e) {
 			throw new ExceptionReport(
 					"There went something wrong with parsing the POST data: "
@@ -212,14 +224,8 @@ public class RequestHandler {
 					"There is a internal parser configuration error",
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
-		if (version == null) {
-			throw new ExceptionReport("version is null: ",
-					ExceptionReport.MISSING_PARAMETER_VALUE);
-		}
-		if (!version.equals(Request.SUPPORTED_VERSION)) {
-			throw new ExceptionReport("version is null: ",
-					ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
+		
+		
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)
 				&& localName.equals("Execute")) {
@@ -231,15 +237,28 @@ public class RequestHandler {
 			}
 		} else if (nodeName.equals("DeployProcess")) {
 			req = new DeployProcessRequest(doc);
+		} else if (nodeName.equals("Cancel")) {
+			req = new CancelRequest(doc);
+		} else if (nodeName.equals("UndeployProcess")) {
+			req = new UndeployProcessRequest(doc);
+		} else if (nodeName.equals("DeployData")) {
+			req = new DeployDataRequest(doc);
+		} else if (nodeName.equals("DescribeData")) {
+			req = new DescribeDataRequest(doc);
+		} else if (nodeName.equals("GetAudit")) {
+			req = new GetAuditRequest(doc);
+		} else if (nodeName.equals("GetStatus")) {
+			req = new GetStatusRequest(doc);
+		
+		} else if (nodeName.equals("UndeployData")) {
+			req = new UndeployDataRequest(doc);
+		//} else if (nodeName.equals("DescribeData")) {
+			//req = new DescribeDataRequest(doc);
 			
-		} else if (nodeName.equals("Capabilities")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for getCapabilitiies supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+		} else if (nodeName.equals("GetCapabilities")) {
+			req = new CapabilitiesRequest(doc);
 		} else if (nodeName.equals("DescribeProcess")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for describeProcess supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+			req= new DescribeDataRequest(doc);
 		} else if (!localName.equals("Execute")) {
 			throw new ExceptionReport("specified operation is not supported: "
 					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);
@@ -260,6 +279,7 @@ public class RequestHandler {
 	 * @throws ExceptionReport
 	 */
 	public void handle() throws ExceptionReport {
+		LOGGER.info("handle");
 		Response resp = null;
 		if (req == null) {
 			throw new ExceptionReport("Internal Error", "");
@@ -269,6 +289,7 @@ public class RequestHandler {
 			ExecuteRequest execReq = (ExecuteRequest) req;
 			// get the statustype of this request
 			StatusType status = StatusType.Factory.newInstance();
+			// ??
 			execReq.getExecuteResponseBuilder().setStatus(status);
 			// create a task for this request
 			WPSTask<Response> task = new WPSTask<Response>(req);
@@ -276,14 +297,15 @@ public class RequestHandler {
 			// add process status before execution to enables clients to see the
 			// status
 			// status.addNewProcessStarted();
-			task.getRequest().getExecuteResponseBuilder().setStatus(status);
-
+			
 			ExceptionReport exceptionReport = null;
 			try {
 				// submit the task for execution
 				pool.addTask(task);
 				// set status to accepted
 				status.setProcessAccepted("Request is queued for execution.");
+				task.getRequest().getExecuteResponseBuilder().setStatus(status);
+
 				if (((ExecuteRequest) req).isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
 					resp.save(os);
@@ -372,9 +394,30 @@ public class RequestHandler {
 				throw exceptionReport;
 			}
 			resp.save(os);
-		} else if (req instanceof DeployProcessRequest) {
-			resp= req.call();
+		} else if (req instanceof GetAuditRequest) {
+			ExceptionReport exceptionReport = null;
+			try {
+				// CancelRequest is called with the WPSTask retrieved from the
+				// tasks registry
+				String taskId = ((GetAuditRequest) req).getGetAuditDom()
+						.getGetAudit().getProcessInstanceIdentifier()
+						.getInstanceId();
+				WPSTask<Response> task = pool.getTask(taskId);
+				resp = ((GetAuditRequest) req).call(task);
+			} catch (Exception e) {
+				if (e.getCause() instanceof ExceptionReport) {
+					exceptionReport = (ExceptionReport) e.getCause();
+				} else {
+					exceptionReport = new ExceptionReport(
+							"An error occurred in the computation: "
+									+ e.getMessage(),
+							ExceptionReport.NO_APPLICABLE_CODE);
+				}
+				e.printStackTrace();
+				throw exceptionReport;
+			}
 			resp.save(os);
+		
 		} else {
 			// for GetCapabilities and DescribeProcess, and GetStatus:
 

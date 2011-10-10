@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wps:Capabilities service="WPS" version="1.0.0" xml:lang="en-US" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_response.xsd" updateSequence="1">
 	<ows:ServiceIdentification>
-		<ows:Title>52N WPS RC5</ows:Title>
+		<ows:Title>52N WPS SSEGRID</ows:Title>
 		<ows:Abstract>Service based on the 52north implementation of WPS 1.0.0</ows:Abstract>
 		<ows:Keywords>
 			<ows:Keyword>WPS</ows:Keyword>
@@ -16,11 +16,11 @@
 		<ows:AccessConstraints>NONE</ows:AccessConstraints>
 	</ows:ServiceIdentification>
 	<ows:ServiceProvider>
-		<ows:ProviderName>52North</ows:ProviderName>
-		<ows:ProviderSite xlink:href="http://www.52north.org/"/>
+		<ows:ProviderName>Spacebel</ows:ProviderName>
+		<ows:ProviderSite xlink:href="http://www.spacebel.be/"/>
 		<ows:ServiceContact>
-			<ows:IndividualName>Your name</ows:IndividualName>
-			<ows:PositionName>Your position</ows:PositionName>
+			<ows:IndividualName>Christophe Noel</ows:IndividualName>
+			<ows:PositionName>Software engineer</ows:PositionName>
 			<ows:ContactInfo>
 				<ows:Phone>
 					<ows:Voice></ows:Voice>
@@ -28,11 +28,11 @@
 				</ows:Phone>
 				<ows:Address>
 					<ows:DeliveryPoint></ows:DeliveryPoint>
-					<ows:City></ows:City>
+					<ows:City>Angleur</ows:City>
 					<ows:AdministrativeArea></ows:AdministrativeArea>
-					<ows:PostalCode></ows:PostalCode>
-					<ows:Country></ows:Country>
-					<ows:ElectronicMailAddress></ows:ElectronicMailAddress>
+					<ows:PostalCode>4031</ows:PostalCode>
+					<ows:Country>Belgium</ows:Country>
+					<ows:ElectronicMailAddress>Christophe.Noel@Spacebel.be</ows:ElectronicMailAddress>
 				</ows:Address>
 			</ows:ContactInfo>
 		</ows:ServiceContact>
@@ -61,8 +61,72 @@
 				</ows:HTTP>
 			</ows:DCP>
 		</ows:Operation>
+		<ows:Operation name="DeployProcess">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="UndeployProcess">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetStatus">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="Cancel">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="GetAudit">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="DeployData">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="UndeployData">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
+		<ows:Operation name="DescribeData">
+			<ows:DCP>
+				<ows:HTTP>
+					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
+				</ows:HTTP>
+			</ows:DCP>
+		</ows:Operation>
 	</ows:OperationsMetadata>
-	
+
 	<wps:Languages>
 		<wps:Default>
 			<ows:Language>en-US</ows:Language>

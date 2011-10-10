@@ -1,9 +1,13 @@
 package org.n52.wps.server;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -14,8 +18,12 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.util.XMLUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.GetAuditDocument;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -23,7 +31,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 
 	protected String algorithmID;
 	private static Logger LOGGER = Logger
-	.getLogger(DefaultTransactionalProcessRepository.class);
+			.getLogger(DefaultTransactionalProcessRepository.class);
 
 	public AbstractTransactionalAlgorithm(String algorithmID) {
 		this.algorithmID = algorithmID;
@@ -34,7 +42,8 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		return algorithmID;
 	}
 
-	public abstract HashMap run(ExecuteDocument document);
+	public abstract HashMap run(ExecuteDocument document)
+			throws ExceptionReport;
 
 	/** call the backend to cancel the task */
 	public void cancel() {
@@ -61,7 +70,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		if (subPath.startsWith("/")) {
 			subPath = subPath.substring(1);
 		}
-		File directory = new File(subPath + "WEB-INF/ProcessDescriptions/");
+				File directory = new File(subPath + "WEB-INF/ProcessDescriptions/");
 		if (!directory.exists()) {
 			directory.mkdirs();
 		}
@@ -102,7 +111,8 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
 			File descFile = new File(path);
-			ProcessDescriptionDocument descDom = ProcessDescriptionDocument.Factory.parse(descFile,option);
+			ProcessDescriptionDocument descDom = ProcessDescriptionDocument.Factory
+					.parse(descFile, option);
 			return descDom.getProcessDescription();
 		} catch (TransformerFactoryConfigurationError e) {
 			e.printStackTrace();
@@ -115,4 +125,157 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		}
 		return null;
 	}
+
+	public static void removeDescription(String processId) {
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
+				+ ".xml";
+		File descFile = new File(path);
+		descFile.delete();
+	}
+
+	public static void storeAuditDocument(String instanceId,
+			AuditTraceType auditTraceType) {
+
+		LOGGER.info("Storing audit:" + instanceId);
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		File directory = new File(subPath + "WEB-INF/AuditDocuments/");
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId + ".xml";
+		try {
+			// TODO handling when exception occurs ...
+			auditTraceType.save(new File(path));
+			// XMLUtils.writeXmlFile((Document)auditTraceType.getDomNode(),
+			// path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("Audit document is stored in:" + subPath);
+	}
+
+	public static AuditTraceType getAuditDocument(String instanceId) {
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId + ".xml";
+		LOGGER.info("Retrieving in " + path);
+		AuditTraceType auditDom = null;
+		try {
+			XmlOptions option = new XmlOptions();
+			option.setLoadTrimTextBuffer();
+			File auditFile = new File(path);
+			auditDom = AuditTraceType.Factory.parse(auditFile);
+
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return auditDom;
+	}
+
+	public static void storeAuditLongDocument(String instanceId,
+			AuditTraceType auditTraceType) {
+
+		LOGGER.info("Storing audit:" + instanceId);
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		File directory = new File(subPath + "WEB-INF/AuditDocuments/");
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
+		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId
+				+ "_long.xml";
+		try {
+			// TODO handling when exception occurs ...
+			auditTraceType.save(new File(path));
+			// XMLUtils.writeXmlFile((Document)auditTraceType.getDomNode(),
+			// path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		}
+		LOGGER.info("Audit document is stored in:" + subPath);
+	}
+
+	public static AuditTraceType getAuditLongDocument(String instanceId) {
+		String fullPath = AbstractTransactionalAlgorithm.class
+				.getProtectionDomain().getCodeSource().getLocation().toString();
+		int searchIndex = fullPath.indexOf("WEB-INF");
+		String subPath = fullPath.substring(0, searchIndex);
+		subPath = subPath.replaceFirst("file:", "");
+		if (subPath.startsWith("/")) {
+			subPath = subPath.substring(1);
+		}
+		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId
+				+ "_long.xml";
+		LOGGER.info("Retrieving in " + path);
+		AuditTraceType auditDom = null;
+		try {
+			XmlOptions option = new XmlOptions();
+			option.setLoadTrimTextBuffer();
+			File auditFile = new File(path);
+			auditDom = AuditTraceType.Factory.parse(auditFile);
+
+		} catch (TransformerFactoryConfigurationError e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XmlException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return auditDom;
+	}
+
+	public AuditTraceType getAudit() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AuditTraceType getAuditLongForm() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void storeAudit() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

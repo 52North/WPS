@@ -2,23 +2,23 @@ package org.n52.wps.server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPFault;
+import org.apache.axiom.soap.SOAPFaultCode;
+import org.apache.axiom.soap.SOAPFaultDetail;
+import org.apache.axiom.soap.SOAPFaultReason;
+import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.xmlbeans.impl.soap.SOAPException;
 import org.n52.wps.server.handler.SOAPRequestHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +49,9 @@ public class WebProcessingServiceSoap {
 	public OMElement getStatus(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
+	public OMElement getAudit(OMElement input) throws Exception {
+		return internalSOAPHandler(input);
+	}
 
 	public OMElement deployProcess(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
@@ -57,7 +60,15 @@ public class WebProcessingServiceSoap {
 	public OMElement undeployProcess(OMElement input) throws Exception {
 		return internalSOAPHandler(input);
 	}
-
+	public OMElement deployData(OMElement input) throws Exception {
+		return internalSOAPHandler(input);
+	}
+	public OMElement undeployData(OMElement input) throws Exception {
+		return internalSOAPHandler(input);
+	}
+	public OMElement describeData(OMElement input) throws Exception {
+		return internalSOAPHandler(input);
+	}
 	public OMElement getCapabilities(OMElement input) throws Exception{
 		return internalSOAPHandler(input);
 	}
@@ -66,9 +77,11 @@ public class WebProcessingServiceSoap {
 		return internalSOAPHandler(input);
 	}
 	
+	public OMElement executeResponseCallback(OMElement input) throws Exception {
+		return internalSOAPHandler(input);
+	}
 	
-	
-	private OMElement internalSOAPHandler(OMElement input) throws IOException, XMLStreamException{
+	private OMElement internalSOAPHandler(OMElement input) throws Exception{
 		m_msgCtx = MessageContext.getCurrentMessageContext();
 		
 		Element payload = null;
@@ -77,6 +90,7 @@ public class WebProcessingServiceSoap {
 		SOAPRequestHandler handler = null;
 		Element inputDoc=null;
 		
+
 		/*convert OMElement to Element*/
 		
 		try{
@@ -94,12 +108,21 @@ public class WebProcessingServiceSoap {
 			
 			
 		} catch (ExceptionReport serviceException) {
-			serviceException.getExceptionDocument().save(outputStream);
-			InputStream instream = new ByteArrayInputStream(outputStream
-					.toByteArray());
-			OMElement result = (OMElement) XMLUtils.toOM(instream);
-			return result;
+
+			OMElement faultElement = XMLUtils.toOM(((Document) serviceException.getExceptionDocument().getDomNode()).getDocumentElement());
+		SOAPFault fault = OMAbstractFactory.getSOAP11Factory().createSOAPFault();
+			SOAPFaultCode code = OMAbstractFactory.getSOAP11Factory().createSOAPFaultCode();
+			code.setText(fault.getNamespace().getPrefix()+":Server");
+			SOAPFaultReason faultstring = OMAbstractFactory.getSOAP11Factory().createSOAPFaultReason();
+			faultstring.setText("WPS Fault");
+			SOAPFaultDetail detail = OMAbstractFactory.getSOAP11Factory().createSOAPFaultDetail();
+			detail.addChild(faultElement);
+			fault.setCode(code);
+			fault.setReason(faultstring);
+			fault.setDetail(detail);
+			return fault;
 		}
+		
 		InputStream instream = new ByteArrayInputStream(outputStream
 				.toByteArray());
 		OMElement result = (OMElement) XMLUtils.toOM(instream);

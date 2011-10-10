@@ -5,8 +5,6 @@
 
 package org.n52.wps.server.profiles.IntalioBPMS;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.xml.namespace.QName;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -18,11 +16,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.transport.http.HTTPConstants;
-
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.ode.utils.Namespaces;
 
 /**
@@ -33,17 +26,17 @@ import org.apache.ode.utils.Namespaces;
  */
 public class ODEServiceClient{
 
-        public OMElement send(OMElement msg, String url) throws AxisFault {
-            return send(msg, url, 180000);
+        public OMElement send(OMElement msg, String url, String action) throws AxisFault {
+            return send(msg, url, 180000, action);
     }
 
-    public OMElement send(OMElement msg, String url, long timeout) throws AxisFault {
+    public OMElement send(OMElement msg, String url, long timeout, String action) throws AxisFault {
         
         Options options = new Options();
         EndpointReference target = new EndpointReference(url);
         options.setTo(target);
         options.setTimeOutInMilliSeconds(timeout);
-        options.setAction("deployAssembly");
+        options.setAction(action);
         OMElement result = null;
         ServiceClient serviceClient = null;
 
@@ -51,7 +44,10 @@ public class ODEServiceClient{
             serviceClient = new ServiceClient();
             serviceClient.setOptions(options);
             result = serviceClient.sendReceive(msg);
-        }catch(AxisFault af){
+            // Following printing is a workaround for a bug relative to
+            // stream closed when receiving big results
+            System.out.println(result);
+                    }catch(AxisFault af){
             af.printStackTrace();
         }finally{
             if (serviceClient != null){
@@ -62,7 +58,8 @@ public class ODEServiceClient{
                     e.printStackTrace();
                 }
                 try{
-                    serviceClient.cleanup();
+                	                  serviceClient.cleanup();
+                    
                 }catch(Exception e){
                     e.printStackTrace();
                 }

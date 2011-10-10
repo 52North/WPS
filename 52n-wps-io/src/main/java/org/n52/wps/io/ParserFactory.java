@@ -176,9 +176,11 @@ public class ParserFactory {
 			LOGGER.debug("Encoding is null, assume standard UTF-8");
 		}
 		//first, look if we can find a direct way		
+		LOGGER.info("---------------------        -------     looking for parser");
 		for(IParser parser : registeredParsers) {
 			Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
 			for(Class clazz : supportedClasses){
+				LOGGER.info(clazz.getName() + " versus "+requiredInputClass.getName());
 				if(clazz.equals(requiredInputClass)) {
 					if(parser.isSupportedSchema(schema) &&	parser.isSupportedEncoding(encoding) && parser.isSupportedFormat(format)) {
 						LOGGER.info("Matching parser found: " + parser);

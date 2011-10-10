@@ -44,7 +44,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
 
 
@@ -159,6 +161,13 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
 		}
 		return processDescriptionMap.get(processID);
+	}
+
+	@Override
+	public void addAlgorithm(DeployProcessRequest request)
+			throws ExceptionReport {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

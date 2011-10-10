@@ -48,6 +48,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.opengis.wps.x100.DeployDataDocument;
 import net.opengis.wps.x100.DeployProcessDocument;
 
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
@@ -60,6 +61,11 @@ public abstract class DeploymentProfile {
 	private String processID;
 	
 	public DeploymentProfile(DeployProcessDocument deployDom, String processID){
+		this.processID = processID;
+		this.payload = payload;
+		
+	}
+	public DeploymentProfile(DeployDataDocument deployDom, String processID){
 		this.processID = processID;
 		this.payload = payload;
 		

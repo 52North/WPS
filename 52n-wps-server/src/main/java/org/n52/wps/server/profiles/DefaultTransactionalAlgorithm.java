@@ -32,14 +32,13 @@ package org.n52.wps.server.profiles;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -47,31 +46,25 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-
 import org.apache.log4j.Logger;
-import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xpath.XPathAPI;
 import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.URLListDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
-import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
-import org.n52.wps.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
 
 public class DefaultTransactionalAlgorithm extends
 		AbstractTransactionalAlgorithm {
@@ -114,22 +107,28 @@ public class DefaultTransactionalAlgorithm extends
 	}
 
 	// TODO : BPEL has nothing to do here...
-	public HashMap<String, IData> run(ExecuteDocument payload) {
+	public HashMap<String, IData> run(ExecuteDocument payload)
+			throws ExceptionReport {
 		ExecuteResponseDocument responseDocument;
 		HashMap<String, IData> resultHash = new HashMap<String, IData>();
+		/**
+		 * Note cnl : The DefaultTransactionAlgorithm receives an
+		 * ExecuteResponseDocument from the backend process manager If the
+		 * process manager returns another kind of DOM document, another
+		 * TransactionalAlgorithm should handle this.
+		 */
+		Document invokeResponse;
+		LOGGER.info("DefaultTransactionAlgo Run");
 		try {
-			/**
-			 * Note cnl : The DefaultTransactionAlgorithm receives an
-			 * ExecuteResponseDocument from the backend process manager If the
-			 * process manager returns another kind of DOM document, another
-			 * TransactionalAlgorithm should handle this.
-			 */
-			responseDocument = ExecuteResponseDocument.Factory
-					.parse(getProcessManager()
-							.invoke(payload, getAlgorithmID()));
+			invokeResponse = getProcessManager().invoke(payload,
+					getAlgorithmID());
 			/**
 			 * Parsing
 			 */
+			LOGGER.info("invoke response");
+			responseDocument = ExecuteResponseDocument.Factory
+					.parse(invokeResponse);
+			LOGGER.info(responseDocument.toString());
 			OutputDataType[] resultValues = responseDocument
 					.getExecuteResponse().getProcessOutputs().getOutputArray();
 			for (int i = 0; i < resultValues.length; i++) {
@@ -144,8 +143,7 @@ public class DefaultTransactionalAlgorithm extends
 							ioElement, getDescription()));
 				}
 				/**
-				 * TODO
-				 * if(ioElement.isSetReference()){ resultHash.put(key,
+				 * TODO if(ioElement.isSetReference()){ resultHash.put(key,
 				 * OutputParser.handleComplexValueReference(ioElement)); }
 				 */
 				if (ioElement.getData().getBoundingBoxData() != null) {
@@ -153,12 +151,17 @@ public class DefaultTransactionalAlgorithm extends
 							.put(key, OutputParser.handleBBoxValue(ioElement));
 				}
 			}
+		} catch (ExceptionReport e) {
+			e.printStackTrace();
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 			String error = "Could not create ExecuteResponseDocument";
 			errors.add(error);
 			LOGGER.warn(error + " Reason: " + e.getMessage());
-			throw new RuntimeException(error, e);
+			throw new ExceptionReport(error,
+					ExceptionReport.REMOTE_COMPUTATION_ERROR);
+
 		}
 		return resultHash;
 	}
@@ -268,12 +271,19 @@ public class DefaultTransactionalAlgorithm extends
 					}
 				}
 				if (input.isSetComplexData()) {
+					LOGGER.info("-------- complex --- --- ");
+					LOGGER.info(input.getComplexData().toString());
+					LOGGER.info("-------- def--- --- ");
+					LOGGER.info(input.getComplexData().getDefault().toString());
+					LOGGER.info("--------format --- --- ");
+					LOGGER.info(input.getComplexData().getDefault().getFormat()
+							.toString());
 					String mimeType = input.getComplexData().getDefault()
 							.getFormat().getMimeType();
 					if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
-						return GTVectorDataBinding.class;
+						return URLListDataBinding.class;
 					} else {
-						return GTRasterDataBinding.class;
+						return URLListDataBinding.class;
 					}
 				}
 			}
@@ -286,8 +296,13 @@ public class DefaultTransactionalAlgorithm extends
 				.getProcessOutputs().getOutputArray();
 
 		for (OutputDescriptionType output : outputs) {
-
+			if(output.getIdentifier().getStringValue().equals(id)) {
+				LOGGER.info("output is :"+id);
 			if (output.isSetLiteralOutput()) {
+				// Missing case when dataType is not present
+				if(output.getLiteralOutput().getDataType() == null) {
+					return LiteralStringBinding.class;
+				}
 				String datatype = output.getLiteralOutput().getDataType()
 						.getStringValue();
 				if (datatype.contains("tring")) {
@@ -307,10 +322,19 @@ public class DefaultTransactionalAlgorithm extends
 				String mimeType = output.getComplexOutput().getDefault()
 						.getFormat().getMimeType();
 				if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
-					return GenericFileDataBinding.class;
+					if (output.getComplexOutput().getDefault().getFormat()
+							.getSchema().contains("wps")) {
+						LOGGER.info("Output Data Type found is URLListDataBinding");
+						return URLListDataBinding.class;
+						
+					} else {
+						return GenericFileDataBinding.class;
+					}
+
 				} else {
 					return GenericFileDataBinding.class;
 				}
+			}
 			}
 		}
 		throw new RuntimeException("Could not determie internal inputDataType");
@@ -336,6 +360,16 @@ public class DefaultTransactionalAlgorithm extends
 
 	public String getWorkspace() {
 		return workspace;
+	}
+
+	public AuditTraceType getAudit() throws Exception {
+		LOGGER.info("short");
+		return getProcessManager().getAudit();
+	}
+
+	public AuditTraceType getAuditLongForm() throws Exception {
+		LOGGER.info("long");
+		return getProcessManager().getAuditLongForm();
 	}
 
 }

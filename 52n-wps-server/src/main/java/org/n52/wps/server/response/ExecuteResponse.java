@@ -35,46 +35,124 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMFactory;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.Constants;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.RelatesTo;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.w3.x2005.x08.addressing.MessageIDDocument;
+import org.w3.x2005.x08.addressing.ReplyToDocument;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class ExecuteResponse extends Response {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteResponse.class);
 	private boolean alreadyStored;
 	private ExecuteResponseBuilder builder;
-	
-	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
+	public static ServiceClient executeClient;
+
+	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport {
 		super(request);
 		alreadyStored = false;
-		this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
-		if(request.isStoreResponse()){
+		this.builder = ((ExecuteRequest) this.request)
+				.getExecuteResponseBuilder();
+		if (request.isStoreResponse()) {
 			LOGGER.debug("Store Response in Database");
-			
+
 			DatabaseFactory.getDatabase().storeResponse(this);
 		}
 	}
-	
-	public void save(OutputStream os) throws ExceptionReport{
-		//workaround, to avoid infinite processing. 
-		if(!alreadyStored) {
+
+	public void save(OutputStream os) throws ExceptionReport {
+		// workaround, to avoid infinite processing.
+		if (!alreadyStored) {
 			this.builder.update();
-			if(((ExecuteRequest)request).isStoreResponse()) {
+			if (((ExecuteRequest) request).isStoreResponse()) {
 				this.alreadyStored = true;
 				DatabaseFactory.getDatabase().storeResponse(this);
 			}
 		}
 		this.builder.save(os);
 	}
-	
-	public ExecuteResponseBuilder getExecuteResponseBuilder(){
+
+	public ExecuteResponseBuilder getExecuteResponseBuilder() {
 		return builder;
 	}
-	
-	public String getMimeType(){
+
+	public String getMimeType() {
 		return builder.getMimeType();
+	}
+
+	public void sendCallback(ArrayList<SOAPHeaderBlock> headerBlocks)
+			throws Exception {
+		LOGGER.info("sending callback");
+		ReplyToDocument replyToBlock = null;
+		MessageIDDocument messageIDBlock = null;
+		for (SOAPHeaderBlock headerBlock : headerBlocks) {
+			if (headerBlock.getLocalName().equals("ReplyTo")) {
+				replyToBlock = ReplyToDocument.Factory.parse(XMLUtils
+						.toDOM(headerBlock));
+				LOGGER.info(replyToBlock.toString());
+			}
+			if (headerBlock.getLocalName().equals("MessageID")) {
+				messageIDBlock = MessageIDDocument.Factory.parse(XMLUtils
+						.toDOM(headerBlock));
+				LOGGER.info(messageIDBlock.toString());
+			}
+		}
+		LOGGER.info("sending callback service client...");
+		ServiceClient sender = getCallbackClient();
+
+		LOGGER.info("target EPR:"
+				+ replyToBlock.getReplyTo().getAddress().getStringValue());
+		EndpointReference targetEPR = new EndpointReference(replyToBlock
+				.getReplyTo().getAddress().getStringValue());
+		Options options = new Options();
+		options.setTo(targetEPR);
+		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+		options.setAction("urn:executeResponseCallback");
+		//options.addRelatesTo(new RelatesTo(messageIDBlock.getMessageID()
+			//	.getStringValue()));
+		OMFactory _factory;
+		_factory = OMAbstractFactory.getOMFactory();
+		OMNamespace ins = _factory.createOMNamespace(
+				"http://www.w3.org/2005/08/addressing", "wsa");
+		OMElement relatesToHeader = _factory.createOMElement("RelatesTo", ins); // qualified
+		relatesToHeader
+				.setText((messageIDBlock.getMessageID().getStringValue()));
+		// sender.engageModule("addressing");
+		sender.setOptions(options);
+		sender.addHeader(relatesToHeader);
+		sender.sendRobust(XMLUtils.toOM(((Document) this
+				.getExecuteResponseBuilder().getDoc().getDomNode())
+				.getDocumentElement()));
+	
+	}
+
+	public static ServiceClient getCallbackClient() {
+		if (executeClient == null) {
+			try {
+				executeClient = new ServiceClient();
+			} catch (AxisFault e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return executeClient;
 	}
 }

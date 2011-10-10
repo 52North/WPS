@@ -5,7 +5,7 @@
 	<parameter name="ServiceClass" locked="false">
 		org.n52.wps.server.WebProcessingServiceSoap
  	</parameter>
-	<module ref="addressing" />
+<!-- 	<module ref="addressing" /> -->
 	<operation name="getCapabilities">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
@@ -18,8 +18,18 @@
 	</operation>
 	<operation name="execute">
 		<messageReceiver
-			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
 		<actionMapping>urn:execute</actionMapping>
+	</operation>
+	<operation name="getAudit">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+		<actionMapping>urn:getAudit</actionMapping>
+	</operation>
+	<operation name="executeResponseCallback">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+		<actionMapping>urn:executeResponseCallback</actionMapping>
 	</operation>
 	<operation name="getStatus">
 		<messageReceiver
@@ -34,12 +44,27 @@
 	<operation name="deployProcess">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
-		<actionMapping>urn:deploy</actionMapping>
+		<actionMapping>urn:deployProcess</actionMapping>
 	</operation>
 	<operation name="undeployProcess">
 		<messageReceiver
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
-		<actionMapping>urn:undeploy</actionMapping>
+		<actionMapping>urn:undeployProcess</actionMapping>
+	</operation>
+	<operation name="deployData">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:deployData</actionMapping>
+	</operation>
+	<operation name="undeployData">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:undeployData</actionMapping>
+	</operation>
+	<operation name="describeData">
+		<messageReceiver
+			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
+		<actionMapping>urn:describeData</actionMapping>
 	</operation>
 	<operation name="pauseJob">
 		<messageReceiver
@@ -51,4 +76,5 @@
 			class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver" />
 		<actionMapping>urn:resumeJob</actionMapping>
 	</operation>
+	<parameter name="messageReceiver.invokeOnSeparateThread" locked="false">false</parameter>
 </service>

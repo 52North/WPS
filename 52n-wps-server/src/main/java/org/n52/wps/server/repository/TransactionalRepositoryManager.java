@@ -41,6 +41,7 @@ public class TransactionalRepositoryManager {
 			for(Property property : properties){
 				if(property.getName().equals("supportedFormat")){
 					if(property.getStringValue().equals(schema)){
+						LOGGER.info("equals "+schema+ "-"+repository.xmlText());
 						return repository;
 					}
 					
@@ -53,12 +54,16 @@ public class TransactionalRepositoryManager {
 	
 
 	public static ITransactionalAlgorithmRepository getMatchingTransactionalRepository(String schema){
-		LOGGER.info("schema:"+schema);
+		/**
+		 * 
+		 * LOGGER.info("schema:"+schema);
+		 
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		String className = repository.getClassName();
 		LOGGER.info("classname:"+className);
-		
-		IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForClassName(className);
+		*/
+		LOGGER.info("get Algorithm Repository ");
+		IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForSchema(schema);
 		if(algorithmRepository!=null){
 			if(algorithmRepository instanceof ITransactionalAlgorithmRepository){
 				return (ITransactionalAlgorithmRepository) algorithmRepository;
@@ -77,7 +82,16 @@ public class TransactionalRepositoryManager {
 		}
 		return null;
 	}
-	
+	public static String getDataDeploymentProfileForSchema(String schema){
+		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
+		Property[] properties = repository.getPropertyArray();
+		for(Property property : properties){
+			if(property.getName().equals("DataDeploymentProfile")){ 
+				return property.getStringValue();
+			}
+		}
+		return null;
+	}
 	public static IProcessManager getProcessManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
 		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
 		Property[] properties = repository.getPropertyArray();

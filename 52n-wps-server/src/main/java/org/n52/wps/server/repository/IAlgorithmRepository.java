@@ -36,6 +36,7 @@ package org.n52.wps.server.repository;
 
 import java.util.Collection;
 
+import net.opengis.wps.x100.DataDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.IAlgorithm;
@@ -50,6 +51,8 @@ public interface IAlgorithmRepository {
 	
 	
 	boolean containsAlgorithm(String processID);
+
+	
 	
 	
 

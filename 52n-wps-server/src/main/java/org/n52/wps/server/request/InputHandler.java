@@ -170,7 +170,9 @@ public class InputHandler {
 //		else
 		try {
 			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			LOGGER.info("InputType of Algo is "+algorithmInput.getName());
 			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}

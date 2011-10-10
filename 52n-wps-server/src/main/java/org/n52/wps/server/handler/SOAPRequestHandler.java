@@ -1,25 +1,27 @@
 package org.n52.wps.server.handler;
 
-import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.xml.parsers.ParserConfigurationException;
-
+import org.apache.axiom.soap.SOAPHeader;
+import org.apache.axis2.context.MessageContext;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CancelRequest;
 import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.DeployDataRequest;
 import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.DescribeDataRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
+import org.n52.wps.server.request.ExecuteCallback;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.GetAuditRequest;
 import org.n52.wps.server.request.GetStatusRequest;
 import org.n52.wps.server.request.Request;
-import org.n52.wps.server.request.UndeployRequest;
+import org.n52.wps.server.request.UndeployDataRequest;
+import org.n52.wps.server.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 public class SOAPRequestHandler extends RequestHandler {
 
@@ -62,7 +64,7 @@ public class SOAPRequestHandler extends RequestHandler {
 			nodeName = child.getNodeName();
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
-
+			SOAPHeader soapHeader = getSOAPHeaders();
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)
 				&& localName.equals("Execute")) {
@@ -83,8 +85,17 @@ public class SOAPRequestHandler extends RequestHandler {
 				throw new ExceptionReport("version is null: ",
 						ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
-
-			req = new ExecuteRequest(inputDoc);
+			
+			if(soapHeader == null) {
+				LOGGER.info("Soap header is not present");
+				req = new ExecuteRequest(inputDoc);	
+			}
+			else {
+				LOGGER.info("Soap header is present.");
+				req = new ExecuteRequest(inputDoc, soapHeader);
+				LOGGER.info("Execute Request created");
+			}
+			
 			if (req instanceof ExecuteRequest) {
 				setResponseMimeType((ExecuteRequest) req);
 			} else {
@@ -94,23 +105,39 @@ public class SOAPRequestHandler extends RequestHandler {
 			req = new CapabilitiesRequest(inputDoc);
 		} else if (localName.equals("DescribeProcess")) {
 			req = new DescribeProcessRequest(inputDoc);
+		} else if (localName.equals("DescribeData")) {
+			req = new DescribeDataRequest(inputDoc);
+		
+			//} else if (localName.equals("DescribeData")) {
+			//req = new DescribeDataRequest(inputDoc);
 		} 
+		
 		/**
 		 * Christophe Noël - Spacebel June 2011 : added new WPS 2.0 operations
 		 */
 		
 		else if (localName.equals("GetStatus")) {
 			req = new GetStatusRequest(inputDoc);
+		} else if (localName.equals("ExecuteResponse")) {
+			req = new ExecuteCallback(inputDoc, soapHeader);
 		} else if (localName.equals("Cancel")) {
 			req = new CancelRequest(inputDoc);
+		} else if (localName.equals("GetAudit")) {
+			req = new GetAuditRequest(inputDoc);
 		}
 		else if (localName.equals("DeployProcess")) {
 			req = new DeployProcessRequest(inputDoc);
 		}
-		/**else if (localName.equals("UndeployProcess")) {
+		else if (localName.equals("UndeployProcess")) {
 			req = new UndeployProcessRequest(inputDoc);
 			}
-		 */
+		else if (localName.equals("DeployData")) {
+			req = new DeployDataRequest(inputDoc);
+		}
+		else if (localName.equals("UndeployData")) {
+			req = new UndeployDataRequest(inputDoc);
+			}
+		 
 		
 		// fix : gardians were not correct...
 		else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
@@ -123,4 +150,23 @@ public class SOAPRequestHandler extends RequestHandler {
 		}
 
 	}
+	
+	private  SOAPHeader getSOAPHeaders() {
+		SOAPHeader soapHeader;
+		try {
+			MessageContext msgCtx = MessageContext.getCurrentMessageContext();
+			 soapHeader = msgCtx.getEnvelope().getHeader();
+			 LOGGER.info(soapHeader.toString());
+		}
+		catch(Exception e) {
+			return null;
+		}
+		return soapHeader;
+		
+		
+	}
+	
+
+
+
 }

@@ -32,11 +32,13 @@ Software Foundation, http://www.fsf.org.
 
 package org.n52.wps.server.repository;
 
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.DeployProcessRequest;
+
 
 
 public interface ITransactionalAlgorithmRepository extends IAlgorithmRepository{
 	boolean addAlgorithm(Object className);
 	boolean removeAlgorithm(Object className);
-	
+	void addAlgorithm(DeployProcessRequest request) throws ExceptionReport; 
 }
-

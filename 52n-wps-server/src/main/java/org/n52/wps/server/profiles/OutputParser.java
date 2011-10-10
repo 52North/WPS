@@ -34,11 +34,13 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.binding.complex.URLListDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
@@ -50,7 +52,9 @@ import org.n52.wps.util.BasicXMLTypeFactory;
 
 public class OutputParser {
 	
-	
+	private static Logger LOGGER = Logger
+	.getLogger(OutputParser.class);
+
 	/**
 	 * Handles the ComplexValueReference
 	 * @param class1 
@@ -86,7 +90,7 @@ public class OutputParser {
 		
 		String schema = output.getData().getComplexData().getSchema();
 		String encoding = output.getData().getComplexData().getEncoding();
-		String format = output.getData().getComplexData().getMimeType();
+		String format = output.getData().getComplexData().getMimeType();		
 		if(schema == null) {
 			schema = outputDesc.getComplexOutput().getDefault().getFormat().getSchema();
 		}
@@ -96,7 +100,7 @@ public class OutputParser {
 		if(encoding == null) {
 			encoding = outputDesc.getComplexOutput().getDefault().getFormat().getEncoding();
 		}
-		
+		LOGGER.info(schema+" "+encoding+" "+format);
 		Class outputDataType = determineOutputDataType(outputID, outputDesc);
 		
 		IParser parser = ParserFactory.getInstance().getParser(schema, format, encoding, outputDataType);
@@ -141,7 +145,12 @@ public class OutputParser {
 		if(output.isSetComplexOutput()){
 			String mimeType = output.getComplexOutput().getDefault().getFormat().getMimeType();
 			if(mimeType.contains("xml") || (mimeType.contains("XML"))){
-				return GTVectorDataBinding.class;
+				if(output.getComplexOutput().getDefault().getFormat().getSchema().contains("wps"))
+				{
+					return URLListDataBinding.class;
+				}
+				else {
+				return GTVectorDataBinding.class;}
 			}else{
 				return GTRasterDataBinding.class;
 			}

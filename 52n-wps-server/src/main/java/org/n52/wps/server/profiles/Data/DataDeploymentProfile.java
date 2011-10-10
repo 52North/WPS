@@ -28,36 +28,28 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-package org.n52.wps.server.profiles.JavaSaga;
+package org.n52.wps.server.profiles.Data;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
-import net.opengis.wps.x100.ApacheOdeDeploymentProfileType;
-import net.opengis.wps.x100.DeployProcessDocument;
-import net.opengis.wps.x100.SagaDeploymentProfileType;
-import net.opengis.wps.x100.SagaDeploymentProfileType.JsdlTemplate;
-import net.opengis.wps.x100.impl.ApacheOdeDeploymentProfileTypeImpl;
-
+import net.opengis.wps.x100.DataDeploymentProfileType;
+import net.opengis.wps.x100.DeployDataDocument;
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
-import org.ogf.saga.job.Job;
 import org.w3c.dom.Node;
 
 /** 
  * TODO rename ApacheOdeDeployementProfile to match to the XSD element type
  *  **/
-public class JavaSagaDeploymentProfile extends DeploymentProfile {
+public class DataDeploymentProfile extends DeploymentProfile {
 
-	private static Logger LOGGER = Logger.getLogger(JavaSagaDeploymentProfile.class);
+	private static Logger LOGGER = Logger.getLogger(DataDeploymentProfile.class);
 	private Node suitCase;
 	private Node bpel;
 	private Node clientWSDL;
@@ -66,12 +58,10 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 	private String processId;
 	private boolean reference;
 	private String archiveRef;
-	private JsdlTemplate jsdlTemplate;
 
-	public JavaSagaDeploymentProfile(DeployProcessDocument deployDom,
+	public DataDeploymentProfile(DeployDataDocument deployDom,
 			String processID) {
 		super(deployDom, processID);
-		LOGGER.info("Java Saga Deployement Profile creating instance");
 		try {
 
 			extractInformation(deployDom);
@@ -98,12 +88,11 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 		return wsdlList;
 	}
 
-	private void extractInformation(DeployProcessDocument deployDom)
+	private void extractInformation(DeployDataDocument deployDom)
 			throws Exception {
-		LOGGER.info("extract information from saga profile");
-		SagaDeploymentProfileType deployProfile = (SagaDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile().changeType(SagaDeploymentProfileType.type);
-		LOGGER.info("deployProfile doc:"+deployProfile.toString());
-		setProcessId(deployDom.getDeployProcess().getProcessDescription()
+		
+		 DataDeploymentProfileType deployProfile = deployDom.getDeployData().getDeploymentProfile();
+		setDataId(deployDom.getDeployData().getDataDescription()
 				.getIdentifier().getStringValue());
 		if (deployProfile.isSetArchive()) {
 			// Note that XMLBeans automatically decodes base64
@@ -116,11 +105,14 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 			setArchive(downloadArchive(getArchiveRef()));
 			LOGGER.info("downloaded");
 			setReference(true);
+		
+		} else if (deployProfile.isSetArchiveReference()) {
+			setArchiveRef(deployProfile.getArchiveReference().getHref());
+			setReference(true);
+			throw new ExceptionReport("Archive Reference not supported yet",
+					org.n52.wps.server.ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}
-		//LOGGER.info(deployProfile.getJsdlTemplate());
-		setJsdlTemplate(deployProfile.getJsdlTemplate());
 	}
-
 	/**
 	 * This method download a binary file located at the given URL and returns the byte array
 	 * @param archiveRef2
@@ -162,11 +154,11 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 		return archive;
 	}
 
-	public void setProcessId(String processId) {
+	public void setDataId(String processId) {
 		this.processId = processId;
 	}
 
-	public String getProcessId() {
+	public String getDataId() {
 		return processId;
 	}
 
@@ -184,14 +176,6 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 
 	public String getArchiveRef() {
 		return archiveRef;
-	}
-
-	public void setJsdlTemplate(JsdlTemplate jsdlTemplate) {
-		this.jsdlTemplate = jsdlTemplate;
-	}
-
-	public JsdlTemplate getJsdlTemplate() {
-		return jsdlTemplate;
 	}
 
 }

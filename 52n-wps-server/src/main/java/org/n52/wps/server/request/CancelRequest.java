@@ -106,8 +106,8 @@ public class CancelRequest extends Request {
 				}
 				// update database (status file) with new status cancelled
 				// TODO replace with ProcessCancelled
-				getTaskStatus().addNewProcessPaused();
-				getTaskStatus().getProcessPaused().setPercentCompleted(100);
+				getTaskStatus().unsetProcessStarted();
+				getTaskStatus().setProcessCancelled("");
 				ExecuteResponse resp = new ExecuteResponse(getTask()
 						.getRequest());
 			}

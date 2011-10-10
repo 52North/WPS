@@ -111,6 +111,7 @@ public class ExecuteResponseBuilder {
 		creationTime = Calendar.getInstance();
 		responseElem.addNewProcessInstanceIdentifier();
 		responseElem.getProcessInstanceIdentifier().setInstanceId(request.getId());
+		responseElem.getProcessInstanceIdentifier().set(request.getId());
 	}
 	
 	public ExecuteResponseDocument getDoc() {
@@ -324,6 +325,7 @@ public class ExecuteResponseBuilder {
 	}
 
 	public void save(OutputStream os) throws ExceptionReport{
+		LOGGER.info("SAVE: "+doc.toString());
 		if(request.isRawData() && rawDataHandler != null) {
 			rawDataHandler.save(os);
 			return;

@@ -28,32 +28,28 @@ is extensible in terms of processes and data handlers.
 
  ***************************************************************/
 
-package org.n52.wps.transactional.request;
 
-import javax.xml.transform.TransformerException;
+package org.n52.wps.server.profiles;
 
-import org.apache.xpath.XPathAPI;
-import org.n52.wps.server.ExceptionReport;
-import org.w3c.dom.DOMException;
+import java.util.Collection;
+import java.util.HashMap;
+
+import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.UndeployDataDocument.UndeployData;
+
+import org.n52.wps.io.data.IData;
+import org.n52.wps.server.request.DeployDataRequest;
+import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.UndeployDataRequest;
+import org.n52.wps.server.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 
-public class UndeployProcessRequest implements ITransactionalRequest {
-	private String processID;
+public interface IDataManager {
 
-	public UndeployProcessRequest(Document request) throws ExceptionReport {
-		try {
-			processID = XPathAPI.selectSingleNode(request,
-					"/UnDeployProcessRequest/Process/Identifier/text()").getNodeValue().trim();
-		} catch (DOMException e) {
-			throw new ExceptionReport("Error. Malformed undeploy request",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (TransformerException e) {
-			throw new ExceptionReport("Error. Malformed undeploy request",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-	}
-
-	public String getProcessID() {
-		return processID;
-	}
+	
+	boolean unDeployData(UndeployDataRequest request) throws Exception;
+	boolean containsData(String processID) throws Exception;
+	Collection<String> getAllDatas() throws Exception;
+	boolean deployData(DeployDataRequest request) throws Exception;
+	
 }

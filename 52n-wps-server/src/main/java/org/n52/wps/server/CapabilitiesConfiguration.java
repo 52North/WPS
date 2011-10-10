@@ -50,6 +50,9 @@ import net.opengis.ows.x11.LanguageStringType;
 import net.opengis.ows.x11.OperationDocument.Operation;
 import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.wps.x100.CapabilitiesDocument;
+import net.opengis.wps.x100.DataBriefType;
+import net.opengis.wps.x100.DataDescriptionType;
+import net.opengis.wps.x100.DataOfferingsDocument.DataOfferings;
 import net.opengis.wps.x100.ProcessBriefType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
@@ -134,6 +137,20 @@ public class CapabilitiesConfiguration {
 			String processVersion = description.getProcessVersion();
 			process.setProcessVersion(processVersion);
 			process.setTitle(title);
+		}
+		DataOfferings datas = capsSkeleton.getCapabilities().addNewDataOfferings();
+		for(String dataName : RepositoryManager.getInstance().getDatas()) {
+			DataDescriptionType description = RepositoryManager.getInstance().getDataDescription(dataName);
+			if(description==null){
+				continue;
+			}
+			DataBriefType data = datas.addNewData();
+			CodeType ct = data.addNewIdentifier();
+			ct.setStringValue(dataName);
+			LanguageStringType title = description.getTitle();
+			String dataVersion = description.getDataVersion();
+			data.setDataVersion(dataVersion);
+			data.setTitle(title);
 		}
 		capabilitiesDocumentObj = capsSkeleton;
 	}
