@@ -60,6 +60,7 @@ import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml2.GMLConfiguration;
 import org.geotools.xml.Configuration;
+import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.IStreamableParser;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -131,7 +132,12 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 	public GTVectorDataBinding parseXML(InputStream stream) {
         Configuration configuration = new GMLConfiguration();		
 		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
-		
+		try {
+			File file = IOUtils.writeStreamToFile(stream, "xml");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//parse
 		FeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
@@ -140,17 +146,18 @@ public class GML2BasicParser extends AbstractXMLParser implements IStreamablePar
 			if (parsedData instanceof FeatureCollection) {
 				fc = (FeatureCollection) parsedData;
 			} else {
-
-				if (((HashMap) parsedData).get("featureMember") instanceof SimpleFeature) {
-					SimpleFeature feature = (SimpleFeature) ((HashMap) parsedData)
-							.get("featureMember");
-					fc.add(feature);
-				} else if (((HashMap) parsedData).get("featureMember") instanceof List) {
-
-					List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>) ((HashMap) parsedData)
-							.get("featureMember"));
-					for (SimpleFeature feature : featureList) {
+				if (parsedData instanceof HashMap) {
+					if (((HashMap) parsedData).get("featureMember") instanceof SimpleFeature) {
+						SimpleFeature feature = (SimpleFeature) ((HashMap) parsedData)
+								.get("featureMember");
 						fc.add(feature);
+					} else if (((HashMap) parsedData).get("featureMember") instanceof List) {
+	
+						List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>) ((HashMap) parsedData)
+								.get("featureMember"));
+						for (SimpleFeature feature : featureList) {
+							fc.add(feature);
+						}
 					}
 				}
 			}
