@@ -32,8 +32,8 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-package org.n52.wps.io;
 
+package org.n52.wps.io;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -43,7 +43,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.io.datahandler.xml.SimpleGMLParser;
+import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
+
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
  * @author foerster
@@ -127,57 +128,16 @@ public class ParserFactory {
 		return factory;
 	}
 	
-	/*
-	private IParser getParser(String schema, String format, String encoding) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("Format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
-			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("Encoding is null, assume standard UTF-8");
-		}
-		for(IParser parser : registeredParsers) {
-			if(parser.isSupportedSchema(schema) &&
-					parser.isSupportedEncoding(encoding) &&
-					parser.isSupportedFormat(format))
-				return parser;
-		}
-		return null;
-	}
-	*/
-	
-	/*
-	public IParser getParser(String schema, String format, String encoding, String algorithmIdentifier, String inputIdentifer) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("Format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
-			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("Encoding is null, assume standard UTF-8");
-		}
-		
-		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
-		Class requiredInputClass = algorithm.getInputDataType(inputIdentifer);
-		
-		return getParser(schema, format, encoding, requiredInputClass);
-		
-	}
-	*/
-	
 	public IParser getParser(String schema, String format, String encoding, Class requiredInputClass) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("Format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
+		
+		// dealing with NULL encoding
+		if (encoding == null){
 			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("Encoding is null, assume standard UTF-8");
 		}
+		
 		//first, look if we can find a direct way		
 		for(IParser parser : registeredParsers) {
-			Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
+			Class[] supportedClasses = parser.getSupportedDataBindings();
 			for(Class clazz : supportedClasses){
 				if(clazz.equals(requiredInputClass)) {
 					if(parser.isSupportedSchema(schema) &&	parser.isSupportedEncoding(encoding) && parser.isSupportedFormat(format)) {
@@ -187,7 +147,7 @@ public class ParserFactory {
 				}
 			}
 		}
-	
+		
 		//no parser could be found
 		//try an indirect way by creating all permutations and look if one matches
 		//TODO

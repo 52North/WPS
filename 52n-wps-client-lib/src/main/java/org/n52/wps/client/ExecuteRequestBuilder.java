@@ -25,7 +25,12 @@ Copyright � 2007 52�North Initiative for Geospatial Open Source Software Gmb
  Software Foundation�s web page, http://www.fsf.org.
 
  ***************************************************************/
+
+
 package org.n52.wps.client;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -39,14 +44,14 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
 
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
-import org.w3c.dom.Node;
+
 /**
  * @author foerster
  * TODO: this does not handle referenced datasets
@@ -56,6 +61,8 @@ public class ExecuteRequestBuilder {
 	ProcessDescriptionType processDesc;
 	ExecuteDocument execute;
 	String SUPPORTED_VERSION = "1.0.0";
+	
+	private static Logger LOGGER = Logger.getLogger(ExecuteRequestBuilder.class);
 	
 
 	public ExecuteRequestBuilder(ProcessDescriptionType processDesc) {
@@ -83,37 +90,29 @@ public class ExecuteRequestBuilder {
 		}
 		
 			
-
-		IGenerator generator = fac.getGenerator(schema, mimeType, encoding,
-				value.getClass());
-
-		if (generator == null) {
-			for (ComplexDataDescriptionType dataDescType : inputDesc
-					.getComplexData().getSupported().getFormatArray()) {
-				schema = dataDescType.getSchema();
-				mimeType = dataDescType.getMimeType();
-				encoding = dataDescType.getEncoding();
-				generator = fac.getGenerator(schema, mimeType, encoding,
-						value.getClass());
-				if (generator != null) {
-					break;
-				}
-			}
-		}
+		LOGGER.debug("Looking for matching Generator ..." + 
+				" schema: " + schema +
+				" mimeType: " + mimeType +
+				" encoding: " + encoding);
+		
+		IGenerator generator = fac.getGenerator(schema, mimeType, encoding, value.getClass());
+		
 		if (generator == null) {
 			// generator is still null
-			throw new IllegalArgumentException("problem finding appropriate generator for parameter: " + parameterID);
+			throw new IllegalArgumentException("Could not find an appropriate generator for parameter: " + parameterID);
 		}
-
-		if (generator instanceof AbstractXMLGenerator) {
-			AbstractXMLGenerator xmlGenerator = (AbstractXMLGenerator) generator;
-			Node node = xmlGenerator.generateXML(value, null);
+		
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
+		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+			
 			InputType input = execute.getExecute().getDataInputs().addNewInput();
 			input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
 
 			try {
+				InputStream stream = generator.generateStream(value, mimeType, schema);
 				ComplexDataType data = input.addNewData().addNewComplexData();
-				data.set(XmlObject.Factory.parse(node));
+				data.set(XmlObject.Factory.parse(stream));
 				if (schema != null) {
 					data.setSchema(schema);
 				}
@@ -125,7 +124,9 @@ public class ExecuteRequestBuilder {
 				}
 			}
 			catch(XmlException e) {
-				throw new IllegalArgumentException("problem inserting node into execute request", e);
+				throw new IllegalArgumentException("error inserting node into execute request", e);
+			} catch (IOException e) {
+				throw new IllegalArgumentException("error reading generator output", e);
 			}
 		}
 	}
@@ -280,7 +281,7 @@ public class ExecuteRequestBuilder {
 		String defaultMimeType = outputDesc.getComplexOutput().getDefault()
 				.getFormat().getMimeType();
 		if (defaultMimeType == null) {
-			defaultMimeType = IOHandler.DEFAULT_MIMETYPE;
+			defaultMimeType = "text/xml";
 		}
 		if (defaultMimeType.equals(mimeType)) {
 			return true;

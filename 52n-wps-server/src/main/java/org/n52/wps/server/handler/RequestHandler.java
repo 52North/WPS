@@ -40,23 +40,18 @@ package org.n52.wps.server.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.wps.x100.ProcessFailedType;
 import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
@@ -69,9 +64,7 @@ import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -283,7 +276,9 @@ public class RequestHandler {
 				status.setProcessAccepted("Request is queued for execution.");
 				if (((ExecuteRequest) req).isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
-					resp.save(os);
+					InputStream is = resp.getAsStream();
+					IOUtils.copy(is, os);
+					is.close();
 					return;
 				}
 				try {
@@ -331,7 +326,9 @@ public class RequestHandler {
 						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
 					}
 					if(!((ExecuteRequest) req).isStoreResponse()) {
-						resp.save(this.os);
+						InputStream is = resp.getAsStream();
+						IOUtils.copy(is, os);
+						is.close();
 						LOGGER.info("Served ExecuteRequest.");
 					}
 				}
@@ -340,11 +337,20 @@ public class RequestHandler {
 				throw new ExceptionReport(
 						"The requested process was rejected. Maybe the server is flooded with requests.",
 						ExceptionReport.SERVER_BUSY);
+			} catch (IOException e) {
+				throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
 			}
 		} else {
 			// for GetCapabilities and DescribeProcess:
 			resp = req.call();
-			resp.save(os);
+			try {
+				InputStream is = resp.getAsStream();
+				IOUtils.copy(is, os);
+				is.close();
+			} catch (IOException e) {
+				throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
+			}
+			
 		}
 	}
 	

@@ -91,7 +91,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 					List<IParser> foundParsers = new ArrayList<IParser>();
 					for(IParser parser : parsers) {
-						Class<?>[] supportedClasses = parser.getSupportedInternalOutputDataType();
+						Class<?>[] supportedClasses = parser.getSupportedDataBindings();
 						for(Class<?> clazz : supportedClasses){
 							if(clazz.equals(inputDataTypeClass)){
 								foundParsers.add(parser);
@@ -213,7 +213,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 						for(IGenerator generator : generators) {
-							Class<?>[] supportedClasses = generator.getSupportedInternalInputDataType();
+							Class<?>[] supportedClasses = generator.getSupportedDataBindings();
 							for(Class<?> clazz : supportedClasses){
 								if(clazz.equals(outputDataTypeClass)){
 									foundGenerators.add(generator);

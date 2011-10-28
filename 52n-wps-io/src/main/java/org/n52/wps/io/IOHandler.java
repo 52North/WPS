@@ -31,25 +31,20 @@ public interface IOHandler {
 	
 	
 	public static final String DEFAULT_ENCODING="UTF-8";
-	
 	public static final String ENCODING_BASE64 = "base64";
 
-	public static final String DEFAULT_MIMETYPE = "text/xml";
-
+	//public static final String DEFAULT_MIMETYPE = "text/xml";
+	
 	public static final String MIME_TYPE_ZIPPED_SHP = "application/x-zipped-shp";
 	
-	boolean isSupportedSchema(String schema);
-	boolean isSupportedFormat(String format);
-	boolean isSupportedEncoding(String encoding);
+	public boolean isSupportedSchema(String schema);
+	public boolean isSupportedFormat(String format);
+	public boolean isSupportedEncoding(String encoding);
+	public boolean isSupportedDataBinding(Class<?> clazz);
 	
-	String[] getSupportedSchemas();
-	
-	String[] getSupportedFormats();
-	
-	String[] getSupportedEncodings();
-	
-	
-	
-	
+	public String[] getSupportedSchemas();
+	public String[] getSupportedFormats();
+	public String[] getSupportedEncodings();
+	public Class<?>[] getSupportedDataBindings();
 	
 }

@@ -1,9 +1,6 @@
 package org.n52.wps.server.handler;
 
-import java.io.IOException;
 import java.io.OutputStream;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
@@ -15,7 +12,6 @@ import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 public class SOAPRequestHandler extends RequestHandler {
 

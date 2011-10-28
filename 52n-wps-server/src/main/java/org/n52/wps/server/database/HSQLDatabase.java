@@ -30,25 +30,17 @@ package org.n52.wps.server.database;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.hsqldb.DatabaseManager;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
-import org.n52.wps.util.StreamUtils;
 
 /**
  * @note Uses lazy initialization without synchronization  
@@ -172,45 +164,6 @@ public class HSQLDatabase extends AbstractDatabase {
 					+ "and message: " + e.getMessage());
 			return null;
 		}
-	}
-	
-	protected synchronized String insertResultEntity(
-			LargeBufferStream baos, String id, String type, String mimeType) {
-		// store the contents of the (finite) outputstream into a bytes array
-		InputStream bais = StreamUtils.convertOutputStreamToInputStream(baos);
-		// Use Calendar to get the current timestamp.
-		// Uses java.sql.Date !
-		Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
-
-		Reader r = new InputStreamReader(bais);  
-		StringWriter sw = new StringWriter();  
-		char[] buffer = new char[1024];  
-		try {
-			for (int n; (n = r.read(buffer)) != -1; ){  
-			    sw.write(buffer, 0, n);
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String str = sw.toString();
-		
-		// try to insert a row of data into the database.
-		try {
-			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
-			AbstractDatabase.insertSQL.setTimestamp(INSERT_COLUMN_REQUEST_DATE, timestamp);
-			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
-			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE, str);
-			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
-			// AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
-		
-			AbstractDatabase.insertSQL.executeUpdate();
-			getConnection().commit();
-		} catch (SQLException e) {
-			LOGGER.error("Could not insert Response into database: "
-					+ e.getMessage());
-		} 
-		return generateRetrieveResultURL(id);
 	}
 	
 	private static boolean createPreparedStatements() {

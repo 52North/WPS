@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import org.n52.wps.server.ExceptionReport;
 
-import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
 
 public interface IReferenceStrategy {

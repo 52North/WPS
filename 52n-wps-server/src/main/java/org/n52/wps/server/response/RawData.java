@@ -27,7 +27,10 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.OutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.IData;
@@ -47,14 +50,18 @@ public class RawData extends ResponseData {
 	 * @param encoding
 	 * @param mimeType
 	 */
-	public RawData(IData obj, String id, String schema, String encoding, String mimeType, String algorithmIdentifier) throws ExceptionReport{
-		super(obj, id, schema, encoding, mimeType, algorithmIdentifier);
+	public RawData(IData obj, String id, String schema, String encoding, String mimeType, String algorithmIdentifier, ProcessDescriptionType description) throws ExceptionReport{
+		super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
 		prepareGenerator();
 		
 	}
 	
-	public void save(OutputStream stream) throws ExceptionReport {
-		this.storeRaw(stream, generator);
+	public InputStream getAsStream() throws ExceptionReport {
+		try {
+			return generator.generateStream(obj, mimeType, schema);
+		} catch (IOException e) {
+			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
 	}
 
 	

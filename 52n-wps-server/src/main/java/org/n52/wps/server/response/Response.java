@@ -35,7 +35,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
 import org.n52.wps.server.ExceptionReport;
@@ -57,7 +57,7 @@ abstract public class Response {
 		return this.getClass().getName();
 	}
 	
-	public abstract void save(OutputStream os) throws ExceptionReport;
+	public abstract InputStream getAsStream() throws ExceptionReport;
 	
 	public Request getRequest(){
 		return request;

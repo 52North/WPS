@@ -155,7 +155,9 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	@Override
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		if(!processDescriptionMap.containsKey(processID)){
-			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
+			IAlgorithm algorithm = getAlgorithm(processID, null);
+			ProcessDescriptionType description = algorithm.getDescription();
+			processDescriptionMap.put(processID, description);
 		}
 		return processDescriptionMap.get(processID);
 	}

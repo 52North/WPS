@@ -38,7 +38,6 @@ import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
@@ -143,10 +142,9 @@ public class FlatFileDatabase implements IDatabase {
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#storeComplexValue(java.lang.String, java.io.ByteArrayOutputStream, java.lang.String)
 	 */
-	public String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType) {
+	public String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
+		
 		// TODO enhance for multiple ProcessResults
-				
-		LargeBufferStream bufferedBytes = ((LargeBufferStream)stream);
 		String uuid = UUID.randomUUID().toString();
 		String usedMimeType = mimeType;
 		try {
@@ -158,14 +156,13 @@ public class FlatFileDatabase implements IDatabase {
 				}
 			}
 			
-		
 			File f = new File(baseDir+File.separator+id+"result-"+uuid);
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
-			bufferedBytes.close();
-			bufferedBytes.writeTo(fos);
-			bufferedBytes.destroy();
+			IOUtils.copy(stream, fos);
+			fos.flush();
 			fos.close();
+			stream.close();
 			
 		//	IOUtils.write(bytes, fos);
 			File f_mime = new File(baseDir+File.separator+id+"result-"+uuid+"_mimeType");
@@ -204,8 +201,11 @@ public class FlatFileDatabase implements IDatabase {
 		File f = new File(baseDir+File.separator+response.getUniqueId()+"result."+usedMimeType);
 		try {
 			FileOutputStream os = new FileOutputStream(f);
-			response.save(os);
+			InputStream is = response.getAsStream();
+			IOUtils.copy(is, os);
+			os.flush();
 			os.close();
+			is.close();
 				
 			File f_mime = new File(baseDir+File.separator+response.getUniqueId()+"_mimeType");
 			FileOutputStream fos_mime = new FileOutputStream(f_mime);

@@ -1,7 +1,7 @@
 /***************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
 
- Author: Theodor Foerster, ITC
+ Author: Matthias Mueller, TU Dresden
 
  Contact: Andreas Wytzisk, 
  52°North Initiative for Geospatial Open Source SoftwareGmbH, 
@@ -25,6 +25,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
+
 package org.n52.wps.io;
 
 import java.io.InputStream;
@@ -33,8 +34,8 @@ import org.n52.wps.io.data.IData;
 
 public interface IParser extends IOHandler{
 	
-	IData parse(InputStream input, String mimeType);
+	IData parse(InputStream input, String mimeType, String schema);
 	
-	Class[] getSupportedInternalOutputDataType();
+	IData parseBase64(InputStream input, String mimeType, String schema);
 	
 }

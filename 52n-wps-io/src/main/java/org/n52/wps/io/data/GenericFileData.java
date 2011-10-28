@@ -1,7 +1,7 @@
 /***************************************************************
 Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
- Author: Matthias Mueller, TU Dresden
+ Author: Matthias Mueller, TU Dresden; Bastian Schaeffer, IFGI
 
  Contact: Andreas Wytzisk, 
  52°North Initiative for Geospatial Open Source SoftwareGmbH, 
@@ -40,6 +40,7 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
@@ -54,10 +55,10 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.IOUtils;
+//import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.binary.GeotiffGenerator;
+import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -114,7 +115,7 @@ public class GenericFileData {
 
 			allFiles[extensions.length] = primaryFile;
 
-			is = new FileInputStream(IOUtils.zip(allFiles));
+			is = new FileInputStream(org.n52.wps.io.IOUtils.zip(allFiles));
 		} else {
 			is = new FileInputStream(primaryFile);
 		}
@@ -122,14 +123,26 @@ public class GenericFileData {
 		this.dataStream = is;
 
 	}
-
+	
+	
 	public GenericFileData(GridCoverage2D payload, String mimeType) {
-		GeotiffGenerator generator = new GeotiffGenerator();
-		primaryFile = generator.generateFile(new GTRasterDataBinding(payload),
-				mimeType);
+		
 		dataStream = null;
 		fileExtension = "tiff";
 		this.mimeType = mimeType;
+		
+		try {
+			GeotiffGenerator generator = new GeotiffGenerator();
+			primaryFile = File.createTempFile("primary", "tif");
+			FileOutputStream outputStream = new FileOutputStream(primaryFile);
+			
+			InputStream is = generator.generateStream(new GTRasterDataBinding(payload), mimeType, null);
+			IOUtils.copy(is,outputStream);
+			is.close();
+			
+		} catch (IOException e){
+			LOGGER.error("Could not generate GeoTiff.");
+		}
 	}
 
 	public static File getShpFile(FeatureCollection collection)

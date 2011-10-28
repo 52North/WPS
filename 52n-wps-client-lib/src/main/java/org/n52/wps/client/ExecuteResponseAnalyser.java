@@ -25,12 +25,14 @@ Copyright � 2007 52�North Initiative for Geospatial Open Source Software Gmb
  Software Foundation�s web page, http://www.fsf.org.
 
  ***************************************************************/
+
 package org.n52.wps.client;
 
 import java.io.InputStream;
 
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -39,7 +41,6 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 
 /*
  * 
@@ -113,56 +114,103 @@ public class ExecuteResponseAnalyser {
 	}
 		
 	
-	
+	/**
+	 * TODO: This is logic for Vector (GTVectorDataBinding.class) only. May need refactoring.
+	 * 
+	 * 
+	 * @param output
+	 * @return
+	 */
 	private IData parseProcessOutput(OutputDataType output) {
-		String schemaURL = output.getData().getComplexData().getSchema();
-		if(schemaURL == null) {
-			for(OutputDescriptionType outputDesc :processDesc.getProcessOutputs().getOutputArray()) {
-				if(outputDesc.getIdentifier().getStringValue().equals(output.getIdentifier().getStringValue())) {
-					schemaURL = outputDesc.getComplexOutput().getDefault().getFormat().getSchema();
-				}
+		
+		OutputDescriptionType outputReferenceDesc = null;
+		String outputID = output.getIdentifier().getStringValue();
+		
+		for(OutputDescriptionType tempDesc : processDesc.getProcessOutputs().getOutputArray()) {
+			if(outputID.equals(tempDesc.getIdentifier().getStringValue())) {
+				outputReferenceDesc = tempDesc;
+				break;
 			}
 		}
-		if(schemaURL == null) {
-			throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + output.getIdentifier().getStringValue());
+		
+		// get data specification from request
+		String schema = output.getData().getComplexData().getSchema();
+		String mimeType = output.getData().getComplexData().getMimeType();
+		String encoding = output.getData().getComplexData().getEncoding();
+		
+		// get default data spec
+		String defaultSchema = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getMimeType();
+		String defaultEncoding = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getEncoding();
+		String defaultMimeType = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getSchema();
+		
+		
+		// check for null elements in request and replace by defaults
+		if (schema == null){
+			schema = defaultSchema;
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
-		if(parser instanceof AbstractXMLParser) {
-			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
-			return xmlParser.parseXML(output.getData().getComplexData().newInputStream());
+		if (encoding == null){
+			encoding = defaultEncoding;
+		}
+		if (mimeType == null){
+			mimeType = defaultMimeType;
+		}
+		
+		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
+		
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
+		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+			
+			return parser.parse(output.getData().getComplexData().newInputStream(), mimeType, schema);
 		}
 		// parser is not of type AbstractXMLParser
 		return null;
 	}
+	
+	
 	/**
+	 * 
+	 * TODO: This is logic for Vector (GTVectorDataBinding.class) only. May need refactoring.
+	 * 
 	 * this parses rawData output directly.
 	 * @param obj
 	 * @return
 	 */
 	private IData parseProcessOutput(Object obj) {
+		OutputDescriptionType outputReferenceDesc = null;
+		String outputID = processDesc.getIdentifier().getStringValue();
+		
+		for(OutputDescriptionType tempDesc : processDesc.getProcessOutputs().getOutputArray()) {
+			if(outputID.equals(tempDesc.getIdentifier().getStringValue())) {
+				outputReferenceDesc = tempDesc;
+				break;
+			}
+		}
+		
+		// get data specification from request
 		String schema = exec.getExecute().getResponseForm().getRawDataOutput().getSchema();
-		if(schema == null) {
-			schema = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getSchema();
-			
-		}
 		String mimeType = exec.getExecute().getResponseForm().getRawDataOutput().getMimeType();
-		if(mimeType == null) {
-			mimeType = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getMimeType();
-			if(mimeType == null) {
-				throw new IllegalArgumentException("Could not find mimeType for output: " + exec.getExecute().getIdentifier().getStringValue());
-			}
-		}
 		String encoding = exec.getExecute().getResponseForm().getRawDataOutput().getEncoding();
-		if(encoding == null) {
-			encoding = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat().getEncoding();
-			if(encoding == null) {
-				encoding = IOHandler.DEFAULT_ENCODING;
-				//throw new IllegalArgumentException("Could not find encoding for output: " + exec.getExecute().getIdentifier().getStringValue());
-			}
+		
+		// get default data spec
+		String defaultSchema = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getMimeType();
+		String defaultEncoding = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getEncoding();
+		String defaultMimeType = outputReferenceDesc.getComplexOutput().getDefault().getFormat().getSchema();
+		
+		// check for null elements in request and replace by defaults
+		if (schema == null){
+			schema = defaultSchema;
 		}
+		if (encoding == null){
+			encoding = defaultEncoding;
+		}
+		if (mimeType == null){
+			mimeType = defaultMimeType;
+		}
+		
 		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
 		if(parser != null) {
-			return parser.parse((InputStream)response, mimeType);
+			return parser.parse((InputStream)response, mimeType, schema);
 		}
 
 		return null;

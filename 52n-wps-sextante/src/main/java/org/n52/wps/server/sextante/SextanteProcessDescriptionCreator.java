@@ -135,7 +135,11 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		if (out instanceof OutputRasterLayer){
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
 			complexOutput.addNewDefault().addNewFormat().setMimeType("image/tiff");
-			complexOutput.addNewSupported().addNewFormat().setMimeType("image/tiff");
+			ComplexDataDescriptionType supportedFormat = complexOutput.addNewSupported().addNewFormat();
+			supportedFormat.setMimeType("image/tiff");
+			supportedFormat.setEncoding("base64");
+			
+			
 		}
 		else if (out instanceof OutputVectorLayer){
 			SupportedComplexDataType complexOutput = output.addNewComplexOutput();
@@ -366,7 +370,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 		List<IParser> foundParsers = new ArrayList<IParser>();
 		for(IParser parser : parsers) {
-			Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
+			Class[] supportedClasses = parser.getSupportedDataBindings();
 			for(Class clazz : supportedClasses){
 				if(clazz.equals(GTVectorDataBinding.class)){
 					foundParsers.add(parser);
@@ -427,7 +431,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 		for(IGenerator generator : generators) {
-			Class[] supportedClasses = generator.getSupportedInternalInputDataType();
+			Class[] supportedClasses = generator.getSupportedDataBindings();
 			for(Class clazz : supportedClasses){
 				if(clazz.equals(GTVectorDataBinding.class)){
 					foundGenerators.add(generator);

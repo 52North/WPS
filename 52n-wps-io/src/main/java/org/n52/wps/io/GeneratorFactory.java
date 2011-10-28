@@ -32,6 +32,7 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
+
 package org.n52.wps.io;
 
 
@@ -43,8 +44,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
-import org.n52.wps.io.datahandler.xml.SimpleGMLGenerator;
 
 
 public class GeneratorFactory {
@@ -121,73 +120,25 @@ public class GeneratorFactory {
 		return factory;
 	}
 	
-	private IGenerator getGenerator(String schema, String format, String encoding) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
+	public IGenerator getGenerator(String schema, String format, String encoding, Class outputInternalClass) {
+		
+		// dealing with NULL encoding
+		if (encoding == null){
 			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("encoding is null, assume standard UTF-8");
-		}
-		for(IGenerator generator : registeredGenerators) {
-			if(generator.isSupportedSchema(schema) && 
-					generator.isSupportedEncoding(encoding) &&
-					generator.isSupportedFormat(format))
-				return generator;
-		}
-		return null;
-	}
-	/*
-	public IGenerator getGenerator(String schema, String format, String encoding, String algorithmIdentifier, String outputIdentifier) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
-			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("encoding is null, assume standard UTF-8");
 		}
 		
-		IAlgorithm algorithm = RepositoryManager.getInstance().getAlgorithm(algorithmIdentifier);
-		Class requiredInputClass = algorithm.getOutputDataType(outputIdentifier);
-		return getGenerator(schema, format, encoding, requiredInputClass);
-	}
-	*/
-	
-	public IGenerator getGenerator(String schema, String format, String encoding, Class outputInternalClass) {
-		if(format == null) {
-			format = IOHandler.DEFAULT_MIMETYPE;
-			LOGGER.debug("format is null, assume standard text/xml");
-		}
-		if(encoding == null) {
-			encoding = IOHandler.DEFAULT_ENCODING;
-			LOGGER.debug("encoding is null, assume standard UTF-8");
-		}
-			
 		for(IGenerator generator : registeredGenerators) {
-			Class[] supportedClasses = generator.getSupportedInternalInputDataType();
-			for(Class clazz : supportedClasses){
+			Class[] supportedBindings = generator.getSupportedDataBindings();
+			for(Class clazz : supportedBindings){
 				if(clazz.equals(outputInternalClass)) {
-					if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) &&generator.isSupportedFormat(format)){
+					if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) && generator.isSupportedFormat(format)){
 						return generator;
 					}
 				}
 			}
-			
-			
 		}
-		//TODO
-		//try a chaining approach, by calculation all permutations and look for matches.
+		//TODO: try a chaining approach, by calculation all permutations and look for matches.
 		return null;
-	}
-	
-	/**
-	 * returns the a simple Generator. In this case the @link SimpleGMLGenerator.
-	 * @return
-	 */
-	public AbstractXMLGenerator getSimpleXMLGenerator() {
-		return new SimpleGMLGenerator();
 	}
 
 	public List<IGenerator> getAllGenerators() {

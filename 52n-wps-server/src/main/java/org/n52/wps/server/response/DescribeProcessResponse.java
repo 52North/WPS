@@ -35,8 +35,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -50,13 +49,13 @@ public class DescribeProcessResponse extends Response{
 		super(request);
 	}
 	
-	public void save(OutputStream os) throws ExceptionReport{
+	public InputStream getAsStream() throws ExceptionReport{
 		try {
 			XmlOptions opts = new XmlOptions();
 			opts.setSaveNamespacesFirst();
-			((ProcessDescriptionsDocument)request.getAttachedResult()).save(os,opts);
+			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(opts);
 		}
-		catch(IOException e) {
+		catch(Exception e) {
 			throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 	}

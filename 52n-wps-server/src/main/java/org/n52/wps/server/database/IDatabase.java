@@ -33,7 +33,6 @@ package org.n52.wps.server.database;
 import java.io.File;
 import java.io.InputStream;
 
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -64,7 +63,7 @@ public interface IDatabase {
 	// identifier, which was already given to the client for reference.
 	public InputStream lookupResponse(String request_id);
 	
-	public String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType);
+	public String storeComplexValue(String id, InputStream stream, String type, String mimeType);
 	
 	// The URL referencing the location from which the ExecuteResponse can be retrieved. 
 	// If "status" is "true" in the Execute request, the ExecuteResponse should also be 

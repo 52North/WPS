@@ -36,7 +36,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.log4j.Logger;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -159,7 +158,7 @@ public class DatabaseFactory implements IDatabase
 		return DatabaseFactory.database.lookupResponse(request_id);
 	}
 	
-	public synchronized String storeComplexValue(String id, LargeBufferStream stream, String type, String mimeType) {
+	public synchronized String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
 		return DatabaseFactory.database.storeComplexValue(id, stream, type, mimeType);
 	}
 	

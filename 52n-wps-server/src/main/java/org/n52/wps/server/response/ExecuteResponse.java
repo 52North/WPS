@@ -34,7 +34,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.OutputStream;
+import java.io.InputStream;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
@@ -58,7 +58,7 @@ public class ExecuteResponse extends Response {
 		}
 	}
 	
-	public void save(OutputStream os) throws ExceptionReport{
+	public InputStream getAsStream() throws ExceptionReport{
 		//workaround, to avoid infinite processing. 
 		if(!alreadyStored) {
 			this.builder.update();
@@ -67,7 +67,7 @@ public class ExecuteResponse extends Response {
 				DatabaseFactory.getDatabase().storeResponse(this);
 			}
 		}
-		this.builder.save(os);
+		return this.builder.getAsStream();
 	}
 	
 	public ExecuteResponseBuilder getExecuteResponseBuilder(){

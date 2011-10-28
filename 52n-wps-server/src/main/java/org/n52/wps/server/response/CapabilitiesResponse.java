@@ -36,6 +36,7 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlException;
@@ -62,9 +63,9 @@ public class CapabilitiesResponse extends Response {
 	 * @param os The OutputStream to save this Response to
 	 * @throws ExceptionReport
 	 */
-	public void save(OutputStream os) throws ExceptionReport{
+	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			CapabilitiesConfiguration.getInstance().save(os);
+			return CapabilitiesConfiguration.getInstance().newInputStream();
 		} catch (IOException e) {
 			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {

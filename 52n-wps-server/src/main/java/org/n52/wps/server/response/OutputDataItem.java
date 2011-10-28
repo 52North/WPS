@@ -2,7 +2,8 @@
 Copyright � 2007 52�North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
-Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
+		 Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
+		 Matthias Mueler, TU Dresden
 
 
  Contact: Andreas Wytzisk, 
@@ -27,12 +28,14 @@ Bastian Schaeffer, Institute for geoinformatics, University of Muenster, Germany
  Software Foundation�s web page, http://www.fsf.org.
 
  ***************************************************************/
+
 package org.n52.wps.server.response;
 
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -42,17 +45,17 @@ import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDataType;
+import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.OutputReferenceType;
+import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.wps.io.IStreamableGenerator;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.datahandler.binary.AbstractBinaryGenerator;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
-import org.n52.wps.io.datahandler.xml.AbstractXMLGenerator;
-import org.n52.wps.io.datahandler.xml.AbstractXMLStringGenerator;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
@@ -83,10 +86,12 @@ public class OutputDataItem extends ResponseData {
 	 * @param mimeType
 	 * @param title
 	 * @param algorithmIdentifier
+	 * @throws ExceptionReport 
 	 */
 	public OutputDataItem(IData obj, String id, String schema, String encoding, 
-			String mimeType, LanguageStringType title, String algorithmIdentifier) {
-		super(obj, id, schema, encoding, mimeType, algorithmIdentifier);
+			String mimeType, LanguageStringType title, String algorithmIdentifier, ProcessDescriptionType description) throws ExceptionReport {
+		super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
+		
 		this.title = title;
 	}
 	
@@ -95,59 +100,80 @@ public class OutputDataItem extends ResponseData {
 	 * @param res
 	 * @throws ExceptionReport
 	 */
-	public void updateResponseForComplexData(ExecuteResponseDocument res) throws ExceptionReport {
+	public void updateResponseForInlineComplexData(ExecuteResponseDocument res) throws ExceptionReport {
 		OutputDataType output = prepareOutput(res);
 		prepareGenerator();
 		ComplexDataType complexData = null;
+		
+		String defaultencoding = null;
+		OutputDescriptionType[] describeProcessOutput = super.description.getProcessOutputs().getOutputArray();
+		for(OutputDescriptionType outputDescription : describeProcessOutput){
+			if(outputDescription.getIdentifier().getStringValue().equals(id)){
+				defaultencoding = outputDescription.getComplexOutput().getDefault().getFormat().getEncoding();
+			}
+		}
+		
 		try {
 			// CHECKING IF STORE IS TRUE AND THEN PROCESSING.... SOMEHOW!
 			// CREATING A COMPLEXVALUE	
-			if(generator instanceof AbstractXMLGenerator) {
-				Node xmlNode;
-				xmlNode = ((AbstractXMLGenerator)generator).generateXML(super.obj, null);
-				if (xmlNode == null){
-					LOGGER.error("Something bad happend while generating output");
-				} else {
-					try {
-						complexData = output.addNewData().addNewComplexData();
-						complexData.set(XmlObject.Factory.parse(xmlNode));
-					} catch(XmlException e) {
-						throw new ExceptionReport("Error occured while generating XML",ExceptionReport.NO_APPLICABLE_CODE, e);
-					}
-				}
-			} else if(generator instanceof AbstractXMLStringGenerator) {
-				try {
-					complexData = output.addNewData().addNewComplexData();
-					complexData.set(XmlObject.Factory.parse(
-							((AbstractXMLStringGenerator)generator).generateXML(super.obj)));
-				} catch(XmlException xml_ex) {
-					throw new ExceptionReport("Error occured while generating XML",ExceptionReport.NO_APPLICABLE_CODE, xml_ex);
-				} 
-			} else if(generator instanceof AbstractBinaryGenerator){
-				//TODO based64 encoding
-				// workaround: generator has to support base64
-				complexData = output.addNewData().addNewComplexData();
-				generator.generate(super.obj);
+			
+			// in case encoding is NULL -or- empty -or- UTF8
+			// attempt parsing it to XML node as it as binary data will not be requested inline
+			// TODO: check this assumption
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
 				
-				//throw new ExceptionReport("This generator does not support base64 encoding: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
-			} else {
-				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
+				InputStream nodeStream = generator.generateStream(super.obj, mimeType, schema);
+				
+				complexData = output.addNewData().addNewComplexData();
+				complexData.set(XmlObject.Factory.parse(nodeStream));
+				nodeStream.close();
+				
 			}
+			
+			// in case encoding is base64 create a new text node
+			// and parse the generator's result into it
+			else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+				
+				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document document = builder.newDocument();
+				InputStream base64Stream = generator.generateBase64Stream(super.obj, mimeType, schema);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(base64Stream, baos);
+				base64Stream.close();
+				String text = baos.toString();
+				baos.close();
+				Node dataNode = document.createTextNode(text);
+				
+				complexData = output.addNewData().addNewComplexData();
+				complexData.set(XmlObject.Factory.parse(dataNode));	
+			}
+			
+			else {
+				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+			}
+			
 		} catch(RuntimeException e) {
 			e.printStackTrace();
-			throw new ExceptionReport("Error while generating XML out of the process result", 
-												ExceptionReport.NO_APPLICABLE_CODE, e);
+			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (XmlException e) {
+			e.printStackTrace();
+			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
+		
 		if (complexData != null) {
 			if (schema != null) {
 				// setting the schema attribute for the output.
 				complexData.setSchema(schema);
 			}
-
 			if (encoding != null) {
 				complexData.setEncoding(encoding);
 			}
-			
 			if (mimeType != null) {
 				complexData.setMimeType(mimeType);
 			}
@@ -179,14 +205,14 @@ public class OutputDataItem extends ResponseData {
 		} catch (XmlException e) {
 			literalData.setStringValue(processValue);
 		}
-			
+		
 	}
 	
 	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
 		prepareGenerator();
 		OutputDataType output = prepareOutput(res);
+		InputStream stream;
 		
-		LargeBufferStream baos = new LargeBufferStream();
 		OutputReferenceType outReference = output.addNewReference();
 		if (schema != null) {
 			outReference.setSchema(schema);
@@ -199,36 +225,26 @@ public class OutputDataItem extends ResponseData {
 		}
 		IDatabase db = DatabaseFactory.getDatabase();
 		String storeID = reqID + "" + id;
-		if(generator instanceof IStreamableGenerator) {
-			try {
-				((IStreamableGenerator)generator).writeToStream(obj, baos);
-			} catch (RuntimeException e) {
-				throw new ExceptionReport("Error generating data", ExceptionReport.NO_APPLICABLE_CODE, e);
+		
+		try {
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+				stream = generator.generateStream(super.obj, mimeType, schema);
 			}
 			
-		} else {
-			if(generator instanceof AbstractXMLGenerator) {
-				try{
-					Node xmlNode = ((AbstractXMLGenerator)generator).generateXML(obj, schema);
-					XmlObject xmlObj = XmlObject.Factory.parse(xmlNode);
-					xmlObj.save(baos);
-				}
-				catch(XmlException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
-				}
-				catch(IOException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
-				}
-				catch(RuntimeException e) {
-					throw new ExceptionReport("Something happend while converting XML node to dataBaseStream. Reason:" +e, ExceptionReport.NO_APPLICABLE_CODE);
-				}
-			} else if(generator instanceof AbstractBinaryGenerator) {
-				 OutputStream stream = ((AbstractBinaryGenerator)generator).generate(obj);
-			} else {
-				throw new ExceptionReport("This generator does not support serialization: " + generator.getClass().getName(), ExceptionReport.INVALID_PARAMETER_VALUE);
+			// in case encoding is base64
+			else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+				stream = generator.generateBase64Stream(super.obj, mimeType, schema);
+			}
+			
+			else {
+				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
 		}
-		String storeReference = db.storeComplexValue(storeID, baos, COMPLEX_DATA_TYPE, mimeType);
+		catch (IOException e){
+			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
+		}
+		
+		String storeReference = db.storeComplexValue(storeID, stream, COMPLEX_DATA_TYPE, mimeType);
 		storeReference = storeReference.replace("#", "%23");
 		outReference.setHref(storeReference);
 		// MSS:  05-02-2009 changed default output type to text/xml to be certain that the calling application doesn't 

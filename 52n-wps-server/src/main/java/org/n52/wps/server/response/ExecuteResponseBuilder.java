@@ -36,9 +36,7 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.Calendar;
 
 import javax.xml.XMLConstants;
@@ -210,6 +208,12 @@ public class ExecuteResponseBuilder {
 		if(def != null) {
 			schema = def.getSchema();
 		}
+		
+		return schema;
+	}
+	
+	private static String getDefaultSchema(OutputDescriptionType desc, OutputDefinitionType def) {
+		String schema = null;
 		if(schema == null) {
 			ComplexDataDescriptionType[] formats = desc.getComplexOutput().getSupported().getFormatArray();
 			for (ComplexDataDescriptionType format : formats) {
@@ -217,14 +221,22 @@ public class ExecuteResponseBuilder {
 					return null;
 				}
 			}
-			// TODO Default schema will be returned. What about alternative schemas? 
+		// TODO Default schema will be returned. What about alternative schemas? 
 			return desc.getComplexOutput().getDefault().getFormat().getSchema();
 		}
-		return schema;
+		return null;
 	}
 	
 	// TODO Rename to getEncoding... the method is a getter, not setter.
 	private static String getEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
+		String encoding = null;
+		if(def != null) {
+			encoding = def.getEncoding();
+		}
+		return encoding;
+	}
+	
+	private static String getDefaultEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
 		String encoding = null;
 		if(def != null) {
 			encoding = def.getEncoding();
@@ -278,30 +290,29 @@ public class ExecuteResponseBuilder {
 	private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
 		IData obj = request.getAttachedResult().get(responseID);
 		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier);
+			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, description);
 		}
 		else {
-			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
+			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, description);
 			if(asReference) {
 				handler.updateResponseAsReference(doc, (request.getUniqueId()).toString(),mimeType);
 			}
 			else {
-				handler.updateResponseForComplexData(doc);
+				handler.updateResponseForInlineComplexData(doc);
 			}
 		}
 		
 	}
 
-	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) {
+	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
 		IData obj = request.getAttachedResult().get(responseID);
-		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier);
+		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, description);
 		handler.updateResponseForLiteralData(res, dataTypeReference);
 	}
 
-	public void save(OutputStream os) throws ExceptionReport{
+	public InputStream getAsStream() throws ExceptionReport{
 		if(request.isRawData() && rawDataHandler != null) {
-			rawDataHandler.save(os);
-			return;
+			return rawDataHandler.getAsStream();
 		}
 		if(request.isStoreResponse()) {
 			doc.getExecuteResponse().setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
@@ -310,9 +321,9 @@ public class ExecuteResponseBuilder {
 			//Forces XMLBeans to write the namespaces in front of all other attributes. Otherwise the xml is not valid
 			XmlOptions opts = new XmlOptions();
 			opts.setSaveNamespacesFirst();
-			doc.save(os,opts);
+			return doc.newInputStream(opts);
 		}
-		catch(IOException e) {
+		catch(Exception e) {
 			throw new RuntimeException(e);
 		}
 	}

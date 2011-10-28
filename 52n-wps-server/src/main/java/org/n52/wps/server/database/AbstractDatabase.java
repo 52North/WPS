@@ -29,8 +29,6 @@
  ***************************************************************/
 package org.n52.wps.server.database;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -44,13 +42,11 @@ import org.apache.log4j.Logger;
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
-import org.n52.wps.util.StreamUtils;
 
 /**
 * An anstract-layer to the databases. 
@@ -140,23 +136,22 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */
 	public synchronized String insertResponse(Response response) {
 		// Save the response to this outputstream.
-		if(response instanceof ExecuteResponse){
+		if (response instanceof ExecuteResponse){
 			ExecuteResponse executeResponse = (ExecuteResponse) response;
-		
-			LargeBufferStream baos = new LargeBufferStream();
+			
+			InputStream stream = null;
 			try {
-				response.save(baos);
+				stream = response.getAsStream();
 			} catch (ExceptionReport e) {
-				LOGGER.error("Saving the Response threw an ErrorReport: "
-						+ e.getMessage());
+				LOGGER.error("Saving the Response threw an ErrorReport: " + e.getMessage());
 			}
 			
+			return insertResultEntity(stream, (response.getUniqueId()).toString(), response.getType(), executeResponse.getMimeType());
 			
-			return insertResultEntity(baos, (response.getUniqueId()).toString(), response.getType(), executeResponse.getMimeType());
-			
-		}else{
+		} else {
 			throw new RuntimeException("Could not insert a non execute response");
 		}
+
 	}
 	
 	/**
@@ -165,10 +160,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 * @param id
 	 * @param type
 	 */
-	protected synchronized String insertResultEntity(
-			LargeBufferStream baos, String id, String type, String mimeType) {
-		// store the contents of the (finite) outputstream into a bytes array
-		InputStream bais = StreamUtils.convertOutputStreamToInputStream(baos);
+	protected synchronized String insertResultEntity(InputStream stream, String id, String type, String mimeType) {
 		// Use Calendar to get the current timestamp.
 		// Uses java.sql.Date !
 		Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
@@ -178,7 +170,7 @@ public abstract class AbstractDatabase implements IDatabase{
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_REQUEST_ID, id);
 			AbstractDatabase.insertSQL.setTimestamp(INSERT_COLUMN_REQUEST_DATE, timestamp);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_RESPONSE_TYPE, type);
-			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais);
+			AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, stream);
 			AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
 			// AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
 		
@@ -199,26 +191,22 @@ public abstract class AbstractDatabase implements IDatabase{
 	 * @see #storeResponse(Response)
 	 */
 	public synchronized void updateResponse(Response response) {
-		// Save the response to this outputstream
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		
+		InputStream stream = null;
+		
 		try {
-			response.save(baos);
+			stream = response.getAsStream();
 		} catch (ExceptionReport e) {
 			LOGGER.error("Updating the Response threw an ErrorReport: "
 					+ e.getMessage());
 		}
-
-		// Store the contents of the (finite) outputstream into a bytes array
-		byte[] b = baos.toByteArray();
-		// Create a new inputstream from the byte array
-		ByteArrayInputStream bais = new ByteArrayInputStream(b);
 
 		// Try to update the row of data into the database.
 		try {
 			AbstractDatabase.updateSQL.setString(
 					UPDATE_COLUMN_REQUEST_ID, (response.getUniqueId()).toString());
 			AbstractDatabase.updateSQL.setAsciiStream(
-					UPDATE_COLUMN_RESPONSE, bais);
+					UPDATE_COLUMN_RESPONSE, stream);
 			AbstractDatabase.updateSQL.executeUpdate();
 			getConnection().commit();
 		} catch (SQLException e) {
@@ -271,8 +259,7 @@ public abstract class AbstractDatabase implements IDatabase{
 		}
 	}
 	
-	public synchronized String storeComplexValue(String id, 
-			LargeBufferStream stream, String type, String mimeType) {
+	public synchronized String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
 		return insertResultEntity(stream, id, type, mimeType);
 	}
 	

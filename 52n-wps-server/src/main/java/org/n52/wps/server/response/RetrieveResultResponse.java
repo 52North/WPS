@@ -35,11 +35,8 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.response;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.RetrieveResultRequest;
 
@@ -49,14 +46,8 @@ public class RetrieveResultResponse extends Response {
 		super(request);	
 	}
 
-	public void save(OutputStream os) throws ExceptionReport {
-		InputStream is = (InputStream)request.getAttachedResult();
-		// copy contents from inputstream to outputstream
-		try{
-			IOUtils.copy(is,os);
-		}catch(IOException e){
-			throw new ExceptionReport("Error while copying the result from storage.", ExceptionReport.NO_APPLICABLE_CODE);
-		}		
+	public InputStream getAsStream() throws ExceptionReport {
+		return (InputStream)request.getAttachedResult();		
 	}
 
 	

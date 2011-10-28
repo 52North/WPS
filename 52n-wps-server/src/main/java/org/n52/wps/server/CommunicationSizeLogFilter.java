@@ -55,7 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
-import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.n52.wps.io.LargeBufferStream;
 
 
 class ResponseSizeInfoStream extends ServletOutputStream {

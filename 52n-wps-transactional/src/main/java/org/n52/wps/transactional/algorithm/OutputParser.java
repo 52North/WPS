@@ -30,10 +30,14 @@ is extensible in terms of processes and data handlers.
 
 
 package org.n52.wps.transactional.algorithm;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
@@ -43,7 +47,6 @@ import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
-import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.util.BasicXMLTypeFactory;
 
@@ -84,9 +87,12 @@ public class OutputParser {
 			throw new RuntimeException("output cannot be found in description for " + processDescription.getIdentifier().getStringValue() + "," + outputID);
 		}
 		
+		// get data specification from request
 		String schema = output.getData().getComplexData().getSchema();
 		String encoding = output.getData().getComplexData().getEncoding();
 		String format = output.getData().getComplexData().getMimeType();
+		
+		// check for null elements in request and replace by defaults
 		if(schema == null) {
 			schema = outputDesc.getComplexOutput().getDefault().getFormat().getSchema();
 		}
@@ -104,9 +110,12 @@ public class OutputParser {
 			parser = ParserFactory.getInstance().getSimpleParser();
 		}
 		IData collection = null;
-		if(parser instanceof AbstractXMLParser) {
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
+		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
 			try {
-				collection = ((AbstractXMLParser)parser).parseXML(complexValue);
+				InputStream stream = new ByteArrayInputStream(complexValue.getBytes());
+				collection = parser.parse(stream, format, schema);
 			}
 			catch(RuntimeException e) {
 				throw new ExceptionReport("Error occured, while XML parsing", 
