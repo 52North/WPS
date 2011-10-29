@@ -1,18 +1,18 @@
 package org.n52.wps.server.request.strategy;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.server.ExceptionReport;
-
-import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
+
+import org.apache.commons.io.IOUtils;
+import org.n52.wps.server.ExceptionReport;
 
 public class DefaultReferenceStrategy implements IReferenceStrategy{
 
@@ -51,8 +51,12 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 			//Handling POST with inline message
 			else if (input.getReference().isSetBody()) {
 				conn.setDoOutput(true);
+				String body = input.getReference().getBody().toString();
 				
-				input.getReference().getBody().save(conn.getOutputStream());
+				DataOutputStream printout = new DataOutputStream (conn.getOutputStream ());
+			    printout.writeBytes (body);
+			    printout.flush ();
+			    printout.close ();
 			}
 			InputStream inputStream = retrievingZippedContent(conn);
 			return inputStream;
