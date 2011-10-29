@@ -75,9 +75,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.datahandler.parser.GML2BasicParser;
-import org.n52.wps.io.datahandler.parser.GML3BasicParser;
-import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
+import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
@@ -971,6 +969,7 @@ public class InputHandler {
 				decodedURL = decodedURL.replace("format", "&format");
 			}*/
 			
+		
 			//lookup WFS
 			if(dataURLString.toUpperCase().contains("REQUEST=GETFEATURE") &&
 				dataURLString.toUpperCase().contains("SERVICE=WFS")){
@@ -986,6 +985,8 @@ public class InputHandler {
 						dataURLString = dataURLString+"&outputFormat=GML3";
 					}
 			}
+
+
 						
 			IData parsedInputData = parser.parse(stream, mimeType, schema);				
 			
@@ -993,6 +994,7 @@ public class InputHandler {
 			if(inputData.containsKey(inputID)) {
 				List<IData> list = inputData.get(inputID);
 				list.add(parsedInputData);
+				inputData.put(inputID, list);
 			}
 			else {
 				List<IData> list = new ArrayList<IData>();
@@ -1003,14 +1005,23 @@ public class InputHandler {
 		
 	}
 	
-	
 	/**
 	 * Handles BBoxValue
 	 * @param input The client input
 	 */
 	private void handleBBoxValue(InputType input) throws ExceptionReport{
-		//String inputID = input.getIdentifier().getStringValue();
-		throw new ExceptionReport("BBox is not supported", ExceptionReport.OPERATION_NOT_SUPPORTED);
+		String crs = input.getData().getBoundingBoxData().getCrs();
+		List lowerCorner = input.getData().getBoundingBoxData().getLowerCorner();
+		List upperCorner = input.getData().getBoundingBoxData().getUpperCorner();
+		
+		if(lowerCorner.size()!=2 || upperCorner.size()!=2){
+			throw new ExceptionReport("Error while parsing the BBOX data", ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
+		IData envelope = new GTReferenceEnvelope(lowerCorner.get(0),lowerCorner.get(1),upperCorner.get(0), upperCorner.get(1), crs);
+		
+		List<IData> resultList = new ArrayList<IData>();
+		resultList.add(envelope);
+		inputData.put(input.getIdentifier().getStringValue(), resultList);		
 	}
 	
 	/**
