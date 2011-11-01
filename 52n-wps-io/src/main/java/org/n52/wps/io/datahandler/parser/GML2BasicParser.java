@@ -78,17 +78,15 @@ public class GML2BasicParser extends AbstractParser {
 			if (parsedData instanceof FeatureCollection) {
 				fc = (FeatureCollection) parsedData;
 			} else {
-
-				if (((HashMap) parsedData).get("featureMember") instanceof SimpleFeature) {
-					SimpleFeature feature = (SimpleFeature) ((HashMap) parsedData)
-							.get("featureMember");
-					fc.add(feature);
-				} else if (((HashMap) parsedData).get("featureMember") instanceof List) {
-
-					List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>) ((HashMap) parsedData)
-							.get("featureMember"));
-					for (SimpleFeature feature : featureList) {
-						fc.add(feature);
+				if (parsedData instanceof HashMap) {
+					if (((HashMap) parsedData).get("featureMember") instanceof SimpleFeature) {
+						SimpleFeature feature = (SimpleFeature) ((HashMap) parsedData).get("featureMember");
+					 						fc.add(feature);
+					} else if (((HashMap) parsedData).get("featureMember") instanceof List) {
+						List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>) ((HashMap) parsedData).get("featureMember"));
+						for (SimpleFeature feature : featureList) {
+							fc.add(feature);
+						}
 					}
 				}
 			}
