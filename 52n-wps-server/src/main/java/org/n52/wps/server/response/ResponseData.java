@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.opengis.wps.x100.ComplexDataDescriptionType;
-import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -77,7 +76,9 @@ public abstract class ResponseData {
 			}
 		}
 		
-//select generator
+		
+		
+		//select generator
 		
 		//1. mimeType set?
 		//yes--> set it
@@ -96,8 +97,7 @@ public abstract class ResponseData {
 		String finalEncoding = null;
 		
 		
-		
-		if (mimeType != null){
+		if (mimeType != null && outputType.isSetComplexOutput()){
 			//mime type in request
 			ComplexDataDescriptionType format = null;
 			
@@ -176,11 +176,8 @@ public abstract class ResponseData {
 			}
 			
 		}else{
+			
 			//mimeType not in request
-			
-				
-			
-			
 			if(mimeType==null && encoding==null && schema == null){
 					//nothing set, use default values
 					finalSchema = outputType.getComplexOutput().getDefault().getFormat().getSchema();
@@ -328,10 +325,7 @@ public abstract class ResponseData {
 		this.schema = finalSchema;
 		this.encoding = finalEncoding;
 		this.mimeType = finalMimeType;
-		
-		
-		
-		
+			
 	}
 
 	protected void prepareGenerator() throws ExceptionReport {
