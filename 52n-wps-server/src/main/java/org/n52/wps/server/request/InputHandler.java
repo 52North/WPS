@@ -63,6 +63,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.opengis.ows.x11.DomainMetadataType;
+import net.opengis.ows.x11.RangeType;
+import net.opengis.ows.x11.ValueType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -76,6 +78,12 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
+import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
+import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
+import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
+import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
+import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
+import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
@@ -520,17 +528,20 @@ public class InputHandler {
 		String inputID = input.getIdentifier().getStringValue();
 		String parameter = input.getData().getLiteralData().getStringValue();
 		String xmlDataType = input.getData().getLiteralData().getDataType();
-		if(xmlDataType == null) {
-			InputDescriptionType inputDesc = null;
-			for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
-				if(inputID.equals(tempDesc.getIdentifier().getStringValue())) {
-					inputDesc = tempDesc;
-					break;
-				}
+		
+		InputDescriptionType inputDesc = null;
+		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
+			if(inputID.equals(tempDesc.getIdentifier().getStringValue())) {
+				inputDesc = tempDesc;
+				break;
 			}
+		}
+		
+		if(xmlDataType == null) {
 			DomainMetadataType dataType = inputDesc.getLiteralData().getDataType();
 			xmlDataType = dataType != null ? dataType.getReference() : null;
 		}
+		
 		IData parameterObj = null;
 		try {
 			parameterObj = BasicXMLTypeFactory.getBasicJavaObject(xmlDataType, parameter);
@@ -538,6 +549,78 @@ public class InputHandler {
 		catch(RuntimeException e) {
 			throw new ExceptionReport("The passed parameterValue: " + parameter + ", but should be of type: " + xmlDataType, ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
+		
+		//validate allowed values.
+		if(inputDesc.getLiteralData().isSetAllowedValues()){
+			if((!inputDesc.getLiteralData().isSetAnyValue())){
+				ValueType[] allowedValues = inputDesc.getLiteralData().getAllowedValues().getValueArray();
+				boolean foundAllowedValue = false;
+				for(ValueType allowedValue : allowedValues){
+					if(input.getData().getLiteralData().getStringValue().equals(allowedValue.getStringValue())){
+						foundAllowedValue = true;
+						
+					}
+				}
+				RangeType[] allowedRanges = {};
+				if(parameterObj instanceof LiteralIntBinding || parameterObj instanceof LiteralDoubleBinding || parameterObj instanceof LiteralShortBinding || parameterObj instanceof LiteralFloatBinding || parameterObj instanceof LiteralLongBinding || parameterObj instanceof LiteralByteBinding){
+				
+					allowedRanges = inputDesc.getLiteralData().getAllowedValues().getRangeArray();
+					for(RangeType allowedRange : allowedRanges){
+						if((parameterObj instanceof LiteralIntBinding)){
+							int min = new Integer(allowedRange.getMinimumValue().getStringValue());
+							int max = new Integer(allowedRange.getMaximumValue().getStringValue());
+							if((Integer)(parameterObj.getPayload())>min && (Integer)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						if((parameterObj instanceof LiteralDoubleBinding)){
+							Double min = new Double(allowedRange.getMinimumValue().getStringValue());
+							Double max = new Double(allowedRange.getMaximumValue().getStringValue());
+							if((Double)(parameterObj.getPayload())>min && (Double)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						if((parameterObj instanceof LiteralShortBinding)){
+							Short min = new Short(allowedRange.getMinimumValue().getStringValue());
+							Short max = new Short(allowedRange.getMaximumValue().getStringValue());
+							if((Short)(parameterObj.getPayload())>min && (Short)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						if((parameterObj instanceof LiteralFloatBinding)){
+							Float min = new Float(allowedRange.getMinimumValue().getStringValue());
+							Float max = new Float(allowedRange.getMaximumValue().getStringValue());
+							if((Float)(parameterObj.getPayload())>min && (Float)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						if((parameterObj instanceof LiteralLongBinding)){
+							Long min = new Long(allowedRange.getMinimumValue().getStringValue());
+							Long max = new Long(allowedRange.getMaximumValue().getStringValue());
+							if((Long)(parameterObj.getPayload())>min && (Long)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						if((parameterObj instanceof LiteralByteBinding)){
+							Byte min = new Byte(allowedRange.getMinimumValue().getStringValue());
+							Byte max = new Byte(allowedRange.getMaximumValue().getStringValue());
+							if((Byte)(parameterObj.getPayload())>min && (Byte)parameterObj.getPayload()<max){
+								foundAllowedValue = true;
+							}
+						}
+						
+					}
+				}
+				
+				
+				if(!foundAllowedValue && (allowedValues.length!=0 || allowedRanges.length!=0)){
+					throw new ExceptionReport("Input with ID " + inputID + " does not contain an allowed value. See ProcessDescription.", ExceptionReport.INVALID_PARAMETER_VALUE);
+				}
+				
+			}
+		}
+		
+		
 		if(parameterObj == null) {
 			throw new ExceptionReport("XML datatype as LiteralParameter is not supported by the server: dataType " + xmlDataType, 
 					ExceptionReport.INVALID_PARAMETER_VALUE);
