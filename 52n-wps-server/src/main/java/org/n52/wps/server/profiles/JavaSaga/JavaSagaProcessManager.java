@@ -71,6 +71,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.profiles.AbstractProcessManager;
 import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.UndeployProcessRequest;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
 
@@ -172,7 +173,6 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 
 		// TODO remove (useless here : getPRInstance();)
 
-		
 	}
 
 	/**
@@ -418,18 +418,23 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		}
 	}
 
-	public Document invoke(ExecuteDocument doc, String algorithmID)
+	public Document invoke(ExecuteRequest req, String algorithmID)
 			throws Exception {
+		ExecuteDocument doc = req.getExecDom();
 		this.processID = algorithmID;
 		// Initialize WPS Map
 		WPSmap = new HashMap<String, String>();
 		WPSmap.put("WPS_DEPLOY_PROCESS_DIR", WPSSagaHome + "deploy/process/");
 		WPSmap.put("WPS_DEPLOY_AUXDATA_DIR", WPSSagaHome + "deploy/auxdata/");
-		WPSmap.put("WPS_JOB_INPUTS_DIR", WPSSagaHome
-				+ "execute/"+processID+"/${GAI_JOB_UID}/inputs");
-		WPSmap.put("WPS_JOB_OUTPUTS_DIR", WPSSagaHome
-				+ "execute/"+processID+"/${GAI_JOB_UID}/outputs");
-		WPSmap.put("WPS_JOB_AUDITS_DIR", WPSSagaHome + "execute/"+processID+"/${GAI_JOB_UID}/audits");
+		WPSmap.put("WPS_JOB_INPUTS_DIR", WPSSagaHome + "execute/" + processID
+				+ "/${GAI_JOB_UID}/inputs");
+		WPSmap.put("WPS_JOB_OUTPUTS_DIR", WPSSagaHome + "execute/" + processID
+				+ "/${GAI_JOB_UID}/outputs");
+		WPSmap.put("WPS_JOB_AUDITS_DIR", WPSSagaHome + "execute/" + processID
+				+ "/${GAI_JOB_UID}/audits");
+		WPSmap.put("WPS_JOB_RESULTS_DIR", WPSSagaHome + "execute/" + processID
+				+ "/${GAI_JOB_UID}/results");
+		
 		ExecuteResponseDocument execRepDom = null;
 		this.setProcessID(algorithmID);
 		// First create a session containing at least a context
@@ -462,14 +467,22 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		Map<String, String> literalInputs = new HashMap<String, String>();
 		Map<String, Document> complexInputs = new HashMap<String, Document>();
 		InputType[] inputs = doc.getExecute().getDataInputs().getInputArray();
+		int numberOfTasks = 0;
 		for (int i = 0; i < inputs.length; i++) {
 			if (inputs[i].getData().isSetLiteralData()) {
 				LOGGER.info("Found literal data: "
 						+ inputs[i].getIdentifier().getStringValue() + " - "
 						+ inputs[i].getData().getLiteralData().getStringValue());
-				literalInputs.put("WPS_INPUT_"
-						+ inputs[i].getIdentifier().getStringValue(), inputs[i]
-						.getData().getLiteralData().getStringValue());
+				if (inputs[i].getIdentifier().getStringValue()
+						.equals("numberOfTasks")) {
+					numberOfTasks = Integer.parseInt(inputs[i].getData()
+							.getLiteralData().getStringValue());
+				} else {
+					literalInputs.put("WPS_INPUT_"
+							+ inputs[i].getIdentifier().getStringValue(),
+							inputs[i].getData().getLiteralData()
+									.getStringValue());
+				}
 			}
 			if (inputs[i].getData().isSetComplexData()) {
 				LOGGER.info("Found complex data: "
@@ -481,21 +494,24 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 						.newTransformer();
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,
 						"no");
-				NodeList nodeList = inputs[i].getData().getComplexData().getDomNode().getChildNodes();
+				NodeList nodeList = inputs[i].getData().getComplexData()
+						.getDomNode().getChildNodes();
 				Node urlListNode = null;
-				for(int k=0 ; k < nodeList.getLength();k++) {
-					if(nodeList.item(k).getLocalName() != null && nodeList.item(k).getLocalName().equals("URLList")) {
+				for (int k = 0; k < nodeList.getLength(); k++) {
+					if (nodeList.item(k).getLocalName() != null
+							&& nodeList.item(k).getLocalName()
+									.equals("URLList")) {
 						urlListNode = nodeList.item(k);
 						break;
 					}
 				}
-				transformer.transform(
-						new DOMSource(urlListNode),
+				transformer.transform(new DOMSource(urlListNode),
 						new StreamResult(stringWriter));
-				
+
 				// XMLBeans parsing for validation (exception is thrown on
 				// failure)
-				LOGGER.info("String writer contains : "+stringWriter.toString());
+				LOGGER.info("String writer contains : "
+						+ stringWriter.toString());
 				XmlOptions options = new XmlOptions();
 				URLListDocument urlDom = URLListDocument.Factory.parse(
 						stringWriter.toString(), options);
@@ -533,15 +549,22 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		} else {
 			LOGGER.info("NumberOfProcesses attribute is null");
 		}
-		JobImpl jobs = ((JobServiceImpl) js).createJob(jd);
+		JobImpl jobs = null;
+		if (numberOfTasks == 0) {
+			jobs = ((JobServiceImpl) js).createJob(jd);
+		} else {
+			jobs = ((JobServiceImpl) js).createJob(jd, numberOfTasks);
+		}
 		// create now the job execute dirs
 		String inputsDir = jobs.getSubstitutedVariable("WPS_JOB_INPUTS_DIR");
 		String outputsDir = jobs.getSubstitutedVariable("WPS_JOB_OUTPUTS_DIR");
 		String auditsDir = jobs.getSubstitutedVariable("WPS_JOB_AUDITS_DIR");
+		String resultsDir = jobs.getSubstitutedVariable("WPS_JOB_RESULTS_DIR");
 		LOGGER.info("Creating inputsDir:" + inputsDir);
 		(new File(inputsDir)).mkdirs();
 		(new File(outputsDir)).mkdirs();
 		(new File(auditsDir)).mkdirs();
+		(new File(resultsDir)).mkdirs();
 
 		if (complexInputs.size() > 0) {
 			jsa.writeComplexInputs(jobs, complexInputs);
@@ -551,9 +574,9 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		jobs.addCallback(Job.JOB_STATEDETAIL, new SagaCallbackManager());
 		LOGGER.info("Running job...");
 		jobs.run();
-		LOGGER.info("saga job id:"+jobs.getId());
+		LOGGER.info("saga job id:" + jobs.getId());
 		setIID(jobs.getId());
-		LOGGER.info("jobs.run() returned "+jobs.getState().getValue());
+		LOGGER.info("jobs.run() returned " + jobs.getState().getValue());
 		// wait for all jobs in the job array
 		LOGGER.info("Waiting for...");
 		jobs.waitFor();
@@ -653,8 +676,8 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					newOutput
 							.addNewData()
 							.addNewComplexData()
-							.set(URLListDocument.Factory.parse(nodeToString(entry
-									.getValue())));
+							.set(URLListDocument.Factory
+									.parse(nodeToString(entry.getValue())));
 					LOGGER.info("test:"
 							+ URLListDocument.Factory.parse(
 									nodeToString(entry.getValue())).toString());
@@ -694,12 +717,12 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 
 	private void setProcessInstanceID(String instanceID) {
 		this.processInstanceID = instanceID;
-		
+
 	}
 
 	private void setIID(String id) {
 		this.IID = id;
-		
+
 	}
 
 	public ExceptionReportDocument buildExceptionReportDom(
@@ -1001,13 +1024,24 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		LOGGER.info("short form apache get audit");
 		AuditTraceType audit = null;
 		URLListDocument auditURLS = URLListDocument.Factory.newInstance();
-		File auditDir = new File(WPSSagaHome + "execute"+ File.separator+processID + File.separator +getIID()  + File.separator + "audits" + File.separator);
+		File auditDir = new File(WPSSagaHome + "execute" + File.separator
+				+ processID + File.separator + getIID() + File.separator
+				+ "audits" + File.separator);
 		LOGGER.info("--------------------------------------------------------------------");
-		LOGGER.info("Audit dir: "+ WPSSagaHome + "execute"+ File.separator+processID + File.separator+getIID()  + File.separator + "audits" + File.separator);
+		LOGGER.info("Audit dir: " + WPSSagaHome + "execute" + File.separator
+				+ processID + File.separator + getIID() + File.separator
+				+ "audits" + File.separator);
 		String[] filenames = auditDir.list();
 		auditURLS.addNewURLList().setCount(filenames.length);
-		for(String filename : filenames) {
-			auditURLS.getURLList().addNewUrl().setStringValue(WPSSagaHome + "execute"+ File.separator+processID + File.separator +getIID()  + File.separator + "audits" + File.separator+filename);
+		for (String filename : filenames) {
+			auditURLS
+					.getURLList()
+					.addNewUrl()
+					.setStringValue(
+							WPSSagaHome + "execute" + File.separator
+									+ processID + File.separator + getIID()
+									+ File.separator + "audits"
+									+ File.separator + filename);
 		}
 		try {
 			audit = AuditTraceType.Factory.parse(auditURLS.getDomNode());
@@ -1016,7 +1050,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 			e.printStackTrace();
 			return null;
 		}
-		//LOGGER.info(audit.toString());
+		// LOGGER.info(audit.toString());
 		return audit;
 
 	}
@@ -1041,4 +1075,24 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	public String getProcessID() {
 		return processID;
 	}
+
+	/**
+	 * TODO : re design the IProcessManager : instanceID is required for some
+	 * backend. All request information should be available at backend. To be
+	 * discussed...
+	 */
+
+	@Override
+	public Document invoke(ExecuteDocument payload, String algorithmID)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void callback(ExecuteResponseDocument execRespDom) {
+		// TODO Auto-generated method stub
+		return;
+	}
+
 }

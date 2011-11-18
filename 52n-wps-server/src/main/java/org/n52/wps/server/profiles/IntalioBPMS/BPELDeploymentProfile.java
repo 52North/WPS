@@ -30,17 +30,17 @@ is extensible in terms of processes and data handlers.
 
 package org.n52.wps.server.profiles.IntalioBPMS;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
 
 import net.opengis.wps.x100.ApacheOdeDeploymentProfileType;
 import net.opengis.wps.x100.DeployProcessDocument;
-import net.opengis.wps.x100.impl.ApacheOdeDeploymentProfileTypeImpl;
-
 import org.apache.log4j.Logger;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
-import org.ogf.saga.job.Job;
 import org.w3c.dom.Node;
 
 /** 
@@ -99,12 +99,45 @@ public class BPELDeploymentProfile extends DeploymentProfile {
 			setReference(false);
 		} else if (deployProfile.isSetArchiveReference()) {
 			setArchiveRef(deployProfile.getArchiveReference().getHref());
+			LOGGER.info("downloading archive");
+			setArchive(downloadArchive(getArchiveRef()));
 			setReference(true);
-			throw new ExceptionReport("Archive Reference not supported yet",
-					org.n52.wps.server.ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}
 	}
 
+	/**
+	 * This method download a binary file located at the given URL and returns the byte array
+	 * @param archiveRef2
+	 * @return
+	 * @throws IOException
+	 */
+	private byte[] downloadArchive(String archiveRef2) throws IOException {
+		LOGGER.info("Downloading url "+archiveRef2); 
+		URL u = new URL(archiveRef2);
+		    URLConnection uc = u.openConnection();
+		    String contentType = uc.getContentType();
+		    int contentLength = uc.getContentLength();
+		    InputStream raw = uc.getInputStream();
+		    InputStream in = new BufferedInputStream(raw);
+		    byte[] data = new byte[contentLength];
+		    int bytesRead = 0;
+		    int offset = 0;
+		    LOGGER.info("loading started...");
+		    while (offset < contentLength) {
+		    	System.out.print(".");
+		      bytesRead = in.read(data, offset, data.length - offset);
+		      if (bytesRead == -1)
+		        break;
+		      offset += bytesRead;
+		    }
+		    in.close();
+		    if (offset != contentLength) {
+		      throw new IOException("Only read " + offset + " bytes; Expected " + contentLength + " bytes");
+		    }
+		   return data;
+	}
+
+	
 	public void setArchive(byte[] archive) {
 		LOGGER.info("setArchive");
 		this.archive = archive;

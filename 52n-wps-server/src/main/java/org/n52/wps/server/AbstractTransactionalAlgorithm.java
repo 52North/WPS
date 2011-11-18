@@ -17,12 +17,14 @@ import org.apache.log4j.spi.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.util.XMLUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.GetAuditDocument;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -42,7 +44,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		return algorithmID;
 	}
 
-	public abstract HashMap run(ExecuteDocument document)
+	public abstract HashMap run(ExecuteRequest document)
 			throws ExceptionReport;
 
 	/** call the backend to cancel the task */
@@ -67,9 +69,11 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
+		/**
 		if (subPath.startsWith("/")) {
 			subPath = subPath.substring(1);
 		}
+		*/
 				File directory = new File(subPath + "WEB-INF/ProcessDescriptions/");
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -78,6 +82,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 				+ ".xml";
 		try {
 			// TODO handling when exception occurs ...
+			LOGGER.info("*************************=========. write "+path);
 			XMLUtils.writeXmlFile(processDescription.getDomNode(), path);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -276,6 +281,10 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 	public void storeAudit() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void callback(ExecuteResponseDocument execRespDom) {
+		
 	}
 
 }

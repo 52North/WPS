@@ -58,6 +58,8 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -87,10 +89,19 @@ public class ExecuteRequest extends Request implements IObserver {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
+	public ExecuteDocument getExecDom() {
+		return execDom;
+	}
+
+	public void setExecDom(ExecuteDocument execDom) {
+		this.execDom = execDom;
+	}
+
 	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilder execRespType;
 	private IAlgorithm algorithm;
 	private SOAPHeader soapHeader;
+	private String myEPR;
 
 	/**
 	 * Constructor which also sets a soap Header (called from the
@@ -108,6 +119,12 @@ public class ExecuteRequest extends Request implements IObserver {
 		this.soapHeader = mySOAPHeader;
 		if(mySOAPHeader==null) {
 			LOGGER.info("soap is null here");
+		}
+		MessageContext context = MessageContext.getCurrentMessageContext();
+		if(context!= null) {
+		ServiceContext serviceContext = context.getServiceContext();
+		String address = serviceContext.getMyEPR().getAddress();
+		setMyEPR(address);
 		}
 		
 
@@ -591,7 +608,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			// The input handler parses (and validates) the inputs.
 			InputHandler parser = new InputHandler(inputs,
 					getAlgorithmIdentifier());
-
+			// TODO (Spacebel) OutputHandler for validation 
 			// we got so far:
 			// get the algorithm, and run it with the clients input
 
@@ -613,7 +630,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			
 			if (algorithm instanceof AbstractTransactionalAlgorithm) {
 				returnResults = ((AbstractTransactionalAlgorithm) algorithm)
-						.run(execDom);
+						.run(this);
 				try {
 					LOGGER.info("Storing audit...");
 					AbstractTransactionalAlgorithm.storeAuditLongDocument(this
@@ -821,6 +838,14 @@ public class ExecuteRequest extends Request implements IObserver {
 					+ e.getMessage());
 		}
 
+	}
+
+	public void setMyEPR(String myEPR) {
+		this.myEPR = myEPR;
+	}
+
+	public String getMyEPR() {
+		return myEPR;
 	}
 
 }

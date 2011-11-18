@@ -66,6 +66,7 @@ import org.n52.wps.server.request.DeployDataRequest;
 import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.DescribeDataRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
+import org.n52.wps.server.request.ExecuteCallback;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.GetAuditRequest;
 import org.n52.wps.server.request.GetStatusRequest;
@@ -372,6 +373,24 @@ public class RequestHandler {
 						"The requested process was rejected. Maybe the server is flooded with requests.",
 						ExceptionReport.SERVER_BUSY);
 			}
+		} else if (req instanceof ExecuteCallback) {
+			ExceptionReport exceptionReport = null;
+			try {
+				
+				WPSTask<Response> task = pool.getTask(((ExecuteCallback) req).getRelatesTo());
+				resp = ((ExecuteCallback) req).call(task);
+			} catch (Exception e) {
+				if (e.getCause() instanceof ExceptionReport) {
+					exceptionReport = (ExceptionReport) e.getCause();
+				} else {
+					exceptionReport = new ExceptionReport(
+							"An error occurred in the computation: "
+									+ e.getMessage(),
+							ExceptionReport.NO_APPLICABLE_CODE);
+				}
+				throw exceptionReport;
+			}
+			//resp.save(os);
 		} else if (req instanceof CancelRequest) {
 			ExceptionReport exceptionReport = null;
 			try {

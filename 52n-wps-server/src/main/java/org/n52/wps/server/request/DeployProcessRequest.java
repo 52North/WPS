@@ -150,12 +150,18 @@ public class DeployProcessRequest extends Request {
 		// DefaultTransactionalProcessRepository)
 		repositoryManager = TransactionalRepositoryManager
 				.getMatchingTransactionalRepository(schema);
+		LOGGER.info("*************************=========... match");
+		
 		if (repositoryManager == null) {
+			LOGGER.info("*************************=========... not found");
 			throw new ExceptionReport("Could not find matching repository",
 					ExceptionReport.NO_APPLICABLE_CODE);
+			
+			
 		}
 		// Add the algorithm the repository of the specific profile
 		repositoryManager.addAlgorithm(this);
+		LOGGER.info("*************************=========... addedAlgo");
 		// if Deployement Successful then store the process description
 		/**
 		 * TODO I suggest not to use AbstractTransactionalAlgorithm but a

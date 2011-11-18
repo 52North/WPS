@@ -36,9 +36,11 @@ import java.util.HashMap;
 
 import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 
@@ -49,9 +51,11 @@ public interface IProcessManager {
 	boolean containsProcess(String processID) throws Exception;
 	Collection<String> getAllProcesses() throws Exception;
 	Document invoke(ExecuteDocument payload, String algorithmID) throws Exception;
+	Document invoke(ExecuteRequest request, String algorithmID) throws Exception;
 	boolean deployProcess(DeployProcessRequest request) throws Exception;
 	AuditTraceType getAuditLongForm() throws Exception;
 	AuditTraceType getAudit() throws Exception;
 	
 	String getIID();
+	void callback(ExecuteResponseDocument execRespDom);
 }

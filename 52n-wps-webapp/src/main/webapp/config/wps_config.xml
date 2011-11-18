@@ -232,12 +232,7 @@
   </Datahandlers>
   <AlgorithmRepositoryList>
     <Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.repository.LocalAlgorithmRepository" active="true">
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-    </Repository>
+     </Repository>
     <Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.repository.UploadedAlgorithmRepository" active="true"/>
     <!--<Repository name="GrassRepository"
 			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
@@ -296,9 +291,9 @@
       <Property name="WorkspaceLocationRoot" active="true"/>
       <Property name="supportedFormat" active="true">apacheode.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property>
-      <Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito:8080/axis2/services/DeploymentService</Property>
-      <Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito:8080/ode/processes/ProcessManagement</Property>
-      <Property name="Ode_ProcessesPrefix" active="true">http://mpi-vito:8080/ode/processes/</Property>
+      <Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito.spacebel.be:8080/axis2/services/DeploymentService</Property>
+      <Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/ProcessManagement</Property>
+      <Property name="Ode_ProcessesPrefix" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/</Property>
       <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
       <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
       <Property name="DataDeployDirectory" active="true">D:\wps\data/</Property>

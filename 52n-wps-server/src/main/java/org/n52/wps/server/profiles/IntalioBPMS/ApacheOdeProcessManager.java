@@ -28,10 +28,8 @@ import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.GetAuditDocument;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.InvokedTasksDocument;
-import net.opengis.wps.x100.InvokedTasksDocument.InvokedTasks;
 import net.opengis.wps.x100.InvokedTasksDocument.InvokedTasks.Task;
 
 import org.apache.axiom.om.OMAbstractFactory;
@@ -48,21 +46,16 @@ import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
-import org.apache.axis2.saaj.util.SAAJUtil;
 import org.apache.axis2.util.XMLUtils;
 import org.apache.log4j.Logger;
 import org.apache.ode.pmapi.types.x2006.x08.x02.EventInfoDocument;
-import org.apache.ode.pmapi.types.x2006.x08.x02.TEventInfo;
-import org.apache.ode.pmapi.types.x2006.x08.x02.TEventInfoList;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.profiles.AbstractProcessManager;
 import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.DeployProcessRequest;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.UndeployProcessRequest;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
 import org.w3c.dom.Document;
@@ -240,15 +233,15 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		return true;
 	}
 
-	public synchronized void executeAndGetId(Document doc,
-			CallbackManager callback) {
+	public synchronized void executeAndGetId(Document doc) {
 		// Get the workflow instance id
 		try {
-			getExecuteClient().sendReceiveNonBlocking(
-					XMLUtils.toOM((doc).getDocumentElement()), callback);
-
+			LOGGER.info("execute");
+			getExecuteClient().sendReceive(
+					XMLUtils.toOM((doc).getDocumentElement()));
+			LOGGER.info("sleep");
 			// Workfaround Wait for the instance to appear TODO enhance
-			Thread.sleep(700);
+			Thread.sleep(300);
 			OMElement listRoot = _client.buildMessage("listInstances",
 					new String[] { "filter", "order", "limit" }, new String[] {
 							"", "-started", "1" });
@@ -268,51 +261,75 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		}
 	}
 
-	public Document invoke(ExecuteDocument doc, String algorithmID)
+	public Document invoke(ExecuteRequest req, String algorithmID)
 			throws Exception {
-
+		ExecuteDocument doc = req.getExecDom();
+		String instanceID = req.getId();
+		String address = req.getMyEPR();
+		LOGGER.info("invoke");
 		setProcessIdentifier(algorithmID);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		SOAPEnvelope response = null;
-		try {
-			Options options = new Options();
-			// set the workflow endpoint
-			options.setTo(new EndpointReference(processesPrefix + algorithmID));
-			options.setUseSeparateListener(true);
-			options.setAction("urn:executeResponseCallback");
-			options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
-			String hostname = null;
-			String address = getExecuteClient().getMyEPR(
-					Constants.TRANSPORT_HTTP).getAddress();
-			System.out.println(address);
-			Matcher matcher = Pattern
-					.compile(
-							"(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*")
-					.matcher(address);
-			if (matcher.find()) {
-				hostname = matcher.group(1);
-			}
-			System.out.println(hostname);
-			// String hostname = (String)
-			// context.getProperty(MessageContext.TRANSPORT_ADDR);
-			// String port = context.getProperty(MessageContext.P)
-			options.setReplyTo(new EndpointReference(hostname
-					+ "/wps/services/executeResponseCallback"));
-			// use WS-Adressing (to perform asynchronous request)
-			getExecuteClient().engageModule("addressing");
-
-			getExecuteClient().setOptions(options);
-			// get the callback manager
-			CallbackManager callback = new CallbackManager(this);
-
-			executeAndGetId((Document) doc.getDomNode(), callback);
-			waitCallback();
-			LOGGER.info("Received callback response.");
-		} catch (AxisFault af) {
-			af.printStackTrace();
-
+		Options options = new Options();
+		// set the workflow endpoint
+		options.setTo(new EndpointReference(processesPrefix + algorithmID));
+		LOGGER.info("Target Worflow endpoint:"+processesPrefix + algorithmID);
+		//options.setUseSeparateListener(true);
+		options.setAction("urn:executeRequest");
+		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
+		String hostname = null;
+		 
+			//getExecuteClient().getMyEPR(Constants.TRANSPORT_HTTP).getAddress();
+		System.out.println("Address:"+address);
+		/**
+		Matcher matcher = Pattern
+				.compile(
+						"(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*")
+				.matcher(address);
+		if (matcher.find()) {
+			hostname = matcher.group(1);
 		}
+		*/
+		//System.out.println(hostname);
+		// String hostname = (String)
+		// context.getProperty(MessageContext.TRANSPORT_ADDR);
+		// String port = context.getProperty(MessageContext.P)
+		//options.setMessageId(instanceID);
+		//options.setReplyTo(new EndpointReference(address));
+		
+		// Set WSA header without activating the addressing module !
+		OMFactory _factory;
+		_factory = OMAbstractFactory.getOMFactory();
+		OMNamespace ins = _factory.createOMNamespace(
+				"http://www.w3.org/2005/08/addressing", "wsa");
+		OMElement messageIDHeader = _factory.createOMElement("MessageID", ins); // qualified
+		messageIDHeader
+				.setText(instanceID);
+		OMElement replyToHeader = _factory.createOMElement("ReplyTo", ins); // qualified
+		OMElement addressHeader = _factory.createOMElement("Address", ins); // qualified
+		addressHeader.setText(address);
+		replyToHeader.addChild(addressHeader);
+		
+		OMElement toHeader = _factory.createOMElement("To", ins); // qualified
+		toHeader
+				.setText(processesPrefix + algorithmID);
+		// sender.engageModule("addressing");
+		
+		
+		// use WS-Adressing (to perform asynchronous request)
+		//getExecuteClient().engageModule("addressing");
+		LOGGER.info("set options");
+		getExecuteClient().setOptions(options);
+		getExecuteClient().removeHeaders();
+		getExecuteClient().addHeader(messageIDHeader);
+		getExecuteClient().addHeader(replyToHeader);
+		getExecuteClient().addHeader(toHeader);
+		// get the callback manager
+		
+		executeAndGetId((Document) doc.getDomNode());
+		waitCallback();
+		LOGGER.info("Received callback response.");
 		if (getExecuteResponse() == null) {
 			throw new ExceptionReport("Callback problem",
 					ExceptionReport.REMOTE_COMPUTATION_ERROR);
@@ -784,5 +801,19 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 
 	public String getProcessIdentifier() {
 		return processIdentifier;
+	}
+
+	@Override
+	public Document invoke(ExecuteDocument payload, String algorithmID)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void callback(ExecuteResponseDocument execRespDom) {
+		this.setExecuteResponse(execRespDom);
+		this.notifyRequestManager();
+		return;
 	}
 }

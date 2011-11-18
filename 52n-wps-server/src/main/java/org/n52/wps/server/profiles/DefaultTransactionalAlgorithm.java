@@ -61,6 +61,7 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -107,7 +108,7 @@ public class DefaultTransactionalAlgorithm extends
 	}
 
 	// TODO : BPEL has nothing to do here...
-	public HashMap<String, IData> run(ExecuteDocument payload)
+	public HashMap<String, IData> run(ExecuteRequest req)
 			throws ExceptionReport {
 		ExecuteResponseDocument responseDocument;
 		HashMap<String, IData> resultHash = new HashMap<String, IData>();
@@ -120,7 +121,7 @@ public class DefaultTransactionalAlgorithm extends
 		Document invokeResponse;
 		LOGGER.info("DefaultTransactionAlgo Run");
 		try {
-			invokeResponse = getProcessManager().invoke(payload,
+			invokeResponse = getProcessManager().invoke(req,
 					getAlgorithmID());
 			/**
 			 * Parsing
@@ -371,5 +372,8 @@ public class DefaultTransactionalAlgorithm extends
 		LOGGER.info("long");
 		return getProcessManager().getAuditLongForm();
 	}
-
+public void callback(ExecuteResponseDocument execRespDom) {
+	getProcessManager().callback(execRespDom);
+	return;
+	}
 }
