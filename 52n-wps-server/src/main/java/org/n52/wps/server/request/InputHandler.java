@@ -95,6 +95,7 @@ public class InputHandler {
 	 * @param inputs The client input
 	 */
 	public InputHandler(InputType[] inputs, String algorithmIdentifier) throws ExceptionReport{
+		LOGGER.info(inputs.toString());
 		this. algorithmIdentifier = algorithmIdentifier;
 		this.processDesc = RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier);
 		for(InputType input : inputs) {
@@ -128,10 +129,9 @@ public class InputHandler {
 	 * @throws ExceptionReport If error occured while parsing XML
 	 */
 	protected void handleComplexData(InputType input) throws ExceptionReport{
+		LOGGER.info(input.toString());
 		String inputID = input.getIdentifier().getStringValue();
-		
 		Node complexValueNode = input.getData().getComplexData().getDomNode();
-		
 		String complexValue = "";
 		try {
 			complexValue = nodeToString(complexValueNode);
@@ -163,20 +163,29 @@ public class InputHandler {
 		if(encoding == null) {
 			encoding = inputDesc.getComplexData().getDefault().getFormat().getEncoding();
 		}
-		
+		if(schema==null) {
+			schema = inputDesc.getComplexData().getDefault().getFormat().getSchema();
+		}
 		IParser parser = null;
 //		if(this.algorithmIdentifier==null)
 //			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding);
 //		else
 		try {
 			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
-			LOGGER.info("InputType of Algo is "+algorithmInput.getName());
+			LOGGER.info("InputType of Algo is "+algorithmInput.getName()+"-"+schema);
+			try {
 			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInput);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			LOGGER.info("Parser found");
 
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		if(parser == null) {
+			LOGGER.info("parser null");
 			parser = ParserFactory.getInstance().getSimpleParser();
 		}
 		IData collection = null;
@@ -336,7 +345,12 @@ public class InputHandler {
 			if(algorithmInputClass == null) {
 				throw new RuntimeException("Could not determine internal input class for input" + inputID);
 			}
-			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
+			try {
+				parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			if(parser == null) {
 				LOGGER.warn("No applicable parser found. Trying simpleGMLParser");

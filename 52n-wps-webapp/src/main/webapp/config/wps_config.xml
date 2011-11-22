@@ -13,7 +13,6 @@
       </Parser>
       <Parser name="URLListParser" className="org.n52.wps.io.datahandler.xml.URLListParser" active="true">
         <Property name="supportedSchema" active="true">http://ssegrid.esa.int/wps/JavaSAGAProfile</Property>
-        <Property name="supportedSchema" active="true">http://schemas.spacebel.be/wps/urllist.xsd</Property>
         <Property name="supportedFormat" active="true">text/xml</Property>
         <Property name="supportedEncoding" active="true">UTF-8</Property>
       </Parser>

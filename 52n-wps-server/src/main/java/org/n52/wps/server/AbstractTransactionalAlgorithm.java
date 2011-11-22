@@ -1,31 +1,21 @@
 package org.n52.wps.server;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.util.XMLUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 import net.opengis.wps.x100.AuditTraceType;
-import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.GetAuditDocument;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -106,9 +96,11 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
+		/** Cause problem !
 		if (subPath.startsWith("/")) {
 			subPath = subPath.substring(1);
 		}
+		*/
 		String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
 				+ ".xml";
 		LOGGER.info(path);

@@ -176,7 +176,7 @@ public class DefaultTransactionalAlgorithm extends
 				.getProtectionDomain().getCodeSource().getLocation().toString();
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
-		subPath = subPath.replaceFirst("file:/", "");
+		subPath = subPath.replaceFirst("file:", "");
 		String processID = getAlgorithmID();
 		// sanitize processID: strip version number and namespace if passed in
 		if (processID.contains("-"))

@@ -124,6 +124,10 @@ public class ParserFactory {
     }
 
 	public static ParserFactory getInstance() {
+		if(factory == null) {
+			LOGGER.info("There is a problem because factory is null");
+		}
+		LOGGER.info("Return factory");
 		return factory;
 	}
 	
@@ -166,7 +170,8 @@ public class ParserFactory {
 	}
 	*/
 	
-	public IParser getParser(String schema, String format, String encoding, Class requiredInputClass) {
+	public IParser getParser(String schema, String format, String encoding, Class requiredInputClass) throws Exception{ 
+		LOGGER.info("getPArser");
 		if(format == null) {
 			format = IOHandler.DEFAULT_MIMETYPE;
 			LOGGER.debug("Format is null, assume standard text/xml");
@@ -182,6 +187,16 @@ public class ParserFactory {
 			for(Class clazz : supportedClasses){
 				LOGGER.info(clazz.getName() + " versus "+requiredInputClass.getName());
 				if(clazz.equals(requiredInputClass)) {
+					LOGGER.info(schema+"-"+format+"-"+encoding);
+					if(parser.isSupportedSchema(schema)) {
+						LOGGER.info("true schema");
+					}
+					if(parser.isSupportedFormat(format)) {
+						LOGGER.info("true format");
+					}
+					if(parser.isSupportedEncoding(encoding)) {
+						LOGGER.info("true mimetype");
+					}
 					if(parser.isSupportedSchema(schema) &&	parser.isSupportedEncoding(encoding) && parser.isSupportedFormat(format)) {
 						LOGGER.info("Matching parser found: " + parser);
 						return parser;
@@ -193,6 +208,7 @@ public class ParserFactory {
 		//no parser could be found
 		//try an indirect way by creating all permutations and look if one matches
 		//TODO
+		LOGGER.info("no parser found");
 		return null;
 	}
 	

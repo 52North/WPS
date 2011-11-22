@@ -126,7 +126,13 @@ public class ExecuteResponseAnalyser {
 		if(schemaURL == null) {
 			throw new IllegalArgumentException("Could not find outputSchemaURL for output: " + output.getIdentifier().getStringValue());
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
+		IParser parser=null;
+		try {
+			parser = StaticDataHandlerRepository.getParserFactory().getParser(schemaURL, IOHandler.DEFAULT_MIMETYPE, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(parser instanceof AbstractXMLParser) {
 			AbstractXMLParser xmlParser = (AbstractXMLParser) parser;
 			return xmlParser.parseXML(output.getData().getComplexData().newInputStream());
@@ -160,7 +166,13 @@ public class ExecuteResponseAnalyser {
 				//throw new IllegalArgumentException("Could not find encoding for output: " + exec.getExecute().getIdentifier().getStringValue());
 			}
 		}
-		IParser parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
+		IParser parser=null;
+		try {
+			parser = StaticDataHandlerRepository.getParserFactory().getParser(schema, mimeType, encoding, GTVectorDataBinding.class);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(parser != null) {
 			return parser.parse((InputStream)response, mimeType);
 		}

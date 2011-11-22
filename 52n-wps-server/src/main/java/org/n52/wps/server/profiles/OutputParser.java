@@ -103,7 +103,13 @@ public class OutputParser {
 		LOGGER.info(schema+" "+encoding+" "+format);
 		Class outputDataType = determineOutputDataType(outputID, outputDesc);
 		
-		IParser parser = ParserFactory.getInstance().getParser(schema, format, encoding, outputDataType);
+		IParser parser=null;
+		try {
+			parser = ParserFactory.getInstance().getParser(schema, format, encoding, outputDataType);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		if(parser == null) {
 			parser = ParserFactory.getInstance().getSimpleParser();
 		}
