@@ -11,29 +11,7 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-io</name>
     <description>The project 52 north 52n-wps-io does something with JAVA.</description>
-     <repositories>
-       <repository>
-        <releases>
-                <enabled>true</enabled>
-        </releases>
-        <snapshots>
-                <enabled>false</enabled>
-        </snapshots>
-        <id>ifgi.releases</id>
-        <name>Ifgi - Maven releases</name>
-        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/releases/</url>
-</repository>
-<repository>
-        <releases>
-                <enabled>false</enabled>
-        </releases>
-        <snapshots>
-                <enabled>true</enabled>
-        </snapshots>
-        <id>ifgi.snapshots</id>
-        <name>Ifgi - Maven snapshots</name>
-        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/snapshots/</url>
-</repository>      
+     <repositories>   
 <repository>
                 <id>osgeo</id>
                 <name>Open Source Geospatial Foundation Repository</name>
