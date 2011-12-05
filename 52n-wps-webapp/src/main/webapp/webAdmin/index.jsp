@@ -67,11 +67,15 @@
                 
                	
                 $("#upload_process").click(function(){
-                    openbox('Upload a WPS process', 1, "box")             
+                    openbox('Upload a WPS process', 1, 'box')             
                 });
 
 				$("#manage_rem_repos").click(function(){
-                    openbox('Manage Remote Repositories', 1, "box2")             
+                    openbox('Manage Remote Repositories', 1, 'box')             
+                });
+               	
+                $("#upload_r_script").click(function(){
+                    openbox('Upload an R script', 1, 'box2')             
                 });
 
                 $("#loadConfBtn").click(function(){
@@ -483,6 +487,7 @@
 						<td><input class="formButtons" type="reset" value="Reset" name="Reset" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" id="upload_process" type="button" value="Upload Process" name="UploadProcess" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" id="manage_rem_repos" type="button" value="Update Remote Repositories" name="ManageRemoteRepositories" style="border:1px solid black;background:white;" /></td>
+						<td><input class="formButtons" id="upload_r_script" type="button" value="Upload R Script" name="UploadRScript" style="border:1px solid black;background:white;" /></td>
 					</tr>
 				</table>
 				<div id="sections">
@@ -624,6 +629,42 @@
 			<p>
 				<input type="submit" name="submit"> 
 				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box')">
+			</p>
+		</form>
+	</div>
+	
+	<div id="filter"></div>
+	<div id="box2">
+		<span id="boxtitle"></span>
+		<form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadRFiles()">
+			<input type="hidden" name="uploadRscript" />
+			<p>
+				Please enter the process name:<br>
+				(only if process name should be unlike filename)<br><br>
+				<input type="text" name="rProcessName" size="30" id="rProcessNameId">
+			</p>
+			<p>
+				Please enter the location of an annotated R script<br>
+				<br>
+				<input type="file" name="rProcessFile" id="rProcessFile" size="40">
+			</p>
+		
+			<!--processDescriptionFile currently has no meaning, so it's just hidden-->
+			<input type="hidden" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
+			<!--<p>
+				Please specify the associated ProcessDescription .xml file
+				(optional, not yet implemented):<br>
+				<br>
+				<input type="file" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
+
+			</p>-->
+			<p>
+				<input type="submit" name="submit"> 
+				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box2')">
+				<br>
+				<br>
+				<I>Process id will be org.n52.wps.server.r.[filename]
+					or org.n52.wps.server.r.[process name]</I>
 			</p>
 		</form>
 	</div>

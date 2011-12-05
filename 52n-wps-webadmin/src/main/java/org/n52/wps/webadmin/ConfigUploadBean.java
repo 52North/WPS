@@ -52,6 +52,7 @@ import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.r.RPropertyChangeManager;
 
 /**
  * This Bean handles the fileupload of the xml configuration file
@@ -62,8 +63,12 @@ public class ConfigUploadBean {
 	private static transient Logger LOGGER = Logger
 			.getLogger(ConfigUploadBean.class);
 
-	private String savePath, filepath, filename, xmlFilepath, xmlFilename;
+	private String savePath, filepath, filename, xmlFilepath, xmlFilename, realSavePath, boundary;
 	private final String filenamePrefix = "userConf_";
+
+	private int i, boundaryLength;
+
+	private byte[] line;
 
 	public String getFilenamePrefix() {
 		return filenamePrefix;
@@ -118,47 +123,68 @@ public class ConfigUploadBean {
 		savePath = savePath.substring(0, savePath.lastIndexOf("/") + 1);
 		ServletInputStream in = request.getInputStream();
 
-		byte[] line = new byte[128];
-		int i = in.readLine(line, 0, 128);
+		line = new byte[128];
+		i = in.readLine(line, 0, 128);
 		if (i < 3) {
 			return;
 		}
-		int boundaryLength = i - 2;
+		boundaryLength = i - 2;
 
 		int classnameupcoming = 4;
 
-		String boundary = new String(line, 0, boundaryLength); // -2 discards
+		boundary = new String(line, 0, boundaryLength); // -2 discards
 																// the newline
 																// character
+		
+		/*
+		 * the type of the uploaded file
+		 * until now only processes (.java/.zip) or R scripts are supported 
+		 */
+		String type = "";
+		
 		String realSavePath = "";
 		while (i != -1) {
 			String newLine = new String(line, 0, i);
 			System.out.println(newLine);
 			if (newLine.contains("processName")) {
+				type = "javaProcess";
+				// we set a flag to know that the next string is the fully
+				// qualified classname
+				classnameupcoming--;				
+			}else if(newLine.contains("rProcessName")){
+				type = "rScript";
 				// we set a flag to know that the next string is the fully
 				// qualified classname
 				classnameupcoming--;
+				
 			}
 			if (classnameupcoming < 4) {
 				classnameupcoming--;
 			}
 			if (classnameupcoming == 0) {
-				// then parse classname
-				String classname = newLine;
-				String[] classnameArr = classname.replace(".", ",").split(",");
-				String classdir = new String();
-				for (int c = 0; c < classnameArr.length - 1; c++) {
-					if (c == 0) {
-						classdir = classdir + classnameArr[c];
-					} else {
-						classdir = classdir + File.separator + classnameArr[c];
-					}
-
+//				// then parse classname
+//				String classname = newLine;
+//				String[] classnameArr = classname.replace(".", ",").split(",");
+//				String classdir = new String();
+//				for (int c = 0; c < classnameArr.length - 1; c++) {
+//					if (c == 0) {
+//						classdir = classdir + classnameArr[c];
+//					} else {
+//						classdir = classdir + File.separator + classnameArr[c];
+//					}
+//
+//				}
+//				realSavePath = new File(savePath).getParentFile()
+//						+ "/WEB-INF/classes/";
+//				realSavePath = realSavePath + classdir + File.separator;
+//				new File(realSavePath).mkdirs();
+				
+				try {
+					handleUpload(in, type, newLine);
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				realSavePath = new File(savePath).getParentFile()
-						+ "/WEB-INF/classes/";
-				realSavePath = realSavePath + classdir + File.separator;
-				new File(realSavePath).mkdirs();
 			}
 
 			if (newLine.startsWith("Content-Disposition: form-data; name=\"")) {
@@ -292,16 +318,227 @@ public class ConfigUploadBean {
 
 			i = in.readLine(line, 0, 128);
 		} // end while
-		if (realSavePath.length() > 0) {
-			LOGGER.info("User Configuration file received and saved at: "
-					+ realSavePath + filename);
-		} else {
-			LOGGER.info("User Configuration file received and saved at: "
-					+ savePath + filename);
+//		if (realSavePath.length() > 0) {
+//			LOGGER.info("User Configuration file received and saved at: "
+//					+ realSavePath + filename);
+//		} else {
+//			LOGGER.info("User Configuration file received and saved at: "
+//					+ savePath + filename);
+//		}
+	}
+	
+	private void handleUpload(ServletInputStream in, String type, String newLine) throws Exception{
+		
+		if(type.equals("javaProcess")){
+			
+			// then parse classname
+			String classname = newLine;
+			String[] classnameArr = classname.replace(".", ",").split(",");
+			String classdir = new String();
+			for (int c = 0; c < classnameArr.length - 1; c++) {
+				if (c == 0) {
+					classdir = classdir + classnameArr[c];
+				} else {
+					classdir = classdir + File.separator + classnameArr[c];
+				}
+
+			}
+			realSavePath = new File(savePath).getParentFile()
+					+ "/WEB-INF/classes/";
+			realSavePath = realSavePath + classdir + File.separator;
+			new File(realSavePath).mkdirs();
+			
+			while (i != -1) {
+
+			newLine = new String(line, 0, i);
+			System.out.println(newLine);
+			
+			if (newLine.startsWith("Content-Disposition: form-data; name=\"")) {
+				if (newLine.contains("processFile")) {
+					// we upload files not config docuements. Therefore store is
+					// somewhere else.
+					// realSavePath = new
+					// File(savePath).getParentFile().getAbsolutePath()+"/WEB-INF/classes/";
+
+					/**
+					 * TODO: dir structure according to fully qual classname
+					 */
+
+					if (newLine.indexOf("filename=\"") != -1) {
+						setFilename(new String(line, 0, i - 2));
+						if (filename == null) {
+							return;
+						}
+
+						// this is the file content
+						i = in.readLine(line, 0, 128);
+						// next line
+						i = in.readLine(line, 0, 128);
+						// blank line
+						i = in.readLine(line, 0, 128);
+						newLine = new String(line, 0, i);
+						// add the prefix to the filename
+
+						PrintWriter pw = null;
+						if (realSavePath.length() > 0) {
+							pw = new PrintWriter(new BufferedWriter(
+									new FileWriter((realSavePath == null ? ""
+											: realSavePath)
+											+ filename)));
+						} else {
+							filename = filenamePrefix + filename;
+							pw = new PrintWriter(new BufferedWriter(
+									new FileWriter((savePath == null ? ""
+											: savePath)
+											+ filename)));
+						}
+
+						while (i != -1 && !newLine.startsWith(boundary)) {
+							// the problem is the last line of the file content
+							// contains the new line character.
+							// So, we need to check if the current line is
+							// the last line.
+							i = in.readLine(line, 0, 128);
+							if ((i == boundaryLength + 2 || i == boundaryLength + 4) // +
+																						// 4
+																						// is
+																						// eof
+									&& (new String(line, 0, i)
+											.startsWith(boundary))) {
+
+								pw.print(newLine.substring(0,
+										newLine.length() - 2));
+							} else {
+								pw.print(newLine);
+							}
+
+							newLine = new String(line, 0, i);
+						}
+						pw.close();
+					}
+
+				}
+
+			}
+
+			i = in.readLine(line, 0, 128);
+		} // end while
+			if (realSavePath.length() > 0) {
+				LOGGER.info("User Configuration file received and saved at: "
+						+ realSavePath + filename);
+			} else {
+				LOGGER.info("User Configuration file received and saved at: "
+						+ savePath + filename);
+			}
+			if (realSavePath.length() > 0) {
+				compile(realSavePath + filename);
+			}
+			
+		}else if(type.equals("rScript")){
+			// if processName is not empty it will the filename (script will be renamed)
+			// because r process IDs are derived from the filenames
+			String processName = newLine.trim();
+			realSavePath = new File(savePath).getParentFile()
+			+ "/WEB-INF/R/scripts/";
+			new File(realSavePath).mkdirs();
+			
+			while (i != -1) {
+
+				newLine = new String(line, 0, i);
+				System.out.println(newLine);
+				
+				if (newLine.startsWith("Content-Disposition: form-data; name=\"")) {
+					if (newLine.contains("rProcessFile")) {
+						// we upload files not config documents. Therefore store is
+						// somewhere else.
+						// realSavePath = new
+						// File(savePath).getParentFile().getAbsolutePath()+"/WEB-INF/classes/";
+
+						/**
+						 * TODO: dir structure according to fully qual classname
+						 */
+
+						if (newLine.indexOf("filename=\"") != -1) {
+							
+							//filename is either the process name or the original file name
+							if(processName != null && !processName.isEmpty()){
+								filename = processName +".R";
+							}else
+								setFilename(new String(line, 0, i - 2));
+							
+							if (filename == null) {
+								return;
+							}
+
+							// this is the file content
+							i = in.readLine(line, 0, 128);
+							// next line
+							i = in.readLine(line, 0, 128);
+							// blank line
+							i = in.readLine(line, 0, 128);
+							newLine = new String(line, 0, i);
+							// add the prefix to the filename
+
+							PrintWriter pw = null;
+							if (realSavePath.length() > 0) {
+								pw = new PrintWriter(new BufferedWriter(
+										new FileWriter((realSavePath == null ? ""
+												: realSavePath)
+												+ filename)));
+							} else {
+								filename = filenamePrefix + filename;
+								pw = new PrintWriter(new BufferedWriter(
+										new FileWriter((savePath == null ? ""
+												: savePath)
+												+ filename)));
+							}
+
+							while (i != -1 && !newLine.startsWith(boundary)) {
+								// the problem is the last line of the file content
+								// contains the new line character.
+								// So, we need to check if the current line is
+								// the last line.
+								i = in.readLine(line, 0, 128);
+								if ((i == boundaryLength + 2 || i == boundaryLength + 4) // +
+																							// 4
+																							// is
+																							// eof
+										&& (new String(line, 0, i)
+												.startsWith(boundary))) {
+
+									pw.print(newLine.substring(0,
+											newLine.length() - 2));
+								} else {
+									pw.print(newLine);
+								}
+
+								newLine = new String(line, 0, i);
+							}
+							pw.close();
+
+
+						}
+						
+						RPropertyChangeManager rmanager = RPropertyChangeManager.getInstance();
+						LOGGER.info("R script uploaded, call to RPropertyChangeManager");
+						rmanager.addUnregisteredScripts();
+					}
+
+				}
+
+				i = in.readLine(line, 0, 128);
+			} // end while
+				if (realSavePath.length() > 0) {
+					LOGGER.info("User Configuration file received and saved at: "
+							+ realSavePath + filename);
+				} else {
+					LOGGER.info("User Configuration file received and saved at: "
+							+ savePath + filename);
+				}
+				if (realSavePath.length() > 0) {
+				}			
 		}
-		if (realSavePath.length() > 0) {
-			compile(realSavePath + filename);
-		}
+		
 	}
 
 	public void compile(String fileName) {

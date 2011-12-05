@@ -30,6 +30,22 @@
 	overflow: none;
 }
 
+#box2
+{
+	display: none;
+	position: absolute;
+	top: 20%;
+	left: 20%;
+	width: 400px;
+	height: 250px;
+	padding: 48px;
+	margin:0;
+	border: 1px solid black;
+	background-color: white;
+	z-index:101;
+	overflow: none;
+}
+
 #boxtitle
 {
 	position:absolute;
