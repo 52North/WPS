@@ -427,9 +427,15 @@ public class ExecuteRequest extends Request implements IObserver {
 		if(desc.getDataInputs()!=null){
 			InputDescriptionType[] inputDescs = desc.getDataInputs().getInputArray();
 		
-
+		//prevent NullPointerException for zero input values in execute request (if only default values are used)
+		InputType[] inputs;
+		if(getExecute().getDataInputs()==null)
+				inputs=new InputType[0];
+		else
+			inputs = getExecute().getDataInputs().getInputArray();
+			
 			// For each input supplied by the client
-			for (InputType input : getExecute().getDataInputs().getInputArray()) {
+			for (InputType input : inputs) {
 				boolean identifierMatched = false;
 				// Try to match the input with one of the descriptions
 				for (InputDescriptionType inputDesc : inputDescs) {
