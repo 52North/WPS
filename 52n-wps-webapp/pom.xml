@@ -166,6 +166,11 @@
             <version>${project.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-r</artifactId>
+            <version>${project.version}</version>
+        </dependency>
        
      <!--   
          <dependency>

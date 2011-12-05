@@ -139,6 +139,7 @@ public class WebProcessingService extends HttpServlet {
 		}
 		LOGGER.info("Initialization of wps properties successful!");
 			
+		BASE_DIR = this.getServletContext().getRealPath("");
 		
 		Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
 		ParserFactory.initialize(parsers);
@@ -163,7 +164,7 @@ public class WebProcessingService extends HttpServlet {
 		}
 		LOGGER.info("webappPath is set to: " + customWebappPath);
 		
-		BASE_DIR = this.getServletContext().getRealPath("");
+
 		try {
 			CapabilitiesConfiguration.getInstance(
 					BASE_DIR + System.getProperty("file.separator") +

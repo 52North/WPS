@@ -137,7 +137,7 @@
         <module>52n-wps-webadmin</module>
         <module>52n-wps-ags</module>
         <module>52n-wps-python</module>
-    
+    	<module>52n-wps-r</module>
        
   </modules>
     <dependencies>
@@ -245,7 +245,11 @@
             	<artifactId>52n-wps-python</artifactId>
             	<version>${project.version}</version>
 			</dependency>
-
+			<dependency>
+            	<groupId>${project.groupId}</groupId>
+            	<artifactId>52n-wps-r</artifactId>
+            	<version>${project.version}</version>
+			</dependency>
            
         
         <!--
