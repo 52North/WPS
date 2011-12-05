@@ -180,9 +180,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 				boolean success = readSkript(rSkriptStream, rCon);
 				if(!success){
 					rCon.close();
-					String message = "Error while reading R Skript\nSee previous Logs for Details";
-					LOGGER.error(message);
-					throw new RuntimeException(message);
+					String message = "Failure while executing R Script\nSee previous Logs for Details";
+					LOGGER.warn(message);
 				}
 				 
 				//retrieving result (REXP - Regular Expression Datatype)
@@ -560,17 +559,18 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 	
 	/**
 	 * 
-	 * @param skript R input skript
+	 * @param script R input script
 	 * @param rCon Connection - should be open usually / 
-	 * otherwise it will be opende and closed separately
-	 * @return true if read was successfull
+	 * otherwise it will be opened and closed separately
+	 * @return true if read was successful
 	 * @throws RserveException
 	 * @throws IOException 
+	 * @throws RuntimeException if R reports an error
 	 */
-	private boolean readSkript(InputStream skript, RConnection rCon) throws RserveException, IOException{
+	private boolean readSkript(InputStream script, RConnection rCon) throws RserveException, IOException{
 		boolean success = true;
 		
-		BufferedReader fr = new BufferedReader(new InputStreamReader(skript));
+		BufferedReader fr = new BufferedReader(new InputStreamReader(script));
 		//reading skript:
 		StringBuilder text = new StringBuilder();
 		//surrounds R skript with try / catch block in R and an initial digit setting
@@ -592,17 +592,18 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 		);
 		rCon.eval(text.toString());
 		try {		
-			//retrieving internal R error if occured:
+			//handling internal R errors:
 			if(rCon.eval("hasError").asInteger() == 1){
-				String message = "Internal R error occured while reading skript: "
+				String message = "An R-error occured while executing R-script: \n"
 						+rCon.eval("error_message").asString();
 				LOGGER.error(message);
 				success = false;
+				throw new RuntimeException(message);
 			}
 
 		//retrieving error from Rserve
 		} catch (REXPMismatchException e) {
-			 LOGGER.error("Error handling during R-script execution failed: "+e.getMessage());
+			 LOGGER.warn("Error handling during R-script execution failed: "+e.getMessage());
 			 success=false;
 		}
 		
