@@ -164,7 +164,9 @@ public class ExecuteRequest extends Request implements IObserver {
 			throw new ExceptionReport("Error while parsing post data",
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
-
+		if(!this.execDom.validate()) {
+			throw new ExceptionReport("Execute request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		// validate the client input
 		LOGGER.info("ExecuteRequest received: "+execDom.toString());
 		validate();
@@ -629,8 +631,15 @@ public class ExecuteRequest extends Request implements IObserver {
 			}
 			
 			if (algorithm instanceof AbstractTransactionalAlgorithm) {
+				try {
 				returnResults = ((AbstractTransactionalAlgorithm) algorithm)
 						.run(this);
+				}
+				catch(Exception ie) {
+					LOGGER.info("interruption exception");
+					ie.printStackTrace();
+					return null;
+				}
 				try {
 					LOGGER.info("Storing audit...");
 					AbstractTransactionalAlgorithm.storeAuditLongDocument(this
@@ -670,12 +679,14 @@ public class ExecuteRequest extends Request implements IObserver {
 				returnResults = algorithm.run(parser.getParsedInputData());
 			}
 			/**
-			 * Check if the thread was cancelled (exception is generated here to
-			 * avoid to change the run() inteface of IAlgorithm but it would be
-			 * better to throw a CancellationException
+			 * Check if the thread was cancelled (interruption is catched here to
+			 * avoid to change the run() inteface of IAlgorithm
 			 */
 			if (Thread.currentThread().isInterrupted()) {
-				throw new CancellationException("Task Cancelled");
+				// if task was cancelled do nothing (all is done inside the
+				// cancel request implementation
+				LOGGER.info("thread is interrupted");
+				return null;
 			}
 
 		} catch (Exception e) {
@@ -690,6 +701,21 @@ public class ExecuteRequest extends Request implements IObserver {
 					"Error while executing the embedded process for: "
 							+ getAlgorithmIdentifier(),
 					ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
+			try {
+				LOGGER.info("Storing audit...");
+				AbstractTransactionalAlgorithm.storeAuditLongDocument(this
+						.getUniqueId().toString(),
+						((AbstractTransactionalAlgorithm) algorithm)
+								.getAuditLongForm());
+				AbstractTransactionalAlgorithm.storeAuditDocument(this
+						.getUniqueId().toString(),
+						((AbstractTransactionalAlgorithm) algorithm)
+								.getAudit());
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				LOGGER.info("Audit storing failed");
+				e1.printStackTrace();
 			}
 			// send callback with exception
 			if (addressingHeader != null) {
@@ -716,10 +742,32 @@ public class ExecuteRequest extends Request implements IObserver {
 				+ getAlgorithmIdentifier());
 		StatusType status = StatusType.Factory.newInstance();
 		status.setProcessSucceeded("Process successful");
-		this.getExecuteResponseBuilder().setStatus(status);
-		ExecuteResponse execResp = new ExecuteResponse(this);
+		ExecuteResponse execResp =null;
+		try {
+			this.getExecuteResponseBuilder().setStatus(status);
+			LOGGER.info("creating execute response");
+			execResp = new ExecuteResponse(this);
+		}
+		catch(ExceptionReport e) {
+			LOGGER.info("catched exception report when creating Execute Response");
+			LOGGER.info("unset process outputs");
+			this.getExecuteResponseBuilder().getDoc().getExecuteResponse().unsetProcessOutputs();
+			LOGGER.info("set status failed");
+			StatusType statusFailed = StatusType.Factory.newInstance();
+			statusFailed.addNewProcessFailed().setExceptionReport(e.getExceptionDocument().getExceptionReport());
+			this.getExecuteResponseBuilder().setStatus(statusFailed);
+			LOGGER.info("**************          ************** Current Ex resp");
+			LOGGER.info(this.getExecuteResponseBuilder().getDoc().toString());
+			execResp = new ExecuteResponse(this);
+			LOGGER.info("created execute response for exception");
+		}
+		catch(Exception e2) {
+			LOGGER.info("catched unexpected general exception");
+			e2.printStackTrace();
+		}
 		if (addressingHeader != null) {
 			try {
+				LOGGER.info("send callback for exception");
 				execResp.sendCallback(addressingHeader);
 			
 			} catch (Exception e) {

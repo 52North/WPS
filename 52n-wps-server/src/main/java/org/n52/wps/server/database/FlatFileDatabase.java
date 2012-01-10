@@ -93,7 +93,7 @@ public class FlatFileDatabase implements IDatabase {
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#insertResponse(org.n52.wps.server.response.Response)
 	 */
-	public String insertResponse(Response response) {
+	public String insertResponse(Response response) throws ExceptionReport {
 		// TODO Auto-generated method stub
 		return this.storeResponse(response);
 	}
@@ -185,7 +185,7 @@ public class FlatFileDatabase implements IDatabase {
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#storeResponse(org.n52.wps.server.response.Response)
 	 */
-	public String storeResponse(Response response) {
+	public String storeResponse(Response response) throws ExceptionReport {
 		Request request = response.getRequest();
 		if(!(request instanceof ExecuteRequest)){
 			throw new RuntimeException("Could not store response in Flatfile Database. Response id = " + response.getUniqueId());
@@ -212,7 +212,7 @@ public class FlatFileDatabase implements IDatabase {
 			IOUtils.write(mimeType, fos_mime);
 			fos_mime.close();
 		}catch(ExceptionReport e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 		catch(FileNotFoundException e) {
 			throw new RuntimeException(e);
@@ -227,7 +227,7 @@ public class FlatFileDatabase implements IDatabase {
 	/* (non-Javadoc)
 	 * @see org.n52.wps.server.database.IDatabase#updateResponse(org.n52.wps.server.response.Response)
 	 */
-	public void updateResponse(Response response) {
+	public void updateResponse(Response response) throws ExceptionReport {
 		
 		this.storeResponse(response);
 

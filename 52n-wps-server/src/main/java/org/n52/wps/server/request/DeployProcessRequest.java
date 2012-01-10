@@ -51,14 +51,17 @@ public class DeployProcessRequest extends Request {
 			// Parse (with XMLBeans generated library) the request
 			this.deployProcessDom = DeployProcessDocument.Factory.parse(doc,
 					option);
-			if (this.deployProcessDom == null) {
+		} catch (XmlException e) {
+			throw new ExceptionReport("Error while parsing post data",
+					ExceptionReport.MISSING_PARAMETER_VALUE, e);
+		}
+			if (this.deployProcessDom == null ) {
 				LOGGER.fatal("DeployProcessDocument is null");
 				throw new ExceptionReport("Error while parsing post data",
 						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-		} catch (XmlException e) {
-			throw new ExceptionReport("Error while parsing post data",
-					ExceptionReport.MISSING_PARAMETER_VALUE, e);
+		if(!this.deployProcessDom.validate()) {
+			throw new ExceptionReport("DeployProcess request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
 		// TODO Validate the request (semantic compliance)
 		// validate();
@@ -72,6 +75,9 @@ public class DeployProcessRequest extends Request {
 		}
 		processDescription = getDeployProcessDom().getDeployProcess()
 				.getProcessDescription();
+		if(!processDescription.validate()) {
+			throw new ExceptionReport("Process Description is not valid according to the schema!",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		schema = getDeployProcessDom().getDeployProcess()
 				.getDeploymentProfile().getSchema().getHref();
 		if (schema == null) {

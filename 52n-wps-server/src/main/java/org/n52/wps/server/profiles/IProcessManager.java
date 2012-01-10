@@ -58,4 +58,5 @@ public interface IProcessManager {
 	
 	String getIID();
 	void callback(ExecuteResponseDocument execRespDom);
+	void cancel();
 }

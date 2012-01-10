@@ -78,6 +78,13 @@ public class ExecuteResponse extends Response {
 		}
 	}
 
+	/**
+	 * Note : Can be called either with a FileOutputStream (by ExecuteRequest),
+	 * either for the response (http outputstream) (and then also the fileoutputstream must be called)
+	 * In my opinion, the class should be simplified using 2 separate method:
+	 * saveStatusFile
+	 * and saveAll (for HTTP stream) which call saveStatusFile itself
+	 */
 	public void save(OutputStream os) throws ExceptionReport {
 		// workaround, to avoid infinite processing.
 		if (!alreadyStored) {
@@ -116,7 +123,7 @@ public class ExecuteResponse extends Response {
 			}
 		}
 		LOGGER.info("sending callback service client...");
-		ServiceClient sender = getCallbackClient();
+		ServiceClient sender = new ServiceClient();
 
 		LOGGER.info("target EPR:"
 				+ replyToBlock.getReplyTo().getAddress().getStringValue());
@@ -144,6 +151,7 @@ public class ExecuteResponse extends Response {
 	
 	}
 
+	// use this if you want a single ServiceClient (TODO to be deleted)
 	public static ServiceClient getCallbackClient() {
 		if (executeClient == null) {
 			try {

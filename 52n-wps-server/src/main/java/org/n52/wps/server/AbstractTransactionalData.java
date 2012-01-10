@@ -60,9 +60,7 @@ public abstract class AbstractTransactionalData  {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
+		
 		File directory = new File(subPath + "WEB-INF/DataDescriptions/");
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -96,9 +94,7 @@ public abstract class AbstractTransactionalData  {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
+		
 		String path = subPath + "WEB-INF/DataDescriptions/" + processId
 				+ ".xml";
 		LOGGER.info(path);

@@ -34,45 +34,13 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.io.datahandler.xml;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import net.opengis.examples.packet.DataType;
-import net.opengis.examples.packet.GMLPacketDocument;
-import net.opengis.examples.packet.GMLPacketType;
-import net.opengis.examples.packet.PropertyType;
-import net.opengis.examples.packet.StaticFeatureType;
-import net.opengis.examples.packet.PropertyType.Value;
-import net.opengis.gml.CoordType;
-import net.opengis.gml.LineStringPropertyType;
-import net.opengis.gml.LinearRingMemberType;
-import net.opengis.gml.LinearRingType;
-import net.opengis.gml.PointPropertyType;
-import net.opengis.gml.PolygonType;
-
-import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.IStreamableGenerator;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.URLListDataBinding;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
-import org.opengis.feature.simple.SimpleFeature;
 import org.w3c.dom.Node;
-
-import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 public class URLListGenerator extends AbstractXMLGenerator implements IStreamableGenerator {
 	

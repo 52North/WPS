@@ -65,7 +65,9 @@ public class DeployDataRequest extends Request {
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
 		// Validate the request
-		validate();
+		if(!this.deployDataDom.validate()) {
+			throw new ExceptionReport("DeployData request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		// Get useful infos
 		dataID = getDeployDataDom().getDeployData().getDataDescription().getIdentifier().getStringValue();
 		 dataDescription = getDeployDataDom().getDeployData().getDataDescription();

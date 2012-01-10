@@ -271,33 +271,34 @@
 		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository" active="true">		
 			<Property name="Algorithm" active="true">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
 		</Repository>-->
+		
     <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
-      <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
+     <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
       <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaProcessManager</Property>
       <Property name="WorkspaceLocationRoot" active="true"/>
       <Property name="supportedFormat" active="true">saga.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile</Property>
-      <Property name="WPSSagaHome" active="true">/wps/saga/</Property>
-      <Property name="DeployDirectory" active="true">/wps/saga/deploy/</Property>
+      <Property name="GridFilesDir" active="true">/ssegrid/gaiwps/</Property>
+      <Property name="WPSPublicationPrefix" active="true">http://ssegrid.vgt.vito.be/gaiwps/</Property>
+      <Property name="SagaLibDir" active="true">/ssegrid/saga/</Property>
       <Property name="GridGlue" active="true">http://ssegrid.vgt.vito.be/config/VITOGrid_GLUE.xml</Property>
       <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
       <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
-      <Property name="DataDeployDirectory" active="true">/wps/saga/deploy/auxdata/</Property>
+      <Property name="DataDeployDirectory" active="true">/ssegrid/gaiwps/deploy/auxdata/</Property>
     </Repository>
+
+<!-- 
     <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
       <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
       <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.IntalioBPMS.ApacheOdeProcessManager</Property>
-      <Property name="WorkspaceLocationRoot" active="true"/>
       <Property name="supportedFormat" active="true">apacheode.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property>
+      <Property name="SSEGrid_Home" active="true">/wps/saga/</Property>
       <Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito.spacebel.be:8080/axis2/services/DeploymentService</Property>
       <Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/ProcessManagement</Property>
       <Property name="Ode_ProcessesPrefix" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/</Property>
-      <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
-      <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
-      <Property name="DataDeployDirectory" active="true">D:\wps\data/</Property>
-      
-    </Repository>
+      </Repository>
+     -->
     <!--<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
 		</Repository>-->
     <!--<Repository name="AGSProcessRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">

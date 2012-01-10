@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -51,14 +52,14 @@ public interface IDatabase {
 	public String getDatabaseName();
 	
 	// Insert a new Response into the Database.
-	public String insertResponse(Response response);
+	public String insertResponse(Response response) throws ExceptionReport;
 
 	// Update the Response in the Database, based on the Identifier.
-	public void updateResponse(Response response);
+	public void updateResponse(Response response) throws ExceptionReport;
 	
 	// Store the Response of a deferred Request. It either gets inserted into
 	// the databse, or it updates a previous Response, based on the identifier.
-	public String storeResponse(Response response);
+	public String storeResponse(Response response) throws ExceptionReport;
 	
 	// Retrieve the Response on a previous Request, based on an unique
 	// identifier, which was already given to the client for reference.

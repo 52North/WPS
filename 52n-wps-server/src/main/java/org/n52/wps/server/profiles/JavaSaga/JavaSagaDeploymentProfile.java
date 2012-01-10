@@ -32,6 +32,7 @@ package org.n52.wps.server.profiles.JavaSaga;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -45,12 +46,20 @@ import net.opengis.wps.x100.SagaDeploymentProfileType;
 import net.opengis.wps.x100.SagaDeploymentProfileType.JsdlTemplate;
 import net.opengis.wps.x100.impl.ApacheOdeDeploymentProfileTypeImpl;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
+
+
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
 import org.ogf.saga.job.Job;
 import org.w3c.dom.Node;
+
+import sun.net.ftp.FtpClient;
 
 /** 
  * TODO rename ApacheOdeDeployementProfile to match to the XSD element type
@@ -76,7 +85,7 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 
 			extractInformation(deployDom);
 		} catch (Exception e) {
-
+			LOGGER.info(e.getStackTrace().toString());
 			e.printStackTrace();
 		}
 
@@ -102,6 +111,10 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 			throws Exception {
 		LOGGER.info("extract information from saga profile");
 		SagaDeploymentProfileType deployProfile = (SagaDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile().changeType(SagaDeploymentProfileType.type);
+		if(!deployProfile.validate()) {
+			throw new ExceptionReport("Saga Deploy Profile is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
+
 		LOGGER.info("deployProfile doc:"+deployProfile.toString());
 		setProcessId(deployDom.getDeployProcess().getProcessDescription()
 				.getIdentifier().getStringValue());
@@ -121,36 +134,86 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 		setJsdlTemplate(deployProfile.getJsdlTemplate());
 	}
 
+	private byte[] downloadHTTP(String url) throws Exception {
+		URL u = new URL(url);
+		URLConnection uc = u.openConnection();
+	    String contentType = uc.getContentType();
+	    int contentLength = uc.getContentLength();
+	    InputStream raw = uc.getInputStream();
+	    InputStream in = new BufferedInputStream(raw);
+	    byte[] data = new byte[contentLength];
+	    int bytesRead = 0;
+	    int offset = 0;
+	    LOGGER.info("loading started...");
+	    while (offset < contentLength) {
+	    	System.out.print(".");
+	      bytesRead = in.read(data, offset, data.length - offset);
+	      if (bytesRead == -1)
+	        break;
+	      offset += bytesRead;
+	    }
+	    in.close();
+	    if (offset != contentLength) {
+	      throw new IOException("Only read " + offset + " bytes; Expected " + contentLength + " bytes");
+	    }
+	   return data;
+	}
+	
 	/**
 	 * This method download a binary file located at the given URL and returns the byte array
 	 * @param archiveRef2
 	 * @return
 	 * @throws IOException
 	 */
-	private byte[] downloadArchive(String archiveRef2) throws IOException {
-		LOGGER.info("Downloading url "+archiveRef2); 
-		URL u = new URL(archiveRef2);
-		    URLConnection uc = u.openConnection();
-		    String contentType = uc.getContentType();
-		    int contentLength = uc.getContentLength();
-		    InputStream raw = uc.getInputStream();
-		    InputStream in = new BufferedInputStream(raw);
-		    byte[] data = new byte[contentLength];
-		    int bytesRead = 0;
-		    int offset = 0;
-		    LOGGER.info("loading started...");
-		    while (offset < contentLength) {
-		    	System.out.print(".");
-		      bytesRead = in.read(data, offset, data.length - offset);
-		      if (bytesRead == -1)
-		        break;
-		      offset += bytesRead;
-		    }
-		    in.close();
-		    if (offset != contentLength) {
-		      throw new IOException("Only read " + offset + " bytes; Expected " + contentLength + " bytes");
-		    }
-		   return data;
+	private byte[] downloadArchive(String url) throws IOException {
+		LOGGER.info("Downloading url "+url); 
+		URL u = new URL(url);
+		if (StringUtils.startsWithIgnoreCase(url, "http://")
+				|| StringUtils
+						.startsWithIgnoreCase(url, "https://")) {
+			LOGGER.info("HTTP protocol");
+			byte[] data=null;
+			try {
+				data = downloadHTTP(url);
+			} catch (Exception e) {
+				LOGGER.info(e.getMessage());
+				LOGGER.info(e.getStackTrace().toString());
+				e.printStackTrace();
+			}
+			return data;
+		} else if (StringUtils.startsWithIgnoreCase(url, "ftp://")) {
+			LOGGER.info("FTP protocol");
+			byte[] data=null;
+			try {
+				data = downloadFTP(url);
+			} catch (Exception e) {
+				LOGGER.info(e.getMessage());
+				LOGGER.info(e.getStackTrace().toString());
+				e.printStackTrace();
+			}
+			return data;
+					}
+		return null;
+	}
+
+	private byte[] downloadFTP(String url) throws Exception {
+		URL u = new URL(url);
+		FTPClient client = new FTPClient();
+	    ByteArrayOutputStream fos = null;
+	    client.connect(u.getHost(), u.getPort());
+	    // hardcoded
+	    client.login("ftpuser", "ssegrid");
+	    int reply = client.getReplyCode();
+		if (!FTPReply.isPositiveCompletion(reply)) {
+			client.disconnect();
+		}
+	    String filename = u.getFile();
+	    fos = new ByteArrayOutputStream();
+	    client.retrieveFile(filename, fos);
+	    byte[] data = fos.toByteArray();
+	    fos.close();
+	    client.disconnect();
+		return data;
 	}
 
 	public void setArchive(byte[] archive) {

@@ -78,8 +78,11 @@
         <name>mpi-vito-releases</name>
         <url>http://mpi-vito.spacebel.be:8081/artifactory/libs-release-local</url>
     </repository>
-
-
+<repository>
+            <id>mvnrepository.com</id>
+            <name>mvnrepository.com</name>
+            <url>http://www.mvnrepository.com/artifacts</url>
+        </repository>
   </repositories>
   
     <build>

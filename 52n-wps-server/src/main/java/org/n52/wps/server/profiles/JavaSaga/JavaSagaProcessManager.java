@@ -59,6 +59,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -110,15 +111,19 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	private String processesPrefix;
 	// Location for process deployement
 	private String deployProcessDir;
+	private String WPSPublicationPrefix;
 	private HashMap<String, String> WPSmap;
 
 	private String IID;
 	private String processInstanceID;
+	
 	private String processID;
-	private static String WPSSagaHome;
+	private static String GridFilesDir;
+	private static String SagaLibDir;
 	private static org.ogf.saga.url.URL gridmapGLUE;
 	private static ProcessingRegistry pr;
-
+	private JobImpl runningJob;
+	private boolean cancelHack;
 	// Asychronous execute client must be shared between threads
 	/**
 	 * TODO delete
@@ -147,30 +152,49 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		Property[] properties = WPSConfig.getInstance()
 				.getPropertiesForRepositoryName("JavaSagaRepository");
 		Property WPSSaga = WPSConfig.getInstance().getPropertyForKey(
-				properties, "WPSSagaHome");
+				properties, "GridFilesDir");
 		if (WPSSaga == null) {
 			throw new RuntimeException(
-					"Error. Could not find the required WPSSagaHome property in wps_config.xml");
+					"Error. Could not find the required GridFilesDir property in wps_config.xml");
 		}
-		setWPSSagaHome(WPSSaga.getStringValue());
+		setGridFilesDir(WPSSaga.getStringValue());
+		Property sagaLibProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "SagaLibDir");
+		if (sagaLibProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required SagaLibDir property in wps_config.xml");
+		}
+		setSagaLibDir(sagaLibProp.getStringValue());
+		System.setProperty("saga.location", getSagaLibDir());
+		Property wpsPublicRoot = WPSConfig.getInstance()
+		.getPropertyForKey(properties, "WPSPublicationPrefix");
+if (wpsPublicRoot == null) {
+	throw new RuntimeException(
+			"Error. Could not find WPSPublicationPrefix");
+}
+setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
+
 		// Set the deployement process directory
-		setDeployProcessDir(WPSSagaHome + "deploy/process/");
+		setDeployProcessDir(GridFilesDir + "deploy/process/");
 		Property gridmap = WPSConfig.getInstance().getPropertyForKey(
 				properties, "GridGlue");
 		if (gridmap == null) {
 			throw new RuntimeException(
 					"Error. Could not find the required GridGlue property in wps_config.xml");
 		}
+		// Saga.location must be loaded before the following line
 		JavaSagaProcessManager.gridmapGLUE = URLFactory.createURL(gridmap
 				.getStringValue());
 		/**
 		 * Set the required system properties (instead of setting them from
 		 * tomcat script)
 		 */
+		
 		System.setProperty("gai.default.rm", gridmapGLUE.toString());
-		System.setProperty("org.globus.tcp.port.range", "20000,20200");
+		System.setProperty("gai.debug.working.dir", "true");
+		System.setProperty("org.globus.tcp.port.range", "20000,20500");
 		System.setProperty("gai.deploy.process.path", getDeployProcessDir());
-
+		// Add port range prop org.globus.tcp.port.range="20000,20200" 
 		// TODO remove (useless here : getPRInstance();)
 
 	}
@@ -212,8 +236,8 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	 * 
 	 * @return
 	 */
-	public static String getWPSSagaHome() {
-		return WPSSagaHome;
+	public static String getGridFilesDir() {
+		return GridFilesDir;
 	}
 
 	/**
@@ -221,8 +245,8 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	 * 
 	 * @param wPSSagaHome
 	 */
-	public static void setWPSSagaHome(String wPSSagaHome) {
-		WPSSagaHome = wPSSagaHome;
+	public static void setGridFilesDir(String gFilesDir) {
+		GridFilesDir = gFilesDir;
 	}
 
 	/**
@@ -345,7 +369,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 				.newInstance();
 		jsdl.addNewJobDefinition().set(jsdlTemplate.getJobDefinition());
 		LOGGER.info("JSDL to wrile:" + jsdl);
-		String dirPath = WPSSagaHome + "JSDLtemplates";
+		String dirPath = GridFilesDir + "JSDLtemplates";
 		LOGGER.info(dirPath);
 		File directory = new File(dirPath);
 		if (!directory.exists()) {
@@ -371,7 +395,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	private void unregisterJSDL(String processId)
 			throws NoSuchElementException, FileNotFoundException, IOException,
 			JSDLNotApplicableException, JSDLException {
-		String dirPath = WPSSagaHome + "JSDLtemplates";
+		String dirPath = GridFilesDir + "JSDLtemplates";
 		String jsdlPath = dirPath + File.separator + processId + ".xml";
 		File f = new File(jsdlPath);
 		f.delete();
@@ -420,20 +444,25 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 
 	public Document invoke(ExecuteRequest req, String algorithmID)
 			throws Exception {
+		cancelHack = false;
+		setProcessInstanceID(req.getId());
 		ExecuteDocument doc = req.getExecDom();
 		this.processID = algorithmID;
 		// Initialize WPS Map
 		WPSmap = new HashMap<String, String>();
-		WPSmap.put("WPS_DEPLOY_PROCESS_DIR", WPSSagaHome + "deploy/process/");
-		WPSmap.put("WPS_DEPLOY_AUXDATA_DIR", WPSSagaHome + "deploy/auxdata/");
-		WPSmap.put("WPS_JOB_INPUTS_DIR", WPSSagaHome + "execute/" + processID
-				+ "/${GAI_JOB_UID}/inputs");
-		WPSmap.put("WPS_JOB_OUTPUTS_DIR", WPSSagaHome + "execute/" + processID
+		WPSmap.put("WPS_DEPLOY_PROCESS_DIR", GridFilesDir + "deploy/process/");
+		WPSmap.put("WPS_DEPLOY_AUXDATA_DIR", GridFilesDir + "deploy/auxdata/");
+		WPSmap.put("WPS_JOB_INPUTS_DIR", GridFilesDir + "execute/" + processID
+				+"/"+ getProcessInstanceID()+ "/${GAI_JOB_UID}/inputs");
+		WPSmap.put("WPS_JOB_OUTPUTS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
 				+ "/${GAI_JOB_UID}/outputs");
-		WPSmap.put("WPS_JOB_AUDITS_DIR", WPSSagaHome + "execute/" + processID
+		WPSmap.put("WPS_JOB_AUDITS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
 				+ "/${GAI_JOB_UID}/audits");
-		WPSmap.put("WPS_JOB_RESULTS_DIR", WPSSagaHome + "execute/" + processID
+		WPSmap.put("WPS_JOB_RESULTS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
 				+ "/${GAI_JOB_UID}/results");
+		WPSmap.put("WPS_JOB_RESULTS_URL", WPSPublicationPrefix + "execute/" + processID+"/"+ getProcessInstanceID()
+				+ "/${GAI_JOB_UID}/results");
+		
 		
 		ExecuteResponseDocument execRepDom = null;
 		this.setProcessID(algorithmID);
@@ -441,7 +470,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		// for user credentials information
 		Session session = SessionFactory.createSession(false);
 		Context context = ContextFactory.createContext("globus");
-		context.setAttribute(Context.USERPROXY, WPSSagaHome + "proxy");
+		context.setAttribute(Context.USERPROXY, GridFilesDir + "proxy");
 		session.addContext(context);
 		LOGGER.info(context.getAttribute(Context.USERPROXY));
 		// Get delegation to that user proxy and set propoerly context
@@ -532,7 +561,12 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 			}
 		}
 		if (literalInputs.size() > 0) {
+			try {
 			jsa.substituteSimpleInputs(jd, literalInputs);
+			}
+			catch(Exception e) {
+				throw new ExceptionReport(e.getMessage(), ExceptionReport.INVALID_PARAMETER_VALUE, e);
+			}
 		}
 		// Once JobDescription ready to run, create the jobs, run them, and wait
 		// for them.
@@ -567,12 +601,18 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		(new File(resultsDir)).mkdirs();
 
 		if (complexInputs.size() > 0) {
+			try {
 			jsa.writeComplexInputs(jobs, complexInputs);
+			}
+			catch(Exception e) {
+				throw new ExceptionReport(e.getMessage(), ExceptionReport.INVALID_PARAMETER_VALUE,e);
+			}
 		}
 		// Callbacks
 		jobs.addCallback(Job.JOB_STATE, new SagaCallbackManager());
 		jobs.addCallback(Job.JOB_STATEDETAIL, new SagaCallbackManager());
 		LOGGER.info("Running job...");
+		setRunningJob(jobs);
 		jobs.run();
 		LOGGER.info("saga job id:" + jobs.getId());
 		setIID(jobs.getId());
@@ -580,6 +620,10 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		// wait for all jobs in the job array
 		LOGGER.info("Waiting for...");
 		jobs.waitFor();
+		if(jobs.isCancelled() || cancelHack)
+		{
+			LOGGER.info("Force cancel if interruption not successful");
+			return null; }
 		// Check if any exitMessage is non null
 		boolean exitFault = false;
 		String[][] exitMessages;
@@ -654,7 +698,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 			execRepDom.addNewExecuteResponse();
 			execRepDom.getExecuteResponse().setLang("en");
 			execRepDom.getExecuteResponse().addNewProcessInstanceIdentifier()
-					.setInstanceId(jobs.JOBID);
+					.setInstanceId(req.getId());
 			execRepDom.getExecuteResponse().addNewStatus()
 					.setProcessSucceeded("success");
 			execRepDom.getExecuteResponse().addNewProcessOutputs();
@@ -737,7 +781,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 			LOGGER.info("exitMessage:" + exitMessages[i]);
 			ExceptionType ex = exceptionReport.addNewException();
 			ex.setExceptionCode(exitMessage[0]);
-			ex.setLocator("Task" + i);
+			ex.setLocator("Task" + (i+1));
 			ex.addExceptionText(exitMessage[1]);
 		}
 		// Adding additional Java exception
@@ -1024,12 +1068,13 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		LOGGER.info("short form apache get audit");
 		AuditTraceType audit = null;
 		URLListDocument auditURLS = URLListDocument.Factory.newInstance();
-		File auditDir = new File(WPSSagaHome + "execute" + File.separator
-				+ processID + File.separator + getIID() + File.separator
+		File auditDir = new File(GridFilesDir + "execute" + File.separator
+				+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
 				+ "audits" + File.separator);
+		
 		LOGGER.info("--------------------------------------------------------------------");
-		LOGGER.info("Audit dir: " + WPSSagaHome + "execute" + File.separator
-				+ processID + File.separator + getIID() + File.separator
+		LOGGER.info("Audit dir: " + GridFilesDir + "execute" + File.separator
+				+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
 				+ "audits" + File.separator);
 		String[] filenames = auditDir.list();
 		auditURLS.addNewURLList().setCount(filenames.length);
@@ -1038,10 +1083,9 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					.getURLList()
 					.addNewUrl()
 					.setStringValue(
-							WPSSagaHome + "execute" + File.separator
-									+ processID + File.separator + getIID()
-									+ File.separator + "audits"
-									+ File.separator + filename);
+							getWPSPublicationPrefix() + "execute" + File.separator
+							+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
+							+ "audits" + File.separator + filename);
 		}
 		try {
 			audit = AuditTraceType.Factory.parse(auditURLS.getDomNode());
@@ -1093,6 +1137,38 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	public void callback(ExecuteResponseDocument execRespDom) {
 		// TODO Auto-generated method stub
 		return;
+	}
+
+	public void setWPSPublicationPrefix(String wPSPublicationPrefix) {
+		WPSPublicationPrefix = wPSPublicationPrefix;
+	}
+
+	public String getWPSPublicationPrefix() {
+		return WPSPublicationPrefix;
+	}
+	public String getProcessInstanceID() {
+		return processInstanceID;
+	}
+
+	public static void setSagaLibDir(String sagaLibDir) {
+		SagaLibDir = sagaLibDir;
+	}
+
+	public static String getSagaLibDir() {
+		return SagaLibDir;
+	}
+	public void cancel() {
+		LOGGER.info("getrunning job cancel");
+		this.cancelHack = true;
+		this.getRunningJob().cancel(true);
+	}
+
+	public void setRunningJob(JobImpl runningJob) {
+		this.runningJob = runningJob;
+	}
+
+	public JobImpl getRunningJob() {
+		return runningJob;
 	}
 
 }

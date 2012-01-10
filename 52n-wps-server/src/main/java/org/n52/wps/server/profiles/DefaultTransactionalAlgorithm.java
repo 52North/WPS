@@ -74,7 +74,6 @@ public class DefaultTransactionalAlgorithm extends
 	private static Logger LOGGER = Logger
 			.getLogger(DefaultTransactionalAlgorithm.class);
 	private ProcessDescriptionType processDescription;
-	private String workspace;
 	private IProcessManager processManager;
 
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
@@ -83,8 +82,6 @@ public class DefaultTransactionalAlgorithm extends
 		super(processID);
 		WPSConfig wpsConfig = WPSConfig.getInstance();
 		Property[] properties = wpsConfig.getPropertiesForAlgorithm(processID);
-		setWorkspace(wpsConfig.getPropertyForKey(properties,
-				"WorkspaceLocationRoot").getStringValue());
 		try {
 			setProcessManager(TransactionalRepositoryManager
 					.getProcessManagerForSchema(wpsConfig.getPropertyForKey(
@@ -355,13 +352,7 @@ public class DefaultTransactionalAlgorithm extends
 		return processManager;
 	}
 
-	public void setWorkspace(String workspace) {
-		this.workspace = workspace;
-	}
-
-	public String getWorkspace() {
-		return workspace;
-	}
+	
 
 	public AuditTraceType getAudit() throws Exception {
 		LOGGER.info("short");
@@ -376,4 +367,11 @@ public void callback(ExecuteResponseDocument execRespDom) {
 	getProcessManager().callback(execRespDom);
 	return;
 	}
+
+@Override
+public void cancel() {
+	LOGGER.info("get process manager cancel");
+	 getProcessManager().cancel();
+	 return;
+}
 }

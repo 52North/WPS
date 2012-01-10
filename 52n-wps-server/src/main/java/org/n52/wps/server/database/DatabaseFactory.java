@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.datahandler.binary.LargeBufferStream;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.Response;
 
 /**
@@ -121,9 +122,10 @@ public class DatabaseFactory implements IDatabase
 	 * Insert a new Response into the Database.
 	 * 
 	 * @param response  The Response to insert.
+	 * @throws ExceptionReport 
 	 * @see #storeResponse(Response)
 	 */
-	public synchronized String insertResponse(Response response) {
+	public synchronized String insertResponse(Response response) throws ExceptionReport {
 		return DatabaseFactory.database.insertResponse(response);
 	}
 
@@ -131,9 +133,10 @@ public class DatabaseFactory implements IDatabase
 	 * Update the Response in the Database, based on the Identifier.
 	 * 
 	 * @param response  The Response to update
+	 * @throws ExceptionReport 
 	 * @see #storeResponse(Response)
 	 */
-	public synchronized void updateResponse(Response response) {
+	public synchronized void updateResponse(Response response) throws ExceptionReport {
 		DatabaseFactory.database.updateResponse(response);
 	}
 
@@ -142,8 +145,9 @@ public class DatabaseFactory implements IDatabase
 	 * the databse, or it updates a previous Response, based on the identifier.
 	 * 
 	 * @param response  The Response to store.
+	 * @throws ExceptionReport 
 	 */
-	public synchronized String storeResponse(Response response) {
+	public synchronized String storeResponse(Response response) throws ExceptionReport {
 		return DatabaseFactory.database.storeResponse(response);
 	}
 

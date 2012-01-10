@@ -18,8 +18,10 @@ import org.apache.axiom.soap.SOAPFaultReason;
 import org.apache.axiom.soap.SOAPFaultValue;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.impl.soap.SOAPException;
 import org.n52.wps.server.handler.SOAPRequestHandler;
+import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,6 +34,7 @@ import org.w3c.dom.Element;
 
 public class WebProcessingServiceSoap {
 
+	private static Logger LOGGER = Logger.getLogger(WebProcessingServiceSoap.class);
 	private MessageContext m_msgCtx;
 
 	public OMElement execute(OMElement input) throws Exception {
@@ -108,7 +111,8 @@ public class WebProcessingServiceSoap {
 			
 			
 		} catch (ExceptionReport serviceException) {
-
+			LOGGER.warn("Responding with SOAP Exception:");
+			LOGGER.warn(serviceException.getExceptionDocument().toString());
 			OMElement faultElement = XMLUtils.toOM(((Document) serviceException.getExceptionDocument().getDomNode()).getDocumentElement());
 		SOAPFault fault = OMAbstractFactory.getSOAP11Factory().createSOAPFault();
 			SOAPFaultCode code = OMAbstractFactory.getSOAP11Factory().createSOAPFaultCode();
@@ -122,11 +126,17 @@ public class WebProcessingServiceSoap {
 			fault.setDetail(detail);
 			return fault;
 		}
-		
+
+		try {
 		InputStream instream = new ByteArrayInputStream(outputStream
 				.toByteArray());
 		OMElement result = (OMElement) XMLUtils.toOM(instream);
 		return result;
+		}
+		catch(Exception e) {
+			// case of callback
+			return null;
+		}
 		
 	}
 	

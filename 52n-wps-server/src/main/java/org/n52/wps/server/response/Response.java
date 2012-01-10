@@ -59,6 +59,7 @@ abstract public class Response {
 	
 	public abstract void save(OutputStream os) throws ExceptionReport;
 	
+	
 	public Request getRequest(){
 		return request;
 	}

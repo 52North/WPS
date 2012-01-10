@@ -58,8 +58,9 @@ public class GetAuditRequest extends Request {
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
 		// Validate the request
-		validate();
-		// create an initial response
+		if(!this.getAuditDom.validate()) {
+			throw new ExceptionReport("GetAudit request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}		// create an initial response
 	}
 
 	public GetAuditDocument getGetAuditDom() {

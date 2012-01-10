@@ -38,8 +38,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 			throws ExceptionReport;
 
 	/** call the backend to cancel the task */
-	public void cancel() {
-	}
+	public abstract void cancel();
 
 	/**
 	 * Writes the ProcessDescription in the appropriate directory. Additional
@@ -129,9 +128,6 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
 		String path = subPath + "WEB-INF/ProcessDescriptions/" + processId
 				+ ".xml";
 		File descFile = new File(path);
@@ -147,9 +143,6 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
 		File directory = new File(subPath + "WEB-INF/AuditDocuments/");
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -174,9 +167,6 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
 		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId + ".xml";
 		LOGGER.info("Retrieving in " + path);
 		AuditTraceType auditDom = null;
@@ -207,9 +197,6 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
 		File directory = new File(subPath + "WEB-INF/AuditDocuments/");
 		if (!directory.exists()) {
 			directory.mkdirs();
@@ -235,9 +222,6 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		int searchIndex = fullPath.indexOf("WEB-INF");
 		String subPath = fullPath.substring(0, searchIndex);
 		subPath = subPath.replaceFirst("file:", "");
-		if (subPath.startsWith("/")) {
-			subPath = subPath.substring(1);
-		}
 		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId
 				+ "_long.xml";
 		LOGGER.info("Retrieving in " + path);
@@ -260,15 +244,9 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		return auditDom;
 	}
 
-	public AuditTraceType getAudit() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract AuditTraceType getAudit() throws Exception;
 
-	public AuditTraceType getAuditLongForm() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public abstract AuditTraceType getAuditLongForm() throws Exception;
 
 	public void storeAudit() {
 		// TODO Auto-generated method stub

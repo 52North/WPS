@@ -59,7 +59,9 @@ public class CancelRequest extends Request {
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
 		// Validate the request
-		validate();
+		if(!this.cancelDom.validate()) {
+			throw new ExceptionReport("Cancel request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		// create an initial response
 	}
 
@@ -92,18 +94,20 @@ public class CancelRequest extends Request {
 			// If a task is already started, the backend should also
 			// cancel the task
 			if (getTaskStatus().isSetProcessStarted()) {
-				LOGGER.info("Process is started --> cancel");
-				if (getTask().getRequest().getAlgorithm() instanceof AbstractTransactionalAlgorithm) {
-					((AbstractTransactionalAlgorithm) getTask().getRequest()
-							.getAlgorithm()).cancel();
-				}
-				// then cancel the task (the previous step generated an
-				// Exception if a problem occured)
 				LOGGER.info("Doing Process Cancellation");
 				getTask().cancel(true);
 				if (getTask().isCancelled()) {
 					LOGGER.info("ProcessCancelled Yes");
 				}
+				LOGGER.info("Process is started --> cancel backend");
+				if (getTask().getRequest().getAlgorithm() instanceof AbstractTransactionalAlgorithm) {
+					LOGGER.info("Process is started --> cancel backend");
+					((AbstractTransactionalAlgorithm) getTask().getRequest()
+							.getAlgorithm()).cancel();
+				}
+				// then cancel the task (the previous step generated an
+				// Exception if a problem occured)
+				
 				// update database (status file) with new status cancelled
 				// TODO replace with ProcessCancelled
 				getTaskStatus().unsetProcessStarted();

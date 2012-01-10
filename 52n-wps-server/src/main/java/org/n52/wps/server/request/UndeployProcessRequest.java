@@ -49,7 +49,9 @@ public class UndeployProcessRequest extends Request {
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
 		// Validate the request
-		validate();
+		if(!this.undeployProcessDom.validate()) {
+			throw new ExceptionReport("UndeployProcess request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		// Get useful infos
 		processID = getUndeployProcessDom().getUndeployProcess().getIdentifier().getStringValue();
 		Logger.getLogger(UndeployProcessRequest.class).info(

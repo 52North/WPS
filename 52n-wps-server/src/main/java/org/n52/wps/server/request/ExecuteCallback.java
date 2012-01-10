@@ -7,12 +7,7 @@
 package org.n52.wps.server.request;
 
 import java.util.ArrayList;
-import java.util.Map;
-
-import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.GetStatusDocument;
-
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.util.XMLUtils;
@@ -20,20 +15,11 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.handler.WPSTask;
-import org.n52.wps.server.response.CancelResponse;
-import org.n52.wps.server.response.ExecuteResponse;
-import org.n52.wps.server.response.ExecuteResponseBuilder;
-import org.n52.wps.server.response.GetStatusResponse;
 import org.n52.wps.server.response.Response;
-import org.n52.wps.server.response.builder.CancelResponseBuilder;
-import org.n52.wps.server.response.builder.GetStatusResponseBuilder;
-import org.w3.x2005.x08.addressing.MessageIDDocument;
 import org.w3.x2005.x08.addressing.RelatesToDocument;
-import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3c.dom.Document;
 
 public class ExecuteCallback extends Request {

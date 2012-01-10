@@ -126,7 +126,7 @@ public class WebProcessingService extends HttpServlet {
 		//TODO: Might be changed to an additional configuration parameter.
 		System.setProperty("org.geotools.referencing.forceXY", "true");
 
-		BasicConfigurator.configure();
+		//BasicConfigurator.configure();
 		LOGGER.info("WebProcessingService initializing...");
 
 		try{

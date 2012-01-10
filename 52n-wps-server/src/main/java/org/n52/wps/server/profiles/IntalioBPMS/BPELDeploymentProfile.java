@@ -40,6 +40,7 @@ import java.util.Map;
 import net.opengis.wps.x100.ApacheOdeDeploymentProfileType;
 import net.opengis.wps.x100.DeployProcessDocument;
 import org.apache.log4j.Logger;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
 import org.w3c.dom.Node;
 
@@ -91,6 +92,9 @@ public class BPELDeploymentProfile extends DeploymentProfile {
 			throws Exception {
 		
 		ApacheOdeDeploymentProfileType deployProfile = (ApacheOdeDeploymentProfileType) deployDom.getDeployProcess().getDeploymentProfile().changeType(ApacheOdeDeploymentProfileType.type);
+		if(!deployProfile.validate()) {
+			throw new ExceptionReport("BPEL Deploy Profile is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		setProcessId(deployDom.getDeployProcess().getProcessDescription()
 				.getIdentifier().getStringValue());
 		if (deployProfile.isSetArchive()) {

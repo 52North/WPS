@@ -1,7 +1,9 @@
 package org.n52.wps.server.profiles.IntalioBPMS;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +14,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -63,6 +66,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
+
 /**
  * TODO this class was based on transactional branch implementation. However the
  * invoke method was reimplemented Therefore there is a doublon implementation
@@ -82,11 +87,14 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 	private String instanceManagerEndpoint;
 	private OMElement deployRequestOde;
 	private String processesPrefix;
+	private String WPSPublicationPrefix;
 	private ExecuteResponseDocument executeResponse;
 	// Asychronous execute client must be shared between threads
 	public static ServiceClient executeClient;
 	private String processIdentifier;
 	private String IID;
+	private String SSEGridHome;
+	private String processInstanceID;
 
 	/**
 	 * @param repository
@@ -125,6 +133,24 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 					"Error. Could not find OdE_ProcessManagerEndpoint");
 		}
 		setProcessesPrefix(processesPrefixProperty.getStringValue());
+		
+		Property wpsPublicRoot = WPSConfig.getInstance()
+		.getPropertyForKey(properties, "WPSPublicationPrefix");
+if (wpsPublicRoot == null) {
+	throw new RuntimeException(
+			"Error. Could not find WPSPublicationPrefix");
+}
+setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
+
+		
+		
+		Property SSEGridHomeValue = WPSConfig.getInstance().getPropertyForKey(
+				properties, "SSEGrid_Home");
+		if (SSEGridHomeValue == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required SSEGrid_Home property in wps_config.xml");
+		}
+		setSSEGridHome(SSEGridHomeValue.getStringValue());
 		try {
 			_factory = OMAbstractFactory.getOMFactory();
 			_client = new ODEServiceClient();
@@ -262,63 +288,64 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 	}
 
 	public Document invoke(ExecuteRequest req, String algorithmID)
-			throws Exception {
+			throws InterruptedException, ExceptionReport {
 		ExecuteDocument doc = req.getExecDom();
-		String instanceID = req.getId();
+		 setProcessInstanceID(req.getId());
 		String address = req.getMyEPR();
 		LOGGER.info("invoke");
 		setProcessIdentifier(algorithmID);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = factory.newDocumentBuilder();
+		try {
+			DocumentBuilder builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new ExceptionReport("Unexpected problem",
+					ExceptionReport.REMOTE_COMPUTATION_ERROR,e);
+		}
 		SOAPEnvelope response = null;
 		Options options = new Options();
 		// set the workflow endpoint
 		options.setTo(new EndpointReference(processesPrefix + algorithmID));
-		LOGGER.info("Target Worflow endpoint:"+processesPrefix + algorithmID);
-		//options.setUseSeparateListener(true);
+		LOGGER.info("Target Worflow endpoint:" + processesPrefix + algorithmID);
+		// options.setUseSeparateListener(true);
 		options.setAction("urn:executeRequest");
 		options.setTransportInProtocol(Constants.TRANSPORT_HTTP);
 		String hostname = null;
-		 
-			//getExecuteClient().getMyEPR(Constants.TRANSPORT_HTTP).getAddress();
-		System.out.println("Address:"+address);
+
+		// getExecuteClient().getMyEPR(Constants.TRANSPORT_HTTP).getAddress();
+		System.out.println("Address:" + address);
 		/**
-		Matcher matcher = Pattern
-				.compile(
-						"(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*")
-				.matcher(address);
-		if (matcher.find()) {
-			hostname = matcher.group(1);
-		}
-		*/
-		//System.out.println(hostname);
+		 * Matcher matcher = Pattern .compile(
+		 * "(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*")
+		 * .matcher(address); if (matcher.find()) { hostname = matcher.group(1);
+		 * }
+		 */
+		// System.out.println(hostname);
 		// String hostname = (String)
 		// context.getProperty(MessageContext.TRANSPORT_ADDR);
 		// String port = context.getProperty(MessageContext.P)
-		//options.setMessageId(instanceID);
-		//options.setReplyTo(new EndpointReference(address));
-		
+		// options.setMessageId(instanceID);
+		// options.setReplyTo(new EndpointReference(address));
+
 		// Set WSA header without activating the addressing module !
 		OMFactory _factory;
 		_factory = OMAbstractFactory.getOMFactory();
 		OMNamespace ins = _factory.createOMNamespace(
 				"http://www.w3.org/2005/08/addressing", "wsa");
 		OMElement messageIDHeader = _factory.createOMElement("MessageID", ins); // qualified
-		messageIDHeader
-				.setText(instanceID);
+		messageIDHeader.setText(getProcessInstanceID());
 		OMElement replyToHeader = _factory.createOMElement("ReplyTo", ins); // qualified
 		OMElement addressHeader = _factory.createOMElement("Address", ins); // qualified
 		addressHeader.setText(address);
 		replyToHeader.addChild(addressHeader);
-		
+
 		OMElement toHeader = _factory.createOMElement("To", ins); // qualified
-		toHeader
-				.setText(processesPrefix + algorithmID);
+		toHeader.setText(processesPrefix + algorithmID);
 		// sender.engageModule("addressing");
-		
-		
+
 		// use WS-Adressing (to perform asynchronous request)
-		//getExecuteClient().engageModule("addressing");
+		// getExecuteClient().engageModule("addressing");
 		LOGGER.info("set options");
 		getExecuteClient().setOptions(options);
 		getExecuteClient().removeHeaders();
@@ -326,14 +353,29 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		getExecuteClient().addHeader(replyToHeader);
 		getExecuteClient().addHeader(toHeader);
 		// get the callback manager
-		
+		try {
 		executeAndGetId((Document) doc.getDomNode());
 		waitCallback();
+		}
+		catch(InterruptedException ie) {
+			LOGGER.info("interrupted");
+			ie.printStackTrace();
+			return null;
+		}
+		
 		LOGGER.info("Received callback response.");
 		if (getExecuteResponse() == null) {
 			throw new ExceptionReport("Callback problem",
 					ExceptionReport.REMOTE_COMPUTATION_ERROR);
 		}
+		if(getExecuteResponse().getExecuteResponse().getStatus().isSetProcessFailed()) {
+			// if response status is failed, throw an exception
+			String exceptionCode = getExecuteResponse().getExecuteResponse().getStatus().getProcessFailed().getExceptionReport().getExceptionArray(0).getExceptionCode();
+			String exceptionLocator = getExecuteResponse().getExecuteResponse().getStatus().getProcessFailed().getExceptionReport().getExceptionArray(0).getLocator();
+			String exceptionText = getExecuteResponse().getExecuteResponse().getStatus().getProcessFailed().getExceptionReport().getExceptionArray(0).getExceptionTextArray(0);
+			throw new ExceptionReport(exceptionText, exceptionCode, exceptionLocator);
+		}
+		
 
 		return (Document) getExecuteResponse().getDomNode();
 	}
@@ -656,13 +698,20 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 
 	/**
 	 * Wait the asynchronousCallback
+	 * @throws InterruptedException 
 	 */
-	public synchronized void waitCallback() {
+	public synchronized void waitCallback() throws InterruptedException {
 		try {
 			LOGGER.info("Waiting callback");
 			wait();
 			LOGGER.info("Callback received");
-		} catch (Exception e) {
+		}
+		catch(InterruptedException e)
+		{
+			throw e;
+		}
+		
+		catch (Exception e) {
 			System.out.println(e);
 		}
 		return;
@@ -680,9 +729,23 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		return executeResponse;
 	}
 
+	// TODO should enhance (getAudit short and long should call getInstanceEvents once)
 	public AuditTraceType getAudit() throws Exception {
 		LOGGER.info("************* short form apache get audit **********----*");
-		AuditTraceType audit = getAuditLongForm();
+		AuditTraceType audit = null;
+		InvokedTasksDocument invokedDom = InvokedTasksDocument.Factory
+		.newInstance();
+
+		try {
+
+			Element eventDom = XMLUtils.toDOM(getInstanceEvents());
+			System.out.println("test");
+			audit = AuditTraceType.Factory.parse(eventDom);
+			// LOGGER.info("Audit Long document after XMLBeans parsing : "+audit.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println("test2");
 		LOGGER.info("AUDIT:" + audit.getDomNode().getNodeName());
 		LOGGER.info("AUDIT:" + audit.getDomNode().getFirstChild().getNodeName());
 		LOGGER.info("AUDIT:"
@@ -694,7 +757,6 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 				.getChildNodes();
 		LOGGER.info("infoList is parsed:" + infoList.getLength());
 		// LOGGER.info("infoList is parsed:"+infoList.getEventInfoArray()[0].toString());
-		InvokedTasksDocument invokedDom = InvokedTasksDocument.Factory.newInstance();
 		invokedDom.addNewInvokedTasks();
 		for (int i = 0; i < infoList.getLength(); i++) {
 			EventInfoDocument eventInfo = EventInfoDocument.Factory
@@ -717,48 +779,64 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 							.equalsIgnoreCase("VariableModificationEvent")
 							&& matchingInfo.getEventInfo().getParentScopeId() == parentId
 							&& matchingInfo.getEventInfo().getScopeId() == scopeId) {
-						
+
 						// TODO exctract and build
-						// Note : regexp fails here because of XML ! Used substring instead...
-						// TODO parse XML to ExecuteResponse instead of string manipulation
-						String timestamp = matchingInfo.getEventInfo().getTimestamp().toString();
-						LOGGER.info("timestamp:"+timestamp);
-						String newValue = matchingInfo.getEventInfo().getNewValue();
-						String processiid = newValue.substring(newValue.indexOf("instanceId=\"")+13);
-						processiid = processiid.substring(0,processiid.indexOf("\""));
-						String processid = newValue.substring(newValue.indexOf("Process")+1);
-						processid = processid.substring(processid.indexOf("Identifier")+1);
-						processid = processid.substring(processid.indexOf(">")+1);
-						processid = processid.substring(0,processid.indexOf("<"));
-						LOGGER.info("found process id : "+processid);
-						//LOGGER.info("info:"+newValue);
-						LOGGER.info("found iid:"+processiid);
-						String statusLocation = newValue.substring(newValue.indexOf("statusLocation=\"")+16);
-						statusLocation = statusLocation.substring(0,statusLocation.indexOf("\""));
+						// Note : regexp fails here because of XML ! Used
+						// substring instead...
+						// TODO parse XML to ExecuteResponse instead of string
+						// manipulation
+						String timestamp = matchingInfo.getEventInfo()
+								.getTimestamp().toString();
+						LOGGER.info("timestamp:" + timestamp);
+						String newValue = matchingInfo.getEventInfo()
+								.getNewValue();
+						String processiid = newValue.substring(newValue
+								.indexOf("instanceId=\"") + 12);
+						processiid = processiid.substring(0,
+								processiid.indexOf("\""));
+						String processid = newValue.substring(newValue
+								.indexOf("Process") + 1);
+						processid = processid.substring(processid
+								.indexOf("Identifier") + 1);
+						processid = processid
+								.substring(processid.indexOf(">") + 1);
+						processid = processid.substring(0,
+								processid.indexOf("<"));
+						LOGGER.info("found process id : " + processid);
+						// LOGGER.info("info:"+newValue);
+						LOGGER.info("found iid:" + processiid);
+						String statusLocation = newValue.substring(newValue
+								.indexOf("statusLocation=\"") + 16);
+						statusLocation = statusLocation.substring(0,
+								statusLocation.indexOf("\""));
 						// extract domain
-						String serviceDomain = null;
-						Matcher matcher = Pattern
-						.compile(
-								"(http://\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}:\\d{1,4})/.*")
-						.matcher(statusLocation);
-							if (matcher.find()) {
-									 serviceDomain = matcher.group(1);
-							}
-						LOGGER.info("servicedomain:"+serviceDomain);
-						 Task newtask = invokedDom.getInvokedTasks().addNewTask();
-						newtask.addNewProcessIdentifier().setStringValue(processid);
-						newtask.addNewProcessInstanceIdentifier().setStringValue(processiid);
+						System.out.println(statusLocation);
+						URL tempURL = new URL(statusLocation);
+						System.out.println(tempURL.getPath());
+						System.out.println(tempURL.getPath().substring(0,tempURL.getPath().indexOf("/")));
+						String serviceDomain= statusLocation.substring(0,statusLocation.indexOf(tempURL.getPath()));
+						serviceDomain = serviceDomain.concat(tempURL.getPath().substring(0,tempURL.getPath().indexOf("/",1)));
+						serviceDomain = serviceDomain.concat("/services/WPS.WPSHttpSoap11Endpoint");
+						
+						Task newtask = invokedDom.getInvokedTasks()
+								.addNewTask();
+						newtask.addNewProcessIdentifier().setStringValue(
+								processid);
+						newtask.addNewProcessInstanceIdentifier()
+								.setStringValue(processiid);
 						newtask.addNewTimestamp().setStringValue(timestamp);
 						newtask.addNewServer().setStringValue(serviceDomain);
-						
-							break;
+						System.out.println(invokedDom.toString()+"========");
+						break;
 					}
 				}
 			}
 		}
-		AuditTraceType shortAudit = AuditTraceType.Factory.newInstance();
-				shortAudit.set(invokedDom);
-		LOGGER.info(shortAudit.toString());
+		System.out.println(invokedDom.toString());
+		AuditTraceType shortAudit = AuditTraceType.Factory.parse(invokedDom.getDomNode());
+		// Remove because it fails
+		//LOGGER.info(shortAudit.toString());
+		System.out.println(shortAudit.toString());
 		return shortAudit;
 
 	}
@@ -782,9 +860,31 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		AuditTraceType audit = null;
 		OMElement eventResult = getInstanceEvents();
 		try {
-
+			// eventResult.get
+			String auditDir = getSSEGridHome() + "execute/"
+					+ getProcessIdentifier() + "/" + getProcessInstanceID() + "/audits";
+			File auditDirFile = new File(auditDir);
+			auditDirFile.mkdirs();
+			String auditPath = auditDir + "/eventlist.xml";
+			File auditFile = new File(auditPath);
+			if(auditFile.exists()) {
+				auditFile.delete();
+				auditFile.createNewFile();
+			}
 			Element eventDom = XMLUtils.toDOM(eventResult);
-			audit = AuditTraceType.Factory.parse(eventDom);
+			Source source = new DOMSource(eventDom);
+			// Prepare the output file
+			Result result = new StreamResult(auditFile);
+			// Write the DOM document to the file
+			Transformer xformer = TransformerFactory.newInstance()
+					.newTransformer();
+			xformer.transform(source, result);
+			URLListDocument auditURLS = URLListDocument.Factory.newInstance();
+			auditURLS.addNewURLList().setCount(1);
+			String eventListURL = getWPSPublicationPrefix() + "execute/"
+			+ getProcessIdentifier() + "/" + getProcessInstanceID() + "/audits"+ "/eventlist.xml";
+			auditURLS.getURLList().addNewUrl().setStringValue(eventListURL);
+			audit = AuditTraceType.Factory.parse(auditURLS.getDomNode());
 			// LOGGER.info("Audit Long document after XMLBeans parsing : "+audit.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -815,5 +915,32 @@ public class ApacheOdeProcessManager extends AbstractProcessManager {
 		this.setExecuteResponse(execRespDom);
 		this.notifyRequestManager();
 		return;
+	}
+
+	public void setSSEGridHome(String sSEGridHome) {
+		SSEGridHome = sSEGridHome;
+	}
+
+	public String getSSEGridHome() {
+		return SSEGridHome;
+	}
+
+	public void setWPSPublicationPrefix(String wPSPublicationPrefix) {
+		WPSPublicationPrefix = wPSPublicationPrefix;
+	}
+
+	public String getWPSPublicationPrefix() {
+		return WPSPublicationPrefix;
+	}
+
+	public String getProcessInstanceID() {
+		return processInstanceID;
+	}
+
+	public void setProcessInstanceID(String processInstanceID) {
+		this.processInstanceID = processInstanceID;
+	}
+	public void cancel() {
+		LOGGER.info("not implemented yet");
 	}
 }

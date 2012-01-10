@@ -52,7 +52,9 @@ public class UndeployDataRequest extends Request {
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
 		// Validate the request
-		validate();
+		if(!this.undeployDataDom.validate()) {
+			throw new ExceptionReport("UndeployData request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		// Get useful infos
 		dataID = getUndeployDataDom().getUndeployData().getIdentifier().getStringValue();
 		Logger.getLogger(UndeployDataRequest.class).info(
