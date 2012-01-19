@@ -71,6 +71,7 @@
 				<Property name="supportedFormat" active="true">image/png</Property>
 				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
 				<Property name="supportedFormat" active="true">application/hdf4-eos</Property>
+				<Property name="supportedFormat" active="true">text/plain</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="supportedEncoding" active="true">base64</Property>
 			</Parser>	
@@ -211,6 +212,7 @@
 				<Property name="supportedFormat" active="true">image/jpeg</Property>
 				<Property name="supportedFormat" active="true">image/png</Property>
 				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
+				<Property name="supportedFormat" active="true">text/plain</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="supportedEncoding" active="true">base64</Property>
 			</Generator>
