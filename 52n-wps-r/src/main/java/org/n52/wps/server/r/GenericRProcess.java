@@ -233,9 +233,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 			LOGGER.error(message);	
 			throw new RuntimeException(message);
 		}	
-			
-		deleteRecursive(new File(WORK_DIR));
 		
+		//try to delete current local workdir - folder
+		File workdir = new File(WORK_DIR);
+		boolean deleted = deleteRecursive(workdir);
+		if(!deleted)
+			workdir.deleteOnExit();
 		return resulthash;
 	}
 
@@ -347,6 +350,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 			rfos.write(buffer, 0, stop);
 			stop = is.read(buffer);
 		}
+		rfos.flush();
 		rfos.close();
 		is.close();
 		//R unzips archive files and renames files with unique 
@@ -419,9 +423,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 			RAnnotation anot = list.get(0);
 			String rType = anot.getAttribute(RAttribute.TYPE);
 			mimeType = RDataType.getType(rType).getProcessKey();
-
+			GenericFileData out = new GenericFileData(tempfile, mimeType);
+			tempfile.deleteOnExit();
 			return new GenericFileDataBinding(
-					new GenericFileData(tempfile, mimeType));
+					out);
 		}
 		
 		if(iClass.equals(GTVectorDataBinding.class)){
@@ -553,6 +558,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 		}
 		fis.close();
 		fos.close();
+		tempfile.deleteOnExit();
 		return tempfile;
 	}
 	

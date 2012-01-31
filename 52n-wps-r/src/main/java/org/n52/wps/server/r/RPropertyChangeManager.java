@@ -9,13 +9,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+
 import org.apache.log4j.Logger;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.*;
 
 public class RPropertyChangeManager implements PropertyChangeListener {
 
@@ -43,9 +43,9 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt){	
-		String repName = LocalRAlgorithmRepository.class.getCanonicalName();
-		RepositoryManager manager = RepositoryManager.getInstance();	
-		LocalRAlgorithmRepository repository = (LocalRAlgorithmRepository) manager.getRepositoryForClassName(repName);
+		//String repName = LocalRAlgorithmRepository.class.getCanonicalName();
+		//RepositoryManager manager = RepositoryManager.getInstance();	
+		//LocalRAlgorithmRepository repository = (LocalRAlgorithmRepository) manager.getRepositoryForClassName(repName);
 		
 		LOGGER.info("received PropertyChangeEvent: "+evt.getPropertyName());
 		deleteUnregisteredScripts();

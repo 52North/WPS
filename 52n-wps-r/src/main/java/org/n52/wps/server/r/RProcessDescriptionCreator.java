@@ -1,10 +1,12 @@
 package org.n52.wps.server.r;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.opengis.ows.x11.DomainMetadataType;
+import net.opengis.ows.x11.MetadataType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
@@ -12,19 +14,18 @@ import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.LiteralOutputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 
 import org.n52.wps.io.GeneratorFactory;
-import org.n52.wps.io.IParser;
-import org.n52.wps.io.ParserFactory;
-import org.n52.wps.io.data.*;
-import org.n52.wps.io.data.binding.complex.*;
 import org.n52.wps.io.IGenerator;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.r.RAnnotation.RAttribute;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 
 
 
@@ -45,7 +46,19 @@ public class RProcessDescriptionCreator{
 			
 			pdt.addNewIdentifier().setStringValue(wkn);
 			pdt.setProcessVersion("1.0.0");
+			MetadataType mt = pdt.addNewMetadata();
 			
+			mt.setTitle("R Script");
+			mt.setAbout("The R script which is used for this process");
+			String url = R_Config.getScriptURL(wkn);
+			mt.setHref(url);
+			
+			mt = pdt.addNewMetadata();
+			mt.setTitle("R Session Info");
+			mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
+			url = R_Config.getSessionInfoURL();
+			mt.setHref(url);
+	
 			ProcessOutputs outputs = pdt.addNewProcessOutputs();
 			DataInputs inputs = pdt.addNewDataInputs();
 			
