@@ -26,3 +26,15 @@ unzipRename = function(file, name, ext){
 	
 	return(baseFileName)
 }
+
+zipShp = function(file){
+	base = unlist(strsplit(file,"\\."))[1]
+	shx = paste(base,"shx", sep=".")
+	dbf = paste(base,"dbf", sep=".")
+	prj = paste(base,"prj", sep=".")
+	zip = paste(base,"zip", sep=".")
+	zip(zip, c(file,shx,dbf,prj))
+	if(zip %in% dir())
+		return(zip)
+	else return(NULL)
+}
