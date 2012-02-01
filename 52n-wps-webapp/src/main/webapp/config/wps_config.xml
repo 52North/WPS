@@ -74,7 +74,25 @@
 				<Property name="supportedFormat" active="true">text/plain</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="supportedEncoding" active="true">base64</Property>
-			</Parser>	
+			</Parser>
+			
+			<Parser name="GenericRasterFileParser" className="org.n52.wps.io.datahandler.parser.GenericRasterFileParser" active="true">
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">application/geotiff</Property>
+				<Property name="supportedFormat" active="true">application/dbase</Property>
+				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
+				<Property name="supportedFormat" active="true">application/hdf4-eos</Property>
+				<Property name="supportedFormat" active="true">text/plain</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="supportedEncoding" active="true">base64</Property>
+			</Parser>		
 			
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.parser.GeotiffParser" active="true">
 				<Property name="supportedFormat" active="true">image/tiff</Property>
