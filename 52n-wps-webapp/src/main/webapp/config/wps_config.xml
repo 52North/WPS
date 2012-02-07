@@ -84,6 +84,7 @@
 				<Property name="supportedFormat" active="true">application/remap</Property>
 				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
 				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/netcdf</Property>
 				<Property name="supportedFormat" active="true">application/dgn</Property>
 				<Property name="supportedFormat" active="true">image/jpeg</Property>
 				<Property name="supportedFormat" active="true">image/png</Property>
@@ -133,6 +134,7 @@
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
+        		<Property name="supportedFormat" active="true">text/xml</Property>
 			</Parser>
  
  			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="true">
@@ -226,6 +228,7 @@
 				<Property name="supportedFormat" active="true">application/remap</Property>
 				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
 				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/netcdf</Property>
 				<Property name="supportedFormat" active="true">application/dgn</Property>
 				<Property name="supportedFormat" active="true">image/jpeg</Property>
 				<Property name="supportedFormat" active="true">image/png</Property>
@@ -233,6 +236,7 @@
 				<Property name="supportedFormat" active="true">text/plain</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="supportedEncoding" active="true">base64</Property>
+       			<Property name="supportedFormat" active="true">image/png</Property>
 			</Generator>
 			
 			<Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator" active="true">
@@ -246,6 +250,8 @@
 				<Property name="supportedFormat" active="true">text/xml; subtype=gml/2.1.2</Property>
 				<Property name="supportedFormat" active="true">text/xml; subtype=gml/2.1.2.1</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
+				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 			</Generator>	
 			
 			<Generator name="ProxyGMLGenerator4Files" className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files" active="true">
@@ -298,6 +304,7 @@
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
+        		<Property name="supportedFormat" active="true">text/xml</Property>
 			</Generator>
 				
 				
@@ -316,6 +323,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			
 			
 			

@@ -35,7 +35,9 @@ import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
@@ -44,6 +46,7 @@ import net.opengis.wps.x100.SupportedComplexDataType;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 import org.n52.wps.server.grass.util.StreamGobbler;
 
@@ -182,6 +185,12 @@ public class GrassProcessDescriptionCreator {
 			ProcessDescriptionType result = pDoc.getProcessDescriptions()
 					.getProcessDescriptionArray()[0];
 
+			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
+			
+			for (InputDescriptionType inputDescriptionType : inputs) {
+				checkForKMLMimeType(inputDescriptionType);					
+			}			
+			
 			SupportedComplexDataType outputType = result.getProcessOutputs()
 					.getOutputArray(0).getComplexOutput();
 
@@ -211,6 +220,9 @@ public class GrassProcessDescriptionCreator {
 
 					}
 				}
+				
+				checkForKMLMimeType(result.getProcessOutputs()
+						.getOutputArray(0));
 
 			}
 
@@ -220,6 +232,52 @@ public class GrassProcessDescriptionCreator {
 		return null;
 	}
 
+	private void checkForKMLMimeType(InputDescriptionType inputDescriptionType) {
+		
+		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+		
+		if(complexData == null){
+			return;
+		}
+		
+		if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+			complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+			return; 
+		}
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+				return;
+			}
+		}
+		
+	}
+
+	private void checkForKMLMimeType(OutputDescriptionType outputDescriptionType) {
+		
+		SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
+		
+		if(complexData == null){
+			return;
+		}
+		
+		if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+			complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+			return; 
+		}
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+				return;
+			}
+		}
+		
+	}
+	
 	/**
 	 * @param args
 	 * @throws IOException

@@ -19,12 +19,6 @@
 				<wps:LiteralData>165</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
-		<wps:Input>
-			<ows:Identifier>max_dist</ows:Identifier>
-			<wps:Data>
-				<wps:LiteralData>50000</wps:LiteralData>
-			</wps:Data>
-		</wps:Input>
 	</wps:DataInputs>
 	<wps:ResponseForm>
 		<wps:RawDataOutput mimeType="application/x-erdas-hfa">

@@ -38,7 +38,7 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 public class GRASSXMLGenerator extends AbstractGenerator {
 
 	
-	private static Logger LOGGER = Logger.getLogger(GML2BasicGenerator.class);
+	private static Logger LOGGER = Logger.getLogger(GRASSXMLGenerator.class);
 	private static String[] SUPPORTED_SCHEMAS = new String[]{
 //		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
 		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
