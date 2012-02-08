@@ -457,9 +457,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 				// zip all -- stream --> unzip all or stream each file?
 				if(!ev.isNull()){
 					zip = ev.asString();
-					streamFromRserveToWPS(rCon, zip);
-					IOUtils.unzipAll(new File(zip));
-					tempfile = new File(filename);
+					File zipfile = streamFromRserveToWPS(rCon, zip);
+					tempfile = IOUtils.unzip(zipfile,"shp").get(0);
 				}else{
 					LOGGER.info("R call to zip() does not work, streaming of shapefile without zipping");
 					String[] dir = rCon.eval("dir()").asStrings();
