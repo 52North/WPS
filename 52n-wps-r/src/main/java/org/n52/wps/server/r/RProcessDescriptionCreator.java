@@ -20,6 +20,8 @@ import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
+import org.n52.wps.io.IParser;
+import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.r.RAnnotation.RAttribute;
@@ -171,7 +173,7 @@ public class RProcessDescriptionCreator{
 			if(encod!=null)
 				format.setEncoding(encod);
 		}else{
-			addSupportedFormats(complexInput, iClass);
+			addSupportedInputFormats(complexInput, iClass);
 		}
 	}
 
@@ -241,7 +243,7 @@ public class RProcessDescriptionCreator{
 				if(encod!=null)
 					format.setEncoding(encod);
 		}else{
-			addSupportedFormats(complexOutput, iClass);
+			addSupportedOutputFormats(complexOutput, iClass);
 		}
 		
 	}
@@ -254,7 +256,8 @@ public class RProcessDescriptionCreator{
 	 * @param complex IData class for which data handlers are searched
 	 * @param supportedClass
 	 */
-	private void addSupportedFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
+	private void addSupportedOutputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
+		// retrieve a list of generators which support the supportedClass-input
 		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 		for(IGenerator generator : generators) {
@@ -277,20 +280,62 @@ public class RProcessDescriptionCreator{
 				
 				for(int j=0; j<supportedFormats.length;j++){
 					for(int k=0; k<supportedEncodings.length;k++){
-						String supportedFormat = supportedFormats[j];
-						ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
-						supportedCreatedFormat.setMimeType(supportedFormat);
-						supportedCreatedFormat.setEncoding(supportedEncodings[k]);
 						for(int t = 0; t<supportedSchemas.length;t++){
-							if(t==0){
-								supportedCreatedFormat.setSchema(supportedSchemas[t]);
-							}
-							else if(t>0){
-								ComplexDataDescriptionType supportedCreatedFormatAdditional = supported.addNewFormat();
-								supportedCreatedFormatAdditional.setMimeType(supportedFormat);
-								supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
-								supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
-							}
+							String supportedFormat = supportedFormats[j];
+							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
+							supportedCreatedFormat.setMimeType(supportedFormat);
+							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+							supportedCreatedFormat.setSchema(supportedSchemas[t]);
+						}
+					}
+				}
+		}
+					
+		
+	}
+
+	
+	
+	/**
+	 * Searches all available datahandlers for supported encodings / schemas / mime-types and adds
+	 * them to the supported list of an output
+	 * 
+	 * @param complex IData class for which data handlers are searched
+	 * @param supportedClass
+	 */
+	private void addSupportedInputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
+		// retrieve a list of parsers which support the supportedClass-input
+		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+		List<IParser> foundParsers = new ArrayList<IParser>();
+		for(IParser parser : parsers) {
+			Class[] supportedClasses = parser.getSupportedDataBindings();
+			for(Class clazz : supportedClasses){
+				if(clazz.equals(supportedClass)){
+					foundParsers.add(parser);
+				}
+			}
+		}
+		
+		
+		//add properties for each parser which is found
+		ComplexDataCombinationsType supported = complex.addNewSupported();
+		for(int i = 0; i<foundParsers.size(); i++){
+				IParser parser = foundParsers.get(i);
+				String[] supportedFormats = parser.getSupportedFormats();
+				String[] supportedSchemas = parser.getSupportedSchemas();
+				if(supportedSchemas == null){
+					supportedSchemas = new String[0];
+				}
+				String[] supportedEncodings = parser.getSupportedEncodings();
+				
+				for(int j=0; j<supportedFormats.length;j++){
+					for(int k=0; k<supportedEncodings.length;k++){
+						for(int t = 0; t<supportedSchemas.length;t++){
+							String supportedFormat = supportedFormats[j];
+							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
+							supportedCreatedFormat.setMimeType(supportedFormat);
+							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
+							supportedCreatedFormat.setSchema(supportedSchemas[t]);
 						}
 					}
 				}
@@ -298,7 +343,6 @@ public class RProcessDescriptionCreator{
 					
 		
 	}
-
 
 
 }
