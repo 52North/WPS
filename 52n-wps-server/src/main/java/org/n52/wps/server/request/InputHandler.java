@@ -322,14 +322,32 @@ public class InputHandler {
 							String defaultSchema = inputReferenceDesc.getComplexData().getDefault().getFormat().getSchema();
 							int found = 0;
 							String foundSchema = null;
-							if(defaultSchema.equalsIgnoreCase(data.getSchema())){
+							//TODO: please review change
+							//Old version causes NullPointerException if default input is given by mimetype and not by schema:
+							/*
+							 if(defaultSchema != null && defaultSchema.equalsIgnoreCase(data.getSchema())){
+							 	...
+							 }
+							 
+							 * */
+							if(defaultSchema != null && defaultSchema.equalsIgnoreCase(data.getSchema())){
 								foundSchema = inputReferenceDesc.getComplexData().getDefault().getFormat().getSchema();
 								schemaFormat = inputReferenceDesc.getComplexData().getDefault().getFormat();
 								found = found +1;
 							}else{
 								 ComplexDataDescriptionType[] formats = inputReferenceDesc.getComplexData().getSupported().getFormatArray();
 								 for(ComplexDataDescriptionType tempFormat : formats){
+									 //TODO: please review change
+									 //Old if-clause wouldn't be true ever and causes NullPointerException if one of the supported types is given by mimetype and not by schema:
+									 /* 									 
 									 if(tempFormat.getEncoding().equalsIgnoreCase(data.getSchema())){
+										 foundSchema = tempFormat.getSchema();
+										 schemaFormat =tempFormat;
+										 found = found +1;
+									 }
+									 
+									 */
+									 if(tempFormat.getSchema().equalsIgnoreCase(data.getSchema())){
 										 foundSchema = tempFormat.getSchema();
 										 schemaFormat =tempFormat;
 										 found = found +1;
@@ -374,12 +392,26 @@ public class InputHandler {
 							//schema
 							List<ComplexDataDescriptionType> foundSchemaList = new ArrayList<ComplexDataDescriptionType>();
 							String defaultSchema = inputReferenceDesc.getComplexData().getDefault().getFormat().getSchema();
-							if(defaultSchema.equalsIgnoreCase(data.getSchema())){
+							//TODO: please review change
+							//Old version causes NullPointerException if default input is given by mimetype and not by schema:
+							//
+							//if(defaultSchema.equalsIgnoreCase(data.getSchema())){...
+							//
+							if(defaultSchema!= null && defaultSchema.equalsIgnoreCase(data.getSchema())){
 								foundSchemaList.add(inputReferenceDesc.getComplexData().getDefault().getFormat());
 							}else{
 								 formats = inputReferenceDesc.getComplexData().getSupported().getFormatArray();
 								 for(ComplexDataDescriptionType tempFormat : formats){
-									 if(tempFormat.getEncoding().equalsIgnoreCase(data.getSchema())){
+									 /*
+									  * TODO please review Change
+									  * Old if-clause wouldn't be true ever and causes NullPointerException if one of the supported types is given by mimetype and not by schema:
+									  *
+									  * old code: 
+									  if(tempFormat.getEncoding().equalsIgnoreCase(data.getSchema())){
+										 foundSchemaList.add(tempFormat);
+									 }
+									 */
+									 if(tempFormat.getSchema()!=null && tempFormat.getSchema().equalsIgnoreCase(data.getSchema())){
 										 foundSchemaList.add(tempFormat);
 									 }
 								 }
