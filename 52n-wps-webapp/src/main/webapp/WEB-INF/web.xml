@@ -82,6 +82,11 @@
 		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
+		<servlet-name>Feed Servlet</servlet-name>
+		<servlet-class>org.n52.wps.server.feed.FeedServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet>
 		<servlet-name>retrieveResultServlet</servlet-name>
 		<servlet-class>org.n52.wps.server.RetrieveResultServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
@@ -94,6 +99,10 @@
 	<servlet-mapping>
 		<servlet-name>wps-T Servlet</servlet-name>
 		<url-pattern>/WPS-T</url-pattern>
+	</servlet-mapping>	
+	<servlet-mapping>
+		<servlet-name>Feed Servlet</servlet-name>
+		<url-pattern>/feed</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
