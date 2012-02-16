@@ -120,16 +120,16 @@
             <artifactId>52n-wps-server</artifactId>
              <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!-- dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-unicore</artifactId>
             <version>${project.version}</version>
         </dependency>      
-          <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-gridgain</artifactId>
             <version>${project.version}</version>
-        </dependency> 
+        </dependency--> 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-sextante</artifactId>
@@ -171,8 +171,14 @@
             <artifactId>52n-wps-r</artifactId>
             <version>${project.version}</version>
         </dependency>
+       <!--    
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-ilwis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
        
-     <!--   
+     
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-geotools</artifactId>
