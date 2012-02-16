@@ -127,8 +127,8 @@
         <module>52n-wps-commons</module>
         <module>52n-wps-io</module>
         <module>52n-wps-server</module>
-		<module>52n-wps-unicore</module>
-		<module>52n-wps-gridgain</module>
+		<!-- module>52n-wps-unicore</module-->
+		<!-- module>52n-wps-gridgain</module-->
 		<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps-sextante</module>
@@ -138,6 +138,7 @@
         <module>52n-wps-ags</module>
         <module>52n-wps-python</module>
     	<module>52n-wps-r</module>
+    	<module>52n-wps-ilwis</module>
        
   </modules>
     <dependencies>
