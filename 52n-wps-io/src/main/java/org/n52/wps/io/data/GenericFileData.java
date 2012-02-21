@@ -35,10 +35,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.management.RuntimeErrorException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -55,10 +58,11 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.n52.wps.io.IOHandler;
-//import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
+import org.n52.wps.io.datahandler.parser.GML2BasicParser;
+import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -344,39 +348,59 @@ public class GenericFileData {
 	}
 
 	public GTVectorDataBinding getAsGTVectorDataBinding() {
-		String tmpDirPath = System.getProperty("java.io.tmpdir");
-		String dirName = tmpDirPath + File.separator + "tmp" + UUID.randomUUID();
-		File tempDir = null;
-
-		if (new File(dirName).mkdir()) {
-			tempDir = new File(dirName);
+		
+		if(mimeType.equals(GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP)){
+			String tmpDirPath = System.getProperty("java.io.tmpdir");
+			String dirName = tmpDirPath + File.separator + "tmp" + UUID.randomUUID();
+			File tempDir = null;
+	
+			if (new File(dirName).mkdir()) {
+				tempDir = new File(dirName);
+			}
+	
+			LOGGER.info("Writing temp data to: " + tempDir);
+			String fileName = writeData(tempDir);
+			LOGGER.info("Temp file is: " + fileName);
+			File shpFile = new File(fileName);
+	
+			try {
+				DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
+				FeatureCollection features = store.getFeatureSource(
+						store.getTypeNames()[0]).getFeatures();
+				System.gc();
+				tempDir.delete();
+				return new GTVectorDataBinding(features);
+			} catch (MalformedURLException e) {
+				LOGGER.error("Something went wrong while creating data store.");
+				e.printStackTrace();
+				throw new RuntimeException(
+						"Something went wrong while creating data store.", e);
+			} catch (IOException e) {
+				LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
+				e.printStackTrace();
+				throw new RuntimeException(
+						"Something went wrong while converting shapefile to FeatureCollection",
+						e);
+			}
 		}
-
-		LOGGER.info("Writing temp data to: " + tempDir);
-		String fileName = writeData(tempDir);
-		LOGGER.info("Temp file is: " + fileName);
-		File shpFile = new File(fileName);
-
-		try {
-			DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
-			FeatureCollection features = store.getFeatureSource(
-					store.getTypeNames()[0]).getFeatures();
-			System.gc();
-			tempDir.delete();
-			return new GTVectorDataBinding(features);
-		} catch (MalformedURLException e) {
-			LOGGER.error("Something went wrong while creating data store.");
-			e.printStackTrace();
-			throw new RuntimeException(
-					"Something went wrong while creating data store.", e);
-		} catch (IOException e) {
-			LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
-			e.printStackTrace();
-			throw new RuntimeException(
-					"Something went wrong while converting shapefile to FeatureCollection",
-					e);
+		if(mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML200)|| mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML211) || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML212)|| mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML2121)){
+			GML2BasicParser parser = new GML2BasicParser();
+			return parser.parse(getDataStream(), mimeType, null);
 		}
+		if(mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML300)|| mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML301) || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML310)|| mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML311) || mimeType.equals(GenericFileDataConstants.MIME_TYPE_GML321)){
+			GML3BasicParser parser = new GML3BasicParser();
+			return parser.parse(getDataStream(), mimeType, null);
+		}
+		throw new RuntimeException("Could not create GTVectorDataBinding for Input");
+		
 	}
+	/*
+	 * Returns the Shp file representation of the file if possible. The returning file is the shp file. All other files associated to that shp file have the same name and are in the same folder.
+	 */
+	public File getShpFile() {
+		return getAsGTVectorDataBinding().getPayloadAsShpFile();
+	}
+		
 
 	private GTRasterDataBinding getAsGTRasterDataBinding() {
 
@@ -384,7 +408,64 @@ public class GenericFileData {
 		return null;
 	}
 
-	public File getBaseFile() {
+	public File getBaseFile(boolean unzipIfPossible) {
+		String extension = fileExtension;	
+		if(primaryFile==null && dataStream!=null){
+			try{
+			
+			if(fileExtension.equals("shp")){
+				extension = "zip";
+			}
+			primaryFile = File.createTempFile(UUID.randomUUID().toString(), "."+extension);
+			OutputStream out = new FileOutputStream(primaryFile);
+			byte buf[]=new byte[1024];
+			int len;
+			while((len=dataStream.read(buf))>0){
+			  out.write(buf,0,len);
+			}
+			out.close();
+			}catch(Exception e){
+				throw new RuntimeException(
+						"Something went wrong while writing the input stream to the file system",
+						e);
+			}
+			
+		}
+		if(unzipIfPossible && extension.contains("zip")){
+			try{
+			File tempFile1 = File.createTempFile(UUID.randomUUID().toString(),"");
+			File dir = new File(tempFile1.getParentFile()+"/"+UUID.randomUUID().toString());
+			dir.mkdir(); 
+			FileInputStream fis = new FileInputStream(primaryFile);
+			BufferedOutputStream dest = null;
+			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			ZipEntry entry;
+	        while((entry = zis.getNextEntry()) != null) {
+	            System.out.println("Extracting: " +entry);
+	            int count;
+	            byte data[] = new byte[2048];
+	            // write the files to the disk
+	            FileOutputStream fos = new FileOutputStream(dir.getAbsoluteFile()+"/"+entry.getName());
+	            dest = new BufferedOutputStream(fos, 2048);
+	            while ((count = zis.read(data, 0, 2048)) 
+	              != -1) {
+	               dest.write(data, 0, count);
+	            }
+	            dest.flush();
+	            dest.close();
+	         }
+	         zis.close();
+	         
+	         File[] files = dir.listFiles();
+	         for(File file : files){
+	        	 if(file.getName().contains(".shp") || file.getName().contains(".SHP")){
+	        		 primaryFile = file;
+	        	 }
+	         }
+			}catch(Exception e){
+				throw new RuntimeException("Error while unzipping input data", e);
+			}
+		}
 		return primaryFile;
 	}
 

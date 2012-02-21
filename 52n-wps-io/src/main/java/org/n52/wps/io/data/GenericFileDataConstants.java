@@ -57,6 +57,15 @@ public final class GenericFileDataConstants {
 	public static final String MIME_TYPE_DGN = "application/dgn";	
 	public static final String MIME_TYPE_KML = "application/vnd.google-earth.kml+xml";	
 	public static final String MIME_TYPE_HDF4EOS = "application/hdf4-eos";
+	public static final String MIME_TYPE_GML200 = "text/xml; subtype=gml/2.0.0";
+	public static final String MIME_TYPE_GML211 = "text/xml; subtype=gml/2.1.1";
+	public static final String MIME_TYPE_GML212 = "text/xml; subtype=gml/2.1.2";
+	public static final String MIME_TYPE_GML2121 = "text/xml; subtype=gml/2.1.2.1";
+	public static final String MIME_TYPE_GML300 = "text/xml; subtype=gml/3.0.0";
+	public static final String MIME_TYPE_GML301 = "text/xml; subtype=gml/3.0.1";
+	public static final String MIME_TYPE_GML310 = "text/xml; subtype=gml/3.1.0";
+	public static final String MIME_TYPE_GML311 = "text/xml; subtype=gml/3.1.1";
+	public static final String MIME_TYPE_GML321 = "text/xml; subtype=gml/3.2.1";
 	
 	
 	public static final HashMap<String, String> mimeTypeFileTypeLUT(){
@@ -101,7 +110,7 @@ public final class GenericFileDataConstants {
 		
 		String[] returnValue = null;
 		
-		if (mimeType.equalsIgnoreCase("application/x-zipped-shp")){
+		if (mimeType != null && mimeType.equalsIgnoreCase("application/x-zipped-shp")){
 			returnValue = additionalSHPFileItems;
 		}
 		
