@@ -573,6 +573,14 @@ public class InputHandler {
 			DomainMetadataType dataType = inputDesc.getLiteralData().getDataType();
 			xmlDataType = dataType != null ? dataType.getReference() : null;
 		}
+		//still null, assume string as default
+		if(xmlDataType == null) {
+			xmlDataType = BasicXMLTypeFactory.STRING_URI;
+		}
+		if(xmlDataType.contains("http://www.w3.org/TR/xmlschema-2#")){
+			xmlDataType = xmlDataType.replace("http://www.w3.org/TR/xmlschema-2#","xs:");
+		}
+		xmlDataType = xmlDataType.toLowerCase();
 		
 		IData parameterObj = null;
 		try {
