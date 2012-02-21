@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
@@ -92,7 +93,7 @@ public class GML2BasicParser4Files extends AbstractParser {
 		
 		FileOutputStream fos = null;
 		try{
-			File tempFile = File.createTempFile("gml2", "tmp");
+			File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
 			finalizeFiles.add(tempFile); // mark for final delete
 			fos = new FileOutputStream(tempFile);
 			int i = stream.read();
