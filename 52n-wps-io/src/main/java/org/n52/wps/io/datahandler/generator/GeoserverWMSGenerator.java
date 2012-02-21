@@ -142,7 +142,7 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 			
 			try {
 				GenericFileData fileData = new GenericFileData(gtData.getPayload());
-				file = fileData.getBaseFile();
+				file = fileData.getBaseFile(true);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 				throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
@@ -163,7 +163,7 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
-			file = fileData.getBaseFile();
+			file = fileData.getBaseFile(true);
 			int lastIndex = file.getName().lastIndexOf(".");
 			wmsLayerName = file.getName().substring(0, lastIndex);
 			

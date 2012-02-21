@@ -133,7 +133,7 @@ public class GeoserverWFSGenerator extends AbstractGenerator {
 		File file = null;
 		try {
 			GenericFileData fileData = new GenericFileData(gtData.getPayload());
-			file = fileData.getBaseFile();
+			file = fileData.getBaseFile(true);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);

@@ -140,7 +140,7 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
-			file = fileData.getBaseFile();
+			file = fileData.getBaseFile(true);
 			int lastIndex = file.getName().lastIndexOf(".");
 			wcsLayerName = file.getName().substring(0, lastIndex);
 			
