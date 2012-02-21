@@ -17,8 +17,8 @@ import org.n52.wps.server.observerpattern.ISubject;
 
 public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
 
-	private ProcessDescriptionType description;
-	private final String wkName;
+	protected ProcessDescriptionType description;
+	protected final String wkName;
 	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
 	
 	/** 
@@ -26,6 +26,11 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 	 */
 	public AbstractObservableAlgorithm() {
 		this.description = initializeDescription();
+		this.wkName = "";
+	}
+	
+	public AbstractObservableAlgorithm(ProcessDescriptionType description) {
+		this.description = description;
 		this.wkName = "";
 	}
 	
