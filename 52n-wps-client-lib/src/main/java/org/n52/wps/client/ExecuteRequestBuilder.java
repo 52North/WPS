@@ -31,6 +31,7 @@ package org.n52.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -38,7 +39,9 @@ import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -381,6 +384,108 @@ public class ExecuteRequestBuilder {
 
 	public ExecuteDocument getExecute() {
 		return execute;
+	}
+	
+	public String getExecuteAsGETString() {
+		String request = "?service=wps&request=execute&version=1.0.0&identifier=";
+		request = request + processDesc.getIdentifier().getStringValue();
+		request = request + "&DataInputs=";
+		InputType[] inputs = execute.getExecute().getDataInputs().getInputArray();
+		int inputCounter = 0;
+		for(InputType input : inputs){
+			
+			request = request + input.getIdentifier().getStringValue();
+			
+			if(input.isSetReference()){
+				//reference
+				InputReferenceType reference = input.getReference();
+				request = request + "="+"@xlink:href="+ URLEncoder.encode(reference.getHref());
+				if(reference.isSetEncoding()){
+					request = request + "@encoding="+reference.getEncoding();
+				}
+				if(reference.isSetMimeType()){
+					request = request + "@format="+reference.getMimeType();
+				}
+				if(reference.isSetEncoding()){
+					request = request + "@schema="+reference.getSchema();
+				}
+			}
+			if(input.isSetData()){
+				if(input.getData().isSetComplexData()){
+					//complex
+					ComplexDataType complexData = input.getData().getComplexData();
+					request = request + "=" + URLEncoder.encode(input.getData().getComplexData().xmlText());
+					if(complexData.isSetEncoding()){
+						request = request + "@encoding="+complexData.getEncoding();
+					}
+					if(complexData.isSetMimeType()){
+						request = request + "@format="+complexData.getMimeType();
+					}
+					if(complexData.isSetEncoding()){
+						request = request + "@schema="+complexData.getSchema();
+					}
+				}
+				if(input.getData().isSetLiteralData()){
+					//literal
+					LiteralDataType literalData = input.getData().getLiteralData();
+					request = request + "=" + literalData.getStringValue();
+					if(literalData.isSetDataType()){
+						request = request + "@datatype="+literalData.getDataType();
+					}
+					if(literalData.isSetUom()){
+						request = request + "@datatype="+literalData.getUom();
+					}
+				}
+			}
+			//concatenation for next input element
+			inputCounter = inputCounter +1;
+			if(inputCounter<inputs.length){
+				request = request + ";";
+			}
+			
+		}
+		if(execute.getExecute().getResponseForm().getResponseDocument()==null){
+			throw new RuntimeException("Responresponsedocument=se Form missing");
+		}
+		DocumentOutputDefinitionType[] outputs = execute.getExecute().getResponseForm().getResponseDocument().getOutputArray();
+		int outputCounter = 0;
+		if(execute.getExecute().getResponseForm().isSetRawDataOutput()){
+			request = request + "&rawdataoutput=";
+		}else{
+			request = request + "&responsedocument=";
+		}
+		for(DocumentOutputDefinitionType output : outputs){
+			request = request + output.getIdentifier().getStringValue();
+			if(output.isSetEncoding()){
+				request = request + "@encoding="+output.getEncoding();
+			}
+			if(output.isSetMimeType()){
+				request = request + "@format="+output.getMimeType();
+			}
+			if(output.isSetEncoding()){
+				request = request + "@schema="+output.getSchema();
+			}
+			if(output.isSetUom()){
+				request = request + "@datatype="+output.getUom();
+			}
+			//concatenation for next output element
+			outputCounter = outputCounter +1;
+			if(outputCounter<outputs.length){
+				request = request + ";";
+			}
+		}
+		
+		if( execute.getExecute().getResponseForm().getResponseDocument().isSetStoreExecuteResponse()){
+			request = request + "&storeExecuteResponse=true";
+		}
+		if( execute.getExecute().getResponseForm().getResponseDocument().isSetStatus()){
+			request = request + "&status=true";
+		}
+		if( execute.getExecute().getResponseForm().getResponseDocument().isSetLineage()){
+			request = request + "&lineage=true";
+		}
+		
+		return request;
 	}
 
 	

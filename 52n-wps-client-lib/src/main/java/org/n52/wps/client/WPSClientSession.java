@@ -266,6 +266,7 @@ public class WPSClientSession {
 		url = req.getRequest(url);
 		try {
 			URL urlObj = new URL(url);
+			urlObj.getContent();
 			InputStream is = urlObj.openStream();
 			Document doc = checkInputStream(is);
 			return CapabilitiesDocument.Factory.parse(doc, options);
@@ -387,6 +388,32 @@ public class WPSClientSession {
 			processNames[i] = processes[i].getIdentifier().getStringValue();
 		}
 		return processNames;
+	}
+
+	public ExecuteResponseDocument executeViaGET(String url, String executeAsGETString) throws WPSClientException {
+		url = url + executeAsGETString;
+		try {
+			URL urlObj = new URL(url);
+			InputStream is = urlObj.openStream();
+			Document doc = checkInputStream(is);
+			ExceptionReportDocument erDoc = null;
+			try {
+				return ExecuteResponseDocument.Factory.parse(doc);
+			}
+			catch(XmlException e) {
+				try {
+					erDoc = ExceptionReportDocument.Factory.parse(doc);
+				} catch (XmlException e1) {
+					throw new WPSClientException("Error occured while parsing executeResponse", e);
+				}
+				throw new WPSClientException("Error occured while parsing executeResponse", erDoc);
+			}
+		} catch (MalformedURLException e) {
+			throw new WPSClientException("Capabilities URL seems to be unvalid: " + url, e);
+		} catch (IOException e) {
+			throw new WPSClientException("Error occured while retrieving capabilities from url: " + url, e);
+		}
+		
 	}
 	
 	
