@@ -280,12 +280,13 @@ public class RProcessDescriptionCreator{
 				
 				for(int j=0; j<supportedFormats.length;j++){
 					for(int k=0; k<supportedEncodings.length;k++){
-						for(int t = 0; t<supportedSchemas.length;t++){
+						for(int t = 0; t<supportedSchemas.length || t == 0;t++){
 							String supportedFormat = supportedFormats[j];
-							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
+							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();					
 							supportedCreatedFormat.setMimeType(supportedFormat);
 							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-							supportedCreatedFormat.setSchema(supportedSchemas[t]);
+							if(supportedSchemas.length >0)
+								supportedCreatedFormat.setSchema(supportedSchemas[t]);
 						}
 					}
 				}
@@ -330,12 +331,13 @@ public class RProcessDescriptionCreator{
 				
 				for(int j=0; j<supportedFormats.length;j++){
 					for(int k=0; k<supportedEncodings.length;k++){
-						for(int t = 0; t<supportedSchemas.length;t++){
+						for(int t = 0; t<supportedSchemas.length || t==0;t++){
 							String supportedFormat = supportedFormats[j];
 							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
 							supportedCreatedFormat.setMimeType(supportedFormat);
 							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-							supportedCreatedFormat.setSchema(supportedSchemas[t]);
+							if(supportedSchemas.length >0)
+								supportedCreatedFormat.setSchema(supportedSchemas[t]);
 						}
 					}
 				}
