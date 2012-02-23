@@ -92,6 +92,15 @@ public final class GenericFileDataConstants {
 		lut.put(MIME_TYPE_DGN, "dgn");
 		lut.put(MIME_TYPE_KML, "kml");
 		lut.put(MIME_TYPE_HDF4EOS, "hdf");
+		lut.put(MIME_TYPE_GML200, ".gml");
+		lut.put(MIME_TYPE_GML211, ".gml");
+		lut.put(MIME_TYPE_GML212, ".gml");
+		lut.put(MIME_TYPE_GML2121, ".gml");
+		lut.put(MIME_TYPE_GML300, ".gml");
+		lut.put(MIME_TYPE_GML301, ".gml");
+		lut.put(MIME_TYPE_GML310, ".gml");
+		lut.put(MIME_TYPE_GML311, ".gml");
+		lut.put(MIME_TYPE_GML321, ".gml");
 		
 		return lut;
 	}

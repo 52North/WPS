@@ -75,7 +75,7 @@ public class GenericFileData {
 	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
 
 	protected final InputStream dataStream;
-	protected final String fileExtension;
+	protected String fileExtension;
 	protected final String mimeType;
 	protected File primaryFile;
 
@@ -84,6 +84,9 @@ public class GenericFileData {
 		this.mimeType = mimeType;
 		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT()
 				.get(mimeType);
+		if(fileExtension == null){
+			this.fileExtension = "dat";
+		}
 	}
 
 	public GenericFileData(FeatureCollection featureCollection)
