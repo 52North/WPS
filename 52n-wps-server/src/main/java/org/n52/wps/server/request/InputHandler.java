@@ -801,7 +801,7 @@ public class InputHandler {
 				 }
 			}
 			if(format == null){
-				throw new ExceptionReport("Could not determine output format", ExceptionReport.INVALID_PARAMETER_VALUE);
+				throw new ExceptionReport("Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
 			
 			mimeType = format.getMimeType();
@@ -889,7 +889,7 @@ public class InputHandler {
 							 }
 						}
 						if(format == null){
-							throw new ExceptionReport("Could not determine output format", ExceptionReport.INVALID_PARAMETER_VALUE);
+							throw new ExceptionReport("Could not determine output format. Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
 						}
 						
 						mimeType = format.getMimeType();
