@@ -85,6 +85,7 @@ public class SimpleGMLParser extends AbstractParser {
 	public SimpleGMLParser() {
 		super();
 		supportedIDataTypes.add(GTVectorDataBinding.class);
+		geomFactory = new GeometryFactory();
 	}
 	
 	public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
