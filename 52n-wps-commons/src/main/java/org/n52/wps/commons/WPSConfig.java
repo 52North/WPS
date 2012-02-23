@@ -40,6 +40,7 @@ import java.io.Serializable;
 import java.io.StringBufferInputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
@@ -221,7 +222,9 @@ public class WPSConfig  implements Serializable {
 			if(configPath==null){
 				throw new IOException("Could not find wps_config.xml");
 			}else{
-				return configPath.getFile();
+				String config = configPath.getFile();
+				config = URLDecoder.decode(config);
+				return config;
 			}
 			
 		}
