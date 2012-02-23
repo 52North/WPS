@@ -43,6 +43,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 
 /**
@@ -125,6 +126,10 @@ public class ParserFactory {
     }
 
 	public static ParserFactory getInstance() {
+		if(factory == null){
+			Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
+			initialize(parsers);
+		}
 		return factory;
 	}
 	

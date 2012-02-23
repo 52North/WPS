@@ -43,7 +43,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.GeneratorDocument.Generator;
+import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
 
 
 public class GeneratorFactory {
@@ -117,6 +119,10 @@ public class GeneratorFactory {
     }
 
 	public static GeneratorFactory getInstance() {
+		if(factory == null){
+			Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();
+			initialize(generators);
+		}
 		return factory;
 	}
 	
