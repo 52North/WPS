@@ -347,7 +347,7 @@ public class InputHandler {
 									 }
 									 
 									 */
-									 if(tempFormat.getSchema().equalsIgnoreCase(data.getSchema())){
+									 if(tempFormat.isSetSchema() && tempFormat.getSchema().equalsIgnoreCase(data.getSchema())){
 										 foundSchema = tempFormat.getSchema();
 										 schemaFormat =tempFormat;
 										 found = found +1;
