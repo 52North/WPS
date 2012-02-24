@@ -123,7 +123,7 @@ public class GML3BasicParser extends AbstractParser {
 		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 		
 		String schemaLocation =  schematypeTuple.getLocalPart();
-		schemaLocation = URLEncoder.encode(schemaLocation);
+		//schemaLocation = URLEncoder.encode(schemaLocation);
 		
 		
 		Configuration configuration = null;
