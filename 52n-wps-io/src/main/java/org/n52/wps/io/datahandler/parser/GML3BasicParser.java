@@ -37,6 +37,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -122,7 +123,9 @@ public class GML3BasicParser extends AbstractParser {
 		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 		
 		String schemaLocation =  schematypeTuple.getLocalPart();
-
+		schemaLocation = URLEncoder.encode(schemaLocation);
+		
+		
 		Configuration configuration = null;
 		if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
 			SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
