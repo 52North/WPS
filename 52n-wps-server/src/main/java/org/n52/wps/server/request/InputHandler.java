@@ -825,8 +825,14 @@ public class InputHandler {
 			
 				 URLConnection urlConnection = url.openConnection();
 				 mimeType = urlConnection.getContentType();
+				 if(mimeType.contains("GML2")){
+					 mimeType = "text/xml; subtype=gml/2.0.0";
+				 }
+				 if(mimeType.contains("GML3")){
+					 mimeType = "text/xml; subtype=gml/3.0.0";
+				 }
 				 ComplexDataDescriptionType format = null;
-				 
+				
 				 if(mimeType!=null){
 					 	String defaultMimeType = inputPD.getComplexData().getDefault().getFormat().getMimeType();
 						
