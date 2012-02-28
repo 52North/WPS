@@ -1,5 +1,6 @@
 package org.n52.wps.io.data.binding.bbox;
 
+import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Set;
 
@@ -14,6 +15,8 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class GTReferenceEnvelope implements IComplexData{
 
 	private Envelope envelope;
@@ -27,7 +30,16 @@ public class GTReferenceEnvelope implements IComplexData{
 			double upx_double = new Double(""+upx);
 			double upy_double = new Double(""+upy);
 			
-			envelope = new ReferencedEnvelope(llx_double,lly_double,upx_double,upy_double,CRS.decode(crs)); 
+			Coordinate ll = new Coordinate(llx_double,lly_double);
+			Coordinate ur = new Coordinate(upx_double,upy_double);
+			com.vividsolutions.jts.geom.Envelope internalEnvelope = new com.vividsolutions.jts.geom.Envelope(ll,ur);
+			
+			if(crs==null){
+				envelope = new ReferencedEnvelope(internalEnvelope, null);
+			}
+			else{
+				envelope = new ReferencedEnvelope(internalEnvelope,CRS.decode(crs));
+			}
 		
 		}catch(Exception e){
 			throw new RuntimeException("Error while creating BoundingBox");
