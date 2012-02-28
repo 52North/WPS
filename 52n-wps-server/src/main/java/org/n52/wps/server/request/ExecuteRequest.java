@@ -35,8 +35,11 @@ Muenster, Germany
 package org.n52.wps.server.request;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -252,6 +255,28 @@ public class ExecuteRequest extends Request implements IObserver {
 							ExceptionReport.MISSING_PARAMETER_VALUE);
 				}
 				data.setStringValue(value);
+			} else if (inputDesc.isSetBoundingBoxData()) {
+				BoundingBoxType data = input.addNewData().addNewBoundingBoxData();
+				String[] values = value.split(",");
+				
+				if(values.length<4){
+					throw new ExceptionReport("Invalid Number of BBOX Values: "
+							+ inputDesc.getIdentifier().getStringValue(),
+							ExceptionReport.MISSING_PARAMETER_VALUE);
+				}
+				List<String> lowerCorner = new ArrayList<String>();
+				lowerCorner.add(values[0]);
+				lowerCorner.add(values[1]);
+				data.setLowerCorner(lowerCorner);
+				
+				List<String> upperCorner = new ArrayList<String>();
+				upperCorner.add(values[2]);
+				upperCorner.add(values[3]);
+				data.setUpperCorner(upperCorner);
+				
+				if(values.length>4){
+					data.setCrs(values[4]);
+				}
 			}
 
 		}
@@ -575,9 +600,25 @@ public class ExecuteRequest extends Request implements IObserver {
 			} 
 
 		}catch(RuntimeException e) {
-			LOGGER.debug("RuntimeException:" + e.getMessage());
-			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
-		} finally {
+
+            /*LOGGER.debug("RuntimeException:" + e.getMessage());
+
+            this.getExecuteResponseBuilder().getDoc().getExecuteResponse().unsetProcessOutputs();
+
+            StatusType statusFailed = StatusType.Factory.newInstance();
+
+            statusFailed.addNewProcessFailed().setExceptionReport(
+
+            e.getExceptionDocument().getExceptionReport());
+
+            this.getExecuteResponseBuilder().setStatus(statusFailed);
+
+            execResp = new ExecuteResponse(this);*/
+
+            throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+
+      }
+		 finally {
 			//  you ***MUST*** call this or else you will have a PermGen ClassLoader memory leak due to ThreadLocal use
 			ExecutionContextFactory.unregisterContext();
 		}
