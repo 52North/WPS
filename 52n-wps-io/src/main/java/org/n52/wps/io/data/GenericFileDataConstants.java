@@ -29,8 +29,15 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.io.data;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Properties;
 
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IOHandler;
 
 
@@ -66,41 +73,76 @@ public final class GenericFileDataConstants {
 	public static final String MIME_TYPE_GML310 = "text/xml; subtype=gml/3.1.0";
 	public static final String MIME_TYPE_GML311 = "text/xml; subtype=gml/3.1.1";
 	public static final String MIME_TYPE_GML321 = "text/xml; subtype=gml/3.2.1";
+	private static HashMap<String, String> lut;
 	
 	
 	public static final HashMap<String, String> mimeTypeFileTypeLUT(){
 		
-		HashMap<String, String> lut = new HashMap<String, String>();
+//		HashMap<String, String> lut = new HashMap<String, String>();
 		
-		lut.put(MIME_TYPE_ZIPPED_SHP, "shp");
-		lut.put(MIME_TYPE_SHP, "shp");
-		lut.put(MIME_TYPE_HDF, "img");
-		lut.put(MIME_TYPE_GEOTIFF, "tif");
-		lut.put(MIME_TYPE_X_GEOTIFF, "tif");
-		lut.put(MIME_TYPE_IMAGE_GEOTIFF, "tif");
-		lut.put(MIME_TYPE_IMAGE_PNG, "png");
-		lut.put(MIME_TYPE_IMAGE_JPEG, "jpeg");
-		lut.put(MIME_TYPE_IMAGE_GIF, "gif");
-		lut.put(MIME_TYPE_TIFF, "tif");
-		lut.put(MIME_TYPE_DBASE, "dbf");
-		lut.put(MIME_TYPE_REMAPFILE, "RMP");
-		lut.put(MIME_TYPE_PLAIN_TEXT, "txt");
-		lut.put(MIME_TYPE_TEXT_XML, "xml");		
-		lut.put(MIME_TYPE_X_ERDAS_HFA, "img");
-		lut.put(MIME_TYPE_NETCDF, "nc");
-		lut.put(MIME_TYPE_X_NETCDF, "nc");
-		lut.put(MIME_TYPE_DGN, "dgn");
-		lut.put(MIME_TYPE_KML, "kml");
-		lut.put(MIME_TYPE_HDF4EOS, "hdf");
-		lut.put(MIME_TYPE_GML200, ".gml");
-		lut.put(MIME_TYPE_GML211, ".gml");
-		lut.put(MIME_TYPE_GML212, ".gml");
-		lut.put(MIME_TYPE_GML2121, ".gml");
-		lut.put(MIME_TYPE_GML300, ".gml");
-		lut.put(MIME_TYPE_GML301, ".gml");
-		lut.put(MIME_TYPE_GML310, ".gml");
-		lut.put(MIME_TYPE_GML311, ".gml");
-		lut.put(MIME_TYPE_GML321, ".gml");
+		if (lut == null) {
+
+			lut = new HashMap<String, String>();
+
+			Properties ioProperties = new Properties();
+
+			try {
+
+				String path = WPSConfig.class.getProtectionDomain()
+						.getCodeSource().getLocation().getFile();
+
+				path = path.substring(0, path.indexOf("lib/")).concat(
+						"classes/org/n52/wps/io/io.properties");
+
+				File ioPropertiesFile = new File(path);
+
+				ioProperties.load(new FileInputStream(ioPropertiesFile));
+
+				Enumeration<Object> en = ioProperties.keys();
+
+				while (en.hasMoreElements()) {
+					String type = (String) en.nextElement();
+					System.out.println(type + " "
+							+ ioProperties.getProperty(type));
+					lut.put(type, ioProperties.getProperty(type));
+				}
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+//		lut.put(MIME_TYPE_ZIPPED_SHP, "shp");
+//		lut.put(MIME_TYPE_SHP, "shp");
+//		lut.put(MIME_TYPE_HDF, "img");
+//		lut.put(MIME_TYPE_GEOTIFF, "tif");
+//		lut.put(MIME_TYPE_X_GEOTIFF, "tif");
+//		lut.put(MIME_TYPE_IMAGE_GEOTIFF, "tif");
+//		lut.put(MIME_TYPE_IMAGE_PNG, "png");
+//		lut.put(MIME_TYPE_IMAGE_JPEG, "jpeg");
+//		lut.put(MIME_TYPE_IMAGE_GIF, "gif");
+//		lut.put(MIME_TYPE_TIFF, "tif");
+//		lut.put(MIME_TYPE_DBASE, "dbf");
+//		lut.put(MIME_TYPE_REMAPFILE, "RMP");
+//		lut.put(MIME_TYPE_PLAIN_TEXT, "txt");
+//		lut.put(MIME_TYPE_TEXT_XML, "xml");		
+//		lut.put(MIME_TYPE_X_ERDAS_HFA, "img");
+//		lut.put(MIME_TYPE_NETCDF, "nc");
+//		lut.put(MIME_TYPE_X_NETCDF, "nc");
+//		lut.put(MIME_TYPE_DGN, "dgn");
+//		lut.put(MIME_TYPE_KML, "kml");
+//		lut.put(MIME_TYPE_HDF4EOS, "hdf");
+//		lut.put(MIME_TYPE_GML200, ".gml");
+//		lut.put(MIME_TYPE_GML211, ".gml");
+//		lut.put(MIME_TYPE_GML212, ".gml");
+//		lut.put(MIME_TYPE_GML2121, ".gml");
+//		lut.put(MIME_TYPE_GML300, ".gml");
+//		lut.put(MIME_TYPE_GML301, ".gml");
+//		lut.put(MIME_TYPE_GML310, ".gml");
+//		lut.put(MIME_TYPE_GML311, ".gml");
+//		lut.put(MIME_TYPE_GML321, ".gml");
 		
 		return lut;
 	}
