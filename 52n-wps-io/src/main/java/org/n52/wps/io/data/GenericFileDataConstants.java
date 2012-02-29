@@ -41,7 +41,6 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IOHandler;
 
 
-
 public final class GenericFileDataConstants {
 	
 	public static final String MIME_TYPE_ZIPPED_SHP = IOHandler.MIME_TYPE_ZIPPED_SHP;
@@ -78,8 +77,6 @@ public final class GenericFileDataConstants {
 	
 	public static final HashMap<String, String> mimeTypeFileTypeLUT(){
 		
-//		HashMap<String, String> lut = new HashMap<String, String>();
-		
 		if (lut == null) {
 
 			lut = new HashMap<String, String>();
@@ -89,11 +86,21 @@ public final class GenericFileDataConstants {
 			try {
 
 				String path = WPSConfig.class.getProtectionDomain()
-						.getCodeSource().getLocation().getFile();
-
-				path = path.substring(0, path.indexOf("lib/")).concat(
-						"classes/org/n52/wps/io/io.properties");
-
+						.getCodeSource().getLocation().getFile();				
+				
+				if(path.indexOf("lib/") != -1){
+					//running as webapp
+					path = path.substring(0, path.indexOf("lib/")).concat(
+						"classes/org/n52/wps/io/io.properties");				
+				}else{
+					//testing, client api
+					File f = new File(GenericFileDataConstants.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+					
+					String projectRoot = f.getParentFile().getParentFile().getParent();//Project root
+					
+					path = projectRoot + "/52n-wps-webapp/src/main/webapp/WEB-INF/classes/org/n52/wps/io/io.properties";
+				}
+				
 				File ioPropertiesFile = new File(path);
 
 				ioProperties.load(new FileInputStream(ioPropertiesFile));
@@ -113,36 +120,6 @@ public final class GenericFileDataConstants {
 				e.printStackTrace();
 			}
 		}
-		
-//		lut.put(MIME_TYPE_ZIPPED_SHP, "shp");
-//		lut.put(MIME_TYPE_SHP, "shp");
-//		lut.put(MIME_TYPE_HDF, "img");
-//		lut.put(MIME_TYPE_GEOTIFF, "tif");
-//		lut.put(MIME_TYPE_X_GEOTIFF, "tif");
-//		lut.put(MIME_TYPE_IMAGE_GEOTIFF, "tif");
-//		lut.put(MIME_TYPE_IMAGE_PNG, "png");
-//		lut.put(MIME_TYPE_IMAGE_JPEG, "jpeg");
-//		lut.put(MIME_TYPE_IMAGE_GIF, "gif");
-//		lut.put(MIME_TYPE_TIFF, "tif");
-//		lut.put(MIME_TYPE_DBASE, "dbf");
-//		lut.put(MIME_TYPE_REMAPFILE, "RMP");
-//		lut.put(MIME_TYPE_PLAIN_TEXT, "txt");
-//		lut.put(MIME_TYPE_TEXT_XML, "xml");		
-//		lut.put(MIME_TYPE_X_ERDAS_HFA, "img");
-//		lut.put(MIME_TYPE_NETCDF, "nc");
-//		lut.put(MIME_TYPE_X_NETCDF, "nc");
-//		lut.put(MIME_TYPE_DGN, "dgn");
-//		lut.put(MIME_TYPE_KML, "kml");
-//		lut.put(MIME_TYPE_HDF4EOS, "hdf");
-//		lut.put(MIME_TYPE_GML200, ".gml");
-//		lut.put(MIME_TYPE_GML211, ".gml");
-//		lut.put(MIME_TYPE_GML212, ".gml");
-//		lut.put(MIME_TYPE_GML2121, ".gml");
-//		lut.put(MIME_TYPE_GML300, ".gml");
-//		lut.put(MIME_TYPE_GML301, ".gml");
-//		lut.put(MIME_TYPE_GML310, ".gml");
-//		lut.put(MIME_TYPE_GML311, ".gml");
-//		lut.put(MIME_TYPE_GML321, ".gml");
 		
 		return lut;
 	}
