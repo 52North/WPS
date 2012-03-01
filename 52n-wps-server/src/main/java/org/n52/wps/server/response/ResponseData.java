@@ -142,13 +142,13 @@ public abstract class ResponseData {
 									}
 								}
 								if(schema == null && encoding != null){
-									if(encoding.equalsIgnoreCase(potenitalFormat.getEncoding())){
+									if(encoding.equalsIgnoreCase(potenitalFormat.getEncoding()) || potenitalFormat.getEncoding() == null){
 										format = potenitalFormat;
 									}
 									
 								}
 								if(schema != null && encoding != null){
-									if(schema.equalsIgnoreCase(potenitalFormat.getSchema()) && encoding.equalsIgnoreCase(potenitalFormat.getEncoding())){
+									if(schema.equalsIgnoreCase(potenitalFormat.getSchema()) && ((encoding.equalsIgnoreCase(potenitalFormat.getEncoding()) || potenitalFormat.getEncoding() == null) )){
 										format = potenitalFormat;
 									}
 									
