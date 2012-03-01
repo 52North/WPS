@@ -66,6 +66,7 @@ public abstract class ResponseData {
 		this.id = id;
 		this.algorithmIdentifier = algorithmIdentifier;
 		this.description = description;
+		this.encoding = encoding;
 	
 		OutputDescriptionType outputType =null;
 		
@@ -325,7 +326,9 @@ public abstract class ResponseData {
 		}
 		
 		this.schema = finalSchema;
-		this.encoding = finalEncoding;
+		if(this.encoding==null){
+			this.encoding = finalEncoding;
+		}
 		this.mimeType = finalMimeType;
 		
 		
