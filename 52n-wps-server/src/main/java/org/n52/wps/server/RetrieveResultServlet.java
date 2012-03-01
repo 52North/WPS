@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axiom.om.util.CopyUtils;
 import org.apache.commons.io.IOUtils;
+import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.request.ExecuteRequest;
@@ -67,6 +68,7 @@ public class RetrieveResultServlet extends HttpServlet {
 		
 		OutputStream os = res.getOutputStream();
 		if(id == null || id.equals("")) {
+			
 			res.setContentType("text/html");
 			res.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			PrintWriter pw = new PrintWriter(os);
@@ -77,17 +79,22 @@ public class RetrieveResultServlet extends HttpServlet {
 		String mimeType = db.getMimeTypeForStoreResponse(id);
 		res.setContentType(mimeType);
 		//look up result
-		InputStream is = db.lookupResponse(id);
+		//InputStream is = db.lookupResponse(id);
 		//write result to output
-		IOUtils.copy(is, os);
-
+		
+		//IOUtils.copy(is, os);
+		
+		String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
+		if(suffix==null){
+			suffix = "dat";
+		}
 		// Not Supported workaround -> removed.
-//		File file = db.lookupResponseAsFile(id+"result."+usedMimeType);
-//		String fileName = URLEncoder.encode(file.getName());
-//		String redirect = "Databases/FlatFile/"+fileName;
-//		
-//		res.sendRedirect(redirect);
-//		res.flushBuffer();
+		File file = db.lookupResponseAsFile(id+"result."+suffix);
+		String fileName = URLEncoder.encode(file.getName());
+		String redirect = "Databases/FlatFile/"+fileName;
+		
+		res.sendRedirect(redirect);
+		res.flushBuffer();
 //		
 //		
 //		db.deleteStoredResponse(id);

@@ -38,6 +38,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
@@ -145,7 +146,7 @@ public class FlatFileDatabase implements IDatabase {
 	public String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
 		
 		// TODO enhance for multiple ProcessResults
-		String uuid = UUID.randomUUID().toString();
+		//String uuid = UUID.randomUUID().toString();
 		String usedMimeType = mimeType;
 		try {
 			String[] splittedMimeType= mimeType.split("/");
@@ -155,8 +156,14 @@ public class FlatFileDatabase implements IDatabase {
 					usedMimeType = "tif";
 				}
 			}
+			String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
+			if(suffix==null){
+				suffix = "dat";
+			}
+			// Not Supported workaround -> removed.
 			
-			File f = new File(baseDir+File.separator+id+"result-"+uuid);
+	
+			File f = new File(baseDir+File.separator+id+"result."+suffix);
 			f.createNewFile();
 			FileOutputStream fos = new FileOutputStream(f);
 			IOUtils.copy(stream, fos);
@@ -165,7 +172,7 @@ public class FlatFileDatabase implements IDatabase {
 			stream.close();
 			
 		//	IOUtils.write(bytes, fos);
-			File f_mime = new File(baseDir+File.separator+id+"result-"+uuid+"_mimeType");
+			File f_mime = new File(baseDir+File.separator+id+"_mimeType");
 			FileOutputStream fos_mime = new FileOutputStream(f_mime);
 			IOUtils.write(mimeType, fos_mime);
 			fos_mime.close();
@@ -175,7 +182,7 @@ public class FlatFileDatabase implements IDatabase {
 			throw new RuntimeException(e);
 		}
 	
-		return generateRetrieveResultURL(id+"result-"+uuid);
+		return generateRetrieveResultURL(id);
 				
 	}
 
@@ -197,8 +204,13 @@ public class FlatFileDatabase implements IDatabase {
 				usedMimeType = "tif";
 			}
 		}
+		String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
+		if(suffix==null){
+			suffix = "dat";
+		}
+		// Not Supported workaround -> removed.
 		
-		File f = new File(baseDir+File.separator+response.getUniqueId()+"result."+usedMimeType);
+		File f = new File(baseDir+File.separator+response.getUniqueId()+"result."+suffix);
 		try {
 			FileOutputStream os = new FileOutputStream(f);
 			InputStream is = response.getAsStream();
