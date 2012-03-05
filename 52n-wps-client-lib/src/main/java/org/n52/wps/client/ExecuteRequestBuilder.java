@@ -72,6 +72,7 @@ public class ExecuteRequestBuilder {
 		this.processDesc = processDesc;
 		execute = ExecuteDocument.Factory.newInstance();
 		Execute ex = execute.addNewExecute();
+		ex.setService("WPS");
 		ex.setVersion(SUPPORTED_VERSION);
 		ex.addNewIdentifier().setStringValue(processDesc.getIdentifier().getStringValue());
 		ex.addNewDataInputs();
