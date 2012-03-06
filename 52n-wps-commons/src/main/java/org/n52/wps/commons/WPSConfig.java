@@ -220,6 +220,31 @@ public class WPSConfig  implements Serializable {
 			//try to load from classpath
 			URL configPath = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
 			if(configPath==null){
+				URL configPathURL = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
+				if(configPathURL!=null){
+					String config = configPathURL.getFile();
+					config = URLDecoder.decode(config);
+					return config;
+				}
+				//try lookup webapp project
+				int index1 = domain.indexOf("52n-wps-parent");
+				if(index1>0){
+					//try to load from classpath
+					String path = URLDecoder.decode(domain.substring(0,index1+14));
+					path = path + File.separator+"52n-wps-webapp"+File.separator+"target";
+					File f = new File(path);
+					String[] dirs = f.getAbsoluteFile().list();
+					for(String dir : dirs){
+						if(dir.startsWith("52n-wps-webapp") && !dir.endsWith(".war")){
+							path = path+File.separator+dir+File.separator+ "config/wps_config.xml";
+						}
+					}
+					
+						return path;
+					
+					
+				}
+				
 				throw new IOException("Could not find wps_config.xml");
 			}else{
 				String config = configPath.getFile();
@@ -228,6 +253,8 @@ public class WPSConfig  implements Serializable {
 			}
 			
 		}
+		//not in web-inf, try classpath
+		
 		String substring = domain.substring(0,index);
 		if(!substring.endsWith("/")){
 			substring = substring + "/";
