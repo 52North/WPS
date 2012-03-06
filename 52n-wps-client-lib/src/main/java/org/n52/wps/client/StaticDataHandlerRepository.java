@@ -27,9 +27,6 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.client;
 
-import java.io.File;
-import java.net.URLDecoder;
-
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
@@ -46,15 +43,9 @@ public class StaticDataHandlerRepository {
 	private static GeneratorFactory genFactory;
 	private static ParserFactory parserFactory;
 	
-	//private static String[] GENERATOR_CLASSES= new String[]{"org.n52.wps.io.xml.GML2BasicGenerator", "org.n52.wps.io.xml.SimpleGMLGenerator"};
-	//private static String[] PARSER_CLASSES= new String[]{"org.n52.wps.io.xml.GML2BasicParser","org.n52.wps.io.xml.SimpleGMLParser"};
-	
 	public static GeneratorFactory getGeneratorFactory() {
 		if(genFactory == null) {
-			String location = new File(StaticDataHandlerRepository.class.getClassLoader().getResource("wps_config.xml").getFile()).getAbsolutePath();
-			location = URLDecoder.decode(location);
-			
-			Generator[] generators = WPSConfig.getInstance(location).getActiveRegisteredGenerator();		
+			Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();		
 			
 			GeneratorFactory.initialize(generators);
 			genFactory = GeneratorFactory.getInstance();
@@ -67,10 +58,7 @@ public class StaticDataHandlerRepository {
 	
 	public static ParserFactory getParserFactory() {
 		if(parserFactory == null) {
-			String location = new File(StaticDataHandlerRepository.class.getClassLoader().getResource("wps_config.xml").getFile()).getAbsolutePath();
-			location = URLDecoder.decode(location);
-
-			Parser[] parsers = WPSConfig.getInstance(location).getActiveRegisteredParser();
+			Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
 			ParserFactory.initialize(parsers);
 			
 			parserFactory = ParserFactory.getInstance();

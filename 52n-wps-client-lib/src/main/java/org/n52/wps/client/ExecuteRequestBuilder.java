@@ -83,7 +83,17 @@ public class ExecuteRequestBuilder {
 		this.execute = execute;
 	}
 	
-	public void addComplexData(String parameterID, IData value, String schema, String encoding, String mimeType) {
+	/**
+	 * add an input element. sets the data in the xml request
+	 * 
+	 * @param parameterID the ID of the input (see process description)
+	 * @param value the actual value (for xml data xml for binary data is should be base64 encoded data)
+	 * @param schema schema if applicable otherwise null
+	 * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
+	 * @param mimeType mimetype of the data, has to be set
+	 * @throws WPSClientException
+	 */
+	public void addComplexData(String parameterID, IData value, String schema, String encoding, String mimeType) throws WPSClientException {
 		GeneratorFactory fac = StaticDataHandlerRepository.getGeneratorFactory();
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if (inputDesc == null) {
@@ -106,35 +116,47 @@ public class ExecuteRequestBuilder {
 			throw new IllegalArgumentException("Could not find an appropriate generator for parameter: " + parameterID);
 		}
 		
-		// encoding is UTF-8 (or nothing and we default to UTF-8)
-		// everything that goes to this condition should be inline xml data
-		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
-			
+		
+		InputStream stream = null;  
+				
 			InputType input = execute.getExecute().getDataInputs().addNewInput();
 			input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
-
-			try {
-				InputStream stream = generator.generateStream(value, mimeType, schema);
-				ComplexDataType data = input.addNewData().addNewComplexData();
-				data.set(XmlObject.Factory.parse(stream));
-				if (schema != null) {
-					data.setSchema(schema);
-				}
-				if (mimeType != null) {
-					data.setMimeType(mimeType);
-				}
-				if (encoding != null) {
-					data.setEncoding(encoding);
-				}
+			// encoding is UTF-8 (or nothing and we default to UTF-8)
+			// everything that goes to this condition should be inline xml data
+		try {
+			
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+					stream = generator.generateStream(value, mimeType, schema);
+					
+			}else if(encoding.equalsIgnoreCase("base64")){
+					stream = generator.generateBase64Stream(value, mimeType, schema);
+			}else{
+				throw new WPSClientException("Encoding not supported");
 			}
-			catch(XmlException e) {
-				throw new IllegalArgumentException("error inserting node into execute request", e);
+					ComplexDataType data = input.addNewData().addNewComplexData();
+					data.set(XmlObject.Factory.parse(stream));
+					if (schema != null) {
+						data.setSchema(schema);
+					}
+					if (mimeType != null) {
+						data.setMimeType(mimeType);
+					}
+					if (encoding != null) {
+						data.setEncoding(encoding);
+					}
+			}catch(XmlException e) {
+					throw new IllegalArgumentException("error inserting node into execute request", e);
 			} catch (IOException e) {
-				throw new IllegalArgumentException("error reading generator output", e);
+					throw new IllegalArgumentException("error reading generator output", e);
 			}
-		}
+			
 	}
 
+	/**
+	 * Add literal data to the request
+	 * @param parameterID the ID of the input paramter according to the describe process
+	 * @param value the value. other types than strings have to be converted to string. The datatype is automatically determined and set accordingly to the process description
+	 */
 	public void addLiteralData(String parameterID, String value) {
 		InputDescriptionType inputDesc = this.getParameterDescription(parameterID);
 		if (inputDesc == null) {
@@ -152,12 +174,15 @@ public class ExecuteRequestBuilder {
 		}
 	}
 
-	/**
-	 * this sets the complexdataReference, if the process description also refers to this schema:
-	 * http://schemas.opengis.net/gml/2.1.2/feature.xsd
-	 * @param parameterID
-	 * @param value
-	 */
+/**
+ * Sets a reference to input data
+ * 
+ * @param parameterID ID of the input element
+ * @param value reference URL
+ * @param schema schema if applicable otherwise null
+ * @param encoding encoding if applicable (typically not), otherwise null
+ * @param mimetype mimetype of the input according to the process description. has to be set
+ */
 	public void addComplexDataReference(String parameterID, String value, String schema, String encoding, String mimetype) {
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if (inputDesc == null) {
@@ -232,6 +257,12 @@ public class ExecuteRequestBuilder {
 		return true;
 	}
 
+	/**
+	 * Set this if you want the data to a schema offered in the process description
+	 * @param schema
+	 * @param outputName
+	 * @return
+	 */
 	public boolean setSchemaForOutput(String schema, String outputName) {
 		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
@@ -267,6 +298,12 @@ public class ExecuteRequestBuilder {
 		return false;
 	}
 
+	/**
+	 * sets the desired mimetype of the output. if not set, the default mimetype will be used as stated in the process description
+	 * @param mimeType the name of the mimetype as announced in the processdescription
+	 * @param outputName the Identifier of the output element
+	 * @return success
+	 */
 	public boolean setMimeTypeForOutput(String mimeType, String outputName) {
 		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
@@ -303,6 +340,12 @@ public class ExecuteRequestBuilder {
 		return false;
 	}
 
+	/**
+	 * sets the encoding. neccessary if data should not be retrieved in the default encoding (i.e. binary data in XML respones not raw data responses)
+	 * @param encoding use base64
+	 * @param outputName ID of the output
+	 * @return
+	 */
 	public boolean setEncodingForOutput(String encoding, String outputName) {
 		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
@@ -363,6 +406,13 @@ public class ExecuteRequestBuilder {
 		return null;
 	}
 
+	/**
+	 * Asks for data as raw data, i.e. without WPS XML wrapping
+	 * @param schema if applicable otherwise null
+	 * @param encoding if default encoding = null, otherwise base64
+	 * @param mimeType requested mimetype of the output according to the process description. if not set, default mime type is used.
+	 * @return
+	 */
 	public boolean setRawData(String schema, String encoding, String mimeType) {
 		if (processDesc.getProcessOutputs().getOutputArray().length != 1) {
 			return false;
@@ -383,10 +433,18 @@ public class ExecuteRequestBuilder {
 		return true;
 	}
 
+	/**
+	 * XML representation of the created request.
+	 * @return
+	 */
 	public ExecuteDocument getExecute() {
 		return execute;
 	}
-	
+
+	/**
+	 * return a KVP representation for the created execute document.
+	 * @return KVP request string
+	 */
 	public String getExecuteAsGETString() {
 		String request = "?service=wps&request=execute&version=1.0.0&identifier=";
 		request = request + processDesc.getIdentifier().getStringValue();

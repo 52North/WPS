@@ -1,6 +1,10 @@
 package org.n52.wps.client;
 
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -55,7 +59,7 @@ public class WPSClientSession {
 	private Map<String, ProcessDescriptionsDocument> processDescriptions;
 
 	/**
-	 * Initializes a WPS client session with a no logged services.
+	 * Initializes a WPS client session.
 	 *
 	 */
 	private WPSClientSession() {
@@ -66,6 +70,9 @@ public class WPSClientSession {
 		processDescriptions = new HashMap<String, ProcessDescriptionsDocument>();
 	}
 	
+	/*
+	 * @result An instance of a WPS Client session.
+	 */
 	public static WPSClientSession getInstance() {
 		if(session == null) {
 			session = new WPSClientSession();
@@ -128,7 +135,7 @@ public class WPSClientSession {
 	 * informs you if the descriptions for the specified service is already in the session. 
 	 * in normal case it should return true :)
 	 * @param serverID
-	 * @return
+	 * @return success
 	 */
 	public boolean descriptionsAvailableInCache(String serverID) {
 		return processDescriptions.containsKey(serverID);
@@ -137,7 +144,7 @@ public class WPSClientSession {
 	/**
 	 * returns the cached processdescriptions of a service.
 	 * @param serverID
-	 * @return
+	 * @return success
 	 * @throws IOException 
 	 */
 	private ProcessDescriptionsDocument getProcessDescriptionsFromCache(String wpsUrl) throws IOException {
@@ -158,7 +165,7 @@ public class WPSClientSession {
 	 * return the processDescription for a specific process from Cache.
 	 * @param serverID
 	 * @param processID
-	 * @return
+	 * @return a ProcessDescription for a specific process from Cache.
 	 * @throws IOException 
 	 */
 	public ProcessDescriptionType getProcessDescription(String serverID, String processID) throws IOException {
@@ -170,20 +177,27 @@ public class WPSClientSession {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Delivers all ProcessDescriptions from a WPS
+	 * 
+	 * @param wpsUrl the URL of the WPS
+	 * @return An Array of ProcessDescriptions
+	 * @throws IOException
+	 */
 	public ProcessDescriptionType[] getAllProcessDescriptions(String wpsUrl) throws IOException{
 		return getProcessDescriptionsFromCache(wpsUrl).getProcessDescriptions().getProcessDescriptionArray();
 	}
 	
 	/**
-	 * look up, if the service exists already in session.
+	 * looks up, if the service exists already in session.
 	 */
 	public boolean serviceAlreadyRegistered(String serverID) {
 		return loggedServices.containsKey(serverID);
 	}
 
 	/**
-	 * provides you the cached capabilities for a specified serivce.
+	 * provides you the cached capabilities for a specified service.
 	 * @param url
 	 * @return
 	 */
@@ -192,7 +206,7 @@ public class WPSClientSession {
 	}
 	
 	/**
-	 * retrieves all current available processdescriptions of a WPS. Mention: to get the current list 
+	 * retrieves all current available ProcessDescriptions of a WPS. Mention: to get the current list 
 	 * of all processes, which will be requested, the cached capabilities will be used. Please keep that in mind.
 	 * the retrieved descriptions will not be cached, so only transient information!
 	 * @param url
@@ -236,12 +250,13 @@ public class WPSClientSession {
 	}
 	
 	/**
-	 * Execute tries to retrieve features encoded as gzip.
+	 * Executes a process at a WPS
+	 * 
 	 * @param url url of server not the entry additionally defined in the caps.
-	 * @param execute
-	 * @return
+	 * @param execute Execute document
+	 * @return either an ExecuteResponseDocument or an InputStream if asked for RawData or an Exception Report 
 	 */
-	public Object execute(String serverID, ExecuteDocument execute, boolean rawData) throws WPSClientException{
+	private Object execute(String serverID, ExecuteDocument execute, boolean rawData) throws WPSClientException{
 		CapabilitiesDocument caps = loggedServices.get(serverID);
 		Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
 		String url = null;
@@ -257,8 +272,20 @@ public class WPSClientSession {
 		return retrieveExecuteResponseViaPOST(url, execute,rawData);
 	}
 	
+	/**
+	 * Executes a process at a WPS
+	 * 
+	 * @param url url of server not the entry additionally defined in the caps.
+	 * @param execute Execute document
+	 * @return either an ExecuteResponseDocument or an InputStream if asked for RawData or an Exception Report 
+	 */
 	public Object execute(String serverID, ExecuteDocument execute) throws WPSClientException{
-		return execute(serverID, execute,false);
+		if(execute.getExecute().isSetResponseForm()==true && execute.getExecute().isSetResponseForm()==true && execute.getExecute().getResponseForm().isSetRawDataOutput()==true){
+			return execute(serverID, execute,true);
+		}else{
+			return execute(serverID, execute,false);
+		}
+			
 	}
 	
 	private CapabilitiesDocument retrieveCapsViaGET(String url) throws WPSClientException {
@@ -360,8 +387,15 @@ public class WPSClientSession {
 		}
 		
 	}
-	
-	private Object retrieveExecuteResponseViaPOST( String url, ExecuteDocument doc, boolean rawData) throws WPSClientException{
+	/**
+	 * either an ExecuteResponseDocument or an InputStream if asked for RawData or an Exception Report
+	 * @param url
+	 * @param doc
+	 * @param rawData
+	 * @return
+	 * @throws WPSClientException
+	 */
+	private Object retrieveExecuteResponseViaPOST(String url, ExecuteDocument doc, boolean rawData) throws WPSClientException{
 		InputStream is = retrieveDataViaPOST(doc, url);
 		if(rawData) {
 			return is;
@@ -377,7 +411,7 @@ public class WPSClientSession {
 			} catch (XmlException e1) {
 				throw new WPSClientException("Error occured while parsing executeResponse", e);
 			}
-			throw new WPSClientException("Error occured while parsing executeResponse", erDoc);
+			return erDoc;
 		}
 	}
 	
@@ -390,11 +424,22 @@ public class WPSClientSession {
 		return processNames;
 	}
 
-	public ExecuteResponseDocument executeViaGET(String url, String executeAsGETString) throws WPSClientException {
+	/**
+	 * Executes a process at a WPS
+	 * 
+	 * @param url url of server not the entry additionally defined in the caps.
+	 * @param executeAsGETString KVP Execute request
+	 * @return either an ExecuteResponseDocument or an InputStream if asked for RawData or an Exception Report 
+	 */
+	public Object executeViaGET(String url, String executeAsGETString) throws WPSClientException {
 		url = url + executeAsGETString;
 		try {
 			URL urlObj = new URL(url);
 			InputStream is = urlObj.openStream();
+		
+			if(executeAsGETString.toUpperCase().contains("RAWDATA")){
+				return is;
+			}
 			Document doc = checkInputStream(is);
 			ExceptionReportDocument erDoc = null;
 			try {
