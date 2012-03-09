@@ -105,52 +105,45 @@ public class OutputDataItem extends ResponseData {
 		prepareGenerator();
 		ComplexDataType complexData = null;
 		
-		String defaultencoding = null;
-		OutputDescriptionType[] describeProcessOutput = super.description.getProcessOutputs().getOutputArray();
-		for(OutputDescriptionType outputDescription : describeProcessOutput){
-			if(outputDescription.getIdentifier().getStringValue().equals(id)){
-				defaultencoding = outputDescription.getComplexOutput().getDefault().getFormat().getEncoding();
-			}
-		}
+		
 		
 		try {
 			// CHECKING IF STORE IS TRUE AND THEN PROCESSING.... SOMEHOW!
 			// CREATING A COMPLEXVALUE	
 			
-			// in case encoding is NULL -or- empty -or- UTF8
-			// attempt parsing it to XML node as it as binary data will not be requested inline
-			// TODO: check this assumption
+			// in case encoding is NULL -or- empty -or- UTF-8
+			// send plain text (XML or not) in response node
+			// 
+			// in case encoding is base64
+			// send base64encoded (binary) data in node
+			//
+			// in case encoding is 
+			// 
+			InputStream stream = null;
 			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
-				
-				InputStream nodeStream = generator.generateStream(super.obj, mimeType, schema);
-				
-				complexData = output.addNewData().addNewComplexData();
-				complexData.set(XmlObject.Factory.parse(nodeStream));
-				nodeStream.close();
-				
+				stream = generator.generateStream(super.obj, mimeType, schema);
 			}
 			
 			// in case encoding is base64 create a new text node
 			// and parse the generator's result into it
 			else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
-				
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				Document document = builder.newDocument();
-				InputStream base64Stream = generator.generateBase64Stream(super.obj, mimeType, schema);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				IOUtils.copy(base64Stream, baos);
-				base64Stream.close();
-				String text = baos.toString();
-				baos.close();
-				Node dataNode = document.createTextNode(text);
-				
-				complexData = output.addNewData().addNewComplexData();
-				complexData.set(XmlObject.Factory.parse(dataNode));	
+				stream = generator.generateBase64Stream(super.obj, mimeType, schema);
 			}
-			
 			else {
 				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
+			
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document document = builder.newDocument();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			IOUtils.copy(stream, baos);
+			stream.close();
+			String text = baos.toString();
+			baos.close();
+			Node dataNode = document.createTextNode(text);
+			
+			complexData = output.addNewData().addNewComplexData();
+			complexData.set(XmlObject.Factory.parse(dataNode));	
 			
 		} catch(RuntimeException e) {
 			e.printStackTrace();
