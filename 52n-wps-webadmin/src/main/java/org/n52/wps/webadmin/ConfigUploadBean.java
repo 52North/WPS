@@ -53,6 +53,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.r.RPropertyChangeManager;
+import org.n52.wps.server.r.R_Config;
 
 /**
  * This Bean handles the fileupload of the xml configuration file
@@ -438,8 +439,7 @@ public class ConfigUploadBean {
 			// if processName is not empty it will the filename (script will be renamed)
 			// because r process IDs are derived from the filenames
 			String processName = newLine.trim();
-			realSavePath = new File(savePath).getParentFile()
-			+ "/WEB-INF/R/scripts/";
+			realSavePath = R_Config.SCRIPT_DIR;
 			new File(realSavePath).mkdirs();
 			
 			while (i != -1) {
