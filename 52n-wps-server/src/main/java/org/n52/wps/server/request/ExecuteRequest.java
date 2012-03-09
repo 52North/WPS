@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.ows.x11.BoundingBoxType;
+import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -601,22 +602,15 @@ public class ExecuteRequest extends Request implements IObserver {
 
 		}catch(RuntimeException e) {
 
-            /*LOGGER.debug("RuntimeException:" + e.getMessage());
+			LOGGER.debug("RuntimeException:" + e.getMessage());
 
-            this.getExecuteResponseBuilder().getDoc().getExecuteResponse().unsetProcessOutputs();
+			StatusType statusFailed = StatusType.Factory.newInstance();
 
-            StatusType statusFailed = StatusType.Factory.newInstance();
+			statusFailed.addNewProcessFailed();
 
-            statusFailed.addNewProcessFailed().setExceptionReport(
+			this.getExecuteResponseBuilder().setStatus(statusFailed);
 
-            e.getExceptionDocument().getExceptionReport());
-
-            this.getExecuteResponseBuilder().setStatus(statusFailed);
-
-            execResp = new ExecuteResponse(this);*/
-
-            throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
-
+			throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
       }
 		 finally {
 			//  you ***MUST*** call this or else you will have a PermGen ClassLoader memory leak due to ThreadLocal use
