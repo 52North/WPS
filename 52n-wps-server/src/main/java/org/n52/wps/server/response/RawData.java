@@ -33,8 +33,10 @@ import java.io.InputStream;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.InputHandler;
 
 /*
  * @author foerster
@@ -58,7 +60,11 @@ public class RawData extends ResponseData {
 	
 	public InputStream getAsStream() throws ExceptionReport {
 		try {
-			return generator.generateStream(obj, mimeType, schema);
+			if(encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+				return generator.generateStream(obj, mimeType, schema);
+			}else{
+				return generator.generateBase64Stream(obj, mimeType, schema);
+			}
 		} catch (IOException e) {
 			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
