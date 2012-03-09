@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ConcurrentModificationException;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
@@ -194,23 +195,8 @@ public class FlatFileDatabase implements IDatabase {
 		if(!(request instanceof ExecuteRequest)){
 			throw new RuntimeException("Could not store response in Flatfile Database. Response id = " + response.getUniqueId());
 		}
-		ExecuteRequest executeRequest = (ExecuteRequest) request;
-		String mimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
-		String usedMimeType = mimeType;
-		String[] splittedMimeType= mimeType.split("/");
-		if(splittedMimeType.length==2){
-			usedMimeType = splittedMimeType[1];
-			if(usedMimeType.equalsIgnoreCase("TIFF")){
-				usedMimeType = "tif";
-			}
-		}
-		String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
-		if(suffix==null){
-			suffix = "dat";
-		}
-		// Not Supported workaround -> removed.
-		
-		File f = new File(baseDir+File.separator+response.getUniqueId()+"result."+suffix);
+			
+		File f = new File(baseDir+File.separator+response.getUniqueId()+"result.xml");
 		try {
 			FileOutputStream os = new FileOutputStream(f);
 			InputStream is = response.getAsStream();
@@ -221,7 +207,7 @@ public class FlatFileDatabase implements IDatabase {
 				
 			File f_mime = new File(baseDir+File.separator+response.getUniqueId()+"_mimeType");
 			FileOutputStream fos_mime = new FileOutputStream(f_mime);
-			IOUtils.write(mimeType, fos_mime);
+			IOUtils.write("text/xml", fos_mime);
 			fos_mime.close();
 		}catch(ExceptionReport e) {
 			throw new RuntimeException(e);
@@ -231,6 +217,16 @@ public class FlatFileDatabase implements IDatabase {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RuntimeException(e);
+		} catch(ConcurrentModificationException e){
+			try {
+				Thread.sleep(2*1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				throw new RuntimeException(e1);
+			}
+			storeResponse(response);
 		}
 		
 		return generateRetrieveResultURL((response.getUniqueId()).toString());
