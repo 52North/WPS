@@ -60,14 +60,18 @@ public class RawData extends ResponseData {
 	
 	public InputStream getAsStream() throws ExceptionReport {
 		try {
-			if(encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+			
+			if(encoding == null || encoding == "" || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
 				return generator.generateStream(obj, mimeType, schema);
-			}else{
+			}
+			else if(encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
 				return generator.generateBase64Stream(obj, mimeType, schema);
+				
 			}
 		} catch (IOException e) {
 			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
+		throw new ExceptionReport("Could not determine encoding. Use default (=not set) or base64", ExceptionReport.NO_APPLICABLE_CODE);
 	}
 
 	
