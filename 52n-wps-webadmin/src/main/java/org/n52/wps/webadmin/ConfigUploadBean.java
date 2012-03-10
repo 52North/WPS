@@ -439,7 +439,7 @@ public class ConfigUploadBean {
 			// if processName is not empty it will the filename (script will be renamed)
 			// because r process IDs are derived from the filenames
 			String processName = newLine.trim();
-			realSavePath = R_Config.SCRIPT_DIR;
+			realSavePath = R_Config.SCRIPT_DIR+"/";
 			new File(realSavePath).mkdirs();
 			
 			while (i != -1) {
