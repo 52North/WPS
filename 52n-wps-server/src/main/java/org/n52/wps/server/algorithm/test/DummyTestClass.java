@@ -2,25 +2,14 @@ package org.n52.wps.server.algorithm.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.FeatureCollection;
-import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
-import org.n52.wps.server.algorithm.spatialquery.ContainsAlgorithm;
-import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-
-import com.vividsolutions.jts.geom.Geometry;
 
 
 
