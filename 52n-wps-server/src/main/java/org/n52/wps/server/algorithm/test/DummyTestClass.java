@@ -1,5 +1,6 @@
 package org.n52.wps.server.algorithm.test;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,8 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 	private final String outputID3 = "BBOXOutputData";
 	
 	private List<String> errors = new ArrayList<String>();
+	
+	
 
 	public List<String> getErrors() {
 		return errors;
@@ -38,7 +41,13 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 			return GTReferenceEnvelope.class;
 		}
 		return null;
+		
 	}
+	@Override
+	public BigInteger getMinOccurs(String identifier){
+		return new BigInteger("0");
+	}
+	
 
 	public Class getOutputDataType(String id) {
 		if (id.equalsIgnoreCase(outputID1)) {
