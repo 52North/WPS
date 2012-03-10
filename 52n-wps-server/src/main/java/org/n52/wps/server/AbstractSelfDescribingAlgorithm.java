@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.opengis.ows.x11.DomainMetadataType;
+import net.opengis.wps.x100.CRSsType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -19,6 +20,8 @@ import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
+import net.opengis.wps.x100.SupportedCRSsType;
+import net.opengis.wps.x100.SupportedCRSsType.Default;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
@@ -26,6 +29,7 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
+import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.observerpattern.IObserver;
@@ -46,9 +50,8 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		//1. Identifer
 		processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
 		processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
-		//2. Inputs
 	
-		
+		//2. Inputs
 		List<String> identifiers = this.getInputIdentifiers();
 		DataInputs dataInputs = null;
 		if(identifiers.size()>0){
@@ -83,7 +86,30 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						datatype.setReference("xs:"+inputClassType.toLowerCase());
 						literalData.addNewAnyValue();		
 					}
-							
+				}else if(implementedInterface.equals(IBBOXData.class)){
+						SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
+						String[] supportedCRSAray = getSupportedCRSForBBOXInput(identifier);
+						for(int i = 0; i<supportedCRSAray.length; i++){
+							if(i==0){
+								Default defaultCRS = bboxData.addNewDefault();
+								defaultCRS.setCRS(supportedCRSAray[0]);
+								if(supportedCRSAray.length==1){
+									CRSsType supportedCRS = bboxData.addNewSupported();
+									supportedCRS.addCRS(supportedCRSAray[0]);
+								}
+							}else{
+								if(i==1){
+									CRSsType supportedCRS = bboxData.addNewSupported();
+									supportedCRS.addCRS(supportedCRSAray[1]);
+								}else{
+									bboxData.getSupported().addCRS(supportedCRSAray[i]);
+								}
+							}
+						}
+						
+						
+						
+									
 				}else if(implementedInterface.equals(IComplexData.class)){
 					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
 					ComplexDataCombinationType defaultInputFormat = complexData.addNewDefault();
@@ -203,6 +229,26 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 						literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
 					}
 				
+				}else if(implementedInterface.equals(IBBOXData.class)){
+					SupportedCRSsType bboxData = dataOutput.addNewBoundingBoxOutput();
+					String[] supportedCRSAray = getSupportedCRSForBBOXOutput(identifier);
+					for(int i = 0; i<supportedCRSAray.length; i++){
+						if(i==0){
+							Default defaultCRS = bboxData.addNewDefault();
+							defaultCRS.setCRS(supportedCRSAray[0]);
+							if(supportedCRSAray.length==1){
+								CRSsType supportedCRS = bboxData.addNewSupported();
+								supportedCRS.addCRS(supportedCRSAray[0]);
+							}
+						}else{
+							if(i==1){
+								CRSsType supportedCRS = bboxData.addNewSupported();
+								supportedCRS.addCRS(supportedCRSAray[1]);
+							}else{
+								bboxData.getSupported().addCRS(supportedCRSAray[i]);
+							}
+						}
+					}
 					
 				}else if(implementedInterface.equals(IComplexData.class)){
 					
@@ -291,6 +337,24 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		}
 		
 		return document.getProcessDescriptions().getProcessDescriptionArray(0);
+	}
+	
+	/**
+	 * Override this class for BBOX input data to set supported mime types. The first one in the resulting array will be the default one.
+	 * @param identifier ID of the input BBOXType
+	 * @return
+	 */
+	public String[] getSupportedCRSForBBOXInput(String identifier){
+		return new String[0];
+	}
+	
+	/**
+	 * Override this class for BBOX output data to set supported mime types. The first one in the resulting array will be the default one.
+	 * @param identifier ID of the input BBOXType
+	 * @return
+	 */
+	public String[] getSupportedCRSForBBOXOutput(String identifier){
+		return new String[0];
 	}
 	
 	public BigInteger getMinOccurs(String identifier){
