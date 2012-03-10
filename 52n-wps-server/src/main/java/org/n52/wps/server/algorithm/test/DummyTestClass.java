@@ -84,11 +84,35 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 	@Override
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		HashMap<String,IData> result = new HashMap<String,IData>();
-		result.put(outputID1, inputData.get(inputID1).get(0));
-		result.put(outputID2, inputData.get(inputID2).get(0));
-		result.put(outputID3, inputData.get(inputID3).get(0));
-		
+		if(inputData.containsKey(inputID1)){
+			result.put(outputID1, inputData.get(inputID1).get(0));
+		}
+		if(inputData.containsKey(inputID2)){
+			result.put(outputID2, inputData.get(inputID3).get(0));
+		}
+		if(inputData.containsKey(inputID3)){
+			result.put(outputID2, inputData.get(inputID3).get(0));
+		}
+			
 		return result;
+	}
+	
+	@Override
+	public String[] getSupportedCRSForBBOXInput(String identifier){
+		String[] supportedCRS = new String[2];
+		supportedCRS[0] = "EPSG:4328";
+		supportedCRS[1] = "EPSG:5628";
+		
+		return supportedCRS;
+	}
+	
+	@Override
+	public String[] getSupportedCRSForBBOXOutput(String identifier){
+		String[] supportedCRS = new String[2];
+		supportedCRS[0] = "EPSG:4328";
+		supportedCRS[1] = "EPSG:5628";
+		
+		return supportedCRS;
 	}
 	
 	
