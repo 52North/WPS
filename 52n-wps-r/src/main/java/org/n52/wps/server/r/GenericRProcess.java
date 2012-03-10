@@ -20,10 +20,13 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -34,6 +37,8 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
+import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
+import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.r.RAnnotation.RAnnotationType;
 import org.n52.wps.server.r.RAnnotation.RAttribute;
@@ -297,6 +302,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 				return result;
 		}
 		
+		if(ivalue instanceof GTRasterDataBinding){
+			GridCoverage2D value = (GridCoverage2D) ivalue.getPayload();
+			GeotiffGenerator tiffGen = new GeotiffGenerator();
+			InputStream is = tiffGen.generateStream(ivalue, GenericFileDataConstants.MIME_TYPE_GEOTIFF, "base64");
+			//String ext = value.getFileExtension();
+			result = streamFromWPSToRserve(rCon, is, "tiff");
+			return result;
+		}
+		
 		if(ivalue instanceof GTVectorDataBinding){
 			GTVectorDataBinding value = (GTVectorDataBinding) ivalue;
 			File shp = value.getPayloadAsShpFile();
@@ -488,6 +502,29 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 			GenericFileData gfd =	new GenericFileData(tempfile, mimeType);
 			GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
 			return gtvec;
+		}
+		
+		if(iClass.equals(GTRasterDataBinding.class)){
+			String mimeType = "application/unknown";
+			
+			//extract filename from R
+			String filename = new File(result.asString()).getName();	
+			File tempfile = streamFromRserveToWPS(rCon, filename);
+			
+			//extract mimetype from annotations (TODO: might have to be simplified somewhen)
+			List<RAnnotation> list = RAnnotation.filterAnnotations(
+										 annotations,
+										 RAnnotationType.OUTPUT,
+										 RAttribute.IDENTIFIER, 
+										 result_id
+										 );
+			
+			RAnnotation anot = list.get(0);
+			String rType = anot.getAttribute(RAttribute.TYPE);
+			mimeType = RDataType.getType(rType).getProcessKey();
+			GeotiffParser tiffPar = new GeotiffParser();
+			GTRasterDataBinding output = tiffPar.parse(new FileInputStream(tempfile), mimeType, "base64");
+			return output;
 		}
 		
 		if(iClass.equals(LiteralBooleanBinding.class)){

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -173,28 +174,28 @@ public class RAnnotation {
 		BOOLEAN("boolean","xs:boolean", LiteralBooleanBinding.class),
 		
 		//geodata:
-		DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataBinding.class, true),
-		DGN("dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataBinding.class, true),
-		GEOTIFF("geotiff",GenericFileDataConstants.MIME_TYPE_GEOTIFF, GenericFileDataBinding.class, true),
-		GEOTIFF2("geotiff_image",GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF, GenericFileDataBinding.class, true),
-		GEOTIFF_X("geotiff_x",GenericFileDataConstants.MIME_TYPE_X_GEOTIFF, GenericFileDataBinding.class, true),
-		IMG("img",GenericFileDataConstants.MIME_TYPE_HDF, GenericFileDataBinding.class, true),
-		IMG2("img_x", GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA, GenericFileDataBinding.class, true),
-		KML("kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataBinding.class, true),
-		NETCDF("netcdf", GenericFileDataConstants.MIME_TYPE_NETCDF, GenericFileDataBinding.class, true),
-		NETCDF_X("netcdf_x", GenericFileDataConstants.MIME_TYPE_X_NETCDF, GenericFileDataBinding.class, true),
-		REMAP("remap", GenericFileDataConstants.MIME_TYPE_REMAPFILE, GenericFileDataBinding.class,true),
-		SHAPE("shp",GenericFileDataConstants.MIME_TYPE_SHP, GTVectorDataBinding.class, true, null, "Base64"),
+		DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataBinding.class, true,null,"base64"),
+		DGN("dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataBinding.class, true,null,"base64"),
+		GEOTIFF("geotiff",GenericFileDataConstants.MIME_TYPE_GEOTIFF, GenericFileDataBinding.class, true,null,"base64"),
+		GEOTIFF2("geotiff_image",GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF, GTRasterDataBinding.class, true,null,"base64"),
+		GEOTIFF_X("geotiff_x",GenericFileDataConstants.MIME_TYPE_X_GEOTIFF, GenericFileDataBinding.class, true,null,"base64"),
+		IMG("img",GenericFileDataConstants.MIME_TYPE_HDF, GenericFileDataBinding.class, true,null,"base64"),
+		IMG2("img_x", GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA, GenericFileDataBinding.class, true,null,"base64"),
+		NETCDF("netcdf", GenericFileDataConstants.MIME_TYPE_NETCDF, GenericFileDataBinding.class, true, null,"base64"),
+		NETCDF_X("netcdf_x", GenericFileDataConstants.MIME_TYPE_X_NETCDF, GenericFileDataBinding.class, true,null,"base64"),
+		REMAP("remap", GenericFileDataConstants.MIME_TYPE_REMAPFILE, GenericFileDataBinding.class,true, null,"base64"),
+		SHAPE("shp",GenericFileDataConstants.MIME_TYPE_SHP, GTVectorDataBinding.class, true, null, "base64"),
 		//SHAPE_ZIP("shp_zip",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GenericFileDataBinding.class, true),
-		SHAPE_ZIP2("shp_x",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null, "Base64"),
+		SHAPE_ZIP2("shp_x",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null, "base64"),
+		KML("kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataBinding.class, true,null,"UTF-8"),
 		
 		// TODO: correct errors in text and text_xml
 		//graphical data
-		GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class,true),
-		JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,true),
-		JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,true),
-		PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class,true),
-		TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class,true),
+		GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class,true, null,"base64"),
+		JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,true, null,"base64"),
+		JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,true, null,"base64"),
+		PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class,true, null,"base64"),
+		TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class,true, null,"base64"),
 		
 		//file data and xml:
 		TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class,true),
