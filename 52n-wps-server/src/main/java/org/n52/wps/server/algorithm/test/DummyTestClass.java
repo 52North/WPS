@@ -88,10 +88,10 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 			result.put(outputID1, inputData.get(inputID1).get(0));
 		}
 		if(inputData.containsKey(inputID2)){
-			result.put(outputID2, inputData.get(inputID3).get(0));
+			result.put(outputID2, inputData.get(inputID2).get(0));
 		}
 		if(inputData.containsKey(inputID3)){
-			result.put(outputID2, inputData.get(inputID3).get(0));
+			result.put(outputID3, inputData.get(inputID3).get(0));
 		}
 			
 		return result;
