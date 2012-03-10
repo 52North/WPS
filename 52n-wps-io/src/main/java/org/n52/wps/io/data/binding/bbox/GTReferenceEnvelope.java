@@ -1,23 +1,13 @@
 package org.n52.wps.io.data.binding.bbox;
 
-import java.awt.geom.Rectangle2D;
-import java.util.Collection;
-import java.util.Set;
-
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.n52.wps.io.data.IComplexData;
+import org.n52.wps.io.data.IBBOXData;
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.extent.Extent;
-import org.opengis.referencing.ReferenceIdentifier;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.util.GenericName;
-import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class GTReferenceEnvelope implements IComplexData{
+public class GTReferenceEnvelope implements IBBOXData{
 
 	private Envelope envelope;
 	
@@ -35,10 +25,10 @@ public class GTReferenceEnvelope implements IComplexData{
 			com.vividsolutions.jts.geom.Envelope internalEnvelope = new com.vividsolutions.jts.geom.Envelope(ll,ur);
 			
 			if(crs==null){
-				envelope = new ReferencedEnvelope(internalEnvelope, null);
+				this.envelope = new ReferencedEnvelope(internalEnvelope, null);
 			}
 			else{
-				envelope = new ReferencedEnvelope(internalEnvelope,CRS.decode(crs));
+				this.envelope = new ReferencedEnvelope(internalEnvelope,CRS.decode(crs));
 			}
 		
 		}catch(Exception e){
@@ -50,12 +40,11 @@ public class GTReferenceEnvelope implements IComplexData{
 		this.envelope = envelope;
 	}
 
-	@Override
+
 	public Envelope getPayload() {
 		return envelope;
 	}
 
-	@Override
 	public Class getSupportedClass() {
 		return ReferencedEnvelope.class;
 	}
