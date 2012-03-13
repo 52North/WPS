@@ -146,7 +146,7 @@ public class ExecuteResponseBuilder {
 					String encoding = null;
 					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
 					String reference = dataType != null ? dataType.getReference() : null;
-					generateLiteralDataOutput(id, doc, reference, schema, mimeType, encoding, desc.getTitle());
+					generateLiteralDataOutput(id, doc, true, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				return;
 			}
@@ -172,7 +172,7 @@ public class ExecuteResponseBuilder {
 					String encoding = null;
 					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
 					String reference = dataType != null ? dataType.getReference() : null;
-					generateLiteralDataOutput(responseID, doc, reference, schema, mimeType, encoding, desc.getTitle());
+					generateLiteralDataOutput(responseID, doc, false, reference, schema, mimeType, encoding, desc.getTitle());
 				}
 				else{
 					throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
@@ -194,7 +194,7 @@ public class ExecuteResponseBuilder {
 					generateComplexDataOutput(d[i].getIdentifier().getStringValue(), false, false, schema, mimeType, encoding, d[i].getTitle());
 				}
 				else if(d[i].isSetLiteralOutput()) {
-					generateLiteralDataOutput(d[i].getIdentifier().getStringValue(), doc, d[i].getLiteralOutput().getDataType().getReference(), null, null, null, d[i].getTitle());
+					generateLiteralDataOutput(d[i].getIdentifier().getStringValue(), doc, false, d[i].getLiteralOutput().getDataType().getReference(), null, null, null, d[i].getTitle());
 				}
 			}
 		}
@@ -227,7 +227,7 @@ public class ExecuteResponseBuilder {
 		return null;
 	}
 	
-	// TODO Rename to getEncoding... the method is a getter, not setter.
+
 	private static String getEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
 		String encoding = null;
 		if(def != null) {
@@ -304,10 +304,14 @@ public class ExecuteResponseBuilder {
 		
 	}
 
-	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
+	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, boolean rawData, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
 		IData obj = request.getAttachedResult().get(responseID);
-		OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, description);
-		handler.updateResponseForLiteralData(res, dataTypeReference);
+		if(rawData) {
+			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, description);
+		}else{
+			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, description);
+			handler.updateResponseForLiteralData(res, dataTypeReference);
+		}
 	}
 
 	public InputStream getAsStream() throws ExceptionReport{

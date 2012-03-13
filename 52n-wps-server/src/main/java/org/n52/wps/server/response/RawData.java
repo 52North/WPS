@@ -27,6 +27,7 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.response;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -34,9 +35,10 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.request.InputHandler;
 
 /*
  * @author foerster
@@ -54,13 +56,20 @@ public class RawData extends ResponseData {
 	 */
 	public RawData(IData obj, String id, String schema, String encoding, String mimeType, String algorithmIdentifier, ProcessDescriptionType description) throws ExceptionReport{
 		super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
-		prepareGenerator();
+		if(obj instanceof IComplexData){
+			prepareGenerator();
+		}
 		
 	}
 	
 	public InputStream getAsStream() throws ExceptionReport {
 		try {
-			
+			if(obj instanceof ILiteralData){
+				String result = ""+obj.getPayload();
+				 InputStream is = new ByteArrayInputStream(result.getBytes());
+				 return is;
+			}
+			//complexdata
 			if(encoding == null || encoding == "" || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
 				return generator.generateStream(obj, mimeType, schema);
 			}
