@@ -34,18 +34,20 @@ package org.n52.wps.server.response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
 import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDataType;
-import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.OutputReferenceType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -60,6 +62,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.util.BasicXMLTypeFactory;
+import org.opengis.geometry.Envelope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -251,5 +254,33 @@ public class OutputDataItem extends ResponseData {
 		identifierCode.setStringValue(id);
 		output.setTitle(title);
 		return output;	
+	}
+
+	public void updateResponseForBBOXData(ExecuteResponseDocument res, IData obj) {
+		Envelope bbox = (Envelope) obj.getPayload();
+		OutputDataType output = prepareOutput(res);
+		BoundingBoxType bboxData = output.addNewData().addNewBoundingBoxData();
+		if(obj == null){
+			bboxData.setNil();
+		}else{
+				
+			if(bbox.getCoordinateReferenceSystem()!=null && bbox.getCoordinateReferenceSystem().getIdentifiers().size()>0){
+				bboxData.setCrs(bbox.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString());
+			}
+			double[] lowerCorner = bbox.getLowerCorner().getCoordinate();
+			List<Double> lowerCornerList = new ArrayList<Double>();
+			for(double d : lowerCorner){
+				lowerCornerList.add(d);
+			}
+			double[] upperCorner = bbox.getUpperCorner().getCoordinate();
+			List<Double> upperCornerList = new ArrayList<Double>();
+			for(double d : upperCorner){
+				upperCornerList.add(d);
+			}
+			
+			bboxData.setLowerCorner(lowerCornerList);
+			bboxData.setUpperCorner(upperCornerList);
+		}
+		
 	}
 }

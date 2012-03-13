@@ -35,10 +35,13 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
+import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
 import org.n52.wps.server.ExceptionReport;
+import org.opengis.geometry.Envelope;
 
 /*
  * @author foerster
@@ -68,6 +71,25 @@ public class RawData extends ResponseData {
 				String result = ""+obj.getPayload();
 				 InputStream is = new ByteArrayInputStream(result.getBytes());
 				 return is;
+			}
+			if(obj instanceof IBBOXData){
+				Envelope result = (Envelope) obj.getPayload();
+				String resultString  = "";
+				resultString = resultString + "<wps:BoundingBoxData ";
+				if(result.getCoordinateReferenceSystem()!=null && result.getCoordinateReferenceSystem().getIdentifiers().size()>0){
+					String crs = result.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString();
+					resultString = resultString + "crs=\""+crs+"\"";
+				
+				}else{
+					resultString = resultString + "\">";
+				}
+				double[] lowerCorner = result.getLowerCorner().getCoordinates();
+				double[] upperCorner = result.getUpperCorner().getCoordinates();
+				resultString = resultString +"<ows:LowerCorner>"+lowerCorner[0]+" "+lowerCorner[1]+"</ows:LowerCorner>";
+				resultString = resultString +"<ows:UpperCorner>"+upperCorner[0]+" "+upperCorner[1]+"</ows:UpperCorner>";
+				resultString = resultString+ "</wps:BoundingBoxData>";
+				InputStream is = new ByteArrayInputStream(resultString.getBytes());
+				return is;
 			}
 			//complexdata
 			if(encoding == null || encoding == "" || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){

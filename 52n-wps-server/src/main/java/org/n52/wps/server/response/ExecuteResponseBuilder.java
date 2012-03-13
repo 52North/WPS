@@ -148,6 +148,12 @@ public class ExecuteResponseBuilder {
 					String reference = dataType != null ? dataType.getReference() : null;
 					generateLiteralDataOutput(id, doc, true, reference, schema, mimeType, encoding, desc.getTitle());
 				}
+				else if (desc.isSetBoundingBoxOutput()) {
+					String mimeType = null;
+					String schema = null;
+					String encoding = null;
+					generateBBOXOutput(id, doc, true, desc.getTitle());
+				}
 				return;
 			}
 			// Get the outputdefinitions from the clients request
@@ -174,6 +180,12 @@ public class ExecuteResponseBuilder {
 					String reference = dataType != null ? dataType.getReference() : null;
 					generateLiteralDataOutput(responseID, doc, false, reference, schema, mimeType, encoding, desc.getTitle());
 				}
+				else if (desc.isSetBoundingBoxOutput()) {
+					String mimeType = null;
+					String schema = null;
+					String encoding = null;
+					generateBBOXOutput(responseID, doc, false, desc.getTitle());
+				}
 				else{
 					throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
 				}
@@ -199,6 +211,8 @@ public class ExecuteResponseBuilder {
 			}
 		}
 	}
+
+	
 
 	/** 
 	 * Returns the schema according to the given output description and type.
@@ -312,6 +326,17 @@ public class ExecuteResponseBuilder {
 			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, description);
 			handler.updateResponseForLiteralData(res, dataTypeReference);
 		}
+	}
+	
+	private void generateBBOXOutput(String responseID, ExecuteResponseDocument res, boolean rawData, LanguageStringType title) throws ExceptionReport {
+		IData obj = request.getAttachedResult().get(responseID);
+		if(rawData) {
+			rawDataHandler = new RawData(obj, responseID, null, null, null, this.identifier, description);
+		}else{
+			OutputDataItem handler = new OutputDataItem(obj, responseID, null, null, null, title, this.identifier, description);
+			handler.updateResponseForBBOXData(res, obj);
+		}
+		
 	}
 
 	public InputStream getAsStream() throws ExceptionReport{
