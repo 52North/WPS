@@ -1,11 +1,8 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
-import java.io.IOException;
-
 import java.io.FileFilter;
-
-import javax.servlet.ServletContext;
+import java.io.IOException;
 
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
