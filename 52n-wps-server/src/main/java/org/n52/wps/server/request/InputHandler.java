@@ -113,6 +113,10 @@ public class InputHandler {
 	public InputHandler(InputType[] inputs, String algorithmIdentifier) throws ExceptionReport{
 		this.algorithmIdentifier = algorithmIdentifier;
 		this.processDesc = RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier);
+		if(processDesc==null){
+			throw new ExceptionReport("Error while accessing the process description for "+ algorithmIdentifier, 
+						ExceptionReport.INVALID_PARAMETER_VALUE);
+		}
 		for(InputType input : inputs) {
 			String inputID = input.getIdentifier().getStringValue();
 			

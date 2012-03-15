@@ -175,6 +175,11 @@ public class ExecuteRequest extends Request implements IObserver {
 				}
 			}
 			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
+			
+			if (description == null) {
+				throw new ExceptionReport("Data Identifier not supported: "
+						+ key, ExceptionReport.MISSING_PARAMETER_VALUE);
+			}
 			InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(key,
 					description.getDataInputs());
 			if (inputDesc == null) {
@@ -446,6 +451,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		// We need a description of the inputs for the algorithm
 		if (desc == null) {
 			LOGGER.warn("desc == null");
+			return false;
 		}
 
 		// Get the inputdescriptions of the algorithm

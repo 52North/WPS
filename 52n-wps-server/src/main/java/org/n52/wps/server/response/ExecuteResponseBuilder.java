@@ -39,6 +39,7 @@ package org.n52.wps.server.response;
 import java.io.InputStream;
 import java.util.Calendar;
 
+import javax.management.RuntimeErrorException;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
@@ -104,6 +105,9 @@ public class ExecuteResponseBuilder {
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
 		description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
+		if(description==null){
+			throw new RuntimeException("Error while accessing the process description for "+ identifier);
+		}
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
@@ -196,7 +200,12 @@ public class ExecuteResponseBuilder {
 			
 			// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
 				
-			OutputDescriptionType [] d = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue()).getProcessOutputs().getOutputArray();
+			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
+			if(description==null){
+				throw new RuntimeException("Error while accessing the process description for "+ request.getExecute().getIdentifier().getStringValue());
+			}
+			
+			OutputDescriptionType [] d = description.getProcessOutputs().getOutputArray();
 			for (int i = 0; i < d.length; i++)
 			{
 				if(d[i].isSetComplexOutput()) {
