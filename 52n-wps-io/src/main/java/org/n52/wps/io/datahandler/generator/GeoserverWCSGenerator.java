@@ -155,7 +155,7 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 		storeName = file.getName();			
 	
 		storeName = storeName +"_" + UUID.randomUUID();
-		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, port);
+		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 		
 		String result = geoserverUploader.createWorkspace();
 		System.out.println(result);

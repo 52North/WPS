@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URLDecoder;
 
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
+import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPParser>{
+public class GenericFileParserTest extends AbstractTestCase<GenericFileParser> {
+
 
 	public void testParser(){	
 		
@@ -18,10 +18,8 @@ public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPPar
 			return;
 		}
 		
-		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/tasmania_roads.zip";
-		
-		testFilePath = URLDecoder.decode(testFilePath);
-		
+		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/testfile";
+				
 		String[] mimetypes = dataHandler.getSupportedFormats();
 		
 		InputStream input = null;
@@ -34,18 +32,17 @@ public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPPar
 		
 		for (String mimetype : mimetypes) {
 			
-			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
+			GenericFileDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 			
-			assertNotNull(theBinding.getPayload());
-			assertTrue(theBinding.getPayloadAsShpFile().exists());			
-			assertTrue(!theBinding.getPayload().isEmpty());			
+			assertTrue(theBinding.getPayload().getBaseFile(true).exists());			
+			
 		}
 		
 	}
 
 	@Override
 	protected void initializeDataHandler() {
-		dataHandler = new GTBinZippedSHPParser();
+		dataHandler = new GenericFileParser();		
 	}
 	
 }

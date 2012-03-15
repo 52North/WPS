@@ -12,9 +12,13 @@ import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class GeotiffGeneratorTest extends AbstractTestCase {
+public class GeotiffGeneratorTest extends AbstractTestCase<GeotiffGenerator> {
 
 	public void testGenerator() {
+		
+		if(!isDataHandlerActive()){
+			return;
+		}
 
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
@@ -37,13 +41,12 @@ public class GeotiffGeneratorTest extends AbstractTestCase {
 				null);
 
 		assertTrue(theBinding.getPayload() != null);
-
-		GeotiffGenerator generator = new GeotiffGenerator();
-		String[] mimetypes2 = generator.getSupportedFormats();
+		
+		String[] mimetypes2 = dataHandler.getSupportedFormats();
 
 		for (String string : mimetypes2) {
 			try {
-				InputStream resultStream = generator.generateStream(theBinding, string, null);
+				InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
 				
 				GTRasterDataBinding rasterBinding = theParser.parse(resultStream, mimetypes[0], null);
 				
@@ -58,6 +61,12 @@ public class GeotiffGeneratorTest extends AbstractTestCase {
 
 		}
 
+	}
+
+	@Override
+	protected void initializeDataHandler() {
+		dataHandler = new GeotiffGenerator();
+		
 	}
 
 	

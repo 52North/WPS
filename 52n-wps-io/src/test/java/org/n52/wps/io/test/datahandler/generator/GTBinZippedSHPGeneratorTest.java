@@ -12,10 +12,14 @@ import org.n52.wps.io.datahandler.generator.GTBinZippedSHPGenerator;
 import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
+public class GTBinZippedSHPGeneratorTest extends AbstractTestCase<GTBinZippedSHPGenerator> {
 
 
 	public void testParser(){	
+		
+		if(!isDataHandlerActive()){
+			return;
+		}
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/tasmania_roads.zip";
 		
@@ -33,14 +37,12 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
 			fail(e.getMessage());
 		}
 		
-		GTBinZippedSHPGenerator theGenerator = new GTBinZippedSHPGenerator();
-		
 //		for (String mimetype : mimetypes) {
 			
 			GTVectorDataBinding theBinding = theParser.parse(input, mimetypes[0], "");
 			
 			try {				
-				InputStream generatedStream = theGenerator.generateStream(theBinding, mimetypes[0], null);
+				InputStream generatedStream = dataHandler.generateStream(theBinding, mimetypes[0], null);
 				
 				GTVectorDataBinding parsedGeneratedBinding = (GTVectorDataBinding) theParser.parse(generatedStream, mimetypes[0], null);
 				
@@ -48,7 +50,7 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
 				assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());			
 				assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 				
-				InputStream generatedStreamBase64 = theGenerator.generateBase64Stream(theBinding, mimetypes[0], null);
+				InputStream generatedStreamBase64 = dataHandler.generateBase64Stream(theBinding, mimetypes[0], null);
 				
 				GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) theParser.parseBase64(generatedStreamBase64, mimetypes[0], null);
 				
@@ -61,6 +63,11 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
 			}		
 //		}
 		
+	}
+
+	@Override
+	protected void initializeDataHandler() {
+		dataHandler = new GTBinZippedSHPGenerator();		
 	}
 	
 }

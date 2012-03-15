@@ -12,9 +12,13 @@ import org.n52.wps.io.datahandler.generator.GML3BasicGenerator;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class GML3BasicGeneratorTest extends AbstractTestCase {
+public class GML3BasicGeneratorTest extends AbstractTestCase<GML3BasicGenerator> {
 
 	public void testParser() {
+		
+		if(!isDataHandlerActive()){
+			return;
+		}
 
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/spearfish_restricted_sites_gml3.xml";
@@ -38,11 +42,9 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
 		GTVectorDataBinding theBinding = theParser.parse(input,
 				"text/xml; subtype=gml/3.2.1",
 				"http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
-
-		GML3BasicGenerator gml3Generator = new GML3BasicGenerator();
 		
 		try {
-			InputStream resultStream = gml3Generator.generateStream(theBinding, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
+			InputStream resultStream = dataHandler.generateStream(theBinding, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 			
 			GTVectorDataBinding parsedGeneratedBinding = theParser.parse(resultStream, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 			
@@ -51,7 +53,7 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
 			assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());
 			assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 
-			InputStream resultStreamBase64 = gml3Generator.generateBase64Stream(theBinding, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
+			InputStream resultStreamBase64 = dataHandler.generateBase64Stream(theBinding, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 			
 			GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) theParser.parseBase64(resultStreamBase64, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 			
@@ -66,6 +68,12 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
 		
 		// }
 
+	}
+
+	@Override
+	protected void initializeDataHandler() {
+		dataHandler = new GML3BasicGenerator();
+		
 	}
 
 }

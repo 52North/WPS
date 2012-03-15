@@ -224,6 +224,10 @@ public class WPSConfig  implements Serializable {
 		if(configPath!=null){
 			return configPath;
 		}
+		configPath = tryToLoadLastResort();
+		if(configPath!=null){
+			return configPath;
+		}
 		
 		throw new RuntimeException("Could find and load wps_config.xml");
 	}
@@ -297,6 +301,28 @@ public class WPSConfig  implements Serializable {
 		}
 		return null;
 	}
+	
+	private static String tryToLoadLastResort(){
+		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+		/*
+		 * domain should always be 52n-wps-commons/target/classes
+		 * so we just go three directories up
+		 */		
+		File classDir = new File(domain);
+		
+		File projectRoot = classDir.getParentFile().getParentFile().getParentFile();
+
+		String path = projectRoot.getAbsolutePath(); 
+		
+		String[] dirs = projectRoot.getAbsoluteFile().list();
+		for(String dir : dirs){
+			if(dir.startsWith("52n-wps-webapp") && !dir.endsWith(".war")){
+				path = path+File.separator+dir+File.separator+ "src"+File.separator+"main"+File.separator+"webapp"+File.separator+"config"+File.separator+"wps_config.xml";
+			}
+		}
+		LOGGER.info(path);
+		return path;
+	}
 		
 
 	public WPSConfigurationImpl getWPSConfig(){
@@ -363,6 +389,28 @@ public class WPSConfig  implements Serializable {
 		}
 		return (Property[]) Array.newInstance(Property.class,0);
 		
+	}
+	
+	public boolean isParserActive(String className){
+		Parser[] activeParser = getActiveRegisteredParser();
+		for(int i = 0; i<activeParser.length; i++) {
+			Parser parser = activeParser[i];
+			if(parser.getClassName().equals(className)){
+				return parser.getActive();
+			}
+		}
+		return false;
+	}
+	
+	public boolean isGeneratorActive(String className){
+		Generator[] generators = getActiveRegisteredGenerator();
+		for(int i = 0; i<generators.length; i++) {
+			Generator generator = generators[i];
+			if(generator.getClassName().equals(className)){
+				return generator.getActive();
+			}
+		}
+		return false;
 	}
 	
 	public boolean isRepositoryActive(String className){

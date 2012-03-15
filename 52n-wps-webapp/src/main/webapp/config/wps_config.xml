@@ -137,7 +137,7 @@
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>
  
- 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="true">
+ 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="false">
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
@@ -210,9 +210,6 @@
 			
 			<Generator name="GTBinZippedSHPGenerator" className="org.n52.wps.io.datahandler.generator.GTBinZippedSHPGenerator" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-				<Property name="supportedSchema" active="true">http://www.opengeospatial.org/gmlpacket.xsd</Property>
-				<Property name="supportedSchema" active="true">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
-				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
 				<Property name="supportedFormat" active="true">text/xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="supportedEncoding" active="true">base64</Property>
@@ -269,35 +266,38 @@
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Generator>
 			
-			<Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator" active="true">
+			<Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator" active="false">
 				<Property name="supportedFormat" active="true">application/WMS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8081</Property>
+				<Property name="Geoserver_port" active="true">8181</Property>
+				<!--Property name="Geoserver_host" active="true">geoprocessing.demo.52north.org</Property>
+				<Property name="Geoserver_port" active="true">8080</Property>
+				<Property name="Geoserver_password" active="true">geWosePrv5er</Property-->
 			</Generator>
 			
-			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWFSGenerator" active="true">
+			<Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWFSGenerator" active="false">
 				<Property name="supportedFormat" active="true">application/WFS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8081</Property>
+				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>
 			
-			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator" active="true">
+			<Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator" active="false">
 				<Property name="supportedFormat" active="true">application/WCS</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 				<Property name="Geoserver_username" active="true">admin</Property>
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
-				<Property name="Geoserver_port" active="true">8081</Property>
+				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>			
 			
 			
-			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.generator.KMLGenerator" active="true">
+			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.generator.KMLGenerator" active="false">
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>

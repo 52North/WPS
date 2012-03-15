@@ -1,32 +1,29 @@
 package org.n52.wps.io.test.datahandler.generator;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLDecoder;
+import java.io.InputStreamReader;
 
-import org.n52.wps.io.data.binding.complex.AsciiGrassDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.wps.io.datahandler.generator.AsciiGrassGenerator;
-import org.n52.wps.io.datahandler.parser.AsciiGrassParser;
+import org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class AsciiGrassGeneratorTest extends AbstractTestCase<AsciiGrassGenerator> {
+public class GeoserverWMSGeneratorTest extends AbstractTestCase<GeoserverWMSGenerator> {
 
 	public void testGenerator() {
 		
 		if(!isDataHandlerActive()){
 			return;
 		}
-		
+
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
 
-		testFilePath = URLDecoder.decode(testFilePath);
-		
 		GeotiffParser theParser = new GeotiffParser();
 
 		String[] mimetypes = theParser.getSupportedFormats();
@@ -43,28 +40,22 @@ public class AsciiGrassGeneratorTest extends AbstractTestCase<AsciiGrassGenerato
 				null);
 
 		assertTrue(theBinding.getPayload() != null);
-		
+
 		String[] mimetypes2 = dataHandler.getSupportedFormats();
 
-		AsciiGrassParser asciiGrassParser = new AsciiGrassParser();
-		
 		for (String string : mimetypes2) {
 			try {
 				InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
 				
-				AsciiGrassDataBinding rasterBinding = asciiGrassParser.parse(resultStream, mimetypes[0], null);
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resultStream));
 				
-				assertTrue(rasterBinding.getPayload() != null);
-				assertTrue(rasterBinding.getPayload().getDimension() != 0);
-				assertTrue(rasterBinding.getPayload().getEnvelope() != null);
+				String line = "";
 				
-				InputStream resultStreamBase64 = dataHandler.generateBase64Stream(theBinding, string, null);
+				while((line = bufferedReader.readLine()) != null){
+					System.out.println(line);
+				}
 				
-				AsciiGrassDataBinding rasterBindingBase64 = (AsciiGrassDataBinding) asciiGrassParser.parseBase64(resultStreamBase64, mimetypes[0], null);
-				
-				assertTrue(rasterBindingBase64.getPayload() != null);
-				assertTrue(rasterBindingBase64.getPayload().getDimension() != 0);
-				assertTrue(rasterBindingBase64.getPayload().getEnvelope() != null);
+				String request = "http://localhost:8181/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=N52:primary738239570087452915.tif_72e5aa87-5e2e-4c70-b913-53f4bf910245&styles=&bbox=444650.0,4631220.0,451640.0,4640510.0&width=385&height=512&srs=EPSG:26716&format=image/tiff";
 				
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -77,9 +68,8 @@ public class AsciiGrassGeneratorTest extends AbstractTestCase<AsciiGrassGenerato
 
 	@Override
 	protected void initializeDataHandler() {
-		dataHandler = new AsciiGrassGenerator();
+		dataHandler = new GeoserverWMSGenerator();
 		
 	}
 
-	
 }

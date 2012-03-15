@@ -10,18 +10,20 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-public class GeotiffParserTest extends AbstractTestCase {
+public class GeotiffParserTest extends AbstractTestCase<GeotiffParser> {
 
 
 	public void testParser(){	
+		
+		if(!isDataHandlerActive()){
+			return;
+		}
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
 		
 		testFilePath = URLDecoder.decode(testFilePath);
 		
-		GeotiffParser theParser = new GeotiffParser();
-		
-		String[] mimetypes = theParser.getSupportedFormats();
+		String[] mimetypes = dataHandler.getSupportedFormats();
 		
 		InputStream input = null;
 		
@@ -33,12 +35,17 @@ public class GeotiffParserTest extends AbstractTestCase {
 				fail(e.getMessage());
 			}
 			
-			GTRasterDataBinding theBinding = theParser.parse(input, mimetype, null);
+			GTRasterDataBinding theBinding = dataHandler.parse(input, mimetype, null);
 			
 			assertTrue(theBinding.getPayload() != null);			
 			
 		}
 		
+	}
+
+	@Override
+	protected void initializeDataHandler() {
+		dataHandler = new GeotiffParser();		
 	}
 	
 }

@@ -2,38 +2,62 @@ package org.n52.wps.io.test.datahandler;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.AbstractIOHandler;
+import org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator;
 
 import junit.framework.TestCase;
 
 
-public abstract class AbstractTestCase extends TestCase {
+public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
 
+	private Logger LOGGER = Logger.getLogger(AbstractTestCase.class);
+	
 	protected String projectRoot;
 
-	public AbstractTestCase(){
+	protected T dataHandler;
+	
+	public AbstractTestCase() {
 		
+		BasicConfigurator.configure();
 		
-		System.out.println(WPSConfig.getConfigPath());
-		
-		
-		File f = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
-		
-		projectRoot = f.getParentFile().getParentFile().getParent();//Project root
-		
-		/*
-		 * now navigate to 52n-wps-webapp/src/main/resources/webapp/config/wps_config.xml
-		 */						
-		try {	
-		String configFilePath = WPSConfig.getConfigPath();
-		WPSConfig.forceInitialization(configFilePath);
+		File f = new File(this.getClass().getProtectionDomain().getCodeSource()
+				.getLocation().getFile());
+
+		projectRoot = f.getParentFile().getParentFile().getParent();																	
+
+		try {
+			String configFilePath = WPSConfig.getConfigPath();
+			WPSConfig.forceInitialization(configFilePath);
 		} catch (XmlException e1) {
 			fail(e1.getMessage());
 		} catch (IOException e1) {
 			fail(e1.getMessage());
 		}
-		
+
+		initializeDataHandler();
+
 	}
+	
+	protected boolean isDataHandlerActive(){
+		
+		if(dataHandler == null){
+			LOGGER.info("Data handler not initialized in test class " + this.getClass().getName());
+			return false;
+		}
+		
+		String className = dataHandler.getClass().getName();
+		
+		if(!WPSConfig.getInstance().isGeneratorActive(className)){
+			LOGGER.info("Skipping inactive data handler: " + className);
+			return false;
+		}
+		return true;
+	}
+	
+	protected abstract void initializeDataHandler();
 	
 }

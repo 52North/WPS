@@ -150,7 +150,7 @@ public class GeoserverWFSGenerator extends AbstractGenerator {
 		
 		String layerName = zipped.getName();
 		layerName = layerName +"_" + UUID.randomUUID();
-		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, port);
+		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 		
 		String result = geoserverUploader.createWorkspace();
 		System.out.println(result);
