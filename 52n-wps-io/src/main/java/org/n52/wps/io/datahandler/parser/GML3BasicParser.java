@@ -115,22 +115,25 @@ public class GML3BasicParser extends AbstractParser {
 	
 	private GTVectorDataBinding parseXML(File file) {
 		QName schematypeTuple = determineFeatureTypeSchema(file);
-		if(schematypeTuple == null) {
-			throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
-		}
-		
-		//create the parser with the gml 2.0 configuration
-		//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
-		
-		String schemaLocation =  schematypeTuple.getLocalPart();
-		//schemaLocation = URLEncoder.encode(schemaLocation);
-		
-		
 		Configuration configuration = null;
-		if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
-			SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
-			configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+		if(schematypeTuple != null) {
+			//throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
+		
 			
+			//create the parser with the gml 2.0 configuration
+			//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
+			
+			String schemaLocation =  schematypeTuple.getLocalPart();
+			//schemaLocation = URLEncoder.encode(schemaLocation);
+			
+			if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
+				SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
+				configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+			}else{
+				configuration = new GMLConfiguration();
+	        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
+	        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+			}
 		}else{
 			configuration = new GMLConfiguration();
         	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
@@ -211,6 +214,9 @@ public class GML3BasicParser extends AbstractParser {
 			factory.setNamespaceAware(true);
 			factory.newSAXParser().parse(new FileInputStream(file), (DefaultHandler)handler); 
 			String schemaUrl = handler.getSchemaUrl(); 
+			if(schemaUrl == null){
+				return null;
+			}
 			String namespaceURI = handler.getNameSpaceURI();
 			return new QName(namespaceURI,schemaUrl);
 			
