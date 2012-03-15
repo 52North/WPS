@@ -137,7 +137,7 @@
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
 			</Parser>
  
- 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="false">
+ 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="true">
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>
@@ -297,7 +297,7 @@
 			</Generator>			
 			
 			
-			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.generator.KMLGenerator" active="false">
+			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.generator.KMLGenerator" active="true">
 				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
 				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
 				<Property name="supportedEncoding" active="true">UTF-8</Property>

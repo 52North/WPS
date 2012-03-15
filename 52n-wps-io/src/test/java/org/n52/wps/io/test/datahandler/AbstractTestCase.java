@@ -2,14 +2,13 @@ package org.n52.wps.io.test.datahandler;
 import java.io.File;
 import java.io.IOException;
 
+import junit.framework.TestCase;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
-import org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator;
-
-import junit.framework.TestCase;
 
 
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
