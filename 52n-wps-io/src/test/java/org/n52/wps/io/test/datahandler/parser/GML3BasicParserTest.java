@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
@@ -15,6 +16,8 @@ public class GML3BasicParserTest extends AbstractTestCase {
 
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/spearfish_restricted_sites_gml3.xml";
+		
+		testFilePath = URLDecoder.decode(testFilePath);
 
 		GML3BasicParser theParser = new GML3BasicParser();
 

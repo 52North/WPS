@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
@@ -15,6 +16,8 @@ public class GeotiffParserTest extends AbstractTestCase {
 	public void testParser(){	
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
+		
+		testFilePath = URLDecoder.decode(testFilePath);
 		
 		GeotiffParser theParser = new GeotiffParser();
 		

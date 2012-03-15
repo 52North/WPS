@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GTBinZippedSHPGenerator;
@@ -17,6 +18,8 @@ public class GTBinZippedSHPGeneratorTest extends AbstractTestCase {
 	public void testParser(){	
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/tasmania_roads.zip";
+		
+		testFilePath = URLDecoder.decode(testFilePath);
 		
 		GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
 		

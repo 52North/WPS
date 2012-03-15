@@ -14,11 +14,9 @@ public abstract class AbstractTestCase extends TestCase {
 
 	public AbstractTestCase(){
 		
-		try {
-			System.out.println(WPSConfig.getConfigPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		
+		System.out.println(WPSConfig.getConfigPath());
+		
 		
 		File f = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
 		
