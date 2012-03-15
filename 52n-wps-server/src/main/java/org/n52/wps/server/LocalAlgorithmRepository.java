@@ -90,6 +90,7 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		try {
 			return loadAlgorithm(algorithmMap.get(className));
 		} catch (Exception e) {
+			
 			e.printStackTrace();
 			return null;
 		}
@@ -156,6 +157,9 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		if(!processDescriptionMap.containsKey(processID)){
 			IAlgorithm algorithm = getAlgorithm(processID, null);
+			if(algorithm==null){
+				return null;
+			}
 			ProcessDescriptionType description = algorithm.getDescription();
 			processDescriptionMap.put(processID, description);
 		}
