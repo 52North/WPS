@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.commons.WPSConfig;
@@ -39,6 +40,8 @@ public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGene
 //		}
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
+		
+		testFilePath = URLDecoder.decode(testFilePath);
 
 		GeotiffParser theParser = new GeotiffParser();
 

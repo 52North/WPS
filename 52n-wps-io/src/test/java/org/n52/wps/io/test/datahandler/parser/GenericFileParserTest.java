@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
@@ -19,6 +20,8 @@ public class GenericFileParserTest extends AbstractTestCase<GenericFileParser> {
 		}
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/testfile";
+		
+		testFilePath = URLDecoder.decode(testFilePath);
 				
 		String[] mimetypes = dataHandler.getSupportedFormats();
 		

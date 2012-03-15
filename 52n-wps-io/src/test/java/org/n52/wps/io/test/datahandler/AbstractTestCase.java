@@ -30,7 +30,10 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Tes
 		projectRoot = f.getParentFile().getParentFile().getParent();																	
 
 		try {
-			String configFilePath = WPSConfig.getConfigPath();
+			String configFilePath = WPSConfig.tryToGetPathFromWebAppSource();
+			if(configFilePath==null){
+				configFilePath = WPSConfig.getConfigPath();
+			}
 			WPSConfig.forceInitialization(configFilePath);
 		} catch (XmlException e1) {
 			fail(e1.getMessage());

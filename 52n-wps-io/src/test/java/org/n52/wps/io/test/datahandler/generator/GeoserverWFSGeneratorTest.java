@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLDecoder;
 
 import junit.framework.TestCase;
 
@@ -31,6 +32,8 @@ public class GeoserverWFSGeneratorTest extends AbstractTestCase<GeoserverWFSGene
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/spearfish_restricted_sites_gml3.xml";
 
+		testFilePath = URLDecoder.decode(testFilePath);
+		
 		GML3BasicParser theParser = new GML3BasicParser();
 
 		String[] mimetypes = theParser.getSupportedFormats();

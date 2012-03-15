@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.parser.KMLParser;
@@ -22,6 +23,8 @@ public class KMLParserTest extends AbstractTestCase<KMLParser> {
 //		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/states.kml";//geotools example kml, fail
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/x4.kml";//returned by our own generator, fail
 				
+		testFilePath = URLDecoder.decode(testFilePath);
+		
 		String[] mimetypes = dataHandler.getSupportedFormats();
 		
 		InputStream input = null;
