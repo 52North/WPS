@@ -47,6 +47,7 @@ public class GML3BasicGeneratorTest extends AbstractTestCase {
 			GTVectorDataBinding parsedGeneratedBinding = theParser.parse(resultStream, "text/xml; subtype=gml/3.2.1", "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 			
 			assertNotNull(parsedGeneratedBinding.getPayload());
+			assertTrue(theBinding.getPayload().size()==theBinding.getPayload().size());
 			assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());
 			assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 
