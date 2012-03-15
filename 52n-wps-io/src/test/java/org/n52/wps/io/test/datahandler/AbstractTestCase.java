@@ -51,7 +51,7 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Tes
 		
 		String className = dataHandler.getClass().getName();
 		
-		if(!WPSConfig.getInstance().isGeneratorActive(className)){
+		if(!(WPSConfig.getInstance().isGeneratorActive(className)||WPSConfig.getInstance().isParserActive(className))){
 			LOGGER.info("Skipping inactive data handler: " + className);
 			return false;
 		}
