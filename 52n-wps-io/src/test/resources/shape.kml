@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<Document><Folder><name>output</name>
+  <Placemark>
+      <description>
+
+      &lt;b>cat:&lt;/b> &lt;i>1&lt;/i>&lt;br />
+</description>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>145.19754,-40.878323000000002,0 145.24667400000001,-40.860210000000002,0 145.29328899999999,-40.852801999999997,0 147.465881,-41.06089,0 147.91127,-41.163108999999999,0 148.23619099999999,-41.339244999999998,0 148.27297999999999,-41.383488,0 148.24925200000001,-41.860850999999997,0 148.23443599999999,-41.901783000000002,0 147.92640700000001,-42.486033999999997,0 147.83200099999999,-42.587299000000002,0 146.95542900000001,-43.423512000000002,0 145.48628199999999,-41.983325999999998,0 145.452744,-41.926544,0 145.19754,-40.878323000000002,0</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  <Style><LineStyle><color>ff0000ff</color></LineStyle>  <PolyStyle><fill>0</fill></PolyStyle></Style>
+  </Placemark>
+</Folder></Document></kml>
