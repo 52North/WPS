@@ -14,17 +14,22 @@ public abstract class AbstractTestCase extends TestCase {
 
 	public AbstractTestCase(){
 		
+		try {
+			System.out.println(WPSConfig.getConfigPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		File f = new File(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
 		
 		projectRoot = f.getParentFile().getParentFile().getParent();//Project root
 		
 		/*
 		 * now navigate to 52n-wps-webapp/src/main/resources/webapp/config/wps_config.xml
-		 */		
-		String configFilePath = projectRoot + "/52n-wps-webapp/src/main/webapp/config/wps_config.xml";
-						
-		try {
-			WPSConfig.forceInitialization(configFilePath);
+		 */						
+		try {	
+		String configFilePath = WPSConfig.getConfigPath();
+		WPSConfig.forceInitialization(configFilePath);
 		} catch (XmlException e1) {
 			fail(e1.getMessage());
 		} catch (IOException e1) {

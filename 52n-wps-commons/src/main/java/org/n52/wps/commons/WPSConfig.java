@@ -226,7 +226,7 @@ public class WPSConfig  implements Serializable {
 					config = URLDecoder.decode(config);
 					return config;
 				}
-				//try lookup webapp project
+				//try lookup webapp project				
 				int index1 = domain.indexOf("52n-wps-parent");
 				if(index1>0){
 					//try to load from classpath
@@ -238,14 +238,33 @@ public class WPSConfig  implements Serializable {
 						if(dir.startsWith("52n-wps-webapp") && !dir.endsWith(".war")){
 							path = path+File.separator+dir+File.separator+ "config/wps_config.xml";
 						}
+					}					
+					return path;
+				}else{
+					/*
+					 * domain should always be 52n-wps-commons/target/classes
+					 * so we just go three directories up
+					 */
+					
+					File classDir = new File(domain);
+					
+					File projectRoot = classDir.getParentFile().getParentFile().getParentFile();
+
+					String path = projectRoot.getAbsolutePath(); 
+					
+					String[] dirs = projectRoot.getAbsoluteFile().list();
+					for(String dir : dirs){
+						if(dir.startsWith("52n-wps-webapp") && !dir.endsWith(".war")){
+							path = path+File.separator+dir+File.separator+ "src"+File.separator+"main"+File.separator+"webapp"+File.separator+"config"+File.separator+"wps_config.xml";
+						}
 					}
-					
-						return path;
-					
-					
+					if(!(new File(path)).exists()){
+						throw new IOException("Could not find wps_config.xml");
+					}
+					return path;
 				}
 				
-				throw new IOException("Could not find wps_config.xml");
+//				throw new IOException("Could not find wps_config.xml");
 			}else{
 				String config = configPath.getFile();
 				config = URLDecoder.decode(config);
