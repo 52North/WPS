@@ -30,7 +30,8 @@ public class GTBinZippedSHPParser extends AbstractParser {
 	public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
 		try {
 			String fileName = "tempfile" + UUID.randomUUID() + ".zip";
-			File tempFile = new File(fileName);
+			String tmpDirPath = System.getProperty("java.io.tmpdir");
+			File tempFile = new File(tmpDirPath + File.pathSeparatorChar + fileName);
 			finalizeFiles.add(tempFile); // mark tempFile for final delete
 			try {
 				FileOutputStream outputStream = new FileOutputStream(tempFile);
