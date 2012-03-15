@@ -129,6 +129,12 @@ public class WPSConfig  implements Serializable {
 		}
 	}
 	
+	/**
+	 * WPSConfig is a singleton. If there is a need for reinitialization, use this path.
+	 * @param configPathp path to the wps_config.xml
+	 * @throws XmlException
+	 * @throws IOException
+	 */
 	public static void forceInitialization(String configPath) throws XmlException, IOException{
 		// temporary save all registered listeners
         PropertyChangeListener[] listeners = {};
@@ -148,6 +154,12 @@ public class WPSConfig  implements Serializable {
         LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
 	
+	/**
+	 * WPSConfig is a singleton. If there is a need for reinitialization, use this path.
+	 * @param stream stream containing the wps_config.xml
+	 * @throws XmlException
+	 * @throws IOException
+	 */
 	public static void forceInitialization(InputStream stream) throws XmlException, IOException {
         // temporary save all registered listeners
         PropertyChangeListener[] listeners = {};
@@ -168,6 +180,10 @@ public class WPSConfig  implements Serializable {
         LOGGER.info("Configuration Reloaded, Listeners informed");
 	}
     
+	/**
+	 * returns an instance of the WPSConfig class. WPSCofnig is a single. If there is need for reinstantitation, use forceInitialization().
+	 * @return WPSConfig object representing the wps_config.xml from the classpath or webapps folder
+	 */
 	public static WPSConfig getInstance()
 	{
 		if (wpsConfig == null)
@@ -179,6 +195,11 @@ public class WPSConfig  implements Serializable {
 		return wpsConfig;
 	}
 	
+	/**
+	 * returns an instance of the WPSConfig class. WPSCofnig is a single. If there is need for reinstantitation, use forceInitialization().
+	 * @param path path to the wps_config.xml
+	 * @return WPSConfig object representing the wps_config.xml from the given path
+	 */
 	public static WPSConfig getInstance(String path)
 	{
 		if (wpsConfig == null)
@@ -208,23 +229,23 @@ public class WPSConfig  implements Serializable {
 	 */
 	public static String getConfigPath() {
 		
-		String configPath = tryToLoadFromClassPath();
+		String configPath = tryToGetPathFromClassPath();
 		if(configPath!=null){
 			return configPath;
 		}
-		configPath = tryToLoadFromWebAppTarget();
+		configPath = tryToGetPathFromWebAppTarget();
 		if(configPath!=null){
 			return configPath;
 		}
-		configPath = tryToLoadFromWebAppSource();
+		configPath = tryToGetPathFromWebAppSource();
 		if(configPath!=null){
 			return configPath;
 		}
-		configPath = tryToLoadViaWebAppPath();
+		configPath = tryToGetPathViaWebAppPath();
 		if(configPath!=null){
 			return configPath;
 		}
-		configPath = tryToLoadLastResort();
+		configPath = tryToGetPathLastResort();
 		if(configPath!=null){
 			return configPath;
 		}
@@ -232,7 +253,7 @@ public class WPSConfig  implements Serializable {
 		throw new RuntimeException("Could find and load wps_config.xml");
 	}
 		
-	private static String tryToLoadFromClassPath(){
+	public static String tryToGetPathFromClassPath(){
 		URL configPathURL = WPSConfig.class.getClassLoader().getResource("wps_config.xml");
 		if(configPathURL!=null){
 			String config = configPathURL.getFile();
@@ -242,7 +263,7 @@ public class WPSConfig  implements Serializable {
 		return null;
 	}
 	
-	private static String tryToLoadFromWebAppTarget(){
+	public static String tryToGetPathFromWebAppTarget(){
 		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		int index1 = domain.indexOf("52n-wps-parent");
 		if(index1>0){
@@ -263,7 +284,7 @@ public class WPSConfig  implements Serializable {
 		return null;
 	}
 	
-	private static String tryToLoadFromWebAppSource(){
+	public static String tryToGetPathFromWebAppSource(){
 		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		int index1 = domain.indexOf("52n-wps-parent");
 		if(index1>0){
@@ -287,7 +308,7 @@ public class WPSConfig  implements Serializable {
 		return null;
 	}
 	
-	private static String tryToLoadViaWebAppPath(){
+	public static String tryToGetPathViaWebAppPath(){
 		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		int index = domain.indexOf("WEB-INF");
 		if(index>0){
@@ -302,7 +323,7 @@ public class WPSConfig  implements Serializable {
 		return null;
 	}
 	
-	private static String tryToLoadLastResort(){
+	public static String tryToGetPathLastResort(){
 		String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 		/*
 		 * domain should always be 52n-wps-commons/target/classes
