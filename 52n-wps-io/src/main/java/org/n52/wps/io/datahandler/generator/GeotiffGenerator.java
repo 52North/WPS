@@ -78,8 +78,8 @@ public class GeotiffGenerator  extends AbstractGenerator {
 			
 			GridCoverage coverage = ((GTRasterDataBinding)data).getPayload();
 			GeoTiffWriter geoTiffWriter = null;
-			
-			String fileName = "temp" + UUID.randomUUID() + ".tmp";
+			String tmpDirPath = System.getProperty("java.io.tmpdir");			
+			String fileName = tmpDirPath + File.separatorChar + "temp" + UUID.randomUUID() + ".tmp";
 			File outputFile = new File(fileName);
 			this.finalizeFiles.add(outputFile); // mark file for final delete
 			
