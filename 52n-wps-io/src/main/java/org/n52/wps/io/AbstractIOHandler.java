@@ -31,6 +31,7 @@ package org.n52.wps.io;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.PropertyDocument.Property;
 
 
@@ -48,6 +49,7 @@ public abstract class AbstractIOHandler implements IOHandler {
 	protected List<String> supportedEncodings;
 	protected List<Class<?>> supportedIDataTypes;
 	protected Property[] properties;
+	protected Format[] formats;
 	
 	public AbstractIOHandler(){
 		this.supportedFormats = new ArrayList<String>();
@@ -123,6 +125,10 @@ public abstract class AbstractIOHandler implements IOHandler {
 		String[] resultArray = supportedEncodings.toArray(new String[supportedEncodings.size()]);
 		return resultArray;
 		//return IOHandler.SUPPORTED_ENCODINGS;
+	}
+	
+	public Format[] getSupportedFullFormats(){
+		return formats;
 	}
 	
 	public boolean isSupportedEncoding(String encoding){

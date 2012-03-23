@@ -29,10 +29,16 @@ div.propEnd {padding-left:3em; padding-bottom:10px; padding-top: 5px;}
 
 div.propListHeader {display:block;}
 div.propListHeader label.propertyNameLabel  { display:inline; width:auto; margin-right:14em; text-align: left; color:inherit; padding-left:0.4em;}
+div.propListHeader label.formatMimeTypeLabel  { width: 17em; text-align: left; color:inherit;}
+div.propListHeader label.formatEncodingLabel  {  width: 10em; text-align: left; color:inherit;}
+div.propListHeader label.formatSchemaLabel  {  width: 30em; text-align: left; color:inherit;}
 div.propListHeader label.propertyValueLabel { display:inline; text-align: left; color:inherit; padding-left:1em;}
 
 div.propItem { margin-bottom:3px;}
 div.propItem input.propertyName  { width: 17em; text-align: left; color:inherit; }
+div.propItem input.formatMimeType  { width: 17em; text-align: left; color:inherit;}
+div.propItem input.formatEncoding  { width: 10em; text-align: left; color:inherit; }
+div.propItem input.formatSchema  { width: 30em; text-align: left; color:inherit; }
 div.propItem input.propertyValue { width: 26em; text-align: left; color:inherit; }
 
 

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.AsciiGrassDataBinding;
@@ -25,7 +26,11 @@ public class AsciiGrassGeneratorTest extends AbstractTestCase<AsciiGrassGenerato
 		String testFilePath = projectRoot
 				+ "/52n-wps-io/src/test/resources/6_UTM2GTIF.TIF";
 
-		testFilePath = URLDecoder.decode(testFilePath);
+		try {
+			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			fail(e1.getMessage());
+		}
 		
 		GeotiffParser theParser = new GeotiffParser();
 

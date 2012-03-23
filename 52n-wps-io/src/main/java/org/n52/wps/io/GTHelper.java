@@ -33,6 +33,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
@@ -467,8 +468,9 @@ public class GTHelper {
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			int startIndex = domain.indexOf("WEB-INF");
-			if(startIndex<0){
-				File f = new File(uuid+".xsd");
+			if(startIndex<0){				
+				String tmpDirPath = System.getProperty("java.io.tmpdir");				
+				File f = new File(tmpDirPath + File.pathSeparatorChar + uuid+".xsd");
 				FileWriter writer = new FileWriter(f);
 				writer.write(schema);
 				writer.flush();

@@ -228,8 +228,6 @@ public class GenericFileData {
 				
 				for (Property prop : sf.getProperties()) {
 					
-					LOGGER.info(prop.getType().getBinding().getSimpleName() + " " + prop.getValue());
-					
 					if (prop.getType() instanceof GeometryType) {
 						/*
 						 * skip, was handled before

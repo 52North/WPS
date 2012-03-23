@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
+import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 import org.n52.wps.server.grass.util.StreamGobbler;
 
@@ -188,6 +189,7 @@ public class GrassProcessDescriptionCreator {
 			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
+				checkForBase64Encoding(inputDescriptionType);
 				checkForKMLMimeType(inputDescriptionType);					
 			}			
 			
@@ -215,12 +217,16 @@ public class GrassProcessDescriptionCreator {
 							|| schema
 									.contains("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd")) {
 
-						outputType.getSupported().addNewFormat()
-								.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+						ComplexDataDescriptionType xZippedShapeType = outputType.getSupported().addNewFormat();
+																		
+						xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+						xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
 
 					}
 				}
 				
+				checkForBase64Encoding(result.getProcessOutputs()
+						.getOutputArray(0));
 				checkForKMLMimeType(result.getProcessOutputs()
 						.getOutputArray(0));
 
@@ -232,6 +238,82 @@ public class GrassProcessDescriptionCreator {
 		return null;
 	}
 
+	private void checkForBase64Encoding(InputDescriptionType inputDescriptionType){
+		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+		
+		if(complexData == null){
+			return;
+		}
+		
+		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
+		
+		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
+		
+		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
+		
+		if(defaultMimeType != null && defaultEncoding == null){			
+			for (String mimeType : genericFileParserMimeTypes) {
+				if(mimeType.equals(defaultMimeType)){
+					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
+				}
+			}			
+		}
+		
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			String supportedMimeType = complexDataDescriptionType.getMimeType();
+			
+			String supportedEncoding = complexDataDescriptionType.getEncoding();
+			
+			if(supportedMimeType != null && supportedEncoding == null){			
+				for (String mimeType : genericFileParserMimeTypes) {
+					if(mimeType.equals(supportedMimeType)){
+						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					}
+				}			
+			}
+		}
+	}
+	
+	private void checkForBase64Encoding(OutputDescriptionType outputDescriptionType){
+		SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
+		
+		if(complexData == null){
+			return;
+		}
+		
+		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
+		
+		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
+		
+		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
+		
+		if(defaultMimeType != null && defaultEncoding == null){			
+			for (String mimeType : genericFileParserMimeTypes) {
+				if(mimeType.equals(defaultMimeType)){
+					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
+				}
+			}			
+		}
+		
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			String supportedMimeType = complexDataDescriptionType.getMimeType();
+			
+			String supportedEncoding = complexDataDescriptionType.getEncoding();
+			
+			if(supportedMimeType != null && supportedEncoding == null){			
+				for (String mimeType : genericFileParserMimeTypes) {
+					if(mimeType.equals(supportedMimeType)){
+						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					}
+				}			
+			}
+		}
+	}
+	
 	private void checkForKMLMimeType(InputDescriptionType inputDescriptionType) {
 		
 		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();

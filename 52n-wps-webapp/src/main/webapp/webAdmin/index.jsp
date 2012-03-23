@@ -192,6 +192,26 @@
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Value").val(propertyValue);
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Activator").attr('checked', propActive);
                             });
+                            
+                             $('Format',this).each(function(j) {
+                                formatMime = $(this).attr("mimetype");
+                                formatEnc = $(this).attr("encoding");
+                                
+                                if(!formatEnc){
+                                	formatEnc = "default";
+                                }
+                                
+                                formatSchem = $(this).attr("schema");
+                                
+                                var formatID = addFormatItem(listType + "-" + itemID + '_Format');
+
+                                // now that the property items exist, add name, value and active state
+                                $("#" + listType + "-" + itemID + "_Format" + "-" + formatID + "_Mime").val(formatMime);
+                                $("#" + listType + "-" + itemID + "_Format" + "-" + formatID + "_Enc").val(formatEnc);
+                                $("#" + listType + "-" + itemID + "_Format" + "-" + formatID + "_Schem").val(formatSchem);
+                            });
+                            
+                            
                         });
                     }
                 });
@@ -211,8 +231,8 @@
 	         
 		                "<br>" +
 
-		                "Properties <img id=\"minMax\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
-						"<div id=\"maximizer-"+ itemType + "-" + id + "\" style=\"display:none;\">"+
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
@@ -221,6 +241,44 @@
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
+	                "</p>"
+                );
+                }else if((itemType == itemListTypes[itemListTypeNr.Parser]) || (itemType == itemListTypes[itemListTypeNr.Generator])){
+                $("#"+itemType+"_List").append
+                (
+	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
+						"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
+						"<table class=\"nameClass\">"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+							
+						"</table>"+
+	         
+		                "<br>" +
+
+		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Format" + "\" style=\"display:none;\">"+
+			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Format_List\">" +
+				                "<div class=\"propListHeader\">" +
+					                "<label class=\"formatMimeTypeLabel\" style=\"font-weight:bold;color:black;\">MimeType</label>" +
+					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +					                
+					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +					                
+				                "</div>" +
+			                "</div>" +
+			                "<div class=\"propEnd\"><img onClick=\"addNewFormatItem('" + itemType + "-" + id + "_Format'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
+			            "</div>"+
+			            
+			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
+			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
+				                "<div class=\"propListHeader\">" +
+					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+				                "</div>" +
+			                "</div>" +
+			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
+			            "</div>"+
+			            
 	                "</p>"
                 );
                 }else{
@@ -236,8 +294,8 @@
 	         
 		                "<br>" +
 
-		                "Properties <img id=\"minMax\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
-						"<div id=\"maximizer-"+ itemType + "-" + id + "\" style=\"display:none;\">"+
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
@@ -256,7 +314,7 @@
 
             function addNewListItem(itemType) {         
                 var id = document.getElementById("id").value;
-                                if(itemType == itemListTypes[itemListTypeNr.RemoteRepository]){
+                if(itemType == itemListTypes[itemListTypeNr.RemoteRepository]){
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
@@ -268,8 +326,8 @@
 	         
 		                "<br>" +
 
-		                "Properties <img id=\"minMax\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
-						"<div id=\"maximizer-"+ itemType + "-" + id + "\" style=\"display:none;\">"+
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
@@ -278,6 +336,44 @@
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
+	                "</p>"
+                );
+                }else if((itemType == itemListTypes[itemListTypeNr.Parser]) || (itemType == itemListTypes[itemListTypeNr.Generator])){
+                $("#"+itemType+"_List").append
+                (
+	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
+						"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
+						"<table class=\"nameClass\">"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+							
+						"</table>"+
+	         
+		                "<br>" +
+
+		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Format" + "\" style=\"display:none;\">"+
+			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Format_List\">" +
+				                "<div class=\"propListHeader\">" +
+					                "<label class=\"formatMimeTypeLabel\" style=\"font-weight:bold;color:black;\">MimeType</label>" +
+					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +					                
+					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +					                
+				                "</div>" +
+			                "</div>" +
+			                "<div class=\"propEnd\"><img onClick=\"addNewFormatItem('" + itemType + "-" + id + "_Format'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
+			            "</div>"+
+			            
+			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
+			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
+				                "<div class=\"propListHeader\">" +
+					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+				                "</div>" +
+			                "</div>" +
+			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
+			            "</div>"+
+			            
 	                "</p>"
                 );
                 }else{                
@@ -293,8 +389,8 @@
 	         
 		                "<br>" +
 
-		                "Properties <img id=\"minMax\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
-						"<div id=\"maximizer-"+ itemType + "-" + id + "\" style=\"display:none;\">"+
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
+						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
@@ -320,10 +416,10 @@
 				var div = $("div#maximizer-" + id);
 				if(div.css("display") == "none"){
 					div.show("fast");
-					$("img#minMax").attr("src","images/minimize.gif");
+					$("img#minMax-"+ id).attr("src","images/minimize.gif");
 				} else {
 					div.hide("fast");
-					$("img#minMax").attr("src","images/maximize.gif");
+					$("img#minMax-"+ id).attr("src","images/maximize.gif");
 				}				
             }
 
@@ -359,7 +455,41 @@
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
                 return id;
-            }            
+            }      
+            
+            function addFormatItem(itemType) {
+                var id = document.getElementById("id").value;
+                $("#" + itemType + "_List").append
+                (
+                "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
+                    "<input type=\"text\" class=\"formatMimeType\" size=\"20\" name=\""+ itemType + "-" + id +"_Mime\" id=\"" + itemType + "-" + id + "_Mime\" readonly />"+
+                    "<input type=\"text\" class=\"formatEncoding\" size=\"20\" name=\""+ itemType + "-" + id +"_Enc\" id=\""+ itemType + "-" + id + "_Enc\" readonly />"+
+                    "<input type=\"text\" class=\"formatSchema\" size=\"20\" name=\""+ itemType + "-" + id +"_Schem\" id=\""+ itemType + "-" + id + "_Schem\" readonly />"+
+                    "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" width=\"16\" height=\"16\" alt=\"Remove\" style=\"cursor:pointer\" />"+
+                    "<img id=\"editImg\" onClick=\"edit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"+
+                "</div>"
+                );
+                var newId = (id - 1) + 2;
+                document.getElementById("id").value = newId;
+                return id;
+            }
+
+            function addNewFormatItem(itemType) {
+                var id = document.getElementById("id").value;
+                $("#" + itemType + "_List").append
+                (
+                "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
+                    "<input type=\"text\" class=\"formatMimeType\" size=\"20\" name=\""+ itemType + "-" + id +"_Mime\" id=\"" + itemType + "-" + id + "_Mime\" style=\"border:1px solid black;background-color:#F5F8F9;\" />"+
+                    "<input type=\"text\" class=\"formatEncoding\" size=\"20\" name=\""+ itemType + "-" + id +"_Enc\" id=\""+ itemType + "-" + id + "_Enc\" style=\"border:1px solid black;background-color:#F5F8F9;\" />"+
+                    "<input type=\"text\" class=\"formatSchema\" size=\"20\" name=\""+ itemType + "-" + id +"_Schem\" id=\""+ itemType + "-" + id + "_Schem\" style=\"border:1px solid black;background-color:#F5F8F9;\" />"+
+                    "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" alt=\"Remove\" style=\"cursor:pointer\" />"+
+                    "<img id=\"saveEditImg\" onClick=\"saveEdit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"+
+                "</div>"
+                );
+                var newId = (id - 1) + 2;
+                document.getElementById("id").value = newId;
+                return id;
+            }         
 
             function removeItemList(listType,id) {
                 $("#" + listType + "-" + id).remove();
@@ -486,7 +616,7 @@
 						<td><input class="formButtons" id="upload_button" type="button" value="Upload Configuration File" name="upload" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" type="reset" value="Reset" name="Reset" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" id="upload_process" type="button" value="Upload Process" name="UploadProcess" style="border:1px solid black;background:white;" /></td>
-						<td><input class="formButtons" id="manage_rem_repos" type="button" value="Update Remote Repositories" name="ManageRemoteRepositories" style="border:1px solid black;background:white;" /></td>
+						<!--td><input class="formButtons" id="manage_rem_repos" type="button" value="Update Remote Repositories" name="ManageRemoteRepositories" style="border:1px solid black;background:white;" /></td-->
 						<td><input class="formButtons" id="upload_r_script" type="button" value="Upload R Script" name="UploadRScript" style="border:1px solid black;background:white;" /></td>
 					</tr>
 				</table>
@@ -548,7 +678,7 @@
 						<div class="sectionContent">
 							<div class="lists" id="Parser_List"></div>
 							<p class="addListItem">
-								<input type="button" value="Add Paser" name="addPaserButton" onClick="addNewListItem(itemListTypes[itemListTypeNr.Parser]); return false;" style="border:1px solid black;background:white;" />
+								<input type="button" value="Add Parser" name="addParserButton" onClick="addNewListItem(itemListTypes[itemListTypeNr.Parser]); return false;" style="border:1px solid black;background:white;" />
 							</p>
 						</div>
 					</div>

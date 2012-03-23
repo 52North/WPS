@@ -27,6 +27,8 @@ Copyright � 2007 52�North Initiative for Geospatial Open Source Software Gmb
  ***************************************************************/
 package org.n52.wps.io;
 
+import org.n52.wps.FormatDocument.Format;
+
 public interface IOHandler {
 	
 	
@@ -45,6 +47,7 @@ public interface IOHandler {
 	public String[] getSupportedSchemas();
 	public String[] getSupportedFormats();
 	public String[] getSupportedEncodings();
+	public Format[] getSupportedFullFormats();
 	public Class<?>[] getSupportedDataBindings();
 	
 }

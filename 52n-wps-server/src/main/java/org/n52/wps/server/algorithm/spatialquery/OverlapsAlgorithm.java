@@ -48,12 +48,12 @@ import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
-import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class OverlapsAlgorithm extends AbstractAlgorithm {
+public class OverlapsAlgorithm extends AbstractSelfDescribingAlgorithm {
 
 	Logger LOGGER = Logger.getLogger(OverlapsAlgorithm.class);
 	private final String inputID1 = "LAYER1";
@@ -65,14 +65,14 @@ public class OverlapsAlgorithm extends AbstractAlgorithm {
 		return errors;
 	}
 
-	public Class getInputDataType(String id) {
+	public Class<GTVectorDataBinding> getInputDataType(String id) {
 		if (id.equalsIgnoreCase(inputID1) || id.equalsIgnoreCase(inputID2)) {
 			return GTVectorDataBinding.class;
 		}
 		return null;
 	}
 
-	public Class getOutputDataType(String id) {
+	public Class<LiteralBooleanBinding> getOutputDataType(String id) {
 		if(id.equalsIgnoreCase(outputID)){
 			return LiteralBooleanBinding.class;
 		}
@@ -94,7 +94,7 @@ public class OverlapsAlgorithm extends AbstractAlgorithm {
 		}
 		IData firstInputData = firstDataList.get(0);
 				
-		FeatureCollection firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
+		FeatureCollection<?, ?> firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
 		List<IData> secondDataList = inputData.get(inputID2);
 		if(secondDataList == null || secondDataList.size() != 1){
@@ -102,11 +102,11 @@ public class OverlapsAlgorithm extends AbstractAlgorithm {
 		}
 		IData secondInputData = secondDataList.get(0);
 				
-		FeatureCollection secondCollection = ((GTVectorDataBinding) secondInputData).getPayload();
+		FeatureCollection<?, ?> secondCollection = ((GTVectorDataBinding) secondInputData).getPayload();
 		
-		FeatureIterator firstIterator = firstCollection.features();
+		FeatureIterator<?> firstIterator = firstCollection.features();
 		
-		FeatureIterator secondIterator = secondCollection.features();
+		FeatureIterator<?> secondIterator = secondCollection.features();
 		
 		if(!firstIterator.hasNext()){
 			throw new RuntimeException("Error while iterating over features in layer 1");
@@ -127,6 +127,21 @@ public class OverlapsAlgorithm extends AbstractAlgorithm {
 		result.put(outputID,
 				new LiteralBooleanBinding(overlaps));
 		return result;
+	}
+
+	@Override
+	public List<String> getInputIdentifiers() {
+		List<String> identifiers = new ArrayList<String>(2);
+		identifiers.add(inputID1);
+		identifiers.add(inputID2);
+		return identifiers;
+	}
+
+	@Override
+	public List<String> getOutputIdentifiers() {
+		List<String> identifiers = new ArrayList<String>(1);
+		identifiers.add(outputID);
+		return identifiers;
 	}
 
 }

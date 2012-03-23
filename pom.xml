@@ -281,23 +281,6 @@
     </reporting>
     <profiles>
         <profile>
-            <!-- only build/deploy site if explicitly enabled by this profile -->
-            <id>env-site</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>site</value>
-                </property>
-            </activation>
-            <distributionManagement>
-                <site>
-                    <id>n52-repo</id>
-                    <name>52n WPS site location</name>
-                    <url>dav:https://52north.org/maven/project-sites/wps/</url>
-                </site>
-            </distributionManagement>
-        </profile>
-        <profile>
             <id>env-ci</id>
             <activation>
                 <property>

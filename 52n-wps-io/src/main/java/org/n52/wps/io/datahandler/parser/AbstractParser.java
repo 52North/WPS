@@ -34,9 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
 
@@ -55,20 +57,42 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 		// load Parser Properties
 		this.properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
 		
-		for(Property property : properties){
-			if(property.getName().equalsIgnoreCase("supportedFormat")){
-				String format = property.getStringValue();
-				supportedFormats.add(format);
+		this.formats = WPSConfig.getInstance().getFormatsForParserClass(this.getClass().getName());
+		
+		for (Format format : formats) {			
+
+			if(format.getMimetype()!= null && !format.getMimetype().equals("")){
+				String mimetype = format.getMimetype();
+				supportedFormats.add(mimetype);
 			}
-			if(property.getName().equalsIgnoreCase("supportedSchema")){
-				String schema = property.getStringValue();
-				supportedSchemas.add(schema);
+			if(format.getSchema()!= null && !format.getSchema().equals("")){
+				String schema = format.getSchema();
+				supportedSchemas.add(schema);				
 			}
-			if(property.getName().equalsIgnoreCase("supportedEncoding")){
-				String encoding = property.getStringValue();
+			
+			if(format.getEncoding()!= null && !format.getEncoding().equals("")){
+				String encoding = format.getEncoding();
 				supportedEncodings.add(encoding);
-			} 
-		}
+			}else{
+				supportedEncodings.add(IOHandler.DEFAULT_ENCODING);
+			}			
+		}	
+		
+		
+//		for(Property property : properties){
+//			if(property.getName().equalsIgnoreCase("supportedFormat")){
+//				String format = property.getStringValue();
+//				supportedFormats.add(format);
+//			}
+//			if(property.getName().equalsIgnoreCase("supportedSchema")){
+//				String schema = property.getStringValue();
+//				supportedSchemas.add(schema);
+//			}
+//			if(property.getName().equalsIgnoreCase("supportedEncoding")){
+//				String encoding = property.getStringValue();
+//				supportedEncodings.add(encoding);
+//			} 
+//		}
 		finalizeFiles = new ArrayList<File>();
 	}
 

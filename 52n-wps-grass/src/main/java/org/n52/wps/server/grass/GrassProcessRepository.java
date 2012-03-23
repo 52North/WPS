@@ -69,16 +69,22 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				this.getClass().getCanonicalName())) {
 			LOGGER.info("Initializing Grass Repository");
 
-			String dontUseProcesses = "";
-
 			Property[] propertyArray = WPSConfig.getInstance()
 					.getPropertiesForRepositoryClass(
 							this.getClass().getCanonicalName());
+			
+			/*
+			 * get properties of Repository
+			 *
+			 * check whether process is amongst them and active
+			 * 
+			 * if properties are empty (not initialized yet)
+			 * 		add all valid processes to WPSConfig
+			 */			
+			ArrayList<String> processList = new ArrayList<String>(propertyArray.length);
+			
 			for (Property property : propertyArray) {
 				if (property.getName().equalsIgnoreCase(
-						GRASSWPSConfigVariables.DONT_USE_PROCESSES.toString())) {
-					dontUseProcesses = property.getStringValue();
-				} else if (property.getName().equalsIgnoreCase(
 						GRASSWPSConfigVariables.TMP_Dir.toString())) {
 					tmpDir = property.getStringValue();
 				}
@@ -100,6 +106,12 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				}else if (property.getName().equalsIgnoreCase(
 						GRASSWPSConfigVariables.Python_Path.toString())) {
 					pythonPath = property.getStringValue();
+				}else if(property.getName().equals("Algorithm")){
+					if(property.getActive()){
+						processList.add(property.getStringValue());
+					}else{
+						LOGGER.info("GRASS process : " + property.getStringValue() + " not active.");				
+					}
 				}
 			}
 
@@ -174,8 +186,6 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 
 			File processDirectory = new File(grassHome + fileSeparator + "bin");
 
-//			int count = 0;
-
 			if (processDirectory.isDirectory()) {
 
 				String[] processes = processDirectory.list();
@@ -185,7 +195,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 					if (process.endsWith(".exe")) {
 						process = process.replace(".exe", "");
 					}
-					if (!dontUseProcesses.contains(process)) {
+					if (processList.contains(process)) {
 
 						ProcessDescriptionType pDescType;
 						try {
@@ -194,22 +204,18 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 							if (pDescType != null) {
 								registeredProcesses.put(process, pDescType);
 								processesAddonFlagMap.put(process, false);
-								LOGGER.info("GRASS Process " + process
+								LOGGER.info("GRASS process " + process
 										+ " added.");
 							}
 						} catch (Exception e) {
-							LOGGER.warn("Could not add Grass Process : "
+							LOGGER.warn("Could not add Grass process : "
 									+ process
-									+ ". Errors while creating describe Process");
+									+ ". Errors while creating process description");
 							LOGGER.error(e);
 						}
-//						count++;
-//						System.out.println("#########################  "
-//								+ count);
 
 					} else {
-						dontUseProcesses = dontUseProcesses.replace(process
-								+ ";", "");
+						LOGGER.info("Did not add GRASS process : " + process +". Not in Repository properties or not active.");
 					}
 
 				}
@@ -235,12 +241,12 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 					if (process.endsWith(".exe")) {
 						process = process.replace(".exe", "");
 					}
-					if (!dontUseProcesses.contains(process)) {
+					if (processList.contains(process)) {
 
 						ProcessDescriptionType pDescType;
 						try {
 							if(registeredProcesses.keySet().contains(process)){
-								LOGGER.info("Skipping duplicate Process " + process);
+								LOGGER.info("Skipping duplicate process " + process);
 								continue;
 							}
 							pDescType = creator
@@ -248,19 +254,18 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 							if (pDescType != null) {
 								registeredProcesses.put(process, pDescType);
 								processesAddonFlagMap.put(process, true);
-								LOGGER.info("GRASS Addon Process " + process
+								LOGGER.info("GRASS Addon process " + process
 										+ " added.");
 							}
 						} catch (Exception e) {
-							LOGGER.warn("Could not add Grass Addon Process : "
+							LOGGER.warn("Could not add Grass Addon process : "
 									+ process
-									+ ". Errors while creating describe Process");
+									+ ". Errors while creating process description");
 							LOGGER.error(e);
 						}
 
 					} else {
-						dontUseProcesses = dontUseProcesses.replace(process
-								+ ";", "");
+						LOGGER.info("Did not add GRASS Addon process : " + process +". Not in Repository properties or not active.");
 					}
 
 				}
@@ -271,7 +276,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 			
 
 		} else {
-			LOGGER.debug("Local Algorithm Repository is inactive.");
+			LOGGER.debug("GRASS Algorithm Repository is inactive.");
 		}
 
 	}
@@ -280,14 +285,14 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		if (registeredProcesses.containsKey(processID)) {
 			return true;
 		}
-		LOGGER.warn("Could not find Grass Process " + processID, null);
+		LOGGER.warn("Could not find Grass process " + processID, null);
 		return false;
 	}
 
 	public IAlgorithm getAlgorithm(String processID,
 			ExecuteRequest executeRequest) {
 		if (!containsAlgorithm(processID)) {
-			throw new RuntimeException("Could not allocate Process");
+			throw new RuntimeException("Could not allocate process");
 		}
 		return new GrassProcessDelegator(processID,
 				registeredProcesses.get(processID), executeRequest, processesAddonFlagMap.get(processID));

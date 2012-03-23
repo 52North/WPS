@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +84,27 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		LOGGER.info("Initializing Sextante Repository");
 		registeredProcesses = new HashMap<String, ProcessDescriptionType>();
 		
+		/*
+		 * get properties of Repository
+		 *
+		 * check whether process is amongst them and active
+		 * 
+		 * if properties are empty (not initialized yet)
+		 * 		add all valid processes to WPSConfig
+		 */
+		
+		Property[] propertyProcesses = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getName());
+		
+		ArrayList<String> processList = new ArrayList<String>(propertyProcesses.length);
+		
+		for (Property prop : propertyProcesses) {
+			
+			if(prop.getActive()){
+				processList.add(prop.getStringValue());
+			}else{
+				LOGGER.info("Sextante Process : " + prop.getStringValue() + " not active.");				
+			}
+		}
 		
 		Sextante.initialize();
 		Map algorithmMap = Sextante.getAlgorithms();
@@ -90,6 +112,10 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		SextanteProcessDescriptionCreator descriptionCreator = new SextanteProcessDescriptionCreator();
 		for(Object keyObject : keys){
 			String key = (String) keyObject;
+			if(!processList.contains(key)){
+				LOGGER.info("Did not add Sextante Process : " + key +". Not in Repository properties or not active.");
+				continue;
+			}
 			GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(key);
 			ProcessDescriptionType processDescription;
 			try {

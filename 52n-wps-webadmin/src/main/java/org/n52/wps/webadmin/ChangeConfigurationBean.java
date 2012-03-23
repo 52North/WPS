@@ -31,13 +31,18 @@ package org.n52.wps.webadmin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.AlgorithmRepositoryListDocument.AlgorithmRepositoryList;
 import org.n52.wps.DatahandlersDocument.Datahandlers;
+import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.GeneratorListDocument.GeneratorList;
 import org.n52.wps.ParserDocument.Parser;
@@ -225,7 +230,7 @@ public class ChangeConfigurationBean {
 		                    } else {
 		                        //checks if the one before was also the same type
 		                        if (processingItemName.startsWith("Parser")) {
-		                            // adds the colected parser values to WPSConfig
+		                            // adds the collected parser values to WPSConfig
 		                            createParser(parserValues);
 		                            parserValues.clear();
 		                        }
@@ -252,7 +257,7 @@ public class ChangeConfigurationBean {
 		                    } else {
 		                        //checks if the one before was also the same type
 		                        if (processingItemName.startsWith("Generator")) {
-		                            // adds the colected generator values to WPSConfig
+		                            // adds the collected generator values to WPSConfig
 		                            createGenerator(generatorValues);
 		                            generatorValues.clear();
 		                        }
@@ -304,7 +309,7 @@ public class ChangeConfigurationBean {
 
     /**
      * adds the name value pairs to the Server instance of the WPSconfig
-     * @param serverEntries map vith the name value pairs
+     * @param serverEntries map with the name value pairs
      */
     private void createServer(HashMap<String, String> serverEntries) {
 
@@ -426,6 +431,11 @@ public class ChangeConfigurationBean {
 
         // if the map has more entries, Properties are present and will be proceed
         if (!parserEntries.isEmpty()) {
+            try {
+				parser.setFormatArray(getFormatArray(parserEntries));
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.error("Error decoding format attributes in UTF-8.");
+			}
             parser.setPropertyArray(getPropertyArray(parserEntries));
         }
     }
@@ -460,6 +470,11 @@ public class ChangeConfigurationBean {
         
         // if the map has more entries, Properties are present and will be proceed
         if (!generatorEntries.isEmpty()) {
+            try {
+				generator.setFormatArray(getFormatArray(generatorEntries));
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.error("Error decoding format attributes in UTF-8.");
+			}
             generator.setPropertyArray(getPropertyArray(generatorEntries));
         }
     }
@@ -470,22 +485,47 @@ public class ChangeConfigurationBean {
      * @return Property[]
      */
     private Property[] getPropertyArray(HashMap<String, String> properties) {
-        ArrayList<Property> propArr = new ArrayList<Property>();
-        while (properties.keySet().iterator().hasNext()) {
-
-            String processingProperty = properties.keySet().iterator().next().split("_")[0];
-            String propertyName = properties.remove(processingProperty + "_Name");
+        ArrayList<Property> propArr = new ArrayList<Property>();   
+        
+        Map<Integer, Property> propertyNumberPropertyMap = new HashMap<Integer, Property>();
+        
+        for (String property : properties.keySet()) {
+        	
+        	/*
+        	 * right now there are only Property and Format elements in the HashMap
+        	 * here we are only interested in Property elements
+        	 */
+        	if(property.contains("Format")){
+        		continue;
+        	}
+        	
+        	Integer propertyNumber = Integer.parseInt(property.substring(property.indexOf("-") + 1, property.indexOf("_")));
+        	
+        	if(propertyNumberPropertyMap.keySet().contains(propertyNumber)){
+        		continue;
+        	}
+        	
+        	String processingProperty = property.split("_")[0];
+            String propertyName = properties.get(processingProperty + "_Name");
             if(propertyName == null){
             	continue;
             }
-            propertyName = URLDecoder.decode(propertyName);
+            try {
+				propertyName = URLDecoder.decode(propertyName, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.error(e);
+			}
           
-            String propertyValue = properties.remove(processingProperty + "_Value");
+            String propertyValue = properties.get(processingProperty + "_Value");
             if(propertyValue == null){
             	continue;
             }
-            propertyValue = URLDecoder.decode(propertyValue);
-            String propertyActiveString = properties.remove(processingProperty + "_Activator");
+            try {
+				propertyValue = URLDecoder.decode(propertyValue, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				LOGGER.error(e);
+			}
+            String propertyActiveString = properties.get(processingProperty + "_Activator");
             
             boolean proptertyActive = false;
             if(propertyActiveString != null){
@@ -501,12 +541,104 @@ public class ChangeConfigurationBean {
                 if (propertyValue != null) {
                     prop.setStringValue(propertyValue);
                 }
-               
+                propertyNumberPropertyMap.put(propertyNumber, prop);
                 propArr.add(prop);
             }
-        }
+		}
 
         Property[] arr = {};
-        return propArr.toArray(arr);
+        arr = propertyNumberPropertyMap.values().toArray(arr);
+        
+        Arrays.sort(arr, new PropertyComparator());
+        
+        return arr;
+    }
+    
+    /**
+     * generates a Format[] of the name value pairs in the map
+     * @param properties map with name value pairs belonging to one entry
+     * @return Format[]
+     * @throws UnsupportedEncodingException 
+     */
+    private Format[] getFormatArray(HashMap<String, String> properties) throws UnsupportedEncodingException {
+        
+        Map<Integer, Format> formatNumberFormatMap = new HashMap<Integer, Format>();
+        
+        for (String property : properties.keySet()) {
+        	
+        	/*
+        	 * right now there are only Property and Format elements in the HashMap
+        	 * here we are only interested in Format elements
+        	 */
+        	if(property.contains("Property")){
+        		continue;
+        	}
+        	
+        	Integer formatNumber = Integer.parseInt(property.substring(property.indexOf("-") + 1, property.indexOf("_")));
+        	
+        	if(formatNumberFormatMap.keySet().contains(formatNumber)){
+        		continue;
+        	}
+        	
+        	String processingProperty = property.split("_")[0];
+            String formatMimeType = properties.get(processingProperty + "_Mime");
+            if(formatMimeType == null){
+            	continue;
+            }
+            formatMimeType = URLDecoder.decode(formatMimeType, "UTF-8");
+          
+            String formatEncoding = properties.get(processingProperty + "_Enc");
+            
+            if(formatEncoding != null){                
+                formatEncoding = URLDecoder.decode(formatEncoding, "UTF-8");
+            }
+            
+            String formatSchema = properties.get(processingProperty + "_Schem");
+            
+            if(formatSchema != null){                
+                formatSchema = URLDecoder.decode(formatSchema, "UTF-8");
+            }
+            
+            if (formatMimeType != null) {
+            	Format format = Format.Factory.newInstance();
+            	format.setMimetype(formatMimeType);
+                if (formatEncoding != null && !formatEncoding.equals("default")) {
+                	format.setEncoding(formatEncoding);
+                }
+                if (formatSchema != null) {
+                    format.setSchema(formatSchema);
+                }
+                formatNumberFormatMap.put(formatNumber, format);
+            }
+		}
+
+        Format[] arr = {};
+        return formatNumberFormatMap.values().toArray(arr);
+    }
+    
+    /**
+     * Comparator class. Used for sorting Properties. Algorithm-Properties will be put at the end,
+     * Algorithm names descending.
+     *
+     */
+    class PropertyComparator implements Comparator<Property>{
+
+		@Override
+		public int compare(Property o1, Property o2) {			
+			
+			String o1Name = o1.getName();
+			String o2Name = o2.getName();
+			
+			if(o1Name.equals("Algorithm") && !o2Name.equals("Algorithm")){
+				return 1;
+			}else if(!o1Name.equals("Algorithm") && o2Name.equals("Algorithm")){
+				return -1;
+			}else if(o1Name.equals("Algorithm") && o2Name.equals("Algorithm")){
+				return o1.getStringValue().compareTo(o2.getStringValue());
+			}else{
+				return o1Name.compareTo(o2Name);
+			}
+		}
+    	
     }
 }

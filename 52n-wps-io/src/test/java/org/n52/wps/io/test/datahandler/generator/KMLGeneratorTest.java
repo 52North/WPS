@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -23,7 +24,11 @@ public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/states.zip";
 		
-		testFilePath = URLDecoder.decode(testFilePath);
+		try {
+			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			fail(e1.getMessage());
+		}
 		
 		GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
 		

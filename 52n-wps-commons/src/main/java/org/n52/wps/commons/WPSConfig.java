@@ -47,6 +47,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
+import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -400,6 +401,18 @@ public class WPSConfig  implements Serializable {
 		
 	}
 	
+	public Format[] getFormatsForGeneratorClass(String className){
+		Generator[] generators = wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
+		for(int i = 0; i<generators.length; i++) {
+			Generator generator = generators[i];
+			if(generator.getClassName().equals(className)){
+				return generator.getFormatArray();
+			}
+		}
+		return (Format[]) Array.newInstance(Format.class,0);
+		
+	}
+	
 	public Property[] getPropertiesForParserClass(String className){
 		Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
 		for(int i = 0; i<parsers.length; i++) {
@@ -409,6 +422,18 @@ public class WPSConfig  implements Serializable {
 			}
 		}
 		return (Property[]) Array.newInstance(Property.class,0);
+		
+	}
+	
+	public Format[] getFormatsForParserClass(String className){
+		Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
+		for(int i = 0; i<parsers.length; i++) {
+			Parser parser = parsers[i];
+			if(parser.getClassName().equals(className)){
+				return parser.getFormatArray();
+			}
+		}
+		return (Format[]) Array.newInstance(Format.class,0);
 		
 	}
 	

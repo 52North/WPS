@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -20,7 +21,11 @@ public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPPar
 		
 		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/tasmania_roads.zip";
 		
-		testFilePath = URLDecoder.decode(testFilePath);
+		try {
+			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			fail(e1.getMessage());
+		}
 		
 		String[] mimetypes = dataHandler.getSupportedFormats();
 		

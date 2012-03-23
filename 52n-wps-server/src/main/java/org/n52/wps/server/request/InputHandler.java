@@ -205,62 +205,62 @@ public class InputHandler {
 			
 			boolean canUseDefault = false;
 			if(defaultMimeType.equalsIgnoreCase(mimeType)){
-				ComplexDataDescriptionType potenitalFormat = inputReferenceDesc.getComplexData().getDefault().getFormat();
+				ComplexDataDescriptionType potentialFormat = inputReferenceDesc.getComplexData().getDefault().getFormat();
 				if(data.getSchema() != null && data.getEncoding() == null){
-					if(data.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
+					if(data.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 				}
 				if(data.getSchema() == null && data.getEncoding() != null){
-					if(data.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+					if(data.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 					
 				}
 				if(data.getSchema() != null && data.getEncoding() != null){
-					if(data.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && data.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+					if(data.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && data.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 					
 				}
 				if(data.getSchema() == null && data.getEncoding() == null){
 					canUseDefault = true;
-					format = potenitalFormat;
+					format = potentialFormat;
 				}
 				
 			}
 			if(!canUseDefault){
 				 ComplexDataDescriptionType[] formats = inputReferenceDesc.getComplexData().getSupported().getFormatArray();
-				 for(ComplexDataDescriptionType potenitalFormat : formats){
-					 if(potenitalFormat.getMimeType().equalsIgnoreCase(mimeType)){
+				 for(ComplexDataDescriptionType potentialFormat : formats){
+					 if(potentialFormat.getMimeType().equalsIgnoreCase(mimeType)){
 						 if(data.getSchema() != null && data.getEncoding() == null){
-								if(data.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
-									format = potenitalFormat;
+								if(data.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
+									format = potentialFormat;
 								}
 							}
 							if(data.getSchema() == null && data.getEncoding() != null){
-								if(data.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-									format = potenitalFormat;
+								if(data.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+									format = potentialFormat;
 								}
 								
 							}
 							if(data.getSchema() != null && data.getEncoding() != null){
-								if(data.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && data.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-									format = potenitalFormat;
+								if(data.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && data.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+									format = potentialFormat;
 								}
 								
 							}
 							if(data.getSchema() == null && data.getEncoding() == null){
-								format = potenitalFormat;
+								format = potentialFormat;
 							}
 					 }
 				 }
 			}
 			if(format == null){
-				throw new ExceptionReport("Could not determine output format", ExceptionReport.INVALID_PARAMETER_VALUE);
+				throw new ExceptionReport("Could not determine intput format", ExceptionReport.INVALID_PARAMETER_VALUE);
 			}
 			
 			mimeType = format.getMimeType();
@@ -750,56 +750,56 @@ public class InputHandler {
 			
 			boolean canUseDefault = false;
 			if(defaultMimeType.equalsIgnoreCase(mimeType)){
-				ComplexDataDescriptionType potenitalFormat = inputPD.getComplexData().getDefault().getFormat();
+				ComplexDataDescriptionType potentialFormat = inputPD.getComplexData().getDefault().getFormat();
 				if(referenceData.getSchema() != null && referenceData.getEncoding() == null){
-					if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
+					if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 				}
 				if(referenceData.getSchema() == null && referenceData.getEncoding() != null){
-					if(referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+					if(referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 					
 				}
 				if(referenceData.getSchema() != null && referenceData.getEncoding() != null){
-					if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+					if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 						canUseDefault = true;
-						format = potenitalFormat;
+						format = potentialFormat;
 					}
 					
 				}
 				if(referenceData.getSchema() == null && referenceData.getEncoding() == null){
 					canUseDefault = true;
-					format = potenitalFormat;
+					format = potentialFormat;
 				}
 				
 			}
 			if(!canUseDefault){
 				 ComplexDataDescriptionType[] formats = inputPD.getComplexData().getSupported().getFormatArray();
-				 for(ComplexDataDescriptionType potenitalFormat : formats){
-					 if(potenitalFormat.getMimeType().equalsIgnoreCase(mimeType)){
+				 for(ComplexDataDescriptionType potentialFormat : formats){
+					 if(potentialFormat.getMimeType().equalsIgnoreCase(mimeType)){
 						 if(referenceData.getSchema() != null && referenceData.getEncoding() == null){
-								if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
-									format = potenitalFormat;
+								if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
+									format = potentialFormat;
 								}
 							}
 							if(referenceData.getSchema() == null && referenceData.getEncoding() != null){
-								if(referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-									format = potenitalFormat;
+								if(referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+									format = potentialFormat;
 								}
 								
 							}
 							if(referenceData.getSchema() != null && referenceData.getEncoding() != null){
-								if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-									format = potenitalFormat;
+								if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+									format = potentialFormat;
 								}
 								
 							}
 							if(referenceData.getSchema() == null && referenceData.getEncoding() == null){
-								format = potenitalFormat;
+								format = potentialFormat;
 							}
 					 }
 				 }
@@ -844,62 +844,62 @@ public class InputHandler {
 												
 						boolean canUseDefault = false;
 						if(defaultMimeType.equalsIgnoreCase(mimeType)){
-							ComplexDataDescriptionType potenitalFormat = inputPD.getComplexData().getDefault().getFormat();
+							ComplexDataDescriptionType potentialFormat = inputPD.getComplexData().getDefault().getFormat();
 							if(referenceData.getSchema() != null && referenceData.getEncoding() == null){
-								if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
+								if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
 									canUseDefault = true;
-									format = potenitalFormat;
+									format = potentialFormat;
 								}
 							}
 							if(referenceData.getSchema() == null && referenceData.getEncoding() != null){
-								if(referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+								if(referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 									canUseDefault = true;
-									format = potenitalFormat;
+									format = potentialFormat;
 								}
 								
 							}
 							if(referenceData.getSchema() != null && referenceData.getEncoding() != null){
-								if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
+								if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
 									canUseDefault = true;
-									format = potenitalFormat;
+									format = potentialFormat;
 								}
 								
 							}
 							if(referenceData.getSchema() == null && referenceData.getEncoding() == null){
 								canUseDefault = true;
-								format = potenitalFormat;
+								format = potentialFormat;
 							}
 							
 						}
 						if(!canUseDefault){
 							 ComplexDataDescriptionType[] formats = inputPD.getComplexData().getSupported().getFormatArray();
-							 for(ComplexDataDescriptionType potenitalFormat : formats){
-								 if(potenitalFormat.getMimeType().equalsIgnoreCase(mimeType)){
+							 for(ComplexDataDescriptionType potentialFormat : formats){
+								 if(potentialFormat.getMimeType().equalsIgnoreCase(mimeType)){
 									 if(referenceData.getSchema() != null && referenceData.getEncoding() == null){
-											if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema())){
-												format = potenitalFormat;
+											if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema())){
+												format = potentialFormat;
 											}
 										}
 										if(referenceData.getSchema() == null && referenceData.getEncoding() != null){
-											if(referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-												format = potenitalFormat;
+											if(referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+												format = potentialFormat;
 											}
 											
 										}
 										if(referenceData.getSchema() != null && referenceData.getEncoding() != null){
-											if(referenceData.getSchema().equalsIgnoreCase(potenitalFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potenitalFormat.getEncoding())){
-												format = potenitalFormat;
+											if(referenceData.getSchema().equalsIgnoreCase(potentialFormat.getSchema()) && referenceData.getEncoding().equalsIgnoreCase(potentialFormat.getEncoding())){
+												format = potentialFormat;
 											}
 											
 										}
 										if(referenceData.getSchema() == null && referenceData.getEncoding() == null){
-											format = potenitalFormat;
+											format = potentialFormat;
 										}
 								 }
 							 }
 						}
 						if(format == null){
-							throw new ExceptionReport("Could not determine output format. Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
+							throw new ExceptionReport("Could not determine intput format. Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
 						}
 						
 						mimeType = format.getMimeType();
