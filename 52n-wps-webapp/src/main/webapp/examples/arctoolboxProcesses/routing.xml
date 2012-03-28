@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xml" href="routing.xslt" ?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+	
+	
+		<ows:Identifier>org.n52.wps.ags.merret.modelrouting4</ows:Identifier>		
+		<ows:Title>myrouting1</ows:Title>
+		<ows:Abstract>Routing via arcgis server</ows:Abstract>
+		<DataInputs>
+		
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>Stops</ows:Identifier>
+				<ows:Title>Stops</ows:Title>
+				<ows:Abstract>The feature layer or feature class that contains the start and stop(s) of the route.</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>text/xml</MimeType>
+							<Schema>http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>text/xml</MimeType>
+							<Schema>http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			
+			
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>RoutingResult</ows:Identifier>
+				<ows:Title>RoutingResult</ows:Title>	
+				<ows:Abstract>The feature class that will be created and to which the resulting line features will be written.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>text/xml</MimeType>
+							<Schema>http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>text/xml</MimeType>
+							<Schema>http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	
