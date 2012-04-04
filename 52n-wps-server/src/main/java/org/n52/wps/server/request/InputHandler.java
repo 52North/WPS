@@ -610,52 +610,9 @@ public class InputHandler {
 				
 					allowedRanges = inputDesc.getLiteralData().getAllowedValues().getRangeArray();
 					for(RangeType allowedRange : allowedRanges){
-						if((parameterObj instanceof LiteralIntBinding)){
-							int min = new Integer(allowedRange.getMinimumValue().getStringValue());
-							int max = new Integer(allowedRange.getMaximumValue().getStringValue());
-							if((Integer)(parameterObj.getPayload())>min && (Integer)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						if((parameterObj instanceof LiteralDoubleBinding)){
-							Double min = new Double(allowedRange.getMinimumValue().getStringValue());
-							Double max = new Double(allowedRange.getMaximumValue().getStringValue());
-							if((Double)(parameterObj.getPayload())>min && (Double)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						if((parameterObj instanceof LiteralShortBinding)){
-							Short min = new Short(allowedRange.getMinimumValue().getStringValue());
-							Short max = new Short(allowedRange.getMaximumValue().getStringValue());
-							if((Short)(parameterObj.getPayload())>min && (Short)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						if((parameterObj instanceof LiteralFloatBinding)){
-							Float min = new Float(allowedRange.getMinimumValue().getStringValue());
-							Float max = new Float(allowedRange.getMaximumValue().getStringValue());
-							if((Float)(parameterObj.getPayload())>min && (Float)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						if((parameterObj instanceof LiteralLongBinding)){
-							Long min = new Long(allowedRange.getMinimumValue().getStringValue());
-							Long max = new Long(allowedRange.getMaximumValue().getStringValue());
-							if((Long)(parameterObj.getPayload())>min && (Long)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						if((parameterObj instanceof LiteralByteBinding)){
-							Byte min = new Byte(allowedRange.getMinimumValue().getStringValue());
-							Byte max = new Byte(allowedRange.getMaximumValue().getStringValue());
-							if((Byte)(parameterObj.getPayload())>min && (Byte)parameterObj.getPayload()<max){
-								foundAllowedValue = true;
-							}
-						}
-						
+						foundAllowedValue = checkRange(parameterObj, allowedRange);						
 					}
-				}
-				
+				}				
 				
 				if(!foundAllowedValue && (allowedValues.length!=0 || allowedRanges.length!=0)){
 					throw new ExceptionReport("Input with ID " + inputID + " does not contain an allowed value. See ProcessDescription.", ExceptionReport.INVALID_PARAMETER_VALUE);
@@ -680,6 +637,66 @@ public class InputHandler {
 			inputData.put(inputID, list);
 		}
 		
+	}
+	
+	private boolean checkRange(IData parameterObj, RangeType allowedRange){
+		
+		List<?> l = allowedRange.getRangeClosure();
+		
+		/*
+		 * no closure info or RangeClosure is "closed", so include boundaries
+		 */
+		if(l == null || l.isEmpty() || l.get(0).equals("closed")){
+			
+			if((parameterObj instanceof LiteralIntBinding)){
+				int min = new Integer(allowedRange.getMinimumValue().getStringValue());
+				int max = new Integer(allowedRange.getMaximumValue().getStringValue());
+				if((Integer)(parameterObj.getPayload())>=min && (Integer)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}
+			if((parameterObj instanceof LiteralDoubleBinding)){
+				Double min = new Double(allowedRange.getMinimumValue().getStringValue());
+				Double max = new Double(allowedRange.getMaximumValue().getStringValue());
+				if((Double)(parameterObj.getPayload())>=min && (Double)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}
+			if((parameterObj instanceof LiteralShortBinding)){
+				Short min = new Short(allowedRange.getMinimumValue().getStringValue());
+				Short max = new Short(allowedRange.getMaximumValue().getStringValue());
+				if((Short)(parameterObj.getPayload())>=min && (Short)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}
+			if((parameterObj instanceof LiteralFloatBinding)){
+				Float min = new Float(allowedRange.getMinimumValue().getStringValue());
+				Float max = new Float(allowedRange.getMaximumValue().getStringValue());
+				if((Float)(parameterObj.getPayload())>=min && (Float)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}
+			if((parameterObj instanceof LiteralLongBinding)){
+				Long min = new Long(allowedRange.getMinimumValue().getStringValue());
+				Long max = new Long(allowedRange.getMaximumValue().getStringValue());
+				if((Long)(parameterObj.getPayload())>=min && (Long)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}
+			if((parameterObj instanceof LiteralByteBinding)){
+				Byte min = new Byte(allowedRange.getMinimumValue().getStringValue());
+				Byte max = new Byte(allowedRange.getMaximumValue().getStringValue());
+				if((Byte)(parameterObj.getPayload())>=min && (Byte)parameterObj.getPayload()<=max){
+					return true;
+				}
+			}		
+			return false;
+		}
+		/*
+		 * TODO:implement other closure cases
+		 */
+		
+		return false;
 	}
 	
 	/**
