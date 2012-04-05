@@ -198,7 +198,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 					 resulthash.put(result_id, parseOutput(result_id, result, rCon));    
 				} 
 			    
-				
+				String sessionInfo = R_Config.getSessionInfo(rCon);
+				resulthash.put("sessionInfo", new LiteralStringBinding(sessionInfo));
 			
 			}catch (IOException e) {
 				e.printStackTrace();
