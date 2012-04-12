@@ -297,8 +297,7 @@
                             <connectionUrl>
                                 scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
                             </connectionUrl>
-                            <!-- make use of system prop set by hudson -->
-                            <tag>WPS-${project.rel.org.n52.wps:52n-wps-parent}</tag>
+                            <tag>WPS-3.1</tag>
                             <remoteTagging>false</remoteTagging>
                             <suppressCommitBeforeTag>true</suppressCommitBeforeTag>
                         </configuration>
