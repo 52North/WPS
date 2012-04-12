@@ -32,13 +32,13 @@ public class GenericFileParserTest extends AbstractTestCase<GenericFileParser> {
 		
 		InputStream input = null;
 		
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
-		}
-		
 		for (String mimetype : mimetypes) {
+			
+			try {
+				input = new FileInputStream(new File(testFilePath));
+			} catch (FileNotFoundException e) {
+				fail(e.getMessage());
+			}
 			
 			GenericFileDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 			
