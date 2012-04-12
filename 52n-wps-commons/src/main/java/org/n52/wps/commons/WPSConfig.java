@@ -228,26 +228,31 @@ public class WPSConfig  implements Serializable {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String getConfigPath() {
+	public
+	static String getConfigPath() {
 		
 		String configPath = tryToGetPathFromClassPath();
-		if(configPath!=null){
+		File file = new File(configPath);
+		if(configPath!=null && file.exists()){
 			return configPath;
 		}
 		configPath = tryToGetPathFromWebAppTarget();
-		if(configPath!=null){
+		file = new File(configPath);
+		if(configPath!=null && file.exists()){
 			return configPath;
 		}
 		configPath = tryToGetPathFromWebAppSource();
-		if(configPath!=null){
+		file = new File(configPath);
+		if(configPath!=null && file.exists()){
 			return configPath;
 		}
 		configPath = tryToGetPathViaWebAppPath();
-		if(configPath!=null){
+		file = new File(configPath);
+		if(configPath!=null && file.exists()){
 			return configPath;
 		}
 		configPath = tryToGetPathLastResort();
-		if(configPath!=null){
+		if(configPath!=null && file.exists()){
 			return configPath;
 		}
 		
@@ -283,6 +288,7 @@ public class WPSConfig  implements Serializable {
 			}
 		}
 		return null;
+		
 	}
 	
 	public static String tryToGetPathFromWebAppSource(){
