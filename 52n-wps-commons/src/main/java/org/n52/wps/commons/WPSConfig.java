@@ -252,6 +252,7 @@ public class WPSConfig  implements Serializable {
 			return configPath;
 		}
 		configPath = tryToGetPathLastResort();
+		file = new File(configPath);
 		if(configPath!=null && file.exists()){
 			return configPath;
 		}
