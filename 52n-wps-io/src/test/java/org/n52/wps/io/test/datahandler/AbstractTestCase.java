@@ -10,7 +10,6 @@ import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 
-
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
 
 	private Logger LOGGER = Logger.getLogger(AbstractTestCase.class);
@@ -32,8 +31,14 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Tes
 			String configFilePath = WPSConfig.tryToGetPathFromWebAppSource();
 			if(configFilePath==null){
 				configFilePath = WPSConfig.getConfigPath();
+				File configFile = new File(configFilePath);
+				if(!configFile.exists()){
+					LOGGER.info("No config file found - skipping tests");
+					return;
+				}else{
+					WPSConfig.forceInitialization(configFilePath);
+				}
 			}
-			WPSConfig.forceInitialization(configFilePath);
 		} catch (XmlException e1) {
 			fail(e1.getMessage());
 		} catch (IOException e1) {
