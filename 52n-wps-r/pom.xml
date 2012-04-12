@@ -9,7 +9,6 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-r</artifactId>
-  <version>3.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>52north 52n-wps-r</name>
     <description>The project 52 north 52n-wps-r releases functionalities of R as WPS processes</description>
