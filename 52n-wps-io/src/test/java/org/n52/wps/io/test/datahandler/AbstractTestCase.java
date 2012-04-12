@@ -43,6 +43,9 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Tes
 			fail(e1.getMessage());
 		} catch (IOException e1) {
 			fail(e1.getMessage());
+		} catch (RuntimeException e) {
+			LOGGER.info("No config file found - skipping tests");
+			return;
 		}
 
 		initializeDataHandler();
