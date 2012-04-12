@@ -97,6 +97,12 @@ h3 {
 
 <script language="JavaScript" type="text/javascript">
 
+	// derive service url from current location
+	var urlIndex = window.location.href.lastIndexOf("/test.html");
+	var urlBasisString = window.location.href.substring(0, (urlIndex+1));
+	var serviceUrlString = urlBasisString + "WebProcessingService";
+		
+	
 	var datafolder = window.location.href.substring(0,
 		     window.location.href.lastIndexOf("/") + 1) +
 		     "requests/";
@@ -114,8 +120,8 @@ h3 {
 		//load files
 		var requests=new Array();
 		requests[0]=datafolder+"SimpleBuffer.xml";
-		requests[1]=datafolder+"Intersectsrequest.xml";	
-		requests[2]=datafolder+"Touchesrequest.xml";	
+		requests[1]=datafolder+"Intersectsrequest_NEU.xml";
+		requests[2]=datafolder+"Unionrequest.xml";	
 		requests[3]=datafolder+"r.contour_request_all_bands_out_gml.xml";	
 		requests[4]=datafolder+"r.contour_request_all_bands_out_shp.xml";	
 		requests[5]=datafolder+"r.contour_request_out_gml.xml";	
@@ -141,6 +147,7 @@ h3 {
 		requests[25]=datafolder+"v.hull_request_out_shp.xml";
 		requests[26]=datafolder+"v.to.rast_request.xml";
 		requests[27]=datafolder+"r.math_request.xml";
+		requests[28]=datafolder+"Intersectsrequest.xml";	
 
 		//fill the select element
 		var selRequest = document.getElementById("selRequest");
@@ -166,6 +173,10 @@ h3 {
 				}
 			}
 		}
+		
+		// Put service url into service url field
+		var serviceUrlField = document.getElementById("serviceUrlField");
+		serviceUrlField.value = serviceUrlString;
 	}
 		
 	function insertSelected() {
@@ -246,8 +257,8 @@ h3 {
 	</div>
 
 	<form name="urlform" method="post" action="">
-		<h3>Service URL:&nbsp;&nbsp; <span> <input name="url"
-			value="http://localhost:8080/wps/WebProcessingService" size="80"
+		<h3>Service URL:&nbsp;&nbsp; <span> <input name="url" id="serviceUrlField"
+			value="http://localhost:8081/wps/WebProcessingService" size="80"
 			type="text" /> </span></h3>
 	</form>
 
