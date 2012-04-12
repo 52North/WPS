@@ -600,10 +600,6 @@
 		<h1	style="padding-left: 3em; color: #4297d7; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 3em;">Web Admin Console</h1>
 	</div>
 	<div id="Tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-		<ul>
-			<li><a href="#tab-1"><span>WPS Config Configuration</span></a></li>
-			<li><a href="#tab-2"><span>WPS Test Client</span></a></li>
-		</ul>
 		<div id="tab-1">
 			<form action="#" method="post" id="saveConfogurationForm">
 				<input type="hidden" name="serializedWPSConfiguraton" />
@@ -702,37 +698,6 @@
 					</div>
 				</div>
 			</form>
-		</div>
-		<div id="tab-2">
-			<div style="height: 400px">
-				Try the request examples: 
-				<a target="_blank" href="../WebProcessingService?Request=GetCapabilities&Service=WPS">GetCapabilities request</a><br><br> 
-				WPS TestClient: <br>
-				<table>
-					<tr>
-						<td><b> Server: </b></td>
-						<td>
-							<form name="form1" method="post" action="">
-								<div>
-									<input name="url" value="../WebProcessingService" size="90"	type="text">
-								</div>
-							</form>
-						</td>
-					</tr>
-					<tr>
-						<td><b> Request: </b></td>
-						<td>
-							<form name="form2" method="post" action="" enctype="text/plain">
-								<div>
-									<textarea name="request" cols="88" rows="15"></textarea>
-								</div>
-								<input value="   Clear    " name="reset" type="reset"> 
-								<input value="   Send    " onclick="form2.action = form1.url.value"	type="submit">
-							</form>
-						</td>
-					</tr>
-				</table>
-			</div>
 		</div>
 	</div>
 	
