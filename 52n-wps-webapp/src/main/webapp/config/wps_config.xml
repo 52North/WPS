@@ -43,6 +43,21 @@
 				<Format mimetype="application/image-ascii-grass"/>
 			</Parser>
 			<Parser name="GenericFileParser" className="org.n52.wps.io.datahandler.parser.GenericFileParser" active="true">
+				<Format mimetype="application/x-zipped-shp"/>
+				<Format mimetype="application/img"/>
+				<Format mimetype="image/tiff"/>
+				<Format mimetype="application/geotiff"/>
+				<Format mimetype="application/dbase"/>
+				<Format mimetype="application/remap"/>
+				<Format mimetype="application/x-erdas-hfa"/>
+				<Format mimetype="application/x-netcdf"/>
+				<Format mimetype="application/dgn"/>
+				<Format mimetype="image/jpeg"/>
+				<Format mimetype="image/png"/>
+				<Format mimetype="application/x-geotiff"/>
+				<Format mimetype="application/hdf4-eos"/>
+				<Format mimetype="text/plain"/>
+				
 				<Format mimetype="application/x-zipped-shp" encoding="base64"/>
 				<Format mimetype="application/img" encoding="base64"/>
 				<Format mimetype="image/tiff" encoding="base64"/>
@@ -73,17 +88,40 @@
 				<Format mimetype="application/x-geotiff" encoding="base64"/>
 				<Format mimetype="application/hdf4-eos" encoding="base64"/>
 				<Format mimetype="text/plain" encoding="base64"/>
+				
+				<Format mimetype="application/img"/>
+				<Format mimetype="image/tiff"/>
+				<Format mimetype="image/geotiff"/>
+				<Format mimetype="application/geotiff"/>
+				<Format mimetype="application/dbase"/>
+				<Format mimetype="application/remap"/>
+				<Format mimetype="application/x-erdas-hfa"/>
+				<Format mimetype="application/x-netcdf"/>
+				<Format mimetype="application/dgn"/>
+				<Format mimetype="image/jpeg"/>
+				<Format mimetype="image/png"/>
+				<Format mimetype="application/x-geotiff"/>
+				<Format mimetype="application/hdf4-eos"/>
+				<Format mimetype="text/plain"/>
 			</Parser>
 			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.parser.GeotiffParser" active="true">
 				<Format mimetype="image/tiff" encoding="base64"/>
 				<Format mimetype="image/geotiff" encoding="base64"/>
+				
+				<Format mimetype="image/tiff"/>
+				<Format mimetype="image/geotiff"/>
 			</Parser>
 			<Parser name="GeotiffParserZipped" className="org.n52.wps.io.datahandler.parser.GeotiffZippedParser" active="true">
 				<Format mimetype="image/x-zipped-tiff" encoding="base64"/>
 				<Format mimetype="image/x-zipped-geotiff" encoding="base64"/>
+				
+				<Format mimetype="image/x-zipped-tiff"/>
+				<Format mimetype="image/x-zipped-geotiff"/>
 			</Parser>
 			<Parser name="GTBinZippedSHPParser" className="org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser" active="true">
 				<Format mimetype="application/x-zipped-shp" encoding="base64"/>
+				
+				<Format mimetype="application/x-zipped-shp"/>
 			</Parser>
 			<Parser name="GML3BasicParser4Files" className="org.n52.wps.io.datahandler.parser.GML3BasicParser4Files" active="true">
 				<Format mimetype="text/xml" schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd"/>
@@ -103,15 +141,12 @@
 			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.parser.KMLParser" active="true">
 				<Format mimetype="application/vnd.google-earth.kml+xml" schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd"/>
 			</Parser>
-			<!--
-			Unsure about proper configuration / behaviour - why is it Base64 only?? Implementation should support
-			general (non Base64) data  
-			 
+			
 			<Parser name="WKTParser" className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser" active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
 				<Property name="supportedEncoding" active="true">Base64</Property>
 			</Parser>
-			 -->
+			
 			<Parser name="WCPSQueryParser" className="org.n52.wps.io.datahandler.parser.WCPSQueryParser" active="true">
 				<Format mimetype="text/plain" schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd"/>
 			</Parser>
@@ -150,14 +185,22 @@
 			</Generator>
 			<Generator name="AsciiGrassGenerator" className="org.n52.wps.io.datahandler.generator.AsciiGrassGenerator" active="true">
 				<Format mimetype="application/image-ascii-grass"/>
+				
+				<Format mimetype="application/image-ascii-grass" encoding="base64"/>
 			</Generator>
 			<Generator name="GeotiffGenerator" className="org.n52.wps.io.datahandler.generator.GeotiffGenerator" active="true">
 				<Format mimetype="image/tiff" encoding="base64"/>
 				<Format mimetype="image/geotiff" encoding="base64"/>
+				
+				<Format mimetype="image/tiff"/>
+				<Format mimetype="image/geotiff"/>
 			</Generator>
 			<Generator name="GTBinZippedSHPGenerator" className="org.n52.wps.io.datahandler.generator.GTBinZippedSHPGenerator" active="true">
 				<Format mimetype="application/x-zipped-shp" encoding="base64"/>
 				<Format mimetype="text/xml" encoding="base64"/>
+				
+				<Format mimetype="application/x-zipped-shp"/>
+				<Format mimetype="text/xml"/>
 			</Generator>
 			<Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.generator.GenericFileGenerator" active="true">
 				<Format mimetype="application/x-zipped-shp" encoding="base64"/>
@@ -175,6 +218,22 @@
 				<Format mimetype="image/png" encoding="base64"/>
 				<Format mimetype="application/x-geotiff" encoding="base64"/>
 				<Format mimetype="text/plain" encoding="base64"/>
+				
+				<Format mimetype="application/x-zipped-shp"/>
+				<Format mimetype="application/shp"/>
+				<Format mimetype="application/img"/>
+				<Format mimetype="image/tiff"/>
+				<Format mimetype="image/geotiff"/>
+				<Format mimetype="application/geotiff"/>
+				<Format mimetype="application/dbase"/>
+				<Format mimetype="application/remap"/>
+				<Format mimetype="application/x-erdas-hfa"/>
+				<Format mimetype="application/x-netcdf"/>
+				<Format mimetype="application/dgn"/>
+				<Format mimetype="image/jpeg"/>
+				<Format mimetype="image/png"/>
+				<Format mimetype="application/x-geotiff"/>
+				<Format mimetype="text/plain"/>
 			</Generator>
 			<Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator" active="true">
 				<Format mimetype="text/xml" schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd"/>
@@ -228,7 +287,7 @@
 			<Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.generator.KMLGenerator" active="true">
 				<Format mimetype="application/vnd.google-earth.kml+xml" schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd"/>
 			</Generator>
-			<Generator name="WCPSGenerator" className="org.n52.wps.io.datahandler.generator.WCPSGenerator" active="true">
+			<Generator name="WCPSGenerator" className="org.n52.wps.io.datahandler.generator.WCPSGenerator" active="false">
 				<Format mimetype="application/octet-stream"/>
 			</Generator>
 		</GeneratorList>
