@@ -822,7 +822,9 @@ public class InputHandler {
 				 }
 			}
 			if(format == null){
-				throw new ExceptionReport("Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
+				throw new ExceptionReport("Possibly multiple or none matching generators found for the input data with id = \"" + inputPD.getIdentifier().getStringValue() + "\". Is the MimeType (\"" + referenceData.getMimeType() + "\") correctly set?", ExceptionReport.INVALID_PARAMETER_VALUE);
+				//throw new ExceptionReport("Could not determine format of the input data (id= \"" + inputPD.getIdentifier().getStringValue() + "\"), given the mimetype \"" + referenceData.getMimeType() + "\"", ExceptionReport.INVALID_PARAMETER_VALUE);
+
 			}
 			
 			mimeType = format.getMimeType();
@@ -916,7 +918,10 @@ public class InputHandler {
 							 }
 						}
 						if(format == null){
-							throw new ExceptionReport("Could not determine intput format. Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
+							//throw new ExceptionReport("Could not determine intput format. Possibly multiple or none matching generators found. MimeType Set?", ExceptionReport.INVALID_PARAMETER_VALUE);
+							// TODO Review error message
+							throw new ExceptionReport("Could not determine output format because none of the supported formats match the given schema (\"" + referenceData.getSchema() + "\") and encoding (\"" + referenceData.getEncoding() + "\"). (A mimetype was not specified)", ExceptionReport.INVALID_PARAMETER_VALUE);
+
 						}
 						
 						mimeType = format.getMimeType();
@@ -1094,15 +1099,17 @@ public class InputHandler {
 			if(algorithmInputClass == null) {
 				throw new RuntimeException("Could not determine internal input class for input" + inputID);
 			}
-			LOGGER.debug("Looking for matching Parser ..." + 
-					" schema: " + schema +
-					" mimeType: " + mimeType +
-					" encoding: " + encoding);
+			LOGGER.info("Looking for matching Parser ..." +
+					" schema: \"" + schema +
+					"\", mimeType: \"" + mimeType +
+					"\", encoding: \"" + encoding + "\"");
 			
 			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
 			
 			if(parser == null) {
-				throw new ExceptionReport("Error. No applicable parser found for " + schema + "," + mimeType + "," + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+				//throw new ExceptionReport("Error. No applicable parser found for " + schema + "," + mimeType + "," + encoding, ExceptionReport.NO_APPLICABLE_CODE);
+				throw new ExceptionReport("Error. No applicable parser found for schema=\"" + schema + "\", mimeType=\"" + mimeType + "\", encoding=\"" + encoding + "\"", ExceptionReport.NO_APPLICABLE_CODE);
+
 			}
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
