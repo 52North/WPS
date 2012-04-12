@@ -57,6 +57,7 @@ import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
+import org.geotools.gml3.bindings.GML3ParsingUtils;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.Parser;
 import org.n52.wps.commons.context.ExecutionContext;
@@ -124,15 +125,21 @@ public class GML3BasicParser extends AbstractParser {
 			//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 			
 			String schemaLocation =  schematypeTuple.getLocalPart();
-			//schemaLocation = URLEncoder.encode(schemaLocation);
-			
-			if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
-				SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
-				configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
-			}else{
+			if(schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")){
 				configuration = new GMLConfiguration();
 	        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
 	        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+			}else{
+			//schemaLocation = URLEncoder.encode(schemaLocation);
+			
+				if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
+					SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
+					configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+				}else{
+					configuration = new GMLConfiguration();
+		        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
+		        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+				}
 			}
 		}else{
 			configuration = new GMLConfiguration();
