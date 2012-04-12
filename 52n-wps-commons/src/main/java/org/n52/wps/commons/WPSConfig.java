@@ -232,29 +232,40 @@ public class WPSConfig  implements Serializable {
 	static String getConfigPath() {
 		
 		String configPath = tryToGetPathFromClassPath();
-		File file = new File(configPath);
-		if(configPath!=null && file.exists()){
-			return configPath;
+		File file = null;
+		if (configPath != null) {
+			file = new File(configPath);
+			if (file.exists()) {
+				return configPath;
+			}
 		}
 		configPath = tryToGetPathFromWebAppTarget();
-		file = new File(configPath);
-		if(configPath!=null && file.exists()){
-			return configPath;
+		if (configPath != null) {
+			file = new File(configPath);
+			if (configPath != null && file.exists()) {
+				return configPath;
+			}
 		}
 		configPath = tryToGetPathFromWebAppSource();
-		file = new File(configPath);
-		if(configPath!=null && file.exists()){
-			return configPath;
+		if (configPath != null) {
+			file = new File(configPath);
+			if (configPath != null && file.exists()) {
+				return configPath;
+			}
 		}
 		configPath = tryToGetPathViaWebAppPath();
-		file = new File(configPath);
-		if(configPath!=null && file.exists()){
-			return configPath;
+		if (configPath != null) {
+			file = new File(configPath);
+			if (configPath != null && file.exists()) {
+				return configPath;
+			}
 		}
 		configPath = tryToGetPathLastResort();
-		file = new File(configPath);
-		if(configPath!=null && file.exists()){
-			return configPath;
+		if (configPath != null) {
+			file = new File(configPath);
+			if (configPath != null && file.exists()) {
+				return configPath;
+			}
 		}
 		
 		throw new RuntimeException("Could find and load wps_config.xml");
