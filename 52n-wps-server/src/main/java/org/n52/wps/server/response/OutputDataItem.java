@@ -135,18 +135,21 @@ public class OutputDataItem extends ResponseData {
 			else {
 				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
-			
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = builder.newDocument();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			IOUtils.copy(stream, baos);
-			stream.close();
-			String text = baos.toString();
-			baos.close();
-			Node dataNode = document.createTextNode(text);
-			
 			complexData = output.addNewData().addNewComplexData();
-			complexData.set(XmlObject.Factory.parse(dataNode));	
+			if(mimeType.contains("xml") || mimeType.contains("XML")){
+				complexData.set(XmlObject.Factory.parse(stream));
+				stream.close();
+			}else{
+				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				Document document = builder.newDocument();
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(stream, baos);
+				stream.close();
+				String text = baos.toString();
+				baos.close();
+				Node dataNode = document.createTextNode(text);
+				complexData.set(XmlObject.Factory.parse(dataNode));
+			}
 			
 		} catch(RuntimeException e) {
 			e.printStackTrace();
