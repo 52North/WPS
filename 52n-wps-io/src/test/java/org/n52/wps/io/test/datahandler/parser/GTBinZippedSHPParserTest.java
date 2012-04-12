@@ -31,13 +31,15 @@ public class GTBinZippedSHPParserTest extends AbstractTestCase<GTBinZippedSHPPar
 		
 		InputStream input = null;
 		
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
-		}
+		
 		
 		for (String mimetype : mimetypes) {
+			
+			try {
+				input = new FileInputStream(new File(testFilePath));
+			} catch (FileNotFoundException e) {
+				fail(e.getMessage());
+			}
 			
 			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 			
