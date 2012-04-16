@@ -247,33 +247,33 @@ public class WebProcessingService extends HttpServlet {
 			InputStream is = req.getInputStream();
 			if (req.getParameterMap().containsKey("request")){
 				is = new ByteArrayInputStream(req.getParameter("request").getBytes("UTF-8"));
+			}else{
+				// WORKAROUND cut the parameter name "request" of the stream
+				// TODO: workaround should not be necessary any more (see bug 682). remove this after testing
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						is, "UTF-8"));
+				StringWriter sw = new StringWriter();
+				int k;
+				while ((k = br.read()) != -1) {
+					sw.write(k);
+				}
+				LOGGER.debug(sw);
+				String s;
+				String reqContentType = req.getContentType();
+				if (sw.toString().startsWith("request=")) {
+					if (reqContentType.equalsIgnoreCase("text/plain")) {
+						s = sw.toString().substring(8);
+					} else {
+						s = URLDecoder.decode(sw.toString().substring(8),
+								"UTF-8");
+					}
+					LOGGER.debug(s);
+				} else {
+					s = sw.toString();
+				}
+
+				is = new ByteArrayInputStream(s.getBytes("UTF-8"));
 			}
-
-//			 WORKAROUND	cut the parameter name "request" of the stream		
-			BufferedReader br=new BufferedReader(new InputStreamReader(is,"UTF-8"));
-    	    StringWriter sw=new StringWriter();
-    	    int k;
-    	    while((k=br.read())!=-1){
-    	    	sw.write(k);
-    	    }
-    	    LOGGER.debug(sw);
-    	    String s;
-    	    String reqContentType = req.getContentType();
-    	    if (sw.toString().startsWith("request=")){
-    	    	if(reqContentType.equalsIgnoreCase("text/plain")) {
-    	    		s = sw.toString().substring(8);
-    	    	}
-    	    	else {
-    	    		s = URLDecoder.decode(sw.toString().substring(8), "UTF-8");
-    	    	}
-    	    	LOGGER.debug(s);
-    	    } else{
-    	    	s = sw.toString();
-    	    }
-
-    	   
-    	    is = new ByteArrayInputStream(s.getBytes("UTF-8"));
-    	     
 			
 			if(is != null) {
 				
@@ -283,9 +283,6 @@ public class WebProcessingService extends HttpServlet {
 				handler.handle();
 							
 				res.setStatus(HttpServletResponse.SC_OK);
-			}
-			else{
-				handleException(new ExceptionReport("POST Message is null", ExceptionReport.MISSING_PARAMETER_VALUE), res, out);
 			}
 		} 
 		catch(ExceptionReport e) {
@@ -300,6 +297,10 @@ public class WebProcessingService extends HttpServlet {
 		if(SERVLET_PATH == null) {
 			req.getContextPath();
 		}
+		/*
+		 * getting the parametermap here prevents bug 682
+		 */
+		req.getParameterMap();
 		super.service(req, res);
 	}
 
