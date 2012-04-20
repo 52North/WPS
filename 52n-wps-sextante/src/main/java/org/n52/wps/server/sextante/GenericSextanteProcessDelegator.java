@@ -35,31 +35,23 @@ package org.n52.wps.server.sextante;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import net.opengis.ows.x11.DomainMetadataType;
-import net.opengis.ows.x11.RangeType;
-import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
-import net.opengis.wps.x100.ComplexDataCombinationsType;
-import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.SupportedComplexDataInputType;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
+import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.feature.FeatureCollection;
-import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.FileDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -69,15 +61,14 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
 import org.opengis.coverage.grid.GridCoverage;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
-import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
 import es.unex.sextante.additionalInfo.AdditionalInfoRasterLayer;
 import es.unex.sextante.additionalInfo.AdditionalInfoSelection;
 import es.unex.sextante.additionalInfo.AdditionalInfoVectorLayer;
+import es.unex.sextante.core.AnalysisExtent;
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
@@ -90,24 +81,14 @@ import es.unex.sextante.exceptions.GeoAlgorithmExecutionException;
 import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 import es.unex.sextante.exceptions.WrongOutputIDException;
 import es.unex.sextante.geotools.GTRasterLayer;
-import es.unex.sextante.geotools.GTTable;
 import es.unex.sextante.geotools.GTVectorLayer;
 import es.unex.sextante.outputs.FileOutputChannel;
 import es.unex.sextante.outputs.Output;
 import es.unex.sextante.parameters.FixedTableModel;
 import es.unex.sextante.parameters.Parameter;
-import es.unex.sextante.parameters.ParameterBand;
-import es.unex.sextante.parameters.ParameterBoolean;
-import es.unex.sextante.parameters.ParameterFixedTable;
 import es.unex.sextante.parameters.ParameterMultipleInput;
-import es.unex.sextante.parameters.ParameterNumericalValue;
-import es.unex.sextante.parameters.ParameterPoint;
 import es.unex.sextante.parameters.ParameterRasterLayer;
-import es.unex.sextante.parameters.ParameterSelection;
-import es.unex.sextante.parameters.ParameterString;
-import es.unex.sextante.parameters.ParameterTableField;
 import es.unex.sextante.parameters.ParameterVectorLayer;
-import es.unex.sextante.rasterWrappers.GridExtent;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteConstants {
 
@@ -216,8 +197,8 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			}
 
 			/* 4. Adjust output grid extent if needed */
-			if (sextanteProcess.generatesUserDefinedRasterOutput()){
-				GridExtent ge = null;
+			if (sextanteProcess.getUserCanDefineAnalysisExtent()){
+				AnalysisExtent ge = null;
 				try{
 					ge = getGridExtent(
 							(Double)inputData.get( GRID_EXTENT_X_MIN).get(0).getPayload(),
@@ -227,7 +208,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 							(Double)inputData.get(GRID_EXTENT_CELLSIZE).get(0).getPayload());
 				}
 				catch(Exception e){}
-				sextanteProcess.setGridExtent(ge);
+				sextanteProcess.setAnalysisExtent(ge);
 			}
 
 
@@ -242,13 +223,14 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			//TODO eventually make the outputfactory dynamic based on the requested output type
 			//until now, only geotools is supported, which may also supports different formats-->please check.
 			 OutputFactory outputFactory = new N52OutputFactory();
-	         OutputObjectsSet outputs = sextanteProcess.getOutputObjects();
 	         /* 6. Execute
 	 	         * e.g.
 	 	         * alg.execute(null, outputFactory);
 	 	         */
 
 	 		sextanteProcess.execute(null, outputFactory);
+	         
+	 		OutputObjectsSet outputs = sextanteProcess.getOutputObjects();
 
 	         int outputDataCount = outputs.getOutputDataObjectsCount();
 	 		 for(int i = 0; i<outputDataCount; i++){
@@ -305,14 +287,14 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 	}
 
 
-	private GridExtent getGridExtent(double xMin, double xMax,
+	private AnalysisExtent getGridExtent(double xMin, double xMax,
 									double yMin, double yMax,
 									double cellSize){
 
-		GridExtent ge = new GridExtent();
+		AnalysisExtent ge = new AnalysisExtent();
 		ge.setCellSize(cellSize);
-		ge.setXRange(xMin, xMax);
-		ge.setYRange(yMin, yMax);
+		ge.setXRange(xMin, xMax, true);
+		ge.setYRange(yMin, yMax, true);
 
 		return ge;
 
@@ -438,6 +420,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		if(result instanceof IVectorLayer){
 
 			IVectorLayer vectorLayer = ((IVectorLayer)result);
+			vectorLayer.open();
 			FeatureStore fs = (FeatureStore) vectorLayer.getBaseDataObject();
 			return new GTVectorDataBinding(fs.getFeatures());
 
@@ -473,8 +456,12 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		}
 		FeatureCollection fc  = (FeatureCollection) vectorLayer.getPayload();
 		DataStore datastore = new CollectionDataStore(fc);
-		GTVectorLayer gtVectorLayer =  GTVectorLayer.createLayer(datastore, datastore.getTypeNames()[0]);
-		gtVectorLayer.setPostProcessStrategy(new NullStrategy());
+		FeatureSource fsource = datastore.getFeatureSource(datastore.getTypeNames()[0]);		
+		GTVectorLayer gtVectorLayer = new GTVectorLayer();
+//		NoPostprocessingGTVectorLayer gtVectorLayer = new NoPostprocessingGTVectorLayer();
+		gtVectorLayer.create(fsource);
+//		GTVectorLayer gtVectorLayer =  GTVectorLayer.createLayer(datastore, datastore.getTypeNames()[0]);
+//		gtVectorLayer.setPostProcessStrategy(new NullStrategy());
 		gtVectorLayer.setName("VectorLayer");
 		return gtVectorLayer;
 	}

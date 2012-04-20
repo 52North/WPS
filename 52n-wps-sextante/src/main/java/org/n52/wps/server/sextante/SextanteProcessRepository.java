@@ -107,8 +107,9 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		}
 		
 		Sextante.initialize();
-		Map algorithmMap = Sextante.getAlgorithms();
-		Set keys = algorithmMap.keySet();
+		HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
+		HashMap<String, GeoAlgorithm> algorithmMap = sextanteMap.get("SEXTANTE");
+		Set<String> keys = algorithmMap.keySet();
 		SextanteProcessDescriptionCreator descriptionCreator = new SextanteProcessDescriptionCreator();
 		for(Object keyObject : keys){
 			String key = (String) keyObject;

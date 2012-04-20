@@ -77,7 +77,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			}
 
 			//grid extent for raster layers (if needed)
-			if (algorithm.generatesUserDefinedRasterOutput()){
+			if (algorithm.getUserCanDefineAnalysisExtent()){
 				addGridExtent(inputs, algorithm.requiresRasterLayers());
 			}
 
@@ -231,8 +231,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMinOccurs(BigInteger.valueOf(1));
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
-			range.addNewMaximumValue().setStringValue("+Infinity");
-			range.addNewMinimumValue().setStringValue("-Infinity");
+			range.addNewMaximumValue().setStringValue("" + Double.POSITIVE_INFINITY);
+			range.addNewMinimumValue().setStringValue("" + Double.NEGATIVE_INFINITY);
 			literal.setDefaultValue(Double.toString(ai.getDefaultValue()));
 		}
 		else if (param instanceof ParameterString){
@@ -323,7 +323,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
-			range.addNewMaximumValue().setStringValue("+Infinity");
+			range.addNewMaximumValue().setStringValue("" + Integer.MAX_VALUE);
 			literal.setDefaultValue("0");
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:int");
@@ -335,7 +335,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 			input.setMaxOccurs(BigInteger.valueOf(1));
 			RangeType range = literal.addNewAllowedValues().addNewRange();
 			range.addNewMinimumValue().setStringValue("0");
-			range.addNewMaximumValue().setStringValue("+Infinity");
+			range.addNewMaximumValue().setStringValue("" + Integer.MAX_VALUE);
 			literal.setDefaultValue("0");
 			DomainMetadataType dataType = literal.addNewDataType();
 			dataType.setReference("xs:int");
