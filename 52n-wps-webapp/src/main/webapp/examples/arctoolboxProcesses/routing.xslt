@@ -27,7 +27,7 @@
 					<prefixString />
 					<suffixString />
 					<separatorString />
-					<legacyIntID>0</legacyIntID>
+					<positionID>0</positionID>
 					<wpsInputID>Stops</wpsInputID>
 					<wpsOutputID />
 				</parameter>
@@ -39,7 +39,7 @@
 					<prefixString />
 					<suffixString />
 					<separatorString />
-					<legacyIntID>1</legacyIntID>
+					<positionID>1</positionID>
 					<wpsInputID />
 					<wpsOutputID>RoutingResult</wpsOutputID>
 				</parameter>
