@@ -31,35 +31,23 @@ is extensible in terms of processes and data handlers.
 package org.n52.wps.server.sextante;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.geotools.io.DefaultFileFilter;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.Sextante;
@@ -141,9 +129,6 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	public boolean addAlgorithm(Object describeProcess) {
 		String processName = "";
 		ProcessDescriptionType document = null;
-		
-	
-		DocumentBuilder parser;
 		try {
 			if(describeProcess instanceof File){
 		
@@ -158,7 +143,6 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 			LOGGER.warn("Could not add Sextante Extension Process. Identifier: Unknown", null);
 			e.printStackTrace();
 		} catch (XmlException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(describeProcess == null){
@@ -208,31 +192,6 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	public boolean removeAlgorithm(Object className) {
 		//not implemented
 		return false;
-	}
-	
-	public static void main(String[] args){
-		Sextante.initialize();
-		Map algorithmMap = Sextante.getAlgorithms();
-		Set keys = algorithmMap.keySet();
-		SextanteProcessDescriptionCreator descriptionCreator = new SextanteProcessDescriptionCreator();
-		List<ProcessDescriptionType> processDescriptionList  = new ArrayList<ProcessDescriptionType>();
-		for(Object keyObject : keys){
-			String key = (String) keyObject;
-			GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(key);
-			ProcessDescriptionType processDescription = null;
-			try {
-				processDescription = descriptionCreator.createDescribeProcessType(sextanteProcess);
-			} catch (NullParameterAdditionalInfoException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedGeoAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			processDescriptionList.add(processDescription);
-		}
-		System.out.println(processDescriptionList);
-		System.out.println("done");
 	}
 	
 	@Override

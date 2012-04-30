@@ -62,6 +62,8 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
@@ -74,6 +76,7 @@ import es.unex.sextante.core.OutputFactory;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.ParametersSet;
 import es.unex.sextante.core.Sextante;
+import es.unex.sextante.dataObjects.ILayer;
 import es.unex.sextante.dataObjects.IRasterLayer;
 import es.unex.sextante.dataObjects.ITable;
 import es.unex.sextante.dataObjects.IVectorLayer;
@@ -421,7 +424,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 			IVectorLayer vectorLayer = ((IVectorLayer)result);
 			vectorLayer.open();
-			FeatureStore fs = (FeatureStore) vectorLayer.getBaseDataObject();
+			FeatureStore<?, ?> fs = (FeatureStore<?, ?>) vectorLayer.getBaseDataObject();
 			return new GTVectorDataBinding(fs.getFeatures());
 
 		}else if (result instanceof IRasterLayer){
@@ -454,9 +457,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		if(!(vectorLayer.getPayload() instanceof FeatureCollection)){
 			return null;
 		}
-		FeatureCollection fc  = (FeatureCollection) vectorLayer.getPayload();
+		FeatureCollection<SimpleFeatureType, SimpleFeature> fc  = (FeatureCollection<SimpleFeatureType, SimpleFeature>) vectorLayer.getPayload();
 		DataStore datastore = new CollectionDataStore(fc);
-		FeatureSource fsource = datastore.getFeatureSource(datastore.getTypeNames()[0]);		
+		FeatureSource<?, ?> fsource = datastore.getFeatureSource(datastore.getTypeNames()[0]);		
 		GTVectorLayer gtVectorLayer = new GTVectorLayer();
 //		NoPostprocessingGTVectorLayer gtVectorLayer = new NoPostprocessingGTVectorLayer();
 		gtVectorLayer.create(fsource);
@@ -466,10 +469,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		return gtVectorLayer;
 	}
 
-	private ArrayList createMultipleInputArray(Parameter parameter, List<IData> wpsInputParameters)
+	private ArrayList<ILayer> createMultipleInputArray(Parameter parameter, List<IData> wpsInputParameters)
 					throws NullParameterAdditionalInfoException, IOException{
-			String parameterName = parameter.getParameterName();
-			ArrayList list = new ArrayList();
+			ArrayList<ILayer> list = new ArrayList<ILayer>();
 			for(IData data : wpsInputParameters){
 				AdditionalInfoMultipleInput ai = (AdditionalInfoMultipleInput)parameter.getParameterAdditionalInfo();
 				switch (ai.getDataType()){
@@ -496,7 +498,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 	 	}
 
-	public Class getInputDataType(String id) {
+	public Class<?> getInputDataType(String id) {
 		ParametersSet parameterSet = sextanteProcess.getParameters();
 
 		int numberOfParameters = parameterSet.getNumberOfParameters();
@@ -561,7 +563,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 	}
 
-	public Class getOutputDataType(String id) {
+	public Class<?> getOutputDataType(String id) {
 		OutputDescriptionType[] outputs = processDescription.getProcessOutputs().getOutputArray();
 
 		for(OutputDescriptionType output : outputs){

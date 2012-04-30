@@ -4,9 +4,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
-import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -14,10 +14,10 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.LiteralInputType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.SupportedComplexDataInputType;
-import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
+import net.opengis.wps.x100.SupportedComplexDataInputType;
+import net.opengis.wps.x100.SupportedComplexDataType;
 
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
@@ -35,7 +35,6 @@ import es.unex.sextante.additionalInfo.AdditionalInfoVectorLayer;
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.OutputObjectsSet;
 import es.unex.sextante.core.ParametersSet;
-import es.unex.sextante.core.Sextante;
 import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 import es.unex.sextante.outputs.Output;
 import es.unex.sextante.outputs.OutputChart;
@@ -372,8 +371,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 		List<IParser> foundParsers = new ArrayList<IParser>();
 		for(IParser parser : parsers) {
-			Class[] supportedClasses = parser.getSupportedDataBindings();
-			for(Class clazz : supportedClasses){
+			Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+			for(Class<?> clazz : supportedClasses){
 				if(clazz.equals(GTVectorDataBinding.class)){
 					foundParsers.add(parser);
 				}
@@ -490,8 +489,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 		for(IGenerator generator : generators) {
-			Class[] supportedClasses = generator.getSupportedDataBindings();
-			for(Class clazz : supportedClasses){
+			Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+			for(Class<?> clazz : supportedClasses){
 				if(clazz.equals(GTVectorDataBinding.class)){
 					foundGenerators.add(generator);
 				}
@@ -603,24 +602,10 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 	//or parameter
 	public class UnsupportedGeoAlgorithmException extends Exception{
 
-	}
-
-	public static void main(String[] args){
-		Sextante.initialize();
-		GeoAlgorithm algorithm = Sextante.getAlgorithmFromCommandLineName("buffer");
-		SextanteProcessDescriptionCreator geoAlgorithm = new SextanteProcessDescriptionCreator();
-		ProcessDescriptionType processDescription = null;
-		try {
-			processDescription = geoAlgorithm.createDescribeProcessType(algorithm);
-			System.out.println(processDescription);
-		} catch (NullParameterAdditionalInfoException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnsupportedGeoAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1017100163300095362L;
 
 	}
 

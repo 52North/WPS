@@ -24,11 +24,8 @@ public class N52OutputFactory extends GTOutputFactory{
 		if (channel instanceof FileOutputChannel){
 			String sFilename = ((FileOutputChannel)channel).getFilename();
 			GTVectorLayer vectorLayer;
-//			NoPostprocessingGTVectorLayer vectorLayer;
 			try {
-//				vectorLayer = (GTVectorLayer) new MemoryVectoryLayerFactory().create(sName, iShapeType, types, sFields, sFilename, crs);
 				vectorLayer = new GTVectorLayer();
-//				vectorLayer = new NoPostprocessingGTVectorLayer();
 				vectorLayer.create(sName, iShapeType, types, sFields, sFilename, crs);
 			} catch (Exception e) {
 				throw new RuntimeException("Error while creating output layer");

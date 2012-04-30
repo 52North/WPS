@@ -590,7 +590,7 @@
 			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
 		</Repository>
         -->
-		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository" active="false">
+		<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository" active="true">
 			<Property name="Algorithm" active="true">visibility</Property>
 			<Property name="Algorithm" active="true">recttopolar</Property>
 			<Property name="Algorithm" active="true">crossclassification</Property>
