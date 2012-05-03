@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xml" href="buffer.xslt" ?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+	
+	
+		<ows:Identifier>org.n52.wps.ags.custom.buffer</ows:Identifier><!-- ParameterCount=3 -->
+		<ows:Title>merretsbuffer</ows:Title>
+		<ows:Abstract>Test buffer bla</ows:Abstract>
+		<DataInputs>
+		
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>inputfeatures</ows:Identifier><!-- 0 -->
+				<ows:Title>inputfeatures</ows:Title>
+				<ows:Abstract>The feature layer or feature class that bla</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Encoding>UTF-8</Encoding>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Encoding>base64</Encoding>
+						</Format>
+					</Supported>
+				</ComplexData>
+			</Input>
+			
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>distance</ows:Identifier><!-- 2 -->
+				<ows:Title>distance</ows:Title>
+				<ows:Abstract>The buffer distance</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
+				</LiteralData>
+			</Input>
+			
+			
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>buffers</ows:Identifier><!-- 1 -->
+				<ows:Title>buffers</ows:Title>	
+				<ows:Abstract>The feature class that will be created and to which the resulting buffers will be written.</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Encoding>UTF-8</Encoding>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Encoding>base64</Encoding>
+						</Format>
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	
