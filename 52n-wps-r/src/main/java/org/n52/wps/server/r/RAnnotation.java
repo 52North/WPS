@@ -1,12 +1,14 @@
 package org.n52.wps.server.r;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -34,7 +36,7 @@ public class RAnnotation {
 	
 	private RAnnotationType type;
 	private HashMap<RAttribute, String> attributeHash;
-	
+	private static Logger LOGGER = Logger.getLogger(RAnnotation.class);
 
 	/**
 	 * 
@@ -189,7 +191,6 @@ public class RAnnotation {
 		SHAPE_ZIP2("shp_x",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null, "base64"),
 		KML("kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataBinding.class, true,null,"UTF-8"),
 		
-		// TODO: correct errors in text and text_xml
 		//graphical data
 		GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class,true, null,"base64"),
 		JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,true, null,"base64"),
@@ -203,7 +204,6 @@ public class RAnnotation {
 		
 		FILE("file","application/unknown",GenericFileDataBinding.class);
 		//TEXT_XML2("text_xml", GenericFileDataConstants.MIME_TYPE_TEXT_XML, GenericFileDataBinding.class,true);
-		//TODO: enhance / test / optimize supported dataTypes
 		
 		private String key;
 		private String processKey;
@@ -248,7 +248,17 @@ public class RAnnotation {
 		
 		
 		private void setKey(String key){
-			rDataTypeKeys.put(key, this);
+			if(!rDataTypeKeys.containsKey(key))
+				rDataTypeKeys.put(key, this);
+			else LOGGER.warn("Doubled definition of data type-key for notation: "+key+"\n" +
+					"only the first definition will be used for this key.");
+			
+			//put process key, i.e. mimetype or xml-notation for literal type, as alternative key into hashmap:
+			if(!rDataTypeKeys.containsKey(this.getProcessKey()))
+				rDataTypeKeys.put(this.getProcessKey(), this);
+			else LOGGER.warn("Doubled definition of data type-key for notation: "+this.getProcessKey()+"\n" +
+					"only the first definition will be used for this key.+" +
+					"(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
 		}
 		
 
@@ -335,7 +345,8 @@ public class RAnnotation {
 					//TODO: Meaning of identifier???? -- doesn't have a meaning yet..
 					RAttribute.IDENTIFIER,
 					RAttribute.TITLE,
-					RAttribute.ABSTRACT
+					RAttribute.ABSTRACT,
+					RAttribute.AUTHOR
 				)
 		);
 		
@@ -459,7 +470,8 @@ public class RAnnotation {
 		METADATA("meta", null, false),
 		MIMETYPE("mimetype", null, false),
 		SCHEMA("schema",null,false),
-		ENCODING("encoding",null,false);
+		ENCODING("encoding",null,false),
+		AUTHOR("author", null,false);
 
 		private String key;
 		private Object defValue; 
