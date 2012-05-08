@@ -222,6 +222,7 @@ public class RAnnotation {
 			this.schema = schema;
 			this.encoding = encoding;
 			setKey(key);
+			//also insert mimetype as key (warnings might occur):
 			setKey(processKey);
 		}
 		
@@ -233,6 +234,7 @@ public class RAnnotation {
 			this.iDataClass = iDataClass;
 			this.isComplex = isComplex;
 			setKey(key);
+			//also insert mimetype as key (warnings might occur):
 			setKey(processKey);
 		}
 		
@@ -243,6 +245,7 @@ public class RAnnotation {
 			this.iDataClass = iDataClass;
 			this.isComplex = false;
 			setKey(key);
+			//also insert mimetype as key (warnings might occur):
 			setKey(processKey);
 		}
 		
@@ -250,15 +253,9 @@ public class RAnnotation {
 		private void setKey(String key){
 			if(!rDataTypeKeys.containsKey(key))
 				rDataTypeKeys.put(key, this);
-			else LOGGER.warn("Doubled definition of data type-key for notation: "+key+"\n" +
-					"only the first definition will be used for this key.");
-			
-			//put process key, i.e. mimetype or xml-notation for literal type, as alternative key into hashmap:
-			if(!rDataTypeKeys.containsKey(this.getProcessKey()))
-				rDataTypeKeys.put(this.getProcessKey(), this);
-			else LOGGER.warn("Doubled definition of data type-key for notation: "+this.getProcessKey()+"\n" +
-					"only the first definition will be used for this key.+" +
-					"(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
+			else LOGGER.warn("Doubled definition of data type-key for annotation: "+key+"\n" +
+					"only the first definition will be used for this key.\n" +
+					"(That might be the usual case if the key is a mimetype)");
 		}
 		
 
