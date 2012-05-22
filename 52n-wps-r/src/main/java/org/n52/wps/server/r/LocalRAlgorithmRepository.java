@@ -29,10 +29,9 @@ the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA  02111-1307, USA or visit the web page of the Free
 Software Foundation, http://www.fsf.org.
 
-***************************************************************/
+ ***************************************************************/
 
 package org.n52.wps.server.r;
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,136 +49,150 @@ import org.n52.wps.server.request.ExecuteRequest;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
-
 /**
  * A static repository to retrieve the available algorithms.
+ * 
  * @author Matthias Hinz
- *
+ * 
  */
-public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository{
-	
-	private static Logger LOGGER = Logger.getLogger(LocalRAlgorithmRepository.class);
-	
-	//registered Processes
-	private Map<String, String> algorithmMap;
-	
-	public LocalRAlgorithmRepository() {
-		algorithmMap = new HashMap<String, String>();
-		
-		// check if the repository is active:
-		String className = this.getClass().getCanonicalName();
-		if(!WPSConfig.getInstance().isRepositoryActive(className)){ 
-			LOGGER.debug("Local R Algorithm Repository is inactive.");
-			return;
-		}
-		
-		RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
-		// unregistered scripts from repository folder will be added as Algorithm to WPSconfig
-		changeManager.addUnregisteredScripts();
-		
-		// Try to build up a connection to Rserve
-		// If it is refused, a new instance of Rserve will be opened
-		try {
-			RConnection testcon = R_Config.openRConnection();
-			LOGGER.info("Try connection to Rserve");
-			testcon.close();
-		} catch (RserveException e) {
-			//try to start Rserve via batchfile if possible
-			R_Config.startRserve();
-		}
-		
-		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-		for(Property property : propertyArray){
-			if(property.getName().equalsIgnoreCase("Algorithm") && property.getActive()){
-				addAlgorithm(property.getStringValue());
-			}
-		}
+public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-	}
-	
-	
-	public boolean addAlgorithms(String[] algorithms)  {
-		for(String algorithmClassName : algorithms) {
-			addAlgorithm(algorithmClassName);
-		}
-		LOGGER.info("Algorithms registered!");
-		return true;
-		
-	}
-	
-	public IAlgorithm getAlgorithm(String className, ExecuteRequest request) {
-		try {
-			return loadAlgorithm(algorithmMap.get(className));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
-		try {
-			for(String algorithmClasses : algorithmMap.values()){
-				resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		}
-		return resultList;
-	}
-	
-	public Collection<String> getAlgorithmNames() {
-		return new ArrayList<String>(algorithmMap.keySet());
-	}
-	
-	public boolean containsAlgorithm(String className) {
-		return algorithmMap.containsKey(className);
-	}
-	
-	private IAlgorithm loadAlgorithm(String wellKnownName) throws Exception{
-		IAlgorithm algorithm = (IAlgorithm)new GenericRProcess(wellKnownName);
-		if(!algorithm.processDescriptionIsValid()) {
-			LOGGER.warn("Algorithm description is not valid: " + wellKnownName);
-			throw new Exception("Could not load algorithm " +wellKnownName +". ProcessDescription Not Valid.");
-		}
-		return algorithm;
-	}
+    private static Logger LOGGER = Logger.getLogger(LocalRAlgorithmRepository.class);
 
-	public boolean addAlgorithm(Object processID) {
-		if(!(processID instanceof String)){
-			return false;
-		}
-		String algorithmClassName = (String) processID;
-				
-		algorithmMap.put(algorithmClassName, algorithmClassName);
-		LOGGER.info("Algorithm class registered: " + algorithmClassName);
-					
-		return true;
+    // registered Processes
+    private Map<String, String> algorithmMap;
 
-	}
+    public LocalRAlgorithmRepository() {
+        LOGGER.info("Instantiating new LocalRAlgorithmRepository");
+        
+        // check if the repository is active:
+        String className = this.getClass().getCanonicalName();
+        if ( !WPSConfig.getInstance().isRepositoryActive(className)) {
+            LOGGER.debug("Local R Algorithm Repository is inactive.");
+            return;
+        }
 
-	/**
-	 * Removes algorithm from AlgorithmMap
-	 */
-	public boolean removeAlgorithm(Object processID) {
-		if(!(processID instanceof String)){
-			return false;
-		}
-		String processName = (String) processID;
-		if(algorithmMap.containsKey(processName)){
-			algorithmMap.remove(processName);
-		}
+        LOGGER.info("Initializing Local R Algorithm Repository");
+        algorithmMap = new HashMap<String, String>();
 
-		return true;
-	}
+        // add algorithms from config file to repository
+        Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+        for (Property property : propertyArray) {
+            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString()) && property.getActive()) {
+                addAlgorithm(property.getStringValue());
+            }
+        }
 
-	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
-		return new GenericRProcess(processID).getDescription();
-	}
+        // Try to build up a connection to Rserve
+        // If it is refused, a new instance of Rserve will be opened
+        LOGGER.debug("Trying to connect to Rserve.");
+        try {
+            RConnection testcon = R_Config.openRConnection();
+            LOGGER.info("Connection to Rserve could be opened.");
+            testcon.close();
+        }
+        catch (RserveException e) {
+            // try to start Rserve via batchfile if enabled
+            LOGGER.debug("Could not open connection to Rserve - trying to start Rserve with batch file.");
+            R_Config.startRserve();
 
+            try {
+                RConnection testcon = R_Config.openRConnection();
+                LOGGER.info("Connection to Rserve could be opened.");
+                testcon.close();
+            }
+            catch (RserveException e2) {
+                LOGGER.error("Could not start Rserve.");
+            }
+        }
+
+        RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
+        // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
+        changeManager.addUnregisteredScripts();
+    }
+
+    public boolean addAlgorithms(String[] algorithms) {
+        for (String algorithmClassName : algorithms) {
+            addAlgorithm(algorithmClassName);
+        }
+        LOGGER.info("Algorithms registered!");
+        return true;
+
+    }
+
+    public IAlgorithm getAlgorithm(String className, ExecuteRequest request) {
+        try {
+            return loadAlgorithm(algorithmMap.get(className));
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public Collection<IAlgorithm> getAlgorithms() {
+        Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
+        try {
+            for (String algorithmClasses : algorithmMap.values()) {
+                resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
+            }
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+        }
+        return resultList;
+    }
+
+    public Collection<String> getAlgorithmNames() {
+        return new ArrayList<String>(algorithmMap.keySet());
+    }
+
+    public boolean containsAlgorithm(String className) {
+        return algorithmMap.containsKey(className);
+    }
+
+    private IAlgorithm loadAlgorithm(String wellKnownName) throws Exception {
+        IAlgorithm algorithm = (IAlgorithm) new GenericRProcess(wellKnownName);
+        if ( !algorithm.processDescriptionIsValid()) {
+            LOGGER.warn("Algorithm description is not valid: " + wellKnownName);
+            throw new Exception("Could not load algorithm " + wellKnownName + ". ProcessDescription Not Valid.");
+        }
+        return algorithm;
+    }
+
+    public boolean addAlgorithm(Object processID) {
+        if ( ! (processID instanceof String)) {
+            return false;
+        }
+        String algorithmClassName = (String) processID;
+
+        algorithmMap.put(algorithmClassName, algorithmClassName);
+        LOGGER.info("Algorithm class registered: " + algorithmClassName);
+
+        return true;
+    }
+
+    /**
+     * Removes algorithm from AlgorithmMap
+     */
+    public boolean removeAlgorithm(Object processID) {
+        if ( ! (processID instanceof String)) {
+            return false;
+        }
+        String processName = (String) processID;
+        if (algorithmMap.containsKey(processName)) {
+            algorithmMap.remove(processName);
+        }
+
+        return true;
+    }
+
+    @Override
+    public ProcessDescriptionType getProcessDescription(String processID) {
+        return new GenericRProcess(processID).getDescription();
+    }
 
 }
