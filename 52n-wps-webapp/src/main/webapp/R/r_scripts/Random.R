@@ -5,6 +5,7 @@
 # wps.in: n, integer, ammount of random numbers, value = 100;  
 # random number: 
 x = runif(n, min=min, max=max)
-output = "outputfilename"
-write.table(x, output)
+
 # wps.out: output, text, Random number list, Textfile containing n random numbers in one column;
+output = "random_out"
+write.table(x, output)
