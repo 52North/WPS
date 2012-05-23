@@ -61,6 +61,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private String currentWorkDir;
 
+    private boolean deleteWorkDirectory = false; // TODO create a task that does this regularly, even if
+                                                 // disabled here
+
     public GenericRProcess(String wellKnownName) {
         super(wellKnownName);
 
@@ -99,7 +102,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 return null; // FIXME throw exception?
             }
             else {
-
                 rScriptStream = new FileInputStream(this.scriptFile);
                 annotations = RAnnotationParser.parseAnnotationsfromScript(rScriptStream);
 
@@ -136,11 +138,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             LOGGER.debug("inputData: " + Arrays.toString(inputData.entrySet().toArray()));
 
         // create WPS4R workdir (will be deleted later)
-        this.currentWorkDir = R_Config.getTemporaryWorkDir();
-        new File(this.currentWorkDir).mkdirs();
+        this.currentWorkDir = R_Config.getTemporaryWorkDirFullPath();
+        File file = new File(this.currentWorkDir);
+        file.mkdirs();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("work dir: " + this.currentWorkDir);
-
+            LOGGER.debug("work dir: " + file.getAbsolutePath());
 
         // retrieve rSkript from path:
         InputStream rScriptStream = null;
@@ -167,12 +169,20 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 rCon.eval("rm(list = ls())");
                 // rCon.eval(".First()"); // Fehler 127
 
-                String wd = UUID.randomUUID().toString();
-                LOGGER.debug("[R] Setting working directory: " + wd);
+                // FIXME not using this.currentWorkDir here???
+                // String wd = UUID.randomUUID().toString();
+                // LOGGER.debug("[R] Setting working directory: " + this.currentWorkDir);
                 r_basedir = rCon.eval("getwd()").asString();
-                rCon.eval("wd = paste(getwd(), \"" + wd + "\" ,sep=\"/\")");
-                rCon.eval("dir.create(wd)");
-                rCon.eval("setwd(wd)");
+                LOGGER.debug("Original getwd(): " + r_basedir);
+                // rCon.eval("wd = paste(getwd(), \"" + wd + "\" ,sep=\"/\")");
+                // rCon.eval("dir.create(wd)");
+                // rCon.eval("setwd(wd)");
+
+                // setting the working directory
+                REXP result = rCon.eval("setwd(\"" + this.currentWorkDir + "\")");
+                LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
+
+                rCon.eval("cat(paste0(\"[GenericRProcess] work dir: \", getwd()), \"\\n\")");
 
                 loadRUtilityScripts(rCon);
 
@@ -232,10 +242,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // -------------------------------
                 // R script Execution:
                 // -------------------------------
-                boolean success = readcript(rScriptStream, rCon);
+                boolean success = readScript(rScriptStream, rCon);
                 if ( !success) {
                     rCon.close();
-                    String message = "Failure while executing R Script\nSee previous Logs for Details";
+                    String message = "Failure while executing R script. See logs for details";
                     LOGGER.warn(message);
                 }
 
@@ -243,8 +253,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 List<RAnnotation> outNotations = RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT);
                 for (RAnnotation rAnnotation : outNotations) {
                     String result_id = rAnnotation.getAttribute(RAttribute.IDENTIFIER);
-                    REXP result = rCon.eval(result_id);
+                    result = rCon.eval(result_id);
                     // TODO: change ParseOutput
+                    // TODO depending on the generated outputs, deleteWorkDirectory must be set!
                     resulthash.put(result_id, parseOutput(result_id, result, rCon));
                 }
 
@@ -264,12 +275,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     rCon = R_Config.openRConnection();
                 }
 
-                // deletes workdirectory:
-                if (r_basedir != null) {
-                    String wd = rCon.eval("getwd()").asString();
-                    rCon.eval("setwd(\"" + r_basedir + "\")");
-                    if (wd != r_basedir)
-                        rCon.eval("unlink(\"" + wd + "\", recursive=TRUE)");
+                // deletes workdirectory: // FIXME this happens again with Java below, this one has no effect
+                if (deleteWorkDirectory) {
+                    if (r_basedir != null) {
+                        String wd = rCon.eval("getwd()").asString();
+                        rCon.eval("setwd(\"" + r_basedir + "\")");
+                        if (wd != r_basedir)
+                            rCon.eval("unlink(\"" + wd + "\", recursive=TRUE)");
+                    }
                 }
 
                 LOGGER.debug("[R] cleaning up and closing stream.");
@@ -300,10 +313,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
 
         // try to delete current local workdir - folder
-        File workdir = new File(this.currentWorkDir);
-        boolean deleted = deleteRecursive(workdir);
-        if ( !deleted)
-            workdir.deleteOnExit();
+        if (deleteWorkDirectory) {
+            File workdir = new File(this.currentWorkDir);
+            boolean deleted = deleteRecursive(workdir);
+            if ( !deleted)
+                workdir.deleteOnExit();
+        }
 
         LOGGER.debug("RESULT: " + Arrays.toString(resulthash.entrySet().toArray()));
         return resulthash;
@@ -317,9 +332,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      */
     private void loadRUtilityScripts(RConnection rCon) throws RserveException, IOException, FileNotFoundException {
         LOGGER.debug("[R] loading utility scripts.");
-        File[] utils = new File(R_Config.UTILS_DIR).listFiles(new R_Config.RFileExtensionFilter());
+        File[] utils = new File(R_Config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
         for (File file : utils) {
-            readcript(new FileInputStream(file), rCon);
+            readScript(new FileInputStream(file), rCon);
         }
     }
 
@@ -486,7 +501,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         Class< ? extends IData> iClass = getOutputDataType(result_id);
 
         if (iClass.equals(GenericFileDataBinding.class)) {
-
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Creating output with GenericFileDataBinding");
             String mimeType = "application/unknown";
 
             // extract filename from R
@@ -507,8 +523,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             tempfile.deleteOnExit();
             return new GenericFileDataBinding(out);
         }
-
-        if (iClass.equals(GTVectorDataBinding.class)) {
+        else if (iClass.equals(GTVectorDataBinding.class)) {
 
             String mimeType = "application/unknown";
 
@@ -568,8 +583,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
         }
-
-        if (iClass.equals(GTRasterDataBinding.class)) {
+        else if (iClass.equals(GTRasterDataBinding.class)) {
             String mimeType = "application/unknown";
 
             // extract filename from R
@@ -590,8 +604,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             GTRasterDataBinding output = tiffPar.parse(new FileInputStream(tempfile), mimeType, "base64");
             return output;
         }
+        else if (iClass.equals(LiteralBooleanBinding.class)) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Creating output with LiteralBooleanBinding");
 
-        if (iClass.equals(LiteralBooleanBinding.class)) {
             int tresult = result.asInteger();
             switch (tresult) {
             case 1:
@@ -599,9 +615,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             case 0:
                 return new LiteralBooleanBinding(false);
             }
-            ;
         }
-        ;
+        else if (iClass.equals(RWorkdirUrlBinding.class)) {
+            if (LOGGER.isDebugEnabled())
+                LOGGER.debug("Creating output with WorkdirUrlBinding");
+            String filename = new File(result.asString()).getName();
+
+            return new RWorkdirUrlBinding(this.currentWorkDir, filename);
+        }
 
         Class[] easyLiterals = new Class[] {LiteralByteBinding.class,
                                             LiteralDoubleBinding.class,
@@ -682,7 +703,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @throws RuntimeException
      *         if R reports an error
      */
-    private boolean readcript(InputStream script, RConnection rCon) throws RserveException, IOException {
+    private boolean readScript(InputStream script, RConnection rCon) throws RserveException, IOException {
         LOGGER.debug("Reading script...");
         boolean success = true;
 

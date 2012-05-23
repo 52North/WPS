@@ -168,7 +168,7 @@ public class RAnnotation {
         STRING("string", "xs:string", LiteralStringBinding.class), CHARACTER("character", "xs:string",
                 LiteralStringBinding.class), INTEGER("integer", "xs:integer", LiteralIntBinding.class), DOUBLE(
                 "double", "xs:double", LiteralDoubleBinding.class), BOOLEAN("boolean", "xs:boolean",
-                LiteralBooleanBinding.class),
+                LiteralBooleanBinding.class), URL("text/url", "xs:string", RWorkdirUrlBinding.class),
 
         // geodata:
         DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataBinding.class, true, null, "base64"), DGN(
@@ -305,7 +305,7 @@ public class RAnnotation {
         public static RDataType getType(String key) throws RAnnotationException {
             RDataType out = rDataTypeKeys.get(key);
             if (out == null)
-                throw new RAnnotationException("Invalid datatype key for r - script annotations: " + key);
+                throw new RAnnotationException("Invalid datatype key for R script annotations: " + key);
             else
                 return out;
         }

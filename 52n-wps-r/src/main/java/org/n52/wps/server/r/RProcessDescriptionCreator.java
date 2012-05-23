@@ -2,6 +2,7 @@
 package org.n52.wps.server.r;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,8 +52,17 @@ public class RProcessDescriptionCreator {
 
         mt.setTitle("R Script");
         mt.setAbout("The R script which is used for this process");
-        String url = R_Config.getScriptURL(wkn);
-        mt.setHref(url);
+        String url;
+        try {
+            url = R_Config.getScriptURL(wkn).toString();
+            mt.setHref(url);
+        }
+        catch (MalformedURLException e) {
+            LOGGER.error("Could not create URL for script file " + wkn, e);
+        }
+        finally {
+            mt.setHref("N/A");
+        }
 
         mt = pdt.addNewMetadata();
         mt.setTitle("R Session Info");

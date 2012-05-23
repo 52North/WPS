@@ -199,7 +199,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
         // check script dir for R process files
         // adjusts wps config
-        File algorithmDir = new File(R_Config.getScriptDirPath()); // new File(R_Config.SCRIPT_DIR);
+        File algorithmDir = new File(R_Config.getScriptDirFullPath()); // new File(R_Config.SCRIPT_DIR);
         if (algorithmDir.isDirectory()) {
             File[] scripts = algorithmDir.listFiles(new R_Config.RFileExtensionFilter());
             LOGGER.debug("Loading script files from " + algorithmDir + ": " + Arrays.toString(scripts));

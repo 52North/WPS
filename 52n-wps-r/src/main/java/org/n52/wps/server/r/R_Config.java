@@ -4,6 +4,8 @@ package org.n52.wps.server.r;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
@@ -24,24 +26,33 @@ public class R_Config {
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
+    private static final String WORK_DIR = "workdir";
+
+    private static final String UTILS_DIR = "utils";
+
+    // FIXME for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
+    // servlet, which is probably a better solution to keep track of files, see
+    // http://www.jguru.com/faq/view.jsp?EID=10646
+    private static final String R_BASE_DIR = "R"; // "WEB-INF/R";
+
     // important directories:
 
     /**
      * Base directory for WPS4R resources
      */
-    public static String BASE_DIR = (WebProcessingService.BASE_DIR + "/WEB-INF/R/").replace("\\", "/");
+    public static String BASE_DIR_FULL = (WebProcessingService.BASE_DIR + "/" + R_BASE_DIR).replace("\\", "/");
 
     /**
      * Work directory, e.g. for streaming files from Rserve to WPS Not to confuse with the Rserve work
      * directory (except if you want to use it as such)
      */
-    public static String WORK_DIR = BASE_DIR + "workdir";
+    public static String WORK_DIR_FULL = BASE_DIR_FULL + "/" + WORK_DIR;
 
     /** R scripts with utility functions to pre-load */
-    public static String UTILS_DIR = BASE_DIR + "utils";
+    public static String UTILS_DIR_FULL = BASE_DIR_FULL + "/" + UTILS_DIR;
 
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
-    public static String SCRIPT_DIR = "/R/r_scripts";
+    public static String SCRIPT_DIR = "R/r_scripts";
 
     // public static String SCRIPT_DIR_URL = "wps/rscripts";
 
@@ -136,7 +147,7 @@ public class R_Config {
         return "http://" + host + ":" + port + "/" + webapppath + "/R/sessioninfo.jsp";
     }
 
-    public static String getScriptURL(String wkn) {
+    public static URL getScriptURL(String wkn) throws MalformedURLException {
         String fname = null;
         try {
             fname = R_Config.wknToFile(wkn).getName();
@@ -144,17 +155,35 @@ public class R_Config {
         catch (IOException e) {
             e.printStackTrace();
         }
-        // String bdir = WebProcessingService.BASE_DIR.replace("\\", "/")+"/";
-        String folder = SCRIPT_DIR; // SCRIPT_DIR.replace(bdir, "");
 
+        if (fname == null)
+            return null;
+
+        URL url = new URL(getUrlPathUpToWebapp() + "/" + SCRIPT_DIR + "/" + fname);
+        return url;
+    }
+
+    private static String getUrlPathUpToWebapp() {
         Server server = WPSConfig.getInstance().getWPSConfig().getServer();
         String host = server.getHostname();
         String port = server.getHostport();
         String webapppath = server.getWebappPath();
-        if (fname == null)
-            return "not available";
-        else
-            return "http://" + host + ":" + port + "/" + webapppath + "/" + folder + "/" + fname;
+
+        return "http://" + host + ":" + port + "/" + webapppath;
+    }
+
+    public static URL getOutputFileURL(String currentWorkdir, String filename) throws IOException {
+        // check if file exists
+        String path = currentWorkdir + "/" + filename;
+        File out = new File(path);
+        if ( ! (out.isFile() && out.canRead()))
+            throw new IOException("Error in creating URL: " + currentWorkdir + " / " + path + " not found or broken.");
+
+        // create URL
+        path = path.substring(WORK_DIR_FULL.length() + 1, path.length());
+        String urlString = getUrlPathUpToWebapp() + "/" + R_BASE_DIR + "/" + WORK_DIR + "/" + path;
+
+        return new URL(urlString);
     }
 
     /**
@@ -163,7 +192,7 @@ public class R_Config {
     public static void startRserve() {
         try {
             if (enableBatchStart) {
-                String batch = BASE_DIR + batchStartFile;
+                String batch = BASE_DIR_FULL + batchStartFile;
                 File batchfile = new File(batch);
                 if (batchfile.exists()) {
                     Runtime.getRuntime().exec(batch);
@@ -218,7 +247,7 @@ public class R_Config {
      */
     public static File wknToFile(String wkn) throws IOException {
         String fname = wkn.replaceFirst(WKN_PREFIX, "");
-        fname = WebProcessingService.BASE_DIR + SCRIPT_DIR + "/" + fname;
+        fname = WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR + "/" + fname;
         fname = fname + SCRIPT_FILE_SUFFIX;
         File out = new File(fname);
         if (out.isFile() && out.canRead()) {
@@ -228,11 +257,11 @@ public class R_Config {
             throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
     }
 
-    public static String getTemporaryWorkDir() {
-        return WORK_DIR + "/" + UUID.randomUUID();
+    public static String getTemporaryWorkDirFullPath() {
+        return WORK_DIR_FULL + "/" + UUID.randomUUID();
     }
 
-    public static String getScriptDirPath() {
-        return WebProcessingService.BASE_DIR + SCRIPT_DIR;
+    public static String getScriptDirFullPath() {
+        return WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR;
     }
 }
