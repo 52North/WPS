@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WPS4R - Web Publishing Demo</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet"
+	href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+
+<script type="text/javascript"
+	src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript"
+	src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+
+<script type="text/javascript">
+	var debug = false;
+	
+	var beginsWith = function(string, pattern) {
+		return (string.indexOf(pattern) === 0);
+	}
+
+	var endsWith = function(string, pattern) {
+			var d = string.length - pattern.length;
+			return (d >= 0 && string.lastIndexOf(pattern) === d);
+	}
+
+
+	var urlIndex = window.location.href.lastIndexOf("/R");
+	var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
+	var serviceUrlString = urlBasisString + "WebProcessingService";
+
+	var requestPlot = function(days, offering) {
+
+		var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
+				+ '<ows:Identifier>org.n52.wps.server.r.SosPlot</ows:Identifier>'
+				+ '<wps:DataInputs><wps:Input><ows:Identifier>offering_days</ows:Identifier>'
+				+ '<ows:Title></ows:Title>'
+				+ '<wps:Data>'
+				+ '<wps:LiteralData>'
+				+ days
+				+ '</wps:LiteralData></wps:Data>'
+				+ '</wps:Input>'
+				+ '<wps:Input>'
+				+ '<ows:Identifier>offering_id</ows:Identifier>'
+				+ '<ows:Title></ows:Title>'
+				+ '<wps:Data>'
+				+ '<wps:LiteralData>'
+				+ offering
+				+ '</wps:LiteralData>'
+				+ '</wps:Data>'
+				+ '</wps:Input>'
+				+ '<wps:Input>'
+				+ '<ows:Identifier>image_width</ows:Identifier>'
+				+ '<ows:Title></ows:Title>'
+				+ '<wps:Data>'
+				+ '<wps:LiteralData>500</wps:LiteralData>'
+				+ '	</wps:Data>'
+				+ '</wps:Input>'
+				+ '<wps:Input>'
+				+ '<ows:Identifier>image_height</ows:Identifier>'
+				+ '<ows:Title></ows:Title>'
+				+ '<wps:Data>'
+				+ '<wps:LiteralData>500</wps:LiteralData>'
+				+ '</wps:Data>'
+				+ '</wps:Input>' + '</wps:DataInputs>' + '</wps:Execute>';
+
+		var requestXML = $.parseXML(requestString);
+		var xmlstr = requestXML.xml ? requestXML.xml : (new XMLSerializer())
+				.serializeToString(requestXML);
+
+		if (debug) {
+			$("#resultLog").html(
+					"Sending to " + serviceUrlString
+							+ " this request:<br /><textarea>" + xmlstr
+							+ "</textarea>");
+		}
+
+		$.ajax({
+			type : "POST",
+			url : serviceUrlString, //"http://localhost:8080/wps/WebProcessingService",
+			data : {
+				request : xmlstr
+			},
+			cache : false,
+			dataType : "xml",
+			success : handleResponse
+		});
+
+	}
+
+	var handleResponse = function(data) {
+		// 		var $er = $(data).find("ns\\:ExecuteResponse");
+		// 		alert($er.text());
+
+		var outputs = $(data).find("ns\\:Output").each(
+				function() {
+					$(this).find("ns\\:LiteralData").each(
+							function() {
+								var literalData = $(this).text().trim();
+								if (beginsWith(literalData, "http://")
+										&& endsWith(literalData, ".jpg"))
+									$("#plot").html(
+											"<img src='" + literalData + "' />");
+							});
+				});
+		
+		// TODO find link to script file
+	}
+
+	$(function() {
+
+		$("#executeRequest").click(function() {
+			var days = $("#slider-days").val();
+			var offering = 'ATMOSPHERIC_TEMPERATURE';
+			$("#resultLog").html("Days: " + days + " | Offering: " + offering);
+
+			requestPlot(days, offering);
+		});
+
+		$("#resultLog").ajaxError(
+				function(event, request, settings, exception) {
+					$("#resultLog").html(
+							"Error Calling: " + settings.url
+									+ "<br />HTPP Code: " + request.status
+									+ "<br />Exception: " + exception);
+				});
+	});
+
+	$(document).ready(function() {
+		$("#serviceUrl").html("<em>" + serviceUrlString + "</em>");
+	});
+</script>
+
+</head>
+<body>
+	<div data-role="page" id="home" data-add-back-btn="true">
+
+		<div data-role="header">
+			<h1>Live WeatheR Plots</h1>
+		</div>
+
+		<div data-role="content">
+			<h1>Observed Property and Range</h1>
+			<label for="slider-days">Days:</label> <input type="range"
+				name="slider" id="slider-days" value="7" min="0" max="365" />
+
+			<button name="submit" id="executeRequest" value="execute-request">Submit</button>
+
+			<p>
+				These plots are powered by the 52&deg;North WPS4R at <span
+					id="serviceUrl"></span>.
+			</p>
+
+			<div id="plot"></div>
+
+			<div id="resultLog"></div>
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+			<a href="#about" data-role="button" data-icon="info">About</a> <a
+				href="#advanced" data-role="button" data-icon="gear">Advanced</a>
+		</div>
+	</div>
+	<!-- /start page -->
+
+	<div data-role="page" id="about" data-add-back-btn="true">
+		<div data-role="header">
+			<h1>52&deg;North WPS4R</h1>
+		</div>
+
+		<div data-role="content">
+			<h2>Documentation</h2>
+			<p>The 52&deg;North Web Processing Service enables the deployment
+				of geo-processes on the web in a standardized way. It features a
+				pluggable architecture for processes and data encodings. The
+				implementation is based on the current OpenGIS specification:
+				05-007r7 .</p>
+			<p>
+				<em>WPS4R</em> extends the 52&deg;North WPS with a processing
+				backend for the <a href="http://www.r-project.org/">R</a>
+				environment for statistical computing and graphics. This allows to
+				expose any R script via a standardised service interface.
+			</p>
+			<ul>
+				<li>WPS Specification: <a
+					href="http://opengeospatial.org/standards/wps">OGC website</a>.
+				</li>
+				<li>52°North WPS Implementation: <a
+					href="http://www.52north.org/wps">52N Geoprocessing Community
+						website</a>.
+				<li>WPS4R: See <a
+					href="http://52north.org/communities/geoprocessing/wps/backends/52n-wps-r.html">Processing
+						Backend</a> and <a
+					href="https://wiki.52north.org/bin/view/Geostatistics/WPS4R">Wiki
+						Page</a>.
+				</li>
+			</ul>
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+			<a href="#home" data-role="button" data-icon="home">Home</a> <a
+				href="#advanced" data-role="button" data-icon="gear">Advanced</a>
+		</div>
+	</div>
+	<!-- /about page -->
+
+	<div data-role="page" id="advanced" data-add-back-btn="true">
+		<div data-role="header">
+			<h1>52&deg;North WPS4R Advanced Client</h1>
+		</div>
+
+		<div data-role="content">
+			<h2>Requests</h2>
+			<ul>
+				<li><a
+					href="./WebProcessingService?Request=GetCapabilities&amp;Service=WPS">GetCapabilities
+						Request</a></li>
+			</ul>
+		</div>
+
+		<div data-role="footer" data-position="fixed">
+			<a href="#home" data-role="button" data-icon="home">Home</a><a
+				href="#about" data-role="button" data-icon="info">About</a>
+		</div>
+	</div>
+	<!-- /advanced page -->
+</body>
+</html>
