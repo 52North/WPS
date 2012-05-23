@@ -5,7 +5,11 @@
 library("sos4R")
 library("xts")
 
-print("start script...")
+myLog <- function(...) {
+	cat(paste0("[SosPlot] ", ..., "\n"))
+}
+
+myLog("Start script... ", Sys.time())
 
 # wps.des: id = PlotSOS, title = Plot SOS Time Series,
 # abstract = Accesses a SOS with sos4R and creates a plot with a fitted
@@ -73,8 +77,8 @@ regression = loess(regressionValues~regressionTime, na.omit(data),
 		enp.target=10)
 
 # create plot
-# wps.out: output_image, type = image/jpeg, title = The output image, 
-# abstract = On-the-fly generated plot for the requested time series;
+## wps.out: output_image, type = image/jpeg, title = The output image, 
+## abstract = On-the-fly generated plot for the requested time series;
 output_image <- "output.jpg"
 jpeg(file = output_image,
 		width = image_width, height = image_height, units = "px")
@@ -87,4 +91,8 @@ p <- plot(timeSeries, main = "Dynamic Time Series Plot",
 lines(data$Time, regression$fitted, col = 'red', lwd = 3)
 graphics.off()
 
-# getwd()
+myLog("Created image ", output_image)
+
+# wps.out: output_image_link, type = text/url, title = image link, 
+# abstract = A link to the output image;
+output_image_link <- "output.jpg"
