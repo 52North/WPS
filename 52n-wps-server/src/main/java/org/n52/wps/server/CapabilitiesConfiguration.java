@@ -100,6 +100,7 @@ public class CapabilitiesConfiguration {
 		XmlOptions options = new XmlOptions();
 		options.setLoadStripComments();
 		CapabilitiesDocument capsSkeleton = CapabilitiesDocument.Factory.parse(new File(CapabilitiesConfiguration.filePath), options);
+	
 		//String host = WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_HOST_NAME);
 		String host = WPSConfig.getInstance().getWPSConfig().getServer().getHostname();
 		String hostPort = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();

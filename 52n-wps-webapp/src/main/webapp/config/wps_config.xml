@@ -231,6 +231,7 @@
   </Datahandlers>
   <AlgorithmRepositoryList>
     <Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.repository.LocalAlgorithmRepository" active="true">
+    <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intergrid.GridDataTransfer</Property>
      </Repository>
     <Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.repository.UploadedAlgorithmRepository" active="true"/>
     <!--<Repository name="GrassRepository"
@@ -271,7 +272,7 @@
 		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository" active="true">		
 			<Property name="Algorithm" active="true">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
 		</Repository>-->
-		
+<!-- 		
     <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
      <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
       <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaProcessManager</Property>
@@ -279,14 +280,14 @@
       <Property name="supportedFormat" active="true">saga.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile</Property>
       <Property name="GridFilesDir" active="true">/ssegrid/gaiwps/</Property>
-      <Property name="WPSPublicationPrefix" active="true">http://ssegrid.vgt.vito.be/gaiwps/</Property>
+      <Property name="WPSPublicationPrefix" active="true">ftp://ssegrid.vgt.vito.be/</Property>
       <Property name="SagaLibDir" active="true">/ssegrid/saga/</Property>
       <Property name="GridGlue" active="true">http://ssegrid.vgt.vito.be/config/VITOGrid_GLUE.xml</Property>
       <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
       <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
       <Property name="DataDeployDirectory" active="true">/ssegrid/gaiwps/deploy/auxdata/</Property>
     </Repository>
-
+ -->
 <!-- 
     <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
       <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
@@ -339,6 +340,8 @@
 		</Repository>-->
   </AlgorithmRepositoryList>
   <Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
+  <Property name="portalFTPUser" active="true">ftpuser</Property>
+  <Property name="portalFTPPassword" active="true">ssegrid</Property>
     <Database/>
   </Server>
 </WPSConfiguration>

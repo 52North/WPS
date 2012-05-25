@@ -31,35 +31,32 @@ is extensible in terms of processes and data handlers.
 package org.n52.wps.server.profiles.JavaSaga;
 
 import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
 
-import net.opengis.wps.x100.ApacheOdeDeploymentProfileType;
 import net.opengis.wps.x100.DeployProcessDocument;
 import net.opengis.wps.x100.SagaDeploymentProfileType;
 import net.opengis.wps.x100.SagaDeploymentProfileType.JsdlTemplate;
-import net.opengis.wps.x100.impl.ApacheOdeDeploymentProfileTypeImpl;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 
 import org.apache.log4j.Logger;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
-import org.ogf.saga.job.Job;
 import org.w3c.dom.Node;
 
-import sun.net.ftp.FtpClient;
 
 /** 
  * TODO rename ApacheOdeDeployementProfile to match to the XSD element type
@@ -197,23 +194,100 @@ public class JavaSagaDeploymentProfile extends DeploymentProfile {
 	}
 
 	private byte[] downloadFTP(String url) throws Exception {
+		try {
+		LOGGER.info("Downloading through FTP: "+url);
 		URL u = new URL(url);
 		FTPClient client = new FTPClient();
 	    ByteArrayOutputStream fos = null;
-	    client.connect(u.getHost(), u.getPort());
-	    // hardcoded
-	    client.login("ftpuser", "ssegrid");
-	    int reply = client.getReplyCode();
+	    int port = u.getPort() == -1 ? 21 : u.getPort();
+	    LOGGER.info("port: "+port+ " - connecting to "+u.getHost());
+	    try {
+	    client.connect(u.getHost(), port);
+	    }
+	    catch(Exception e) {
+	    	LOGGER.info("connection fault:"+e.getMessage()+ " " + e.getCause().toString());
+	    	
+	    	throw e;
+	    }
+	 // connection error code
+		int reply = client.getReplyCode();
 		if (!FTPReply.isPositiveCompletion(reply)) {
+			LOGGER.info("Disconnect on positive completion");
 			client.disconnect();
+			throw new ExceptionReport("FTP connection failed",ExceptionReport.NO_APPLICABLE_CODE);
 		}
+	    LOGGER.info("connected");
+	    client.setDefaultTimeout(60000);
+	    client.setConnectTimeout(60000);
+	    // currently bugging
+	    //Property[] properties = WPSConfig.getInstance().getPropertiesForServer();
+	    //Property ftpUserProp = WPSConfig.getInstance().getPropertyForKey(
+		//properties, "portalFTPUser");
+	    //LOGGER.info("user found in config: "+ftpUserProp.getStringValue());
+	    //Property ftpPassProp = WPSConfig.getInstance().getPropertyForKey(
+	    	//	properties, "portalFTPPassword");
+	   // LOGGER.info("password found in config: "+ftpPassProp.getStringValue());
+	    //client.login(ftpUserProp.getStringValue(), ftpPassProp.getStringValue());
+	    client.login("ftpuser", "ssegrid");
+	    LOGGER.info("logged");
 	    String filename = u.getFile();
+	    int slashIndex = filename.lastIndexOf('/') + 1;
+		String parent = "."+filename.substring(0, slashIndex);
+		String ftpFileName = filename.substring(slashIndex);
+		LOGGER.info("parent:"+parent);
+		LOGGER.info("filename:"+filename);
+	    FTPFile ftpFile = null;
+		for (FTPFile f : client.listFiles(parent)) {
+			if (StringUtils.equals(f.getName(), ftpFileName)) {
+				LOGGER.info("found"+f.getName());
+				ftpFile = f;
+			}
+		}
+		if (ftpFile == null) {
+			throw new IOException("File not found: " + ftpFileName);
+		}
+		int total = (int) ftpFile.getSize();
+		LOGGER.info("total:"+total);
+	    LOGGER.info("get file name: "+filename);
 	    fos = new ByteArrayOutputStream();
-	    client.retrieveFile(filename, fos);
-	    byte[] data = fos.toByteArray();
-	    fos.close();
+	    LOGGER.info("retrieve file....");
+	    //client.retrieveFile("."+filename, fos);
+	    // Set to Binary Mode !!!
+	    client.setFileType(FTP.BINARY_FILE_TYPE);
+	    InputStream raw = client.retrieveFileStream("."+filename);
+	    // InputStream in = new BufferedInputStream(raw, client.getBufferSize());
+	    byte[] data = new byte[total];
+	    data = IOUtils.toByteArray(raw);
+	    /** useless
+	    int bytesRead = 0;
+	    int offset = 0;
+	    LOGGER.info("loading started...");
+	    while (offset < total) {
+	    	System.out.print(".");
+	      bytesRead = in.read(data, offset, client.getBufferSize());
+	      if (bytesRead == -1)
+	        break;
+	      offset += bytesRead;
+	    }
+	    */
+	    raw.close();
+	    /**
+	    if (offset != total) {
+	    	LOGGER.info("Only read " + offset + " bytes; Expected " + total + " bytes");
+	     // throw new IOException("Only read " + offset + " bytes; Expected " + total + " bytes");
+	    }
+	    */
+	    LOGGER.info("retrieved");
+	    //byte[] data = fos.toByteArray();
+	    //fos.close();
 	    client.disconnect();
+	    LOGGER.info("Lenght of file:"+data.length);
 		return data;
+		}
+		catch(Exception e) {
+			throw new ExceptionReport("FTP exception",ExceptionReport.REMOTE_COMPUTATION_ERROR,e);
+			
+		}
 	}
 
 	public void setArchive(byte[] archive) {

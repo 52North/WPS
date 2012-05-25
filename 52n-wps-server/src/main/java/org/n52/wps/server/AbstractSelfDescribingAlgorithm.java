@@ -22,6 +22,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
+import org.apache.log4j.Logger;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
@@ -30,10 +31,12 @@ import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
+import org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
 
+	private static Logger LOGGER = Logger.getLogger(AbstractSelfDescribingAlgorithm.class);
 	@Override
 	protected ProcessDescriptionType initializeDescription() {
 		ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
@@ -129,7 +132,8 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 										
 										}
 									}
-								}else{
+								}
+								// Modified : supported is required so single default must be also in supported section
 									String supportedFormat = supportedFormats[j];
 									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
 									supportedCreatedFormat.setMimeType(supportedFormat);
@@ -145,7 +149,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 											supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
 										}
 									}
-								}
+								
 //								if(supportedFormats.length==1 && supportedEncodings.length==1){
 //									String supportedFormat = supportedFormats[j];
 //									ComplexDataDescriptionType supportedCreatedFormat = supportedtInputFormat.addNewFormat();
@@ -289,7 +293,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 				}		
 			}
 		}
-		
+		LOGGER.info(document.toString());
 		return document.getProcessDescriptions().getProcessDescriptionArray(0);
 	}
 	

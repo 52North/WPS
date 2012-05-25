@@ -43,6 +43,7 @@ import net.opengis.wps.x100.DataDescriptionType;
 import net.opengis.wps.x100.DataDescriptionsDocument;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.repository.RepositoryManager;
@@ -132,11 +133,13 @@ public class DescribeDataRequest extends Request {
 		
 		document = DataDescriptionsDocument.Factory.newInstance();
 		document.addNewDataDescriptions();
+		if(!WPSConfig.getInstance().isRemoveschemalocation()) {
+			
 		XmlCursor c = document.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeData_response.xsd");
-				
+		}	
 		String[] identifiers = getMapValue("identifier", true).split(",");
 		document.getDataDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		document.getDataDescriptions().setService("WPS");

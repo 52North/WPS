@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Vector;
+import java.util.concurrent.CancellationException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -113,10 +114,14 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	private String deployProcessDir;
 	private String WPSPublicationPrefix;
 	private HashMap<String, String> WPSmap;
+	private String myProxyURL;
+	private String myProxyUser;
+	private String myProxyPassword;
+	
 
 	private String IID;
 	private String processInstanceID;
-	
+
 	private String processID;
 	private static String GridFilesDir;
 	private static String SagaLibDir;
@@ -165,14 +170,40 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					"Error. Could not find the required SagaLibDir property in wps_config.xml");
 		}
 		setSagaLibDir(sagaLibProp.getStringValue());
+		
+		Property myProxyURLProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "MyProxyURL");
+		if (myProxyURLProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyURL = myProxyURLProp.getStringValue();
+		
+		Property myProxyUserProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "MyProxyUser");
+		if (myProxyUserProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyUser = myProxyUserProp.getStringValue();
+		
+		Property myProxyPasswordProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "MyProxyPassword");
+		if (myProxyPasswordProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyPassword = myProxyPasswordProp.getStringValue();
+		
+		
 		System.setProperty("saga.location", getSagaLibDir());
-		Property wpsPublicRoot = WPSConfig.getInstance()
-		.getPropertyForKey(properties, "WPSPublicationPrefix");
-if (wpsPublicRoot == null) {
-	throw new RuntimeException(
-			"Error. Could not find WPSPublicationPrefix");
-}
-setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
+		Property wpsPublicRoot = WPSConfig.getInstance().getPropertyForKey(
+				properties, "WPSPublicationPrefix");
+		if (wpsPublicRoot == null) {
+			throw new RuntimeException(
+					"Error. Could not find WPSPublicationPrefix");
+		}
+		setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 
 		// Set the deployement process directory
 		setDeployProcessDir(GridFilesDir + "deploy/process/");
@@ -189,12 +220,12 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		 * Set the required system properties (instead of setting them from
 		 * tomcat script)
 		 */
-		
+
 		System.setProperty("gai.default.rm", gridmapGLUE.toString());
 		System.setProperty("gai.debug.working.dir", "true");
-		System.setProperty("org.globus.tcp.port.range", "20000,20500");
+		System.setProperty("org.globus.tcp.port.range", "20000,22000");
 		System.setProperty("gai.deploy.process.path", getDeployProcessDir());
-		// Add port range prop org.globus.tcp.port.range="20000,20200" 
+		// Add port range prop org.globus.tcp.port.range="20000,20200"
 		// TODO remove (useless here : getPRInstance();)
 
 	}
@@ -267,8 +298,11 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		String processID = deploymentProfile.getProcessID();
 		LOGGER.info("Saga deployement process for: " + processID);
 		try {
-			registerJSDL(processID, deploymentProfile.getJsdlTemplate());
+			LOGGER.info("storing archive");
 			storeArchive(deploymentProfile.getArchive(), processID);
+			LOGGER.info("register JSDL");
+			registerJSDL(processID, deploymentProfile.getJsdlTemplate());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ExceptionReport("IO Exception during deployement",
@@ -286,6 +320,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 	 */
 	private void storeArchive(byte[] archive, String processId)
 			throws IOException {
+		LOGGER.info("Store Archive");
 		String archiveDir = getDeployProcessDir() + processId + File.separator;
 		// create dir
 		File archiveFile = new File(archiveDir);
@@ -390,6 +425,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 					"Registered process id does not match the right process id",
 					ExceptionReport.NO_APPLICABLE_CODE);
 		}
+		LOGGER.info("registering end...");
 	}
 
 	private void unregisterJSDL(String processId)
@@ -453,17 +489,17 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		WPSmap.put("WPS_DEPLOY_PROCESS_DIR", GridFilesDir + "deploy/process/");
 		WPSmap.put("WPS_DEPLOY_AUXDATA_DIR", GridFilesDir + "deploy/auxdata/");
 		WPSmap.put("WPS_JOB_INPUTS_DIR", GridFilesDir + "execute/" + processID
-				+"/"+ getProcessInstanceID()+ "/${GAI_JOB_UID}/inputs");
-		WPSmap.put("WPS_JOB_OUTPUTS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
-				+ "/${GAI_JOB_UID}/outputs");
-		WPSmap.put("WPS_JOB_AUDITS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
-				+ "/${GAI_JOB_UID}/audits");
-		WPSmap.put("WPS_JOB_RESULTS_DIR", GridFilesDir + "execute/" + processID+"/"+ getProcessInstanceID()
+				+ "/" + getProcessInstanceID() + "/${GAI_JOB_UID}/inputs");
+		WPSmap.put("WPS_JOB_OUTPUTS_DIR", GridFilesDir + "execute/" + processID
+				+ "/" + getProcessInstanceID() + "/${GAI_JOB_UID}/outputs");
+		WPSmap.put("WPS_JOB_AUDITS_DIR", GridFilesDir + "execute/" + processID
+				+ "/" + getProcessInstanceID() + "/${GAI_JOB_UID}/audits");
+		WPSmap.put("WPS_JOB_RESULTS_DIR", GridFilesDir + "execute/" + processID
+				+ "/" + getProcessInstanceID() + "/${GAI_JOB_UID}/results");
+		WPSmap.put("WPS_JOB_RESULTS_URL", WPSPublicationPrefix + "execute/"
+				+ processID + "/" + getProcessInstanceID()
 				+ "/${GAI_JOB_UID}/results");
-		WPSmap.put("WPS_JOB_RESULTS_URL", WPSPublicationPrefix + "execute/" + processID+"/"+ getProcessInstanceID()
-				+ "/${GAI_JOB_UID}/results");
-		
-		
+
 		ExecuteResponseDocument execRepDom = null;
 		this.setProcessID(algorithmID);
 		// First create a session containing at least a context
@@ -474,8 +510,8 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		session.addContext(context);
 		LOGGER.info(context.getAttribute(Context.USERPROXY));
 		// Get delegation to that user proxy and set propoerly context
-		MyProxyClient.delegateProxyFromMyProxyServer("ify-ce03.terradue.com",
-				7512, "emathot", "myproxy", 604800, context);
+		MyProxyClient.delegateProxyFromMyProxyServer(myProxyURL,
+				7512, myProxyUser, myProxyPassword, 604800, context);
 		// then create a JobService from the JobFactory
 		// that is ready to handle job submission passing the session
 		// information
@@ -562,10 +598,10 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		}
 		if (literalInputs.size() > 0) {
 			try {
-			jsa.substituteSimpleInputs(jd, literalInputs);
-			}
-			catch(Exception e) {
-				throw new ExceptionReport(e.getMessage(), ExceptionReport.INVALID_PARAMETER_VALUE, e);
+				jsa.substituteSimpleInputs(jd, literalInputs);
+			} catch (Exception e) {
+				throw new ExceptionReport(e.getMessage(),
+						ExceptionReport.INVALID_PARAMETER_VALUE, e);
 			}
 		}
 		// Once JobDescription ready to run, create the jobs, run them, and wait
@@ -599,13 +635,13 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		(new File(outputsDir)).mkdirs();
 		(new File(auditsDir)).mkdirs();
 		(new File(resultsDir)).mkdirs();
-
+		(new File(resultsDir)).setWritable(true, false);
 		if (complexInputs.size() > 0) {
 			try {
-			jsa.writeComplexInputs(jobs, complexInputs);
-			}
-			catch(Exception e) {
-				throw new ExceptionReport(e.getMessage(), ExceptionReport.INVALID_PARAMETER_VALUE,e);
+				jsa.writeComplexInputs(jobs, complexInputs);
+			} catch (Exception e) {
+				throw new ExceptionReport(e.getMessage(),
+						ExceptionReport.INVALID_PARAMETER_VALUE, e);
 			}
 		}
 		// Callbacks
@@ -620,10 +656,10 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		// wait for all jobs in the job array
 		LOGGER.info("Waiting for...");
 		jobs.waitFor();
-		if(jobs.isCancelled() || cancelHack)
-		{
+		if (jobs.isCancelled() || cancelHack) {
 			LOGGER.info("Force cancel if interruption not successful");
-			return null; }
+			throw new CancellationException();
+		}
 		// Check if any exitMessage is non null
 		boolean exitFault = false;
 		String[][] exitMessages;
@@ -781,7 +817,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 			LOGGER.info("exitMessage:" + exitMessages[i]);
 			ExceptionType ex = exceptionReport.addNewException();
 			ex.setExceptionCode(exitMessage[0]);
-			ex.setLocator("Task" + (i+1));
+			ex.setLocator("Task" + (i + 1));
 			ex.addExceptionText(exitMessage[1]);
 		}
 		// Adding additional Java exception
@@ -1069,13 +1105,15 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		AuditTraceType audit = null;
 		URLListDocument auditURLS = URLListDocument.Factory.newInstance();
 		File auditDir = new File(GridFilesDir + "execute" + File.separator
-				+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
-				+ "audits" + File.separator);
-		
+				+ processID + File.separator + getProcessInstanceID()
+				+ File.separator + getIID() + File.separator + "audits"
+				+ File.separator);
+
 		LOGGER.info("--------------------------------------------------------------------");
 		LOGGER.info("Audit dir: " + GridFilesDir + "execute" + File.separator
-				+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
-				+ "audits" + File.separator);
+				+ processID + File.separator + getProcessInstanceID()
+				+ File.separator + getIID() + File.separator + "audits"
+				+ File.separator);
 		String[] filenames = auditDir.list();
 		auditURLS.addNewURLList().setCount(filenames.length);
 		for (String filename : filenames) {
@@ -1083,9 +1121,12 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 					.getURLList()
 					.addNewUrl()
 					.setStringValue(
-							getWPSPublicationPrefix() + "execute" + File.separator
-							+ processID + File.separator + getProcessInstanceID() + File.separator + getIID() + File.separator
-							+ "audits" + File.separator + filename);
+							getWPSPublicationPrefix() + "execute"
+									+ File.separator + processID
+									+ File.separator + getProcessInstanceID()
+									+ File.separator + getIID()
+									+ File.separator + "audits"
+									+ File.separator + filename);
 		}
 		try {
 			audit = AuditTraceType.Factory.parse(auditURLS.getDomNode());
@@ -1146,6 +1187,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 	public String getWPSPublicationPrefix() {
 		return WPSPublicationPrefix;
 	}
+
 	public String getProcessInstanceID() {
 		return processInstanceID;
 	}
@@ -1157,6 +1199,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 	public static String getSagaLibDir() {
 		return SagaLibDir;
 	}
+
 	public void cancel() {
 		LOGGER.info("getrunning job cancel");
 		this.cancelHack = true;
@@ -1169,6 +1212,30 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 
 	public JobImpl getRunningJob() {
 		return runningJob;
+	}
+
+	public String getMyProxyURL() {
+		return myProxyURL;
+	}
+
+	public void setMyProxyURL(String myProxyURL) {
+		this.myProxyURL = myProxyURL;
+	}
+
+	public String getMyProxyUser() {
+		return myProxyUser;
+	}
+
+	public void setMyProxyUser(String myProxyUser) {
+		this.myProxyUser = myProxyUser;
+	}
+
+	public String getMyProxyPassword() {
+		return myProxyPassword;
+	}
+
+	public void setMyProxyPassword(String myProxyPassword) {
+		this.myProxyPassword = myProxyPassword;
 	}
 
 }

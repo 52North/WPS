@@ -48,6 +48,8 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
 
 
@@ -104,9 +106,18 @@ public class RequestExecutor extends ThreadPoolExecutor {
 		// set a lower priority
 		t.setPriority(Thread.MIN_PRIORITY);
 		LOGGER.debug("beforeExecute called");
+		ExecuteRequest execReq = ((WPSTask<Response>)r).getRequest();
 		StatusType status = StatusType.Factory.newInstance();
 		status.addNewProcessStarted().setPercentCompleted(0);
-		((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
+		execReq.getExecuteResponseBuilder().setStatus(status);
+		if(execReq.isStoreResponse())	{
+				try {
+					ExecuteResponse resp = new ExecuteResponse(execReq);
+				} catch (ExceptionReport e) {
+					LOGGER.warn("BeforeExecute - error when updating status file...");
+					e.printStackTrace();
+				}
+			}
 	}
 
 	/**

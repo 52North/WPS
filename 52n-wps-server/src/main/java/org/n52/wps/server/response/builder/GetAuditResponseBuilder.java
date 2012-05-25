@@ -10,6 +10,7 @@ import net.opengis.wps.x100.GetAuditResponseDocument;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.GetAuditRequest;
@@ -28,11 +29,14 @@ public class GetAuditResponseBuilder {
 		option.setLoadTrimTextBuffer();
 		responseDom = GetAuditResponseDocument.Factory.newInstance();
 		responseDom.addNewGetAuditResponse();
+		if(!WPSConfig.getInstance().isRemoveschemalocation()) {
+			
 		XmlCursor c = responseDom.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
 		// TODO modify with future schema location
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+		}
 		responseDom.getGetAuditResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		responseDom.getGetAuditResponse().setService("WPS");
 		responseDom.getGetAuditResponse().setVersion(Request.SUPPORTED_VERSION);

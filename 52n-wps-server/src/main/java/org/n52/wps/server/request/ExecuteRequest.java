@@ -60,6 +60,7 @@ import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -89,6 +90,7 @@ public class ExecuteRequest extends Request implements IObserver {
 
 	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
+
 	public ExecuteDocument getExecDom() {
 		return execDom;
 	}
@@ -102,6 +104,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	private IAlgorithm algorithm;
 	private SOAPHeader soapHeader;
 	private String myEPR;
+	private ArrayList<SOAPHeaderBlock> samlHeader;
 
 	/**
 	 * Constructor which also sets a soap Header (called from the
@@ -113,20 +116,19 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public ExecuteRequest(Document inputDoc, SOAPHeader mySOAPHeader)
 			throws ExceptionReport {
-		
+
 		this(inputDoc);
 		LOGGER.info("Received soap header");
 		this.soapHeader = mySOAPHeader;
-		if(mySOAPHeader==null) {
+		if (mySOAPHeader == null) {
 			LOGGER.info("soap is null here");
 		}
 		MessageContext context = MessageContext.getCurrentMessageContext();
-		if(context!= null) {
-		ServiceContext serviceContext = context.getServiceContext();
-		String address = serviceContext.getMyEPR().getAddress();
-		setMyEPR(address);
+		if (context != null) {
+			ServiceContext serviceContext = context.getServiceContext();
+			String address = serviceContext.getMyEPR().getAddress();
+			setMyEPR(address);
 		}
-		
 
 	}
 
@@ -155,6 +157,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
 			this.execDom = ExecuteDocument.Factory.parse(doc, option);
+			
 			if (this.execDom == null) {
 				LOGGER.fatal("ExecuteDocument is null");
 				throw new ExceptionReport("Error while parsing post data",
@@ -164,11 +167,13 @@ public class ExecuteRequest extends Request implements IObserver {
 			throw new ExceptionReport("Error while parsing post data",
 					ExceptionReport.MISSING_PARAMETER_VALUE, e);
 		}
-		if(!this.execDom.validate()) {
-			throw new ExceptionReport("Execute request is not valid (according WPS schemas)",ExceptionReport.INVALID_PARAMETER_VALUE);
+		if (!this.execDom.validate()) {
+			throw new ExceptionReport(
+					"Execute request is not valid (according WPS schemas)",
+					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
 		// validate the client input
-		LOGGER.info("ExecuteRequest received: "+execDom.toString());
+		LOGGER.info("ExecuteRequest received: " + execDom.toString());
 		validate();
 		LOGGER.info("Inputs are validated");
 		// create an initial response
@@ -499,7 +504,25 @@ public class ExecuteRequest extends Request implements IObserver {
 		if (desc.getDataInputs() != null) {
 			InputDescriptionType[] inputDescs = desc.getDataInputs()
 					.getInputArray();
-
+			// Check all required inputw are present
+			for (InputDescriptionType inputDesc : inputDescs) {
+				if (inputDesc.getMinOccurs().floatValue() > 0) {
+					boolean inputIsPresent = false;
+					for (InputType input : getExecute().getDataInputs()
+							.getInputArray()) {
+						if (inputDesc.getIdentifier().getStringValue()
+								.equals(input.getIdentifier().getStringValue())) {
+							inputIsPresent = true;
+						}
+					}
+					if (!inputIsPresent) {
+						throw new ExceptionReport("Required Input "
+								+ inputDesc.getIdentifier().getStringValue()
+								+ " is not present",
+								ExceptionReport.INVALID_PARAMETER_VALUE);
+					}
+				}
+			}
 			// For each input supplied by the client
 			for (InputType input : getExecute().getDataInputs().getInputArray()) {
 				boolean identifierMatched = false;
@@ -592,7 +615,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public Response call() throws ExceptionReport {
 		ArrayList<SOAPHeaderBlock> addressingHeader = getAddressingHeaderBlocks();
-
+		setSamlHeader(getSAMLHeaderBlocks());
 		try {
 
 			// register so that any function that calls
@@ -600,7 +623,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			// with this thread
 			ExecutionContext context = new ExecutionContext(getId());
 			ExecutionContextFactory.registerContext(context);
-			
+
 			LOGGER.info("started with execution");
 			// parse the input
 			InputType[] inputs = new InputType[0];
@@ -610,7 +633,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			// The input handler parses (and validates) the inputs.
 			InputHandler parser = new InputHandler(inputs,
 					getAlgorithmIdentifier());
-			// TODO (Spacebel) OutputHandler for validation 
+			// TODO (Spacebel) OutputHandler for validation
 			// we got so far:
 			// get the algorithm, and run it with the clients input
 
@@ -623,36 +646,30 @@ public class ExecuteRequest extends Request implements IObserver {
 			 */
 			algorithm = RepositoryManager.getInstance().getAlgorithm(
 					getAlgorithmIdentifier(), this);
-			
+
 			if (algorithm instanceof ISubject) {
 				ISubject subject = (ISubject) algorithm;
 				subject.addObserver(this);
 
 			}
-			
+
 			if (algorithm instanceof AbstractTransactionalAlgorithm) {
-				try {
 				returnResults = ((AbstractTransactionalAlgorithm) algorithm)
 						.run(this);
-				}
-				catch(Exception ie) {
-					LOGGER.info("interruption exception");
-					ie.printStackTrace();
-					return null;
-				}
+
+				LOGGER.info("Storing audit...");
 				try {
-					LOGGER.info("Storing audit...");
-					AbstractTransactionalAlgorithm.storeAuditLongDocument(this
-							.getUniqueId().toString(),
-							((AbstractTransactionalAlgorithm) algorithm)
-									.getAuditLongForm());
-					AbstractTransactionalAlgorithm.storeAuditDocument(this
-							.getUniqueId().toString(),
-							((AbstractTransactionalAlgorithm) algorithm)
-									.getAudit());
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				AbstractTransactionalAlgorithm.storeAuditLongDocument(this
+						.getUniqueId().toString(),
+						((AbstractTransactionalAlgorithm) algorithm)
+								.getAuditLongForm());
+				AbstractTransactionalAlgorithm
+						.storeAuditDocument(this.getUniqueId().toString(),
+								((AbstractTransactionalAlgorithm) algorithm)
+										.getAudit());
+				}
+				catch(Exception e) {
+					LOGGER.warn("Cannot store audit after process run !");
 				}
 			}
 
@@ -679,8 +696,8 @@ public class ExecuteRequest extends Request implements IObserver {
 				returnResults = algorithm.run(parser.getParsedInputData());
 			}
 			/**
-			 * Check if the thread was cancelled (interruption is catched here to
-			 * avoid to change the run() inteface of IAlgorithm
+			 * Check if the thread was cancelled (interruption is catched here
+			 * to avoid to change the run() inteface of IAlgorithm
 			 */
 			if (Thread.currentThread().isInterrupted()) {
 				// if task was cancelled do nothing (all is done inside the
@@ -689,18 +706,19 @@ public class ExecuteRequest extends Request implements IObserver {
 				return null;
 			}
 
+		} catch (CancellationException e) {
+			return null;
 		} catch (Exception e) {
 			ExceptionReport exReport = null;
 			e.printStackTrace();
 			LOGGER.debug("RuntimeException:" + e.getMessage());
-			if(e instanceof ExceptionReport) {
+			if (e instanceof ExceptionReport) {
 				exReport = (ExceptionReport) e;
-			}
-			else {
-			exReport = new ExceptionReport(
-					"Error while executing the embedded process for: "
-							+ getAlgorithmIdentifier(),
-					ExceptionReport.NO_APPLICABLE_CODE, e);
+			} else {
+				exReport = new ExceptionReport(
+						"Error while executing the embedded process for: "
+								+ getAlgorithmIdentifier(),
+						ExceptionReport.NO_APPLICABLE_CODE, e);
 			}
 			try {
 				LOGGER.info("Storing audit...");
@@ -708,10 +726,10 @@ public class ExecuteRequest extends Request implements IObserver {
 						.getUniqueId().toString(),
 						((AbstractTransactionalAlgorithm) algorithm)
 								.getAuditLongForm());
-				AbstractTransactionalAlgorithm.storeAuditDocument(this
-						.getUniqueId().toString(),
-						((AbstractTransactionalAlgorithm) algorithm)
-								.getAudit());
+				AbstractTransactionalAlgorithm
+						.storeAuditDocument(this.getUniqueId().toString(),
+								((AbstractTransactionalAlgorithm) algorithm)
+										.getAudit());
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				LOGGER.info("Audit storing failed");
@@ -721,11 +739,13 @@ public class ExecuteRequest extends Request implements IObserver {
 			if (addressingHeader != null) {
 				try {
 					StatusType status = StatusType.Factory.newInstance();
-					status.addNewProcessFailed().setExceptionReport(exReport.getExceptionDocument().getExceptionReport());
+					status.addNewProcessFailed().setExceptionReport(
+							exReport.getExceptionDocument()
+									.getExceptionReport());
 					this.getExecuteResponseBuilder().setStatus(status);
 					ExecuteResponse execResp = new ExecuteResponse(this);
 					execResp.sendCallback(addressingHeader);
-				
+
 				} catch (Exception e2) {
 					// TODO Auto-generated catch block
 					LOGGER.warn("Execution response callback could not be sent. Please check the ws addressing header.");
@@ -742,26 +762,26 @@ public class ExecuteRequest extends Request implements IObserver {
 				+ getAlgorithmIdentifier());
 		StatusType status = StatusType.Factory.newInstance();
 		status.setProcessSucceeded("Process successful");
-		ExecuteResponse execResp =null;
+		ExecuteResponse execResp = null;
 		try {
 			this.getExecuteResponseBuilder().setStatus(status);
 			LOGGER.info("creating execute response");
 			execResp = new ExecuteResponse(this);
-		}
-		catch(ExceptionReport e) {
+		} catch (ExceptionReport e) {
 			LOGGER.info("catched exception report when creating Execute Response");
 			LOGGER.info("unset process outputs");
-			this.getExecuteResponseBuilder().getDoc().getExecuteResponse().unsetProcessOutputs();
+			this.getExecuteResponseBuilder().getDoc().getExecuteResponse()
+					.unsetProcessOutputs();
 			LOGGER.info("set status failed");
 			StatusType statusFailed = StatusType.Factory.newInstance();
-			statusFailed.addNewProcessFailed().setExceptionReport(e.getExceptionDocument().getExceptionReport());
+			statusFailed.addNewProcessFailed().setExceptionReport(
+					e.getExceptionDocument().getExceptionReport());
 			this.getExecuteResponseBuilder().setStatus(statusFailed);
 			LOGGER.info("**************          ************** Current Ex resp");
 			LOGGER.info(this.getExecuteResponseBuilder().getDoc().toString());
 			execResp = new ExecuteResponse(this);
 			LOGGER.info("created execute response for exception");
-		}
-		catch(Exception e2) {
+		} catch (Exception e2) {
 			LOGGER.info("catched unexpected general exception");
 			e2.printStackTrace();
 		}
@@ -769,17 +789,38 @@ public class ExecuteRequest extends Request implements IObserver {
 			try {
 				LOGGER.info("send callback for exception");
 				execResp.sendCallback(addressingHeader);
-			
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				LOGGER.warn("Execution response callback could not be sent. Please check the ws addressing header.");
-				
+
 				e.printStackTrace();
 			}
 		}
 		return execResp;
 	}
 
+	
+	private ArrayList<SOAPHeaderBlock> getSAMLHeaderBlocks() {
+		LOGGER.info("Addressing header");
+		// TODO Auto-generated method stub
+		if (this.soapHeader == null) {
+			LOGGER.info("soap Header is null");
+			return null;
+		}
+		try {
+			ArrayList<SOAPHeaderBlock> headerBlocks = this.soapHeader
+					.getHeaderBlocksWithNSURI("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd");
+			LOGGER.info(headerBlocks.toString());
+			// sendCallback(headerBlocks);
+			return headerBlocks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	
 	private ArrayList<SOAPHeaderBlock> getAddressingHeaderBlocks() {
 		LOGGER.info("Addressing header");
 		// TODO Auto-generated method stub
@@ -791,14 +832,13 @@ public class ExecuteRequest extends Request implements IObserver {
 			ArrayList<SOAPHeaderBlock> headerBlocks = this.soapHeader
 					.getHeaderBlocksWithNSURI("http://www.w3.org/2005/08/addressing");
 			LOGGER.info(headerBlocks.toString());
-			//sendCallback(headerBlocks);
+			// sendCallback(headerBlocks);
 			return headerBlocks;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-
 
 	/**
 	 * Gets the identifier of the algorithm the client requested
@@ -894,6 +934,14 @@ public class ExecuteRequest extends Request implements IObserver {
 
 	public String getMyEPR() {
 		return myEPR;
+	}
+
+	public void setSamlHeader(ArrayList<SOAPHeaderBlock> samlHeader) {
+		this.samlHeader = samlHeader;
+	}
+
+	public ArrayList<SOAPHeaderBlock> getSamlHeader() {
+		return samlHeader;
 	}
 
 }

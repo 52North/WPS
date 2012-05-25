@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.database.DatabaseFactory;
@@ -70,11 +71,14 @@ public class GetStatusResponseBuilder {
 		// 3. create Response
 		responseDom = GetStatusResponseDocument.Factory.newInstance();
 		responseDom.addNewGetStatusResponse();
+		if(!WPSConfig.getInstance().isRemoveschemalocation()) {
+			
 		XmlCursor c = responseDom.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
 		// TODO modify with future schema location
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+		}
 		// ??????? doc.getExecuteResponse().setServiceInstance(CapabilitiesConfiguration.ENDPOINT_URL+"?REQUEST=GetCapabilities&SERVICE=WPS");
 		responseDom.getGetStatusResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		responseDom.getGetStatusResponse().setService("WPS");

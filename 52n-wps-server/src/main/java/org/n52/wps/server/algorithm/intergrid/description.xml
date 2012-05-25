@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProcessDescription xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	wps:processVersion="2" storeSupported="true" statusSupported="true">
+	<ows:Identifier>GridDataTransfer</ows:Identifier>
+	<ows:Title>GridDataTransfer Process</ows:Title>
+	<ows:Abstract>Transfers files from one Grid to another</ows:Abstract>
+	<DataInputs>
+		<Input minOccurs="1" maxOccurs="1">
+			<ows:Identifier>sourceList</ows:Identifier>
+			<ows:Title>List of source URLs</ows:Title>
+			<ows:Abstract>List of URLs of source files (or directories) to be
+				copied.</ows:Abstract>
+			<ComplexData>
+				<Default>
+					<Format>
+						<MimeType>text/xml</MimeType>
+						<Schema>http://ssegrid.esa.int/wps/JavaSAGAProfile</Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>text/xml</MimeType>
+						<Schema>http://ssegrid.esa.int/wps/JavaSAGAProfile</Schema>
+					</Format>
+				</Supported>
+			</ComplexData>
+		</Input>
+		<Input minOccurs="1" maxOccurs="1">
+			<ows:Identifier>destinationList</ows:Identifier>
+			<ows:Title>List of destination URLs</ows:Title>
+			<ows:Abstract>List of URLs of destination files (or directories) to
+				be copied.</ows:Abstract>
+			<ComplexData>
+				<Default>
+					<Format>
+						<MimeType>text/xml</MimeType>
+						<Schema>http://ssegrid.esa.int/wps/JavaSAGAProfile</Schema>
+					</Format>
+				</Default>
+				<Supported>
+					<Format>
+						<MimeType>text/xml</MimeType>
+						<Schema>http://ssegrid.esa.int/wps/JavaSAGAProfile</Schema>
+					</Format>
+				</Supported>
+			</ComplexData>
+		</Input>
+	</DataInputs>
+	<ProcessOutputs>
+		<Output>
+			<ows:Identifier>output</ows:Identifier>
+			<ows:Title>Output</ows:Title>
+			<ows:Abstract>Any output message.</ows:Abstract>
+			<LiteralOutput>
+				<ows:DataType ows:reference="http://www.w3.org/TR/xmlschema-2/#string">string</ows:DataType>
+				<ows:AnyValue />
+			</LiteralOutput>
+		</Output>
+	</ProcessOutputs>
+</ProcessDescription>

@@ -13,6 +13,7 @@ import net.opengis.wps.x100.StatusDocumentType;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.UndeployProcessRequest;
@@ -30,11 +31,14 @@ public class UndeployProcessResponseBuilder {
 		setRequest(undeployProcessRequest);
 		responseDom = UndeployProcessResponseDocument.Factory.newInstance();
 		responseDom.addNewUndeployProcessResponse();
+		if(!WPSConfig.getInstance().isRemoveschemalocation()) {
+			
 		XmlCursor c = responseDom.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
 		// TODO modify with future schema location
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+		}
 		responseDom.getUndeployProcessResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		responseDom.getUndeployProcessResponse().setService("WPS");
 		responseDom.getUndeployProcessResponse().setVersion(Request.SUPPORTED_VERSION);

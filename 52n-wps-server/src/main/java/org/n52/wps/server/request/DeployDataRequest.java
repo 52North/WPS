@@ -6,25 +6,19 @@ import java.lang.reflect.InvocationTargetException;
 
 import net.opengis.wps.x100.DataDescriptionType;
 import net.opengis.wps.x100.DeployDataDocument;
-import net.opengis.wps.x100.DeployDataDocument;
-import net.opengis.wps.x100.DataDescriptionType;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.AbstractTransactionalData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.repository.DefaultTransactionalDataRepository;
-import org.n52.wps.server.repository.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
 import org.n52.wps.server.response.DeployDataResponse;
 import org.n52.wps.server.response.Response;
 import org.n52.wps.server.response.builder.DeployDataResponseBuilder;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 public class DeployDataRequest extends Request {
 
@@ -81,7 +75,6 @@ public class DeployDataRequest extends Request {
 				"data ID: " + dataID);
 		// Parse the specialized part (profile)
 		try {
-			
 			// Get the DeployementProfile specialized for this profile
 			String deployementProfileClass = TransactionalRepositoryManager
 					.getDataDeploymentProfileForSchema(schema);

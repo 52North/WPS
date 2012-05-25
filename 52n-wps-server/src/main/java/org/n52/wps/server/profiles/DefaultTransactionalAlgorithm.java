@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.AuditTraceType;
@@ -118,8 +119,7 @@ public class DefaultTransactionalAlgorithm extends
 		Document invokeResponse;
 		LOGGER.info("DefaultTransactionAlgo Run");
 		try {
-			invokeResponse = getProcessManager().invoke(req,
-					getAlgorithmID());
+			invokeResponse = getProcessManager().invoke(req, getAlgorithmID());
 			/**
 			 * Parsing
 			 */
@@ -149,6 +149,8 @@ public class DefaultTransactionalAlgorithm extends
 							.put(key, OutputParser.handleBBoxValue(ioElement));
 				}
 			}
+		} catch (CancellationException e) {
+			throw e;
 		} catch (ExceptionReport e) {
 			e.printStackTrace();
 			throw e;
@@ -294,45 +296,45 @@ public class DefaultTransactionalAlgorithm extends
 				.getProcessOutputs().getOutputArray();
 
 		for (OutputDescriptionType output : outputs) {
-			if(output.getIdentifier().getStringValue().equals(id)) {
-				LOGGER.info("output is :"+id);
-			if (output.isSetLiteralOutput()) {
-				// Missing case when dataType is not present
-				if(output.getLiteralOutput().getDataType() == null) {
-					return LiteralStringBinding.class;
+			if (output.getIdentifier().getStringValue().equals(id)) {
+				LOGGER.info("output is :" + id);
+				if (output.isSetLiteralOutput()) {
+					// Missing case when dataType is not present
+					if (output.getLiteralOutput().getDataType() == null) {
+						return LiteralStringBinding.class;
+					}
+					String datatype = output.getLiteralOutput().getDataType()
+							.getStringValue();
+					if (datatype.contains("tring")) {
+						return LiteralStringBinding.class;
+					}
+					if (datatype.contains("ollean")) {
+						return LiteralBooleanBinding.class;
+					}
+					if (datatype.contains("loat") || datatype.contains("ouble")) {
+						return LiteralDoubleBinding.class;
+					}
+					if (datatype.contains("nt")) {
+						return LiteralIntBinding.class;
+					}
 				}
-				String datatype = output.getLiteralOutput().getDataType()
-						.getStringValue();
-				if (datatype.contains("tring")) {
-					return LiteralStringBinding.class;
-				}
-				if (datatype.contains("ollean")) {
-					return LiteralBooleanBinding.class;
-				}
-				if (datatype.contains("loat") || datatype.contains("ouble")) {
-					return LiteralDoubleBinding.class;
-				}
-				if (datatype.contains("nt")) {
-					return LiteralIntBinding.class;
-				}
-			}
-			if (output.isSetComplexOutput()) {
-				String mimeType = output.getComplexOutput().getDefault()
-						.getFormat().getMimeType();
-				if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
-					if (output.getComplexOutput().getDefault().getFormat()
-							.getSchema().contains("wps")) {
-						LOGGER.info("Output Data Type found is URLListDataBinding");
-						return URLListDataBinding.class;
-						
+				if (output.isSetComplexOutput()) {
+					String mimeType = output.getComplexOutput().getDefault()
+							.getFormat().getMimeType();
+					if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
+						if (output.getComplexOutput().getDefault().getFormat()
+								.getSchema().contains("wps")) {
+							LOGGER.info("Output Data Type found is URLListDataBinding");
+							return URLListDataBinding.class;
+
+						} else {
+							return GenericFileDataBinding.class;
+						}
+
 					} else {
 						return GenericFileDataBinding.class;
 					}
-
-				} else {
-					return GenericFileDataBinding.class;
 				}
-			}
 			}
 		}
 		throw new RuntimeException("Could not determie internal inputDataType");
@@ -352,8 +354,6 @@ public class DefaultTransactionalAlgorithm extends
 		return processManager;
 	}
 
-	
-
 	public AuditTraceType getAudit() throws Exception {
 		LOGGER.info("short");
 		return getProcessManager().getAudit();
@@ -363,15 +363,16 @@ public class DefaultTransactionalAlgorithm extends
 		LOGGER.info("long");
 		return getProcessManager().getAuditLongForm();
 	}
-public void callback(ExecuteResponseDocument execRespDom) {
-	getProcessManager().callback(execRespDom);
-	return;
+
+	public void callback(ExecuteResponseDocument execRespDom) {
+		getProcessManager().callback(execRespDom);
+		return;
 	}
 
-@Override
-public void cancel() {
-	LOGGER.info("get process manager cancel");
-	 getProcessManager().cancel();
-	 return;
-}
+	@Override
+	public void cancel() {
+		LOGGER.info("get process manager cancel");
+		getProcessManager().cancel();
+		return;
+	}
 }

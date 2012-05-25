@@ -116,8 +116,8 @@ public class GetAuditRequest extends Request {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.info("Task cannot be getAuditled");
-			throw new ExceptionReport("The task cannot be getAuditled.",
+			LOGGER.info("Task cannot be getAudited");
+			throw new ExceptionReport("The task cannot be getAudited.",
 					ExceptionReport.CANCELLATION_FAILED);
 		}
 		// The GetAuditResponse is only returned if no exception occurs

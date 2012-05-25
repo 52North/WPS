@@ -54,6 +54,11 @@ import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 
 public class WPSConfig implements Serializable {
+	/**
+	 * Disclaimer: hideSchemaLocation set to true to remove the schema location
+	 * --> used as a WORKAROUND in the context of a specific project.
+	 */
+	private final boolean removeSchemaLocation = true;  
 	private static transient WPSConfig wpsConfig;
 	private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 
@@ -374,6 +379,17 @@ public class WPSConfig implements Serializable {
 		return (Property[]) Array.newInstance(Property.class, 0);
 	}
 
+	
+	public Property[] getPropertiesForServer() {
+		try {
+		LOGGER.info("size of server prop array : "+wpsConfigXMLBeans.getServer().getPropertyArray().length);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		return wpsConfigXMLBeans.getServer().getPropertyArray();
+	}
+	
 	public Property[] getPropertiesForRepositoryFormat(String repFormat) {
 		Repository[] repositories = getRegisterdAlgorithmRepositories();
 		for (int i = 0; i < repositories.length; i++) {
@@ -454,11 +470,16 @@ public class WPSConfig implements Serializable {
 	
 	public Property getPropertyForKey(Property[] properties, String key) {
 		for (Property property : properties) {
+			LOGGER.info(property.getName() + " - " + key);
 			if (property.getName().equalsIgnoreCase(key)) {
 				return property;
 			}
 		}
 		return null;
+	}
+
+	public  boolean isRemoveschemalocation() {
+		return removeSchemaLocation;
 	}
 
 }

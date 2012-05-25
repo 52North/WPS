@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.CancellationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,12 +45,14 @@ import org.apache.axiom.om.OMText;
 import org.apache.axiom.om.util.Base64;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.util.XMLUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.ode.pmapi.types.x2006.x08.x02.EventInfoDocument;
 import org.n52.wps.PropertyDocument.Property;
@@ -61,6 +64,8 @@ import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.UndeployProcessRequest;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
+import org.w3.x2005.x08.addressing.MessageIDDocument;
+import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -263,8 +268,22 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		// Get the workflow instance id
 		try {
 			LOGGER.info("execute");
-			getExecuteClient().sendReceive(
+			OMElement response = getExecuteClient().sendReceive(
 					XMLUtils.toOM((doc).getDocumentElement()));
+			try {
+				Document execRespDom = XMLUtils.toDOM(response).getOwnerDocument();
+				ExecuteResponseDocument execResp = ExecuteResponseDocument.Factory.parse(execRespDom);
+				String workflowId = execResp.getExecuteResponse().getProcessInstanceIdentifier().getInstanceId();
+				LOGGER.info("Workflow instance id = "+ workflowId);
+				setIID(workflowId);
+				if(!StringUtils.isEmpty(workflowId)) {
+				return;
+				}
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			// If instanceId not present then check the last instance appeared
 			LOGGER.info("sleep");
 			// Workfaround Wait for the instance to appear TODO enhance
 			Thread.sleep(300);
@@ -352,6 +371,11 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		getExecuteClient().addHeader(messageIDHeader);
 		getExecuteClient().addHeader(replyToHeader);
 		getExecuteClient().addHeader(toHeader);
+		for (SOAPHeaderBlock headerBlock : req.getSamlHeader()) {
+			if (headerBlock.getLocalName().equals("Security")) {
+				getExecuteClient().addHeader(headerBlock);
+			}
+		}
 		// get the callback manager
 		try {
 		executeAndGetId((Document) doc.getDomNode());
@@ -360,7 +384,7 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		catch(InterruptedException ie) {
 			LOGGER.info("interrupted");
 			ie.printStackTrace();
-			return null;
+			throw new CancellationException();
 		}
 		
 		LOGGER.info("Received callback response.");
@@ -468,6 +492,11 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		// return _PMclient.send(msg, this.processManagerEndpoint,10000);
 	}
 
+	private OMElement sendCancel(OMElement msg) throws AxisFault {
+		return _client.send(msg, this.instanceManagerEndpoint, "terminate");
+		// return _PMclient.send(msg, this.processManagerEndpoint,10000);
+	}
+	
 	private OMElement sendListEvents(OMElement msg) throws AxisFault {
 		return _client.send(msg, this.instanceManagerEndpoint, "listEvents");
 		// return _PMclient.send(msg, this.processManagerEndpoint,10000);
@@ -941,6 +970,22 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 		this.processInstanceID = processInstanceID;
 	}
 	public void cancel() {
-		LOGGER.info("not implemented yet");
+		LOGGER.info("BPMS Cancel...");
+		OMElement terminateRequest = _client.buildMessage("terminate",
+				new String[] { "iid" }, new String[] {
+						getIID() });
+		LOGGER.info("Terminate instance request:" + terminateRequest.toString());
+		try {
+			OMElement result = terminateInstance(terminateRequest);
+		} catch (AxisFault e) {
+			LOGGER.error("Could not cancel the intalio workflow instance");
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	private OMElement terminateInstance(OMElement terminateRequest) throws AxisFault {
+		OMElement result = sendCancel(terminateRequest);
+		return result;
 	}
 }
