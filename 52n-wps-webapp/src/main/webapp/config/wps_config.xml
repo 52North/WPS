@@ -231,24 +231,13 @@
   </Datahandlers>
   <AlgorithmRepositoryList>
     <Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.repository.LocalAlgorithmRepository" active="true">
-    <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intergrid.GridDataTransfer</Property>
+    <!-- 
+       <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intergrid.GridDataTransfer</Property>
+      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.importgrid.ImportData</Property>
+      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.publishgrid.PublishData</Property>
+     -->
      </Repository>
     <Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.repository.UploadedAlgorithmRepository" active="true"/>
-    <!--<Repository name="GrassRepository"
-			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
-			<Property name="Grass_Home" active="true">c:\programme\grass-70-svn</Property>
-			<Property name="Python_Home" active="true">c:\programme\grass-70-svn\extrabin</Property>
-			<Property name="ModuleStarter_Home" active="true">C:\wps-grass-bridge\gms\</Property>
-			<Property name="GISRC_Dir" active="true">c:\programme\grass-70-svn\\demolocation\.grassrc70</Property>
-			<Property name="TMP_Dir" active="true">C:\tmp\grass_tmp</Property>
-			<Property name="DONT_USE_PROCESSES" active="true">v.out.ascii;v.out.dxf;v.out.ogr;v.out.pov;v.out.svg;v.out.vtk;v.in.ascii;v.in.db;v.in.dxf;v.in.ogr;v.in.region;v.in.sites;r3.out.ascii;r3.out.v5d;r3.out.vtk;r.out.arc;r.out.ascii;r.out.bin;r.out.gdal;r.out.gridatb;r.out.mat;r.out.mpeg;r.out.png;r.out.pov;r.out.ppm;r.out.ppm3;r.out.tiff;r.out.vrml;r.out.vtk;r.in.arc;r.in.ascii;
-			r.in.bin;r.in.gdal;r.in.gridatb;r.in.mat;r.in.png;r.in.poly;r.in.xyzdb.columns;db.connect;db.copy;db.createdb;db.databases;db.describe;db.drivers;db.dropdb;db.droptable;dbcute;db.login;db.select;db.tables;g.access;g.copy;g.dirseps;g.filename;g.findetc;g.findfile;g.gisenv;g.gui;g.list;g.mapset;g.mapsets;g.message;g.mkfontcap;g.mlist;g.mremove;
-			g.parser;g.pnmcomp;g.proj;nviz;nviz_cmd;d.rast.numd.barscale;d.colorlist;d.colortable;d.erase;d.font;d.fontlist;d.geodesic;d.graph;d.grid;d.his;d.histogram;d.info;d.labels;d.legend;d.linegraph;d.nviz;d.path;d.profile;d.rast.arrow;d.rast;d.rgb;d.rhumbline;d.text;d.thematic.area;d.title;d.vect.chart;d.vect;d.where;g.region;g.remove;
-			g.rename;g.tempfile;g.version;r3.cross.rast;r3.in.v5d;r3.mkdspf;r.external;r.external.out;v.info;r.gegion;r.colors;i.group;r3.in.ascii;v.external;i.albedo;g.transform;r.info;v.db.select;v.db.connect;r.what;r.what.color;r.composite;r.colors.out;ps.map;g.ppmtopng;v.what;v.what.rast</Property>
-		</Repository>
-		
-		 
-		
 		
 		<Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository" active="false">
 		</Repository>
@@ -268,78 +257,45 @@
 		</Repository>
 		
 
-		 
-		<Repository name="LocalGridGainAlgorithmRepository"	className="org.n52.wps.gridgain.GridGainAlgorithmRepository" active="true">		
-			<Property name="Algorithm" active="true">org.n52.wps.gridgain.algorithm.GridGainSimpleBufferAlgorithm</Property>
-		</Repository>-->
-<!-- 		
-    <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
-     <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
+		
+<!-- 
+ <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
+      <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
       <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaProcessManager</Property>
       <Property name="WorkspaceLocationRoot" active="true"/>
       <Property name="supportedFormat" active="true">saga.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile</Property>
-      <Property name="GridFilesDir" active="true">/ssegrid/gaiwps/</Property>
-      <Property name="WPSPublicationPrefix" active="true">ftp://ssegrid.vgt.vito.be/</Property>
+      <Property name="GridFilesDir" active="true">/ssegrid/$wps_id/</Property>
+      <Property name="WPSPublicationPrefix" active="true">ftp://$hostname/$wps_id/</Property>
       <Property name="SagaLibDir" active="true">/ssegrid/saga/</Property>
-      <Property name="GridGlue" active="true">http://ssegrid.vgt.vito.be/config/VITOGrid_GLUE.xml</Property>
+      <Property name="GridGlue" active="true">http://$hostname/config/VITOGrid_GLUE.xml</Property>
       <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
       <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
-      <Property name="DataDeployDirectory" active="true">/ssegrid/gaiwps/deploy/auxdata/</Property>
+      <Property name="DataDeployDirectory" active="true">/ssegrid/$wps_id/deploy/auxdata/</Property>
+      <Property name="MyProxyUser" active="true">ddaems</Property>
+      <Property name="MyProxyPassword" active="true">R0d3Du1v3l</Property>
+      <Property name="MyProxyURL" active="true">ce1.intern.vgt.vito.be</Property>
     </Repository>
- -->
+-->
+
 <!-- 
-    <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
+ <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
       <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
       <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.IntalioBPMS.ApacheOdeProcessManager</Property>
+      <Property name="SSEGrid_Home" active="true">/ssegrid/$wps_id/</Property>
+      <Property name="WorkspaceLocationRoot" active="true"/>
       <Property name="supportedFormat" active="true">apacheode.xsd</Property>
       <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property>
-      <Property name="SSEGrid_Home" active="true">/wps/saga/</Property>
-      <Property name="Ode_DeploymentEndpoint" active="true">http://mpi-vito.spacebel.be:8080/axis2/services/DeploymentService</Property>
-      <Property name="Ode_ProcessManagerEndpoint" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/ProcessManagement</Property>
-      <Property name="Ode_ProcessesPrefix" active="true">http://mpi-vito.spacebel.be:8080/ode/processes/</Property>
-      </Repository>
+      <Property name="Ode_DeploymentEndpoint" active="true">http://$hostname.vgt.vito.be:8080/axis2/services/DeploymentService</Property>
+      <Property name="Ode_ProcessManagerEndpoint" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/ProcessManagement</Property>
+      <Property name="Ode_ProcessesPrefix" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/</Property>
+      <Property name="WPSPublicationPrefix" active="true">ftp://$hostname.vgt.vito.be/$wps_id/</Property>
+    </Repository>
+
+  
      -->
-    <!--<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository">
-		</Repository>-->
-    <!--<Repository name="AGSProcessRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
-			<Property name="IP" active="true">**</Property>
-			<Property name="DOMAIN" active="true">**</Property>
-			<Property name="USER" active="true">**</Property>
-			<Property name="PASS" active="true">**</Property>
-			<Property name="DCOM_NATIVE" active="true">FALSE</Property>
-			<Property name="WORKSPACEBASE" active="true">**</Property>
-			<Property name="ARCOBJECTSJAR" active="true">**</Property>
-			<Property name="DESCRIBE_PROCESS_DIR" active="true">D:\development\xmlDescriptions</Property>
-		</Repository>-->
-    <!--<Repository name="ArcToolboxProcessRepository" className="org.n52.wps.ags.ArcToolboxProcessRepository" active="true">
-			<Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\arctoolboxProcesses</Property>
-			<Property name="CONTAINER_URN" active="true">urn:n52:esri:arctoolbox:9.3.1</Property>
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property>
-			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
-		</Repository>-->
-    <!--<Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" active="true">
-            <Property name="IP" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
-            <Property name="DOMAIN" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
-            <Property name="USER" active="true">soknos-wps</Property>
-            <Property name="PASS" active="true">soknos-52N</Property>
-            <Property name="WORKSPACEBASE" active="true">C:\wpsworkspace</Property>
-            <Property name="ARCOBJECTSJAR" active="true">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property>
-            <Property name="DESCRIBE_PROCESS_DIR" active="true">C:\wps\xmlDescriptions</Property>
-        </Repository>-->
-    <!--<Repository name="SextanteRepository" className="org.n52.wps.server.sextante.SextanteProcessRepository" active="true"/>-->
-    <!--<Repository name="PythonProcessRepository" className="org.n52.wps.python.PythonProcessRepository" active="true">
-			<Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\pythonProcesses</Property>
-			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.5</Property>
-			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.6</Property>
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property>
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3</Property>
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property>
-			<Property name="BACKEND_URN" active="true">urn:n52:gdal:1.8.0</Property>
-			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
-		</Repository>-->
   </AlgorithmRepositoryList>
-  <Server hostname="localhost" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="wps">
+  <Server hostname="$hostname" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="$wps_id">
   <Property name="portalFTPUser" active="true">ftpuser</Property>
   <Property name="portalFTPPassword" active="true">ssegrid</Property>
     <Database/>
