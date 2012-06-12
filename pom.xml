@@ -90,6 +90,11 @@
 							<filtering>true</filtering>
 							<targetPath>WEB-INF</targetPath>
 						</resource>
+						<resource>
+							<directory>src/main/webapp/config</directory>
+							<filtering>true</filtering>
+							<targetPath>config</targetPath>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
