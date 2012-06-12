@@ -8,7 +8,7 @@
     <groupId>org.n52.wps</groupId>
     <artifactId>52n-wps-parent</artifactId>
     <packaging>pom</packaging>
-    <name>52north processing</name>
+    <name>52North Web Processing Service</name>
 	<version>3.1-SNAPSHOT</version>
     <description>
     	52 north processing provides different tools for web based
@@ -78,6 +78,21 @@
   
     <build>
         <plugins>
+        		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/WEB-INF</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -112,6 +127,28 @@
                     <!--checkoutDirectory>${basedir}/src</checkoutDirectory-->
                 </configuration>
             </plugin>
+            			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
+					<timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+					<providerImplementations>
+						<svn>javasvn</svn>
+					</providerImplementations>
+					<revisionOnScmFailure>0</revisionOnScmFailure>
+				</configuration>
+			</plugin>
           <!--    <plugin>
     			<groupId>org.apache.maven.plugins</groupId>
     			<artifactId>maven-site-plugin</artifactId>
