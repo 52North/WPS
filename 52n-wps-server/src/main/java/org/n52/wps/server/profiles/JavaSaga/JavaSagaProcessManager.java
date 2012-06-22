@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,7 +60,9 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axiom.soap.SOAPHeaderBlock;
 import org.apache.axis2.client.ServiceClient;
+import org.apache.axis2.util.XMLUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
@@ -98,6 +101,8 @@ import com.terradue.ssegrid.sagaext.JobServiceAssistant;
 import com.terradue.ssegrid.sagaext.MyProxyClient;
 import com.terradue.ssegrid.sagaext.ProcessingRegistry;
 
+import org.w3.x2005.x08.addressing.MessageIDDocument;
+import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -117,7 +122,6 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 	private String myProxyURL;
 	private String myProxyUser;
 	private String myProxyPassword;
-	
 
 	private String IID;
 	private String processInstanceID;
@@ -170,7 +174,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					"Error. Could not find the required SagaLibDir property in wps_config.xml");
 		}
 		setSagaLibDir(sagaLibProp.getStringValue());
-		
+
 		Property myProxyURLProp = WPSConfig.getInstance().getPropertyForKey(
 				properties, "MyProxyURL");
 		if (myProxyURLProp == null) {
@@ -178,7 +182,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					"Error. Could not find the required MyProxyUser property in wps_config.xml");
 		}
 		myProxyURL = myProxyURLProp.getStringValue();
-		
+
 		Property myProxyUserProp = WPSConfig.getInstance().getPropertyForKey(
 				properties, "MyProxyUser");
 		if (myProxyUserProp == null) {
@@ -186,16 +190,15 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 					"Error. Could not find the required MyProxyUser property in wps_config.xml");
 		}
 		myProxyUser = myProxyUserProp.getStringValue();
-		
-		Property myProxyPasswordProp = WPSConfig.getInstance().getPropertyForKey(
-				properties, "MyProxyPassword");
+
+		Property myProxyPasswordProp = WPSConfig.getInstance()
+				.getPropertyForKey(properties, "MyProxyPassword");
 		if (myProxyPasswordProp == null) {
 			throw new RuntimeException(
 					"Error. Could not find the required MyProxyUser property in wps_config.xml");
 		}
 		myProxyPassword = myProxyPasswordProp.getStringValue();
-		
-		
+
 		System.setProperty("saga.location", getSagaLibDir());
 		Property wpsPublicRoot = WPSConfig.getInstance().getPropertyForKey(
 				properties, "WPSPublicationPrefix");
@@ -510,8 +513,38 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 		session.addContext(context);
 		LOGGER.info(context.getAttribute(Context.USERPROXY));
 		// Get delegation to that user proxy and set propoerly context
-		MyProxyClient.delegateProxyFromMyProxyServer(myProxyURL,
-				7512, myProxyUser, myProxyPassword, 604800, context);
+		String cnName = null;
+		try {
+
+			for (SOAPHeaderBlock samlHeader : req.getSamlHeader()) {
+				LOGGER.info("LocalName = " + samlHeader.getLocalName());
+				OMElement assertion = (OMElement) samlHeader
+						.getChildrenWithLocalName("Assertion").next();
+				LOGGER.info("Assertion found:"+assertion.toString());
+				OMElement attributeStatement = (OMElement) assertion
+						.getChildrenWithLocalName("AttributeStatement").next();
+				LOGGER.info("AttributeStatement found");
+				OMElement subject = (OMElement) attributeStatement
+						.getChildrenWithLocalName("Subject").next();
+				LOGGER.info("Subject found:"+subject.toString());
+				OMElement nameIdentifier = (OMElement) subject
+						.getChildrenWithLocalName("NameIdentifier").next();
+				LOGGER.info("Name Id found"+nameIdentifier.toString());
+				cnName = nameIdentifier.getText();
+				LOGGER.info(cnName);
+			}
+
+		} catch (Exception e) {
+		}
+
+		if (cnName != null && !cnName.equals("spb") && !cnName.equals("vito")
+				&& !cnName.equals("superuser") && !cnName.equals("esasp")) {
+			throw new ExceptionReport(
+					"No Grid Proxy account is associated with the user",
+					ExceptionReport.REMOTE_COMPUTATION_ERROR);
+		}
+		MyProxyClient.delegateProxyFromMyProxyServer(myProxyURL, 7512,
+				myProxyUser, myProxyPassword, 604800, context);
 		// then create a JobService from the JobFactory
 		// that is ready to handle job submission passing the session
 		// information
