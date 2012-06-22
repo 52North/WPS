@@ -532,7 +532,7 @@ public class JavaSagaProcessManager extends AbstractProcessManager {
 				LOGGER.info("Name Id found"+nameIdentifier.toString());
 				cnName = nameIdentifier.getText();
 				LOGGER.info(cnName);
-			}
+			} 
 
 		} catch (Exception e) {
 		}
