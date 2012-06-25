@@ -26,7 +26,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				</ComplexData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
-				<ows:Identifier>buffer_distance_or_field</ows:Identifier><!-- 1 -->
+				<ows:Identifier>buffer_distance_or_field</ows:Identifier><!-- 2 -->
 				<ows:Title>buffer distance or field</ows:Title>
 				<ows:Abstract>The distance used to create buffer zones around Input Features. Either a value or a numeric field can be used to provide buffer distances. If a negative buffer distance is specified, the buffer offsets will be generated inside, instead of outside, of the input features. This is only valid for polygon feature classes. If the distance units are not specified, or entered as Unknown, the units of the Input Features are used (or if the Output Coordinate System environment has been set, its units will be used).</ows:Abstract>
 				<LiteralData>
