@@ -132,7 +132,8 @@ public final class GenericFileDataConstants {
 	//public static final String RASTER_SCHEMA = "http://tu-dresden.de/fgh/geo/gis/schemas/esri/raster.xsd";
 	//public static final String VECTOR_SCHEMA = "http://tu-dresden.de/fgh/geo/gis/schemas/esri/shape.xsd";
 	
-	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj"};
+//	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj"};
+	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj", "sbn", "sbx", "shp.xml"};
 	
 	public static final String[] getIncludeFilesByMimeType(String mimeType){
 		
