@@ -436,7 +436,7 @@
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">\R\r_scripts</Property>
+			<Property name="Script_Dir" active="true">R\r_scripts</Property>
 			<Property name="Enable_Batch_Start" active="true">false</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
 		</Repository>
