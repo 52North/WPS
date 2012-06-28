@@ -44,9 +44,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
@@ -225,7 +225,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					}else{
 						extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(currentParam.mimeType);
 					}
-					String fileName = UUID.randomUUID() + "." + extension;
+					String fileName = UUID.randomUUID().toString().substring(0,7) + "." + extension; // geoprocessor can't handle points, dashes etc in output file name
 					
 					fileName = this.addOutputFile(fileName);
 					this.toolParameters[i] = fileName;
@@ -236,12 +236,13 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		
 		//execute
 		String toolName = this.processDescription.getTitle().getStringValue();
-		//LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
+		LOGGER.info("Executing ArcGIS tool " + toolName + " . Parameter array contains " + this.parameterCount + " parameters.");
 		try {
 			workspace.executeGPTool(toolName, null, this.toolParameters);
 		} catch (IOException e1) {
 			LOGGER.error(e1.getMessage());
 			errors.add(e1.getMessage());
+			throw new RuntimeException(e1.getMessage()); // otherwise WPS tries to zip and return non-existing files => null pointer
 		}
 		
 		
@@ -251,7 +252,8 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		for (int i=0; i<this.parameterCount; i++){
 			ToolParameter currentParam = this.parameterDescriptions[i];
 			
-			if(currentParam.isOutput){
+			if(currentParam != null // Otherwise, nullpointer exception when trying to process outputs!
+					&& currentParam.isOutput){ 
 				
 				if(currentParam.isComplex){
 					String fileName = this.toolParameters[i];
@@ -271,6 +273,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					} catch (FileNotFoundException e) {
 						LOGGER.error("Could not read output file: " + fileName);
 						errors.add("Could not read output file: " + fileName);
+						throw new RuntimeException("No files found. Probably the process did not create any output files.");
 					} catch (IOException e) {
 						LOGGER.error("Could not create output file from: " + fileName);
 						errors.add("Could not create output file from: " + fileName);
@@ -287,7 +290,16 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			}
 		}
 
-		
+		//Handle if no result was created
+		if (result.isEmpty()){
+			String message = "";
+			for (String error : errors){
+				message = message.concat(error + " - ");
+			}
+			message = message.concat("ArcGIS Backend Process " + this.processID + " did not return any output"
+					+ " data or the output data could not be processed.");
+			throw new RuntimeException(message);
+		}
 		return result;
 	}
 	
