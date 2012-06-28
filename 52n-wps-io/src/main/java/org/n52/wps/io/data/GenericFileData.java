@@ -32,6 +32,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -130,6 +131,25 @@ public class GenericFileData {
 						+ extensions[i]);
 
 			allFiles[extensions.length] = primaryFile;
+			
+			// Handling the case if the files don't exist
+			// (Can occur if ArcGIS backend has an error and returns no files,
+			// but only filenames).
+			int numberOfFiles = allFiles.length;
+			int numberOfMissing = 0;
+			for (int i = 0; i < numberOfFiles; i++){
+				if (!allFiles[i].exists()){
+					LOGGER.info("File " + (i+1) + " of " + numberOfFiles + " missing (" + allFiles[i].getName() + ").");
+					numberOfMissing ++;
+				}
+			}
+			if ((numberOfFiles - numberOfMissing) == 0){
+				String message = "There is no files to generate data from!";
+				LOGGER.error(message);
+				throw new FileNotFoundException(message);
+			} else if ((numberOfMissing > 0)){
+				LOGGER.info("Not all files are available, but the available ones are zipped.");
+			}
 
 			is = new FileInputStream(org.n52.wps.io.IOUtils.zip(allFiles));
 		} else {
