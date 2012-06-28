@@ -59,7 +59,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     // constructor
     private List<RAnnotation> annotations;
 
-    private String currentWorkDir;
+    /**
+     * Indicates the current workdirectory on the WPS. This is NOT to confuse with the R/Rserve workdirectory
+     * used inside the run-method.
+     */
+    private String currentWPSWorkDir;
 
     private boolean deleteWorkDirectory = false; // TODO create a task that does this regularly, even if
                                                  // disabled here
@@ -138,8 +142,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             LOGGER.debug("inputData: " + Arrays.toString(inputData.entrySet().toArray()));
 
         // create WPS4R workdir (will be deleted later)
-        this.currentWorkDir = R_Config.getTemporaryWorkDirFullPath();
-        File file = new File(this.currentWorkDir);
+        //R workdirectory not same as Wps workdirectory. Instead it shall be a subdirectory of the R default workdirectory otherwise Rserve can't be installed on a separate server
+        this.currentWPSWorkDir = R_Config.getTemporaryWPSWorkDirFullPath();
+        File file = new File(this.currentWPSWorkDir);
         file.mkdirs();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("work dir: " + file.getAbsolutePath());
@@ -169,17 +174,20 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 rCon.eval("rm(list = ls())");
                 // rCon.eval(".First()"); // Fehler 127
 
-                // FIXME not using this.currentWorkDir here???
-                // String wd = UUID.randomUUID().toString();
-                // LOGGER.debug("[R] Setting working directory: " + this.currentWorkDir);
+                // No use of this.currentWorkDir here! 
+                // R is starting from it's default workdirectory which is changed into a random sub-directory and will be deleted after session completed
+                
+                // setting the R working directory relative to default R directory
+                String randomFolderName = UUID.randomUUID().toString();
                 r_basedir = rCon.eval("getwd()").asString();
                 LOGGER.debug("Original getwd(): " + r_basedir);
-                // rCon.eval("wd = paste(getwd(), \"" + wd + "\" ,sep=\"/\")");
-                // rCon.eval("dir.create(wd)");
-                // rCon.eval("setwd(wd)");
+                rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
+                rCon.eval("dir.create(wd)");
+                REXP result = rCon.eval("setwd(wd)");
+                LOGGER.debug("[R] Setting working directory: " + r_basedir);
+               
 
-                // setting the working directory
-                REXP result = rCon.eval("setwd(\"" + this.currentWorkDir + "\")");
+               
                 LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
 
                 rCon.eval("cat(paste0(\"[GenericRProcess] work dir: \", getwd()), \"\\n\")");
@@ -275,14 +283,16 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     rCon = R_Config.openRConnection();
                 }
 
-                // deletes workdirectory: // FIXME this happens again with Java below, this one has no effect
-                if (deleteWorkDirectory) {
-                    if (r_basedir != null) {
-                        String wd = rCon.eval("getwd()").asString();
-                        rCon.eval("setwd(\"" + r_basedir + "\")");
-                        if (wd != r_basedir)
-                            rCon.eval("unlink(\"" + wd + "\", recursive=TRUE)");
-                    }
+                // deletes R workdirectory:
+                if (r_basedir != null) {
+                    String currentwd = rCon.eval("getwd()").asString();
+                    rCon.eval("setwd(\"" + r_basedir + "\")");
+                    // should be true usually, if not, workdirectory has been
+                    // changed unexpectedly (prob. inside script)
+                    if (currentwd != r_basedir)
+                        rCon.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
+                    else
+                        LOGGER.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
                 }
 
                 LOGGER.debug("[R] cleaning up and closing stream.");
@@ -314,10 +324,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         // try to delete current local workdir - folder
         if (deleteWorkDirectory) {
-            File workdir = new File(this.currentWorkDir);
+            File workdir = new File(this.currentWPSWorkDir);
             boolean deleted = deleteRecursive(workdir);
             if ( !deleted)
-                workdir.deleteOnExit();
+                LOGGER.warn("Failed to delete temporary WPS Workdirectory: " +workdir.getAbsolutePath());
         }
 
         LOGGER.debug("RESULT: " + Arrays.toString(resulthash.entrySet().toArray()));
@@ -520,7 +530,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String rType = anot.getAttribute(RAttribute.TYPE);
             mimeType = RDataType.getType(rType).getProcessKey();
             GenericFileData out = new GenericFileData(tempfile, mimeType);
-            tempfile.deleteOnExit();
+            
             return new GenericFileDataBinding(out);
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
@@ -619,9 +629,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         else if (iClass.equals(RWorkdirUrlBinding.class)) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Creating output with WorkdirUrlBinding");
+            
             String filename = new File(result.asString()).getName();
+            File tempfile = streamFromRserveToWPS(rCon, filename);
+            filename = tempfile.getName();
 
-            return new RWorkdirUrlBinding(this.currentWorkDir, filename);
+            return new RWorkdirUrlBinding(this.currentWPSWorkDir, filename);
         }
 
         Class[] easyLiterals = new Class[] {LiteralByteBinding.class,
@@ -671,7 +684,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
 
         // create File to stream from Rserve to WPS4R
-        File destination = new File(currentWorkDir);
+        File destination = new File(currentWPSWorkDir);
         if ( !destination.exists())
             destination.mkdirs();
         File tempfile = new File(destination, filename);

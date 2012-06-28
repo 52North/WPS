@@ -61,8 +61,6 @@ public class RProcessDescriptionCreator {
         }
         catch (MalformedURLException e) {
             LOGGER.error("Could not create URL for script file " + wkn, e);
-        }
-        finally {
             mt.setHref("N/A");
         }
 
