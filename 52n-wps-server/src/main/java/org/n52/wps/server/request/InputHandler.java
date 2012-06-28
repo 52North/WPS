@@ -1091,7 +1091,9 @@ public class InputHandler {
 		}
 		
 		
-		LOGGER.debug("Loading parser for: "+ schema + "," + mimeType + "," + encoding);
+		LOGGER.debug("Loading parser for: schema = \""+ schema 
+				+ "\" , mimetype = \"" + mimeType 
+				+ "\", encoding = \"" + encoding + "\"");
 		
 		IParser parser = null;
 		try {
