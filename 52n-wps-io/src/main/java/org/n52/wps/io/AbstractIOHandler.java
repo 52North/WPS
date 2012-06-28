@@ -97,7 +97,7 @@ public abstract class AbstractIOHandler implements IOHandler {
 	 */
 	public boolean isSupportedSchema(String schema) {
 		//no schema given. assuming no schema required. therefore accept all schemas
-		if(supportedSchemas.size()==0 && schema == null){
+		if(supportedSchemas.size()==0 && (schema == null || schema.isEmpty())){ // test whether schema is empty, because in ArcToolbox process descriptions, there is empty elements for schemas
 			return true;
 		}
 		for(String supportedSchema : supportedSchemas) {
