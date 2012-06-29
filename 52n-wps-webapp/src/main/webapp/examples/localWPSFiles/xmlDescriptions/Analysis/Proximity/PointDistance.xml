@@ -62,19 +62,15 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ComplexOutput>
 					<Default>
 						<Format>
-							<MimeType>application/dbf</MimeType>
+							<MimeType>application/dbase</MimeType>
 							<Schema></Schema>
 						</Format>
 					</Default>
 					<Supported>
 						<Format>
-							<MimeType>application/dbf</MimeType>
+							<MimeType>application/dbase</MimeType>
 							<Schema></Schema>
 						</Format>
-						<Format>
-					    <MimeType>text/XML</MimeType>
-						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
-				    </Format>	
 					</Supported>
 				</ComplexOutput>
 			</Output>
