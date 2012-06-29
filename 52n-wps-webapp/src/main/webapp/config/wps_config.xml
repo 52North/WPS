@@ -222,6 +222,11 @@
 			</Parser>
 		</ParserList>
 		<GeneratorList>
+		
+			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
+				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
+			</Generator>
+			
 			<Generator name="GML3BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
