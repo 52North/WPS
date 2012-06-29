@@ -134,6 +134,7 @@ public final class GenericFileDataConstants {
 	
 //	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj"};
 	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj", "sbn", "sbx", "shp.xml"};
+	private static final String[] additionalDBFFileItems = {"dbf.xml"}; // e.g. ArcGIS backend returns shape and a metadata xml file (e.g. process pointdistance)
 	
 	public static final String[] getIncludeFilesByMimeType(String mimeType){
 		
@@ -141,6 +142,8 @@ public final class GenericFileDataConstants {
 		
 		if (mimeType != null && mimeType.equalsIgnoreCase("application/x-zipped-shp")){
 			returnValue = additionalSHPFileItems;
+		} if (mimeType != null && mimeType.equalsIgnoreCase("application/dbase")){
+			returnValue = additionalDBFFileItems;
 		}
 		
 		return returnValue;

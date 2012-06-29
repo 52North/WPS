@@ -117,7 +117,7 @@ public class IOUtils {
 		byte[] buffer = new byte[4096];
 		for (File file : files) {
 			if (!file.exists()) {
-				LOGGER.debug("Colud not zip " + file.getAbsolutePath());
+				LOGGER.debug("Could not zip " + file.getAbsolutePath());
 				continue;
 			}
 
