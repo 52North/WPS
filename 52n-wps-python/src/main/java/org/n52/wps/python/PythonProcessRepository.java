@@ -77,6 +77,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 			loadFeedProcesses();
 		} catch (Exception e){
 			LOGGER.error("Could not initialize PythonProcessRepository.");
+			LOGGER.error(e.getMessage());
 		}
 		
 		// check if workspaceBase is specified
