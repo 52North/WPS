@@ -48,9 +48,9 @@ import com.terradue.ssegrid.sagaext.JobServiceAssistant;
 import com.terradue.ssegrid.sagaext.MyProxyClient;
 import com.terradue.ssegrid.sagaext.ProcessingRegistry;
 
-public class ImportData extends AbstractSelfDescribingAlgorithm {
+public class ImportData2 extends AbstractSelfDescribingAlgorithm {
 
-	private static Logger LOGGER = Logger.getLogger(ImportData.class);
+	private static Logger LOGGER = Logger.getLogger(ImportData2.class);
 
 	private static String GridFilesDir;
 	private static String SagaLibDir;
@@ -67,16 +67,12 @@ public class ImportData extends AbstractSelfDescribingAlgorithm {
 	public List<String> getInputIdentifiers() {
 		List<String> list = new ArrayList<String>();
 		list.add("sourceList");
-		list.add("rootDir");
 		return list;
 	}
 
 	public Class getInputDataType(String identifier) {
 		if (identifier.equalsIgnoreCase("sourceList")) {
 			return URLListDataBinding.class;
-		}
-		if (identifier.equalsIgnoreCase("rootDir")) {
-			return LiteralStringBinding.class;
 		}
 		return null;
 	}
@@ -104,7 +100,7 @@ public class ImportData extends AbstractSelfDescribingAlgorithm {
 			getSagaRepositoryProperties();
 			// wps MAP
 			// Initialize WPS Map
-			String processID = "org.n52.wps.server.algorithm.importgrid.ImportData";
+			String processID = "org.n52.wps.server.algorithm.importgrid.ImportData2";
 			HashMap<String, String> WPSmap = new HashMap<String, String>();
 			WPSmap.put("WPS_DEPLOY_PROCESS_DIR", GridFilesDir
 					+ "deploy/process/");
@@ -129,16 +125,7 @@ public class ImportData extends AbstractSelfDescribingAlgorithm {
 				throw new RuntimeException(
 						"Error while allocating input parameters");
 			}
-			List<IData> rootDirData = inputData.get("rootDir");
-			if (rootDirData == null || rootDirData.size() != 1) {
-				throw new RuntimeException(
-						"Error while allocating input parameters");
-			}
-			String rootDir = (String) rootDirData
-					.get(0).getPayload();
-			if(!rootDir.endsWith(File.separator)) {
-				rootDir = rootDir + File.separator;
-			}
+			
 			URLListDocument sourceListDoc = (URLListDocument) sourceListData
 					.get(0).getPayload();
 			// Retrieve this algorithm directory path
@@ -214,12 +201,12 @@ public class ImportData extends AbstractSelfDescribingAlgorithm {
 			// Modify jsdlDoc
 			for (int i = 0; i < sourceListDoc.getURLList().getUrlArray().length; i++) {
 				String sourceURL = sourceListDoc.getURLList().getUrlArray(i);
-				//String subURL = sourceURL.substring(sourceURL.lastIndexOf(File.separator)+1);
-				String subURL = sourceURL.substring(rootDir.length());
-				String destinationURL = subURL;
+				String subURL = sourceURL.substring(sourceURL.lastIndexOf(File.separator)+1);
+				
+				String destinationURL = "${GAI_JOB_RESULTS_DIR}/"+subURL;
 				DataStagingType staging = jsdlDoc.getJobDefinition()
 						.getJobDescription().addNewDataStaging();
-				staging.setFileName(destinationURL);
+				staging.setFileName(subURL);
 				staging.setCreationFlag(CreationFlagEnumerationImpl.OVERWRITE);
 				staging.setDeleteOnTermination(false);
 				staging.addNewSource().setURI(sourceURL);
@@ -290,8 +277,7 @@ public class ImportData extends AbstractSelfDescribingAlgorithm {
 			 
 			for (int i = 0; i < sourceListDoc.getURLList().getUrlArray().length; i++) {
 				String sourceURL = sourceListDoc.getURLList().getUrlArray(i);
-				String subURL = sourceURL.substring(rootDir.length());
-				//sourceURL.substring(sourceURL.lastIndexOf(File.separator)+1);
+				String subURL = sourceURL.substring(sourceURL.lastIndexOf(File.separator)+1);
 				String destinationURL = resultsDir+File.separator+subURL;
 				File destinationFile= new File(destinationURL);
 				destinationFile.mkdirs();

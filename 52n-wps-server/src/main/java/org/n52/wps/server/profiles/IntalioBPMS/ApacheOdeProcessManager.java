@@ -819,6 +819,9 @@ setWPSPublicationPrefix(wpsPublicRoot.getStringValue());
 						LOGGER.info("timestamp:" + timestamp);
 						String newValue = matchingInfo.getEventInfo()
 								.getNewValue();
+						if(newValue.indexOf("instanceId=\"")==-1) {
+							break;
+						}
 						String processiid = newValue.substring(newValue
 								.indexOf("instanceId=\"") + 12);
 						processiid = processiid.substring(0,

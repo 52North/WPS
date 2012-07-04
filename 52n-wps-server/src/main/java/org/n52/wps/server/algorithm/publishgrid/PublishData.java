@@ -60,6 +60,10 @@ public class PublishData extends AbstractSelfDescribingAlgorithm {
 	private ProcessingRegistry processingRegistry = null;
 	private String WPSPublicationPrefix;
 	private String DeployProcessDir;
+	private String myProxyURL;
+	private String myProxyUser;
+	private String myProxyPassword;
+
 
 	public List<String> getInputIdentifiers() {
 		List<String> list = new ArrayList<String>();
@@ -239,9 +243,8 @@ public class PublishData extends AbstractSelfDescribingAlgorithm {
 			context.setAttribute(Context.USERPROXY, GridFilesDir + "proxy");
 			session.addContext(context);
 			// Get delegation to that user proxy and set propoerly context
-			MyProxyClient.delegateProxyFromMyProxyServer(
-					"ify-ce03.terradue.com", 7512, "emathot", "myproxy",
-					604800, context);
+			MyProxyClient.delegateProxyFromMyProxyServer(myProxyURL, 7512,
+					myProxyUser, myProxyPassword, 604800, context);
 			JobServiceImpl js = JobFactory.createJobService(session/*
 																	 * ,
 																	 * gridmapGLUE
@@ -348,6 +351,29 @@ public class PublishData extends AbstractSelfDescribingAlgorithm {
 		// Saga.location must be loaded before the following line
 		GridmapGLUE = URLFactory.createURL(gridmap.getStringValue());
 		// Note system properties must already be set by a previous run
+		Property myProxyURLProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "MyProxyURL");
+		if (myProxyURLProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyURL = myProxyURLProp.getStringValue();
+
+		Property myProxyUserProp = WPSConfig.getInstance().getPropertyForKey(
+				properties, "MyProxyUser");
+		if (myProxyUserProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyUser = myProxyUserProp.getStringValue();
+
+		Property myProxyPasswordProp = WPSConfig.getInstance()
+				.getPropertyForKey(properties, "MyProxyPassword");
+		if (myProxyPasswordProp == null) {
+			throw new RuntimeException(
+					"Error. Could not find the required MyProxyUser property in wps_config.xml");
+		}
+		myProxyPassword = myProxyPasswordProp.getStringValue();
 
 	}
 
@@ -364,5 +390,29 @@ public class PublishData extends AbstractSelfDescribingAlgorithm {
 		}
 		// Keep the callback.
 		return true;
+	}
+
+	public void setMyProxyURL(String myProxyURL) {
+		this.myProxyURL = myProxyURL;
+	}
+
+	public String getMyProxyURL() {
+		return myProxyURL;
+	}
+
+	public void setMyProxyUser(String myProxyUser) {
+		this.myProxyUser = myProxyUser;
+	}
+
+	public String getMyProxyUser() {
+		return myProxyUser;
+	}
+
+	public void setMyProxyPassword(String myProxyPassword) {
+		this.myProxyPassword = myProxyPassword;
+	}
+
+	public String getMyProxyPassword() {
+		return myProxyPassword;
 	}
 }
