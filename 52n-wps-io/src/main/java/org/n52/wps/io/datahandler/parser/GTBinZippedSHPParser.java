@@ -31,7 +31,7 @@ public class GTBinZippedSHPParser extends AbstractParser {
 		try {
 			String fileName = "tempfile" + UUID.randomUUID() + ".zip";
 			String tmpDirPath = System.getProperty("java.io.tmpdir");
-			File tempFile = new File(tmpDirPath + File.pathSeparatorChar + fileName);
+			File tempFile = new File(tmpDirPath + File.separatorChar + fileName);
 			finalizeFiles.add(tempFile); // mark tempFile for final delete
 			try {
 				FileOutputStream outputStream = new FileOutputStream(tempFile);
