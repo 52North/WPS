@@ -125,7 +125,8 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 				
 				// prepare output filename
 				String extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
-				String fileName = UUID.randomUUID() + "." + extension;
+				String fileName = UUID.randomUUID().toString().substring(0,7) + "." + extension; // geoprocessor can't handle points, dashes etc in output file name
+//				String fileName = UUID.randomUUID() + "." + extension;
 				fileName = toolWorkspace.getAbsolutePath() + File.separator + fileName;
 				cmdParam.addValue(fileName);
 			}
@@ -153,6 +154,7 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 		} catch (IOException e1) {
 			LOGGER.error(e1.getMessage());
 			errors.add(e1.getMessage());
+			throw new RuntimeException(e1.getMessage()); // otherwise WPS tries to zip and return non-existing files => null pointer
 		}
 		
 		//create the output - files only
