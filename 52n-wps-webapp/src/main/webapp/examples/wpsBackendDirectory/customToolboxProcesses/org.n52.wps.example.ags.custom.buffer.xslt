@@ -16,8 +16,8 @@
 			</xsl:attribute>
 
 			<!-- General parameters -->
-			<workspaceLocation>./org.n52.wps.ags.custom.routing.muenster</workspaceLocation>
-			<algorithmLocation>algorithm://org.n52.wps.ags.custom.routing.muenster/routingnetworkpredefined.tbx?routingnetworkpredefined</algorithmLocation>
+			<workspaceLocation>./org.n52.wps.example.ags.custom.buffer</workspaceLocation>
+			<algorithmLocation>algorithm://org.n52.wps.example.ags.custom.buffer/buffertoolbox.tbx?custombuffername</algorithmLocation>
 			<containerType>urn:n52:esri:arctoolbox:10.0</containerType>
 			<requiredRuntimeComponent>urn:n52:esri:arcgis:10.0</requiredRuntimeComponent>
 			<algorithmParameters sequential="true">
@@ -27,8 +27,17 @@
 					<prefixString />
 					<suffixString />
 					<separatorString />
-					<positionID>1</positionID>
-					<wpsInputID>stops</wpsInputID>
+					<positionID>0</positionID>
+					<wpsInputID>inputfeatures</wpsInputID>
+					<wpsOutputID />
+				</parameter>
+				
+				<parameter>
+					<prefixString />
+					<suffixString />
+					<separatorString />
+					<positionID>2</positionID>
+					<wpsInputID>distance</wpsInputID>
 					<wpsOutputID />
 				</parameter>
 
@@ -39,9 +48,9 @@
 					<prefixString />
 					<suffixString />
 					<separatorString />
-					<positionID>0</positionID>
+					<positionID>1</positionID>
 					<wpsInputID />
-					<wpsOutputID>route</wpsOutputID>
+					<wpsOutputID>buffers</wpsOutputID>
 				</parameter>
 
 			</algorithmParameters>

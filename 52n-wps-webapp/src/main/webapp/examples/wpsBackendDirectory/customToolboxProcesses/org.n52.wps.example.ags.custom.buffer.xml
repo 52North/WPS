@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet type="text/xml" href="buffer.xslt" ?>
+<?xml-stylesheet type="text/xml" href="org.n52.wps.example.ags.custom.buffer.xslt" ?>
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
 	
 	
-		<ows:Identifier>org.n52.wps.ags.custom.buffer</ows:Identifier><!-- ParameterCount=3 -->
-		<ows:Title>merretsbuffer</ows:Title>
-		<ows:Abstract>Test buffer bla</ows:Abstract>
+		<ows:Identifier>org.n52.wps.example.ags.custom.buffer</ows:Identifier><!-- ParameterCount=3 -->
+		<ows:Title>Buffer computation</ows:Title>
+		<ows:Abstract>This process offers buffer computation executed via the ESRI ArcGIS tool inside a custom toolbox.</ows:Abstract>
 		<DataInputs>
 		
 			<Input minOccurs="1" maxOccurs="1">
 				<ows:Identifier>inputfeatures</ows:Identifier><!-- 0 -->
-				<ows:Title>inputfeatures</ows:Title>
-				<ows:Abstract>The feature layer or feature class that bla</ows:Abstract>
+				<ows:Title>The input features</ows:Title>
+				<ows:Abstract>The feature layer or feature class containing the features that will be buffered</ows:Abstract>
 				<ComplexData>
 					<Default>
 						<Format>
@@ -32,8 +32,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 			
 			<Input minOccurs="1" maxOccurs="1">
 				<ows:Identifier>distance</ows:Identifier><!-- 2 -->
-				<ows:Title>distance</ows:Title>
-				<ows:Abstract>The buffer distance</ows:Abstract>
+				<ows:Title>The buffer distance</ows:Title>
+				<ows:Abstract>The distance around the features that will be the buffer</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
@@ -45,7 +45,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>buffers</ows:Identifier><!-- 1 -->
-				<ows:Title>buffers</ows:Title>	
+				<ows:Title>Output buffer features</ows:Title>	
 				<ows:Abstract>The feature class that will be created and to which the resulting buffers will be written.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
