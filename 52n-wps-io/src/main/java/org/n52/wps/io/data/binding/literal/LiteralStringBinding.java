@@ -2,7 +2,6 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
 
 public class LiteralStringBinding implements ILiteralData {
