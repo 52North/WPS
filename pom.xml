@@ -222,11 +222,6 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>52n-wps-xml-wpsconfig</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>52n-wps-commons</artifactId>
                 <version>${project.version}</version>
             </dependency>
