@@ -96,19 +96,6 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		}
 	}
 	
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
-		try {
-			for(String algorithmClasses : algorithmMap.values()){
-				resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			
-		}
-		return resultList;
-	}
-	
 	public Collection<String> getAlgorithmNames() {
 		return new ArrayList<String>(algorithmMap.keySet());
 	}

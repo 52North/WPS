@@ -225,17 +225,6 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		return registeredAlgorithms.keySet();
 	}
 	
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredAlgorithms.size());
-		for(String processID : registeredAlgorithms.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID, null);
-			if(algorithm!=null){
-				algorithms.add(algorithm);
-			}
-		}
-		return algorithms;
-	}
-	
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		return registeredAlgorithms.get(processID).getProcessDescription();
 	}

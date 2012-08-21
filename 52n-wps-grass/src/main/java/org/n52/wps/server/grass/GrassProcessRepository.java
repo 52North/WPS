@@ -303,18 +303,6 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		return registeredProcesses.keySet();
 	}
 
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(
-				registeredProcesses.size());
-		for (String processID : registeredProcesses.keySet()) {
-			IAlgorithm algorithm = getAlgorithm(processID, null);
-			if (algorithm != null) {
-				algorithms.add(algorithm);
-			}
-		}
-		return algorithms;
-	}
-
 	private void deleteFiles(File tmpDirectory) {
 
 		File[] filesToDelete = tmpDirectory.listFiles();

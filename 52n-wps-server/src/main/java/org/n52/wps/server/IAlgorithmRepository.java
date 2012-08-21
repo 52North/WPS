@@ -44,7 +44,6 @@ public interface IAlgorithmRepository {
 	Collection<String> getAlgorithmNames();
 	
 	IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest);
-	Collection<IAlgorithm> getAlgorithms();
 	ProcessDescriptionType getProcessDescription(String processID);
 	
 	

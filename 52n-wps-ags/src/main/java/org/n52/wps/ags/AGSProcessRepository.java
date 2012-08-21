@@ -130,18 +130,6 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		return registeredProcessDescriptions.keySet();
 	}
 	
-	
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> algorithms = new ArrayList<IAlgorithm>(registeredProcessDescriptions.size());
-		for(String processID : registeredProcessDescriptions.keySet()){
-			IAlgorithm algorithm = getAlgorithm(processID, null);
-			if(algorithm!=null){
-				algorithms.add(algorithm);
-			}
-		}
-		return algorithms;
-	}
-	
 	private ToolParameter[] loadParameters(ProcessDescriptionType pd){
 		if(pd.getIdentifier().getStringValue().contains("buffer")){
 			System.out.println("Buffer"); 
