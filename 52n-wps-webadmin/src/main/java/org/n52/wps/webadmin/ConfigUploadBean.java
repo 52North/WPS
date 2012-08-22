@@ -33,10 +33,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,12 +51,10 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.r.RPropertyChangeManager;
-import org.n52.wps.server.r.R_Config;
 
 /**
  * This Bean handles the fileupload of the xml configuration file
@@ -439,7 +440,22 @@ public class ConfigUploadBean {
 			// if processName is not empty it will the filename (script will be renamed)
 			// because r process IDs are derived from the filenames
 			String processName = newLine.trim();
-			realSavePath = R_Config.SCRIPT_DIR_FULL+"/";
+			
+			/*
+			 * FIXME This is very dirty. Changed from staticly referencing
+			 * the 52n-wps-r module (!!) to generic string property resolving. Nevertheless,
+			 * this is sort of hard-coded. The webadmin module should be completely separated
+			 * from others.
+			 */
+			String scriptDir = "";
+	    	Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass("org.n52.wps.server.r.LocalRAlgorithmRepository");
+	    	for (Property property : rConfig) {
+				if (property.getName().equalsIgnoreCase("Script_Dir")) {
+					scriptDir = property.getStringValue();
+				}
+			}
+			
+			realSavePath = scriptDir+"/";
 			new File(realSavePath).mkdirs();
 			
 			while (i != -1) {
@@ -519,9 +535,24 @@ public class ConfigUploadBean {
 
 						}
 						
-						RPropertyChangeManager rmanager = RPropertyChangeManager.getInstance();
-						LOGGER.info("R script uploaded, call to RPropertyChangeManager");
-						rmanager.addUnregisteredScripts();
+						/*
+						 * FIXME This is very dirty. The webadmin module should be completely separated
+						 * from others. This one points out the need for a generic "reload your configuration"
+						 * convenience method. Changed to java Reflections to remove the static
+						 * 52n-wps-r module reference (though, very hardcoded).
+						 */
+						{
+							LOGGER.info("R script uploaded, call to RPropertyChangeManager");
+							Class<?> clazz = Class.forName("org.n52.wps.server.r.RPropertyChangeManager");
+							Method method = clazz.getMethod("getInstance", null);
+							Object instance = method.invoke(null, null);
+							Method method2 = instance.getClass().getMethod("addUnregisteredScripts", null);
+							method2.invoke(instance, null);
+//							RPropertyChangeManager rmanager = RPropertyChangeManager.getInstance();
+//							LOGGER.info("R script uploaded, call to RPropertyChangeManager");
+//							rmanager.addUnregisteredScripts();
+						}
+						
 					}
 
 				}
@@ -572,8 +603,14 @@ public class ConfigUploadBean {
 		String ops[] = new String[] { "-classpath", sb.toString() };
 
 		List<String> opsIter = new ArrayList<String>();
-		for (String s : ops) {
-			((ArrayList) opsIter).add(URLDecoder.decode(s));
+		try {
+			for (String s : ops) {
+				//XXX test usage, removed use of deprecated method
+	//			((ArrayList) opsIter).add(URLDecoder.decode(s));
+				((ArrayList) opsIter).add(URLDecoder.decode(s, Charset.forName("UTF-8").toString()));
+			}
+		}catch (UnsupportedEncodingException e) {
+			LOGGER.warn(e.getMessage(), e);
 		}
 
 		File[] files1 = new File[1];
