@@ -153,16 +153,23 @@ public class IOUtils {
 	 *             if the unzipping process fails
 	 */
 	public static List<File> unzip(File file, String extension) throws IOException {
+		return unzip(file, extension, null);
+	}
+	
+	public static List<File> unzip(File file, String extension, File directory) throws IOException {
 		int bufferLength = 2048;
 		byte buffer[] = new byte[bufferLength];
 		List<File> foundFiles = new ArrayList<File>();
 		ZipInputStream zipInputStream = new ZipInputStream(
 				new BufferedInputStream(new FileInputStream(file)));
 		ZipEntry entry;
-		File tempDir = File.createTempFile("unzipped" + UUID.randomUUID(), "", new File(System
-				.getProperty("java.io.tmpdir")));
-		tempDir.delete();
-		tempDir.mkdir();
+		File tempDir = directory;
+		if (tempDir == null || !directory.isDirectory()) {
+			tempDir = File.createTempFile("unzipped" + UUID.randomUUID(), "", new File(System
+					.getProperty("java.io.tmpdir")));
+			tempDir.delete();
+			tempDir.mkdir();
+		}
 		while ((entry = zipInputStream.getNextEntry()) != null) {
 			int count;
 			File entryFile = new File(tempDir, entry.getName());

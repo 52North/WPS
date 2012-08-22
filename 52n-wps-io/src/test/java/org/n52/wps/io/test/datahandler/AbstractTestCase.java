@@ -12,7 +12,7 @@ import org.n52.wps.io.AbstractIOHandler;
 
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
 
-	private Logger LOGGER = Logger.getLogger(AbstractTestCase.class);
+	protected Logger LOGGER = Logger.getLogger(AbstractTestCase.class);
 	
 	protected String projectRoot;
 

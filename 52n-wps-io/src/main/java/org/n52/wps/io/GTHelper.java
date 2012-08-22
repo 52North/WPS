@@ -33,7 +33,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
@@ -95,7 +94,7 @@ public class GTHelper {
 		for(Property property : attributes){
 			if(property.getValue()!=null){ 
 				String name = property.getName().getLocalPart();
-				Class binding = property.getType().getBinding();
+				Class<?> binding = property.getType().getBinding();
 				if(binding.equals(Envelope.class)){
 					continue;
 				}
@@ -213,7 +212,7 @@ public class GTHelper {
 					if(propertyDescriptor.getName().getLocalPart().equals(originalProperty.getName().getLocalPart())){
 						if(propertyDescriptor instanceof GeometryDescriptor){
 							newData[i] = geometry;
-							System.out.println("Geometry");
+//							System.out.println("Geometry");
 						}else{
 							newData[i] = originalProperty.getValue();
 						}
@@ -221,7 +220,7 @@ public class GTHelper {
 				}
 				
 				if(propertyDescriptor instanceof GeometryDescriptor){
-					System.out.println("Geometry");
+//					System.out.println("Geometry");
 					if(geometry.getGeometryType().equals("Point")){
 						Point[] points = new Point[1];
 						points[0] = (Point)geometry;
@@ -259,14 +258,11 @@ public class GTHelper {
 		
 		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 		SimpleFeature feature = null;
-		Collection<PropertyDescriptor> featureTypeAttributes = featureType.getDescriptors();
+//		Collection<PropertyDescriptor> featureTypeAttributes = featureType.getDescriptors();
 					
 		Object[] newData = new Object[featureType.getDescriptors().size()];
 		
 		int i = 0;
-		
-			
-			
 	
 		if(geometry.getGeometryType().equals("Point")){
 			Point[] points = new Point[1];
@@ -469,8 +465,8 @@ public class GTHelper {
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			int startIndex = domain.indexOf("WEB-INF");
 			if(startIndex<0){				
-				String tmpDirPath = System.getProperty("java.io.tmpdir");				
-				File f = new File(tmpDirPath + File.pathSeparatorChar + uuid+".xsd");
+				File f = File.createTempFile(uuid, ".xsd");
+				f.deleteOnExit();
 				FileWriter writer = new FileWriter(f);
 				writer.write(schema);
 				writer.flush();

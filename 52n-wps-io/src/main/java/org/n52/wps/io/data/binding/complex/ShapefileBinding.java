@@ -3,17 +3,22 @@ package org.n52.wps.io.data.binding.complex;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.IComplexData;
 
 
 public class ShapefileBinding implements IComplexData{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private static Logger LOGGER = Logger.getLogger(ShapefileBinding.class);
 	
 	
@@ -47,31 +52,25 @@ public class ShapefileBinding implements IComplexData{
 		File prj = new File(baseName + ".prj");
 		File zipped = null;
 		try {
-			zipped = org.n52.wps.io.IOUtils.zip(shpFile, shx, dbf, prj);
+			zipped = IOUtils.zip(shpFile, shx, dbf, prj);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 		return zipped;
 
 	}
 	
 	public GTVectorDataBinding getPayloadAsGTVectorDataBinding(){
-		String dirName = "tmp" + UUID.randomUUID();
-		File tempDir = null;
-		
 		try {
 			DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
 			FeatureCollection features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-			System.gc();
-			tempDir.delete();
+//			System.gc(); XXX WTF, dude? System.gc() is the root of evil.
 			return new GTVectorDataBinding(features);
 		} catch (MalformedURLException e) {
-			LOGGER.error("Something went wrong while creating data store.");
-			e.printStackTrace();
+			LOGGER.error("Something went wrong while creating data store.", e);
 			throw new RuntimeException("Something went wrong while creating data store.", e);
 		} catch (IOException e) {
-			LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
-			e.printStackTrace();
+			LOGGER.error("Something went wrong while converting shapefile to FeatureCollection", e);
 			throw new RuntimeException("Something went wrong while converting shapefile to FeatureCollection", e);
 		}
 	}
@@ -83,7 +82,6 @@ public class ShapefileBinding implements IComplexData{
 			
 		}
 	}
-	
 	
 	
 }

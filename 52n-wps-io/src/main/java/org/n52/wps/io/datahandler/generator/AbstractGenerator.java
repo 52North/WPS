@@ -36,7 +36,6 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.n52.wps.FormatDocument.Format;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 import org.n52.wps.io.IGenerator;

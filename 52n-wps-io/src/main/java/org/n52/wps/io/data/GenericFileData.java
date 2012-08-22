@@ -190,8 +190,8 @@ public class GenericFileData {
 		Transaction transaction = new DefaultTransaction("create");
 		FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
 		String uuid = UUID.randomUUID().toString();
-		String tmpDirPath = System.getProperty("java.io.tmpdir");
-		File shp = new File(tmpDirPath + File.separator + "Shape_" + uuid + ".shp");
+		File shp = File.createTempFile("Shape_" + uuid, ".shp");
+		shp.deleteOnExit();
 		while (iterator.hasNext()) {
 			SimpleFeature sf = (SimpleFeature) iterator.next();
 			// create SimpleFeatureType
