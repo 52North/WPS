@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.WebProcessingService;
@@ -74,6 +75,15 @@ public class R_Config {
     public static boolean enableBatchStart = false;
 
     private static String batchStartFile = "Rserve.bat";
+    
+    static {
+    	Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
+    	for (Property property : rConfig) {
+			if (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString())) {
+				SCRIPT_DIR = property.getStringValue();
+			}
+		}
+    }
 
     public static RConnection openRConnection() throws RserveException {
         RConnection con = new RConnection(RSERVE_HOST, RSERVE_PORT);

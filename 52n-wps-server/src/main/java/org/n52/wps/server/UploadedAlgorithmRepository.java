@@ -163,6 +163,12 @@ import org.n52.wps.server.request.ExecuteRequest;
 			}
 			return processDescriptionMap.get(processID);
 		}
+
+		@Override
+		public void shutdown() {
+			// TODO Auto-generated method stub
+			
+		}
 		
 
 		

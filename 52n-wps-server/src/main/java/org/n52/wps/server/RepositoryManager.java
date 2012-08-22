@@ -325,4 +325,10 @@ public class RepositoryManager {
     	}
     }
 
+	public void shutdown() {
+		for (IAlgorithmRepository repo : repositories) {
+			repo.shutdown();
+		}
+	}
+
 }

@@ -191,4 +191,11 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		return registeredProcesses.get(processID);
 	}
 
+
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

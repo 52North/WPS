@@ -153,6 +153,12 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		return processDescriptionMap.get(processID);
 	}
 
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 	
 

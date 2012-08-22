@@ -195,4 +195,10 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         return new GenericRProcess(processID).getDescription();
     }
 
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

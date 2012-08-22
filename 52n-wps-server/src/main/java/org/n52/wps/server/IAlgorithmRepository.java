@@ -48,10 +48,11 @@ public interface IAlgorithmRepository {
 	
 	
 	boolean containsAlgorithm(String processID);
-	
-	
 
-
+	/**
+	 * use to free resources
+	 */
+	public void shutdown();
 	
 
 }

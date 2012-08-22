@@ -161,4 +161,10 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		return processDescriptionMap.get(processID);
 	}
 
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
