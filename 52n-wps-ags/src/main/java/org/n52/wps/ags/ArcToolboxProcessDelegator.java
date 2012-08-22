@@ -42,6 +42,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;

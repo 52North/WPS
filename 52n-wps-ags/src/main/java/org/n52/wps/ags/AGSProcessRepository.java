@@ -47,6 +47,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
@@ -88,10 +89,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	 * @return
 	*/
 	public boolean containsAlgorithm(String processID) {
-		if(registeredProcessDescriptions.containsKey(processID)){
-			return true;
-		}
-		return false;
+		return registeredProcessDescriptions.containsKey(processID);
 	}
 	
 	
@@ -101,8 +99,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	 * @return
 	*/
 	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
-		if(!containsAlgorithm(processID)){
-			throw new RuntimeException("Could not allocate Process " + processID);
+		if (!containsAlgorithm(processID)){
+			//TODO returning null should be better than throwing an unexpectable exception. Test if it breaks other parts
+			return null;
 		}
 		// create a unique directory for each instance
 		String randomDirName = AGSProperties.getInstance().getWorkspaceBase() + File.separator + UUID.randomUUID();
@@ -131,9 +130,9 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	}
 	
 	private ToolParameter[] loadParameters(ProcessDescriptionType pd){
-		if(pd.getIdentifier().getStringValue().contains("buffer")){
-			System.out.println("Buffer"); 
-		}
+//		if(pd.getIdentifier().getStringValue().contains("buffer")){
+//			System.out.println("Buffer"); 
+//		}
 		InputDescriptionType[] inputArray = pd.getDataInputs().getInputArray();
 		OutputDescriptionType[] outputArray = pd.getProcessOutputs().getOutputArray();
 		
@@ -306,6 +305,12 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 			registeredProcessDescriptions.put(processID, getAlgorithm(processID, null).getDescription());
 		}
 		return registeredProcessDescriptions.get(processID);
+	}
+
+
+	@Override
+	public void shutdown() {
+		AGSWorkspace.shutdown();
 	}
 	
 	

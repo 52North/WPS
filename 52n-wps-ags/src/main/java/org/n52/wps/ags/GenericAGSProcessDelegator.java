@@ -44,6 +44,8 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.n52.wps.ags.workspace.AGSWorkspace;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
@@ -102,25 +104,25 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 				if(datatype.equalsIgnoreCase("string")){
 					return LiteralStringBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("boolean")){
+				else if(datatype.equalsIgnoreCase("boolean")){
 					return LiteralBooleanBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("float")){
+				else if(datatype.equalsIgnoreCase("float")){
 					return LiteralFloatBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("double")){
+				else if(datatype.equalsIgnoreCase("double")){
 					return LiteralDoubleBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("int")){
+				else if(datatype.equalsIgnoreCase("int")){
 					return LiteralIntBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("integer")){
+				else if(datatype.equalsIgnoreCase("integer")){
 					return LiteralIntBinding.class;
 				}
 			}
 			
 			//Complex Output
-			if(input.isSetComplexData()){
+			else if(input.isSetComplexData()){
 				return GenericFileDataBinding.class;
 			}
 		}
@@ -139,25 +141,25 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 				if(datatype.equalsIgnoreCase("string")){
 					return LiteralStringBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("boolean")){
+				else if(datatype.equalsIgnoreCase("boolean")){
 					return LiteralBooleanBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("float")){
+				else if(datatype.equalsIgnoreCase("float")){
 					return LiteralFloatBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("double")){
+				else if(datatype.equalsIgnoreCase("double")){
 					return LiteralDoubleBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("int")){
+				else if(datatype.equalsIgnoreCase("int")){
 					return LiteralIntBinding.class;
 				}
-				if(datatype.equalsIgnoreCase("integer")){
+				else if(datatype.equalsIgnoreCase("integer")){
 					return LiteralIntBinding.class;
 				}
 			}
 			
 			//Complex Output
-			if(output.isSetComplexOutput()){
+			else if(output.isSetComplexOutput()){
 				return GenericFileDataBinding.class;
 			}
 		}
@@ -202,6 +204,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					
 					String[] valueArray = valueList.toArray(new String[0]);
 					
+					//TODO verify: isnt the input separator acutally an " ; "?
 					this.toolParameters[i] = this.calcToolParameterString(" ", valueArray);
 				}
 				else{
@@ -216,7 +219,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			}
 			
 			//output only parameters
-			if(currentParam.isOutput && !currentParam.isInput){
+			else if(currentParam.isOutput && !currentParam.isInput){
 				if(currentParam.isComplex){
 					String extension = "";
 					if(currentParam.schema != null && currentParam.schema.length()>0){
@@ -315,19 +318,19 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		}
 		
 		//String
-		if (payload instanceof String)
+		else if (payload instanceof String)
 			value = (String) payload;
 		
 		//Float
-		if (payload instanceof Float)
+		else if (payload instanceof Float)
 			value = ((Float)payload).toString();
 
 		//Integer
-		if (payload instanceof Integer)
+		else if (payload instanceof Integer)
 			value = ((Integer)payload).toString();
 		
 		//Double
-		if (payload instanceof Double)
+		else if (payload instanceof Double)
 			value = ((Double)payload).toString();
 		
 		return value;

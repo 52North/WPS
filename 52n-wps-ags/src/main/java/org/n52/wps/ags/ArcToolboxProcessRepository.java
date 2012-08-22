@@ -228,6 +228,12 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		return registeredAlgorithms.get(processID).getProcessDescription();
 	}
+
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 
 

@@ -32,12 +32,15 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 
 public final class AGSProperties {
 	
+	private static final AtomicBoolean FIRST_RUN = new AtomicBoolean(true);
 	private static String workspaceBase;
 	private static String domain;
 	private static String user;
@@ -54,12 +57,13 @@ public final class AGSProperties {
 		
 		LOGGER.info("Reading AGS configuration ...");
 		readAGSProperties();
-		
+
 		if (nativeDCOM){
 			// switch to JINTEGRA native mode
 			LOGGER.info("Switching to JINTEGRA_NATIVE_MODE");
 			System.setProperty("JINTEGRA_NATIVE_MODE", "");
 		}
+		
 	}
 	
 	public static synchronized AGSProperties getInstance(){
@@ -95,7 +99,7 @@ public final class AGSProperties {
 	
 	private void readAGSProperties(){
 		
-		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass("org.n52.wps.ags.AGSProcessRepository");
+		Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(AGSProcessRepository.class.getName());
 		
 		for(Property property : propertyArray){
 			// get IP adress of ArcGIS Server instance
@@ -103,34 +107,34 @@ public final class AGSProperties {
 				ip=property.getStringValue();
 			}
 			// get Domain of ArcGIS Server instance; without a DC: Worstation Name (Windows)
-			if(property.getName().equalsIgnoreCase("DOMAIN")){
+			else if(property.getName().equalsIgnoreCase("DOMAIN")){
 				domain=property.getStringValue();
 			}
 			// get user with access permissions to ArcGIS Server
-			if(property.getName().equalsIgnoreCase("USER")){
+			else if(property.getName().equalsIgnoreCase("USER")){
 				user=property.getStringValue();
 			}
 			// get the corresponding pass
-			if(property.getName().equalsIgnoreCase("PASS")){
+			else if(property.getName().equalsIgnoreCase("PASS")){
 				pass=property.getStringValue();
 			}
 			// get property for DCOM Native Mode
-			if(property.getName().equalsIgnoreCase("DCOM_NATIVE")){
+			else if(property.getName().equalsIgnoreCase("DCOM_NATIVE")){
 				String value = property.getStringValue();
 				if (value.equalsIgnoreCase("TRUE")){
 					nativeDCOM = true;
 				}
 			}
 			// get Workspace base
-			if(property.getName().equalsIgnoreCase("WORKSPACEBASE")){
+			else if(property.getName().equalsIgnoreCase("WORKSPACEBASE")){
 				workspaceBase=property.getStringValue();
 			}
 			// get path to arcobjects.jar
-			if(property.getName().equalsIgnoreCase("ARCOBJECTSJAR")){
+			else if(property.getName().equalsIgnoreCase("ARCOBJECTSJAR")){
 				arcObjectsJar=property.getStringValue();
 			}
 			// get path to process description directory
-			if(property.getName().equalsIgnoreCase("DESCRIBE_PROCESS_DIR")){
+			else if(property.getName().equalsIgnoreCase("DESCRIBE_PROCESS_DIR")){
 				processDescriptionDir=property.getStringValue();
 			}
 			
@@ -150,7 +154,12 @@ public final class AGSProperties {
 		LOGGER.info("  WORKSPACEBASE: " + workspaceBase);
 	}
 	
-	protected void bootstrapArcobjectsJar() {
+	public void bootstrapArcobjectsJar() {
+		
+		/*
+		 * only bootstrap one time
+		 */
+		if (!FIRST_RUN.getAndSet(false)) return;
 		
 		//bootstrap arcobjects.jar
 		LOGGER.info("Bootstrapping ArcObjects: " + arcObjectsJar);
@@ -172,7 +181,7 @@ public final class AGSProperties {
 					
 		}
 		
-		Thread.currentThread().setContextClassLoader(sysloader);
+//		Thread.currentThread().setContextClassLoader(sysloader);
 	}
 
 }

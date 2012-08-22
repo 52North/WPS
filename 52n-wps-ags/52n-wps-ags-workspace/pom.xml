@@ -7,10 +7,12 @@
 		<version>3.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>52n-wps-ags</artifactId>
-	<name>52n-wps-ags</name>
+	<artifactId>52n-wps-ags-workspace</artifactId>
+	<name>52n-wps-ags-workspace</name>
 	<packaging>jar</packaging>
-	<description>ProcessRepository for the ArcGIS server backend.</description>
+	<version>10.0.2</version>
+	<description>52 north 52n-wps-ags-workspace wrapper for ArcObjects</description>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -21,31 +23,19 @@
 	</build>
 	<!-- here are the dependencies of the project -->
 	<dependencies>
-		<!-- Dependencies for Scope 'test' -->
+
 		<dependency>
-			<!-- junit for the unit tests -->
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Dependencies for Scope 'compile' -->
 
 		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-server</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-commons</artifactId>
-		</dependency>
-
-		<!-- pre-compiled AGSWorkspace -->
-		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-ags-workspace</artifactId>
-			<version>10.0.2</version>
+			<groupId>com.esri</groupId>
+			<artifactId>arcobjects</artifactId>
+			<version>10.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>
@@ -61,5 +51,6 @@
 		</repository>
 
 	</repositories>
+
 
 </project>
