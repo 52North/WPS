@@ -178,7 +178,7 @@ public class CoordinateTransformAlgorithm extends
 				for (Coordinate coordinate : coords) {
 					Coordinate k = new Coordinate();
 					k = JTS.transform(coordinate, k, tx);
-					System.out.println(k);
+//					System.out.println(k);
 				}
 				
 				Geometry newGeometry = JTS.transform(geometry, tx);
