@@ -84,6 +84,7 @@ import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
+import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
@@ -706,6 +707,15 @@ public class InputHandler {
 	 */
 	private void handleComplexValueReference(InputType input) throws ExceptionReport{
 		String inputID = input.getIdentifier().getStringValue();
+		
+		/* Streaming based WPS */
+		if (input.getReference().getMimeType().contains("playlist")) {
+			// Just store the playlist url and we are done
+			List<IData> list = new ArrayList<IData>();
+			list.add(new LiteralStringBinding(input.getReference().getHref()));
+			inputData.put(inputID, list);
+			return;
+		}
 		
 		ReferenceStrategyRegister register = ReferenceStrategyRegister.getInstance();
 		InputStream stream = register.resolveReference(input);

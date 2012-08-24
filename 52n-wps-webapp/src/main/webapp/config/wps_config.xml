@@ -230,6 +230,42 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="VectorPlaylistParser" 
+				className="org.n52.wps.io.datahandler.parser.VectorPlaylistParser" 
+				active="true">
+				<Format mimetype="application/x-ogc-playlist+text/xml" 
+					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml" 
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml; subtype=gml/2.1.2" 
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml; subtype=gml/2.1.2.1" 
+					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd"/>
+			</Parser>
+			
+			<Parser name="RasterPlaylistParser" 
+				className="org.n52.wps.io.datahandler.parser.RasterPlaylistParser" 
+				active="true">
+				<Format mimetype="application/x-ogc-playlist+image/tiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/geotiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/geotiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-erdas-hfa" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-netcdf" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/img" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/jpeg" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/png" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-geotiff" 
+					encoding="base64"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
 		
@@ -446,6 +482,40 @@
 				active="false">
 				<Format mimetype="application/octet-stream" />
 			</Generator>
+			<Generator name="VectorPlaylistGenerator" 
+				className="org.n52.wps.io.datahandler.generator.VectorPlaylistGenerator" 
+				active="true">
+				<Format mimetype="application/x-ogc-playlist+text/xml; subtype=gml/2.1.2" 
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml; subtype=gml/2.1.2.1" 
+					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml" 
+					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd"/>
+				<Format mimetype="application/x-ogc-playlist+text/xml" 
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"/>
+			</Generator>
+			<Generator name="RasterPlaylistGenerator" 
+				className="org.n52.wps.io.datahandler.generator.RasterPlaylistGenerator" 
+				active="true">
+				<Format mimetype="application/x-ogc-playlist+image/tiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/geotiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/geotiff" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-erdas-hfa" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-netcdf" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/img" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/jpeg" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+image/png" 
+					encoding="base64"/>
+				<Format mimetype="application/x-ogc-playlist+application/x-geotiff" 
+					encoding="base64"/>
+			</Generator>
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
@@ -466,6 +536,11 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SnapPointsToLinesAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.ndwi</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.streaming.OutputStreamingSimplifyDouglasPeucker</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.streaming.OutputStreamingNDWI</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.streaming.FullStreamingSnapPointsToLines</Property>
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
@@ -983,7 +1058,7 @@
 	<RemoteRepositoryList />
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
-		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+		cacheCapabilites="false" webappPath="52n-wps-webapp" repoReloadInterval="0">
 		<Database />
 	</Server>
 </WPSConfiguration>

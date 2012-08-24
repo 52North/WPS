@@ -58,6 +58,8 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.RasterPlaylistBinding;
+import org.n52.wps.io.data.binding.complex.VectorPlaylistBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
@@ -123,7 +125,9 @@ public class OutputDataItem extends ResponseData {
 			// in case encoding is 
 			// 
 			InputStream stream = null;
-			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)
+				|| (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64) 
+						&& mimeType.toLowerCase().contains("playlist"))) {
 				stream = generator.generateStream(super.obj, mimeType, schema);
 			}
 			
@@ -136,10 +140,9 @@ public class OutputDataItem extends ResponseData {
 				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
 			complexData = output.addNewData().addNewComplexData();
-			if(mimeType.contains("xml") || mimeType.contains("XML")){
-				complexData.set(XmlObject.Factory.parse(stream));
-				stream.close();
-			}else{
+			
+			if (mimeType.toLowerCase().contains("playlist") ||
+					!mimeType.toLowerCase().contains("xml")) {
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document document = builder.newDocument();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -149,6 +152,9 @@ public class OutputDataItem extends ResponseData {
 				baos.close();
 				Node dataNode = document.createTextNode(text);
 				complexData.set(XmlObject.Factory.parse(dataNode));
+   		    } else {
+				complexData.set(XmlObject.Factory.parse(stream));
+				stream.close();
 			}
 			
 		} catch(RuntimeException e) {
@@ -222,6 +228,25 @@ public class OutputDataItem extends ResponseData {
 		if (mimeType != null) {
 			outReference.setMimeType(mimeType);
 		}
+		
+		/* Streaming based WPS */ 
+		if (mimeType.toLowerCase().contains("playlist")) {
+			// The URL is already given, so, just extract it and we are done
+			Class[] supportedBindings = generator.getSupportedDataBindings();
+			
+			if (supportedBindings.length > 0) {
+				Class clazz = supportedBindings[0]; // Playlist Generators support a single data type
+				String storeReference = "";
+				if (clazz.getName().equals("org.n52.wps.io.data.binding.complex.VectorPlaylistBinding")) {
+					storeReference = (String) ((VectorPlaylistBinding) super.obj).getPayload();
+				} else if (clazz.getName().equals("org.n52.wps.io.data.binding.complex.RasterPlaylistBinding")) {
+					storeReference = (String) ((RasterPlaylistBinding) super.obj).getPayload();
+				}								
+				outReference.setHref(storeReference);
+			}
+			return;
+		}
+		
 		IDatabase db = DatabaseFactory.getDatabase();
 		String storeID = reqID + "" + id;
 		

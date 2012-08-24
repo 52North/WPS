@@ -689,8 +689,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	}
 
 	
-	public void update(ISubject subject) {
-		Object state = subject.getState();
+	public void update(Object state) {
 		LOGGER.info("Update received from Subject, state changed to : " + state);
 		StatusType status = StatusType.Factory.newInstance();
 		

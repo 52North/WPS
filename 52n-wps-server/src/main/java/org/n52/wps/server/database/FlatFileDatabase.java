@@ -1,11 +1,11 @@
 /*****************************************************************
-Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2007 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: foerster
  
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -23,15 +23,17 @@ Copyright © 2007 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.server.database;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ConcurrentModificationException;
@@ -157,6 +159,12 @@ public class FlatFileDatabase implements IDatabase {
 					usedMimeType = "tif";
 				}
 			}
+			
+			/* Streaming based WPS */
+			if(mimeType.toLowerCase().contains("playlist")){
+				mimeType = mimeType.split("//+")[0];
+			}
+			
 			String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
 			if(suffix==null){
 				suffix = "dat";
@@ -287,23 +295,49 @@ public class FlatFileDatabase implements IDatabase {
 	}
 
 	public File lookupResponseAsFile(String id) {
-		File f = new File(baseDir);
-		File[] allFiles = f.listFiles();
-		for(File tempFile : allFiles){
-			String fileName = tempFile.getName();
-			if(fileName.equalsIgnoreCase(id)){
-				return tempFile;
-			}
-			String[] splittedName = fileName.split("result");
-			if(splittedName.length==2){
-				if(splittedName[0].startsWith(id) || (splittedName[0]+"result").startsWith(id)){
-					return tempFile;
-				}
-			}
+		File f = new File(baseDir+File.separator+id);
+		if (f.exists()){
+			return f;
 		}
 		return new File(baseDir + File.separator + id);
 	}
-
 	
-
+	/***
+	 * Function to append data to a complex data file
+	 * @param id Name of the file to be updated
+	 * @param stream Content to be appended 
+	 * @return Whether the operation was successful
+	 * @throws IOException 
+	 */
+	public boolean updateComplexValue(String id, InputStream stream) throws IOException{
+		String mimeType = getMimeTypeForStoreResponse(id);
+		String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
+		if(suffix==null){
+			suffix = "dat";
+		}		
+		String fileName = id+"result."+suffix;
+		
+		File f = new File(baseDir+File.separator+fileName);
+		if (!f.exists()){
+			return false;
+		}
+		
+		// Update a plain text file
+		StringBuffer str = new StringBuffer();
+        byte[] b = new byte[4096];
+        for (int i; (i = stream.read(b)) != -1;) {
+            str.append(new String(b, 0, i));
+        }
+		FileWriter fileWritter = new FileWriter(f.getAbsolutePath(),true);
+		BufferedWriter fbw = new BufferedWriter(fileWritter);
+	    try {
+	    	fbw.write(str.toString());
+	        fbw.newLine();
+	    }
+	    finally {
+	      fbw.close();
+	    }
+		return true;
+	}
+	
 }

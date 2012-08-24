@@ -7,7 +7,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
 Copyright (C) 2009 by con terra GmbH
 
 Authors: 
-	Bastian Schäffer, University of Muenster
+	Bastian Schï¿½ffer, University of Muenster
 
 
 
@@ -44,6 +44,10 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.algorithm.streaming.AbstractRasterFullStreamingAlgorithm;
+import org.n52.wps.server.algorithm.streaming.AbstractRasterOutputStreamingAlgorithm;
+import org.n52.wps.server.algorithm.streaming.AbstractVectorFullStreamingAlgorithm;
+import org.n52.wps.server.algorithm.streaming.AbstractVectorOutputStreamingAlgorithm;
 import org.n52.wps.server.request.ExecuteRequest;
 
 
@@ -88,7 +92,7 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	
 	public IAlgorithm getAlgorithm(String className, ExecuteRequest executeRequest) {
 		try {
-			return loadAlgorithm(algorithmMap.get(className));
+			return loadAlgorithm(algorithmMap.get(className), executeRequest);
 		} catch (Exception e) {
 			
 			e.printStackTrace();
@@ -104,8 +108,20 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		return algorithmMap.containsKey(className);
 	}
 	
-	private IAlgorithm loadAlgorithm(String algorithmClassName) throws Exception{
+	private IAlgorithm loadAlgorithm(String algorithmClassName, ExecuteRequest executeRequest) throws Exception{
 		IAlgorithm algorithm = (IAlgorithm)LocalAlgorithmRepository.class.getClassLoader().loadClass(algorithmClassName).newInstance();
+		
+		/* Streaming based WPS */
+		if (algorithm instanceof AbstractVectorOutputStreamingAlgorithm) {
+			((AbstractVectorOutputStreamingAlgorithm) algorithm).setExecuteRequest(executeRequest);
+		} else if (algorithm instanceof AbstractRasterOutputStreamingAlgorithm) {
+			((AbstractRasterOutputStreamingAlgorithm) algorithm).setExecuteRequest(executeRequest);
+		} else if (algorithm instanceof AbstractVectorFullStreamingAlgorithm) {
+			((AbstractVectorFullStreamingAlgorithm) algorithm).setExecuteRequest(executeRequest);
+		} else if (algorithm instanceof AbstractRasterFullStreamingAlgorithm) {
+			((AbstractRasterFullStreamingAlgorithm) algorithm).setExecuteRequest(executeRequest);
+		}		
+				
 		if(!algorithm.processDescriptionIsValid()) {
 			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);
 			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
@@ -159,14 +175,5 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		
 	}
 
-	
-	
-
-	
-
-	
-
-
-	
 
 }

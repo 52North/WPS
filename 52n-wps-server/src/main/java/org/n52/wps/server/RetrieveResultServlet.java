@@ -43,6 +43,8 @@ import org.apache.axiom.om.util.CopyUtils;
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.database.FlatFileDatabase;
+import org.n52.wps.server.database.FolderDatabase;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.request.ExecuteRequest;
 
@@ -65,6 +67,18 @@ public class RetrieveResultServlet extends HttpServlet {
 		}
 		String id = req.getParameter("id");
 		
+		/* Streaming based WPS */
+		Boolean bFolder = id.toLowerCase().startsWith("dir");
+		String folder=null;
+		IDatabase db = null;
+		if (bFolder) {
+			id = id.substring(3);
+			folder = id.split("_")[0];
+			db = FolderDatabase.getInstance(); 
+		}
+		else{
+			db = FlatFileDatabase.getInstance();
+		}
 		
 		OutputStream os = res.getOutputStream();
 		if(id == null || id.equals("")) {
@@ -74,15 +88,10 @@ public class RetrieveResultServlet extends HttpServlet {
 			PrintWriter pw = new PrintWriter(os);
 			pw.write("<html><title>52n WPS - id not found</title><body><H1>ID not found: " + id + "<H1></body></html>");
 		}
-		IDatabase db = DatabaseFactory.getDatabase();
+
 		//set appropriate mimetype for result
 		String mimeType = db.getMimeTypeForStoreResponse(id);
 		res.setContentType(mimeType);
-		//look up result
-		//InputStream is = db.lookupResponse(id);
-		//write result to output
-		
-		//IOUtils.copy(is, os);
 		
 		String suffix = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
 		if(suffix==null){
@@ -91,8 +100,14 @@ public class RetrieveResultServlet extends HttpServlet {
 		// Not Supported workaround -> removed.
 		File file = db.lookupResponseAsFile(id+"result."+suffix);
 		String fileName = URLEncoder.encode(file.getName());
-		String redirect = "Databases/FlatFile/"+fileName;
 		
+		String redirect;
+		if (bFolder){
+			redirect = "Databases/Folder/"+folder+"/"+fileName;
+		}
+		else{
+			redirect = "Databases/FlatFile/"+fileName;
+		}
 		res.sendRedirect(redirect);
 		res.flushBuffer();
 //		
