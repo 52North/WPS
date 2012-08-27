@@ -1,7 +1,5 @@
 package org.n52.wps.server.algorithm.streaming;
 
-import org.n52.wps.server.observerpattern.ISubject;
-
 public class FullStreamingSnapPointsToLines extends AbstractVectorFullStreamingAlgorithm {
 
 	@Override

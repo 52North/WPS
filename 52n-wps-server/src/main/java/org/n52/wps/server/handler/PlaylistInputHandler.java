@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -76,9 +77,9 @@ public class PlaylistInputHandler implements ISubject {
 	 * @param playlistURL
 	 * 						URL of the playlist to be read
 	 * @param period
-	 * 						Period in miliseconds to reload the playlist
+	 * 						Period in milliseconds to reload the playlist
 	 * @param maxTimeIdle
-	 * 						Max time in miliseconds not receiving new data 
+	 * 						Max time in milliseconds not receiving new data 
 	 */
 	public void start(String playlistURL, int period, int maxTimeIdle) {
 		
@@ -91,7 +92,8 @@ public class PlaylistInputHandler implements ISubject {
 		builder.setAllowPoolingConnection(true)
 			//.setExecutorService(Executors.newFixedThreadPool(20)) // Bounded pool if preferred
 			.setIdleConnectionInPoolTimeoutInMs(maxTimeIdle)			
-			.setIdleConnectionTimeoutInMs(maxTimeIdle);
+			.setIdleConnectionTimeoutInMs(maxTimeIdle)
+			.setFollowRedirects(true);
 		client = new AsyncHttpClient(builder.build());
 		
 		readPlaylist();
@@ -147,7 +149,16 @@ public class PlaylistInputHandler implements ISubject {
 		    
 		    /* Define its callback handler */
 		    f.addListener(new Runnable() {
-		        public void run() {		        	
+		        public void run() {		    
+		        	Response response;
+					try {
+						response = f.get();
+					} catch (InterruptedException e) {
+						throw new RuntimeException("Could not read from a playlist item's response.", e);
+					} catch (ExecutionException e) {
+						throw new RuntimeException("Could not read from a playlist item's response.", e);
+					}
+
 		        	LOGGER.info("Playlist request Complete!");
 		            totalRequestsCompleted += 1;
 		            
@@ -155,12 +166,8 @@ public class PlaylistInputHandler implements ISubject {
 		            	InputStream stream = null;
 						
 						try {
-							stream = f.get().getResponseBodyAsStream();
+							stream = response.getResponseBodyAsStream();
 						} catch (IOException e) {
-							throw new RuntimeException("Could not read from a playlist item's response.", e);
-						} catch (InterruptedException e) {
-							throw new RuntimeException("Could not read from a playlist item's response.", e);
-						} catch (ExecutionException e) {
 							throw new RuntimeException("Could not read from a playlist item's response.", e);
 						}
 						
@@ -277,7 +284,7 @@ public class PlaylistInputHandler implements ISubject {
 				            @Override
 				            public Response onCompleted(Response response) throws Exception {
 				            	LOGGER.info("Chunk response Complete!");
-				                return response;
+				            	return response;
 				            }
 
 				            @Override
@@ -291,20 +298,25 @@ public class PlaylistInputHandler implements ISubject {
 				    
 				    f.addListener(new Runnable() {
 				        public void run() {
-				        	LOGGER.info("Chunk request Complete!");
-				            totalRequestsCompleted += 1;
-				            InputStream stream = null;
-				            
+				        	Response response;
 							try {
-								stream = f.get().getResponseBodyAsStream();
-							} catch (IOException e) {
-								throw new RuntimeException("Could not read from a playlist item's response.", e);
+								response = f.get();
 							} catch (InterruptedException e) {
 								throw new RuntimeException("Could not read from a playlist item's response.", e);
 							} catch (ExecutionException e) {
 								throw new RuntimeException("Could not read from a playlist item's response.", e);
 							}
 							
+				        	LOGGER.info("Chunk request Complete!");
+				            totalRequestsCompleted += 1;
+				            InputStream stream = null;
+				            
+							try {
+								stream = response.getResponseBodyAsStream();
+							} catch (IOException e) {
+								throw new RuntimeException("Could not read from a playlist item's response.", e);
+							}
+						
 							handleChunk(stream);
 				        }
 				    }, client.getConfig().executorService());
