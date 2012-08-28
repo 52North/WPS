@@ -37,6 +37,14 @@ import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
+/**
+ * Class to define output streaming for rasters.
+ * The response is sent right away, the data are split and processed in 
+ *  another thread. Intermediate results' URLs are appended to a playlist
+ * 
+ * @author gcarrillo
+ *
+ */
 public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSelfDescribingAlgorithm implements Runnable {
 
 	private AbstractSelfDescribingAlgorithm delegate;
@@ -49,47 +57,59 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 	public abstract String getOutputIdentifier();
 	
 	protected static Logger LOGGER = Logger.getLogger(AbstractRasterOutputStreamingAlgorithm.class);
-	long start; 
+	//long start; 
 	
-	public AbstractRasterOutputStreamingAlgorithm(){
+	public AbstractRasterOutputStreamingAlgorithm() {
 		initDelegate();
 	}
 	
-	public void initDelegate(){
-		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
+	/**
+	 *	Gets the base algorithm. It is not placed in the constructor because 
+	 *   it can be called by other methods before.  
+	 */
+	public void initDelegate() {
+		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager
+			.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
 	}
 	
-	public void setExecuteRequest(ExecuteRequest executeRequest){
+	/**
+	 * Makes the executeRequest available in the algorithm's class
+	 * 
+	 * @param executeRequest
+	 */
+	public void setExecuteRequest(ExecuteRequest executeRequest) {
 		this.executeRequest = executeRequest;
 	}
 	
-	public AbstractRasterOutputStreamingAlgorithm runnableAlgorithm() {
-		return this;
-	}
-	
-	
+	/**
+	 * Business logic
+	 */
 	@Override
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		
-		start = System.nanoTime(); 
-		LOGGER.info("Run method called...");
+		//start = System.nanoTime(); 
+		//LOGGER.info("Run method called...");
 		
 		Map<String,String> format = getOutputFormat(); // Gets mimeType, schema and encoding 
 		
-		// Get the appropriate generator to create output chunks
-		IGenerator chunkGenerator = GeneratorFactory.getInstance().getGenerator(format.get("schema"), format.get("mimeType"), format.get("encoding"), GTRasterDataBinding.class);
+		/* Get the appropriate generator to create output chunks */
+		IGenerator chunkGenerator = GeneratorFactory.getInstance()
+			.getGenerator(format.get("schema"), format.get("mimeType"), 
+					format.get("encoding"), GTRasterDataBinding.class);
 		
-		playlistOutputHandler = new PlaylistOutputHandler(new RasterPlaylistGenerator(), chunkGenerator, format.get("mimeType"), format.get("schema"), format.get("encoding"));
+		playlistOutputHandler = new PlaylistOutputHandler(new RasterPlaylistGenerator(), 
+				chunkGenerator, format.get("mimeType"), format.get("schema"), 
+				format.get("encoding"));
 		
-		// Check at least data and chunks are there
+		/* Check parameters */
 		List<RenderedImage> images = new ArrayList<RenderedImage>(); 
 		Map<String, IData> datasets = new HashMap<String, IData>(); 
-		for (String id : getInputStreamableIdentifiers()){
-			if(inputData==null || !inputData.containsKey(id)){
+		for (String id : getInputStreamableIdentifiers()) {
+			if (inputData==null || !inputData.containsKey(id)) {
 				throw new RuntimeException("Error while allocating input parameters");
 			}		
 			List<IData> dataList = inputData.get(id);
-			if(dataList == null || dataList.size() != 1){
+			if (dataList == null || dataList.size() != 1) {
 				throw new RuntimeException("Error while allocating input parameters");
 			}
 			datasets.put(id, dataList.get(0));
@@ -97,24 +117,24 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 			images.add(gridCoverage.getRenderedImage());
 		}		
 		
-		if(inputData==null || !inputData.containsKey("chunksByRow") || !inputData.containsKey("chunksByColumn")){
+		if (inputData==null || !inputData.containsKey("chunksByRow") || !inputData.containsKey("chunksByColumn")) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}
 		List<IData> chunksDataListRow = inputData.get("chunksByRow");
-		if(chunksDataListRow == null || chunksDataListRow.size() != 1){
+		if (chunksDataListRow == null || chunksDataListRow.size() != 1) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}	
 		List<IData> chunksDataListColumn = inputData.get("chunksByColumn");
-		if(chunksDataListColumn == null || chunksDataListColumn.size() != 1){
+		if (chunksDataListColumn == null || chunksDataListColumn.size() != 1) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}	
 		Integer chunksByRow = ((LiteralIntBinding) chunksDataListRow.get(0)).getPayload();
 		Integer chunksByColumn = ((LiteralIntBinding) chunksDataListColumn.get(0)).getPayload();
-		if (chunksByRow<1 || chunksByColumn<1){
+		if (chunksByRow<1 || chunksByColumn<1) {
 			throw new RuntimeException("The parameters chunksByRow and chunksByColumn must be greater than 0.");
 		}
-		for (RenderedImage image : images){
-			if (chunksByRow>image.getWidth() || chunksByColumn>image.getHeight()){
+		for (RenderedImage image : images) {
+			if (chunksByRow>image.getWidth() || chunksByColumn>image.getHeight()) {
 				throw new RuntimeException("The parameters chunksByRow and chunksByColumn must not be greater than the raster's width and height, respectively.");		
 			}
 		}
@@ -124,8 +144,8 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		String url = null;
 		url = playlistOutputHandler.createPlaylist();
 		    
-		// Start the new thread for processing chunks
-		(new Thread(runnableAlgorithm())).start();
+		/* Start the new thread for processing chunks */
+		(new Thread(this)).start();
 	
 		Map<String, IData> result = new HashMap<String, IData>();
 		result.put("result", new RasterPlaylistBinding(url));
@@ -133,12 +153,15 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		return result;
 	}
 	
+	/**
+	 * New thread's run method
+	 */
 	@Override
 	public void run() {
 		// Get the data
 		List<RenderedImage> images = new ArrayList<RenderedImage>(); 
 		Map<String, IData> datasets = new HashMap<String, IData>(); 
-		for (String id : getInputStreamableIdentifiers()){
+		for (String id : getInputStreamableIdentifiers()) {
 			List<IData> dataList = inputData.get(id);
 			datasets.put(id, dataList.get(0));
 		}		
@@ -151,8 +174,8 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		
 		splitInputData(datasets, chunksByRow, chunksByColumn);
 		
-		double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
-		LOGGER.info("Chunks finished: " +  elapsedTimeInSec);
+		//double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
+		//LOGGER.info("Chunks finished: " +  elapsedTimeInSec);
 	}
 
 	
@@ -162,7 +185,6 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		GridCoverage2D gridCoverage = (GridCoverage2D) datasets.get(getInputStreamableIdentifiers().get(0)).getPayload();
 		RenderedImage image = gridCoverage.getRenderedImage();
 		
-		// Prepare some variables to call the process
 		int noOfChunk = 1;
 		
 		// Create a tile-based image
@@ -176,18 +198,18 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		final CoverageProcessor processor= CoverageProcessor.getInstance();
 		final ParameterValueGroup param = processor.getOperation("CoverageCrop").getParameters();
 		
-		for (int col=0; col<chunksByColumn; col++){
-			for (int row=0; row<chunksByRow; row++){
+		for (int col=0; col<chunksByColumn; col++) {
+			for (int row=0; row<chunksByRow; row++) {
 				minX = (double) row * tWidth;
 				minY = (double) col * tHeight;
 				
-				if (row==chunksByRow-1){
+				if (row==chunksByRow-1) {
 					w = (double) width - minX;
 				}
 				else{
 					w = tWidth - 1;
 				}
-				if (col==chunksByColumn-1){
+				if (col==chunksByColumn-1) {
 					h = (double) height - minY;
 				}
 				else{
@@ -209,14 +231,15 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 				Envelope envelope = new ReferencedEnvelope(internalEnvelope, gridCoverage.getCoordinateReferenceSystem());
 
 				// Iterate through all images and crop them
-				for (String id : getInputStreamableIdentifiers()){
+				for (String id : getInputStreamableIdentifiers()) {
 					GridCoverage2D coverage = (GridCoverage2D) datasets.get(id).getPayload();
 					param.parameter("Source").setValue( coverage );
 					param.parameter("Envelope").setValue( envelope );
 					GridCoverage2D output = (GridCoverage2D) processor.doOperation(param);
 					chunkList.put(id, new GTRasterDataBinding(output));
 				}				
-				// Process the chunk (TODO Start a new thread here?)
+				
+				// Process the chunk (Start a new thread here?)
 				processChunkList(chunkList, noOfChunk);
 				noOfChunk = noOfChunk + 1;
 			}
@@ -225,44 +248,44 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		playlistOutputHandler.closePlaylist();
 	}
 
-	
-	/*
-	 * Prepares and processes input data, and updates the playlist afterwards
-	 */
-	public void processChunkList(Map<String, IData> splittedData, int noOfChunk){
-		// Prepare the new input data
+	public void processChunkList(Map<String, IData> splittedData, int noOfChunk) {
+		
+		/* Create input data as expected by the base algorithm */ 
 		Map<String, List<IData>> inputDataChunk = new HashMap<String, List<IData>>();
-		for (String id : getInputStreamableIdentifiers()){
+		for (String id : getInputStreamableIdentifiers()) {
 			inputDataChunk.put(id, new ArrayList<IData>(Arrays.asList(splittedData.get(id))));	
 		}
-		for (String key : inputData.keySet()){
+		for (String key : inputData.keySet()) {
 			if (!getInputStreamableIdentifiers().contains(key) &&
-					!key.equalsIgnoreCase("chunksByRow") && !key.equalsIgnoreCase("chunksByColumn")){
+					!key.equalsIgnoreCase("chunksByRow") && !key.equalsIgnoreCase("chunksByColumn")) {
 				inputDataChunk.put(key, inputData.get(key));
 			}
 		}
 		
 		try{
 			// Process and store the chunk
-			if (!playlistOutputHandler.isClosed){ // Is it worth processing incoming chunks? 
+			if (!playlistOutputHandler.isClosed) { // Is it worth processing incoming chunks? 
 				Map<String, IData> result = delegate.run(inputDataChunk);
-				if (result.get(getOutputIdentifier()) == null){
+				
+				if (result.get(getOutputIdentifier()) == null) {
 					throw new RuntimeException("Error while allocating intermediate results");
 				}
 				playlistOutputHandler.appendChunk(result.get(getOutputIdentifier()), Integer.toString(noOfChunk));
 			} else{
 				LOGGER.warn("Output playlist already closed, skipping processing.");
 			}
-		} catch(RuntimeException e){
+		} catch(RuntimeException e) {
 			handleException(e);
 		}
 	}
 	
-	
-	private Map<String, String> getOutputFormat(){
-		// Get output parameter's mimeType, encoding and schema
-		// I guess this method could be offered in the ExecuteResponseBuilder 
-		
+	/**
+	 * Get output parameter's mimeType, encoding, and schema. I guess this 
+	 *  method could be offered in the ExecuteResponseBuilder class
+	 * 
+	 * @return HashMap with mimeType, encoding, and schema
+	 */
+	private Map<String, String> getOutputFormat() {
 		String mimeType = null;
 		String schema = null;
 		String encoding = null;
@@ -281,10 +304,10 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		}	
 	 
 		// If not, get mimeType/encoding/schema from the process description		
-		if (mimeType == null && schema == null && encoding == null){
+		if (mimeType == null && schema == null && encoding == null) {
 			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			for (OutputDescriptionType output : outputDescs){
-				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))){
+			for (OutputDescriptionType output : outputDescs) {
+				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))) {
 					ComplexDataDescriptionType descType = output.getComplexOutput().getDefault().getFormat();
 					mimeType = descType.getMimeType();
 					schema = descType.getSchema();
@@ -319,10 +342,9 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 
 	@Override
 	public Class getInputDataType(String id) {
-		if(id.equalsIgnoreCase("chunksByRow") || id.equalsIgnoreCase("chunksByColumn")){
+		if (id.equalsIgnoreCase("chunksByRow") || id.equalsIgnoreCase("chunksByColumn")) {
 			return LiteralIntBinding.class;
-		}
-		else {
+		} else {
 			initDelegate();
 			return delegate.getInputDataType(id);
 		}
@@ -333,8 +355,17 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		return RasterPlaylistBinding.class;
 	}
 	
-	private synchronized void handleException(RuntimeException e){
-		if (!playlistOutputHandler.isClosed){
+	/**
+	 * Takes care of exceptions while processing chunks. These exceptions are
+	 *  notified via the playlist, rather than the regular response document.
+	 *  This method is executed only by one thread at once, other threads are
+	 *  blocked for preventing multiple notifications
+	 * 
+	 * @param e
+	 * 			The exception whose URL will be appended to the playlist
+	 */
+	private synchronized void handleException(RuntimeException e) {
+		if (!playlistOutputHandler.isClosed) {
 			ExceptionReport exception = new ExceptionReport(e.getMessage(),	"NoApplicableCode", e);
 			playlistOutputHandler.appendException(exception);
 			playlistOutputHandler.closePlaylist();

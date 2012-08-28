@@ -709,7 +709,7 @@ public class InputHandler {
 		String inputID = input.getIdentifier().getStringValue();
 		
 		/* Streaming based WPS */
-		if (input.getReference().getMimeType().contains("playlist")) {
+		if (input.getReference().getMimeType().contains(IOHandler.MIME_TYPE_PLAYLIST)) {
 			// Just store the playlist url and we are done
 			List<IData> list = new ArrayList<IData>();
 			list.add(new LiteralStringBinding(input.getReference().getHref()));

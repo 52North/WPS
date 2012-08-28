@@ -19,13 +19,8 @@ public class FullStreamingSnapPointsToLines extends AbstractVectorFullStreamingA
 
 	@Override
 	public int getTimeSlot() {
-		return 1000; // In miliseconds
+		/* How often should the playlist be read if it is still open */
+		return 1000; // In milliseconds
 	}
-
-	@Override
-	public int getDefaultMaxTimeIdle() {
-		return 10000; // In miliseconds
-	}
-
 
 }

@@ -37,10 +37,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ConcurrentModificationException;
-import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RetrieveResultServlet;
@@ -161,7 +161,7 @@ public class FlatFileDatabase implements IDatabase {
 			}
 			
 			/* Streaming based WPS */
-			if(mimeType.toLowerCase().contains("playlist")){
+			if(mimeType.toLowerCase().contains(IOHandler.MIME_TYPE_PLAYLIST)){
 				mimeType = mimeType.split("//+")[0];
 			}
 			
@@ -304,8 +304,11 @@ public class FlatFileDatabase implements IDatabase {
 	
 	/***
 	 * Function to append data to a complex data file
-	 * @param id Name of the file to be updated
-	 * @param stream Content to be appended 
+	 * 
+	 * @param id 
+	 * 				Name of the file to be updated
+	 * @param stream 
+	 * 				Content to be appended 
 	 * @return Whether the operation was successful
 	 * @throws IOException 
 	 */

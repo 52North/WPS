@@ -38,6 +38,7 @@ public interface IOHandler {
 	//public static final String DEFAULT_MIMETYPE = "text/xml";
 	
 	public static final String MIME_TYPE_ZIPPED_SHP = "application/x-zipped-shp";
+	public static final String MIME_TYPE_PLAYLIST = "application/x-ogc-playlist";
 	
 	public boolean isSupportedSchema(String schema);
 	public boolean isSupportedFormat(String format);

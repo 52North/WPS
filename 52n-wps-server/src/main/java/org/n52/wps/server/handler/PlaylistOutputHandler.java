@@ -44,7 +44,7 @@ public class PlaylistOutputHandler  {
 	/**
 	 * Creates a PlaylistOutputHandler 
 	 */
-	public PlaylistOutputHandler(IGenerator playlistGenerator, IGenerator chunkGenerator, String mimeType, String schema, String encoding){
+	public PlaylistOutputHandler(IGenerator playlistGenerator, IGenerator chunkGenerator, String mimeType, String schema, String encoding) {
 		this.playlistGenerator = playlistGenerator;
 		this.chunkGenerator = chunkGenerator;
 		this.mimeType = mimeType;
@@ -65,7 +65,7 @@ public class PlaylistOutputHandler  {
 		try {
 			stream = playlistGenerator.generateStream(null, null, null);
 			url = ffdb.storeComplexValue(playlistId, stream, "ComplexDataResponse", 
-					"application/x-ogc-playlist");
+					IOHandler.MIME_TYPE_PLAYLIST);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -84,7 +84,7 @@ public class PlaylistOutputHandler  {
 	 * 						Chunk's Id
 	 * @return Whether the URL was appended or not
 	 */
-	public boolean appendChunk(IData resultChunk, String chunkId){
+	public boolean appendChunk(IData resultChunk, String chunkId) {
 		String url = storeChunk(resultChunk, playlistId+"_chunk"+chunkId);
 		updatePlaylist(url);
 		return true;
@@ -97,7 +97,7 @@ public class PlaylistOutputHandler  {
 	 * 					ExceptionReport containing the exception information
 	 * @return Whether the exception item was appended or not
 	 */
-	public boolean appendException(ExceptionReport exception){	    
+	public boolean appendException(ExceptionReport exception) {	    
 		/* Store the exception report */
 	    ExceptionReportDocument doc = exception.getExceptionDocument();
 	    InputStream docStream = new ByteArrayInputStream(doc.toString().getBytes());
@@ -119,8 +119,8 @@ public class PlaylistOutputHandler  {
 	 * 
 	 * @return Whether the playlist was closed or not
 	 */
-	public boolean closePlaylist(){
-		if (!isClosed){
+	public boolean closePlaylist() {
+		if (!isClosed) {
 			isClosed = true;
 			updatePlaylist(endTag);
 			return true;
@@ -136,10 +136,10 @@ public class PlaylistOutputHandler  {
 	 */
 	private boolean updatePlaylist(String item) {
 		IData data = null;
-		if (playlistGenerator.isSupportedDataBinding(VectorPlaylistBinding.class)){
+		if (playlistGenerator.isSupportedDataBinding(VectorPlaylistBinding.class)) {
 			data = new VectorPlaylistBinding(item);
 		}
-		else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)){
+		else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)) {
 			data = new RasterPlaylistBinding(item);
 		}
 		
@@ -163,18 +163,18 @@ public class PlaylistOutputHandler  {
 	 * 					Chunk's Id
 	 * @return Chunk's URL
 	 */
-	private String storeChunk(IData data, String chunkId){
+	private String storeChunk(IData data, String chunkId) {
 		InputStream stream = null;
 
 		try {
-			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
 				stream = chunkGenerator.generateStream(data, mimeType, schema);
-			} else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+			} else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
 				stream = chunkGenerator.generateBase64Stream(data, mimeType, schema);
 			} else {
 				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
-		} catch (IOException e){
+		} catch (IOException e) {
 			try {
 				throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 			} catch (ExceptionReport e1) {

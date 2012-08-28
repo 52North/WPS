@@ -117,7 +117,8 @@ public class SnapPointsToLinesAlgorithm extends AbstractSelfDescribingAlgorithm 
 		/*
 		 * If not provided, the maximum distance that a line can be from a point
 		 * to be a candidate for snapping is set to the diagonal distance of the
-		 * lines BBOX 
+		 * lines BBOX (as implemented now, this parameter is always given, since 
+		 * it is mandatory)
 		 */
 		if (maxDistance == null){
 			ReferencedEnvelope bounds = lineCollection.getBounds();
@@ -168,10 +169,7 @@ public class SnapPointsToLinesAlgorithm extends AbstractSelfDescribingAlgorithm 
 				if (minDistPoint == null) {
 					// No line close enough to snap the point to
 					LOGGER.info(pointCoords + "- X");
-				} else {
-					//PrecisionModel precisionModel = pointGeometry.getPrecisionModel();
-					//int SRID = pointGeometry.getSRID();
-					
+				} else {					
 					Point snappedPoint = factory.createPoint(minDistPoint);
 					if (snappedPoint != null) {
 						if(count==0){

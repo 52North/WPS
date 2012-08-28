@@ -10,7 +10,6 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.binding.complex.RasterPlaylistBinding;
 
 public class RasterPlaylistParser extends AbstractParser {
-	private static Logger LOGGER = Logger.getLogger(RasterPlaylistParser.class);
 		
 	public RasterPlaylistParser() {
 		super();

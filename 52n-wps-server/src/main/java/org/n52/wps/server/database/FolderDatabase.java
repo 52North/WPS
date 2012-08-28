@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.server.RetrieveResultServlet;
 import org.n52.wps.server.WebProcessingService;
@@ -77,7 +78,7 @@ public class FolderDatabase implements IDatabase {
 			}
 			
 			/* Streaming based WPS */
-			if(mimeType.toLowerCase().contains("playlist")){
+			if(mimeType.toLowerCase().contains(IOHandler.MIME_TYPE_PLAYLIST)){
 				mimeType = mimeType.split("//+")[0];
 			}
 			
@@ -86,6 +87,7 @@ public class FolderDatabase implements IDatabase {
 				suffix = "dat";
 			}
 			
+			/* Get folder's and file's name from the id */
 			String[] splittedId  = id.split(separator);
 			String folder = "";
 			String file = "";
@@ -125,6 +127,7 @@ public class FolderDatabase implements IDatabase {
 	}
 
 	public String generateRetrieveResultURL(String id) {
+		/* Prefix 'dir' to the id for distinguishing folder based id's */
 		return "http://" + 
 		WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":" + 
 		WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/" + 
@@ -155,7 +158,6 @@ public class FolderDatabase implements IDatabase {
 		return true;
 	}
 
-	
 	public File lookupResponseAsFile(String id) {
 		String[] splittedId = id.split(separator);
 		

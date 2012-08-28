@@ -9,7 +9,6 @@ import java.util.Map;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.impl.OutputDescriptionTypeImpl;
 
 import org.apache.log4j.Logger;
 import org.geotools.feature.DefaultFeatureCollections;
@@ -28,10 +27,16 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.handler.PlaylistOutputHandler;
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.server.response.ExecuteResponseBuilder;
-import org.n52.wps.util.XMLBeansHelper;
 import org.opengis.feature.simple.SimpleFeature;
 
+/**
+ * Class to define output streaming for vectors.
+ * The response is sent right away, the data are split and processed in 
+ *  another thread. Intermediate results' URLs are appended to a playlist
+ * 
+ * @author gcarrillo
+ *
+ */
 public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSelfDescribingAlgorithm implements Runnable {
 
 	private AbstractSelfDescribingAlgorithm delegate;
@@ -44,58 +49,70 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 	public abstract String getOutputIdentifier();
 	
 	protected static Logger LOGGER = Logger.getLogger(AbstractVectorOutputStreamingAlgorithm.class);
-	long start; 
+	//long start; 
 	
-	public AbstractVectorOutputStreamingAlgorithm(){
+	public AbstractVectorOutputStreamingAlgorithm() {
 		initDelegate();
 	}
 	
-	public void initDelegate(){
-		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
+	/**
+	 *	Gets the base algorithm. It is not placed in the constructor because 
+	 *   it can be called by other methods before.  
+	 */
+	public void initDelegate() {
+		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager
+			.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
 	}
 	
-	public void setExecuteRequest(ExecuteRequest executeRequest){
+	/**
+	 * Makes the executeRequest available in the algorithm's class
+	 * 
+	 * @param executeRequest
+	 */
+	public void setExecuteRequest(ExecuteRequest executeRequest) {
 		this.executeRequest = executeRequest;
 	}
 	
-	public AbstractVectorOutputStreamingAlgorithm runnableAlgorithm() {
-		return this;
-	}
-	
+	/**
+	 * Business logic
+	 */
 	@Override
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		
-		start = System.nanoTime(); 
-		LOGGER.info("Run method called...");
+		//start = System.nanoTime(); 
+		//LOGGER.info("Run method called...");
 		
 		Map<String,String> format = getOutputFormat(); // Gets mimeType, schema and encoding 
 		
-		// Get the appropriate generator to create output chunks
-		IGenerator chunkGenerator = GeneratorFactory.getInstance().getGenerator(format.get("schema"), format.get("mimeType"), format.get("encoding"), GTVectorDataBinding.class);
+		/* Get the appropriate generator to create output chunks */
+		IGenerator chunkGenerator = GeneratorFactory.getInstance()
+			.getGenerator(format.get("schema"), format.get("mimeType"), 
+					format.get("encoding"), GTVectorDataBinding.class);
 		
-		playlistOutputHandler = new PlaylistOutputHandler(new VectorPlaylistGenerator(), chunkGenerator, format.get("mimeType"), format.get("schema"), format.get("encoding"));
+		playlistOutputHandler = new PlaylistOutputHandler(new VectorPlaylistGenerator(), 
+				chunkGenerator, format.get("mimeType"), format.get("schema"), 
+				format.get("encoding"));
 		
-		
-		// Check at least "data" and "NumberOfChunks" are there
-		if(inputData==null || !inputData.containsKey(getInputStreamableIdentifier())){
+		/* Check parameters */
+		if (inputData==null || !inputData.containsKey(getInputStreamableIdentifier())) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}
 		List<IData> dataList = inputData.get(getInputStreamableIdentifier());
-		if(dataList == null || dataList.size() != 1){
+		if (dataList == null || dataList.size() != 1) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}
 		IData data = dataList.get(0);
 		FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) data).getPayload();
 		
-		if(inputData==null || !inputData.containsKey("NumberOfChunks")){
+		if (inputData==null || !inputData.containsKey("NumberOfChunks")) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}
 		List<IData> chunksDataList = inputData.get("NumberOfChunks");
-		if(chunksDataList == null || chunksDataList.size() != 1){
+		if (chunksDataList == null || chunksDataList.size() != 1) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}	
 		Integer numberOfChunks = ((LiteralIntBinding) chunksDataList.get(0)).getPayload();
-		if (numberOfChunks<1 || numberOfChunks>featureCollection.size()){
+		if (numberOfChunks<1 || numberOfChunks>featureCollection.size()) {
 			throw new RuntimeException("The parameter Chunks must be greater than 1 but not greater than the number of features");
 		}
 		
@@ -104,15 +121,17 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		String url = null;
 		url = playlistOutputHandler.createPlaylist();
 		    
-		// Start the new thread for processing chunks
-		(new Thread(runnableAlgorithm())).start();
+		/* Start the new thread for processing chunks */
+		(new Thread(this)).start();
 	
 		Map<String, IData> result = new HashMap<String, IData>();
 		result.put("result", new VectorPlaylistBinding(url));
 		return result;
 	}
-	
-	
+		
+	/**
+	 * New thread's run method
+	 */
 	@Override
 	public void run() {
 		// Get the data 
@@ -125,10 +144,9 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		
 		splitInputData(data, numberOfChunks);
 		
-		double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
-		LOGGER.info("Chunks finished: " +  elapsedTimeInSec);
+		//double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
+		//LOGGER.info("Chunks finished: " +  elapsedTimeInSec);
 	}	
-
 
 	public void splitInputData(IData data, Integer numberOfChunks) {
 		
@@ -148,7 +166,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 				featList.add((SimpleFeature) featIterator.next());
 				
 				// Create the chunk now?  
-				if ((i % chunkSize == 0 && noOfChunk < numberOfChunks) || i == totalNumberOfFeatures){
+				if ((i % chunkSize == 0 && noOfChunk < numberOfChunks) || i == totalNumberOfFeatures) {
 					FeatureCollection<?, SimpleFeature> featureCollection = DefaultFeatureCollections.newCollection();
 					featureCollection.addAll(featList);
 					featList.clear();
@@ -159,45 +177,47 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 					noOfChunk=noOfChunk+1;					
 				}
 			}
-		}
-		finally {
+		} finally {
 			featIterator.close();
 			playlistOutputHandler.closePlaylist();
 		}
 	}
 
-	
-	public void processChunk(IData splitData, int noOfChunk){
+	public void processChunk(IData splitData, int noOfChunk) {
 
-		// Create input data 
+		/* Create input data as expected by the base algorithm */ 
 		Map<String, List<IData>> inputDataChunk = new HashMap<String, List<IData>>();
 		inputDataChunk.put(getInputStreamableIdentifier(), new ArrayList<IData>(Arrays.asList(splitData)));			
-		for (String key : inputData.keySet()){
-			if (!key.equalsIgnoreCase(getInputStreamableIdentifier()) && !key.equalsIgnoreCase("NumberOfChunks")){
+		for (String key : inputData.keySet()) {
+			if (!key.equalsIgnoreCase(getInputStreamableIdentifier()) && !key.equalsIgnoreCase("NumberOfChunks")) {
 				inputDataChunk.put(key, inputData.get(key));
 			}
 		}
 
 		try{
 			// Process and store the chunk
-			if (!playlistOutputHandler.isClosed){ // Is it worth processing incoming chunks? 
+			if (!playlistOutputHandler.isClosed) { // Is it worth processing incoming chunks? 
 				Map<String, IData> result = delegate.run(inputDataChunk);
-				if (result.get(getOutputIdentifier()) == null){
+				
+				if (result.get(getOutputIdentifier()) == null) {
 					throw new RuntimeException("Error while allocating intermediate results");
 				}
 				playlistOutputHandler.appendChunk(result.get(getOutputIdentifier()), Integer.toString(noOfChunk));
 			} else{
 				LOGGER.warn("Output playlist already closed, skipping processing.");
 			}
-		} catch(RuntimeException e){
+		} catch(RuntimeException e) {
 			handleException(e);
 		}
 	}
 	
-	private Map<String, String> getOutputFormat(){
-		// Get output parameter's mimeType, encoding and schema
-		// I guess this method could be offered in the ExecuteResponseBuilder 
-		
+	/**
+	 * Get output parameter's mimeType, encoding, and schema. I guess this 
+	 *  method could be offered in the ExecuteResponseBuilder class
+	 * 
+	 * @return HashMap with mimeType, encoding, and schema
+	 */
+	private Map<String, String> getOutputFormat() {
 		String mimeType = null;
 		String schema = null;
 		String encoding = null;
@@ -216,10 +236,10 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		}	
 	 
 		// If not, get mimeType/encoding/schema from the process description		
-		if (mimeType == null && schema == null && encoding == null){
+		if (mimeType == null && schema == null && encoding == null) {
 			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			for (OutputDescriptionType output : outputDescs){
-				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))){
+			for (OutputDescriptionType output : outputDescs) {
+				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))) {
 					ComplexDataDescriptionType descType = output.getComplexOutput().getDefault().getFormat();
 					mimeType = descType.getMimeType();
 					schema = descType.getSchema();
@@ -230,7 +250,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		}		
 		
 		Map<String,String> format = new HashMap<String, String>();
-		format.put("mimeType", mimeType.split("\\+")[1]); //We want the chunk's mimeType 
+		format.put("mimeType", mimeType.split("\\+")[1]); // We want the chunk's mimeType 
 		format.put("schema", schema);
 		format.put("encoding", encoding);		
 		return format;
@@ -253,10 +273,9 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 
 	@Override
 	public Class getInputDataType(String id) {
-		if(id.equalsIgnoreCase("NumberOfChunks")){
+		if (id.equalsIgnoreCase("NumberOfChunks")) {
 			return LiteralIntBinding.class;
-		}
-		else {
+		} else {
 			initDelegate();
 			return delegate.getInputDataType(id);
 		}
@@ -267,8 +286,17 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		return VectorPlaylistBinding.class;
 	}		
 	
-	private synchronized void handleException(RuntimeException e){
-		if (!playlistOutputHandler.isClosed){
+	/**
+	 * Takes care of exceptions while processing chunks. These exceptions are
+	 *  notified via the playlist, rather than the regular response document.
+	 *  This method is executed only by one thread at once, other threads are
+	 *  blocked for preventing multiple notifications
+	 * 
+	 * @param e
+	 * 			The exception whose URL will be appended to the playlist
+	 */
+	private synchronized void handleException(RuntimeException e) {
+		if (!playlistOutputHandler.isClosed) {
 			ExceptionReport exception = new ExceptionReport(e.getMessage(),	"NoApplicableCode", e);
 			playlistOutputHandler.appendException(exception);
 			playlistOutputHandler.closePlaylist();
@@ -278,4 +306,3 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		}
 	}
 }
-

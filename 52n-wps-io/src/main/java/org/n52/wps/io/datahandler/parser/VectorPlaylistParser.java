@@ -10,8 +10,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.binding.complex.VectorPlaylistBinding;
 
 public class VectorPlaylistParser extends AbstractParser {
-	private static Logger LOGGER = Logger.getLogger(VectorPlaylistParser.class);
-		
+	
 	public VectorPlaylistParser() {
 		super();
 		supportedIDataTypes.add(VectorPlaylistBinding.class);

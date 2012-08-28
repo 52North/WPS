@@ -32,12 +32,21 @@ import org.n52.wps.server.handler.PlaylistOutputHandler;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.request.ExecuteRequest;
 
+/**
+ * Class to define full streaming for rasters.
+ * The response is sent right away, input data come in a playlist that is 
+ *  constantly read in another thread, where the data are processed as well. 
+ *  Intermediate results' URLs are appended to an output playlist
+ * 
+ * @author gcarrillo
+ *
+ */
 public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfDescribingAlgorithm implements Runnable, IObserver {
 
 	private AbstractSelfDescribingAlgorithm delegate;
 	private PlaylistOutputHandler playlistOutputHandler;
 	private PlaylistInputHandler playlistInputHandler;
-	private Map<String, List<IData>> inputData;
+	private Map<String, List<IData>> inputData; 
 	private ExecuteRequest executeRequest;
 	private int noOfChunk = 0; // Current chunk's ID
 	private int loadedChunks = 0; // No. of chunks to be processed  
@@ -46,109 +55,132 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 	public abstract String getBaseAlgorithmName();
 	public abstract String getInputStreamableIdentifier();
 	public abstract String getOutputIdentifier();
-	public abstract int getTimeSlot(); // Check the playlist every ... seconds (default: 2 seconds)
-	public abstract int getDefaultMaxTimeIdle(); // Max. time of not receiving new chunks (default: 10 seconds)
+	public abstract int getTimeSlot(); // How often should the playlist be read
 	
 	protected static Logger LOGGER = Logger.getLogger(AbstractRasterFullStreamingAlgorithm.class);
-	long start; 
 	
-	public AbstractRasterFullStreamingAlgorithm(){
+	public AbstractRasterFullStreamingAlgorithm() {
 		initDelegate();
 	}
 	
+	/**
+	 *	Gets the base algorithm. It is not placed in the constructor because 
+	 *   it can be called by other methods before.  
+	 */
 	private void initDelegate() {
-		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
+		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager
+			.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
 	}
 	
-	public void setExecuteRequest(ExecuteRequest executeRequest){
+	/**
+	 * Makes the executeRequest available in the algorithm's class
+	 * 
+	 * @param executeRequest
+	 */
+	public void setExecuteRequest(ExecuteRequest executeRequest) {
 		this.executeRequest = executeRequest;
 	}
 	
-	public AbstractRasterFullStreamingAlgorithm runnableAlgorithm() {
-		return this;
-	}
-	
+	/**
+	 * Business logic
+	 */
 	@Override
-	public Map<String, IData> run(Map<String, List<IData>> inputData) {
-		start = System.nanoTime(); 
-		LOGGER.info("Run method called...");
+	public Map<String, IData> run(Map<String, List<IData>> inputData) { 
 	
-		// Check if there are exceptions with (streaming) parameters
+		/* Check parameters */
 		List<IData> playlistDataList = inputData.get(getInputStreamableIdentifier());
-		if(playlistDataList == null || playlistDataList.size() != 1){
+		if (playlistDataList == null || playlistDataList.size() != 1) {
 			throw new RuntimeException("Error while allocating input parameters");
 		}	
 		
 		Integer maxTimeIdle;
 		List<IData> maxTimeDataList = inputData.get("MaxTimeIdle");
-		if(maxTimeDataList == null || maxTimeDataList.size() != 1){
-			// Do nothing, we will take care of maxTimeDataList afterwards 
-		} else if (maxTimeDataList != null || maxTimeDataList.size() == 1){
-			maxTimeIdle = ((LiteralIntBinding) maxTimeDataList.get(0)).getPayload();
-			if (maxTimeIdle<getTimeSlot() || maxTimeIdle>Integer.MAX_VALUE){
-				throw new RuntimeException(
-						"The parameter maxTimeIdle must be greater than or equal to " 
-						+ getTimeSlot() + " and less than " + Integer.MAX_VALUE 
-						+ " miliseconds.");
-			}
-		}
+		if (maxTimeDataList == null || maxTimeDataList.size() != 1) {
+			throw new RuntimeException("Error while allocating input parameters");
+		} 
+		maxTimeIdle = ((LiteralIntBinding) maxTimeDataList.get(0)).getPayload();
+		if (maxTimeIdle < getTimeSlot() || maxTimeIdle > Integer.MAX_VALUE) {
+			throw new RuntimeException(
+				"The parameter maxTimeIdle must be greater than or equal to " 
+				+ getTimeSlot() + " and less than " + Integer.MAX_VALUE 
+				+ " miliseconds.");
+		}		
 		
 		this.inputData = inputData;
 		
-		// Get input's mimeType, schema and encoding, associated parser and create handler
+		/* Get input's mimeType, schema and encoding, 
+		 * associated parser and create handler */
 		Map<String,String> inputFormat = getInputFormat();
-		Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(getBaseAlgorithmName(), getInputStreamableIdentifier());
-		IParser chunkParser = ParserFactory.getInstance().getParser(inputFormat.get("schema"), inputFormat.get("mimeType"), inputFormat.get("encoding"), algorithmInput);
-		playlistInputHandler = new PlaylistInputHandler(chunkParser, inputFormat.get("mimeType"), inputFormat.get("schema"), inputFormat.get("encoding"));
+		Class algorithmInput = RepositoryManager.getInstance()
+			.getInputDataTypeForAlgorithm(getBaseAlgorithmName(), 
+					getInputStreamableIdentifier());
+		
+		IParser chunkParser = ParserFactory.getInstance()
+			.getParser(inputFormat.get("schema"), inputFormat.get("mimeType"), 
+					inputFormat.get("encoding"), algorithmInput);
+		
+		playlistInputHandler = new PlaylistInputHandler(chunkParser, 
+				inputFormat.get("mimeType"), inputFormat.get("schema"), 
+				inputFormat.get("encoding"));
 		playlistInputHandler.addObserver(this);
 		
-		// Get output's mimeType, schema and encoding, associated generator and create handler
+		/* Get output's mimeType, schema and encoding, 
+		 * associated generator and create handler */
 		Map<String,String> outputFormat = getOutputFormat(); // Get output's mimeType, schema and encoding 
-		IGenerator chunkGenerator = GeneratorFactory.getInstance().getGenerator(outputFormat.get("schema"), outputFormat.get("mimeType"), outputFormat.get("encoding"), GTRasterDataBinding.class);
-		playlistOutputHandler = new PlaylistOutputHandler(new RasterPlaylistGenerator(), chunkGenerator, outputFormat.get("mimeType"), outputFormat.get("schema"), outputFormat.get("encoding"));
+		IGenerator chunkGenerator = GeneratorFactory.getInstance()
+			.getGenerator(outputFormat.get("schema"), 
+					outputFormat.get("mimeType"), outputFormat.get("encoding"),
+					GTRasterDataBinding.class);
 		
+		playlistOutputHandler = new PlaylistOutputHandler(new RasterPlaylistGenerator(), 
+				chunkGenerator, outputFormat.get("mimeType"), 
+				outputFormat.get("schema"), outputFormat.get("encoding"));
 		
 		String url = null;
 		url = playlistOutputHandler.createPlaylist();
 		    
-		// Start the new thread for processing chunks
-		(new Thread(runnableAlgorithm())).start();
+		/* Start the new thread for reading and processing chunks */
+		(new Thread(this)).start();
 	
 		Map<String, IData> result = new HashMap<String, IData>();
 		result.put(getOutputIdentifiers().get(0), new RasterPlaylistBinding(url));
 		return result;
 	}
 	
+	/**
+	 * New thread's run method
+	 */
 	@Override
 	public void run() {
-		// Get the maxTimeIdle from the input data
-		Integer maxTimeIdle;
-		List<IData> maxTimeDataList = inputData.get("MaxTimeIdle");
-		if(maxTimeDataList == null || maxTimeDataList.size() != 1){
-			maxTimeIdle = getDefaultMaxTimeIdle();
-		} else {
-			maxTimeIdle = ((LiteralIntBinding) maxTimeDataList.get(0)).getPayload();
-		}
-		
 		// Get the playlistURL from the input data
 		List<IData> playlistDataList = inputData.get(getInputStreamableIdentifier());			
 		String playlistURL = ((LiteralStringBinding) playlistDataList.get(0)).getPayload(); 
 		
+		// Get the maxTimeIdle from the input data
+		Integer maxTimeIdle;
+		List<IData> maxTimeDataList = inputData.get("MaxTimeIdle");
+		maxTimeIdle = ((LiteralIntBinding) maxTimeDataList.get(0)).getPayload();
+		
 		playlistInputHandler.start(playlistURL, getTimeSlot(), maxTimeIdle);
-		LOGGER.info("Reading playlist...");
+		LOGGER.info("Reading input playlist...");
 	}
 	
-	private Map<String, String> getInputFormat(){
-		// Get input parameter's mimeType, encoding and schema
-		// I guess this method could be offered in the ExecuteResponseBuilder
+	/**
+	 * Get input parameter's mimeType, encoding, and schema. I guess this 
+	 *  method could be offered in the ExecuteResponseBuilder class
+	 * 
+	 * @return HashMap with mimeType, encoding, and schema
+	 */
+	private Map<String, String> getInputFormat() {
 		String mimeType = null;
 		String schema = null;
 		String encoding = null;
 		
+		// Try first from the request itself 
 		InputType[] inputs = executeRequest.getExecute().getDataInputs().getInputArray();
-		for (InputType input:inputs){
-			if (input.getIdentifier().getStringValue().equalsIgnoreCase(getInputStreamableIdentifier())){
-				if (input.getData() != null){
+		for (InputType input:inputs) {
+			if (input.getIdentifier().getStringValue().equalsIgnoreCase(getInputStreamableIdentifier())) {
+				if (input.getData() != null) {
 					mimeType = input.getData().getComplexData().getMimeType();
 					schema = input.getData().getComplexData().getSchema();
 					encoding = input.getData().getComplexData().getEncoding();
@@ -161,19 +193,19 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 			}
 		}
 		
-		// If not, get default format 
-		if (mimeType == null && schema == null && encoding == null){
+		// If not, get mimeType/encoding/schema from the process description
+		if (mimeType == null && schema == null && encoding == null) { 
 			InputDescriptionType[] inputDescs = description.getDataInputs().getInputArray();
-			for (InputDescriptionType input : inputDescs){
-				if (input.getIdentifier().getStringValue().equalsIgnoreCase(getInputStreamableIdentifier())){
+			for (InputDescriptionType input : inputDescs) {
+				if (input.getIdentifier().getStringValue().equalsIgnoreCase(getInputStreamableIdentifier())) {
 					ComplexDataDescriptionType descType = input.getComplexData().getDefault().getFormat();
-					if (mimeType == null){ 
+					if (mimeType == null) { 
 						mimeType = descType.getMimeType();
 					}
-					if (schema == null){ 
+					if (schema == null) { 
 						schema = descType.getSchema();
 					}
-					if (encoding == null){
+					if (encoding == null) {
 						encoding = descType.getEncoding();	
 					}		
 					break;
@@ -188,10 +220,13 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 		return format;
 	}
 	
-	private Map<String, String> getOutputFormat(){
-		// Get output parameter's mimeType, encoding and schema
-		// I guess this method could be offered in the ExecuteResponseBuilder 
-		
+	/**
+	 * Get output parameter's mimeType, encoding, and schema. I guess this 
+	 *  method could be offered in the ExecuteResponseBuilder class
+	 * 
+	 * @return HashMap with mimeType, encoding, and schema
+	 */
+	private Map<String, String> getOutputFormat() {
 		String mimeType = null;
 		String schema = null;
 		String encoding = null;
@@ -210,10 +245,10 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 		}	
 	 
 		// If not, get mimeType/encoding/schema from the process description		
-		if (mimeType == null && schema == null && encoding == null){
+		if (mimeType == null && schema == null && encoding == null) {
 			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			for (OutputDescriptionType output : outputDescs){
-				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))){
+			for (OutputDescriptionType output : outputDescs) {
+				if (output.getIdentifier().getStringValue().equalsIgnoreCase(getOutputIdentifiers().get(0))) {
 					ComplexDataDescriptionType descType = output.getComplexOutput().getDefault().getFormat();
 					mimeType = descType.getMimeType();
 					schema = descType.getSchema();
@@ -247,13 +282,11 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 
 	@Override
 	public Class getInputDataType(String id) {
-		if(id.equalsIgnoreCase("MaxTimeIdle")){
+		if (id.equalsIgnoreCase("MaxTimeIdle")) {
 			return LiteralIntBinding.class;
-		}
-		else if(id.equalsIgnoreCase(getInputStreamableIdentifier())){
+		} else if (id.equalsIgnoreCase(getInputStreamableIdentifier())) {
 			return RasterPlaylistBinding.class;
-		}
-		else {
+		} else {
 			initDelegate();
 			return delegate.getInputDataType(id);
 		}
@@ -264,61 +297,78 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 		return RasterPlaylistBinding.class;
 	}
 
+	/**
+	 * Observer pattern's update method
+	 */
 	@Override
 	public void update(Object state) {
-		if (!playlistOutputHandler.isClosed){
-			// State holds 3 kinds of obects: Spatial data chunk, playlist finished, exception
-			if (state instanceof String){
-				String stringState = (String)state;
-				if (stringState.contains("PLAYLIST_FINISHED")){
+		if (!playlistOutputHandler.isClosed) {
+			
+			/* State may hold 3 different objects: Spatial data chunk,
+			 * 	playlist finished notification, and exception */
+			if (state instanceof String) {
+				String stringState = (String) state;
+				if (stringState.contains("PLAYLIST_FINISHED")) {
+					/* Get the number of chunks in the input playlist */
 					loadedChunks = Integer.parseInt(stringState.split(":")[1]);
 				} 				
-			} else if (state instanceof IData){
+			} else if (state instanceof IData) {
 				noOfChunk += 1; 
 				processChunk((IData) state, noOfChunk);
 				deliveredChunks += 1;
-			} else if (state instanceof RuntimeException){
+			} else if (state instanceof RuntimeException) {
 				handleException((RuntimeException) state);
 				return;
 			}
 			
-			if (deliveredChunks == loadedChunks){
+			if (deliveredChunks == loadedChunks) {
 				playlistOutputHandler.closePlaylist();
 				playlistInputHandler.stop();
 			}				
-		} else{
+		} else {
 			LOGGER.warn("Output playlist already closed, skipping updating.");
 		}
 	}
 
-	private void processChunk(IData chunk, int noOfChunk){
-		// Prepare input data 
+	private void processChunk(IData chunk, int noOfChunk) {
+		
+		/* Create input data as expected by the base algorithm */ 
 		Map<String, List<IData>> inputDataChunk = new HashMap<String, List<IData>>();
 		inputDataChunk.put(getInputStreamableIdentifier(), new ArrayList<IData>(Arrays.asList(chunk)));			
-		for (String key : inputData.keySet()){
-			if (!key.equalsIgnoreCase(getInputStreamableIdentifier()) && !key.equalsIgnoreCase("MaxTimeIdle")){
+		for (String key : inputData.keySet()) {
+			if (!key.equalsIgnoreCase(getInputStreamableIdentifier()) && !key.equalsIgnoreCase("MaxTimeIdle")) {
 				inputDataChunk.put(key, inputData.get(key));
 			}
 		}
 
 		// Process and store the chunk
 		try{
-			if (!playlistOutputHandler.isClosed){ // Is it worth processing incoming chunks? 
+			if (!playlistOutputHandler.isClosed) { // Is it worth processing incoming chunks? 
 				Map<String, IData> result = delegate.run(inputDataChunk);
-				if (result.get(getOutputIdentifier()) == null){
+				
+				if (result.get(getOutputIdentifier()) == null) {
 					throw new RuntimeException("Error while allocating intermediate results");
 				}
 				playlistOutputHandler.appendChunk(result.get(getOutputIdentifier()), Integer.toString(noOfChunk));
-			} else{
+			} else {
 				LOGGER.warn("Output playlist already closed, skipping processing.");
 			}		
-		} catch(RuntimeException e){
+		} catch(RuntimeException e) {
 			handleException(e);
 		}
 	}
 	
-	private synchronized void handleException(RuntimeException e){
-		if (!playlistOutputHandler.isClosed){
+	/**
+	 * Takes care of exceptions while reading or processing chunks. These 
+	 * 	exceptions are notified via the playlist, rather than the regular 
+	 * 	response document. This method is executed only by one thread at once, 
+	 * 	other threads are blocked for preventing multiple notifications
+	 * 
+	 * @param e
+	 * 			The exception whose URL will be appended to the playlist
+	 */
+	private synchronized void handleException(RuntimeException e) {
+		if (!playlistOutputHandler.isClosed) {
 			ExceptionReport exception = new ExceptionReport(e.getMessage(),	"NoApplicableCode", e);
 			playlistInputHandler.stop();
 			playlistOutputHandler.appendException(exception);
@@ -328,5 +378,4 @@ public abstract class AbstractRasterFullStreamingAlgorithm extends AbstractSelfD
 			LOGGER.warn("Output playlist already closed, skipping appending exception.");			
 		}
 	}
-	
 }

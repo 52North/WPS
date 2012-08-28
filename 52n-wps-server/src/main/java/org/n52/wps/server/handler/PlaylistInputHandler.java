@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,9 +116,9 @@ public class PlaylistInputHandler implements ISubject {
 		}
 		
 		/* If the client is closed, a "Callback" thread is left, 
-		    else a "Reaper" thread is left, how to terminate all threads? */
+		    if not, a "Reaper" thread is left, how to terminate all threads? */
 		//client.closeAsynchronously(); // Close pending HTTP connections
-		LOGGER.info("Async Http Client closed!");
+		//LOGGER.info("Async Http Client closed!");
 	}
 	
 	/**
@@ -187,15 +186,14 @@ public class PlaylistInputHandler implements ISubject {
 	/**
 	 * Handles the result of the request for the playlist. If necessary, sets 
 	 * 	a timer for reloading the playlist, checks whether maxTimeIdle was 
-	 *  exceeded, and finally dispatches chunks' URLs.
+	 *  exceeded, and finally dispatches chunks' URLs
 	 * 
 	 * @param stream
+	 * 					Request response as InputStream
 	 */
-	private void handlePlaylist(InputStream stream){
-		BufferedReader bufferedReader = null;
-	    bufferedReader = new BufferedReader(new InputStreamReader(stream));
+	private void handlePlaylist(InputStream stream) {
 		
-		Map<Integer, String> newURLs = parseURLs(bufferedReader);
+		Map<Integer, String> newURLs = parseURLs(stream);
 		
 		/* Account for new URLs and check if maxTimeIdle was exceeded */
 		if (newURLs.size() > 0) {
@@ -221,7 +219,7 @@ public class PlaylistInputHandler implements ISubject {
 		}
 		bFirstRequest = false;
 		
-		/* If playlist not finished, make additional calls */
+		/* If playlist is not finished, make additional calls */
 		if (!playlistFinished) {
 			if (!timerIsActive) {
 				timerIsActive = true;
@@ -242,7 +240,16 @@ public class PlaylistInputHandler implements ISubject {
 		}
 	}
 
-	private Map<Integer, String> parseURLs(BufferedReader bufferedReader) {
+	/**
+	 * Parse the chunks' URLs 
+	 * 
+	 * @param stream
+	 * @return HashMap of URLs {1:http://..., 2:http://..., ...}
+	 */
+	private Map<Integer, String> parseURLs(InputStream stream) {
+		
+		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+	    
 		Map<Integer, String> newURLs = new HashMap<Integer, String>();
 		int count = 0;
 		
@@ -268,15 +275,21 @@ public class PlaylistInputHandler implements ISubject {
 		return newURLs;
 	}
 
-	
+	/**
+	 * Fetches the chunks asynchronously
+	 * 
+	 * @param URLs
+	 * 				Collection of chunks to be fetched
+	 */
 	private void fetchChunks(Collection<String> URLs) {
 		Iterator<String> iterator = URLs.iterator();
 		String chunkURL = null;
 		
-		while (iterator.hasNext()){
+		while (iterator.hasNext()) {
 				chunkURL = iterator.next();
 				
 				try {
+					/* Create the asynchronous request */
 					totalRequestsMade += 1;
 				    final ListenableFuture<Response> f =
 				        client.prepareGet(chunkURL).execute(new AsyncCompletionHandler<Response>() {
@@ -296,6 +309,7 @@ public class PlaylistInputHandler implements ISubject {
 				            }
 				        });
 				    
+				    /* Define its callback handler */
 				    f.addListener(new Runnable() {
 				        public void run() {
 				        	Response response;
@@ -324,18 +338,25 @@ public class PlaylistInputHandler implements ISubject {
 				} catch (IOException ioe) {
 					update(new RuntimeException(
 						"There went something wrong with the network connection while fetching a playlist item.", ioe));
-				} catch (RuntimeException e){
+				} catch (RuntimeException e) {
 					update(e);
 				}
 		} 
 	}
 
-	private void handleChunk(InputStream stream){
+	/**
+	 * Handles the result of the request for each chunk. Parses the stream 
+	 * 	 and notifies observers attaching its IData wrapper
+	 * 
+	 * @param stream
+	 * 					Request response as InputStream
+	 */
+	private void handleChunk(InputStream stream) {
 		IData data = null;
-		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
+		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
 			data = chunkParser.parse(stream, mimeType, schema);
 		}
-		else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)){
+		else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
 			data = chunkParser.parseBase64(stream, mimeType, schema);
 		}
 		update(data);
@@ -361,7 +382,7 @@ public class PlaylistInputHandler implements ISubject {
 		notifyObservers(state);
 	}
 	
-	private void notifyObservers(Object state){
+	private void notifyObservers(Object state) {
 		Iterator<IObserver> i = observers.iterator();
 		while (i.hasNext()) {
 			IObserver o = (IObserver) i.next();
@@ -369,7 +390,10 @@ public class PlaylistInputHandler implements ISubject {
 		}
 	}
 
-	TimerTask timerTask = new TimerTask(){
+	/**
+	 * Task to be executed periodically
+	 */
+	TimerTask timerTask = new TimerTask() {
 		@Override
 		public void run() {
 			readPlaylist();		

@@ -127,7 +127,7 @@ public class OutputDataItem extends ResponseData {
 			InputStream stream = null;
 			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)
 				|| (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64) 
-						&& mimeType.toLowerCase().contains("playlist"))) {
+						&& mimeType.toLowerCase().contains(IOHandler.MIME_TYPE_PLAYLIST))) {
 				stream = generator.generateStream(super.obj, mimeType, schema);
 			}
 			
@@ -141,7 +141,7 @@ public class OutputDataItem extends ResponseData {
 			}
 			complexData = output.addNewData().addNewComplexData();
 			
-			if (mimeType.toLowerCase().contains("playlist") ||
+			if (mimeType.toLowerCase().contains(IOHandler.MIME_TYPE_PLAYLIST) ||
 					!mimeType.toLowerCase().contains("xml")) {
 				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				Document document = builder.newDocument();
@@ -230,7 +230,7 @@ public class OutputDataItem extends ResponseData {
 		}
 		
 		/* Streaming based WPS */ 
-		if (mimeType.toLowerCase().contains("playlist")) {
+		if (mimeType.toLowerCase().contains(IOHandler.MIME_TYPE_PLAYLIST)) {
 			// The URL is already given, so, just extract it and we are done
 			Class[] supportedBindings = generator.getSupportedDataBindings();
 			
