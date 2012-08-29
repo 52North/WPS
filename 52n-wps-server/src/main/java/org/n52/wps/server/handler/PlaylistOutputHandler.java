@@ -119,8 +119,11 @@ public class PlaylistOutputHandler  {
 	 * @return Whether the playlist was closed or not
 	 */
 	public boolean closePlaylist() {
-		isClosed = updatePlaylist(endTag);
-		return isClosed;
+		boolean updated = updatePlaylist(endTag);
+		
+		/* If it was already closed don't alter isClosed */
+		isClosed = (updated || isClosed); 
+		return updated;
 	}
 	
 	/**
