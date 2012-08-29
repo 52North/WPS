@@ -86,8 +86,7 @@ public class PlaylistOutputHandler  {
 	 */
 	public boolean appendChunk(IData resultChunk, String chunkId) {
 		String url = storeChunk(resultChunk, playlistId+"_chunk"+chunkId);
-		updatePlaylist(url);
-		return true;
+		return updatePlaylist(url);		
 	}
 
 	/**
@@ -120,38 +119,39 @@ public class PlaylistOutputHandler  {
 	 * @return Whether the playlist was closed or not
 	 */
 	public boolean closePlaylist() {
-		if (!isClosed) {
-			isClosed = true;
-			updatePlaylist(endTag);
-			return true;
-		}
-		return false;
+		isClosed = updatePlaylist(endTag);
+		return isClosed;
 	}
 	
 	/**
-	 * Updates the playlist appending a new item (i.e., a new line)
+	 * Updates the playlist appending a new item (i.e., a new line).
+	 * 	This method is executed only by one thread at once, other threads 
+	 * 	are blocked for preventing race conditions
 	 * 
 	 * @param item 
 	 * 				Could be a comment, exception, end tag, or URL 
 	 */
-	private boolean updatePlaylist(String item) {
-		IData data = null;
-		if (playlistGenerator.isSupportedDataBinding(VectorPlaylistBinding.class)) {
-			data = new VectorPlaylistBinding(item);
+	private synchronized boolean updatePlaylist(String item) {
+		if (!isClosed){
+			IData data = null;
+			if (playlistGenerator.isSupportedDataBinding(VectorPlaylistBinding.class)) {
+				data = new VectorPlaylistBinding(item);
+			}
+			else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)) {
+				data = new RasterPlaylistBinding(item);
+			}
+			
+			try {
+				InputStream is;
+				is = playlistGenerator.generateStream(data, null, null);
+				ffdb.updateComplexValue(playlistId, is);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+			return true;
 		}
-		else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)) {
-			data = new RasterPlaylistBinding(item);
-		}
-		
-		try {
-			InputStream is;
-			is = playlistGenerator.generateStream(data, null, null);
-			ffdb.updateComplexValue(playlistId, is);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		return false;
 	}
 	
 	/**

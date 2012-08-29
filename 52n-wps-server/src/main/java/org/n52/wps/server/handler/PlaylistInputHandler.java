@@ -353,13 +353,21 @@ public class PlaylistInputHandler implements ISubject {
 	 */
 	private void handleChunk(InputStream stream) {
 		IData data = null;
-		if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
-			data = chunkParser.parse(stream, mimeType, schema);
+		
+		try{
+			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
+				data = chunkParser.parse(stream, mimeType, schema);
+			} else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
+				data = chunkParser.parseBase64(stream, mimeType, schema);
+			}
+		} catch (RuntimeException e) {
+			update(new RuntimeException(
+					"There went something wrong while parsing a playlist item.", e));
 		}
-		else if (encoding.equalsIgnoreCase(IOHandler.ENCODING_BASE64)) {
-			data = chunkParser.parseBase64(stream, mimeType, schema);
+		
+		if (data != null){
+			update(data);
 		}
-		update(data);
 	}
 		
 	@Override
