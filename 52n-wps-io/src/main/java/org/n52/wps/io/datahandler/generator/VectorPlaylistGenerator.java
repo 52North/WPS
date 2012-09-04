@@ -33,7 +33,7 @@ import org.n52.wps.io.data.binding.complex.VectorPlaylistBinding;
 
 public class VectorPlaylistGenerator extends AbstractGenerator {
 
-	public VectorPlaylistGenerator(){
+	public VectorPlaylistGenerator() {
 		super();
 		supportedIDataTypes.add(VectorPlaylistBinding.class);	
 	}
@@ -41,10 +41,9 @@ public class VectorPlaylistGenerator extends AbstractGenerator {
 	public InputStream generateStream(IData data, String mimeType, String schema)
 			throws IOException {
 		String str;
-		if (data == null){
+		if (data == null) {
 			str = "";
-		}
-		else{
+		} else {
 			str = (String) ((VectorPlaylistBinding)data).getPayload();			
 		}
 		InputStream is = new ByteArrayInputStream(str.getBytes());

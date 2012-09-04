@@ -33,7 +33,7 @@ import org.n52.wps.io.data.binding.complex.RasterPlaylistBinding;
 
 public class RasterPlaylistGenerator extends AbstractGenerator {
 
-	public RasterPlaylistGenerator(){
+	public RasterPlaylistGenerator() {
 		super();
 		supportedIDataTypes.add(RasterPlaylistBinding.class);	
 	}
@@ -41,10 +41,9 @@ public class RasterPlaylistGenerator extends AbstractGenerator {
 	public InputStream generateStream(IData data, String mimeType, String schema)
 			throws IOException {
 		String str;
-		if (data == null){
+		if (data == null) {
 			str = "";
-		}
-		else{
+		} else {
 			str = (String) ((RasterPlaylistBinding)data).getPayload();			
 		}
 		InputStream is = new ByteArrayInputStream(str.getBytes());

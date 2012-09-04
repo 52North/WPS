@@ -163,8 +163,7 @@ public class PlaylistOutputHandler  {
 			IData data = null;
 			if (playlistGenerator.isSupportedDataBinding(VectorPlaylistBinding.class)) {
 				data = new VectorPlaylistBinding(item);
-			}
-			else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)) {
+			} else if (playlistGenerator.isSupportedDataBinding(RasterPlaylistBinding.class)) {
 				data = new RasterPlaylistBinding(item);
 			}
 			

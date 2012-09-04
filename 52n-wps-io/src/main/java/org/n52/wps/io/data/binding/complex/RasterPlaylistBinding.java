@@ -34,7 +34,7 @@ public class RasterPlaylistBinding implements IComplexData {
 	protected String playlistItem;
 	protected String mimeType;
 	
-	public RasterPlaylistBinding(String item){
+	public RasterPlaylistBinding(String item) {
 		this.playlistItem = item;
 		mimeType = IOHandler.MIME_TYPE_PLAYLIST;
 	}

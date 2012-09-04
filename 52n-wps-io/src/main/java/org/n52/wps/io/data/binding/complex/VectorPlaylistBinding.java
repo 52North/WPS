@@ -34,7 +34,7 @@ public class VectorPlaylistBinding implements IComplexData {
 	protected String playlistItem;
 	protected String mimeType;
 	
-	public VectorPlaylistBinding(String item){
+	public VectorPlaylistBinding(String item) {
 		this.playlistItem = item;
 		mimeType = IOHandler.MIME_TYPE_PLAYLIST;
 	}
