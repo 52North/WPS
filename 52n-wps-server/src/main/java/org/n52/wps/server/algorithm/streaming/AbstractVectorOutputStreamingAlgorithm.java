@@ -137,7 +137,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		}	
 		Integer numberOfChunks = ((LiteralIntBinding) chunksDataList.get(0)).getPayload();
 		if (numberOfChunks<1 || numberOfChunks>featureCollection.size()) {
-			throw new RuntimeException("The parameter Chunks must be greater than 1 but not greater than the number of features");
+			throw new RuntimeException("The parameter NumberOfChunks must be greater than 1 but not greater than the number of features");
 		}
 		
 		this.inputData = inputData;
