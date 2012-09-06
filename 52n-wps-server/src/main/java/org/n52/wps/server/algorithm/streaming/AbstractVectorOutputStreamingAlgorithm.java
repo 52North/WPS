@@ -83,7 +83,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 	 *	Gets the base algorithm. It is not placed in the constructor because 
 	 *   it can be called by other methods before.  
 	 */
-	public void initDelegate() {
+	private void initDelegate() {
 		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager
 			.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
 	}
@@ -172,7 +172,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		//LOGGER.info("Chunks finished: " +  elapsedTimeInSec);
 	}	
 
-	public void splitInputData(IData data, Integer numberOfChunks) {
+	private void splitInputData(IData data, Integer numberOfChunks) {
 		
 		int noOfChunk = 1;
 		
@@ -207,7 +207,7 @@ public abstract class AbstractVectorOutputStreamingAlgorithm extends AbstractSel
 		}
 	}
 
-	public void processChunk(IData splitData, int noOfChunk) {
+	private void processChunk(IData splitData, int noOfChunk) {
 
 		/* Create input data as expected by the base algorithm */ 
 		Map<String, List<IData>> inputDataChunk = new HashMap<String, List<IData>>();

@@ -91,7 +91,7 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 	 *	Gets the base algorithm. It is not placed in the constructor because 
 	 *   it can be called by other methods before.  
 	 */
-	public void initDelegate() {
+	private void initDelegate() {
 		delegate = (AbstractSelfDescribingAlgorithm) RepositoryManager
 			.getInstance().getAlgorithm(getBaseAlgorithmName(), null);
 	}
@@ -203,7 +203,7 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 	}
 
 	
-	public void splitInputData(Map<String, IData> datasets, Integer chunksByRow, Integer chunksByColumn) {
+	private void splitInputData(Map<String, IData> datasets, Integer chunksByRow, Integer chunksByColumn) {
 		
 		// Take 1st element and extract dimensions
 		GridCoverage2D gridCoverage = (GridCoverage2D) datasets.get(getInputStreamableIdentifiers().get(0)).getPayload();
@@ -272,7 +272,7 @@ public abstract class AbstractRasterOutputStreamingAlgorithm extends AbstractSel
 		playlistOutputHandler.closePlaylist();
 	}
 
-	public void processChunkList(Map<String, IData> splittedData, int noOfChunk) {
+	private void processChunkList(Map<String, IData> splittedData, int noOfChunk) {
 		
 		/* Create input data as expected by the base algorithm */ 
 		Map<String, List<IData>> inputDataChunk = new HashMap<String, List<IData>>();
