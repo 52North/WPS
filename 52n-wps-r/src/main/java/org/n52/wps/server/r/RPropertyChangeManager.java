@@ -208,11 +208,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                 Property prop = algorithmPropertyHash.get(wkn);
 
                 // case: property is missing in wps config
-                // FIXME shouldn't this script then also be added to LocalRAlgorithmRepository?
                 if (prop == null) {
                     // either delete r script or create new property:
                     if (deleteUnregisteredScripts) {
-                        deleteProcessFile(wkn);
+                        deleteScript(wkn);
                         continue;
                     }
                     else {
@@ -267,8 +266,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
         if (propertyChanged) {
             Property[] newPropertyArray = newPropertyList.toArray(new Property[0]);
-
-            // TODO: sort properties or not? And how?
+            
             // sort list of properties lexicographically:
 
             Arrays.sort(newPropertyArray, new PropertyComparator());
@@ -301,7 +299,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     /**
      * Deletes *.R file from repository
      */
-    private boolean deleteProcessFile(String processName) {
+    private boolean deleteScript(String processName) {
         boolean deleted = false;
         try {
             File processFile = R_Config.wknToFile(processName);
