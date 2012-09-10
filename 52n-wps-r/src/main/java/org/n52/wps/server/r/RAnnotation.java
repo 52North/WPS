@@ -34,6 +34,8 @@ public class RAnnotation {
     private RAnnotationType type;
     private HashMap<RAttribute, String> attributeHash;
     private static Logger LOGGER = Logger.getLogger(RAnnotation.class);
+    public static String WPS_OFF_START = "wps.off:";
+    public static String WPS_OFF_END = "wps.off.end;";
 
     /**
      * 
