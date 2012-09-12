@@ -193,12 +193,21 @@ public class RAnnotation {
                 "UTF-8"),
 
         // graphical data
-        GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, "base64"), JPEG(
+        GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, null), 
+        
+        JPEG(
                 "jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null,
-                "base64"), JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,
-                true, null, "base64"), PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG,
-                GenericFileDataBinding.class, true, null, "base64"), TIFF("tiff",
-                GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, "base64"),
+                null), 
+                
+           JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class,
+                true, null, null), 
+                
+           PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG,
+                GenericFileDataBinding.class, true, null, null), 
+                
+                
+            TIFF("tiff",
+                GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, null),
 
         // file data and xml:
         TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class, true), TEXT_XML(
