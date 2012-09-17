@@ -1,10 +1,10 @@
 /***************************************************************
-Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright ï¿½ 2009 52ï¿½North Initiative for Geospatial Open Source Software GmbH
 
  Author: Matthias Mueller, TU Dresden
  
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52ï¿½North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,7 +22,7 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundationï¿½s web page, http://www.fsf.org.
 
  ***************************************************************/
 
@@ -85,25 +85,25 @@ public final class GenericFileDataConstants {
 
 			try {
 
-				String path = WPSConfig.class.getProtectionDomain()
-						.getCodeSource().getLocation().getFile();				
-				
-				if(path.indexOf("lib/") != -1){
-					//running as webapp
-					path = path.substring(0, path.indexOf("lib/")).concat(
-						"classes/org/n52/wps/io/io.properties");				
-				}else{
-					//testing, client api
-					File f = new File(GenericFileDataConstants.class.getProtectionDomain().getCodeSource().getLocation().getFile());
-					
-					String projectRoot = f.getParentFile().getParentFile().getParent();//Project root
-					
-					path = projectRoot + "/52n-wps-webapp/src/main/webapp/WEB-INF/classes/org/n52/wps/io/io.properties";
-				}
-				
-				File ioPropertiesFile = new File(path);
+//				String path = WPSConfig.class.getProtectionDomain()
+//						.getCodeSource().getLocation().getFile();				
+//				
+//				if(path.indexOf("lib/") != -1){
+//					//running as webapp
+//					path = path.substring(0, path.indexOf("lib/")).concat(
+//						"classes/org/n52/wps/io/io.properties");				
+//				}else{
+//					//testing, client api
+//					File f = new File(GenericFileDataConstants.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+//					
+//					String projectRoot = f.getParentFile().getParentFile().getParent();//Project root
+//					
+//					path = projectRoot + "/52n-wps-webapp/src/main/webapp/WEB-INF/classes/org/n52/wps/io/io.properties";
+//				}
+//				
+//				File ioPropertiesFile = new File(path);
 
-				ioProperties.load(new FileInputStream(ioPropertiesFile));
+				ioProperties.load(GenericFileDataConstants.class.getResourceAsStream("/org/n52/wps/io/io.properties"));
 
 				Enumeration<Object> en = ioProperties.keys();
 
