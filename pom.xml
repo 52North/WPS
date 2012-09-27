@@ -11,7 +11,7 @@
     <name>52North Web Processing Service</name>
 	<version>3.1-SNAPSHOT</version>
     <description>
-    	52 north processing provides different tools for web based
+    	52°North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
     </description>
     <url>http://52north.org/maven/project-sites/wps</url>
