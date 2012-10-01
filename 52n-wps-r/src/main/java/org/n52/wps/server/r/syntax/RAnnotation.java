@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.r.RAnnotationException;
 
 /**
  * Defines Syntax and Semantics for Annotations in R Skripts

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import org.n52.wps.server.r.RAnnotationException;
 
 /**
  * Describes each annotation type considering attributes, their order and behavior

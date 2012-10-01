@@ -1,4 +1,4 @@
-package org.n52.wps.server.r;
+package org.n52.wps.server.r.syntax;
 
 public class RAnnotationException extends RuntimeException {
 

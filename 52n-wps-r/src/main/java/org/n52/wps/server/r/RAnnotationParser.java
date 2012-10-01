@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.r.syntax.RAnnotation;
+import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
