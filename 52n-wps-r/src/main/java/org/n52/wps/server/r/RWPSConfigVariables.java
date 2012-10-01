@@ -3,12 +3,14 @@ package org.n52.wps.server.r;
 
 public enum RWPSConfigVariables {
 
-    SCRIPT_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD;
+    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD;
 
     public String toString() {
         switch (this) {
         case SCRIPT_DIR:
             return "Script_Dir";
+        case RESOURCE_DIR:
+        	return "Resource_Dir";
         case ALGORITHM:
             return "Algorithm";
         case ENABLE_BATCH_START:

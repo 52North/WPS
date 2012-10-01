@@ -40,9 +40,12 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.AbstractObservableAlgorithm;
-import org.n52.wps.server.r.RAnnotation.RAnnotationType;
-import org.n52.wps.server.r.RAnnotation.RAttribute;
-import org.n52.wps.server.r.RAnnotation.RDataType;
+import org.n52.wps.server.r.syntax.RAnnotation;
+import org.n52.wps.server.r.syntax.RAnnotationType;
+import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.syntax.RDataType;
+import org.n52.wps.server.r.syntax.RTypeDefinition;
+import org.n52.wps.server.r.syntax.RegExp;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -532,7 +535,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String filename = new File(result.asString()).getName();
 
             RAnnotation out = RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT).get(0);
-            RDataType dataType = out.getRDataType();
+            RTypeDefinition dataType = out.getRDataType();
             File tempfile;
 
             if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2)) {
@@ -718,15 +721,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String line = fr.readLine();
             
 
-            if (line.contains(RAnnotation.WPS_OFF_START)) {
+            if (line.contains(RegExp.WPS_OFF_START)) {
                    if (wpsoff == true)
-                       throw new RuntimeException("Unexpected occurence of " + RAnnotation.WPS_OFF_START + ". Reason may be an annotation syntax error.");    
+                       throw new RuntimeException("Unexpected occurence of " + RegExp.WPS_OFF_START + ". Reason may be an annotation syntax error.");    
                    wpsoff = true;
             }
             ;
-            if (line.contains(RAnnotation.WPS_OFF_END)) {
+            if (line.contains(RegExp.WPS_OFF_END)) {
                  if (wpsoff == false)
-                     throw new RuntimeException("Unexpected occurence of " + RAnnotation.WPS_OFF_END + ". Reason may be an annotation syntax error.");
+                     throw new RuntimeException("Unexpected occurence of " + RegExp.WPS_OFF_END + ". Reason may be an annotation syntax error.");
     
                   wpsoff = false;
                   text.append("# (ignored) ");

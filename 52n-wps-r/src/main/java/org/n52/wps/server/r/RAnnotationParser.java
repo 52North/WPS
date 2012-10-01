@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.n52.wps.server.r.RAnnotation.RAnnotationType;
-import org.n52.wps.server.r.RAnnotation.RAttribute;
-import org.n52.wps.server.r.RAnnotation.RSeperator;
+import org.n52.wps.server.r.syntax.RAnnotation;
+import org.n52.wps.server.r.syntax.RAnnotationType;
+import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.syntax.RSeperator;
 
 public class RAnnotationParser {
 
@@ -48,7 +49,7 @@ public class RAnnotationParser {
                                     LOGGER.debug("Parsing annotation " + startKey);
 
                                 // start parsing an annotation, which might spread several lines
-                                line = line.split(RAnnotation.RSeperator.STARTKEY_SEPARATOR.getKey(), 2)[1];
+                                line = line.split(RSeperator.STARTKEY_SEPARATOR.getKey(), 2)[1];
                                 annotationString = new StringBuilder();
                                 annotationType = anot;
                                 isCurrentlyParsingAnnotation = true;
