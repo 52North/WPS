@@ -28,7 +28,7 @@
 	<wps:ResponseForm>
 		<wps:ResponseDocument storeExecuteResponse="false">
 			<wps:Output asReference="false">
-				<ows:Identifier>result</ows:Identifier>
+				<ows:Identifier>output</ows:Identifier>
 			</wps:Output>
 		</wps:ResponseDocument>
 	</wps:ResponseForm>
