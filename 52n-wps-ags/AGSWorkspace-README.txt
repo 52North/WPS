@@ -9,3 +9,9 @@ For that project, you need that the arcobjects.jar is located in the folder
 
 It must be named "arcobjects-10.0.jar" in order to allow maven to resolve it within 
 the project build.
+
+
+If you do NOT want to compile the AGSWorkspace classes, i.e. you will not use the
+project 52n-wps-ags, and you get validation errors in Eclipse you can simply remove the
+project 52n-wps-ags-workspace from your Eclipse workspace and refresh all Maven
+projects.
