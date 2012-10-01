@@ -75,6 +75,8 @@ public class R_Config {
     public static boolean enableBatchStart = false;
 
     private static String batchStartFile = "Rserve.bat";
+
+	public static String RESOURCE_DIR;
     
     static {
     	Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
@@ -152,6 +154,10 @@ public class R_Config {
 
     public static String getSessionInfoURL() {
         return getUrlPathUpToWebapp() + "/R/sessioninfo.jsp";
+    }
+    
+    public static String getResourceDirURL() {
+        return (getUrlPathUpToWebapp() + "/"+RESOURCE_DIR).replace("\\", "/");
     }
 
     public static URL getScriptURL(String wkn) throws MalformedURLException {

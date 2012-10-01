@@ -240,6 +240,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // assign values to the (clean) workspace:
                 LOGGER.debug("[R] assign values.");
                 Iterator<Map.Entry<String, String>> iterator2 = assign.entrySet().iterator();
+               //assign link to rescource folder
+                rCon.assign("resourceURL", R_Config.getResourceDirURL());
+                LOGGER.debug("[R] assign recource directory to variable \"resourceURL:\" "+R_Config.getResourceDirURL());
                 for (; iterator2.hasNext();) {
                     Map.Entry<String, String> entry = iterator2.next();
                     // use eval, not assign (assign only parses strings)

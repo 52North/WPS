@@ -157,6 +157,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         R_Config.SCRIPT_DIR = property.getStringValue();
                         LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
                     }
+                    else if (pname.equalsIgnoreCase(RWPSConfigVariables.RESOURCE_DIR.toString()) && property.getActive()) {
+                        R_Config.RESOURCE_DIR = property.getStringValue();
+                        LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
+                    }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.ENABLE_BATCH_START.toString())
                             && property.getActive()) {
                         R_Config.enableBatchStart = Boolean.parseBoolean(property.getStringValue());

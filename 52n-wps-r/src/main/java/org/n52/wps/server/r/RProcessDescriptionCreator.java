@@ -65,6 +65,12 @@ public class RProcessDescriptionCreator {
             LOGGER.error("Could not create URL for script file " + wkn, e);
             mt.setHref("N/A");
         }
+        
+        //Add URL to resource folder
+        mt = pdt.addNewMetadata();
+        mt.setTitle("Recource Directory");
+        url = R_Config.getResourceDirURL().toString();
+		mt.setHref(url);
 
         mt = pdt.addNewMetadata();
         mt.setTitle("R Session Info");
