@@ -68,7 +68,7 @@ public class RProcessDescriptionCreator {
         
         //Add URL to resource folder
         mt = pdt.addNewMetadata();
-        mt.setTitle("Recource Directory");
+        mt.setTitle("Resource Directory URL");
         url = R_Config.getResourceDirURL().toString();
 		mt.setHref(url);
 
