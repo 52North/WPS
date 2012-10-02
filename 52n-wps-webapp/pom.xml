@@ -1,220 +1,334 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <!-- $Id$ -->
-    <parent>
-        <groupId>org.n52.wps</groupId>
-        <artifactId>52n-wps-parent</artifactId>
-        <version>3.1-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>52n-wps-webapp</artifactId>
-    <packaging>war</packaging>
-    <name>52n WPS Web Application</name>
-    <mailingLists>
-        <mailingList>
-            <name>Geoprocessing</name>
-            <archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
-            <post>geoprocessingservices@52north.org</post>
-            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
-            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
-        </mailingList>
-        <mailingList>
-            <name>Geoprocessing Commits</name>
-            <archive>http://www2.52north.org/pipermail/geoprocessing-commits</archive>
-            <post>Geoprocessing-commits@52north.org</post>
-            <subscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
-            <unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
-        </mailingList>
-    </mailingLists>
-    <developers>
-        <developer>
-            <id>TheodorFoerster</id>
-            <name>Theodor Foerster</name>
-            <email>foerster@52north.org</email>
-            <url>http://www.itc.nl/about_itc/resumes/foerster.aspx</url>
-            <timezone>+2</timezone>
-            <organization>ITC</organization>
-            <organizationUrl>http://www.itc.nl</organizationUrl>
-            <roles>
-                <role>Member of Geoprocessing community</role>
-                <role>Leader in WPS development</role>
-                <role>Java Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>BastianSchaeffer</id>
-            <name>Bastian Schaeffer</name>
-            <email>schaeffer@52north.org</email>
-            <timezone>+2</timezone>
-            <organization>IFGI, University of Muenster</organization>
-            <organizationUrl>http://ifgi.uni-muenster.de</organizationUrl>
-            <roles>
-                <role>Member of Geoprocessing community</role>
-                <role>Leader in WPS development</role>
-                <role>Java Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>JohannesBrauner</id>
-            <name>Johannes Brauner</name>
-            <email>brauner@52north.org</email>
-            <timezone>+2</timezone>
-            <organization>Technical University of Dresden</organization>
-            <organizationUrl>http://tu-dresden.de/die_tu_dresden/fakultaeten/fakultaet_forst_geo_und_hydrowissenschaften/fachrichtung_geowissenschaften/gis</organizationUrl>
-            <roles>
-                <role>Member of Geoprocessing community</role>
-                <role>Java Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>BastianBaranski</id>
-            <name>Bastian Baranski</name>
-            <email>baranski@52north.org</email>
-            <timezone>+2</timezone>
-            <organization>IFGI, University of Muenster</organization>
-            <organizationUrl>http://ifgi.uni-muenster.de</organizationUrl>
-            <roles>
-                <role>Member of Geoprocessing community</role>
-                <role>Java Developer</role>
-            </roles>
-        </developer>
-    </developers>
-    <contributors>
-    <contributor>
-    <name>Janne Kovanen</name>
-    <organization>Finnish Geodetic Institute, FGI</organization>
-    <organizationUrl>http://www.fgi.fi</organizationUrl>
-    </contributor>
-    <contributor>
-    <name>Laura Diaz</name>
-    <organization>Universitat Jaume I, Castellón, Spain</organization>
-    <organizationUrl>http://www.geoinfo.uji.es/</organizationUrl>
-    </contributor>
-    <contributor>
-    <name>Carlos Granell</name>
-    <organization>Universitat Jaume I, Castellón, Spain</organization>
-    <organizationUrl>http://www.geoinfo.uji.es/</organizationUrl>
-    </contributor>
-    <contributor>
-    <name>David Robinson</name>
-    <organization>Open Roads Consulting, Inc.</organization>
-    <organizationUrl>http://openroadsconsulting.com</organizationUrl>
-    </contributor>
-    </contributors>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration 
+		$ -->
+	<parent>
+		<groupId>org.n52.wps</groupId>
+		<artifactId>52n-wps-parent</artifactId>
+		<version>3.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>52n-wps-webapp</artifactId>
+	<packaging>war</packaging>
+	<name>52n WPS Web Application</name>
+	<mailingLists>
+		<mailingList>
+			<name>Geoprocessing</name>
+			<archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
+			<post>geoprocessingservices@52north.org</post>
+			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+		</mailingList>
+		<mailingList>
+			<name>Geoprocessing Commits</name>
+			<archive>http://www2.52north.org/pipermail/geoprocessing-commits</archive>
+			<post>Geoprocessing-commits@52north.org</post>
+			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
+			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<id>TheodorFoerster</id>
+			<name>Theodor Foerster</name>
+			<email>foerster@52north.org</email>
+			<url>http://www.itc.nl/about_itc/resumes/foerster.aspx</url>
+			<timezone>+2</timezone>
+			<organization>ITC</organization>
+			<organizationUrl>http://www.itc.nl</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Leader in WPS development</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>BastianSchaeffer</id>
+			<name>Bastian Schaeffer</name>
+			<email>schaeffer@52north.org</email>
+			<timezone>+2</timezone>
+			<organization>IFGI, University of Muenster</organization>
+			<organizationUrl>http://ifgi.uni-muenster.de</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Leader in WPS development</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>JohannesBrauner</id>
+			<name>Johannes Brauner</name>
+			<email>brauner@52north.org</email>
+			<timezone>+2</timezone>
+			<organization>Technical University of Dresden</organization>
+			<organizationUrl>http://tu-dresden.de/die_tu_dresden/fakultaeten/fakultaet_forst_geo_und_hydrowissenschaften/fachrichtung_geowissenschaften/gis</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>BastianBaranski</id>
+			<name>Bastian Baranski</name>
+			<email>baranski@52north.org</email>
+			<timezone>+2</timezone>
+			<organization>IFGI, University of Muenster</organization>
+			<organizationUrl>http://ifgi.uni-muenster.de</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Janne Kovanen</name>
+			<organization>Finnish Geodetic Institute, FGI</organization>
+			<organizationUrl>http://www.fgi.fi</organizationUrl>
+		</contributor>
+		<contributor>
+			<name>Laura Diaz</name>
+			<organization>Universitat Jaume I, Castellón, Spain</organization>
+			<organizationUrl>http://www.geoinfo.uji.es/</organizationUrl>
+		</contributor>
+		<contributor>
+			<name>Carlos Granell</name>
+			<organization>Universitat Jaume I, Castellón, Spain</organization>
+			<organizationUrl>http://www.geoinfo.uji.es/</organizationUrl>
+		</contributor>
+		<contributor>
+			<name>David Robinson</name>
+			<organization>Open Roads Consulting, Inc.</organization>
+			<organizationUrl>http://openroadsconsulting.com</organizationUrl>
+		</contributor>
+	</contributors>
 
-    <!-- here are the dependencies of the project -->
-    <dependencies>
-        <!-- Dependencies for Scope 'test' -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-io</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-server</artifactId>
-             <version>${project.version}</version>
-        </dependency>
-        <!-- dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-unicore</artifactId>
-            <version>${project.version}</version>
-        </dependency>      
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-gridgain</artifactId>
-            <version>${project.version}</version>
-        </dependency--> 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-sextante</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-         
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-grass</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-ags</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-python</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-webadmin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-transactional</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-r</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-       <!--    
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-ilwis</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-       
-     
-         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-geotools</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-       -->
-        <dependency>
-            <groupId>net.sourceforge.pjl-comp-filter</groupId>
-            <artifactId>pjl-comp-filter</artifactId>
-            <scope>runtime</scope>
-            <version>1.6.4</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-            <scope>provided</scope>
-            <version>2.1</version>
-        </dependency>
+	<!-- here are the dependencies of the project -->
+	<dependencies>
+		<!-- Dependencies for Scope 'test' -->
 		<dependency>
-		      <groupId>org.n52.security</groupId>
-		      <artifactId>52n-security-config</artifactId>
-		      <version>2.2-M2</version>
-		      <scope>compile</scope>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-commons</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-		      <groupId>org.n52.security</groupId>
-		      <artifactId>52n-security-authentication</artifactId>
-		      <version>2.2-M2</version>
-		      <scope>compile</scope>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-		      <groupId>org.n52.security</groupId>
-		      <artifactId>52n-security-authn-web</artifactId>
-		      <version>2.2-M2</version>
-		      <scope>compile</scope>
-		</dependency>   
-    </dependencies>
-    		
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-server</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- dependency> <groupId>${project.groupId}</groupId> <artifactId>52n-wps-unicore</artifactId> 
+			<version>${project.version}</version> </dependency> <dependency> <groupId>${project.groupId}</groupId> 
+			<artifactId>52n-wps-gridgain</artifactId> <version>${project.version}</version> 
+			</dependency -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-sextante</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-grass</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-ags</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-python</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-webadmin</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-transactional</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-r</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>52n-wps-ilwis</artifactId> 
+			<version>${project.version}</version> </dependency> <dependency> <groupId>${project.groupId}</groupId> 
+			<artifactId>52n-wps-geotools</artifactId> <version>${project.version}</version> 
+			</dependency> -->
+		<dependency>
+			<groupId>net.sourceforge.pjl-comp-filter</groupId>
+			<artifactId>pjl-comp-filter</artifactId>
+			<scope>runtime</scope>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<scope>provided</scope>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.security</groupId>
+			<artifactId>52n-security-config</artifactId>
+			<version>2.2-M2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.security</groupId>
+			<artifactId>52n-security-authentication</artifactId>
+			<version>2.2-M2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.security</groupId>
+			<artifactId>52n-security-authn-web</artifactId>
+			<version>2.2-M2</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+
+	<!-- <build> -->
+	<!-- <plugins> -->
+	<!-- <plugin> -->
+	<!-- http://wiki.eclipse.org/Jetty/Feature/Jetty_Maven_Plugin -->
+	<!-- jetty:run-exploded invoces lifecycle phase package -->
+	<!-- <groupId>org.mortbay.jetty</groupId> -->
+	<!-- <artifactId>jetty-maven-plugin</artifactId> -->
+	<!-- <version>8.1.0.RC5</version> -->
+
+	<!-- <configuration> -->
+	<!-- <scanIntervalSeconds>2</scanIntervalSeconds> -->
+	<!-- if you embed <contextPath> in <webApp>, then jetty:run-exploded 
+		will result in error "When configuring a basic element the configuration 
+	 cannot contain any child elements. Configuration element 'war'."
+	-->
+	<!-- <webApp> -->
+	<!-- <contextPath>/${build.finalName}</contextPath> -->
+	<!-- use war file? -->
+	<!-- try run-exploded -->
+	<!-- </webApp> -->
+	<!-- </configuration> -->
+	<!-- </plugin> -->
+	<!-- </plugins> -->
+	<!-- </build> -->
+
+	<profiles>
+		<profile>
+			<id>with-deploy</id>
+			<!-- 
+			server configuration for settings.xml
+			=====================================
+			
+			<server>
+				<id>loho</id>
+				<configuration>
+					<cargo.remote.username>admin</cargo.remote.username>
+					<cargo.remote.password>admin</cargo.remote.password>
+				</configuration>
+			</server>
+			
+			<profile>
+				<id>wps-localhost</id>
+				<properties>
+					<conf.wps.server.settings>loho</conf.wps.server.settings>
+					<conf.wps.remote.server>localhost</conf.wps.remote.server>
+					<conf.wps.remote.port>8080</conf.wps.remote.port>
+					<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId>
+				</properties>
+			</profile>
+			
+			tomcat-users.xml
+			================
+			<user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" />
+			
+			Run with Maven (Run Configuration in Eclipse)
+			=============================================
+			
+			- start Tomcat
+			- mvn install -Pwps-localhost,with-deploy
+			
+			Remote Debugging in Eclipse
+			===========================
+			Add Java options to Tomcat: -Xdebug -Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n
+			Add new Remote Java Application as debugging configuration and use the address above as the connection port.
+			
+			-->
+			<build>
+				<finalName>WPS</finalName>
+				<plugins>
+					<plugin>
+						<inherited>true</inherited>
+						<groupId>org.codehaus.cargo</groupId>
+						<artifactId>cargo-maven2-plugin</artifactId>
+						<version>1.2.4</version>
+						<executions>
+							<execution>
+								<id>verify-deploy</id>
+								<phase>install</phase>
+								<goals>
+									<goal>deployer-deploy</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>clean-undeploy</id>
+								<phase>pre-clean</phase>
+								<goals>
+									<goal>deployer-undeploy</goal>
+								</goals>
+							</execution>
+						</executions>
+
+						<configuration>
+
+							<!-- Container Configuration -->
+							<container>
+								<containerId>${conf.wps.deploy.containerId}</containerId>
+								<type>remote</type>
+							</container>
+
+							<configuration>
+								<type>runtime</type>
+								<properties>
+									<cargo.server.settings>${conf.wps.server.settings}</cargo.server.settings>
+									<cargo.hostname>${conf.wps.remote.server}</cargo.hostname>
+									<cargo.servlet.port>${conf.wps.remote.port}</cargo.servlet.port>
+								</properties>
+
+							</configuration>
+
+							<!-- Deployer and Deployables configuration -->
+<!-- 							<deployer> -->
+<!-- 								<type>remote</type> -->
+								
+<!-- 							</deployer> -->
+							<deployables>
+								<deployable>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<type>war</type>
+								</deployable>
+							</deployables>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
