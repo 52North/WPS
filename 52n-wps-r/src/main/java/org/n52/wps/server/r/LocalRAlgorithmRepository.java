@@ -64,7 +64,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public LocalRAlgorithmRepository() {
         LOGGER.info("Instantiating new LocalRAlgorithmRepository");
-        
+
         // check if the repository is active:
         String className = this.getClass().getCanonicalName();
         if ( !WPSConfig.getInstance().isRepositoryActive(className)) {
@@ -83,30 +83,36 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             }
         }
 
+        RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
+
         // Try to build up a connection to Rserve
         // If it is refused, a new instance of Rserve will be opened
-        LOGGER.debug("Trying to connect to Rserve.");
+        LOGGER.debug("[Rserve] Trying to connect to Rserve.");
+        R_Config rConfig = R_Config.getInstance();
         try {
-            RConnection testcon = R_Config.openRConnection();
-            LOGGER.info("Connection to Rserve could be opened.");
+            RConnection testcon = rConfig.openRConnection();
+            LOGGER.info("[Rserve] Connection to Rserve could be opened.");
             testcon.close();
         }
         catch (RserveException e) {
             // try to start Rserve via batchfile if enabled
-            LOGGER.debug("Could not open connection to Rserve - trying to start Rserve with batch file.");
-            R_Config.startRserve();
+            LOGGER.debug("[Rserve] Could not open connection to Rserve - trying to start Rserve with batch file.");
+            rConfig.startRserve();
 
             try {
-                RConnection testcon = R_Config.openRConnection();
-                LOGGER.info("Connection to Rserve could be opened.");
+                RConnection testcon = rConfig.openRConnection();
+                LOGGER.info("[Rserve] Connection to Rserve could be opened after batch file start.");
+                // changeManager.addUnregisteredScripts() -- TODO maybe save the value of testcon.getVersion
+                // or something similar to a property so that the connection to RServe can be check in admin
+                // console.
+
                 testcon.close();
             }
             catch (RserveException e2) {
-                LOGGER.error("Could not start Rserve.");
+                LOGGER.error("[Rserve] Could not start Rserve.");
             }
         }
 
-        RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
         // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
         changeManager.addUnregisteredScripts();
     }
@@ -195,10 +201,10 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         return new GenericRProcess(processID).getDescription();
     }
 
-	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void shutdown() {
+        // TODO Auto-generated method stub
+
+    }
 
 }

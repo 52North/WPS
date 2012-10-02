@@ -96,7 +96,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         }
 
         if (repositoryDocument == null) {
-            LOGGER.debug("Local R Algorithm Repository is not registered");
+            LOGGER.error("Local R Algorithm Repository is not registered");
             return;
         }
 
@@ -136,11 +136,11 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
                 if (param.contains(pname)) {
                     if (pname.equalsIgnoreCase(RWPSConfigVariables.RSERVE_HOST.toString())) {
-                        R_Config.RSERVE_HOST = property.getStringValue();
+                        R_Config.getInstance().RSERVE_HOST = property.getStringValue();
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.RSERVE_PORT.toString())) {
                         try {
-                            R_Config.RSERVE_PORT = Integer.parseInt(property.getStringValue());
+                            R_Config.getInstance().RSERVE_PORT = Integer.parseInt(property.getStringValue());
                         }
                         catch (NumberFormatException e) {
                             LOGGER.error("Non numeric RServe_Port property found - it will be ignored and deleted");
@@ -148,23 +148,23 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         }
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.RSERVE_USER.toString())) {
-                        R_Config.RSERVE_USER = property.getStringValue();
+                        R_Config.getInstance().RSERVE_USER = property.getStringValue();
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.RSERVE_PASSWORD.toString())) {
-                        R_Config.RSERVE_PASSWORD = property.getStringValue();
+                        R_Config.getInstance().RSERVE_PASSWORD = property.getStringValue();
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString()) && property.getActive()) {
                         R_Config.SCRIPT_DIR = property.getStringValue();
                         LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.RESOURCE_DIR.toString()) && property.getActive()) {
-                        R_Config.RESOURCE_DIR = property.getStringValue();
+                        R_Config.getInstance().RESOURCE_DIR = property.getStringValue();
                         LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.ENABLE_BATCH_START.toString())
                             && property.getActive()) {
-                        R_Config.enableBatchStart = Boolean.parseBoolean(property.getStringValue());
-                        LOGGER.info("Trying batch start if R is not running: " + R_Config.enableBatchStart);
+                        R_Config.getInstance().enableBatchStart = Boolean.parseBoolean(property.getStringValue());
+                        LOGGER.info("Trying batch start if R is not running: " + R_Config.getInstance().enableBatchStart);
                     }
 
                     param.remove(pname);
@@ -187,7 +187,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             Property host = repositoryDocument.addNewProperty();
             host.setActive(true);
             host.setName(RWPSConfigVariables.RSERVE_HOST.toString());
-            host.setStringValue(R_Config.RSERVE_HOST);
+            host.setStringValue(R_Config.getInstance().RSERVE_HOST);
             newPropertyList.add(host);
             propertyChanged = true;
         }
@@ -196,19 +196,20 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             Property port = repositoryDocument.addNewProperty();
             port.setActive(true);
             port.setName(RWPSConfigVariables.RSERVE_PORT.toString());
-            port.setStringValue(Integer.toString(R_Config.RSERVE_PORT));
+            port.setStringValue(Integer.toString(R_Config.getInstance().RSERVE_PORT));
             newPropertyList.add(port);
             propertyChanged = true;
         }
 
         // check script dir for R process files
         // adjusts wps config
-        File algorithmDir = new File(R_Config.SCRIPT_DIR_FULL); // new File(R_Config.SCRIPT_DIR);
+        String scriptDir = R_Config.getScriptDirFullPath();
+        File algorithmDir = new File(scriptDir); // new File(R_Config.SCRIPT_DIR);
         if (algorithmDir.isDirectory()) {
             File[] scripts = algorithmDir.listFiles(new R_Config.RFileExtensionFilter());
             LOGGER.debug("Loading script files from " + algorithmDir + ": " + Arrays.toString(scripts));
             for (File scriptf : scripts) {
-                String wkn = R_Config.FileToWkn(scriptf);
+                String wkn = R_Config.getInstance().FileToWkn(scriptf);
                 Property prop = algorithmPropertyHash.get(wkn);
 
                 // case: property is missing in wps config
@@ -306,7 +307,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     private boolean deleteScript(String processName) {
         boolean deleted = false;
         try {
-            File processFile = R_Config.wknToFile(processName);
+            File processFile = R_Config.getInstance().wknToFile(processName);
             deleted = processFile.delete();
             if ( !deleted) {
                 LOGGER.error("Process file " + processFile.getName() + " could not be deleted, "

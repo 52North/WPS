@@ -10,7 +10,7 @@ public enum RWPSConfigVariables {
         case SCRIPT_DIR:
             return "Script_Dir";
         case RESOURCE_DIR:
-        	return "Resource_Dir";
+            return "Resource_Dir";
         case ALGORITHM:
             return "Algorithm";
         case ENABLE_BATCH_START:

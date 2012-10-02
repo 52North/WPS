@@ -58,7 +58,7 @@ public class RProcessDescriptionCreator {
         mt.setAbout("The R script which is used for this process");
         String url;
         try {
-            url = R_Config.getScriptURL(wkn).toString();
+            url = R_Config.getInstance().getScriptURL(wkn).toString();
             mt.setHref(url);
         }
         catch (MalformedURLException e) {
@@ -69,13 +69,13 @@ public class RProcessDescriptionCreator {
         //Add URL to resource folder
         mt = pdt.addNewMetadata();
         mt.setTitle("Resource Directory URL");
-        url = R_Config.getResourceDirURL().toString();
+        url = R_Config.getInstance().getResourceDirURL();
 		mt.setHref(url);
 
         mt = pdt.addNewMetadata();
         mt.setTitle("R Session Info");
         mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
-        url = R_Config.getSessionInfoURL();
+        url = R_Config.getInstance().getSessionInfoURL();
         mt.setHref(url);
 
         ProcessOutputs outputs = pdt.addNewProcessOutputs();

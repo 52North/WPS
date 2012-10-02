@@ -27,19 +27,18 @@ public class R_Config {
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
-    
     // important directories:
-    
+
     // FIXME for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
     // servlet, which is probably a better solution to keep track of files, see
     // http://www.jguru.com/faq/view.jsp?EID=10646
     private static final String R_BASE_DIR = "R";
-    
+
     private static final String WORK_DIR = "workdir";
 
     private static final String UTILS_DIR = "utils";
 
-    public static String SCRIPT_DIR = "r_scripts";
+    public static String SCRIPT_DIR = null;
 
     /**
      * Base directory for WPS4R resources
@@ -54,40 +53,51 @@ public class R_Config {
 
     /** R scripts with utility functions to pre-load */
     public static String UTILS_DIR_FULL = BASE_DIR_FULL + "/" + UTILS_DIR;
- 
+
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
-    public static String SCRIPT_DIR_FULL = BASE_DIR_FULL +"/"+SCRIPT_DIR;
+    // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
     // public static String SCRIPT_DIR_URL = "wps/rscripts";
 
     /** Host IP for Rserve **/
-    public static String RSERVE_HOST = "localhost";
+    public String RSERVE_HOST = "localhost";
 
     /** Port were Rserve is listening **/
-    public static int RSERVE_PORT = 6311;
+    public int RSERVE_PORT = 6311;
 
     /** Applied user ID for Rserve (if login needed) **/
-    public static String RSERVE_USER;
+    public String RSERVE_USER;
 
     /** Applied user password for Rserve (if login needed) **/
-    public static String RSERVE_PASSWORD;
+    public String RSERVE_PASSWORD;
 
     /** Starts R serve via batch file **/
-    public static boolean enableBatchStart = false;
+    public boolean enableBatchStart = false;
 
-    private static String batchStartFile = "Rserve.bat";
+    private String batchStartFile = "Rserve.bat";
 
-	public static String RESOURCE_DIR;
-    
-    static {
-    	Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
-    	for (Property property : rConfig) {
-			if (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString())) {
-				SCRIPT_DIR = property.getStringValue();
-			}
-		}
+    public String RESOURCE_DIR;
+
+    private static R_Config instance = null;
+
+    private R_Config() {
+        // singleton pattern > private constructor
+
+        Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
+        for (Property property : rConfig) {
+            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString())) {
+                SCRIPT_DIR = property.getStringValue();
+            }
+        }
     }
 
-    public static RConnection openRConnection() throws RserveException {
+    public static R_Config getInstance() {
+        if (instance == null)
+            instance = new R_Config();
+
+        return instance;
+    }
+
+    public RConnection openRConnection() throws RserveException {
         RConnection con = new RConnection(RSERVE_HOST, RSERVE_PORT);
         if (con.needLogin())
             con.login(RSERVE_USER, RSERVE_PASSWORD);
@@ -133,7 +143,7 @@ public class R_Config {
      * @see getConsoleOutput(RConnection rCon, String cmd)
      * @see getSessionInfo(RConnection rCon)
      */
-    public static String getSessionInfo() {
+    public String getSessionInfo() {
         RConnection rCon = null;
         String sessionInfo = "";
         try {
@@ -152,18 +162,18 @@ public class R_Config {
         return sessionInfo;
     }
 
-    public static String getSessionInfoURL() {
+    public String getSessionInfoURL() {
         return getUrlPathUpToWebapp() + "/R/sessioninfo.jsp";
     }
-    
-    public static String getResourceDirURL() {
-        return (getUrlPathUpToWebapp() + "/"+RESOURCE_DIR).replace("\\", "/");
+
+    public String getResourceDirURL() {
+        return (getUrlPathUpToWebapp() + "/" + RESOURCE_DIR).replace("\\", "/");
     }
 
-    public static URL getScriptURL(String wkn) throws MalformedURLException {
+    public URL getScriptURL(String wkn) throws MalformedURLException {
         String fname = null;
         try {
-            fname = R_Config.wknToFile(wkn).getName();
+            fname = wknToFile(wkn).getName();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -176,7 +186,7 @@ public class R_Config {
         return url;
     }
 
-    private static String getUrlPathUpToWebapp() {
+    public String getUrlPathUpToWebapp() {
         Server server = WPSConfig.getInstance().getWPSConfig().getServer();
         String host = server.getHostname();
         String port = server.getHostport();
@@ -185,7 +195,7 @@ public class R_Config {
         return "http://" + host + ":" + port + "/" + webapppath;
     }
 
-    public static URL getOutputFileURL(String currentWorkdir, String filename) throws IOException {
+    public URL getOutputFileURL(String currentWorkdir, String filename) throws IOException {
         // check if file exists
         String path = currentWorkdir + "/" + filename;
         File out = new File(path);
@@ -202,7 +212,7 @@ public class R_Config {
     /**
      * tries to start Rserve (runs "Rserve.bat" if batchfile.exists() && RSERVE_HOST == "localhost")
      */
-    public static void startRserve() {
+    public void startRserve() {
         try {
             if (enableBatchStart) {
                 String batch = BASE_DIR_FULL + batchStartFile;
@@ -243,7 +253,7 @@ public class R_Config {
      *        points to an R scripts
      * @return wellknownName is the corresponding process identifier
      */
-    public static String FileToWkn(File file) {
+    public String FileToWkn(File file) {
         String fileName = file.getName();
         // remove suffix, usually file ending ".R":
         int index = fileName.lastIndexOf('.');
@@ -258,9 +268,9 @@ public class R_Config {
      * @return File points to corresponding R process script
      * @throws IOException
      */
-    public static File wknToFile(String wkn) throws IOException {
+    public File wknToFile(String wkn) throws IOException {
         String fname = wkn.replaceFirst(WKN_PREFIX, "");
-        fname = SCRIPT_DIR_FULL + "/" + fname;
+        fname = getScriptDirFullPath() + "/" + fname;
         fname = fname + SCRIPT_FILE_SUFFIX;
         File out = new File(fname);
         if (out.isFile() && out.canRead()) {
@@ -270,13 +280,12 @@ public class R_Config {
             throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
     }
 
-    public static String getTemporaryWPSWorkDirFullPath() {
+    public String getTemporaryWPSWorkDirFullPath() {
         return WORK_DIR_FULL + "/" + UUID.randomUUID();
     }
 
-    @Deprecated
     public static String getScriptDirFullPath() {
-        //return WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR;
-        return SCRIPT_DIR_FULL;
+        return WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR;
+        // return SCRIPT_DIR_FULL;
     }
 }

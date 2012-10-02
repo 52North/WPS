@@ -25,7 +25,7 @@ public class RWorkdirUrlBinding extends LiteralStringBinding {
     public RWorkdirUrlBinding(String currentWorkdir, String filename) {
         super(currentWorkdir + "/" + filename);
         try {
-            this.url = R_Config.getOutputFileURL(currentWorkdir, filename);
+            this.url = R_Config.getInstance().getOutputFileURL(currentWorkdir, filename);
         }
         catch (IOException e) {
             LOGGER.error(e);
