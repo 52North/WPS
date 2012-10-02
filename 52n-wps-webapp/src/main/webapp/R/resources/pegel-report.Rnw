@@ -57,7 +57,53 @@ observed_property.def <- "<property definition from metadata>" #toString(attribu
 observed_property.range <- "<range of values>" # range(r1[[toString(observed_property)]])
 observed_property.numberOfValues <- "<number of values>" # length(r1[[toString(observed_property)]])
 
-source("pegel-analysis.R")
+################################################################################
+pegelsos <- SOS(url = "http://pegelonline.wsv.de/webservices/gis/gdi-sos")
+
+procs <- sosProcedures(pegelsos)[[offering_name]]
+
+if(is.null(procedure_filter)) {
+	sensors <- procs
+} else {
+	filter <- procs %in% grep(procedure_filter, procs, value=TRUE)
+	sensors <- subset(procs, filter)
+}
+
+
+offering <- sosOfferings(pegelsos)[[offering_name]]
+observed_property <- sosObservedProperties(offering)[1]
+
+sensors <- sensors[1]
+sensors.sml <- describeSensor(sos=pegelsos,procedure=sensors)
+
+################################################################################
+tPeriod.end <- Sys.time()
+tPeriod <- sosCreateEventTimeList(
+	time = sosCreateTimePeriod(
+		sos = pegelsos,
+		begin = tPeriod.end - (3600 * 24 * tPeriod.days),
+		end = tPeriod.end))
+
+################################################################################
+pegelObs <- getObservation(sos = pegelsos,
+													 observedProperty = observed_property,
+													 offering = offering,
+													 procedure = sensors,
+													 eventTime = tPeriod)
+
+################################################################################
+r1 <- sosResult(pegelObs[[1]])
+range(r1[[toString(observed_property)]])
+r1clean <- subset(r1, toString(observed_property) > 0)
+range(r1clean$Wasserstand)
+
+
+################################################################################
+r1plot <- xyplot(r1clean$Wasserstand ~ r1clean$SamplingTime, r1clean, type = "l",
+								 col = "grey", xlab = "Time", ylab = "Wasserstand")
+
+r1plot <- r1plot + layer(panel.quantile(x, y, tau = c(.95, .5, .05)))
+# show(r1plot)
 
 @
 
@@ -145,18 +191,7 @@ toLatex(sessionInfo())
 
 \subsection{Code}
 
-Die Originaldatei kann \hl{hier heruntergeladen werden - link zum WPS der diese Datei erzeugt hat}. Die Datei um diesen Bericht zu erstellen kann \hl{hier heruntergeladen werden}.
-
-% \lstinputlisting[language=R]{pegel-analysis.R}
-
-\scriptsize
-\singlespacing
-
-\lstset{caption={pegel-analysis.R},label={code:plot},frame=tb}
-\lstinputlisting[tabsize=2]{pegel-analysis.R}
-
-\normalfont
-\normalsize
+Die original \href{http://de.wikipedia.org/wiki/Sweave}{Sweave}-Datei dieses Dokumentes kann \href{resource_url_rnw_file}{hier} heruntergeladen werden. Sie enthält den gesamten Code der Analyse. Download der Prozessbeschreibung \href{\Sexpr{process_description_url}}{hier}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Kontakt}

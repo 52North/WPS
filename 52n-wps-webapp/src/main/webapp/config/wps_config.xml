@@ -354,6 +354,7 @@
 				<Format mimetype="image/png" />
 				<Format mimetype="application/x-geotiff" />
 				<Format mimetype="text/plain" />
+				<Format mimetype="application/pdf" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
@@ -450,14 +451,16 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">R\r_scripts</Property>
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
+			<Property name="Script_Dir" active="true">R\scripts</Property>
 			<Property name="Resource_Dir" active="true">R\resources</Property>
 			<Property name="Enable_Batch_Start" active="true">false</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
-			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="false">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>

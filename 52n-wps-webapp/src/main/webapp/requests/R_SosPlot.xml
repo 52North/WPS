@@ -9,16 +9,16 @@
 			<ows:Identifier>offering_days</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>3</wps:LiteralData>
+				<wps:LiteralData>10</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
-		<!-- <wps:Input> -->
-		<!-- <ows:Identifier>offering_id</ows:Identifier> -->
-		<!-- <ows:Title></ows:Title> -->
-		<!-- <wps:Data> -->
-		<!-- <wps:LiteralData>ATMOSPHERIC_TEMPERATURE</wps:LiteralData> -->
-		<!-- </wps:Data> -->
-		<!-- </wps:Input> -->
+		<wps:Input>
+			<ows:Identifier>offering_id</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<wps:LiteralData>ATMOSPHERIC_TEMPERATURE</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
 		<wps:Input>
 			<ows:Identifier>image_width</ows:Identifier>
 			<ows:Title></ows:Title>
@@ -35,8 +35,10 @@
 		</wps:Input>
 	</wps:DataInputs>
 	<wps:ResponseForm>
-		<wps:RawDataOutput mimeType="image/jpeg">
-			<ows:Identifier>output_image</ows:Identifier>
-		</wps:RawDataOutput>
+		<wps:ResponseDocument>
+			<wps:Output asReference="true">
+				<ows:Identifier>output_image</ows:Identifier>
+			</wps:Output>
+		</wps:ResponseDocument>
 	</wps:ResponseForm>
 </wps:Execute>
