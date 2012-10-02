@@ -120,6 +120,7 @@ public class WebProcessingService extends HttpServlet {
 	
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024L);
 		// this is important to set the lon lat support for correct CRS transformation.
 		//TODO: Might be changed to an additional configuration parameter.
@@ -129,7 +130,7 @@ public class WebProcessingService extends HttpServlet {
 		LOGGER.info("WebProcessingService initializing...");
 
 		try{
-			if(WPSConfig.getInstance() ==null){
+			if(WPSConfig.getInstance(config) == null){
 				LOGGER.error("Initialization failed! Please look at the properties file!");
 				return;
 			}

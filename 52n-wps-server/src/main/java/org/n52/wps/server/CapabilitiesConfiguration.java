@@ -97,8 +97,11 @@ public class CapabilitiesConfiguration {
 		options.setLoadStripComments();
 		CapabilitiesDocument capsSkeleton = CapabilitiesDocument.Factory.parse(new File(CapabilitiesConfiguration.filePath), options);
 		//String host = WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_HOST_NAME);
-		String host = WPSConfig.getInstance().getWPSConfig().getServer().getHostname();
-		String hostPort = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
+		
+		WPSConfig config = WPSConfig.getInstance();
+		
+		String host = config.getWPSConfig().getServer().getHostname();
+		String hostPort = config.getWPSConfig().getServer().getHostport();
 		if(host == null) {
 			host = InetAddress.getLocalHost().getCanonicalHostName();
 		}
