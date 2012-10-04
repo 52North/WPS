@@ -42,6 +42,7 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.AbstractObservableAlgorithm;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
@@ -134,6 +135,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             LOGGER.error("I/O error while parsing process description: " + ioe.getMessage());
             throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage());
         }
+        catch (ExceptionReport e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException("Error creating process descriptionn.", e);
+        }
         finally {
             try {
                 if (rScriptStream != null)
@@ -145,7 +150,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
     }
 
-    public Map<String, IData> run(Map<String, List<IData>> inputData) {
+    public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
         LOGGER.info("Running " + this.toString());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("inputData: " + Arrays.toString(inputData.entrySet().toArray()));
@@ -304,11 +309,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             }
             catch (IOException e) {
-                e.printStackTrace();
                 String message = "Attempt to read R Skript file failed:\n" + e.getClass() + " - "
                         + e.getLocalizedMessage() + "\n" + e.getCause();
-                LOGGER.error(message);
-                throw new RuntimeException(message);
+                LOGGER.error(message, e);
+                throw new ExceptionReport(message, e.getClass().getName());
             }
             finally {
                 if (rCon == null || !rCon.isConnected()) {
@@ -340,17 +344,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         }
         catch (RserveException e) {
-            e.printStackTrace();
-            String message = "An R Connection Error occoured:\n" + e.getClass() + " - " + e.getLocalizedMessage()
-                    + "\n" + e.getCause();
-            LOGGER.error(message);
-            throw new RuntimeException(message);
+            String message = "An R Connection Error occured:\n" + e.getClass() + " - " + e.getLocalizedMessage() + "\n"
+                    + e.getCause();
+            LOGGER.error(message, e);
+            throw new ExceptionReport("Error with the R connection", "R", "R_Connection", e);
         }
         catch (REXPMismatchException e) {
-            e.printStackTrace();
             String message = "An R Parsing Error occoured:\n" + e.getMessage() + e.getClass() + " - "
                     + e.getLocalizedMessage() + "\n" + e.getCause();
-            LOGGER.error(message);
+            LOGGER.error(message, e);
             throw new RuntimeException(message);
         }
 
@@ -690,8 +692,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 catch (Exception e) {
                     String message = "Error for parsing String to IData for " + result_id + " and class " + iClass
                             + "\n" + e.getMessage();
-                    LOGGER.error(message);
-                    e.printStackTrace();
+                    LOGGER.error(message, e);
                     throw new RuntimeException(message);
                 }
             }

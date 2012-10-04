@@ -12,54 +12,37 @@ var endsWith = function(string, pattern) {
 var urlIndex = window.location.href.lastIndexOf("/R/");
 var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
 var serviceUrlString = urlBasisString + "WebProcessingService";
-var processIdentifier = 'org.n52.wps.server.r.SosPlot';
-var outputIdentifier = 'output_image';
+var outputIdentifier = "report";
 
-var requestPlot = function(days, offering) {
+var sendRequest = function(processId, outputId, outputFormat) {
 
-	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
-			+ '<ows:Identifier>'
-			+ processIdentifier
-			+ '</ows:Identifier>'
-			+ '<wps:DataInputs><wps:Input><ows:Identifier>offering_days</ows:Identifier>'
-			+ '<ows:Title></ows:Title>'
-			+ '<wps:Data>'
-			+ '<wps:LiteralData>'
-			+ days
-			+ '</wps:LiteralData></wps:Data>'
-			+ '</wps:Input>'
-			+ '<wps:Input>'
-			+ '<ows:Identifier>offering_id</ows:Identifier>'
-			+ '<ows:Title></ows:Title>'
-			+ '<wps:Data>'
-			+ '<wps:LiteralData>'
-			+ offering
-			+ '</wps:LiteralData>'
-			+ '</wps:Data>'
-			+ '</wps:Input>'
-			+ '<wps:Input>'
-			+ '<ows:Identifier>image_width</ows:Identifier>'
-			+ '<ows:Title></ows:Title>'
-			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
-			+ '	</wps:Data>'
-			+ '</wps:Input>'
-			+ '<wps:Input>'
-			+ '<ows:Identifier>image_height</ows:Identifier>'
-			+ '<ows:Title></ows:Title>'
-			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
-			+ '</wps:Data>'
-			+ '</wps:Input>'
-			+ '</wps:DataInputs>'
-			+ '<wps:ResponseForm>'
-			+ '<wps:ResponseDocument>'
-			+ '<wps:Output asReference="true">'
-			+ '<ows:Identifier>output_image</ows:Identifier>'
-			+ '</wps:Output>'
-			+ '</wps:ResponseDocument>'
-			+ '</wps:ResponseForm>'
-			+ '</wps:Execute>';
+	var beforeOutput = '<?xml version="1.0" encoding="UTF-8"?>'
+			+ '<wps:Execute service="WPS" version="1.0.0" '
+			+ 'xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" '
+			+ 'xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+			+ 'xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
+			+ '<ows:Identifier>' + processId + '</ows:Identifier>'
+			+ '<wps:ResponseForm>';
+
+	var rawOutput = '<wps:RawDataOutput>' + '<ows:Identifier>' + outputId
+			+ '</ows:Identifier>' + '</wps:RawDataOutput>';
+	var linkOutput = '<wps:ResponseDocument>'
+			+ '<wps:Output asReference="true">' + '<ows:Identifier>' + outputId
+			+ '</ows:Identifier>' + '</wps:Output>' + '</wps:ResponseDocument>';
+
+	var afterOutput = '</wps:ResponseForm>' + '</wps:Execute>';
+
+	var requestString = null;
+	if (outputFormat == "pdf") {
+		requestString = beforeOutput + rawOutput + afterOutput;
+	} else if (outputFormat == "link") {
+		requestString = beforeOutput + linkOutput + afterOutput;
+	} else {
+		$("#resultLog")
+				.html(
+						"<div class=\"validation\">Output format must be pdf or link.</div>");
+		return;
+	}
 
 	var requestXML = $.parseXML(requestString);
 	var xmlstr = requestXML.xml ? requestXML.xml : (new XMLSerializer())
@@ -68,6 +51,9 @@ var requestPlot = function(days, offering) {
 	$("#resultLog").html(
 			"<div class=\"info\">Sent request to " + serviceUrlString
 					+ " :<br /><textarea>" + xmlstr + "</textarea><div>");
+	
+	// TODO if not a download, then I have to redirect... window.location.replace("http://stackoverflow.com");
+	// maybe with dataType: "application/pdf" ???
 
 	$.ajax({
 		type : "POST",
@@ -120,14 +106,16 @@ var showResponse = function(executeResponse) {
 									function() {
 
 										var link = $(this).attr("href");
-										// var mime_type = $(this)
-										// .attr("mimeType");
+										var mime_type = $(this)
+												.attr("mimeType");
 
 										if (beginsWith(link, "http://")) {
-											$("#plot").html(
-													"<img src='" + link
+											$("#report").html(
+													"<a href='" + link
 															+ "' alt='" + title
-															+ "' />");
+															+ " (" + mime_type
+															+ ")" + "'>" + link
+															+ "</a>");
 										}
 
 										// $("#resultLog").append(
@@ -150,11 +138,12 @@ var handleResponse = function(data) {
 $(function() {
 
 	$("#executeRequest").click(function() {
-		var days = $("#slider-days").val();
-		var offering = 'ATMOSPHERIC_TEMPERATURE';
-		$("#resultLog").html("Days: " + days + " | Offering: " + offering);
+		var process = $('input:radio[name=radio-content]:checked').val();
+		var format = $("#flip-output").val();
 
-		requestPlot(days, offering);
+		$("#resultLog").html("Process: " + process + " | Format: " + format);
+
+		sendRequest(process, outputIdentifier, format);
 	});
 
 	$("#resultLog").ajaxError(
@@ -164,6 +153,14 @@ $(function() {
 								+ "<br />HTPP Code: " + request.status
 								+ "<br />Exception: " + exception + "</div>");
 			});
+
+	$("flip-output").bind("change", function(event, ui) {
+		alert(event);
+	});
+
+	$("flip-content").bind("change", function(event, ui) {
+		alert(event);
+	});
 });
 
 $(document).ready(function() {

@@ -7,21 +7,31 @@
 #wps.out: report, pdf, pegel-analyse report;
 #wps.resource: pegel-report.Rnw, Sweave.sty;
 
-# can be inputs later:
+# can be inputs later, to be used in the Sweave file
 tPeriod.days <- 1
 offering_name <- "WASSERSTAND_ROHDATEN"
 procedure_filter <- "*Wasserstand-Bake*"
 
-cat(wpsResourceURL, "\n")
-cat(wpsProcessDescription, "\n")
-process_description_url <- wpsProcessDescription
-resource_url_rnw_file <- paste0(wpsResourceURL, "/", "pegel-report.Rnw")
-resource_url_script_file <- "url skript kommt noch"
+# TODO must be set on the server:
+wpsServer <- FALSE
 
-# download file from resources - alternative TODO: server copies resources to workdir
-download.file(resource_url_rnw_file, "pegel-report.Rnw")
+if(wpsServer) {
+	# get metadata when running if the server
+	# cat(wpsResourceURL, "\n")
+	# cat(wpsProcessDescription, "\n")
+	process_description_url <- wpsProcessDescription
+	resource_url_rnw_file <- paste0(wpsResourceURL, "/", "pegel-report.Rnw")
+	
+	# download file from resources - alternative TODO: server copies resources to workdir
+	sweave_input_file <- "pegel-report.Rnw"
+	download.file(resource_url_rnw_file, sweave_input_file)
+} else {
+	process_description_url <- "N/A"
+	resource_url_rnw_file <- "N/A"
+	sweave_input_file <- "D:\\workspace-wps\\maven.1336393192191\\WPS\\52n-wps-webapp\\src\\main\\webapp\\R\\resources\\pegel-report.Rnw"
+}
 
 # generate report
-Sweave("pegel-report.Rnw")
-system("pdfLatex \"pegel-report.tex\"") #proplem: doesn't run without interaction
+Sweave(sweave_input_file)
+system("pdfLatex \"pegel-report.tex\"") #problem: doesn't run without interaction
 report="pegel-report.pdf"

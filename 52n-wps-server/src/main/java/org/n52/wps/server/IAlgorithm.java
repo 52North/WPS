@@ -43,9 +43,12 @@ import org.n52.wps.io.data.IData;
 
 public interface IAlgorithm  {
 		
-	Map<String, IData> run(Map<String, List<IData>> inputData);
+	Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport;
+	
 	List<String> getErrors();
+	
 	ProcessDescriptionType getDescription();
+	
 	/** Returns some well-known name for the process.
 	 *  
 	 *  @return Returns some well-known name for the process or algorithm
@@ -53,12 +56,14 @@ public interface IAlgorithm  {
 	 *  @note The fully-qualified class name is gotten via getName();
 	 */ 
 	String getWellKnownName();
+	
 	/**
 	 * Checks if the processDescription complies to the process itself and fits any schema or other dependencies.
 	 */
 	boolean processDescriptionIsValid();
 	
-	Class getInputDataType(String id);
-	Class getOutputDataType(String id);
+	Class< ? > getInputDataType(String id);
+	
+	Class< ? > getOutputDataType(String id);
 	
 }

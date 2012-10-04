@@ -28,6 +28,7 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
@@ -44,8 +45,9 @@ public class RProcessDescriptionCreator {
      * @param wkn
      *        Process identifier
      * @return
+     * @throws ExceptionReport 
      */
-    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String wkn) {
+    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String wkn) throws ExceptionReport {
         ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
         pdt.setStatusSupported(true);
         pdt.setStoreSupported(true);

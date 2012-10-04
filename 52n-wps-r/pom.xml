@@ -12,10 +12,47 @@
 	<groupId>org.n52.wps</groupId>
 	<artifactId>52n-wps-r</artifactId>
 	<packaging>jar</packaging>
-	<name>52north 52n-wps-r</name>
-	<description>The project 52 north 52n-wps-r releases functionalities of R as WPS processes</description>
+	<name>52North WPS4R</name>
+	<description>The project WPS4R provides functionalities of R as WPS processes.</description>
 
 	<inceptionYear>2010</inceptionYear>
+
+	<mailingLists>
+		<mailingList>
+			<name>Geoprocessing</name>
+			<archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
+			<post>geoprocessingservices@52north.org</post>
+			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+		</mailingList>
+	</mailingLists>
+	<developers>
+		<developer>
+			<id>MatthiasHinz</id>
+			<name>Matthias Hinz</name>
+			<email>m.hinz@52north.org</email>
+			<timezone>+2</timezone>
+			<organization>52°North GmbH</organization>
+			<organizationUrl>http://52north.org</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Leader in WPS4R development</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>DanielNuest</id>
+			<name>Daniel Nüst</name>
+			<email>d.nuest@52north.org</email>
+			<timezone>+2</timezone>
+			<organization>52°North GmbH</organization>
+			<organizationUrl>http://52north.org</organizationUrl>
+			<roles>
+				<role>Member of Geoprocessing community</role>
+				<role>Java Developer</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<build>
 		<!--resources> <resource> <directory>src/main/resources</directory> <includes> 
@@ -68,7 +105,7 @@
 			<version>1.0.4</version>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-server</artifactId>

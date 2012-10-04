@@ -37,6 +37,10 @@
 %Dieses Dokument demonstriert eine transparente Berichtgenerierung mit Hilfe von Open Source Softwarekomponenten von 52$^\circ$North. Diese Datei wurde auf Basis von live Daten in einem 52$^\circ$North Web Processing Service\footnote{\url{http://52north.org/communities/geoprocessing/wps/}} (WPS) mit Hilfe von WPS4R\footnote{\url{{http://52north.org/communities/geoprocessing/wps/backends/52n-wps-r.html}} auf der Basis von R\footnote{\url{http://r-project.org/}}, \LaTeX{}\footnote{\url{http://www.latex-project.org/}} und Sweave\footnote{\url{http://www.statistik.lmu.de/~leisch/Sweave/}} generiert.
 
 
+<<label=defaults, echo=FALSE, results=hide>>=
+cat("Input values: ", tPeriod.days, " ", offering_name, " ", procedure_filter, "\n")
+@
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<label=analysis, echo=FALSE, results=hide>>=
 library("sos4R")
@@ -56,6 +60,7 @@ request.time.end <- "<end of time interval>" # tPeriod.end
 observed_property.def <- "<property definition from metadata>" #toString(attributes(sosResult(pegelObs[[1]])$SamplingTime)[c("name", "definition")])
 observed_property.range <- "<range of values>" # range(r1[[toString(observed_property)]])
 observed_property.numberOfValues <- "<number of values>" # length(r1[[toString(observed_property)]])
+
 
 ################################################################################
 pegelsos <- SOS(url = "http://pegelonline.wsv.de/webservices/gis/gdi-sos")

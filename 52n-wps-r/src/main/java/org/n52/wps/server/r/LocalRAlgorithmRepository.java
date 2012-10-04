@@ -43,6 +43,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
@@ -131,9 +132,9 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return loadAlgorithm(algorithmMap.get(className));
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
+            String message = "Could not load algorithm for class name " + className;
+            LOGGER.error(message, e);
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -141,12 +142,15 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
         try {
             for (String algorithmClasses : algorithmMap.values()) {
-                resultList.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
+                String algName = algorithmMap.get(algorithmClasses);
+                IAlgorithm algorithm = loadAlgorithm(algName);
+                resultList.add(algorithm);
             }
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            String message = "Could not load algorithms.";
+            LOGGER.error(message, e);
+            throw new RuntimeException(message, e);
 
         }
         return resultList;

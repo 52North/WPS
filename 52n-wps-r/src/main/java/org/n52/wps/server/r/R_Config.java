@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -151,8 +152,8 @@ public class R_Config {
             sessionInfo = getSessionInfo(rCon);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error: R session info cannot be retrieved.");
+            LOGGER.error("Could not open session.", e);
+            throw new RuntimeException("Error: R session info cannot be retrieved.", e);
         }
         finally {
             if (rCon != null)
@@ -170,13 +171,14 @@ public class R_Config {
         return (getUrlPathUpToWebapp() + "/" + RESOURCE_DIR).replace("\\", "/");
     }
 
-    public URL getScriptURL(String wkn) throws MalformedURLException {
+    public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
         String fname = null;
         try {
             fname = wknToFile(wkn).getName();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Could not open session.", e);
+            throw new ExceptionReport("Could not open script file.", "Input/Output", e);
         }
 
         if (fname == null)
@@ -213,8 +215,8 @@ public class R_Config {
      * tries to start Rserve (runs "Rserve.bat" if batchfile.exists() && RSERVE_HOST == "localhost")
      */
     public void startRserve() {
-        try {
-            if (enableBatchStart) {
+        if (enableBatchStart) {
+            try {
                 String batch = BASE_DIR_FULL + batchStartFile;
                 File batchfile = new File(batch);
                 if (batchfile.exists()) {
@@ -223,13 +225,14 @@ public class R_Config {
                 else
                     LOGGER.error("Batch file does not exist! " + batchfile);
             }
-            else
-                LOGGER.error("Batch start is disabled! (" + RWPSConfigVariables.ENABLE_BATCH_START.toString() + " = "
-                        + enableBatchStart + ")");
+
+            catch (IOException e) {
+                LOGGER.error("Could not start Rserve with batch file.", e);
+            }
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        else
+            LOGGER.error("Batch start is disabled! (" + RWPSConfigVariables.ENABLE_BATCH_START.toString() + " = "
+                    + enableBatchStart + ")");
     }
 
     /**
