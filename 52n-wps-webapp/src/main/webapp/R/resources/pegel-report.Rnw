@@ -36,43 +36,51 @@
 
 %Dieses Dokument demonstriert eine transparente Berichtgenerierung mit Hilfe von Open Source Softwarekomponenten von 52$^\circ$North. Diese Datei wurde auf Basis von live Daten in einem 52$^\circ$North Web Processing Service\footnote{\url{http://52north.org/communities/geoprocessing/wps/}} (WPS) mit Hilfe von WPS4R\footnote{\url{{http://52north.org/communities/geoprocessing/wps/backends/52n-wps-r.html}} auf der Basis von R\footnote{\url{http://r-project.org/}}, \LaTeX{}\footnote{\url{http://www.latex-project.org/}} und Sweave\footnote{\url{http://www.statistik.lmu.de/~leisch/Sweave/}} generiert.
 
-
-<<label=defaults, echo=FALSE, results=hide>>=
-cat("Input values: ", tPeriod.days, " ", offering_name, " ", procedure_filter, "\n")
-@
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<label=analysis, echo=FALSE, results=hide>>=
+<<label=libraries, echo=FALSE, results=hide>>=
 library("sos4R")
 library("latticeExtra")
 library("quantreg")
-
-pegelsos <- "<sos toString>"
-offering <- "<offering name>"
-observed_property <- "<observed property name>"
-sos.url <- "<sos url>" # paste0(sosUrl(pegelsos), "?request=GetCapabilities&service=SOS")
-
-sensors.string <- "<list of used sensors>" # toString("sensors")
-
-request.time <- "<time interval used for request>" # toString(tPeriod.days)
-request.time.end <- "<end of time interval>" # tPeriod.end
-
-observed_property.def <- "<property definition from metadata>" #toString(attributes(sosResult(pegelObs[[1]])$SamplingTime)[c("name", "definition")])
-observed_property.range <- "<range of values>" # range(r1[[toString(observed_property)]])
-observed_property.numberOfValues <- "<number of values>" # length(r1[[toString(observed_property)]])
+@
 
 
-################################################################################
+<<label=inputs, echo=FALSE, results=hide>>=
+# can be inputs later, to be defined in the script file as wps inputs
+
+if(exists("tPeriod_days")) {
+	cat("[pegel] Found param tPeriod_days: ", tPeriod_days, "\n")
+} else {
+	tPeriod_days <- 1
+}
+
+if(exists("offering_name")) {
+	cat("[pegel] Found param offering_name: ", offering_name, "\n")
+} else {
+	offering_name <- "WASSERSTAND_ROHDATEN"
+}
+
+if(exists("procedure_filter")) {
+	cat("[pegel] Found param procedure_filter: ", procedure_filter, "\n")		
+} else {
+	procedure_filter <- "*Wasserstand-Bake*"
+}
+			
+cat("[pegel] Input values:\n\tdays=", tPeriod_days, "\n\toffering=", offering_name, "\n\tprocedure filter=", procedure_filter, "\n")
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<label=metadata_service, echo=FALSE, results=hide>>=
 pegelsos <- SOS(url = "http://pegelonline.wsv.de/webservices/gis/gdi-sos")
 
 procs <- sosProcedures(pegelsos)[[offering_name]]
 
-if(is.null(procedure_filter)) {
-	sensors <- procs
-} else {
+if(exists("procedure_filter")) {
 	filter <- procs %in% grep(procedure_filter, procs, value=TRUE)
 	sensors <- subset(procs, filter)
+} else {
+	sensors <- procs
 }
+cat("[pegel] sensors: ", toString(sensors), "\n")
 
 
 offering <- sosOfferings(pegelsos)[[offering_name]]
@@ -80,36 +88,6 @@ observed_property <- sosObservedProperties(offering)[1]
 
 sensors <- sensors[1]
 sensors.sml <- describeSensor(sos=pegelsos,procedure=sensors)
-
-################################################################################
-tPeriod.end <- Sys.time()
-tPeriod <- sosCreateEventTimeList(
-	time = sosCreateTimePeriod(
-		sos = pegelsos,
-		begin = tPeriod.end - (3600 * 24 * tPeriod.days),
-		end = tPeriod.end))
-
-################################################################################
-pegelObs <- getObservation(sos = pegelsos,
-													 observedProperty = observed_property,
-													 offering = offering,
-													 procedure = sensors,
-													 eventTime = tPeriod)
-
-################################################################################
-r1 <- sosResult(pegelObs[[1]])
-range(r1[[toString(observed_property)]])
-r1clean <- subset(r1, toString(observed_property) > 0)
-range(r1clean$Wasserstand)
-
-
-################################################################################
-r1plot <- xyplot(r1clean$Wasserstand ~ r1clean$SamplingTime, r1clean, type = "l",
-								 col = "grey", xlab = "Time", ylab = "Wasserstand")
-
-r1plot <- r1plot + layer(panel.quantile(x, y, tau = c(.95, .5, .05)))
-# show(r1plot)
-
 @
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,10 +102,16 @@ r1plot <- r1plot + layer(panel.quantile(x, y, tau = c(.95, .5, .05)))
 \begin{tabular}{l|l}
 
 \hline
-Service & \Sexpr{toString(pegelsos)} \\
-Offering & \Sexpr{toString(offering)} \\
+Service Title & \Sexpr{sosTitle(pegelsos)} \\
+Service Abstract & \Sexpr{sosAbstract(pegelsos)} \\
+Service Version & \Sexpr{sosVersion(pegelsos)} \\
+Service Capabilities & \Sexpr{sosUrl(pegelsos)} \\
+\hline
+Provider & \Sexpr{sosServiceProvider(pegelsos)@providerName} (\href{sosServiceProvider(pegelsos)@providerSite}{Website}) \\
+\hline
+Offering ID & \Sexpr{sosId(offering)} \\ % gsub("_", " \\\_", sosId(offering))
+Offering Name & \Sexpr{sosName(offering)} \\
 Observed Property & \Sexpr{toString(observed_property)} \\
-Service Capabilities & \Sexpr{toString(sos.url)} \\
 \hline
 
 \end{tabular}
@@ -139,17 +123,42 @@ Service Capabilities & \Sexpr{toString(sos.url)} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Analyserahmen}
 
-Die folgenden Analysen umfassen einen Zeitraum von \Sexpr{request.time} vor Erstellungszeit (\Sexpr{request.time.end}).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<label=metadata_analysis, echo=FALSE, results=hide>>=
+tPeriod.end <- Sys.time()
+tPeriod <- sosCreateEventTimeList(
+	time = sosCreateTimePeriod(
+		sos = pegelsos,
+		begin = tPeriod.end - (3600 * 24 * tPeriod_days),
+		end = tPeriod.end))
+cat("[pegel] time period: ", toString(tPeriod), "\n")
+@
+
+Die folgenden Analysen umfassen einen Zeitraum von \Sexpr{tPeriod_days} Tagen vor Erstellungszeit diese Dokumentes (\Sexpr{tPeriod.end}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<label=request, echo=FALSE, results=hide>>=
+pegelObs <- getObservation(sos = pegelsos,
+													 observedProperty = observed_property,
+													 offering = offering,
+													 procedure = sensors,
+													 eventTime = tPeriod)
+
+r1 <- sosResult(pegelObs[[1]])
+range(r1[[toString(observed_property)]])
+r1clean <- subset(r1, toString(observed_property) > 0)
+range(r1clean$Wasserstand)
+@
 
 \begin{table}[h]
 \centering
 \begin{tabular}{l|l}
 
 \hline
-Zeitparameter, Definition & \Sexpr{observed_property.def} \\
 Messgröße & \Sexpr{observed_property} \\
-Zeitinterval & \Sexpr{observed_property} \\
-Werteintervall & \Sexpr{observed_property.range} \\
+Messeinheit & \Sexpr{toString(sosUOM(r1))} \\
+Zeitinterval & \Sexpr{range(r1clean$SamplingTime)} \\
+Werteintervall & \Sexpr{range(r1clean$Wasserstand)} \\
 Werteanzahl & \Sexpr{observed_property.numberOfValues} \\
 \hline
 
@@ -163,6 +172,15 @@ Werteanzahl & \Sexpr{observed_property.numberOfValues} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Analyse}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<label=plot, echo=FALSE, results=hide>>=
+r1plot <- xyplot(r1clean$Wasserstand ~ r1clean$SamplingTime, r1clean, type = "l",
+								 col = "grey", xlab = "Time", ylab = "Wasserstand")
+
+r1plot <- r1plot + layer(panel.quantile(x, y, tau = c(.95, .5, .05)))
+# show(r1plot)
+@
 
 Die folgende Analyse wurde durchgeführt: ...
 

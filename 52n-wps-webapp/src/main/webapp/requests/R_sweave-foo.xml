@@ -5,8 +5,13 @@
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
 	<ows:Identifier>org.n52.wps.server.r.sweave-foo</ows:Identifier>
 	<wps:ResponseForm>
-		<wps:RawDataOutput>
-			<ows:Identifier>report</ows:Identifier>
-		</wps:RawDataOutput>
+		<wps:ResponseDocument>
+			<wps:Output asReference="true">
+				<ows:Identifier>report</ows:Identifier>
+			</wps:Output>
+			<wps:Output asReference="false">
+				<ows:Identifier>report_source</ows:Identifier>
+			</wps:Output>
+		</wps:ResponseDocument>
 	</wps:ResponseForm>
 </wps:Execute>

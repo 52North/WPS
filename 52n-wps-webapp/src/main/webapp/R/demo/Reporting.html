@@ -15,6 +15,7 @@
 	src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
 
 <script type="text/javascript" src="reporting.js"></script>
+<script type="text/javascript" src="wps-client-common.js"></script>
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -27,24 +28,26 @@
 		</div>
 
 		<div data-role="content" class="reporting-content">
-			<!-- 			<label for="slider-days">Select the number of days to view:</label> <input -->
-			<!-- 				type="range" name="slider" id="slider-days" value="7" min="1" -->
-			<!-- 				max="90" /> -->
-			<label for="flip-output" class="ui-hidden-accessible">Select
-				output:</label> <select name="flip-output" id="flip-output"
-				data-role="slider">
-				<option value="pdf">Open PDF</option>
-				<option value="link">Download Link</option>
-			</select>
 
-			<p>
 			<fieldset data-role="controlgroup" data-type="horizontal">
-				<input type="radio" name="radio-content" id="radio-pegel"
-					value="org.n52.wps.server.r.pegel-report" checked="checked" /> <label for="radio-pegel">Pegel
-					Report</label> <input type="radio" name="radio-content" id="radio-foo"
-					value="org.n52.wps.server.r.sweave-foo" /> <label for="radio-foo">Sweave Foo</label> </select>
+				<p>
+					<input type="radio" name="radio-output" id="radio-pdf" value="pdf" />
+					<label for="radio-pdf">Open PDF</label> <input type="radio"
+						name="radio-output" id="radio-link" value="link" checked="checked" />
+					<label for="radio-link">Download Link</label>
+				</p>
 			</fieldset>
-			</p>
+
+			<fieldset data-role="controlgroup" data-type="horizontal">
+				<p>
+					<input type="radio" name="radio-content" id="radio-pegel"
+						value="org.n52.wps.server.r.pegel-report" checked="checked" /> <label
+						for="radio-pegel">Pegel Report</label> <input type="radio"
+						name="radio-content" id="radio-foo"
+						value="org.n52.wps.server.r.sweave-foo" /> <label for="radio-foo">Sweave
+						Foo</label>
+				</p>
+			</fieldset>
 
 			<button name="submit" id="executeRequest" value="execute-request">Generate
 				Report</button>

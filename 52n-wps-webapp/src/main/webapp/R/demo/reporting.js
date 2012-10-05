@@ -1,20 +1,6 @@
-var debug = false;
-
-var beginsWith = function(string, pattern) {
-	return (string.indexOf(pattern) === 0);
-}
-
-var endsWith = function(string, pattern) {
-	var d = string.length - pattern.length;
-	return (d >= 0 && string.lastIndexOf(pattern) === d);
-}
-
-var urlIndex = window.location.href.lastIndexOf("/R/");
-var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
-var serviceUrlString = urlBasisString + "WebProcessingService";
 var outputIdentifier = "report";
 
-var sendRequest = function(processId, outputId, outputFormat) {
+var sendRequest = function(processId, outputId, outputSourceId, outputFormat) {
 
 	var beforeOutput = '<?xml version="1.0" encoding="UTF-8"?>'
 			+ '<wps:Execute service="WPS" version="1.0.0" '
@@ -28,15 +14,44 @@ var sendRequest = function(processId, outputId, outputFormat) {
 			+ '</ows:Identifier>' + '</wps:RawDataOutput>';
 	var linkOutput = '<wps:ResponseDocument>'
 			+ '<wps:Output asReference="true">' + '<ows:Identifier>' + outputId
-			+ '</ows:Identifier>' + '</wps:Output>' + '</wps:ResponseDocument>';
+			+ '</ows:Identifier>' + '</wps:Output>'
+			+ '<wps:Output asReference="false">' + '<ows:Identifier>'
+			+ outputSourceId + '</ows:Identifier>' + '</wps:Output>'
+			+ '</wps:ResponseDocument>';
 
 	var afterOutput = '</wps:ResponseForm>' + '</wps:Execute>';
 
 	var requestString = null;
 	if (outputFormat == "pdf") {
 		requestString = beforeOutput + rawOutput + afterOutput;
+		var data = {
+			"request" : requestString,
+			"data-ajax" : "false",
+			"rel" : "external"
+		};
+		download(serviceUrlString, data, "post");
+
 	} else if (outputFormat == "link") {
 		requestString = beforeOutput + linkOutput + afterOutput;
+
+		var requestXML = $.parseXML(requestString);
+		var xmlstr = requestXML.xml ? requestXML.xml : (new XMLSerializer())
+				.serializeToString(requestXML);
+
+		$("#resultLog").html(
+				"<div class=\"info\">Sent request to " + serviceUrlString
+						+ " :<br /><textarea>" + xmlstr + "</textarea><div>");
+
+		$.ajax({
+			type : "POST",
+			url : serviceUrlString, // "http://localhost:8080/wps/WebProcessingService",
+			data : {
+				request : xmlstr
+			},
+			cache : false,
+			dataType : "xml",
+			success : handleResponse
+		});
 	} else {
 		$("#resultLog")
 				.html(
@@ -44,106 +59,92 @@ var sendRequest = function(processId, outputId, outputFormat) {
 		return;
 	}
 
-	var requestXML = $.parseXML(requestString);
-	var xmlstr = requestXML.xml ? requestXML.xml : (new XMLSerializer())
-			.serializeToString(requestXML);
-
-	$("#resultLog").html(
-			"<div class=\"info\">Sent request to " + serviceUrlString
-					+ " :<br /><textarea>" + xmlstr + "</textarea><div>");
-	
-	// TODO if not a download, then I have to redirect... window.location.replace("http://stackoverflow.com");
-	// maybe with dataType: "application/pdf" ???
-
-	$.ajax({
-		type : "POST",
-		url : serviceUrlString, // "http://localhost:8080/wps/WebProcessingService",
-		data : {
-			request : xmlstr
-		},
-		cache : false,
-		dataType : "xml",
-		success : handleResponse
-	});
-
 }
 
-var showError = function(error) {
-	var xmlString = (new XMLSerializer()).serializeToString(error);
-	alert(xmlString);
+// http://stackoverflow.com/questions/10627051/jquery-ajax-pdf-response
+// http://stackoverflow.com/questions/1149454/non-ajax-get-post-using-jquery-plugin
+download = function(url, data, method) {
+	// url and data options required
+	if (url && data) {
+		var form = $('<form />', {
+			action : url,
+			method : (method || 'get')
+		});
 
-	var messages = "";
-	$(error).find("ns\\:Exception").each(
-			function() {
-
-				var text = $(this).find("ns\\:ExceptionText").text();
-				var locator = $(this).attr("locator");
-
-				var errorMessage = "<p>Error: " + text + "<br />Locator: "
-						+ locator + "</p>\n";
-				messages = messages + errorMessage;
+		$.each(data, function(key, value) {
+			var input = $('<input />', {
+				type : 'hidden',
+				name : key,
+				value : value
 			});
+			input.appendTo(form);
+		});
 
-	$("#resultLog").html("<div class=\"error\">" + messages + "</div>");
-}
+		// return form.appendTo('body').submit().remove();
+		form.appendTo('body');
+		form.submit();
+	}
+
+	throw new Error('$.download(url, data) - url or data invalid');
+};
 
 var showResponse = function(executeResponse) {
 	var status = $(executeResponse).find("ns\\:Status");
 	var statusText = $(status).find("ns\\:ProcessSucceeded").text();
 	$("#resultLog").html("<div class=\"success\">" + statusText + "</div>");
 
-	$(executeResponse)
-			.find("ns\\:Output")
-			.each(
-					function() {
-						// check if the output is the desired image
-						if ($(this).find("ns1\\:Identifier").text() == outputIdentifier) {
-							// alert("Found: " + outputIdentifier);
+	var message = "";
 
-							var title = $(this).find("ns1\\:Title").text();
+	$(executeResponse).find("ns\\:Output").each(
+			function() {
+				var title = $(this).find("ns1\\:Title").text();
 
-							$(this).find("ns\\:Reference").each(
-									function() {
+				$(this).find("ns\\:Reference").each(
+						function() {
 
-										var link = $(this).attr("href");
-										var mime_type = $(this)
-												.attr("mimeType");
+							var link = $(this).attr("href");
+							var mime_type = $(this).attr("mimeType");
 
-										if (beginsWith(link, "http://")) {
-											$("#report").html(
-													"<a href='" + link
-															+ "' alt='" + title
-															+ " (" + mime_type
-															+ ")" + "'>" + link
-															+ "</a>");
-										}
+							if (beginsWith(link, "http://")) {
+								message = message + "<p>" + title + " ("
+										+ mime_type + "): " + "<a href='"
+										+ link + "' alt='" + title + " ("
+										+ mime_type + ")" + "'>" + link
+										+ "</a></p>";
+							}
+						});
 
-										// $("#resultLog").append(
-										// "<div class=\"info\">" + link +
-										// "</div>");
-									});
-						}
-					});
-}
+				$(this).find("ns\\:LiteralData").each(
+						function() {
 
-var handleResponse = function(data) {
-	var isError = $(data).find("ns\\:ExceptionReport").length > 0;
-	if (isError) {
-		showError(data);
-	} else {
-		showResponse(data);
-	}
+							var value = $(this).text();
+							var dataType = $(this).attr("dataType");
+
+							if (beginsWith(value, "http://")) {
+								message = message + "<p>" + title + "("
+										+ dataType + ")" + ": <a href='"
+										+ value + "' alt='" + title + "'>"
+										+ value + "</a></p>";
+							} else {
+								message = message + "<p>" + title + "("
+										+ dataType + ")" + " = " + value
+										+ "</p>";
+							}
+						});
+			});
+
+	$("#report").html("<div class=\"success\">" + message + "</div>");
 }
 
 $(function() {
 
 	$("#executeRequest").click(function() {
-		var process = $('input:radio[name=radio-content]:checked').val();
-		var format = $("#flip-output").val();
+		var process = $("input:radio[name=radio-content]:checked").val();
+		var format = $("input:radio[name=radio-output]:checked").val();
 
 		$("#resultLog").html("Process: " + process + " | Format: " + format);
 
-		sendRequest(process, outputIdentifier, format);
+		sendRequest(process, outputIdentifier, "report_source", format);
 	});
 
 	$("#resultLog").ajaxError(
@@ -154,15 +155,9 @@ $(function() {
 								+ "<br />Exception: " + exception + "</div>");
 			});
 
-	$("flip-output").bind("change", function(event, ui) {
-		alert(event);
+	// suppossed to help with the form submission, disabled transitions
+	$(document).bind("mobileinit", function() {
+		$.mobile.ajaxenabled = false;
 	});
 
-	$("flip-content").bind("change", function(event, ui) {
-		alert(event);
-	});
-});
-
-$(document).ready(function() {
-	$("#serviceUrl").html("<em>" + serviceUrlString + "</em>");
 });

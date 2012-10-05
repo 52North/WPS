@@ -7,6 +7,7 @@
 #wps.des: sweaveFoo, Creates a pdf report based on a simple Sweave file;
 #wps.in: dummy, integer, value = 0;
 #wps.out: report, pdf, Sweave output file;
+#wps.out: report_source, string, Report source file;
 #wps.resource: sweave-foo.Rnw, Sweave.sty;
 
 rnw_file <- "sweave-foo.Rnw"
@@ -20,4 +21,5 @@ Sweave(rnw_file)
 
 library(tools)
 texi2dvi("sweave-foo.tex", pdf = TRUE)
-report="sweave-foo.pdf"
+report <- "sweave-foo.pdf"
+report_source <- resource_url_rnw_file

@@ -109,6 +109,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private File scriptFile = null;
 
+    private boolean debugScript = true;
+
     public List<String> getErrors() {
         return errors;
     }
@@ -277,18 +279,28 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 LOGGER.debug("[R] assign values.");
                 Iterator<Map.Entry<String, String>> inputValuesIterator = inputValues.entrySet().iterator();
 
+                /*
+                 * create workspace metadata - TODO this should be done using global variables or an
+                 * environment...
+                 */
                 // assign link to rescource folder to an R variable
-                rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL()); // rCon.eval(resourceUrl
-                                                                                                 // <-
-                                                                                                 // "lala");
-                LOGGER.debug("[R] assign resource directory to variable \"" + RWPSSessionVariables.RESOURCE_URL_NAME
+                String cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- TRUE";
+                rCon.eval(cmd);
+                LOGGER.debug("[R] " + cmd);
+
+                rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
+                // should have the same result as rCon.eval(resourceUrl <- "lala");
+                LOGGER.debug("[R] assigned resource directory to variable \"" + RWPSSessionVariables.RESOURCE_URL_NAME
                         + ":\" " + config.getResourceDirURL());
+
                 // TODO add a link to _every_ resource as names list
                 // wpsScriptResources <- list(filname = url, filename2 = url2)
 
                 String processDescription = R_Config.getInstance().getUrlPathUpToWebapp()
                         + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
                 rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
+                LOGGER.debug("[R] assigned process description to variable \""
+                        + RWPSSessionVariables.PROCESS_DESCRIPTION + ":\" " + processDescription);
 
                 while (inputValuesIterator.hasNext()) {
                     Map.Entry<String, String> entry = inputValuesIterator.next();
@@ -308,7 +320,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // R script execution:
                 // -------------------------------
                 boolean success = false;
-                success = readScript(rScriptStream, rCon);
+                success = executeScript(rScriptStream, rCon);
 
                 if ( !success) {
                     rCon.close();
@@ -401,7 +413,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         LOGGER.debug("[R] loading utility scripts.");
         File[] utils = new File(R_Config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
         for (File file : utils) {
-            readScript(new FileInputStream(file), rCon);
+            executeScript(new FileInputStream(file), rCon);
         }
     }
 
@@ -772,8 +784,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @throws RuntimeException
      *         if R reports an error
      */
-    private boolean readScript(InputStream script, RConnection rCon) throws RserveException, IOException {
-        LOGGER.debug("Reading script...");
+    private boolean executeScript(InputStream script, RConnection rCon) throws RserveException, IOException {
+        LOGGER.debug("Executing script...");
         boolean success = true;
 
         BufferedReader fr = new BufferedReader(new InputStreamReader(script));
@@ -817,7 +829,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
         text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
                 + "if(hasError) error_message = as.character(error)" + '\n');
+
+        if (debugScript && LOGGER.isDebugEnabled())
+            LOGGER.debug(text);
+
         rCon.eval(text.toString());
+
         try {
             // handling internal R errors:
             if (rCon.eval("hasError").asInteger() == 1) {

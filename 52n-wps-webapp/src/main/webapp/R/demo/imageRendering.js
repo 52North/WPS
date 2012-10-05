@@ -1,17 +1,4 @@
-var debug = false;
 
-var beginsWith = function(string, pattern) {
-	return (string.indexOf(pattern) === 0);
-}
-
-var endsWith = function(string, pattern) {
-	var d = string.length - pattern.length;
-	return (d >= 0 && string.lastIndexOf(pattern) === d);
-}
-
-var urlIndex = window.location.href.lastIndexOf("/R/");
-var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
-var serviceUrlString = urlBasisString + "WebProcessingService";
 var processIdentifier = 'org.n52.wps.server.r.SosPlot';
 var outputIdentifier = 'output_image';
 
@@ -82,25 +69,6 @@ var requestPlot = function(days, offering) {
 
 }
 
-var showError = function(error) {
-	var xmlString = (new XMLSerializer()).serializeToString(error);
-	alert(xmlString);
-
-	var messages = "";
-	$(error).find("ns\\:Exception").each(
-			function() {
-
-				var text = $(this).find("ns\\:ExceptionText").text();
-				var locator = $(this).attr("locator");
-
-				var errorMessage = "<p>Error: " + text + "<br />Locator: "
-						+ locator + "</p>\n";
-				messages = messages + errorMessage;
-			});
-
-	$("#resultLog").html("<div class=\"error\">" + messages + "</div>");
-}
-
 var showResponse = function(executeResponse) {
 	var status = $(executeResponse).find("ns\\:Status");
 	var statusText = $(status).find("ns\\:ProcessSucceeded").text();
@@ -138,15 +106,6 @@ var showResponse = function(executeResponse) {
 					});
 }
 
-var handleResponse = function(data) {
-	var isError = $(data).find("ns\\:ExceptionReport").length > 0;
-	if (isError) {
-		showError(data);
-	} else {
-		showResponse(data);
-	}
-}
-
 $(function() {
 
 	$("#executeRequest").click(function() {
@@ -164,8 +123,4 @@ $(function() {
 								+ "<br />HTPP Code: " + request.status
 								+ "<br />Exception: " + exception + "</div>");
 			});
-});
-
-$(document).ready(function() {
-	$("#serviceUrl").html("<em>" + serviceUrlString + "</em>");
 });

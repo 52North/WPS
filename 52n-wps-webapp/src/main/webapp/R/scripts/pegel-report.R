@@ -5,17 +5,13 @@
 #wps.des: pegelReport, Creates a pdf report for water gauge analysis;
 #wps.in: dummy, integer, value = 0;
 #wps.out: report, pdf, pegel-analyse report;
+#wps.out: report_source, string, report source file;
 #wps.resource: pegel-report.Rnw, Sweave.sty;
 
-# can be inputs later, to be used in the Sweave file
-tPeriod.days <- 1
-offering_name <- "WASSERSTAND_ROHDATEN"
-procedure_filter <- "*Wasserstand-Bake*"
+# for local testing use 
+# wpsServer <- FALSE
 
-# TODO must be set on the server:
-wpsServer <- FALSE
-
-if(wpsServer) {
+if(exists("wpsServer") && wpsServer) {
 	# get metadata when running if the server
 	# cat(wpsResourceURL, "\n")
 	# cat(wpsProcessDescription, "\n")
@@ -24,7 +20,7 @@ if(wpsServer) {
 	
 	# download file from resources - alternative TODO: server copies resources to workdir
 	sweave_input_file <- "pegel-report.Rnw"
-	download.file(resource_url_rnw_file, sweave_input_file)
+	download.file(, sweave_input_file)
 } else {
 	process_description_url <- "N/A"
 	resource_url_rnw_file <- "N/A"
@@ -35,3 +31,4 @@ if(wpsServer) {
 Sweave(sweave_input_file)
 system("pdfLatex \"pegel-report.tex\"") #problem: doesn't run without interaction
 report="pegel-report.pdf"
+report_source <- resource_url_rnw_file
