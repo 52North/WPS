@@ -120,6 +120,11 @@ public class RProcessDescriptionCreator {
             case DESCRIPTION:
                 addProcessDescription(pdt, annotation);
                 break;
+			case RESOURCE:
+				//TODO: add resources to description
+				break;
+			default:
+				break;
             }
         }
 
@@ -297,8 +302,8 @@ public class RProcessDescriptionCreator {
 		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 		for(IGenerator generator : generators) {
-			Class[] supportedClasses = generator.getSupportedDataBindings();
-			for(Class clazz : supportedClasses){
+			Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+			for(Class<?> clazz : supportedClasses){
 				if(clazz.equals(supportedClass)){
 					foundGenerators.add(generator);
 				}
@@ -324,26 +329,6 @@ public class RProcessDescriptionCreator {
 						newSupportedFormat.setSchema(schema);
 				}
 				
-				/*TODO: That's some old code to be deleted later
-				 * String[] supportedFormats = generator.getSupportedFormats();
-				String[] supportedSchemas = generator.getSupportedSchemas();
-				if(supportedSchemas == null){
-					supportedSchemas = new String[0];
-				}
-				String[] supportedEncodings = generator.getSupportedEncodings();
-				
-				for(int j=0; j<supportedFormats.length;j++){
-					for(int k=0; k<supportedEncodings.length;k++){
-						for(int t = 0; t<supportedSchemas.length || t == 0;t++){
-							String supportedFormat = supportedFormats[j];
-							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();					
-							supportedCreatedFormat.setMimeType(supportedFormat);
-							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-							if(supportedSchemas.length >0)
-								supportedCreatedFormat.setSchema(supportedSchemas[t]);
-						}
-					}
-				}*/
 		}
 					
 		
@@ -363,8 +348,8 @@ public class RProcessDescriptionCreator {
 		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 		List<IParser> foundParsers = new ArrayList<IParser>();
 		for(IParser parser : parsers) {
-			Class[] supportedClasses = parser.getSupportedDataBindings();
-			for(Class clazz : supportedClasses){
+			Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+			for(Class<?> clazz : supportedClasses){
 				if(clazz.equals(supportedClass)){
 					foundParsers.add(parser);
 				}
@@ -390,26 +375,6 @@ public class RProcessDescriptionCreator {
 						newSupportedFormat.setSchema(schema);
 				}
 				
-				/*TODO: That's some old code to be deleted later
-				 * String[] supportedFormats = parser.getSupportedFormats();
-				String[] supportedSchemas = parser.getSupportedSchemas();
-				if(supportedSchemas == null){
-					supportedSchemas = new String[0];
-				}
-				String[] supportedEncodings = parser.getSupportedEncodings();
-				
-				for(int j=0; j<supportedFormats.length;j++){
-					for(int k=0; k<supportedEncodings.length;k++){
-						for(int t = 0; t<supportedSchemas.length || t==0;t++){
-							String supportedFormat = supportedFormats[j];
-							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
-							supportedCreatedFormat.setMimeType(supportedFormat);
-							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-							if(supportedSchemas.length >0)
-								supportedCreatedFormat.setSchema(supportedSchemas[t]);
-						}
-					}
-				}*/
 			}
 					
 		

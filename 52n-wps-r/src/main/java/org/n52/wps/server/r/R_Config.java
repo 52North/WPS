@@ -45,38 +45,38 @@ public class R_Config {
 
     private static Logger LOGGER = Logger.getLogger(R_Config.class);
 
-    public static final String SCRIPT_FILE_EXTENSION = "R";
+    public final String SCRIPT_FILE_EXTENSION = "R";
 
-    public static final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
+    public final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
 
-    public static final String WKN_PREFIX = "org.n52.wps.server.r.";
+    public final String WKN_PREFIX = "org.n52.wps.server.r.";
 
     // important directories:
 
     // FIXME for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
     // servlet, which is probably a better solution to keep track of files, see
     // http://www.jguru.com/faq/view.jsp?EID=10646
-    private static final String R_BASE_DIR = "R";
+    private final String R_BASE_DIR = "R";
 
-    private static final String WORK_DIR = "workdir";
+    private final String WORK_DIR = "workdir";
 
-    private static final String UTILS_DIR = "utils";
+    private final String UTILS_DIR = "utils";
 
-    public static String SCRIPT_DIR = null;
+    public String SCRIPT_DIR = null;
 
     /**
      * Base directory for WPS4R resources
      */
-    public static String BASE_DIR_FULL = (WebProcessingService.BASE_DIR + "/" + R_BASE_DIR).replace("\\", "/");
+    public String BASE_DIR_FULL = (WebProcessingService.BASE_DIR + "/" + R_BASE_DIR).replace("\\", "/");
 
     /**
      * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
      * directory
      */
-    public static String WORK_DIR_FULL = BASE_DIR_FULL + "/" + WORK_DIR;
+    public String WORK_DIR_FULL = BASE_DIR_FULL + "/" + WORK_DIR;
 
     /** R scripts with utility functions to pre-load */
-    public static String UTILS_DIR_FULL = BASE_DIR_FULL + "/" + UTILS_DIR;
+    public String UTILS_DIR_FULL = BASE_DIR_FULL + "/" + UTILS_DIR;
 
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
     // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
@@ -138,7 +138,7 @@ public class R_Config {
      * @throws RserveException
      * @throws REXPMismatchException
      */
-    public static String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
+    public String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
         return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
 
     }
@@ -154,7 +154,7 @@ public class R_Config {
      * 
      * @see getConsoleOutput(RConnection rCon, String cmd)
      */
-    public static String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException {
+    public String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException {
         return getConsoleOutput(rCon, "sessionInfo()");
     }
 
@@ -267,7 +267,7 @@ public class R_Config {
         public boolean accept(File f) {
             if (f.isFile() && f.canRead()) {
                 String name = f.getName();
-                if (name.endsWith(SCRIPT_FILE_SUFFIX))
+                if (name.endsWith(getInstance().SCRIPT_FILE_SUFFIX))
                     return true;
             }
             return false;
@@ -310,8 +310,17 @@ public class R_Config {
         return WORK_DIR_FULL + "/" + UUID.randomUUID();
     }
 
-    public static String getScriptDirFullPath() {
+    public String getScriptDirFullPath() {
         return WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR;
         // return SCRIPT_DIR_FULL;
     }
+
+	public boolean isScriptAvailable(String wkn) {
+		try {
+			wknToFile(wkn);
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
 }

@@ -44,8 +44,6 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -126,7 +124,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     protected ProcessDescriptionType initializeDescription() {
         LOGGER.info("Initializing description for  " + this.toString());
 
-        // Reading Process information from skript annotations:
+        // Reading process information from script annotations:
         InputStream rScriptStream = null;
         try {
             String wkn = getWellKnownName();
@@ -191,7 +189,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("work dir: " + file.getAbsolutePath());
 
-        // retrieve rSkript from path:
+        // retrieve R-Script from path:
         InputStream rScriptStream = null;
         try {
             File rScriptFile = config.wknToFile(getWellKnownName());
@@ -339,12 +337,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     resulthash.put(result_id, parseOutput(result_id, result, rCon));
                 }
 
-                String sessionInfo = R_Config.getSessionInfo(rCon);
+                String sessionInfo = config.getSessionInfo(rCon);
                 resulthash.put("sessionInfo", new LiteralStringBinding(sessionInfo));
 
             }
             catch (IOException e) {
-                String message = "Attempt to read R Skript file failed:\n" + e.getClass() + " - "
+                String message = "Attempt to read R Script file failed:\n" + e.getClass() + " - "
                         + e.getLocalizedMessage() + "\n" + e.getCause();
                 LOGGER.error(message, e);
                 throw new ExceptionReport(message, e.getClass().getName());
@@ -411,7 +409,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      */
     private void loadRUtilityScripts(RConnection rCon) throws RserveException, IOException, FileNotFoundException {
         LOGGER.debug("[R] loading utility scripts.");
-        File[] utils = new File(R_Config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
+        R_Config config = R_Config.getInstance();
+        File[] utils = new File(config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
         for (File file : utils) {
             executeScript(new FileInputStream(file), rCon);
         }
@@ -465,7 +464,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
 
         if (ivalue instanceof GTRasterDataBinding) {
-            GridCoverage2D value = (GridCoverage2D) ivalue.getPayload();
             GeotiffGenerator tiffGen = new GeotiffGenerator();
             InputStream is = tiffGen.generateStream(ivalue, GenericFileDataConstants.MIME_TYPE_GEOTIFF, "base64");
             // String ext = value.getFileExtension();
@@ -585,7 +583,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String mimeType = "application/unknown";
 
             // extract filename from R
-            String filename = new File(result.asString()).getName();
+            File dest =  new File(result.asString());
+            
+            String filename;
+			if(dest.isAbsolute())
+            	filename = dest.getAbsolutePath();
+            else
+            	filename = dest.getName();
+           
             File tempfile = streamFromRserveToWPS(rCon, filename);
 
             // extract mimetype from annotations (TODO: might have to be
@@ -618,13 +623,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 String zip = "";
                 REXP ev = rCon.eval("zipShp(\"" + filename + "\")");
 
-                // filname --> baseName + suffix
-                String baseName = filename;
-                String suffix = ".shp";
+                // filname = baseName (+ suffix)
+                String baseName = null;
+                		
                 if (filename.endsWith(".shp"))
                     baseName = filename.substring(0, filename.length() - ".shp".length());
                 else
-                    suffix = null;
+            		baseName = filename;
+
 
                 // zip all -- stream --> unzip all or stream each file?
                 if ( !ev.isNull()) {
@@ -715,12 +721,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                             LiteralStringBinding.class};
 
         // TODO: Might be a risky solution in terms of unknown constructors:
-        for (Class literal : easyLiterals) {
+        for (Class<?> literal : easyLiterals) {
             if (iClass.equals(literal)) {
                 Constructor<IData> cons = null;
                 try {
                     cons = (Constructor<IData>) iClass.getConstructors()[0];
-                    Constructor param = cons.getParameterTypes()[0].getConstructor(String.class);
+                    Constructor<?> param = cons.getParameterTypes()[0].getConstructor(String.class);
                     return cons.newInstance(param.newInstance(result.asString()));
 
                 }
@@ -751,11 +757,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      */
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
 
-        // create File to stream from Rserve to WPS4R
-        File destination = new File(currentWPSWorkDir);
-        if ( !destination.exists())
-            destination.mkdirs();
-        File tempfile = new File(destination, filename);
+		File tempfile = new File(filename);
+		if (!tempfile.isAbsolute()) {
+			// create File to stream from Rserve to WPS4R
+			File destination = new File(currentWPSWorkDir);
+			if (!destination.exists())
+				destination.mkdirs();
+			tempfile = new File(destination, filename);
+		}
 
         // Do streaming Rserve --> WPS tempfile
         RFileInputStream fis = rCon.openFile(filename);
@@ -800,32 +809,27 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         // is set true when wps.off-annotations occur
         // this indicates that parts of the script shall not pass to Rserve
-        boolean wpsoff = false;
+        boolean wpsoff_state = false;
 
+        
         while (fr.ready()) {
             String line = fr.readLine();
-
-            if (line.contains(RegExp.WPS_OFF_START)) {
-                if (wpsoff == true)
-                    throw new RuntimeException("Unexpected occurence of " + RegExp.WPS_OFF_START
-                            + ". Reason may be an annotation syntax error.");
-                wpsoff = true;
-            }
-            ;
-            if (line.contains(RegExp.WPS_OFF_END)) {
-                if (wpsoff == false)
-                    throw new RuntimeException("Unexpected occurence of " + RegExp.WPS_OFF_END
-                            + ". Reason may be an annotation syntax error.");
-
-                wpsoff = false;
-                text.append("# (ignored) ");
-            }
-
-            if (wpsoff == true) {
-                text.append("# (ignored) ");
-            }
-            text.append(line + "\n");
-
+            
+            if (line.contains(RegExp.WPS_OFF)) {
+            	wpsoff_state = true;
+            }else
+            	if (line.contains(RegExp.WPS_ON)) {
+            		wpsoff_state = false; 
+            }else
+            	if(wpsoff_state)
+            		line = "# (ignored) "+line;
+            
+            if(line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
+            	//TODO: check in validation
+            	throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
+            
+            text.append(line +"\n");
+           
         }
         text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
                 + "if(hasError) error_message = as.character(error)" + '\n');
@@ -859,7 +863,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * Deletes File or Directory completely with its content
      * 
      * @param in
-     *        File or directory
+     *            File or directory
      * @return true if all content could be deleted
      */
     private boolean deleteRecursive(File in) {
@@ -895,12 +899,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         Class< ? extends IData> dataType = null;
         List<RAnnotation> ioNotations = RAnnotation.filterAnnotations(annotations, ioType, RAttribute.IDENTIFIER, id);
         if (ioNotations.isEmpty()) {
-            LOGGER.error("Missing R-skript-annotation of type " + ioType.toString().toLowerCase() + " for id \"" + id
+            LOGGER.error("Missing R-script-annotation of type " + ioType.toString().toLowerCase() + " for id \"" + id
                     + "\" ,datatype - class not found");
             return null;
         }
         if (ioNotations.size() > 1) {
-            LOGGER.warn("R-skript contains more than one annotation of type " + ioType.toString().toLowerCase()
+            LOGGER.warn("R-script contains more than one annotation of type " + ioType.toString().toLowerCase()
                     + " for id \"" + id + "\n" + " WPS selects the first one.");
         }
 
@@ -909,9 +913,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         dataType = RAnnotation.getDataClass(rClass);
 
         if (dataType == null) {
-            LOGGER.error("R-skript-annotation for " + ioType.toString().toLowerCase() + " id \"" + id
-                    + "\" contains unsuported data format identifier \"" + rClass + "\"");
-
+            LOGGER.error("R-script-annotation for " + ioType.toString().toLowerCase() + " id \"" + id + "\" contains unsuported data format identifier \"" + rClass + "\"");
         }
         return dataType;
     }

@@ -33,7 +33,6 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.request.ExecuteRequest;
@@ -54,59 +53,90 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     private Map<String, String> algorithmMap;
 
     public LocalRAlgorithmRepository() {
-        LOGGER.info("Instantiating new LocalRAlgorithmRepository");
+        LOGGER.info("Initializing LocalRAlgorithmRepository");
+        algorithmMap = new HashMap<String, String>();
 
-        // check if the repository is active:
+        checkStartUpConditions();
+
+        //Check WPS Config properties:
+        RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
+        // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
+        changeManager.addUnregisteredScripts();
+        
+        //finally add all available algorithms from the R config
+        addAllAlgorithms();
+    }
+
+    /**
+     * Check if repository is active and Rserve can be found
+     * @return
+     */
+	private boolean checkStartUpConditions() {
+		// check if the repository is active:
         String className = this.getClass().getCanonicalName();
         if ( !WPSConfig.getInstance().isRepositoryActive(className)) {
             LOGGER.debug("Local R Algorithm Repository is inactive.");
-            return;
+            return false;
         }
-
-        LOGGER.info("Initializing Local R Algorithm Repository");
-        algorithmMap = new HashMap<String, String>();
-
-        // add algorithms from config file to repository
-        Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-        for (Property property : propertyArray) {
-            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString()) && property.getActive()) {
-                addAlgorithm(property.getStringValue());
-            }
-        }
-
-        RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
-
+        
         // Try to build up a connection to Rserve
         // If it is refused, a new instance of Rserve will be opened
         LOGGER.debug("[Rserve] Trying to connect to Rserve.");
         R_Config rConfig = R_Config.getInstance();
         try {
             RConnection testcon = rConfig.openRConnection();
-            LOGGER.info("[Rserve] Connection to Rserve could be opened.");
+            LOGGER.info("[Rserve] WPS successfully connected to Rserve.");
             testcon.close();
         }
         catch (RserveException e) {
             // try to start Rserve via batchfile if enabled
-            LOGGER.debug("[Rserve] Could not open connection to Rserve - trying to start Rserve with batch file.");
+            LOGGER.error("[Rserve] Connecting to Rserve failed - trying to startup Rserve with batch file.", e);
             rConfig.startRserve();
 
-            try {
-                RConnection testcon = rConfig.openRConnection();
-                LOGGER.info("[Rserve] Connection to Rserve could be opened after batch file start.");
-                // changeManager.addUnregisteredScripts() -- TODO maybe save the value of testcon.getVersion
-                // or something similar to a property so that the connection to RServe can be check in admin
-                // console.
+	            try {
+	                RConnection testcon = rConfig.openRConnection();
+	                LOGGER.info("[Rserve] WPS successfully connected to Rserve after startup with batch file.");
+	                //TODO maybe save the value of testcon.getVersion
+	                // or something similar to a property so that the connection to RServe can be check in admin
+	                // console.	
+	                testcon.close();
+	            }
+	            catch (RserveException e2) {
+	                LOGGER.error("[Rserve] Could not connect to Rserve. Rserve may not be available or may not be ready at the current time.", e2);
+	                return false;
+	            }
+        }
+        return true;
+	}
 
-                testcon.close();
-            }
-            catch (RserveException e2) {
-                LOGGER.error("[Rserve] Could not start Rserve.");
+	private void addAllAlgorithms() {
+		R_Config rConfig = R_Config.getInstance();
+		// add algorithms from config file to repository
+        Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+        for (Property property : propertyArray) {
+            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString()) && property.getActive()) {
+            	String algorithm_wkn = property.getStringValue();
+            	
+            	//unavailable algorithms get an unavailable suffix in the properties and will be deactivated
+            	String unavailable_suffix = " (unavailable)";
+            	if(!rConfig.isScriptAvailable(algorithm_wkn)){
+            		if(!algorithm_wkn.endsWith(unavailable_suffix)){
+            			property.setName(algorithm_wkn+ unavailable_suffix);
+            		}
+            		property.setActive(false);
+            		LOGGER.error("[WPS4R] Missing R script for process "+algorithm_wkn+". Property hass been set inactive. Check WPS config.");
+  
+            	}else{           	
+	            	if(algorithm_wkn.endsWith(unavailable_suffix)){
+	            		algorithm_wkn = algorithm_wkn.replace(unavailable_suffix, "");
+	            		property.setName(algorithm_wkn);
+	            	}
+	            	addAlgorithm(algorithm_wkn);
+            	}
+            	
             }
         }
-
-        // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
-        changeManager.addUnregisteredScripts();
-    }
+	}
 
     public boolean addAlgorithms(String[] algorithms) {
         for (String algorithmClassName : algorithms) {

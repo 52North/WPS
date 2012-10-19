@@ -92,7 +92,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     /**
      * Checks R-repository properties If there is a script without corresponding algorithm property, it will
      * be deleted
-     * 
+     * FIXME: scripts get not deleted properly. Find a better way to manage deleted properties
      * Usage: properties were changed -> scripts will be changed scripts were changed (or lack of properties)
      * -> properties will be changed
      */
@@ -177,12 +177,11 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         R_Config.getInstance().RSERVE_PASSWORD = property.getStringValue();
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString()) && property.getActive()) {
-                        R_Config.SCRIPT_DIR = property.getStringValue();
-                        LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
+                        R_Config.getInstance().SCRIPT_DIR = property.getStringValue();
+                        LOGGER.info("Using script dir " + R_Config.getInstance().SCRIPT_DIR);
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.RESOURCE_DIR.toString()) && property.getActive()) {
                         R_Config.getInstance().RESOURCE_DIR = property.getStringValue();
-                        LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
                     }
                     else if (pname.equalsIgnoreCase(RWPSConfigVariables.ENABLE_BATCH_START.toString())
                             && property.getActive()) {
@@ -225,9 +224,9 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         }
 
         // check script dir for R process files
-        // adjusts wps config
-        String scriptDir = R_Config.getScriptDirFullPath();
-        File algorithmDir = new File(scriptDir); // new File(R_Config.SCRIPT_DIR);
+        // adjusts WPS config
+        String scriptDir = R_Config.getInstance().getScriptDirFullPath();
+        File algorithmDir = new File(scriptDir); // new File(R_Config.SCRIPT_DIR_FULL);
         if (algorithmDir.isDirectory()) {
             File[] scripts = algorithmDir.listFiles(new R_Config.RFileExtensionFilter());
             LOGGER.debug("Loading script files from " + algorithmDir + ": " + Arrays.toString(scripts));

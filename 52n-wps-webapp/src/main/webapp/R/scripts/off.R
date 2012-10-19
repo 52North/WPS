@@ -4,7 +4,7 @@
 a = 2
 b = 3
 c = 4
-#wps.off.end;
+#wps.on;
 
 
 # wps.in: a, integer, value=2;
