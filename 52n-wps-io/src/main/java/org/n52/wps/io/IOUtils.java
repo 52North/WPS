@@ -66,8 +66,12 @@ public class IOUtils {
 	
 	public static File writeStreamToFile(InputStream inputStream, String extension)
 	throws IOException {
-		File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension, new File(
-		System.getProperty("java.io.tmpdir")));
+		File file = File.createTempFile("file" + UUID.randomUUID(), "." + extension);
+		return writeStreamToFile(inputStream, extension, file);
+	}
+
+	public static File writeStreamToFile(InputStream inputStream,
+			String extension, File file) throws IOException {
 		FileOutputStream output = new FileOutputStream(file);
 		
 		byte buf[]=new byte[1024];
@@ -78,8 +82,8 @@ public class IOUtils {
 		output.close();
 		inputStream.close();
 
-		return file;
-}
+		return file;		
+	}
 
 	public static File writeBase64XMLToFile(InputStream stream, String extension)
 			throws SAXException, IOException, ParserConfigurationException,
