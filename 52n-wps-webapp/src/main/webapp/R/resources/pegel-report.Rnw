@@ -131,7 +131,7 @@ tPeriod <- sosCreateEventTimeList(
 		sos = pegelsos,
 		begin = tPeriod.end - (3600 * 24 * tPeriod_days),
 		end = tPeriod.end))
-cat("[pegel] time period: ", toString(tPeriod), "\n")
+cat("[pegel] time period: ", toString(tPeriod[[1]]), "\n")
 @
 
 Die folgenden Analysen umfassen einen Zeitraum von \Sexpr{tPeriod_days} Tagen vor Erstellungszeit diese Dokumentes (\Sexpr{tPeriod.end}).
