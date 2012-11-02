@@ -121,7 +121,7 @@ var showResponse = function(executeResponse) {
 							var dataType = $(this).attr("dataType");
 
 							if (beginsWith(value, "http://")) {
-								message = message + "<p>" + title + "("
+								message = message + "<p>" + title + " ("
 										+ dataType + ")" + ": <a href='"
 										+ value + "' alt='" + title + "'>"
 										+ value + "</a></p>";
