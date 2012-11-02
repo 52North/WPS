@@ -635,7 +635,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * @return An identifier
 	 */
 	public String getAlgorithmIdentifier() {
-		return getExecute().getIdentifier().getStringValue();
+		return getExecute().getIdentifier().getStringValue().trim();
 	}
 
 	/**

@@ -101,10 +101,10 @@ public class ExecuteResponseBuilder {
 		doc.getExecuteResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		doc.getExecuteResponse().setService("WPS");
 		doc.getExecuteResponse().setVersion(Request.SUPPORTED_VERSION);
-		this.identifier = request.getExecute().getIdentifier().getStringValue();
+		this.identifier = request.getExecute().getIdentifier().getStringValue().trim();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
-		description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
+		description = RepositoryManager.getInstance().getProcessDescription(this.identifier);
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}
