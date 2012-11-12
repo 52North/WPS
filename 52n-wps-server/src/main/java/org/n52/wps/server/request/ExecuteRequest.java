@@ -656,7 +656,6 @@ public class ExecuteRequest extends Request implements IObserver {
 			if (algorithm instanceof AbstractTransactionalAlgorithm) {
 				returnResults = ((AbstractTransactionalAlgorithm) algorithm)
 						.run(this);
-
 				LOGGER.info("Storing audit...");
 				try {
 				AbstractTransactionalAlgorithm.storeAuditLongDocument(this
@@ -709,6 +708,13 @@ public class ExecuteRequest extends Request implements IObserver {
 		} catch (CancellationException e) {
 			return null;
 		} catch (Exception e) {
+			if(!(algorithm instanceof AbstractTransactionalAlgorithm)) {
+				LOGGER.debug("RuntimeException:" + e.getMessage());
+				StatusType statusFailed = StatusType.Factory.newInstance();
+				statusFailed.addNewProcessFailed();
+				this.getExecuteResponseBuilder().setStatus(statusFailed);
+				throw new ExceptionReport("Error while executing the embedded process for: " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE, e);
+			}
 			ExceptionReport exReport = null;
 			e.printStackTrace();
 			LOGGER.debug("RuntimeException:" + e.getMessage());
