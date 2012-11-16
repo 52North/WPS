@@ -89,6 +89,9 @@ import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.handler.DataInputInterceptors;
+import org.n52.wps.server.handler.DataInputInterceptors.DataInputInterceptorImplementations;
+import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
 import org.n52.wps.util.BasicXMLTypeFactory;
 import org.w3c.dom.Node;
@@ -113,12 +116,25 @@ public class InputHandler {
 	public InputHandler(InputType[] inputs, String algorithmIdentifier) throws ExceptionReport{
 		this.algorithmIdentifier = algorithmIdentifier;
 		this.processDesc = RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier);
-		if(processDesc==null){
+		
+		if (processDesc == null) {
 			throw new ExceptionReport("Error while accessing the process description for "+ algorithmIdentifier, 
 						ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
-		for(InputType input : inputs) {
-			String inputID = input.getIdentifier().getStringValue();
+		
+		Map<String, InterceptorInstance> inputInterceptors = resolveInputInterceptors(algorithmIdentifier);
+		
+		for (InputType input : inputs) {
+			String inputID = input.getIdentifier().getStringValue().trim();
+			if (inputInterceptors.containsKey(inputID)) {
+				InterceptorInstance interceptor = inputInterceptors.get(inputID);
+				List<IData> result = interceptor.applyInterception(input);
+				
+				if (result != null && !result.isEmpty()) {
+					this.inputData.put(inputID, result);
+					continue;
+				}
+			}
 			
 			if(input.getData() != null) {
 				if(input.getData().getComplexData() != null) {
@@ -141,6 +157,46 @@ public class InputHandler {
 		}
 	}
 	
+	private Map<String, InterceptorInstance> resolveInputInterceptors(String algorithmClassName) {
+		Map<String,InterceptorInstance> result = new HashMap<String, InterceptorInstance>();
+		
+		Class<?> clazz;
+		try {
+			clazz = Class.forName(algorithmClassName, false, getClass().getClassLoader());
+		} catch (ClassNotFoundException e) {
+			LOGGER.warn("Could not find class "+ algorithmClassName, e);
+			throw new RuntimeException(e);
+		}
+		
+		DataInputInterceptorImplementations annotation = clazz.getAnnotation(DataInputInterceptors.DataInputInterceptorImplementations.class);
+		if (annotation != null) {
+			Class<?> interceptorClazz;
+			try {
+				interceptorClazz = Class.forName(annotation.value());
+			} catch (ClassNotFoundException e) {
+				LOGGER.warn("Could not find class "+ annotation.value(), e);
+				return result;
+			}
+
+			if (DataInputInterceptors.class.isAssignableFrom(interceptorClazz)) {
+				DataInputInterceptors instance;
+				try {
+					instance = (DataInputInterceptors) interceptorClazz.newInstance();
+				} catch (InstantiationException e) {
+					LOGGER.warn("Could not instantiate class "+ interceptorClazz, e);
+					return result;
+				} catch (IllegalAccessException e) {
+					LOGGER.warn("Could not access class "+ interceptorClazz, e);
+					return result;
+				}
+				
+				return instance.getInterceptors();
+			}
+			
+		}
+		return result;
+	}
+
 	/**
 	 * Handles the complexValue, which in this case should always include XML 
 	 * which can be parsed into a FeatureCollection.
@@ -461,7 +517,7 @@ public class InputHandler {
 		
 		IParser parser = null;
 		try {
-			Class algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			Class<?> algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
 			
 			LOGGER.debug("Looking for matching Parser ..." + 
 					" schema: " + schema +
@@ -1097,7 +1153,7 @@ public class InputHandler {
 		
 		IParser parser = null;
 		try {
-			Class algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			Class<?> algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
 			if(algorithmInputClass == null) {
 				throw new RuntimeException("Could not determine internal input class for input" + inputID);
 			}
@@ -1173,8 +1229,8 @@ public class InputHandler {
 	 */
 	private void handleBBoxValue(InputType input) throws ExceptionReport{
 		String crs = input.getData().getBoundingBoxData().getCrs();
-		List lowerCorner = input.getData().getBoundingBoxData().getLowerCorner();
-		List upperCorner = input.getData().getBoundingBoxData().getUpperCorner();
+		List<?> lowerCorner = input.getData().getBoundingBoxData().getLowerCorner();
+		List<?> upperCorner = input.getData().getBoundingBoxData().getUpperCorner();
 		
 		if(lowerCorner.size()!=2 || upperCorner.size()!=2){
 			throw new ExceptionReport("Error while parsing the BBOX data", ExceptionReport.INVALID_PARAMETER_VALUE);

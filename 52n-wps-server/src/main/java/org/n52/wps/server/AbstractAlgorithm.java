@@ -33,17 +33,17 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	 * default constructor, calls the initializeDescription() Method
 	 */
 	public AbstractAlgorithm() {
-		this.description = initializeDescription();
-		this.wkName = this.getClass().getName();
+		this(null);
 	}
 	
 	/** 
 	 * default constructor, calls the initializeDescription() Method
 	 */
 	public AbstractAlgorithm(String wellKnownName) {
-		this.wkName = wellKnownName; // Has to be initialized before the description. 
+		this.wkName = wellKnownName != null ? wellKnownName:  getClass().getName(); 
 		this.description = initializeDescription();
 	}
+
 	
 	/** 
 	 * This method should be overwritten, in case you want to have a way of initializing.

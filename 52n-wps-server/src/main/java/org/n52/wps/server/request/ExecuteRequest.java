@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.ows.x11.BoundingBoxType;
-import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
