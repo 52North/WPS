@@ -9,29 +9,32 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 public class GTReferenceEnvelope implements IBBOXData{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Envelope envelope;
 	
 	public GTReferenceEnvelope(Object llx, Object lly, Object upx, Object upy, String crs) {
 		
-		try{
-			double llx_double = new Double(""+llx);
-		
-			double lly_double = new Double(""+lly);
-			double upx_double = new Double(""+upx);
-			double upy_double = new Double(""+upy);
+		try {
+			double llx_double = Double.parseDouble(llx.toString());
+			double lly_double = Double.parseDouble(lly.toString());
+			double upx_double = Double.parseDouble(upx.toString());
+			double upy_double = Double.parseDouble(upy.toString());
 			
 			Coordinate ll = new Coordinate(llx_double,lly_double);
 			Coordinate ur = new Coordinate(upx_double,upy_double);
 			com.vividsolutions.jts.geom.Envelope internalEnvelope = new com.vividsolutions.jts.geom.Envelope(ll,ur);
 			
-			if(crs==null){
+			if (crs == null) {
 				this.envelope = new ReferencedEnvelope(internalEnvelope, null);
 			}
-			else{
+			else {
 				this.envelope = new ReferencedEnvelope(internalEnvelope,CRS.decode(crs));
 			}
 		
-		}catch(Exception e){
+		} catch (Exception e) {
 			throw new RuntimeException("Error while creating BoundingBox");
 		}
 	}
@@ -45,7 +48,7 @@ public class GTReferenceEnvelope implements IBBOXData{
 		return envelope;
 	}
 
-	public Class getSupportedClass() {
+	public Class<?> getSupportedClass() {
 		return ReferencedEnvelope.class;
 	}
 	
