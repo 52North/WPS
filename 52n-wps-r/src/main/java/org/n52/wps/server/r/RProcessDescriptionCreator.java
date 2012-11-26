@@ -79,8 +79,8 @@ public class RProcessDescriptionCreator {
         pdt.setProcessVersion("1.0.0");
         MetadataType mt = pdt.addNewMetadata();
 
-        mt.setTitle("R Script");
-        mt.setAbout("The R script which is used for this process");
+        mt.setTitle("R Script used for this process");
+        //mt.setAbout("The R script which is used for this process");
         String url;
         try {
             url = R_Config.getInstance().getScriptURL(wkn).toString();
@@ -99,7 +99,7 @@ public class RProcessDescriptionCreator {
 
         mt = pdt.addNewMetadata();
         mt.setTitle("R Session Info");
-        mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
+       // mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
         url = R_Config.getInstance().getSessionInfoURL();
         mt.setHref(url);
 
