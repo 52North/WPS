@@ -114,8 +114,18 @@ public class GML3BasicParser extends AbstractParser {
 		}
 	}
 	
+	public GTVectorDataBinding parse(File file, String mimeType, String schema) {
+		return parseXML(file);
+	}
+	
 	private GTVectorDataBinding parseXML(File file) {
 		QName schematypeTuple = determineFeatureTypeSchema(file);
+		
+		boolean schemaLocationIsRelative = false;
+		if (!(schematypeTuple.getLocalPart().contains("://") || schematypeTuple.getLocalPart().contains("file:"))) {
+			schemaLocationIsRelative = true;
+		}
+		
 		Configuration configuration = null;
 		if(schematypeTuple != null) {
 			//throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
@@ -125,6 +135,11 @@ public class GML3BasicParser extends AbstractParser {
 			//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
 			
 			String schemaLocation =  schematypeTuple.getLocalPart();
+			
+			if (schemaLocationIsRelative) {
+				schemaLocation = new File(file.getParentFile(), schemaLocation).getAbsolutePath();
+			}
+			
 			if(schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")){
 				configuration = new GMLConfiguration();
 	        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
