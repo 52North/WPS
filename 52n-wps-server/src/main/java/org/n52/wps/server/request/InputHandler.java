@@ -162,18 +162,21 @@ public class InputHandler {
 		
 		Class<?> clazz;
 		try {
-			//FIXME (by Matthias) This method causes exceptions for each R process because they are represented as 
+			//(by Matthias) This method causes exceptions for each R process because they are represented as 
 			//instances from GenericRProcess. Hence classes do not match algorithm-names in WPS4R.
 			//The following is a quick workaround, please review:
 			//------------------------------------
-			if(algorithmClassName.startsWith("org.n52.wps.server.r."))
-				return result;
+//			if(algorithmClassName.startsWith("org.n52.wps.server.r."))
+//				return result;
 			//------------------------------------
+			//TODO (by Matthes) check if sufficient. Good point, the followin should work as well. If an exception is thrown
+			//go on with the default way. This has the benefit that its not hardcoded and should work for
+			//every algorithm which is created at runtime.
 			
 			clazz = Class.forName(algorithmClassName, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
 			LOGGER.warn("Could not find class "+ algorithmClassName, e);
-			throw new RuntimeException(e);
+			return result;
 		}
 		
 		DataInputInterceptorImplementations annotation = clazz.getAnnotation(DataInputInterceptors.DataInputInterceptorImplementations.class);
