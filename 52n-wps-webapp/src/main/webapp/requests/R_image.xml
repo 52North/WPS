@@ -6,7 +6,7 @@
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
 	<ows:Identifier>org.n52.wps.server.r.image</ows:Identifier>
 	<wps:ResponseForm>
-		<wps:RawDataOutput mimeType="image/jpg">
+		<wps:RawDataOutput mimeType="image/png">
 				<ows:Identifier>image</ows:Identifier>
 		</wps:RawDataOutput>
 	</wps:ResponseForm>
