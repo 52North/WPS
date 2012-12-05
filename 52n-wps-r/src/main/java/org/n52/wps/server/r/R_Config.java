@@ -26,10 +26,13 @@ package org.n52.wps.server.r;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.UUID;
+
+import javax.imageio.stream.FileImageInputStream;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
@@ -37,6 +40,7 @@ import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -97,7 +101,7 @@ public class R_Config {
     /** Starts R serve via batch file **/
     public boolean enableBatchStart = false;
 
-    private String batchStartFile = "Rserve.bat";
+  //  private String batchStartFile = "Rserve.bat";
 
     public String RESOURCE_DIR;
 
@@ -121,12 +125,33 @@ public class R_Config {
         return instance;
     }
 
-    public RConnection openRConnection() throws RserveException {
-        RConnection con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-        if (con.needLogin())
-            con.login(RSERVE_USER, RSERVE_PASSWORD);
-        return con;
-    }
+	public RConnection openRConnection() throws RserveException {
+		RConnection con = null;
+		try {
+			con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+		} catch (RserveException e) {
+			if (e.getMessage().startsWith("Cannot connect") && enableBatchStart) {
+				try {
+					startRserve();
+					// try to establish RServe connection
+					int attempt = 1;
+					while (attempt < 5) {
+						con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+						Thread.sleep(500);
+						attempt++;
+					}
+				} catch (Exception e2) {
+						LOGGER.error("Attempt to start Rserve and establish a connection failed", e2);
+						throw e;
+				}
+			} else
+				throw e;
+		} finally {
+			if (con != null && con.needLogin())
+				con.login(RSERVE_USER, RSERVE_PASSWORD);
+		}
+		return con;
+	}
 
     /**
      * Captures the Console printout of R for a specific string
@@ -233,29 +258,68 @@ public class R_Config {
 
         return new URL(urlString);
     }
+    
+    
+	/**
+	 * start RServe on Linux
+	 * @throws RserveException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 */
+	private void startRServeOnLinux() throws RserveException, InterruptedException, IOException {
+		String rserveStartCMD = "R CMD Rserve --vanilla --slave";
+		Runtime.getRuntime().exec(rserveStartCMD).waitFor();
+	}
+	
+	/**
+	 * start RServe on Windows
+	 * @throws RserveException
+	 * @throws IOException
+	 */
+	private void startRServeOnWindows() throws RserveException, IOException {
+		String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
+		Runtime.getRuntime().exec(rserveStartCMD);
+	}
+	
+	
+	
 
     /**
      * tries to start Rserve (runs "Rserve.bat" if batchfile.exists() && RSERVE_HOST == "localhost")
+     * @throws IOException 
+     * @throws InterruptedException 
+     * @throws RserveException 
      */
-    public void startRserve() {
-        if (enableBatchStart) {
-            try {
-                String batch = BASE_DIR_FULL + batchStartFile;
-                File batchfile = new File(batch);
-                if (batchfile.exists()) {
-                    Runtime.getRuntime().exec(batch);
-                }
-                else
-                    LOGGER.error("Batch file does not exist! " + batchfile);
-            }
-
-            catch (IOException e) {
-                LOGGER.error("Could not start Rserve with batch file.", e);
-            }
-        }
-        else
-            LOGGER.error("Batch start is disabled! (" + RWPSConfigVariables.ENABLE_BATCH_START.toString() + " = "
-                    + enableBatchStart + ")");
+    public void startRserve() throws RserveException, InterruptedException, IOException {
+    	if (enableBatchStart) {
+    		LOGGER.debug("Trying to start Rserve locally");
+	    	if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1){
+	    		startRServeOnLinux();
+	    	}
+	    	else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1){
+	    		startRServeOnWindows();
+	    	}
+    	}
+    	
+//	Old batch file solution    	
+//        if (enableBatchStart) {
+//            try {
+//                String batch = BASE_DIR_FULL + batchStartFile;
+//                File batchfile = new File(batch);
+//                if (batchfile.exists()) {
+//                    Runtime.getRuntime().exec(batch);
+//                }
+//                else
+//                    LOGGER.error("Batch file does not exist! " + batchfile);
+//            }
+//
+//            catch (IOException e) {
+//                LOGGER.error("Could not start Rserve with batch file.", e);
+//            }
+//        }
+//        else
+//            LOGGER.error("Batch start is disabled! (" + RWPSConfigVariables.ENABLE_BATCH_START.toString() + " = "
+//                    + enableBatchStart + ")");
     }
 
     /**
@@ -315,12 +379,48 @@ public class R_Config {
         // return SCRIPT_DIR_FULL;
     }
 
+    /**
+     * 
+     * @param wkn
+     * @return
+     */
 	public boolean isScriptAvailable(String wkn) {
 		try {
 			wknToFile(wkn);
 			return true;
 		} catch (IOException e) {
+			LOGGER.error("Script file unavailable for process id "+wkn, e);
 			return false;
 		}
+	}
+	
+	/**
+	 * Tests if a script associated with a process is valid
+	 * Any errors will be logged
+	 * @param wkn
+	 * @return
+	 */
+	public boolean isScriptValid(String wkn) {
+		try {
+			File file = wknToFile(wkn);
+			RAnnotationParser.validateScript(new FileInputStream(file), wkn);
+			return true;
+		} catch (IOException e) {
+			LOGGER.error("Script file unavailable for process "+wkn+".", e);
+			return false;
+		} catch (Exception e) {
+			LOGGER.error("Validation of process "+wkn+" failed.", e);
+			return false;		
+		}
+	}
+	
+	
+	public void killRserveOnWindows(){
+		try {
+			if(Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0);
+				return;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		} 
 	}
 }

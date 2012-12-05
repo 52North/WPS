@@ -260,8 +260,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
                 // parses default values to R-compatible literals:
                 for (RAnnotation rAnnotation : inNotations) {
-                    String id = rAnnotation.getAttribute(RAttribute.IDENTIFIER);
-                    String value = rAnnotation.getAttribute(RAttribute.DEFAULT_VALUE);
+                    String id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
+                    String value = rAnnotation.getStringValue(RAttribute.DEFAULT_VALUE);
                     Class< ? extends IData> iClass = getInputDataType(id);
                     // solution should be suitable for most literal input
                     // values:
@@ -281,24 +281,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                  * create workspace metadata - TODO this should be done using global variables or an
                  * environment...
                  */
-                // assign link to rescource folder to an R variable
-                String cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- TRUE";
-                rCon.eval(cmd);
-                LOGGER.debug("[R] " + cmd);
-
-                rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
-                // should have the same result as rCon.eval(resourceUrl <- "lala");
-                LOGGER.debug("[R] assigned resource directory to variable \"" + RWPSSessionVariables.RESOURCE_URL_NAME
-                        + ":\" " + config.getResourceDirURL());
-
-                // TODO add a link to _every_ resource as names list
-                // wpsScriptResources <- list(filname = url, filename2 = url2)
-
-                String processDescription = R_Config.getInstance().getUrlPathUpToWebapp()
-                        + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
-                rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
-                LOGGER.debug("[R] assigned process description to variable \""
-                        + RWPSSessionVariables.PROCESS_DESCRIPTION + ":\" " + processDescription);
+                assignRWPSSessionVariables(rCon);
 
                 while (inputValuesIterator.hasNext()) {
                     Map.Entry<String, String> entry = inputValuesIterator.next();
@@ -329,7 +312,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // retrieving result (REXP - Regular Expression Datatype)
                 List<RAnnotation> outNotations = RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT);
                 for (RAnnotation rAnnotation : outNotations) {
-                    String result_id = rAnnotation.getAttribute(RAttribute.IDENTIFIER);
+                    String result_id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
                     result = rCon.eval(result_id);
                     // TODO: change ParseOutput
                     // TODO depending on the generated outputs,
@@ -345,8 +328,13 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 String message = "Attempt to read R Script file failed:\n" + e.getClass() + " - "
                         + e.getLocalizedMessage() + "\n" + e.getCause();
                 LOGGER.error(message, e);
-                throw new ExceptionReport(message, e.getClass().getName());
-            }
+                throw new ExceptionReport(message, e.getClass().getName(),e);
+            } catch (RAnnotationException e) {
+            	String message = "R script cannot be executed due to invalid annotations.";
+				LOGGER.error(message, e);
+				throw new ExceptionReport(message, e.getClass().getName(),e);
+				
+			}
             finally {
                 if (rCon == null || !rCon.isConnected()) {
                     rCon = config.openRConnection();
@@ -386,7 +374,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String message = "An R Parsing Error occoured:\n" + e.getMessage() + e.getClass() + " - "
                     + e.getLocalizedMessage() + "\n" + e.getCause();
             LOGGER.error(message, e);
-            throw new RuntimeException(message);
+            throw new ExceptionReport(message,"R", "R_Connection",e);
         }
 
         // try to delete current local workdir - folder
@@ -401,13 +389,48 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         return resulthash;
     }
 
+	private void assignRWPSSessionVariables(RConnection rCon)
+			throws RserveException, RAnnotationException {
+		R_Config config = R_Config.getInstance();
+		
+		// assign link to resource folder to an R variable
+		String cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- TRUE";
+		rCon.eval(cmd);
+		LOGGER.debug("[R] " + cmd);
+
+		rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
+		// should have the same result as rCon.eval(resourceUrl <- "lala");
+		LOGGER.debug("[R] assigned resource directory to variable \"" + RWPSSessionVariables.RESOURCE_URL_NAME
+		        + ":\" " + config.getResourceDirURL());
+		
+		List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(annotations, RAnnotationType.RESOURCE);
+		String wpsScriptResources = null;
+		if(resAnnotList.size()==1)
+			wpsScriptResources=resAnnotList.get(0).getStringValue(RAttribute.NAMED_LIST);
+		else wpsScriptResources = "list()";
+		//evaluations of commands given by strings require "eval"-method
+		rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES+" = " +wpsScriptResources);
+		
+		LOGGER.debug("[R] assigned recource urls to variable \""
+		        + RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + ":\" " + wpsScriptResources);
+		
+
+		String processDescription = R_Config.getInstance().getUrlPathUpToWebapp()
+		        + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
+		
+		rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
+		LOGGER.debug("[R] assigned process description to variable \""
+		        + RWPSSessionVariables.PROCESS_DESCRIPTION + ":\" " + processDescription);
+	}
+
     /**
      * @param rCon
      * @throws RserveException
      * @throws IOException
      * @throws FileNotFoundException
+     * @throws RAnnotationException 
      */
-    private void loadRUtilityScripts(RConnection rCon) throws RserveException, IOException, FileNotFoundException {
+    private void loadRUtilityScripts(RConnection rCon) throws RserveException, IOException, FileNotFoundException, RAnnotationException {
         LOGGER.debug("[R] loading utility scripts.");
         R_Config config = R_Config.getInstance();
         File[] utils = new File(config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
@@ -574,7 +597,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     @SuppressWarnings("unchecked")
     private IData parseOutput(String result_id, REXP result, RConnection rCon) throws IOException,
             REXPMismatchException,
-            RserveException {
+            RserveException, RAnnotationException {
         Class< ? extends IData> iClass = getOutputDataType(result_id);
 
         if (iClass.equals(GenericFileDataBinding.class)) {
@@ -601,7 +624,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                    result_id);
 
             RAnnotation anot = list.get(0);
-            String rType = anot.getAttribute(RAttribute.TYPE);
+            String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataType.getType(rType).getProcessKey();
             GenericFileData out = new GenericFileData(tempfile, mimeType);
 
@@ -661,7 +684,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                    result_id);
 
             RAnnotation anot = list.get(0);
-            String rType = anot.getAttribute(RAttribute.TYPE);
+            String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataType.getType(rType).getProcessKey();
 
             GenericFileData gfd = new GenericFileData(tempfile, mimeType);
@@ -683,7 +706,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                    result_id);
 
             RAnnotation anot = list.get(0);
-            String rType = anot.getAttribute(RAttribute.TYPE);
+            String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataType.getType(rType).getProcessKey();
             GeotiffParser tiffPar = new GeotiffParser();
             GTRasterDataBinding output = tiffPar.parse(new FileInputStream(tempfile), mimeType, "base64");
@@ -790,10 +813,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @return true if read was successful
      * @throws RserveException
      * @throws IOException
+     * @throws RAnnotationException 
      * @throws RuntimeException
      *         if R reports an error
      */
-    private boolean executeScript(InputStream script, RConnection rCon) throws RserveException, IOException {
+    private boolean executeScript(InputStream script, RConnection rCon) throws RserveException, IOException, RAnnotationException {
         LOGGER.debug("Executing script...");
         boolean success = true;
 
@@ -894,8 +918,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @param ioType
      * @param id
      * @return
+     * @throws RAnnotationException 
      */
-    private Class< ? extends IData> getIODataType(RAnnotationType ioType, String id) {
+    private Class< ? extends IData> getIODataType(RAnnotationType ioType, String id) throws RAnnotationException {
         Class< ? extends IData> dataType = null;
         List<RAnnotation> ioNotations = RAnnotation.filterAnnotations(annotations, ioType, RAttribute.IDENTIFIER, id);
         if (ioNotations.isEmpty()) {
@@ -909,7 +934,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
 
         RAnnotation annotation = ioNotations.get(0);
-        String rClass = annotation.getAttribute(RAttribute.TYPE);
+        String rClass = annotation.getStringValue(RAttribute.TYPE);
         dataType = RAnnotation.getDataClass(rClass);
 
         if (dataType == null) {
@@ -919,11 +944,23 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     public Class< ? extends IData> getInputDataType(String id) {
-        return getIODataType(RAnnotationType.INPUT, id);
+        try {
+			return getIODataType(RAnnotationType.INPUT, id);
+		} catch (RAnnotationException e) {
+			String message="Data type for id "+id+" could not be retrieved, return null";
+			LOGGER.error(message, e);
+		}
+		return null;
     };
 
     public Class< ? extends IData> getOutputDataType(String id) {
-        return getIODataType(RAnnotationType.OUTPUT, id);
+        try {
+			return getIODataType(RAnnotationType.OUTPUT, id);
+		} catch (RAnnotationException e) {
+			String message="Data type for id "+id+" could not be retrieved, return null";
+			LOGGER.error(message, e);
+		}
+		return null;
     };
 
     @Override

@@ -23,26 +23,15 @@
  */
 package org.n52.wps.server.r.syntax;
 
-public class RAnnotationException extends Exception {
+import java.io.IOException;
+import java.util.HashMap;
 
-	private static final long serialVersionUID = 1L;
+public class ResourceAnnotation extends RAnnotation {
 
-	public RAnnotationException() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public RAnnotationException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
-
-	public RAnnotationException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
-
-	public RAnnotationException(String message, Throwable cause) {
-		super(message, cause);
+	public ResourceAnnotation(RAnnotationType type,
+			HashMap<RAttribute, Object> attributeHash) throws IOException,
+			RAnnotationException {
+		super(type, attributeHash);
 		// TODO Auto-generated constructor stub
 	}
 

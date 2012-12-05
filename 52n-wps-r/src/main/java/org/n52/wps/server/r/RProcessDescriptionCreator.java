@@ -69,8 +69,9 @@ public class RProcessDescriptionCreator {
      *        Process identifier
      * @return
      * @throws ExceptionReport 
+     * @throws RAnnotationException 
      */
-    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String wkn) throws ExceptionReport {
+    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String wkn) throws ExceptionReport, RAnnotationException {
         ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
         pdt.setStatusSupported(true);
         pdt.setStoreSupported(true);
@@ -141,35 +142,36 @@ public class RProcessDescriptionCreator {
     /**
      * @param pdt
      * @param annotation
+     * @throws RAnnotationException 
      */
-    private void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) {
-        String abstr = annotation.getAttribute(RAttribute.ABSTRACT);
+    private void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
+        String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
         pdt.addNewAbstract().setStringValue("" + abstr);
-        String title = annotation.getAttribute(RAttribute.TITLE);
+        String title = annotation.getStringValue(RAttribute.TITLE);
         pdt.addNewTitle().setStringValue("" + title);
     }
 
-    private void addInput(DataInputs inputs, RAnnotation annotation) {
+    private void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
         InputDescriptionType input = inputs.addNewInput();
 
-        String identifier = annotation.getAttribute(RAttribute.IDENTIFIER);
+        String identifier = annotation.getStringValue(RAttribute.IDENTIFIER);
         input.addNewIdentifier().setStringValue(identifier);
 
         // title is optional, therefore it could be null
-        String title = annotation.getAttribute(RAttribute.TITLE);
+        String title = annotation.getStringValue(RAttribute.TITLE);
         if (title != null)
             input.addNewTitle().setStringValue(title);
 
-        String abstr = annotation.getAttribute(RAttribute.ABSTRACT);
+        String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
         // abstract is optional, therefore it could be null
         if (abstr != null)
             input.addNewAbstract().setStringValue(abstr);
 
-        String min = annotation.getAttribute(RAttribute.MIN_OCCURS);
+        String min = annotation.getStringValue(RAttribute.MIN_OCCURS);
         BigInteger minOccurs = BigInteger.valueOf(Long.parseLong(min));
         input.setMinOccurs(minOccurs);
 
-        String max = annotation.getAttribute(RAttribute.MAX_OCCURS);
+        String max = annotation.getStringValue(RAttribute.MAX_OCCURS);
         BigInteger maxOccurs = BigInteger.valueOf(Long.parseLong(max));
         input.setMaxOccurs(maxOccurs);
 
@@ -193,7 +195,7 @@ public class RProcessDescriptionCreator {
         dataType.setReference(annotation.getProcessDescriptionType());
         literalInput.setDataType(dataType);
         literalInput.addNewAnyValue();
-        String def = annotation.getAttribute(RAttribute.DEFAULT_VALUE);
+        String def = annotation.getStringValue(RAttribute.DEFAULT_VALUE);
         if (def != null) {
             literalInput.setDefaultValue(def);
         }
@@ -208,7 +210,7 @@ public class RProcessDescriptionCreator {
         SupportedComplexDataType complexInput = input.addNewComplexData();
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
         cpldata.setMimeType(annotation.getProcessDescriptionType());
-        String encod = annotation.getAttribute(RAttribute.ENCODING);
+        String encod = annotation.getStringValue(RAttribute.ENCODING);
         if (encod != null)
             cpldata.setEncoding(encod);
 
@@ -216,7 +218,7 @@ public class RProcessDescriptionCreator {
         if (iClass.equals(GenericFileDataBinding.class)) {
             ComplexDataDescriptionType format = complexInput.addNewSupported().addNewFormat();
             format.setMimeType(annotation.getProcessDescriptionType());
-            encod = annotation.getAttribute(RAttribute.ENCODING);
+            encod = annotation.getStringValue(RAttribute.ENCODING);
             if (encod != null)
                 format.setEncoding(encod);
         }
@@ -225,19 +227,19 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    private void addOutput(ProcessOutputs outputs, RAnnotation out) {
+    private void addOutput(ProcessOutputs outputs, RAnnotation out) throws RAnnotationException {
         OutputDescriptionType output = outputs.addNewOutput();
 
-        String identifier = out.getAttribute(RAttribute.IDENTIFIER);
+        String identifier = out.getStringValue(RAttribute.IDENTIFIER);
         output.addNewIdentifier().setStringValue(identifier);
 
         // title is optional, therefore it could be null
-        String title = out.getAttribute(RAttribute.TITLE);
+        String title = out.getStringValue(RAttribute.TITLE);
         if (title != null)
             output.addNewTitle().setStringValue(title);
 
         // is optional, therefore it could be null
-        String abstr = out.getAttribute(RAttribute.ABSTRACT);
+        String abstr = out.getStringValue(RAttribute.ABSTRACT);
         if (abstr != null)
             output.addNewAbstract().setStringValue(abstr);
 
@@ -271,7 +273,7 @@ public class RProcessDescriptionCreator {
         ComplexDataDescriptionType complexData = complexOutput.addNewDefault().addNewFormat();
         complexData.setMimeType(out.getProcessDescriptionType());
 
-        String encod = out.getAttribute(RAttribute.ENCODING);
+        String encod = out.getStringValue(RAttribute.ENCODING);
         if (encod != null)
             complexData.setEncoding(encod);
 
@@ -280,7 +282,7 @@ public class RProcessDescriptionCreator {
         if (iClass.equals(GenericFileDataBinding.class)) {
             ComplexDataDescriptionType format = complexOutput.addNewSupported().addNewFormat();
             format.setMimeType(out.getProcessDescriptionType());
-            encod = out.getAttribute(RAttribute.ENCODING);
+            encod = out.getStringValue(RAttribute.ENCODING);
             if (encod != null)
                 format.setEncoding(encod);
         }

@@ -23,9 +23,11 @@
  */
 package org.n52.wps.server.r;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -35,6 +37,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.r.info.RProcessInfo;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -56,12 +59,14 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         LOGGER.info("Initializing LocalRAlgorithmRepository");
         algorithmMap = new HashMap<String, String>();
 
-        checkStartUpConditions();
+
 
         //Check WPS Config properties:
         RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
         // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
         changeManager.addUnregisteredScripts();
+        
+        checkStartUpConditions();
         
         //finally add all available algorithms from the R config
         addAllAlgorithms();
@@ -90,52 +95,74 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         }
         catch (RserveException e) {
             // try to start Rserve via batchfile if enabled
-            LOGGER.error("[Rserve] Connecting to Rserve failed - trying to startup Rserve with batch file.", e);
-            rConfig.startRserve();
-
-	            try {
-	                RConnection testcon = rConfig.openRConnection();
-	                LOGGER.info("[Rserve] WPS successfully connected to Rserve after startup with batch file.");
-	                //TODO maybe save the value of testcon.getVersion
-	                // or something similar to a property so that the connection to RServe can be check in admin
-	                // console.	
-	                testcon.close();
-	            }
-	            catch (RserveException e2) {
-	                LOGGER.error("[Rserve] Could not connect to Rserve. Rserve may not be available or may not be ready at the current time.", e2);
-	                return false;
-	            }
-        }
+            LOGGER.error("[Rserve] Could not connect to Rserve. Rserve may not be available or may not be ready at the current time.", e);
+            e.printStackTrace();
+            return false;
+        } 		
         return true;
 	}
 
 	private void addAllAlgorithms() {
 		R_Config rConfig = R_Config.getInstance();
 		// add algorithms from config file to repository
+		
+		List<RProcessInfo> processInfoList = new ArrayList<RProcessInfo>();
         Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+
         for (Property property : propertyArray) {
-            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString()) && property.getActive()) {
-            	String algorithm_wkn = property.getStringValue();
-            	
-            	//unavailable algorithms get an unavailable suffix in the properties and will be deactivated
-            	String unavailable_suffix = " (unavailable)";
-            	if(!rConfig.isScriptAvailable(algorithm_wkn)){
-            		if(!algorithm_wkn.endsWith(unavailable_suffix)){
-            			property.setName(algorithm_wkn+ unavailable_suffix);
-            		}
-            		property.setActive(false);
-            		LOGGER.error("[WPS4R] Missing R script for process "+algorithm_wkn+". Property hass been set inactive. Check WPS config.");
-  
-            	}else{           	
-	            	if(algorithm_wkn.endsWith(unavailable_suffix)){
-	            		algorithm_wkn = algorithm_wkn.replace(unavailable_suffix, "");
-	            		property.setName(algorithm_wkn);
-	            	}
-	            	addAlgorithm(algorithm_wkn);
-            	}
+        	RProcessInfo processInfo = null;
+			String algorithm_wkn = property.getStringValue();
+			
+        	if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString())){
+        		processInfo  = new RProcessInfo(algorithm_wkn);
+        		processInfoList.add(processInfo);
+        	}else
+        		continue;
+        	
+            if (property.getActive()) {
+				if (!processInfo.isAvailable()) {
+					//property.setActive(false);
+					//propertyChanged=true;
+					LOGGER.error("[WPS4R] Missing R script for process "
+							+ algorithm_wkn
+							+ ". Process ignored. Check WPS configuration.");
+					continue;
+				}
+				
+				if (!processInfo.isValid()) {
+					//property.setActive(false);
+					//propertyChanged=true;
+					LOGGER.error("[WPS4R] Invalid R script for process "
+							+ algorithm_wkn
+							+ ". Process ignored. Check previous logs.");
+					continue;
+				}
+				
+				addAlgorithm(algorithm_wkn);
+				
+				
+//            	//unavailable algorithms get an unavailable suffix in the properties and will be deactivated
+//            	String unavailable_suffix = " (unavailable)";
+//            	
+//            	if(!rConfig.isScriptAvailable(algorithm_wkn)){
+//            		if(!algorithm_wkn.endsWith(unavailable_suffix)){
+//            			property.setName(algorithm_wkn+ unavailable_suffix);
+//            		}
+//            		property.setActive(false);
+//            		LOGGER.error("[WPS4R] Missing R script for process "+algorithm_wkn+". Property has been set inactive. Check WPS config.");
+//  
+//            	}else{           	
+//	            	if(algorithm_wkn.endsWith(unavailable_suffix)){
+//	            		algorithm_wkn = algorithm_wkn.replace(unavailable_suffix, "");
+//	            		property.setName(algorithm_wkn);
+//	            	}
+//	            	addAlgorithm(algorithm_wkn);
+//            	}
             	
             }
         }
+        
+        RProcessInfo.setRProcessInfoList(processInfoList);
 	}
 
     public boolean addAlgorithms(String[] algorithms) {

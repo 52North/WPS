@@ -454,7 +454,7 @@
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
 			<Property name="Script_Dir" active="true">R\scripts</Property>
 			<Property name="Resource_Dir" active="true">R\resources</Property>
-			<Property name="Enable_Batch_Start" active="true">false</Property>
+			<Property name="Enable_Batch_Start" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>

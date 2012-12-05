@@ -46,7 +46,7 @@ import org.n52.wps.io.data.IData;
 public class RAnnotation {
 
     private RAnnotationType type;
-    private HashMap<RAttribute, String> attributeHash;
+    private HashMap<RAttribute, Object> attributeHash;
     static Logger LOGGER = Logger.getLogger(RAnnotation.class);
     //public static String WPS_OFF_START = "wps.off:";
     //public static String WPS_OFF_END = "wps.off.end;";
@@ -59,13 +59,12 @@ public class RAnnotation {
      *         if AttributHash is not valid for any cause
      * @throws RAnnotationException
      */
-    public RAnnotation(RAnnotationType type, HashMap<RAttribute, String> attributeHash) throws IOException,
+    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash) throws IOException,
             RAnnotationException {
         super();
-        this.type = type;
-        type.validDescription(attributeHash);
+        this.type = type;    
         this.attributeHash = attributeHash;
-
+        type.validDescription(this);
         LOGGER.debug("NEW " + toString());
     }
 
@@ -73,18 +72,17 @@ public class RAnnotation {
         return type;
     }
 
-    // public HashMap<RAttribute, String> getAttributeHash() {
-    // return attributeHash;
-    // }
+	/**
+	 * 
+	 * @param attr
+	 * @return Returns Attribute value as Java Object in case it is more complex
+	 * @throws RAnnotationException
+	 */
+    public Object getObjectValue(RAttribute attr) throws RAnnotationException {
+        Object out = attributeHash.get(attr);
 
-    public String getAttribute(RAttribute attr) {
-        String out = attributeHash.get(attr);
-        Object def = attr.getDefValue();
         if (out == null && attr.getDefValue() != null)
-            if (def.getClass() == RAttribute.class)
-                return getAttribute((RAttribute) def);
-            else
-                return "" + attr.getDefValue();
+        	out = attr.getDefValue();
         else if (attr == RAttribute.ENCODING)
             return getRDataType().encoding;
         if (attr == RAttribute.SCHEMA)
@@ -92,16 +90,30 @@ public class RAnnotation {
         return out;
     }
 
+    /**
+     * 
+     * @param attr
+     * @return Returns an attribute value as string. Suits for most literal data types
+     * @throws RAnnotationException
+     */
+    public String getStringValue(RAttribute attr) throws RAnnotationException {
+    	Object value = getObjectValue(attr);
+    	if(value == null) 
+    		return null;
+    	else
+    	return getObjectValue(attr).toString();
+    }
+
     public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations,
                                                       RAnnotationType type,
                                                       RAttribute attribute,
-                                                      String value) {
+                                                      String value) throws RAnnotationException {
         LinkedList<RAnnotation> out = new LinkedList<RAnnotation>();
         for (RAnnotation annotation : annotations) {
             // type filter:
             if (type == null || annotation.getType() == type) {
                 // attribute - value filter:
-                if (attribute == null || value == null || annotation.getAttribute(attribute).equalsIgnoreCase(value)) {
+                if (attribute == null || value == null || annotation.getStringValue(attribute).equalsIgnoreCase(value)) {
                     out.add(annotation);
                 }
             }
@@ -109,11 +121,11 @@ public class RAnnotation {
         return out;
     }
 
-    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAttribute attribute, String value) {
+    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAttribute attribute, String value) throws RAnnotationException {
         return filterAnnotations(annotations, null, attribute, value);
     }
 
-    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAnnotationType type) {
+    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAnnotationType type) throws RAnnotationException {
         return filterAnnotations(annotations, type, null, null);
     }
 
@@ -130,7 +142,7 @@ public class RAnnotation {
     }
 
     public Class< ? extends IData> getDataClass() throws RAnnotationException {
-        String rClass = getAttribute(RAttribute.TYPE);
+        String rClass = getStringValue(RAttribute.TYPE);
         return getDataClass(rClass);
     }
 
@@ -145,8 +157,8 @@ public class RAnnotation {
 
     }
 
-    public RDataType getRDataType() {
-        return RDataType.getType(getAttribute(RAttribute.TYPE));
+    public RDataType getRDataType() throws RAnnotationException {
+        return RDataType.getType(getStringValue(RAttribute.TYPE));
     }
 
     /**
@@ -154,7 +166,7 @@ public class RAnnotation {
      * @throws RAnnotationException
      */
     public boolean isComplex() throws RAnnotationException {
-        return isComplex(this.getAttribute(RAttribute.TYPE));
+        return isComplex(this.getStringValue(RAttribute.TYPE));
     }
 
     /**
@@ -163,7 +175,7 @@ public class RAnnotation {
      * @throws RAnnotationException
      */
     public String getProcessDescriptionType() throws RAnnotationException {
-        String type = getAttribute(RAttribute.TYPE);
+        String type = getStringValue(RAttribute.TYPE);
         RTypeDefinition rdt = RDataType.getType(type);
         if (rdt != null)
             return rdt.getProcessKey();
@@ -178,4 +190,13 @@ public class RAnnotation {
     public String toString() {
         return "RAnnotation [" + this.type + "][" + Arrays.toString(this.attributeHash.entrySet().toArray()) + "]";
     }
+
+	public boolean containsKey(RAttribute key) {
+		return attributeHash.containsKey(key);
+	}
+
+	public void setAttribute(RAttribute key, Object value) {
+		attributeHash.put(key, value);
+		
+	}
 }

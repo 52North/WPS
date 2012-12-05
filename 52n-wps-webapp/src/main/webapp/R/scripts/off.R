@@ -1,10 +1,10 @@
 # wps.des: off, dummy process for testing wps.off annotations;
-
-#wps.off:
+# wps.resource: pegel-report.Rnw, sweave-foo.Rnw;
+# wps.off:
 a = 2
 b = 3
 c = 4
-#wps.on;
+# wps.on;
 
 
 # wps.in: a, integer, value=2;

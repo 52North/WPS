@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
@@ -44,6 +45,35 @@ import org.n52.wps.server.r.syntax.RSeperator;
 public class RAnnotationParser {
 
     private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
+    
+    /**
+     * 
+     * @param script
+     * @throws RAnnotationException if script is invalid
+     * @throws IOException
+     * @throws ExceptionReport 
+     */
+    public static void validateScript(InputStream script, String wkn) throws RAnnotationException, IOException, ExceptionReport{
+    	//TODO: improve this method to something more useful
+    	
+    	//try to parse annotations:
+    	List<RAnnotation> annotations = parseAnnotationsfromScript(script);
+    	//try to create process description:
+    	RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
+    	
+    	//TODO: WPS.des and WPS.res should only occur once or not.
+    	try {
+			descriptionCreator.createDescribeProcessType(annotations, wkn);
+		} catch (ExceptionReport e) {
+			String message ="Script validation failed when testing process description creator.";
+			LOGGER.error(message);
+			throw e;
+		}catch(RAnnotationException e){
+			String message ="Script validation failed when testing process description creator.";
+			LOGGER.error(message);
+			throw e;
+		}
+    }
 
     // TODO: Improve process script validation
     public static List<RAnnotation> parseAnnotationsfromScript(InputStream skript) throws IOException,
@@ -92,7 +122,7 @@ public class RAnnotationParser {
 
                             annotationString.append(line);
                             if ( !isCurrentlyParsingAnnotation) {
-                                HashMap<RAttribute, String> attrHash = hashAttributes(annotationType,
+                                HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
                                                                                       annotationString.toString());
                                 RAnnotation newAnnotation = new RAnnotation(annotationType, attrHash);
                                 annotations.add(newAnnotation);
@@ -113,9 +143,13 @@ public class RAnnotationParser {
         return annotations;
     }
 
-    private static HashMap<RAttribute, String> hashAttributes(RAnnotationType anotType, String attributeString) throws IOException,
+    private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws IOException,
             RAnnotationException {
-        HashMap<RAttribute, String> attrHash = new HashMap<RAttribute, String>();
+    	
+    	if(anotType.equals(RAnnotationType.RESOURCE)){
+    		return hashResourceAnnotation(attributeString);
+    	}
+        HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
         boolean iterableOrder = true;
@@ -160,6 +194,25 @@ public class RAnnotationParser {
         }
         return attrHash;
     }
+
+	private static HashMap<RAttribute, Object> hashResourceAnnotation(
+			String attributeString) {
+		HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+        StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
+                RSeperator.ATTRIBUTE_SEPARATOR.getKey());
+        String namedList = "list(";
+        while (attrValueTokenizer.hasMoreElements()) {
+        	String resourcefile = attrValueTokenizer.nextToken();
+        	resourcefile = resourcefile.trim();
+        	namedList +="\""+ resourcefile +"\" = "+"\""+R_Config.getInstance().getResourceDirURL()+"/"+resourcefile+"\"";
+        	if(attrValueTokenizer.hasMoreElements()){
+        		namedList+=", ";
+        	}	
+        }
+        namedList+=")";
+        attributeHash.put(RAttribute.NAMED_LIST, namedList);
+		return attributeHash;
+	}
 
     // Main method for tests:
     /*

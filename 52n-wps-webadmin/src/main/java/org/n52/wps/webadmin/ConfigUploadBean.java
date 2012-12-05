@@ -474,11 +474,14 @@ public class ConfigUploadBean {
                             // add the prefix to the filename
 
                             PrintWriter pw = null;
+                            File destFile = null;
                             if (realSavePath.length() > 0) {
-                                pw = new PrintWriter(new BufferedWriter(new FileWriter((realSavePath == null ? "" : realSavePath) + filename)));
+                            	destFile = new File((realSavePath == null ? "" : realSavePath) + filename);
+                                pw = new PrintWriter(new BufferedWriter(new FileWriter(destFile)));
                             } else {
                                 filename = filenamePrefix + filename;
-                                pw = new PrintWriter(new BufferedWriter(new FileWriter((savePath == null ? "" : savePath) + filename)));
+                                destFile = new File((savePath == null ? "" : savePath) + filename);
+                                pw = new PrintWriter(new BufferedWriter(new FileWriter(destFile)));
                             }
 
                             while (i != -1 && !newLine.startsWith(boundary)) {

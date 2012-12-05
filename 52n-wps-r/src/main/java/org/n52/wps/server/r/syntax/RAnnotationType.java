@@ -61,7 +61,7 @@ public enum RAnnotationType {
                                   RAttribute.ABSTRACT,
                                   RAttribute.AUTHOR)),
     
-    RESOURCE(Arrays.asList(RAttribute.DESCRIPTION_START, RAttribute.SEQUENCE));
+    RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST));
 
     private HashMap<String, RAttribute> attributeLut = new HashMap<String, RAttribute>();
     private HashSet<RAttribute> mandatory = new HashSet<RAttribute>();
@@ -107,12 +107,12 @@ public enum RAnnotationType {
      * @return key / value pairs ready for process description
      * @throws IOException
      */
-    public void validDescription(HashMap<RAttribute, String> keyValues) throws RAnnotationException {
+    public void validDescription(RAnnotation rAnnotation) throws RAnnotationException {
         // check minOccurs Attribute and default value:
         try {
-            if (keyValues.containsKey(RAttribute.MIN_OCCURS)) {
-                Integer min = Integer.parseInt(keyValues.get(RAttribute.MIN_OCCURS));
-                if (keyValues.containsKey(RAttribute.DEFAULT_VALUE) && !min.equals(0))
+            if (rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
+                Integer min = Integer.parseInt(rAnnotation.getStringValue(RAttribute.MIN_OCCURS));
+                if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !min.equals(0))
                     throw new RAnnotationException("");
             }
         }
@@ -122,14 +122,14 @@ public enum RAnnotationType {
                     + e.getMessage());
         }
 
-        if (keyValues.containsKey(RAttribute.DEFAULT_VALUE) && !keyValues.containsKey(RAttribute.MIN_OCCURS)) {
-            keyValues.put(RAttribute.MIN_OCCURS, "0");
+        if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
+            rAnnotation.setAttribute(RAttribute.MIN_OCCURS, 0);
         }
 
         // check maxOccurs Attribute:
         try {
-            if (keyValues.containsKey(RAttribute.MAX_OCCURS)) {
-                Integer.parseInt(keyValues.get(RAttribute.MAX_OCCURS));
+            if (rAnnotation.containsKey(RAttribute.MAX_OCCURS)) {
+                Integer.parseInt(rAnnotation.getStringValue(RAttribute.MAX_OCCURS));
             }
         }
         catch (NumberFormatException e) {
