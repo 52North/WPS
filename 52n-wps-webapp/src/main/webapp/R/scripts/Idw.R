@@ -31,7 +31,7 @@
 		
 	#runs interpolation and builds data frame:
 	form=formula(paste(attributename,"~ 1"))
-	idw=idw(form,points,raster,maxdist=maxdist,nmax=nmax)
+	idw=gstat::idw(form,points,raster,maxdist=maxdist,nmax=nmax)
 	idw@data=data.frame(idw@data$var1.pred)
 	
 	#writing result file and define absolute filepath as output
