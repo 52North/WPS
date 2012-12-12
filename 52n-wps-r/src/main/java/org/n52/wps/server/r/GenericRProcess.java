@@ -781,12 +781,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
 
 		File tempfile = new File(filename);
-		if (!tempfile.isAbsolute()) {
+		if (tempfile.isAbsolute()) {
 			// create File to stream from Rserve to WPS4R
 			File destination = new File(currentWPSWorkDir);
 			if (!destination.exists())
 				destination.mkdirs();
-			tempfile = new File(destination, filename);
+			tempfile = new File(destination, tempfile.getName());
 		}
 
         // Do streaming Rserve --> WPS tempfile
