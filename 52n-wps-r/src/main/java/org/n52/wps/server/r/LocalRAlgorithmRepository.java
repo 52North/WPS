@@ -23,7 +23,6 @@
  */
 package org.n52.wps.server.r;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,6 +53,9 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     // registered Processes
     private Map<String, String> algorithmMap;
+
+    // local cache for algorithm descriptions
+    private Map<String, GenericRProcess> algorithmDescriptionMap = new HashMap<String, GenericRProcess>();
 
     public LocalRAlgorithmRepository() {
         LOGGER.info("Initializing LocalRAlgorithmRepository");
@@ -103,9 +105,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 	}
 
 	private void addAllAlgorithms() {
-		R_Config rConfig = R_Config.getInstance();
 		// add algorithms from config file to repository
-		
 		List<RProcessInfo> processInfoList = new ArrayList<RProcessInfo>();
         Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
 
@@ -212,6 +212,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     }
 
     private IAlgorithm loadAlgorithm(String wellKnownName) throws Exception {
+        LOGGER.debug("Loading algorithm '" + wellKnownName + "'");
+        
         IAlgorithm algorithm = (IAlgorithm) new GenericRProcess(wellKnownName);
         if ( !algorithm.processDescriptionIsValid()) {
             LOGGER.warn("Algorithm description is not valid: " + wellKnownName);
@@ -249,13 +251,20 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Override
     public ProcessDescriptionType getProcessDescription(String processID) {
-        return new GenericRProcess(processID).getDescription();
+        if(this.algorithmMap.containsKey(processID)) {
+            LOGGER.debug("Creating new process to get the description for " + processID);
+            GenericRProcess process = new GenericRProcess(processID);
+            this.algorithmDescriptionMap.put(processID, process);
+        }
+        
+        LOGGER.debug("Returning  process description from cache: " + processID);
+        return this.algorithmDescriptionMap.get(processID).getDescription();
     }
 
     @Override
     public void shutdown() {
+        LOGGER.info("Shutting down ...");
         // TODO Auto-generated method stub
-
     }
 
 }

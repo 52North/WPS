@@ -76,11 +76,11 @@ public class RAnnotationParser {
     }
 
     // TODO: Improve process script validation
-    public static List<RAnnotation> parseAnnotationsfromScript(InputStream skript) throws IOException,
+    public static List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws IOException,
             RAnnotationException {
-        LOGGER.debug("Starting to parse annotations from script.");
+        LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
-        BufferedReader lineReader = new BufferedReader(new InputStreamReader(skript));
+        BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
         int lineCounter = 0;
         boolean isCurrentlyParsingAnnotation = false;
         StringBuilder annotationString = null;
@@ -139,7 +139,7 @@ public class RAnnotationParser {
             }
         }
 
-        LOGGER.debug("Finished to parse annotations from script.");
+        LOGGER.debug("Finished to parse annotations from script " + inputScript);
         return annotations;
     }
 
