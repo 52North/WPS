@@ -1,6 +1,9 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="org.n52.wps.webadmin.ConfigUploadBean"%>
 <%@ page import="org.n52.wps.webadmin.ChangeConfigurationBean"%>
+<%@ page import="org.n52.wps.server.r.info.RProcessInfo"%>
+<%@ page import="java.util.List"%>
+
 <!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <jsp:useBean id="fileUpload" class="org.n52.wps.webadmin.ConfigUploadBean" scope="session" />
@@ -31,6 +34,7 @@
             
             // upload req
             var uploadId = "";
+            var WPS4RId = "";
 
             // at page load
             $(document).ready(function(){
@@ -169,6 +173,7 @@
                             
                             var itemID = addListItem(listType);
                             if (nameEntry == "UploadedAlgorithmRepository"){setUploadId(itemID);}
+                            if (nameEntry == "LocalRAlgorithmRepository"){setWPS4RId(itemID);}
 
                             // now that the list item exists, add name, class and active to the elements
                             $("#" + listType + "-" + itemID + "_NameEntry").val(nameEntry);					// set the name entry 
@@ -191,6 +196,11 @@
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Name").val(propertyName);
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Value").val(propertyValue);
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Activator").attr('checked', propActive);
+                                
+                                if(propertyName=="Algorithm" && itemID==WPS4RId){
+                                	var flagID = propertyValue.replace(/\./g,"_")+"_flag";
+									$("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_flag").attr('id',flagID);
+                                }
                             });
                             
                              $('Format',this).each(function(j) {
@@ -214,6 +224,8 @@
                             
                         });
                     }
+                    
+                    setWPS4RValidityFlags();
                 });
             }
 
@@ -425,6 +437,9 @@
 
             function addPropItem(itemType) {
                 var id = document.getElementById("id").value;
+                
+                //Assigns a special behaviour to WPS4R properties (esp. for scripts):
+                if(itemType == "Repository-"+WPS4RId+"_Property"){
                 $("#" + itemType + "_List").append
                 (
                 "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
@@ -433,8 +448,21 @@
 					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +            
                     "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" width=\"16\" height=\"16\" alt=\"Remove\" style=\"cursor:pointer\" />"+
                     "<img id=\"editImg\" onClick=\"edit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"+
+                    "<div class=\"validity_flag\" id=\""+ itemType + "-" + id +"_flag\"></div>"+                   
                 "</div>"
                 );
+                }else{
+                    $("#" + itemType + "_List").append
+                    (
+                    "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
+                        "<input type=\"text\" class=\"propertyName\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" readonly />"+
+                        "<input type=\"text\" class=\"propertyValue\" size=\"20\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" readonly />"+
+    					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +            
+                        "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" width=\"16\" height=\"16\" alt=\"Remove\" style=\"cursor:pointer\" />"+
+                        "<img id=\"editImg\" onClick=\"edit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"+
+                    "</div>"
+                    );	
+                }
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
                 return id;
@@ -514,6 +542,10 @@
             function setUploadId(itemID){
              	uploadId = itemID;
             }
+            
+            function setWPS4RId(itemID){
+             	WPS4RId = itemID;
+            }
                       
 			function appendProcessToList() {                            			
 				 itemType= "Repository-" + uploadId + "_Property";
@@ -589,7 +621,55 @@
 	           	$("div#editSave img#editImg").remove();
 	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"editServerSettings(); return false;\" src=\"images/edit.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 								
             }
+			function rProcessInfo(){
+				this.algorithmName;
+				this.isValid;
+				this.isAvailable;
+				this.exception;
+				this.scriptURL;
+			}
+			
 
+			function setWPS4RValidityFlags(){
+				var rProcessInfos = new Array();
+<%List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
+				int i = 0;
+				for (RProcessInfo rProcessInfo : rProcessInfoList) {
+					//TODO: use constructor, i.e. new ProcessInfo(algorithmname, isValid, isAvailable, ...) to shorten text
+					out.println("\t\t\t\trProcessInfos["+i+"] = new rProcessInfo();");
+					out.println("\t\t\t\trProcessInfos["+i+"].algorithmName = \""+ rProcessInfo.getWkn() +"\";");
+					out.println("\t\t\t\trProcessInfos["+i+"].isAvailable = "+   rProcessInfo.isAvailable() +";");
+					out.println("\t\t\t\trProcessInfos["+i+"].isValid = "+		 rProcessInfo.isValid()+";");
+					out.println("\t\t\t\trProcessInfos["+i+"].scriptURL = \""+	 rProcessInfo.getScriptURL()+"\";");
+					//out.print("rProcessInfos["+i+"].exception = \""+	 rProcessInfo.getLastException().getMessage()+"\";");
+					i++;
+				}%>
+				
+				for(var i = 0; i<rProcessInfos.length; i++){					
+					var flagId = rProcessInfos[i].algorithmName.replace(/\./g,"_")+"_flag";
+					if(rProcessInfos[i].isValid){
+						$("#"+flagId).append(
+								"<img class=\"flagIcon\" src=\"images/script_valid.png\" alt=\"Script is valid\" title=\"Script is valid\" style=\"background-color:transparent\"></img>"		
+							);
+					}else
+						if(!rProcessInfos[i].isAvailable){
+							$("#"+flagId).append(
+									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent\"></img>"		
+								);
+						}
+					else{
+						$("#"+flagId).append(
+								"<img class=\"flagIcon\" src=\"images/script_invalid.png\" alt=\"Script not valid\" title=\"Script not valid\" style=\"background-color:transparent\"></img>"		
+						);
+						
+						}
+					
+				}
+				//TODO: insert exceptions
+
+			}
+
+			
         -->
     </script>
 </head>
