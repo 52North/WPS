@@ -71,7 +71,7 @@ public class WPSConfig implements Serializable {
     public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
     public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
 
-    private static final String CONFIG_FILE_NAME = "wps_config.xml";
+    public static final String CONFIG_FILE_NAME = "wps_config.xml";
     private static final String CONFIG_FILE_DIR = "config";
 
     private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
@@ -540,6 +540,15 @@ public class WPSConfig implements Serializable {
             }
         }
         return null;
+    }
+    
+    /**
+     * 
+     * @return directory of the configuration folder
+     */
+    public static final String getConfigDir(){
+    	String dir = getConfigPath();
+    	return dir.substring(0, dir.lastIndexOf(CONFIG_FILE_NAME));
     }
 
 }

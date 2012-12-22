@@ -47,9 +47,6 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.wps.x100.ProcessFailedType;
-import net.opengis.wps.x100.StatusType;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -187,11 +184,12 @@ public class RequestHandler {
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
 			Node versionNode = child.getAttributes().getNamedItem("version");
-			if(versionNode == null && !nodeName.contains("apabilities")) {
+                        boolean isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
+			if(versionNode == null && !isCapabilitiesNode) {
 				throw new ExceptionReport("No version parameter supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-			if(nodeName.contains("apabilities")){
-				version = child.getFirstChild().getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
+			if(isCapabilitiesNode){
+				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
 			}else{
 				version = child.getAttributes().getNamedItem("version").getNodeValue();
 			}
@@ -258,39 +256,26 @@ public class RequestHandler {
 		if (req instanceof ExecuteRequest) {
 			// cast the request to an executerequest
 			ExecuteRequest execReq = (ExecuteRequest) req;
-			// get the statustype of this request
-			StatusType status = StatusType.Factory.newInstance();
-			execReq.getExecuteResponseBuilder().setStatus(status);
-			// create a task for this request
-			WPSTask<Response> task = new WPSTask<Response>(req);
-
-			//add process status before execution to enables clients to see the status
-			//status.addNewProcessStarted();
-			task.getRequest().getExecuteResponseBuilder().setStatus(status);
+			
+			execReq.updateStatusAccepted();
 			
 			ExceptionReport exceptionReport = null;
 			try {
-				// submit the task for execution
-				pool.execute(task);
-				// set status to accepted
-				status.setProcessAccepted("Request is queued for execution.");
-				if (((ExecuteRequest) req).isStoreResponse()) {
+				if (execReq.isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
 					InputStream is = resp.getAsStream();
 					IOUtils.copy(is, os);
 					is.close();
+                    pool.submit(execReq);
 					return;
 				}
 				try {
 					// retrieve status with timeout enabled
 					try {
-						resp = task.get();
-						//Thread.sleep(this.sleepingTime);
-						status.setProcessSucceeded("Process has succeeded");
-						status.unsetProcessAccepted();
-						task.getRequest().getExecuteResponseBuilder().setStatus(status);
+						resp = pool.submit(execReq).get();
 					}
 					catch (ExecutionException ee) {
+						LOGGER.warn("exception while handling ExecuteRequest.");
 						// the computation threw an error
 						// probably the client input is not valid
 						if (ee.getCause() instanceof ExceptionReport) {
@@ -303,6 +288,7 @@ public class RequestHandler {
 									ExceptionReport.NO_APPLICABLE_CODE);
 						}
 					} catch (InterruptedException ie) {
+						LOGGER.warn("interrupted while handling ExecuteRequest.");
 						// interrupted while waiting in the queue
 						exceptionReport = new ExceptionReport(
 								"The computation in the process was interrupted.",
@@ -311,9 +297,6 @@ public class RequestHandler {
 				} finally {
 					if (exceptionReport != null) {
 						LOGGER.debug("ExceptionReport not null: " + exceptionReport.getMessage());
-						ProcessFailedType statusFailed = ProcessFailedType.Factory.newInstance();
-						statusFailed.setExceptionReport(exceptionReport.getExceptionDocument().getExceptionReport());
-						status.setProcessFailed(statusFailed);
 						// NOT SURE, if this exceptionReport is also written to the DB, if required... test please!
 						throw exceptionReport;
 					}
@@ -322,10 +305,10 @@ public class RequestHandler {
 						resp = new ExecuteResponse(execReq);
 					}*/
 					else if(resp == null) {
-						LOGGER.debug("repsonse object is null");
+						LOGGER.warn("null response handling ExecuteRequest.");
 						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
 					}
-					if(!((ExecuteRequest) req).isStoreResponse()) {
+					if(!execReq.isStoreResponse()) {
 						InputStream is = resp.getAsStream();
 						IOUtils.copy(is, os);
 						is.close();
@@ -333,12 +316,17 @@ public class RequestHandler {
 					}
 				}
 			} catch (RejectedExecutionException ree) {
+                LOGGER.warn("exception handling ExecuteRequest.", ree);
 				// server too busy?
 				throw new ExceptionReport(
 						"The requested process was rejected. Maybe the server is flooded with requests.",
 						ExceptionReport.SERVER_BUSY);
-			} catch (IOException e) {
-				throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
+			} catch (Exception e) {
+                LOGGER.error("exception handling ExecuteRequest.", e);
+                if (e instanceof ExceptionReport) {
+                    throw (ExceptionReport)e;
+                }
+                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
 			}
 		} else {
 			// for GetCapabilities and DescribeProcess:

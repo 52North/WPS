@@ -113,111 +113,112 @@ public class ExecuteResponseBuilder {
 		creationTime = Calendar.getInstance();
 	}
 	
-	public void update() throws ExceptionReport {		
+	public void update() throws ExceptionReport {
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();
-		if(request.isStoreResponse() && responseElem.getStatus().getProcessSucceeded() == null) {
+				
+		// if status succeeded, update reponse with result
+		if (responseElem.getStatus().isSetProcessSucceeded()) {
+			// the response only include dataInputs, if the property is set to true;
+			//if(Boolean.getBoolean(WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_INCLUDE_DATAINPUTS_IN_RESPONSE))) {
+			if(new Boolean(WPSConfig.getInstance().getWPSConfig().getServer().getIncludeDataInputsInResponse())){
+				dataInputs = request.getExecute().getDataInputs();
+				responseElem.setDataInputs(dataInputs);
+			}
+			responseElem.addNewProcessOutputs();
+			// has the client specified the outputs?
+			if (request.getExecute().isSetResponseForm()) {
+				// Get the outputdescriptions from the algorithm
+
+				OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
+				if(request.isRawData()) {
+					OutputDefinitionType rawDataOutput = request.getExecute().getResponseForm().getRawDataOutput();
+					String id = rawDataOutput.getIdentifier().getStringValue();
+					OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
+					if(desc.isSetComplexOutput()) {
+						String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
+						String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
+						String responseMimeType = getMimeType(rawDataOutput);
+						generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
+					}
+
+					else if (desc.isSetLiteralOutput()) {
+						String mimeType = null;
+						String schema = null;
+						String encoding = null;
+						DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+						String reference = dataType != null ? dataType.getReference() : null;
+						generateLiteralDataOutput(id, doc, true, reference, schema, mimeType, encoding, desc.getTitle());
+					}
+					else if (desc.isSetBoundingBoxOutput()) {
+						String mimeType = null;
+						String schema = null;
+						String encoding = null;
+						generateBBOXOutput(id, doc, true, desc.getTitle());
+					}
+					return;
+				}
+				// Get the outputdefinitions from the clients request
+				// For each request of output
+				for(int i = 0; i<request.getExecute().getResponseForm().getResponseDocument().getOutputArray().length; i++) {
+					OutputDefinitionType definition = request.getExecute().getResponseForm().getResponseDocument().getOutputArray(i);
+					DocumentOutputDefinitionType documentDef = request.getExecute().getResponseForm().getResponseDocument().getOutputArray(i);
+					String responseID = definition.getIdentifier().getStringValue();
+					OutputDescriptionType desc = XMLBeansHelper.findOutputByID(responseID, outputDescs);
+					if(desc==null){
+						throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
+					}
+					if(desc.isSetComplexOutput()) {
+						String mimeType = getMimeType(definition);
+						String schema = ExecuteResponseBuilder.getSchema(desc, definition);
+						String encoding = ExecuteResponseBuilder.getEncoding(desc, definition);
+						generateComplexDataOutput(responseID, documentDef.getAsReference(), false,  schema, mimeType, encoding, desc.getTitle());
+					}
+					else if (desc.isSetLiteralOutput()) {
+						String mimeType = null;
+						String schema = null;
+						String encoding = null;
+						DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
+						String reference = dataType != null ? dataType.getReference() : null;
+						generateLiteralDataOutput(responseID, doc, false, reference, schema, mimeType, encoding, desc.getTitle());
+					}
+					else if (desc.isSetBoundingBoxOutput()) {
+						String mimeType = null;
+						String schema = null;
+						String encoding = null;
+						generateBBOXOutput(responseID, doc, false, desc.getTitle());
+					}
+					else{
+						throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
+					}
+				}
+			}
+			else {
+				LOGGER.info("OutputDefinitions are not stated explicitly in request");
+
+				// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
+
+				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
+				if(description==null){
+					throw new RuntimeException("Error while accessing the process description for "+ request.getExecute().getIdentifier().getStringValue());
+				}
+
+				OutputDescriptionType [] d = description.getProcessOutputs().getOutputArray();
+				for (int i = 0; i < d.length; i++)
+				{
+					if(d[i].isSetComplexOutput()) {
+						String schema = d[i].getComplexOutput().getDefault().getFormat().getSchema();
+						String encoding = d[i].getComplexOutput().getDefault().getFormat().getEncoding();
+						String mimeType = d[i].getComplexOutput().getDefault().getFormat().getMimeType();
+						generateComplexDataOutput(d[i].getIdentifier().getStringValue(), false, false, schema, mimeType, encoding, d[i].getTitle());
+					}
+					else if(d[i].isSetLiteralOutput()) {
+						generateLiteralDataOutput(d[i].getIdentifier().getStringValue(), doc, false, d[i].getLiteralOutput().getDataType().getReference(), null, null, null, d[i].getTitle());
+					}
+				}
+			}
+		} else if(request.isStoreResponse()) {
 			responseElem.setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
-			return;
-		}
-		
-		// the response only include dataInputs, if the property is set to true;
-		//if(Boolean.getBoolean(WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_INCLUDE_DATAINPUTS_IN_RESPONSE))) {
-		if(new Boolean(WPSConfig.getInstance().getWPSConfig().getServer().getIncludeDataInputsInResponse())){
-			dataInputs = request.getExecute().getDataInputs();
-			responseElem.setDataInputs(dataInputs);
-		}
-		responseElem.addNewProcessOutputs();
-		// has the client specified the outputs?
-		if (request.getExecute().isSetResponseForm()) {
-			// Get the outputdescriptions from the algorithm
-			
-			OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-			if(request.isRawData()) {
-				OutputDefinitionType rawDataOutput = request.getExecute().getResponseForm().getRawDataOutput();
-				String id = rawDataOutput.getIdentifier().getStringValue();
-				OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
-				if(desc.isSetComplexOutput()) {
-					String encoding = ExecuteResponseBuilder.getEncoding(desc, rawDataOutput);
-					String schema = ExecuteResponseBuilder.getSchema(desc, rawDataOutput);
-					String responseMimeType = getMimeType(rawDataOutput);
-					generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
-				}
-				
-				else if (desc.isSetLiteralOutput()) {
-					String mimeType = null;
-					String schema = null;
-					String encoding = null;
-					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
-					String reference = dataType != null ? dataType.getReference() : null;
-					generateLiteralDataOutput(id, doc, true, reference, schema, mimeType, encoding, desc.getTitle());
-				}
-				else if (desc.isSetBoundingBoxOutput()) {
-					String mimeType = null;
-					String schema = null;
-					String encoding = null;
-					generateBBOXOutput(id, doc, true, desc.getTitle());
-				}
-				return;
-			}
-			// Get the outputdefinitions from the clients request
-			// For each request of output
-			for(int i = 0; i<request.getExecute().getResponseForm().getResponseDocument().getOutputArray().length; i++) {
-				OutputDefinitionType definition = request.getExecute().getResponseForm().getResponseDocument().getOutputArray(i);
-				DocumentOutputDefinitionType documentDef = request.getExecute().getResponseForm().getResponseDocument().getOutputArray(i);
-				String responseID = definition.getIdentifier().getStringValue();
-				OutputDescriptionType desc = XMLBeansHelper.findOutputByID(responseID, outputDescs);
-				if(desc==null){
-					throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
-				}
-				if(desc.isSetComplexOutput()) {
-					String mimeType = getMimeType(definition);
-					String schema = ExecuteResponseBuilder.getSchema(desc, definition);
-					String encoding = ExecuteResponseBuilder.getEncoding(desc, definition);
-					generateComplexDataOutput(responseID, documentDef.getAsReference(), false,  schema, mimeType, encoding, desc.getTitle());
-				}
-				else if (desc.isSetLiteralOutput()) {
-					String mimeType = null;
-					String schema = null;
-					String encoding = null;
-					DomainMetadataType dataType = desc.getLiteralOutput().getDataType();
-					String reference = dataType != null ? dataType.getReference() : null;
-					generateLiteralDataOutput(responseID, doc, false, reference, schema, mimeType, encoding, desc.getTitle());
-				}
-				else if (desc.isSetBoundingBoxOutput()) {
-					String mimeType = null;
-					String schema = null;
-					String encoding = null;
-					generateBBOXOutput(responseID, doc, false, desc.getTitle());
-				}
-				else{
-					throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
-				}
-			}
-		}
-		else {
-			LOGGER.info("OutputDefinitions are not stated explicitly in request");
-			
-			// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
-				
-			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
-			if(description==null){
-				throw new RuntimeException("Error while accessing the process description for "+ request.getExecute().getIdentifier().getStringValue());
-			}
-			
-			OutputDescriptionType [] d = description.getProcessOutputs().getOutputArray();
-			for (int i = 0; i < d.length; i++)
-			{
-				if(d[i].isSetComplexOutput()) {
-					String schema = d[i].getComplexOutput().getDefault().getFormat().getSchema();
-					String encoding = d[i].getComplexOutput().getDefault().getFormat().getEncoding();
-					String mimeType = d[i].getComplexOutput().getDefault().getFormat().getMimeType();
-					generateComplexDataOutput(d[i].getIdentifier().getStringValue(), false, false, schema, mimeType, encoding, d[i].getTitle());
-				}
-				else if(d[i].isSetLiteralOutput()) {
-					generateLiteralDataOutput(d[i].getIdentifier().getStringValue(), doc, false, d[i].getLiteralOutput().getDataType().getReference(), null, null, null, d[i].getTitle());
-				}
-			}
 		}
 	}
 

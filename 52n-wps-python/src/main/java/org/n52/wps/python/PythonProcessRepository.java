@@ -47,7 +47,6 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.feed.FeedRepository;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
-import org.n52.wps.server.request.ExecuteRequest;
 
 public class PythonProcessRepository implements IAlgorithmRepository {
 	
@@ -206,7 +205,7 @@ public class PythonProcessRepository implements IAlgorithmRepository {
 	 * @param processID
 	 * @return
 	*/
-	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
+	public IAlgorithm getAlgorithm(String processID) {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}

@@ -171,7 +171,7 @@ public class TransactionalRequestHandler {
 			UndeployProcessRequest request) throws ExceptionReport {
 		try {
 			if (RepositoryManager.getInstance().getAlgorithm(
-					request.getProcessID(), null) == null) {
+					request.getProcessID()) == null) {
 				throw new ExceptionReport("The process does not exist",
 						ExceptionReport.INVALID_PARAMETER_VALUE);
 			}

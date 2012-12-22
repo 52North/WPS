@@ -1,128 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<artifactId>52n-wps-parent</artifactId>
-		<groupId>org.n52.wps</groupId>
-		<version>3.1-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>52n-wps-server</artifactId>
-	<name>52north 52n-wps-server</name>
-	<description>The project 52 north 52n-wps-server does something with JAVA.</description>
-	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.xml</include>
-				</includes>
-				<excludes>
-					<exclude>org/n52/wps/server/algorithm/smooth/**</exclude>
-				</excludes>
-			</resource>
-		</resources>
-	</build>
-	<dependencies>
+    <parent>
+        <artifactId>52n-wps-parent</artifactId>
+        <groupId>org.n52.wps</groupId>
+        <version>3.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>52n-wps-server</artifactId>
+    <name>52north 52n-wps-server</name>
+    <description>The project 52 north 52n-wps-server does something with JAVA.</description>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-config</artifactId>
+        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-algorithm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-database</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+	  	</dependency>
+		<dependency>
+			<groupId>javax.media</groupId>
+			<artifactId>jai_core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
-			<scope>compile</scope>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-xml</artifactId>
-			<version>1.0.0</version>
+			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>tomcat</groupId>
+			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-			<version>5.5.15</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.2.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2</artifactId>
-			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-impl</artifactId>
-			<version>1.2.8</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-dom</artifactId>
-			<version>1.2.8</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.ws.commons.axiom</groupId>
-			<artifactId>axiom-api</artifactId>
-			<version>1.2.8</version>
-		</dependency>
-		<!-- dependency>
-			<groupId>org.apache.rampart</groupId>
-			<artifactId>rampart-core</artifactId>
-			<version>1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xmlbeans</groupId>
-					<artifactId>xbean</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>opensaml</groupId>
-					<artifactId>opensaml</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.ant</groupId>
-					<artifactId>ant-nodeps</artifactId>
-				</exclusion>
-
-			</exclusions>
-		</dependency-->
-		<dependency>
-			<groupId>org.apache.ws.security</groupId>
-			<artifactId>wss4j</artifactId>
-			<version>1.5.6</version>
-		</dependency>
-   
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<version>2.7.1</version>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.0</version>
-			<scope>compile</scope>
-		</dependency>	
-	</dependencies>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>log4j</groupId>
+		    <artifactId>log4j</artifactId>
+	  	</dependency>
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+	  	</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-algorithm-impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+    </dependencies>
 </project>
 

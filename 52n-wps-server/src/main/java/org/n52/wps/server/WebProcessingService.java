@@ -42,8 +42,6 @@ import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
@@ -56,8 +54,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
@@ -126,7 +122,6 @@ public class WebProcessingService extends HttpServlet {
 		//TODO: Might be changed to an additional configuration parameter.
 		System.setProperty("org.geotools.referencing.forceXY", "true");
 
-		BasicConfigurator.configure();
 		LOGGER.info("WebProcessingService initializing...");
 
 		try{
@@ -241,56 +236,82 @@ public class WebProcessingService extends HttpServlet {
 		out.close();
 	}
 
+	public final static int MAXIMUM_REQUEST_SIZE = 128 << 20;
+	public final static String SPECIAL_XML_POST_VARIABLE = "request";
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		//OutputStream out = getConfiguredOutputStream(req, res);
-		OutputStream out = res.getOutputStream();
+		OutputStream os = res.getOutputStream();
 		try {
-			InputStream is = req.getInputStream();
-			if (req.getParameterMap().containsKey("request")){
-				is = new ByteArrayInputStream(req.getParameter("request").getBytes("UTF-8"));
-			}else{
-				// WORKAROUND cut the parameter name "request" of the stream
-				// TODO: workaround should not be necessary any more (see bug 682). remove this after testing
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						is, "UTF-8"));
-				StringWriter sw = new StringWriter();
-				int k;
-				while ((k = br.read()) != -1) {
-					sw.write(k);
-				}
-				LOGGER.debug(sw);
-				String s;
-				String reqContentType = req.getContentType();
-				if (sw.toString().startsWith("request=")) {
-					if (reqContentType.equalsIgnoreCase("text/plain")) {
-						s = sw.toString().substring(8);
-					} else {
-						s = URLDecoder.decode(sw.toString().substring(8),
-								"UTF-8");
-					}
-					LOGGER.debug(s);
-				} else {
-					s = sw.toString();
-				}
-
-				is = new ByteArrayInputStream(s.getBytes("UTF-8"));
+			String contentType = req.getContentType();
+			String characterEncoding = req.getCharacterEncoding();
+			if ( characterEncoding == null || characterEncoding.length() == 0) {
+				characterEncoding = "UTF-8"; // default character encoding if unspecified
 			}
 			
-			if(is != null) {
-				
-				RequestHandler handler = new RequestHandler(is, out);
-				String mimeType = handler.getResponseMimeType();
-				res.setContentType(mimeType);
-				handler.handle();
-							
-				res.setStatus(HttpServletResponse.SC_OK);
+			int contentLength = req.getContentLength();
+			if (contentLength > MAXIMUM_REQUEST_SIZE) {
+				LOGGER.warn("POST request rejected, request size of " + contentLength + " too large.");
+				handleException(new ExceptionReport(
+						"Request body too large, limited to " + MAXIMUM_REQUEST_SIZE + " bytes",
+						ExceptionReport.NO_APPLICABLE_CODE),
+						res, os);
 			}
-		} 
-		catch(ExceptionReport e) {
-			handleException(e, res, out);
+
+			LOGGER.debug("Received POST: Content-Type = " + contentType +
+					", Character-Encoding = " + characterEncoding + 
+					", Content-Length = " + contentLength);
+			
+			int requestSize = 0;
+			
+			StringWriter writer = contentLength > 0 ? new StringWriter(contentLength) : new StringWriter();
+			BufferedReader reader = req.getReader();
+			char[] buffer = new char[8192];
+			int read;
+			while ( (read = reader.read(buffer)) != -1 && requestSize < MAXIMUM_REQUEST_SIZE) {
+				writer.write(buffer, 0, read);
+				requestSize += read;
+			}
+			
+			LOGGER.debug("POST request contained  " + requestSize + " characters");
+			
+			// Protect against denial of service attacks.
+			if (requestSize >= MAXIMUM_REQUEST_SIZE && reader.read() > -1) {
+				LOGGER.warn("POST request rejected, request size of " + requestSize + " too large.");
+				handleException(new ExceptionReport(
+						"Request body too large, limited to " + MAXIMUM_REQUEST_SIZE + " bytes",
+						ExceptionReport.NO_APPLICABLE_CODE),
+						res, os);
+			} else {
+
+				String documentString = writer.toString();
+
+				// Perform URL decoding, if necessary
+				if ("application/x-www-form-urlencoded".equals(contentType)) {
+					if (documentString.startsWith(SPECIAL_XML_POST_VARIABLE + "=")) {
+						// This is a hack to permit xml to be easily submitted via a form POST.
+						// By convention, we are allowing users to post xml if they name it
+						// with a POST parameter "request" although this is not
+						// valid per the specification.
+						documentString = documentString.substring(SPECIAL_XML_POST_VARIABLE.length() + 1);
+						LOGGER.debug("POST request form variable removed");
+					}
+					documentString = URLDecoder.decode(documentString, characterEncoding);
+				}
+
+				RequestHandler handler = new RequestHandler(
+						new ByteArrayInputStream(documentString.getBytes("UTF-8")),
+						res.getOutputStream());
+				String mimeType = handler.getResponseMimeType();
+						res.setContentType(mimeType);
+						handler.handle();
+						res.setStatus(HttpServletResponse.SC_OK);
+			}
+		} catch (ExceptionReport e) {
+			handleException(e, res, os);
+		} finally {
+			if (os != null) {
+				os.close();
+			}
 		}
-		out.flush();
-		out.close();
 	}
 	
 	@Override
@@ -298,10 +319,6 @@ public class WebProcessingService extends HttpServlet {
 		if(SERVLET_PATH == null) {
 			req.getContextPath();
 		}
-		/*
-		 * getting the parametermap here prevents bug 682
-		 */
-		req.getParameterMap();
 		super.service(req, res);
 	}
 
@@ -328,6 +345,5 @@ public class WebProcessingService extends HttpServlet {
 	public void destroy() {
 		super.destroy();
 		DatabaseFactory.getDatabase().shutdown();
-		RepositoryManager.getInstance().shutdown();
 	}
 }

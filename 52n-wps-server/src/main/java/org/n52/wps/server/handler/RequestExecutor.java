@@ -36,24 +36,8 @@
 package org.n52.wps.server.handler;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import net.opengis.wps.x100.ProcessFailedType;
-import net.opengis.wps.x100.StatusType;
-
-import org.apache.log4j.Logger;
-import org.n52.wps.server.ExceptionReport;
-
-
-/*
- * import org.apache.log4j.Logger; import
- * org.n52.wps.server.request.ExecuteRequest; import
- * org.n52.wps.server.response.structures.ProcessStartedType; import
- * org.n52.wps.server.response.structures.StatusType;
- */
 
 /**
  * After the client Request is accepted, it should be executed. To prevent
@@ -75,8 +59,6 @@ public class RequestExecutor extends ThreadPoolExecutor {
 	public static final int KEEP_ALIVE_SECONDS = 1000;
 	public static final int MAX_QUEUED_TASKS = 100;
 
-	private static Logger LOGGER = Logger.getLogger(RequestExecutor.class);
-
 	/**
 	 * Create a RequestExecutor.
 	 */
@@ -86,76 +68,4 @@ public class RequestExecutor extends ThreadPoolExecutor {
 						MAX_QUEUED_TASKS));
 	}
 
-	/**
-	 * Before Executing the Request this method is called.
-	 * 
-	 * @param t
-	 *            The Thread which executes the Request.
-	 * @param r
-	 *            The Request.
-	 * @see java.util.concurrent.ThreadPoolExecutor#beforeExecute(java.lang.Thread,
-	 *      java.lang.Runnable)
-	 */
-	protected void beforeExecute(Thread t, Runnable r) {
-		super.beforeExecute(t, r);
-		// set a lower priority
-		t.setPriority(Thread.MIN_PRIORITY);
-		LOGGER.debug("beforeExecute called");
-		StatusType status = StatusType.Factory.newInstance();
-		status.addNewProcessStarted().setPercentCompleted(0);
-		((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
-	}
-
-	/**
-	 * After Execution of the Request this method is called.
-	 * 
-	 * @param r
-	 *            The Request.
-	 * @param t
-	 *            The Exception that was thrown (if one exists, otherwise null).
-	 * @see java.util.concurrent.ThreadPoolExecutor#afterExecute(java.lang.Runnable,
-	 *      java.lang.Throwable)
-	 */
-	protected void afterExecute(Runnable r, Throwable t) {
-		super.afterExecute(r, t);
-		LOGGER.debug("afterExecute called");
-		String errMsg = null;
-		if (t != null) {
-			errMsg = t.getMessage();
-		} else {
-			try {
-				// do nothing with result here
-				// only need to check for the status of the computation
-				((WPSTask<?>) r).get();
-				StatusType status = StatusType.Factory.newInstance();
-				status.setProcessSucceeded("The service succesfully processed the request.");
-				((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
-			} catch (CancellationException ce) {
-				LOGGER.error("Task cancelled: " + ce.getMessage());
-				errMsg = ce.getMessage();
-			} catch (ExecutionException ee) {
-				LOGGER.error("Task execution failed: " + ee.getMessage());
-				errMsg = ee.getMessage();
-			} catch (InterruptedException ie) {
-				// Thread.currentThread().interrupt(); // ignore/reset
-				LOGGER.error("Task interrupted: " + ie.getMessage());
-				errMsg = ie.getMessage();
-			}
-		}
-
-		if (errMsg != null) {
-			ProcessFailedType statusFailed = ProcessFailedType.Factory.newInstance();
-			ExceptionReport report = new ExceptionReport(
-					"Unknown error during execution of the request: "
-					+ errMsg,
-			ExceptionReport.NO_APPLICABLE_CODE);
-			statusFailed.setExceptionReport(report.getExceptionDocument().getExceptionReport());
-			StatusType status = StatusType.Factory.newInstance();
-			((WPSTask<?>) r).getRequest().getExecuteResponseBuilder().setStatus(status);
-			// throw exception?
-			//throw report;
-			
-		} 
-
-	}
 }

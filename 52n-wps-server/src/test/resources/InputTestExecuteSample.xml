@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+  <ows:Identifier>HTTP_INPUT_TEST</ows:Identifier>
+  
+  <wps:DataInputs>
+    <!-- simple get 1 -->
+    <wps:Input>
+      <ows:Identifier>INPUT1</ows:Identifier>
+      <wps:Reference xlink:href="http://52north.org/communities/geoprocessing/index.html"/>
+    </wps:Input>
+    
+    <!-- simple get 2 -->
+     <wps:Input>
+		<ows:Identifier>INPUT2</ows:Identifier>
+		<wps:Reference xlink:href="http://geoprocessing.demo.52north.org:8080/wps2/WebProcessingService">
+			<wps:Body>
+				<wps:GetCapabilities service="WPS" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_request.xsd">
+					<wps:AcceptVersions>
+		        		<ows:Version>1.0.0</ows:Version>
+		    		</wps:AcceptVersions>
+				</wps:GetCapabilities>
+			</wps:Body>
+		</wps:Reference>
+	</wps:Input>
+    
+    <!-- TODO: set up inputs for POST and "POST w/ body reference" -->
+    
+  </wps:DataInputs>
+  
+  
+  <wps:ResponseForm>
+  <wps:RawDataOutput mimeType="application/x-netcdf">
+    <ows:Identifier>RESULT</ows:Identifier>
+  </wps:RawDataOutput>
+  </wps:ResponseForm>
+</wps:Execute>

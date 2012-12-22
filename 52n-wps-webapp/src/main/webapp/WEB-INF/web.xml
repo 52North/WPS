@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
+         version="2.4">
 	<display-name>${project.parent.name}, SVN: ${buildNumber} @ ${timestamp}</display-name>
 	<description>a 52n prototype implementation of the WPS 1.0.0 spec.</description>
 	
@@ -54,6 +56,15 @@
 		<filter-name>CommunicationSizeLogFilter</filter-name>
 		<url-pattern>/WebProcessingService</url-pattern>
 	</filter-mapping-->
+    
+<!--    <filter>
+        <filter-name>ResponseURLFilter</filter-name>
+        <filter-class>org.n52.wps.server.ResponseURLFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ResponseURLFilter</filter-name>
+        <url-pattern>*</url-pattern>
+    </filter-mapping>-->
 		
 	<servlet>
 		<servlet-name>wpsServlet</servlet-name>

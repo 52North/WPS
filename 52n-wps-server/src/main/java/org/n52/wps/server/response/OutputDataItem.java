@@ -61,7 +61,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
-import org.n52.wps.util.BasicXMLTypeFactory;
+import org.n52.wps.io.BasicXMLTypeFactory;
 import org.opengis.geometry.Envelope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

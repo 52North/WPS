@@ -174,7 +174,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     }
 
-    public IAlgorithm getAlgorithm(String className, ExecuteRequest request) {
+    public IAlgorithm getAlgorithm(String className) {
         try {
             return loadAlgorithm(algorithmMap.get(className));
         }

@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 import net.opengis.wps.x100.InputType;
 
-import org.apache.axis.encoding.Base64;
+import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
@@ -118,7 +118,7 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 				
 			}
 			
-			ByteArrayInputStream bytes = new ByteArrayInputStream(Base64.decode(encodedImage));			
+			InputStream bytes = new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()));			
 			return bytes;
 		}
 		catch(RuntimeException e) {

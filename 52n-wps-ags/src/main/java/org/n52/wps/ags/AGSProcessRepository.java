@@ -98,7 +98,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	 * @param processID
 	 * @return
 	*/
-	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
+	public IAlgorithm getAlgorithm(String processID) {
 		if (!containsAlgorithm(processID)){
 			//TODO returning null should be better than throwing an unexpectable exception. Test if it breaks other parts
 			return null;
@@ -302,7 +302,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	@Override
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		if(!registeredProcessDescriptions.containsKey(processID)){
-			registeredProcessDescriptions.put(processID, getAlgorithm(processID, null).getDescription());
+			registeredProcessDescriptions.put(processID, getAlgorithm(processID).getDescription());
 		}
 		return registeredProcessDescriptions.get(processID);
 	}

@@ -11,140 +11,90 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-transactional</name>
     <description>The project 52 north 52n-wps-transactionalserver does something with JAVA.</description>
-   
-    <!-- here are the dependencies of the project -->
-    <dependencies>
-        <!-- Dependencies for Scope 'test' -->
+	<dependencies>
         <dependency>
-            <!-- junit for the unit tests -->
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
-            <scope>test</scope>
         </dependency>
-        <!-- Dependencies for Scope 'compile' -->
-        
-        
+        <dependency>
+            <groupId>org.n52.wps</groupId>
+            <artifactId>52n-wps-algorithm</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-server</artifactId>
-            <version>${project.version}</version>
         </dependency>
-     
         <dependency>
 			<groupId>org.n52.wps</groupId>
   			<artifactId>52n-wps-commons</artifactId>
-  	 		<version>${project.version}</version>
   		</dependency>
-        
-     
-
-        <dependency>
-		    <groupId>tomcat</groupId>
+		<dependency>
+		    <groupId>javax.servlet</groupId>
 		    <artifactId>servlet-api</artifactId>
-		    <version>5.5.15</version>
-		    <scope>provided</scope>
-	     </dependency>
-
-
-   
-  	<dependency>
-    <groupId>xalan</groupId>
-    <artifactId>xalan</artifactId>
-    <version>2.7.1</version>
-</dependency>
- 
-<!-- Apache ODE Dependencies -->
-<dependency>
-            <groupId>org.apache.ode</groupId>
-            <artifactId>ode-axis2</artifactId>
-            <version>1.3.3</version>
-            <scope>compile</scope>
-        </dependency>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ode</groupId>
+			<artifactId>ode-axis2</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.ode</groupId>
             <artifactId>ode-utils</artifactId>
-            <version>1.3.3</version>
-            <scope>compile</scope>
         </dependency>
-  	<dependency>
+		<dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-api</artifactId>
-            <version>1.2.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons.axiom</groupId>
             <artifactId>axiom-impl</artifactId>
-            <version>1.2.8</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>backport-util-concurrent</groupId>
-            <artifactId>backport-util-concurrent</artifactId>
-            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.woden</groupId>
             <artifactId>woden-api</artifactId>
-            <version>1.0M8</version>
         </dependency>
-  	<dependency>
+		<dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2</artifactId>
-            <version>1.5.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-local</artifactId>
-            <version>1.5.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2</groupId>
             <artifactId>axis2-transport-http</artifactId>
-            <version>1.5.1</version>
-            <scope>compile</scope>
         </dependency>
-        <dependency>
-    <groupId>org.apache.axis2</groupId>
-    <artifactId>axis2-saaj</artifactId>
-    <version>1.5.1</version>
-</dependency>
-  	<dependency>
+		<dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>axis2-saaj</artifactId>
+		</dependency>
+		<dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
-            <version>1.6.2</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ws.commons</groupId>
             <artifactId>XmlSchema</artifactId>
-            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0.4</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.3</version>
-            <scope>compile</scope>
         </dependency>
-<!-- End Apache ODE Dependencies --> 
     </dependencies>
-    <!-- here are default properties, can be overwritten by profiles -->
-
 </project>

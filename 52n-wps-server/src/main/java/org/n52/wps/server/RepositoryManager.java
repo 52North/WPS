@@ -188,10 +188,10 @@ public class RepositoryManager {
 	 * @return IAlgorithm or null
 	 * @throws Exception
 	 */
-	public IAlgorithm getAlgorithm(String className, ExecuteRequest executeRequest){
+	public IAlgorithm getAlgorithm(String className){
 		for(IAlgorithmRepository repository : repositories){
 			if(repository.containsAlgorithm(className)){
-				return repository.getAlgorithm(className, executeRequest);
+				return repository.getAlgorithm(className);
 			}
 		}
 		return null;
@@ -229,13 +229,13 @@ public class RepositoryManager {
 	}
 	
 	public Class getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
-		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier, null);
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getInputDataType(inputIdentifier);
 		
 	}
 	
 	public Class getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
-		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier, null);
+		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getOutputDataType(inputIdentifier);
 		
 	}

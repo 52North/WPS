@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WPSConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://n52.org/wps schema_v1.xsd" xmlns="http://n52.org/wps">
+	<Datahandlers>
+
+		<ParserList>
+			<Parser name="MockParser" className="org.n52.test.mock.MockParser" active="true">
+				<Property name="supportedSchema" active="true">http://a.mock.schema/apple</Property>
+				<Property name="supportedSchema" active="true">http://a.mock.schema/orange</Property>
+				<Property name="supportedFormat" active="true">test/mock</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+		</ParserList>
+
+		<GeneratorList>
+			<Generator name="MockGenerator" className="org.n52.test.mock.MockGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://a.mock.schema/apple</Property>
+				<Property name="supportedSchema" active="true">http://a.mock.schema/orange</Property>
+				<Property name="supportedFormat" active="true">test/mock</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+		</GeneratorList>
+	</Datahandlers>
+
+	<AlgorithmRepositoryList>
+
+		<Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+            <Property name="Algorithm" active="true">org.n52.wps.server.SelfDescribingAlgorithmUsingDeprecatedAPI</Property>
+            <Property name="Algorithm" active="true">org.n52.wps.server.SelfDescribingAlgorithmUsingDescriptor</Property>
+		</Repository>
+
+	</AlgorithmRepositoryList>
+
+    <!-- @hostname@, @hostport@ and @webappPath@ are filtered and replaced by values derived from
+         HttpServelRequest instance of getRequestURL() in response using a Filter -->
+	<Server hostname="@hostname@" hostport="@hostport@" webappPath="@webappPath@" includeDataInputsInResponse="true" computationTimeoutMilliSeconds="5" cacheCapabilites="false">
+        <Database/>
+    </Server>
+
+</WPSConfiguration>

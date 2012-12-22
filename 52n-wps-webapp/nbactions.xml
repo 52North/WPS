@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-Debug Build</actionName>
+            <displayName>Debug Build</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <jpda.listen>maven</jpda.listen>
+                <Xmx1024m></Xmx1024m>
+            </properties>
+            <activatedProfiles>
+                <activatedProfile>integration-test</activatedProfile>
+            </activatedProfiles>
+        </action>
+        <action>
+            <actionName>CUSTOM-Integration Test</actionName>
+            <displayName>Integration Test</displayName>
+            <goals>
+                <goal>integration-test</goal>
+            </goals>
+            <activatedProfiles>
+                <activatedProfile>integration-test</activatedProfile>
+            </activatedProfiles>
+        </action>
+    </actions>

@@ -289,13 +289,12 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		return false;
 	}
 
-	public IAlgorithm getAlgorithm(String processID,
-			ExecuteRequest executeRequest) {
+	public IAlgorithm getAlgorithm(String processID) {
 		if (!containsAlgorithm(processID)) {
 			throw new RuntimeException("Could not allocate process");
 		}
 		return new GrassProcessDelegator(processID,
-				registeredProcesses.get(processID), executeRequest, processesAddonFlagMap.get(processID));
+				registeredProcesses.get(processID), processesAddonFlagMap.get(processID));
 
 	}
 
@@ -330,7 +329,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	@Override
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		if(!registeredProcesses.containsKey(processID)){
-			registeredProcesses.put(processID, getAlgorithm(processID, null).getDescription());
+			registeredProcesses.put(processID, getAlgorithm(processID).getDescription());
 		}
 		return registeredProcesses.get(processID);
 	}

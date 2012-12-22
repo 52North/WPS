@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>52n-wps-parent</artifactId>
+		<groupId>org.n52.wps</groupId>
+		<version>3.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>52n-wps-algorithm-impl</artifactId>
+	<name>52north 52n-wps-algorithm-impl</name>
+	<description>The project 52 north 52n-wps-algorithm-impl does something with JAVA.</description>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-algorithm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io</artifactId>
+		</dependency>
+		<dependency>
+			<artifactId>gt-referencing</artifactId>
+			<groupId>org.geotools</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>gt-main</artifactId>
+			<groupId>org.geotools</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>log4j</artifactId>
+			<groupId>log4j</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>gt-coverage</artifactId>
+			<groupId>org.geotools</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>jai_core</artifactId>
+			<groupId>javax.media</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>jts</artifactId>
+			<groupId>com.vividsolutions</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>gt-api</artifactId>
+			<groupId>org.geotools</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>axis-jaxrpc</artifactId>
+			<groupId>axis</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>gt-opengis</artifactId>
+			<groupId>org.geotools</groupId>
+		</dependency>
+	</dependencies>
+</project>
+

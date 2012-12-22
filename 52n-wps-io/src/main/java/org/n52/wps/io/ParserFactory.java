@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
+//import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
@@ -159,9 +159,9 @@ public class ParserFactory {
 		return null;
 	}
 	
-	public IParser getSimpleParser() {
-		return (IParser)new SimpleGMLParser();
-	}
+//	public IParser getSimpleParser() {
+//		return (IParser)new SimpleGMLParser();
+//	}
 
 	public List<IParser> getAllParsers() {
 		return registeredParsers;

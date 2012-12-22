@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -55,7 +56,6 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.apache.log4j.Logger;
-import org.apache.xerces.jaxp.DocumentBuilderFactoryImpl;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xpath.XPathAPI;
@@ -122,7 +122,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 			//
             writeXmlFile(responseDocument,tempFile2);
 
-            Document d = new DocumentBuilderFactoryImpl().newDocumentBuilder().parse(tempFile2);
+            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(tempFile2);
             
 			GenericFileData data = new GenericFileData(tempFile, "text/xml");
 			
@@ -391,15 +391,5 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	
-	
-
-	
-	
-	
-	
-	
-	
 	
 }

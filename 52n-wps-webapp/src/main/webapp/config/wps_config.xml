@@ -451,7 +451,7 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
 			<Property name="Script_Dir" active="true">R\scripts</Property>
 			<Property name="Resource_Dir" active="true">R\resources</Property>
 			<Property name="Enable_Batch_Start" active="true">true</Property>
@@ -460,7 +460,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
-			className="org.n52.wps.server.LocalAlgorithmRepository" active="false">
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
@@ -983,11 +983,21 @@
 			<Property name="Algorithm" active="true">kerneldensity</Property>
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
-	</AlgorithmRepositoryList>
+		
+    <!--		
+		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
+			<Property name="REPOSITORY_FEED_URL" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
+		</Repository>
+		-->
+	
+  </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
+             the response document will be replaced with the server URL used in the HTTP request. --> 
+        <Property name="responseURLFilterEnabled" active="true">false</Property>
 		<Database />
 	</Server>
 </WPSConfiguration>

@@ -30,27 +30,24 @@ package org.n52.wps.server.grass;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.AbstractAlgorithm;
-import org.n52.wps.server.request.ExecuteRequest;
 
 public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
 
 	private ProcessDescriptionType description;
 	private final String wkName;
-	private ExecuteRequest executeRequest;
 	
 	/** 
 	 * default constructor, calls the initializeDescription() Method
 	 */
-	public GenericGrassAlgorithm(ExecuteRequest executeRequest) {
+	public GenericGrassAlgorithm() {
 		this.description = initializeDescription();
 		this.wkName = "";
-		this.executeRequest = executeRequest;
 	}
 	
 	/** 
 	 * default constructor, calls the initializeDescription() Method
 	 */
-	public GenericGrassAlgorithm(String wellKnownName, ExecuteRequest executeRequest) {
+	public GenericGrassAlgorithm(String wellKnownName) {
 		this.wkName = wellKnownName; // Has to be initialized before the description. 
 		this.description = initializeDescription();
 	}
@@ -76,10 +73,6 @@ public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
 	
 	public String getWellKnownName() {
 		return this.wkName;
-	}
-
-	public ExecuteRequest getExecuteRequest() {
-		return executeRequest;
 	}
 
 

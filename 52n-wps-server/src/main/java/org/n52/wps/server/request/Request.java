@@ -80,7 +80,7 @@ abstract public class Request implements Callable <Response> {
 	 * Returns the user input in Document form
 	 * @return Document || null if Request(Map, outputstream) was used
 	 */
-	protected Document getDocument(){
+	public Document getDocument(){
 		return doc;
 	}
 	
@@ -88,7 +88,7 @@ abstract public class Request implements Callable <Response> {
 	 * Returns the user input in Map form
 	 * @return Map || null if Request(Document, OutputStream) was used
 	 */	
-	protected CaseInsensitiveMap getMap(){
+	public CaseInsensitiveMap getMap(){
 		return map;
 	}
 	

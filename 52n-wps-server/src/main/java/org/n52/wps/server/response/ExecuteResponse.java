@@ -35,38 +35,20 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.InputStream;
-
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequest;
 
 public class ExecuteResponse extends Response {
 
-	private static Logger LOGGER = Logger.getLogger(ExecuteResponse.class);
-	private boolean alreadyStored;
 	private ExecuteResponseBuilder builder;
 	
 	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
 		super(request);
-		alreadyStored = false;
 		this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
-		if(request.isStoreResponse()){
-			LOGGER.debug("Store Response in Database");
-			
-			DatabaseFactory.getDatabase().storeResponse(this);
-		}
 	}
 	
+    @Override
 	public InputStream getAsStream() throws ExceptionReport{
-		//workaround, to avoid infinite processing. 
-		if(!alreadyStored) {
-			this.builder.update();
-			if(((ExecuteRequest)request).isStoreResponse()) {
-				this.alreadyStored = true;
-				DatabaseFactory.getDatabase().storeResponse(this);
-			}
-		}
 		return this.builder.getAsStream();
 	}
 	

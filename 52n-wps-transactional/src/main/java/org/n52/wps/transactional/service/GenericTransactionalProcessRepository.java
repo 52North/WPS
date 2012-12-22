@@ -106,7 +106,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 		} 
 	}
 
-	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
+	public IAlgorithm getAlgorithm(String processID) {
 		return new GenericTransactionalAlgorithm(processID, this.getClass());
 		
 	}
@@ -156,7 +156,7 @@ public class GenericTransactionalProcessRepository implements ITransactionalAlgo
 	@Override
 	public ProcessDescriptionType getProcessDescription(String processID) {
 		if(!processDescriptionMap.containsKey(processID)){
-			processDescriptionMap.put(processID, getAlgorithm(processID, null).getDescription());
+			processDescriptionMap.put(processID, getAlgorithm(processID).getDescription());
 		}
 		return processDescriptionMap.get(processID);
 	}

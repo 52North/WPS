@@ -206,7 +206,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 	 * @param processID
 	 * @return
 	*/
-	public IAlgorithm getAlgorithm(String processID, ExecuteRequest executeRequest) {
+	public IAlgorithm getAlgorithm(String processID) {
 		if(!containsAlgorithm(processID)){
 			throw new RuntimeException("Could not allocate Process " + processID);
 		}

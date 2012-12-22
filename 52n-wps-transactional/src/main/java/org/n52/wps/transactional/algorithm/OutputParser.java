@@ -48,7 +48,7 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.util.BasicXMLTypeFactory;
+import org.n52.wps.io.BasicXMLTypeFactory;
 
 
 public class OutputParser {
@@ -106,9 +106,9 @@ public class OutputParser {
 		Class outputDataType = determineOutputDataType(outputID, outputDesc);
 		
 		IParser parser = ParserFactory.getInstance().getParser(schema, format, encoding, outputDataType);
-		if(parser == null) {
-			parser = ParserFactory.getInstance().getSimpleParser();
-		}
+//		if(parser == null) {
+//			parser = ParserFactory.getInstance().getSimpleParser();
+//		}
 		IData collection = null;
 		// encoding is UTF-8 (or nothing and we default to UTF-8)
 		// everything that goes to this condition should be inline xml data

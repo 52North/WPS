@@ -44,6 +44,7 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -52,7 +53,6 @@ import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.grass.io.GrassIOHandler;
-import org.n52.wps.server.request.ExecuteRequest;
 
 public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
@@ -65,7 +65,6 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	private HashMap<String, Class<?>> complexInputTypes;	
 	private HashMap<String, Class<?>> literalInputTypes;
 	private HashMap<String, String> outputTypeMimeTypeMap;
-	private ExecuteRequest executeRequest;
 	
 	private final String dataTypeFloat = "float";
 	private final String dataTypeBoolean = "boolean";
@@ -74,13 +73,11 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	private final String dataTypeDouble = "double";
 	
 	
-	public GrassProcessDelegator(String processID, ProcessDescriptionType processDescriptionType, ExecuteRequest executeRequest, boolean isAddon){
-		super(executeRequest);
+	public GrassProcessDelegator(String processID, ProcessDescriptionType processDescriptionType, boolean isAddon){
 		this.processID = processID;
 		this.isAddon = isAddon;
 		this.processDescription = processDescriptionType;
 		this.errors = new ArrayList<String>();
-		this.executeRequest = executeRequest;
 		mapInputAndOutputTypes(processDescriptionType);		
 	}
 	
@@ -186,11 +183,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 		
 		Map<String, IData> result = new HashMap<String, IData>();
 
-		OutputDefinitionType output = executeRequest.getExecute().getResponseForm().getRawDataOutput();
-		
-		if(output == null){		
-			output = executeRequest.getExecute().getResponseForm().getResponseDocument().getOutputArray(0);
-		}
+		OutputDefinitionType output = ExecutionContextFactory.getContext().getOutputs().get(0);
 		
 		String outputSchema = output.getSchema();
 		

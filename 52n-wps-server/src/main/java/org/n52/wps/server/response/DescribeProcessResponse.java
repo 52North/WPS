@@ -36,6 +36,7 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.InputStream;
+import java.util.HashMap;
 
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -49,10 +50,16 @@ public class DescribeProcessResponse extends Response{
 		super(request);
 	}
 	
+    @Override
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
 			XmlOptions opts = new XmlOptions();
-			opts.setSaveNamespacesFirst();
+            HashMap ns = new HashMap();
+            ns.put("http://www.opengis.net/wps/1.0.0", "wps");
+            ns.put("http://www.opengis.net/ows/1.1", "ows");
+            opts.setSaveNamespacesFirst().
+                setSaveSuggestedPrefixes(ns).
+                setSaveAggressiveNamespaces();
 			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(opts);
 		}
 		catch(Exception e) {
