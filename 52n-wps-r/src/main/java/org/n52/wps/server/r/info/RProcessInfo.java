@@ -28,6 +28,7 @@ package org.n52.wps.server.r.info;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -90,6 +91,9 @@ public class RProcessInfo {
 	}
 	
 	public static List<RProcessInfo> getRProcessInfoList() {
+		if(rProcessInfoList== null){
+			rProcessInfoList = new ArrayList<RProcessInfo>();
+		}
 		return rProcessInfoList;
 	}
 
