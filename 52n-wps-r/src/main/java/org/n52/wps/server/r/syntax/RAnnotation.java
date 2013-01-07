@@ -32,6 +32,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
+import org.n52.wps.server.r.data.RTypeDefinition;
 
 /**
  * Defines Syntax and Semantics for Annotations in R Skripts
@@ -84,9 +86,9 @@ public class RAnnotation {
         if (out == null && attr.getDefValue() != null)
         	out = attr.getDefValue();
         else if (attr == RAttribute.ENCODING)
-            return getRDataType().encoding;
+            return getRDataType().getEncoding();
         if (attr == RAttribute.SCHEMA)
-            return getRDataType().schema;
+            return getRDataType().getSchema();
         return out;
     }
 
@@ -137,7 +139,7 @@ public class RAnnotation {
      * @throws RAnnotationException
      */
     public static Class< ? extends IData> getDataClass(String rClass) throws RAnnotationException {
-        RTypeDefinition rType = RDataType.getType(rClass);
+        RTypeDefinition rType = RDataTypeRegistry.getInstance().getType(rClass);
         return rType.getIDataClass();
     }
 
@@ -153,12 +155,12 @@ public class RAnnotation {
      * @throws RAnnotationException
      */
     public static boolean isComplex(String rClass) throws RAnnotationException {
-        return RDataType.getType(rClass).isComplex();
+        return RDataTypeRegistry.getInstance().getType(rClass).isComplex();
 
     }
 
-    public RDataType getRDataType() throws RAnnotationException {
-        return RDataType.getType(getStringValue(RAttribute.TYPE));
+    public RTypeDefinition getRDataType() throws RAnnotationException {
+        return RDataTypeRegistry.getInstance().getType(getStringValue(RAttribute.TYPE));
     }
 
     /**
@@ -176,7 +178,7 @@ public class RAnnotation {
      */
     public String getProcessDescriptionType() throws RAnnotationException {
         String type = getStringValue(RAttribute.TYPE);
-        RTypeDefinition rdt = RDataType.getType(type);
+        RTypeDefinition rdt = RDataTypeRegistry.getInstance().getType(type);
         if (rdt != null)
             return rdt.getProcessKey();
         else
@@ -184,7 +186,7 @@ public class RAnnotation {
 
     }
 
-    static HashMap<String, RDataType> rDataTypeKeys = new HashMap<String, RDataType>();
+
 
     @Override
     public String toString() {

@@ -211,16 +211,22 @@ public class RProcessDescriptionCreator {
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
         cpldata.setMimeType(annotation.getProcessDescriptionType());
         String encod = annotation.getStringValue(RAttribute.ENCODING);
-        if (encod != null)
+        if (encod != null && encod != "base64")
             cpldata.setEncoding(encod);
 
         Class< ? extends IData> iClass = annotation.getDataClass();
         if (iClass.equals(GenericFileDataBinding.class)) {
-            ComplexDataDescriptionType format = complexInput.addNewSupported().addNewFormat();
+        	ComplexDataCombinationsType supported = complexInput.addNewSupported();
+            ComplexDataDescriptionType format = supported.addNewFormat();
             format.setMimeType(annotation.getProcessDescriptionType());
             encod = annotation.getStringValue(RAttribute.ENCODING);
             if (encod != null)
                 format.setEncoding(encod);
+	            if(encod=="base64"){
+	            	//set a format entry such that not encoded data is supported as well
+	                ComplexDataDescriptionType format2 = supported.addNewFormat();
+	                format2.setMimeType(annotation.getProcessDescriptionType());
+	            }
         }
         else {
             addSupportedInputFormats(complexInput, iClass);
@@ -274,17 +280,27 @@ public class RProcessDescriptionCreator {
         complexData.setMimeType(out.getProcessDescriptionType());
 
         String encod = out.getStringValue(RAttribute.ENCODING);
-        if (encod != null)
+        if (encod != null && encod !="base64"){
+        	//base64 shall not be default, but occur in the supported formats
             complexData.setEncoding(encod);
-
+        }
         Class< ? extends IData> iClass = out.getDataClass();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
-            ComplexDataDescriptionType format = complexOutput.addNewSupported().addNewFormat();
+ 
+        	ComplexDataCombinationsType supported = complexOutput.addNewSupported();
+            ComplexDataDescriptionType format = supported.addNewFormat();
             format.setMimeType(out.getProcessDescriptionType());
             encod = out.getStringValue(RAttribute.ENCODING);
-            if (encod != null)
+            	
+            if (encod != null){
                 format.setEncoding(encod);
+                if(encod=="base64"){
+                	//set a format entry such that not encoded data is supported as well
+                    ComplexDataDescriptionType format2 = supported.addNewFormat();
+                    format2.setMimeType(out.getProcessDescriptionType());
+                }
+            }
         }
         else {
             addSupportedOutputFormats(complexOutput, iClass);

@@ -21,31 +21,36 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.wps.server.r.syntax;
+package org.n52.wps.server.r.data;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
-public class CustomFileDataType implements RTypeDefinition{
+public class CustomDataType implements RTypeDefinition{
 
 	String key;
 	String processKey;
 	String encoding;
 	String schema;
+	boolean isComplex;
 	
+	public void setComplex(boolean isComplex) {
+		this.isComplex = isComplex;
+	}
+
 	@Override
 	public String getKey() {
-		return null;
+		return key;
 	}
 
 	@Override
 	public String getProcessKey() {
-		return null;
+		return processKey;
 	}
 
 	@Override
 	public boolean isComplex() {
-		return false;
+		return isComplex;
 	}
 
 	public void setKey(String key) {
@@ -78,6 +83,10 @@ public class CustomFileDataType implements RTypeDefinition{
 	public Class<? extends IData> getIDataClass() {
 		
 		return GenericFileDataBinding.class;
+	}
+	
+	public String toString(){
+		return key + " - " + processKey + " - " + encoding + " - " + schema + " - " + isComplex;
 	}
 
 }

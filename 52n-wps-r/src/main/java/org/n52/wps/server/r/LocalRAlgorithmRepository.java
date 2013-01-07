@@ -36,6 +36,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
+import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.info.RProcessInfo;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -61,13 +62,11 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         LOGGER.info("Initializing LocalRAlgorithmRepository");
         algorithmMap = new HashMap<String, String>();
 
-
-
         //Check WPS Config properties:
         RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
         // unregistered scripts from repository folder will be added as Algorithm to WPSconfig
-        changeManager.addUnregisteredScripts();
-        
+        changeManager.updateRepositoryConfiguration();
+        CustomDataTypeManager.getInstance().update();
         checkStartUpConditions();
         
         //finally add all available algorithms from the R config

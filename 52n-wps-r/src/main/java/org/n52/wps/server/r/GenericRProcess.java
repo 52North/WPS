@@ -64,12 +64,13 @@ import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.data.RDataType;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
+import org.n52.wps.server.r.data.RTypeDefinition;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
-import org.n52.wps.server.r.syntax.RDataType;
-import org.n52.wps.server.r.syntax.RTypeDefinition;
 import org.n52.wps.server.r.syntax.RegExp;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -183,11 +184,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // R workdirectory not same as Wps workdirectory. Instead it shall be a
         // subdirectory of the R default workdirectory otherwise Rserve can't be
         // installed on a separate server
-        this.currentWPSWorkDir = config.getTemporaryWPSWorkDirFullPath();
-        File file = new File(this.currentWPSWorkDir);
-        file.mkdirs();
+        try {
+			this.currentWPSWorkDir = config.createTemporaryWPSWorkDirFullPath();
+		} catch (IOException e1) {
+			throw new ExceptionReport("Error in creating temporary work directory", ExceptionReport.REMOTE_COMPUTATION_ERROR, e1);
+		}
+        //File file = new File(this.currentWPSWorkDir);
+        //file.mkdirs();
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("work dir: " + file.getAbsolutePath());
+            LOGGER.debug("Temp folder for WPS4R: " + currentWPSWorkDir);
 
         // retrieve R-Script from path:
         InputStream rScriptStream = null;
@@ -548,8 +553,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         RFileOutputStream rfos = rCon.createFile(inputFileName);
 
-        int blen = Math.min(2048, is.available());
-        byte[] buffer = new byte[blen];
+        byte[] buffer = new byte[2048];
         int stop = is.read(buffer);
 
         while (stop != -1) {
@@ -632,7 +636,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             RAnnotation anot = list.get(0);
             String rType = anot.getStringValue(RAttribute.TYPE);
-            mimeType = RDataType.getType(rType).getProcessKey();
+            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
             GenericFileData out = new GenericFileData(tempfile, mimeType);
 
             return new GenericFileDataBinding(out);
@@ -691,7 +695,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             RAnnotation anot = list.get(0);
             String rType = anot.getStringValue(RAttribute.TYPE);
-            mimeType = RDataType.getType(rType).getProcessKey();
+            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
             GenericFileData gfd = new GenericFileData(tempfile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
@@ -713,7 +717,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             RAnnotation anot = list.get(0);
             String rType = anot.getStringValue(RAttribute.TYPE);
-            mimeType = RDataType.getType(rType).getProcessKey();
+            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
             GeotiffParser tiffPar = new GeotiffParser();
             GTRasterDataBinding output = tiffPar.parse(new FileInputStream(tempfile), mimeType, "base64");
             return output;
@@ -787,7 +791,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
 
         File tempfile = new File(filename);
-        if (tempfile.isAbsolute()) {
+        if (!tempfile.isAbsolute()) {
             // create File to stream from Rserve to WPS4R
             File destination = new File(currentWPSWorkDir);
             if ( !destination.exists())

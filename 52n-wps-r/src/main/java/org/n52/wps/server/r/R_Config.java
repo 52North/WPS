@@ -30,11 +30,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.imageio.stream.FileImageInputStream;
 
 import org.apache.log4j.Logger;
+import org.geotools.resources.i18n.ErrorKeys;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
@@ -62,7 +67,7 @@ public class R_Config {
     // http://www.jguru.com/faq/view.jsp?EID=10646
     private final String R_BASE_DIR = "R";
 
-    private final String WORK_DIR = "workdir";
+   // private final String WORK_DIR = "workdir";
 
     private final String UTILS_DIR = "utils";
 
@@ -71,16 +76,16 @@ public class R_Config {
     /**
      * Base directory for WPS4R resources
      */
-    public String BASE_DIR_FULL = (WebProcessingService.BASE_DIR + "/" + R_BASE_DIR).replace("\\", "/");
+    public String BASE_DIR_FULL = new File(WebProcessingService.BASE_DIR, R_BASE_DIR).getAbsolutePath();
 
     /**
      * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
      * directory
      */
-    public String WORK_DIR_FULL = BASE_DIR_FULL + "/" + WORK_DIR;
+   // public String WORK_DIR_FULL = new File(BASE_DIR_FULL, WORK_DIR).getAbsolutePath();
 
     /** R scripts with utility functions to pre-load */
-    public String UTILS_DIR_FULL = BASE_DIR_FULL + "/" + UTILS_DIR;
+    public String UTILS_DIR_FULL = new File(BASE_DIR_FULL, UTILS_DIR).getAbsolutePath();
 
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
     // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
@@ -104,6 +109,8 @@ public class R_Config {
   //  private String batchStartFile = "Rserve.bat";
 
     public String RESOURCE_DIR;
+    
+    private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
     private static R_Config instance = null;
 
@@ -135,10 +142,19 @@ public class R_Config {
 					startRserve();
 					// try to establish RServe connection
 					int attempt = 1;
-					while (attempt < 5) {
-						con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-						Thread.sleep(500);
-						attempt++;
+					while (attempt <= 5) {
+						try{
+							Thread.sleep(1000); //wait for R to startup, then establish connection
+							con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+							break;
+						}catch(RserveException rse){
+							if(attempt==5){
+								throw e;
+							}
+							
+							attempt++;
+						}
+						
 					}
 				} catch (Exception e2) {
 						LOGGER.error("Attempt to start Rserve and establish a connection failed", e2);
@@ -151,6 +167,28 @@ public class R_Config {
 				con.login(RSERVE_USER, RSERVE_PASSWORD);
 		}
 		return con;
+	}
+	
+	public void setConfigVariable(RWPSConfigVariables key, String value){
+		configVariables.put(key, value);
+	}
+	
+	public String getConfigVariable(RWPSConfigVariables key){
+		return configVariables.get(key);
+	}
+	
+	public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport{
+		String path = getConfigVariable(key);
+		if(path==null)
+			throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
+		File testFile = new File(path);
+		if(!testFile.isAbsolute()){
+			testFile = new File(WebProcessingService.BASE_DIR,path);
+		}
+		if(!testFile.exists())
+			throw new ExceptionReport("Invalid config property of name \""+key+"\" and value \""+path+"\". It denotes a non-existent path.", "Inconsistent property");
+		
+		return testFile.getAbsolutePath();
 	}
 
     /**
@@ -216,7 +254,7 @@ public class R_Config {
     }
 
     public String getResourceDirURL() {
-        return (getUrlPathUpToWebapp() + "/" + RESOURCE_DIR).replace("\\", "/");
+        return getUrlPathUpToWebapp() + "/" + RESOURCE_DIR.replace("\\", "/");
     }
 
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
@@ -370,12 +408,13 @@ public class R_Config {
             throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
     }
 
-    public String getTemporaryWPSWorkDirFullPath() {
-        return WORK_DIR_FULL + "/" + UUID.randomUUID();
+    public String createTemporaryWPSWorkDirFullPath() throws IOException {
+    	return Files.createTempDirectory("wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp").toFile().getAbsolutePath();
+        //return new File(WORK_DIR_FULL, ""+UUID.randomUUID()).getAbsolutePath();
     }
 
     public String getScriptDirFullPath() {
-        return WebProcessingService.BASE_DIR + "/" + SCRIPT_DIR;
+        return new File(WebProcessingService.BASE_DIR, SCRIPT_DIR).getAbsolutePath();
         // return SCRIPT_DIR_FULL;
     }
 

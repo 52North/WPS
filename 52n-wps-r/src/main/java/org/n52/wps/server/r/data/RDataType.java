@@ -22,8 +22,9 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.wps.server.r.syntax;
+package org.n52.wps.server.r.data;
 
+import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -40,6 +41,8 @@ import org.n52.wps.server.r.RWorkdirUrlBinding;
  * handled successful --> GenericRProcess TODO: restructure dependent classes & methods for new attributes
  */
 public enum RDataType implements RTypeDefinition {
+	
+	
     // literal data:
     STRING("string", "xs:string", LiteralStringBinding.class), CHARACTER("character", "xs:string",
             LiteralStringBinding.class), INTEGER("integer", "xs:integer", LiteralIntBinding.class), DOUBLE("double",
@@ -90,6 +93,7 @@ public enum RDataType implements RTypeDefinition {
     private String processKey;
     private Class< ? extends IData> iDataClass;
     private boolean isComplex;
+    private Logger LOGGER = Logger.getLogger(RDataType.class);
     String schema;
     String encoding = "UTF-8";
 
@@ -128,22 +132,13 @@ public enum RDataType implements RTypeDefinition {
     }
 
     private void setKey(String key) {
-        if ( !RAnnotation.rDataTypeKeys.containsKey(key))
-            RAnnotation.rDataTypeKeys.put(key, this);
+        if ( !RDataTypeRegistry.getInstance().containsKey(key))
+            RDataTypeRegistry.getInstance().register(this);
         else
-            RAnnotation.LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
+            LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
                     + "only the first definition will be used for this key.");
 
-        // put process key, i.e. mimetype or xml-notation for literal type, as alternative key into
-        // hashmap:
-        if ( !RAnnotation.rDataTypeKeys.containsKey(this.getProcessKey()))
-            RAnnotation.rDataTypeKeys.put(this.getProcessKey(), this);
-        else
-            RAnnotation.LOGGER.warn("Doubled definition of data type-key for notation: "
-                    + this.getProcessKey()
-                    + "\n"
-                    + "only the first definition will be used for this key.+"
-                    + "(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
+       
     }
 
     /*
@@ -183,6 +178,8 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public String getEncoding() {
+    	if(!isComplex)
+    		return null;
         return encoding;
     }
 
@@ -196,21 +193,6 @@ public enum RDataType implements RTypeDefinition {
         return schema;
     }
 
-    /**
-     * This method is important for parsers to request the meaning of a specific key
-     * 
-     * @param key
-     *        process keys and self defined short keys are recognized as dataType keys
-     * @return
-     * @throws RAnnotationException
-     */
-    public static RDataType getType(String key) throws RAnnotationException {
-        RDataType out = RAnnotation.rDataTypeKeys.get(key);
-        if (out == null)
-            throw new RAnnotationException("Invalid datatype key for R script annotations: " + key);
-        else
-            return out;
-    }
 
     /*
      * (non-Javadoc)

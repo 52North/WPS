@@ -26,7 +26,7 @@ package org.n52.wps.server.r;
 
 public enum RWPSConfigVariables {
 
-    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD;
+    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG;
 
     public String toString() {
         switch (this) {
@@ -46,10 +46,16 @@ public enum RWPSConfigVariables {
             return "Rserve_User";
         case RSERVE_PASSWORD:
             return "Rserve_Password";
+        case R_DATATYPE_CONFIG:
+            return "R_Datatype_Config";
         default:
             return "NO STRING REPRESENTATION DEFINED FOR ENUM CONSTANT!";
         }
 
     };
+    
+    public static void main(String[] args) {
+		System.out.println(RWPSConfigVariables.valueOf("Rserve_Port"));
+	}
 
 }
