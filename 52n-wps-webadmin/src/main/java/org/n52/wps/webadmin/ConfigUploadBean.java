@@ -521,7 +521,7 @@ public class ConfigUploadBean {
                             Class<?> clazz = Class.forName("org.n52.wps.server.r.RPropertyChangeManager");
                             Method method = clazz.getMethod("getInstance", null);
                             Object instance = method.invoke(null, null);
-                            Method method2 = instance.getClass().getMethod("addUnregisteredScripts", null);
+                            Method method2 = instance.getClass().getMethod("updateRepositoryConfiguration", null);
                             method2.invoke(instance, null);
                             // RPropertyChangeManager rmanager =
                             // RPropertyChangeManager.getInstance();
