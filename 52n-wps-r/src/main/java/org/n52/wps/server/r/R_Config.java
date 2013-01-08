@@ -30,22 +30,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileAttribute;
-import java.util.ArrayList;
+//import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
 
-import javax.imageio.stream.FileImageInputStream;
-
 import org.apache.log4j.Logger;
-import org.geotools.resources.i18n.ErrorKeys;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
-import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -409,7 +403,11 @@ public class R_Config {
     }
 
     public String createTemporaryWPSWorkDirFullPath() throws IOException {
-    	return Files.createTempDirectory("wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp").toFile().getAbsolutePath();
+    	File tempdir = new File(System.getProperty("java.io.tmpdir"),"wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp");
+    	tempdir.mkdir();
+    	return tempdir.getAbsolutePath();
+    	
+    	//return Files.createTempDirectory("wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp").toFile().getAbsolutePath();
         //return new File(WORK_DIR_FULL, ""+UUID.randomUUID()).getAbsolutePath();
     }
 
