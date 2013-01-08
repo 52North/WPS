@@ -105,9 +105,7 @@ public class RProcessInfo {
 		RProcessInfo.rProcessInfoList = rProcessInfoList;
 	}
 	
-
-
-
+	// TODO remove this code, create a test case instead
 	public static void main(String[] args) {
 		List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
 		for (RProcessInfo rProcessInfo : rProcessInfoList) {
