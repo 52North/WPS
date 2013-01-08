@@ -103,13 +103,13 @@
 		<dependency>
 			<groupId>org.n52.mc</groupId>
  			<artifactId>mc-schema</artifactId>
- 			<version>1.0-SNAPSHOT</version>
+ 			<version>1.0</version>
 		</dependency>
 		
 		<dependency>
-			<groupId>org.n52.movingcode</groupId>
+			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>0.5</version>
 		</dependency>
 
     </dependencies>
