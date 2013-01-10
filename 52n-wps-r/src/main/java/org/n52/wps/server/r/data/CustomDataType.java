@@ -26,7 +26,7 @@ package org.n52.wps.server.r.data;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
-public class CustomDataType implements RTypeDefinition{
+public class CustomDataType implements RTypeDefinition {
 
 	String key;
 	String processKey;
