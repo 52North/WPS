@@ -180,7 +180,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         catch (Exception e) {
             String message = "Could not load algorithm for class name " + className;
             LOGGER.error(message, e);
-            throw new RuntimeException(message, e);
+            throw new RuntimeException(message+'\n' + e.getMessage(), e);
         }
     }
 

@@ -109,7 +109,15 @@
 				<Format mimetype="application/x-geotiff" />
 				<Format mimetype="application/hdf4-eos" />
 				<Format mimetype="text/plain" />
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
 
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
 				<Format mimetype="application/x-zipped-shp" encoding="base64" />
 				<Format mimetype="application/img" encoding="base64" />
 				<Format mimetype="image/tiff" encoding="base64" />
@@ -338,7 +346,16 @@
 				<Format mimetype="image/png" encoding="base64" />
 				<Format mimetype="application/x-geotiff" encoding="base64" />
 				<Format mimetype="text/plain" encoding="base64" />
-
+				<Format mimetype="application/x-zipped-shp" encoding="base64" />
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
+				
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
 				<Format mimetype="application/x-zipped-shp" />
 				<Format mimetype="application/shp" />
 				<Format mimetype="application/img" />
