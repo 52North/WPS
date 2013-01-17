@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0"
+	xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+  http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+	<ows:Identifier>org.n52.wps.server.r.eo2h_airqualitysaxony</ows:Identifier>
+	<wps:DataInputs>
+		<wps:Input>
+			<ows:Identifier>in_sos_url</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<wps:LiteralData>http://141.30.100.135:8080/eo2heavenSOS/sos</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+		<wps:Input>
+			<ows:Identifier>in_offering_id</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<wps:LiteralData>O3</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+		<wps:Input>
+			<ows:Identifier>in_observed_prop</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<wps:LiteralData>http://www.eo2heaven.org/classifier/parameter/daily_average/O3</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+		<wps:Input>
+			<ows:Identifier>in_stations</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<wps:LiteralData>DESN019,DESN004 ,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050, DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+		<wps:Input>
+			<ows:Identifier>in_time</ows:Identifier>
+			<ows:Title></ows:Title>
+			<wps:Data>
+				<!-- <wps:LiteralData>$wms:time$</wps:LiteralData> -->
+				<wps:LiteralData>2011-01-01</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+	</wps:DataInputs>
+	<wps:ResponseForm>
+		<wps:RawDataOutput mimeType="application/geotiff">
+			<ows:Identifier>output</ows:Identifier>
+		</wps:RawDataOutput>
+	</wps:ResponseForm>
+</wps:Execute>

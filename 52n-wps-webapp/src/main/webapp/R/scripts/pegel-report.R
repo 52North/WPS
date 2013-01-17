@@ -1,4 +1,4 @@
-# Copyright (C) 2012< by 52°North Initiative for Geospatial Open Source Software GmbH, Contact: info@52north.org
+# Copyright (C) 2012 by 52°North Initiative for Geospatial Open Source Software GmbH, Contact: info@52north.org
 # This document is licensed under Creative Commons Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0), see http://creativecommons.org/licenses/by-sa/3.0/ for details.
 # Author: Daniel Nuest (d.nuest@52north.org)
 
