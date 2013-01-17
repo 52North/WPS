@@ -180,17 +180,21 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             LOGGER.debug("inputData: " + Arrays.toString(inputData.entrySet().toArray()));
 
         R_Config config = R_Config.getInstance();
+
         // create WPS4R workdir (will be deleted later)
         // R workdirectory not same as Wps workdirectory. Instead it shall be a
         // subdirectory of the R default workdirectory otherwise Rserve can't be
         // installed on a separate server
         try {
-			this.currentWPSWorkDir = config.createTemporaryWPSWorkDirFullPath();
-		} catch (IOException e1) {
-			throw new ExceptionReport("Error in creating temporary work directory", ExceptionReport.REMOTE_COMPUTATION_ERROR, e1);
-		}
-        //File file = new File(this.currentWPSWorkDir);
-        //file.mkdirs();
+            this.currentWPSWorkDir = config.createTemporaryWPSWorkDir();
+        }
+        catch (IOException e1) {
+            throw new ExceptionReport("Error in creating temporary work directory",
+                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
+                                      e1);
+        }
+        // File file = new File(this.currentWPSWorkDir);
+        // file.mkdirs();
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Temp folder for WPS4R: " + currentWPSWorkDir);
 
@@ -230,17 +234,26 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // setting the R working directory relative to default R
                 // directory
                 String randomFolderName = UUID.randomUUID().toString();
-                r_basedir = rCon.eval("getwd()").asString();
-                LOGGER.debug("Original getwd(): " + r_basedir);
-                rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
-                rCon.eval("dir.create(wd)");
-                REXP result = rCon.eval("setwd(wd)");
-                LOGGER.debug("[R] Setting working directory: " + r_basedir);
 
+                // FIXED: automatically started R sessions use have the Tomcat folder as wd, this does not
+                // work
+                LOGGER.debug("Original getwd(): " + rCon.eval("getwd()").asString());
+                // rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
+
+                // use generated temp folder as R basedir
+                // r_basedir = config.createTemporaryRWorkDir().replace("\\", "/");
+                r_basedir = "D:/TEMP/" + randomFolderName; // FIXME use property, or try creating the
+                // folder with Java, spaces etc. make this thing tricky...
+
+                REXP result = rCon.eval("dir.create(\"" + r_basedir + "\")"); // don't forget the escaped
+                                                                              // quotation marks!
+                LOGGER.debug("[R] Setting working directoryt to: " + r_basedir + " | result: " + result.asString());
+                result = rCon.eval("setwd(\"" + r_basedir + "\")");
                 LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
 
-                rCon.eval("cat(paste0(\"[GenericRProcess] work dir: \", getwd()), \"\\n\")");
-
+                rLog(rCon, "working directory:");
+                rLog(rCon, "getwd()");
+                
                 loadRUtilityScripts(rCon);
 
                 // Searching for missing inputs to apply standard values:
@@ -344,19 +357,30 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 throw new ExceptionReport(message, e.getClass().getName(), e);
 
             }
+            catch (RserveException e) {
+                LOGGER.error("Rserve problem: " + e.getMessage(), e);
+            }
             finally {
                 if (rCon == null || !rCon.isConnected()) {
+                    LOGGER.debug("[R] opening connection...");
                     rCon = config.openRConnection();
                 }
 
                 // deletes R workdirectory:
                 if (r_basedir != null) {
                     String currentwd = rCon.eval("getwd()").asString();
+
+                    LOGGER.debug("[R] setwd to " + r_basedir + " (was: " + currentwd + ")");
+
+                    // the next lines throws and exception, because r_basedir might not succesfully have been
+                    // set, so check first
                     rCon.eval("setwd(\"" + r_basedir + "\")");
                     // should be true usually, if not, workdirectory has been
                     // changed unexpectedly (prob. inside script)
-                    if (currentwd != r_basedir)
+                    if (currentwd != r_basedir) {
+                        LOGGER.debug("[R] unlinking (recursive) " + currentwd);
                         rCon.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
+                    }
                     else
                         LOGGER.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
                 }
@@ -396,6 +420,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         LOGGER.debug("RESULT: " + Arrays.toString(resulthash.entrySet().toArray()));
         return resulthash;
+    }
+
+    private void rLog(RConnection rCon, String message) {
+        RUtil.logGenericRProcess(rCon, message);
     }
 
     private void assignRWPSSessionVariables(RConnection rCon) throws RserveException, RAnnotationException {
@@ -791,7 +819,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
 
         File tempfile = new File(filename);
-        if (!tempfile.isAbsolute()) {
+        if ( !tempfile.isAbsolute()) {
             // create File to stream from Rserve to WPS4R
             File destination = new File(currentWPSWorkDir);
             if ( !destination.exists())

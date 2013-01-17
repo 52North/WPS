@@ -46,6 +46,8 @@ import org.rosuda.REngine.Rserve.RserveException;
 
 public class R_Config {
 
+    private static final int TEMPDIR_NAME_LENGTH = 8;
+
     private static Logger LOGGER = Logger.getLogger(R_Config.class);
 
     public final String SCRIPT_FILE_EXTENSION = "R";
@@ -61,7 +63,7 @@ public class R_Config {
     // http://www.jguru.com/faq/view.jsp?EID=10646
     private final String R_BASE_DIR = "R";
 
-   // private final String WORK_DIR = "workdir";
+    // private final String WORK_DIR = "workdir";
 
     private final String UTILS_DIR = "utils";
 
@@ -76,7 +78,7 @@ public class R_Config {
      * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
      * directory
      */
-   // public String WORK_DIR_FULL = new File(BASE_DIR_FULL, WORK_DIR).getAbsolutePath();
+    // public String WORK_DIR_FULL = new File(BASE_DIR_FULL, WORK_DIR).getAbsolutePath();
 
     /** R scripts with utility functions to pre-load */
     public String UTILS_DIR_FULL = new File(BASE_DIR_FULL, UTILS_DIR).getAbsolutePath();
@@ -100,10 +102,10 @@ public class R_Config {
     /** Starts R serve via batch file **/
     public boolean enableBatchStart = false;
 
-  //  private String batchStartFile = "Rserve.bat";
+    // private String batchStartFile = "Rserve.bat";
 
     public String RESOURCE_DIR;
-    
+
     private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
     private static R_Config instance = null;
@@ -126,64 +128,72 @@ public class R_Config {
         return instance;
     }
 
-	public RConnection openRConnection() throws RserveException {
-		RConnection con = null;
-		try {
-			con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-		} catch (RserveException e) {
-			if (e.getMessage().startsWith("Cannot connect") && enableBatchStart) {
-				try {
-					startRserve();
-					// try to establish RServe connection
-					int attempt = 1;
-					while (attempt <= 5) {
-						try{
-							Thread.sleep(1000); //wait for R to startup, then establish connection
-							con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-							break;
-						}catch(RserveException rse){
-							if(attempt==5){
-								throw e;
-							}
-							
-							attempt++;
-						}
-						
-					}
-				} catch (Exception e2) {
-						LOGGER.error("Attempt to start Rserve and establish a connection failed", e2);
-						throw e;
-				}
-			} else
-				throw e;
-		} finally {
-			if (con != null && con.needLogin())
-				con.login(RSERVE_USER, RSERVE_PASSWORD);
-		}
-		return con;
-	}
-	
-	public void setConfigVariable(RWPSConfigVariables key, String value){
-		configVariables.put(key, value);
-	}
-	
-	public String getConfigVariable(RWPSConfigVariables key){
-		return configVariables.get(key);
-	}
-	
-	public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport{
-		String path = getConfigVariable(key);
-		if(path==null)
-			throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
-		File testFile = new File(path);
-		if(!testFile.isAbsolute()){
-			testFile = new File(WebProcessingService.BASE_DIR,path);
-		}
-		if(!testFile.exists())
-			throw new ExceptionReport("Invalid config property of name \""+key+"\" and value \""+path+"\". It denotes a non-existent path.", "Inconsistent property");
-		
-		return testFile.getAbsolutePath();
-	}
+    public RConnection openRConnection() throws RserveException {
+        RConnection con = null;
+        try {
+            con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+            RUtil.log(con, "New connection from WPS4R...");
+            con.eval("sessionInfo()");
+        }
+        catch (RserveException e) {
+            if (e.getMessage().startsWith("Cannot connect") && enableBatchStart) {
+                try {
+                    startRserve();
+                    // try to establish RServe connection
+                    int attempt = 1;
+                    while (attempt <= 5) {
+                        try {
+                            Thread.sleep(1000); // wait for R to startup, then establish connection
+                            con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+                            break;
+                        }
+                        catch (RserveException rse) {
+                            if (attempt == 5) {
+                                throw e;
+                            }
+
+                            attempt++;
+                        }
+
+                    }
+                }
+                catch (Exception e2) {
+                    LOGGER.error("Attempt to start Rserve and establish a connection failed", e2);
+                    throw e;
+                }
+            }
+            else
+                throw e;
+        }
+        finally {
+            if (con != null && con.needLogin())
+                con.login(RSERVE_USER, RSERVE_PASSWORD);
+        }
+        return con;
+    }
+
+    public void setConfigVariable(RWPSConfigVariables key, String value) {
+        configVariables.put(key, value);
+    }
+
+    public String getConfigVariable(RWPSConfigVariables key) {
+        return configVariables.get(key);
+    }
+
+    public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport {
+        String path = getConfigVariable(key);
+        if (path == null)
+            throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
+        File testFile = new File(path);
+        if ( !testFile.isAbsolute()) {
+            testFile = new File(WebProcessingService.BASE_DIR, path);
+        }
+        if ( !testFile.exists())
+            throw new ExceptionReport("Invalid config property of name \"" + key + "\" and value \"" + path
+                    + "\". It denotes a non-existent path.", "Inconsistent property");
+
+        return testFile.getAbsolutePath();
+    }
 
     /**
      * Captures the Console printout of R for a specific string
@@ -290,68 +300,47 @@ public class R_Config {
 
         return new URL(urlString);
     }
-    
-    
-	/**
-	 * start RServe on Linux
-	 * @throws RserveException
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	private void startRServeOnLinux() throws RserveException, InterruptedException, IOException {
-		String rserveStartCMD = "R CMD Rserve --vanilla --slave";
-		Runtime.getRuntime().exec(rserveStartCMD).waitFor();
-	}
-	
-	/**
-	 * start RServe on Windows
-	 * @throws RserveException
-	 * @throws IOException
-	 */
-	private void startRServeOnWindows() throws RserveException, IOException {
-		String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
-		Runtime.getRuntime().exec(rserveStartCMD);
-	}
-	
-	
-	
+
+    /**
+     * start RServe on Linux
+     * 
+     * @throws RserveException
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    private void startRServeOnLinux() throws RserveException, InterruptedException, IOException {
+        String rserveStartCMD = "R CMD Rserve --vanilla --slave";
+        Runtime.getRuntime().exec(rserveStartCMD).waitFor();
+    }
+
+    /**
+     * start RServe on Windows
+     * 
+     * @throws RserveException
+     * @throws IOException
+     */
+    private void startRServeOnWindows() throws RserveException, IOException {
+        String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
+        Runtime.getRuntime().exec(rserveStartCMD);
+    }
 
     /**
      * tries to start Rserve (runs "Rserve.bat" if batchfile.exists() && RSERVE_HOST == "localhost")
-     * @throws IOException 
-     * @throws InterruptedException 
-     * @throws RserveException 
+     * 
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws RserveException
      */
     public void startRserve() throws RserveException, InterruptedException, IOException {
-    	if (enableBatchStart) {
-    		LOGGER.debug("Trying to start Rserve locally");
-	    	if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1){
-	    		startRServeOnLinux();
-	    	}
-	    	else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1){
-	    		startRServeOnWindows();
-	    	}
-    	}
-    	
-//	Old batch file solution    	
-//        if (enableBatchStart) {
-//            try {
-//                String batch = BASE_DIR_FULL + batchStartFile;
-//                File batchfile = new File(batch);
-//                if (batchfile.exists()) {
-//                    Runtime.getRuntime().exec(batch);
-//                }
-//                else
-//                    LOGGER.error("Batch file does not exist! " + batchfile);
-//            }
-//
-//            catch (IOException e) {
-//                LOGGER.error("Could not start Rserve with batch file.", e);
-//            }
-//        }
-//        else
-//            LOGGER.error("Batch start is disabled! (" + RWPSConfigVariables.ENABLE_BATCH_START.toString() + " = "
-//                    + enableBatchStart + ")");
+        if (enableBatchStart) {
+            LOGGER.debug("Trying to start Rserve locally");
+            if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
+                startRServeOnLinux();
+            }
+            else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+                startRServeOnWindows();
+            }
+        }
     }
 
     /**
@@ -402,13 +391,18 @@ public class R_Config {
             throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
     }
 
-    public String createTemporaryWPSWorkDirFullPath() throws IOException {
-    	File tempdir = new File(System.getProperty("java.io.tmpdir"),"wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp");
-    	tempdir.mkdir();
-    	return tempdir.getAbsolutePath();
-    	
-    	//return Files.createTempDirectory("wps4r-tmp-"+UUID.randomUUID().toString().substring(0,8)+".tmp").toFile().getAbsolutePath();
-        //return new File(WORK_DIR_FULL, ""+UUID.randomUUID()).getAbsolutePath();
+    public String createTemporaryWPSWorkDir() throws IOException {
+        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-wps-workdir-tmp-"
+                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
+        tempdir.mkdir();
+        return tempdir.getAbsolutePath();
+    }
+
+    public String createTemporaryRWorkDir() throws IOException {
+        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-r-workdir-"
+                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
+        tempdir.mkdir();
+        return tempdir.getAbsolutePath();
     }
 
     public String getScriptDirFullPath() {
@@ -421,43 +415,47 @@ public class R_Config {
      * @param wkn
      * @return
      */
-	public boolean isScriptAvailable(String wkn) {
-		try {
-			wknToFile(wkn);
-			return true;
-		} catch (IOException e) {
-			LOGGER.error("Script file unavailable for process id "+wkn, e);
-			return false;
-		}
-	}
-	
-	/**
-	 * Tests if a script associated with a process is valid
-	 * Any errors will be logged
-	 * @param wkn
-	 * @return
-	 */
-	public boolean isScriptValid(String wkn) {
-		try {
-			File file = wknToFile(wkn);
-			RAnnotationParser.validateScript(new FileInputStream(file), wkn);
-			return true;
-		} catch (IOException e) {
-			LOGGER.error("Script file unavailable for process "+wkn+".", e);
-			return false;
-		} catch (Exception e) {
-			LOGGER.error("Validation of process "+wkn+" failed.", e);
-			return false;		
-		}
-	}
-	
-	
-	public void killRserveOnWindows(){
-		try {
-			if(Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0);
-				return;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		} 
-	}
+    public boolean isScriptAvailable(String wkn) {
+        try {
+            wknToFile(wkn);
+            return true;
+        }
+        catch (IOException e) {
+            LOGGER.error("Script file unavailable for process id " + wkn, e);
+            return false;
+        }
+    }
+
+    /**
+     * Tests if a script associated with a process is valid Any errors will be logged
+     * 
+     * @param wkn
+     * @return
+     */
+    public boolean isScriptValid(String wkn) {
+        try {
+            File file = wknToFile(wkn);
+            RAnnotationParser.validateScript(new FileInputStream(file), wkn);
+            return true;
+        }
+        catch (IOException e) {
+            LOGGER.error("Script file unavailable for process " + wkn + ".", e);
+            return false;
+        }
+        catch (Exception e) {
+            LOGGER.error("Validation of process " + wkn + " failed.", e);
+            return false;
+        }
+    }
+
+    public void killRserveOnWindows() {
+        try {
+            if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0)
+                ;
+            return;
+        }
+        catch (Exception e1) {
+            e1.printStackTrace();
+        }
+    }
 }
