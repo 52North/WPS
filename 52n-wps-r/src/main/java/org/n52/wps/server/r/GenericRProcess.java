@@ -110,6 +110,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private boolean debugScript = true;
 
+    private boolean rServeException = false;
+
+    private RserveException rServeExceptionCause = null;
+
     public List<String> getErrors() {
         return errors;
     }
@@ -195,8 +199,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
         // File file = new File(this.currentWPSWorkDir);
         // file.mkdirs();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Temp folder for WPS4R: " + currentWPSWorkDir);
+        LOGGER.debug("Temp folder for WPS4R: " + currentWPSWorkDir);
 
         // retrieve R-Script from path:
         InputStream rScriptStream = null;
@@ -252,8 +255,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
 
                 rLog(rCon, "working directory:");
-                rLog(rCon, "getwd()");
-                
+                rCon.eval("getwd()");
+
                 loadRUtilityScripts(rCon);
 
                 // Searching for missing inputs to apply standard values:
@@ -304,12 +307,22 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                  */
                 assignRWPSSessionVariables(rCon);
 
+                // load input variables
                 while (inputValuesIterator.hasNext()) {
                     Map.Entry<String, String> entry = inputValuesIterator.next();
                     // use eval, not assign (assign only parses strings)
                     String statement = entry.getKey() + " <- " + entry.getValue();
-                    LOGGER.debug("[R] " + statement);
+                    LOGGER.debug("[R] running " + statement);
                     rCon.eval(statement);
+                }
+                
+                // FIXME load resources
+                List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(annotations, RAnnotationType.RESOURCE);
+                for (RAnnotation res : resAnnotList) {
+                    LOGGER.debug("Loading resource " + res);
+                    Object objectValue = res.getObjectValue(RAttribute.NAMED_LIST);
+                    
+                    System.out.println(objectValue);
                 }
 
                 // save an image that may help debugging R scripts
@@ -358,7 +371,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             }
             catch (RserveException e) {
-                LOGGER.error("Rserve problem: " + e.getMessage(), e);
+                LOGGER.error("Rserve problem executing script: " + e.getMessage(), e);
+                throw e;
             }
             finally {
                 if (rCon == null || !rCon.isConnected()) {
@@ -441,7 +455,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(annotations, RAnnotationType.RESOURCE);
         String wpsScriptResources = null;
-        if (resAnnotList.size() == 1)
+        if (resAnnotList.size() == 1) // FIXME does this work for several resources?
             wpsScriptResources = resAnnotList.get(0).getStringValue(RAttribute.NAMED_LIST);
         else
             wpsScriptResources = "list()";
@@ -878,6 +892,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         while (fr.ready()) {
             String line = fr.readLine();
 
+            if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
+                // TODO: check in validation
+                throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
+
             if (line.contains(RegExp.WPS_OFF)) {
                 wpsoff_state = true;
             }
@@ -885,14 +903,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 wpsoff_state = false;
             }
             else if (wpsoff_state)
-                line = "# (ignored) " + line;
-
-            if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
-                // TODO: check in validation
-                throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
+                line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
 
             text.append(line + "\n");
-
         }
         text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
                 + "if(hasError) error_message = as.character(error)" + '\n');
@@ -900,6 +913,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         if (debugScript && LOGGER.isDebugEnabled())
             LOGGER.debug(text);
 
+        // call the actual script here
         rCon.eval(text.toString());
 
         try {

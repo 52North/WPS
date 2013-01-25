@@ -24,6 +24,9 @@
 
 package org.n52.wps.server.r;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -31,11 +34,21 @@ import org.rosuda.REngine.Rserve.RserveException;
 public class RUtil {
 
     private static Logger LOGGER = Logger.getLogger(RUtil.class);
+    
+    private static DateFormat format = DateFormat.getDateTimeInstance();
 
     public static void logGenericRProcess(RConnection rCon, String message) {
         String msg = prepareMessage(message);
+        
+        StringBuilder evalString = new StringBuilder();
+        evalString.append("cat(\"[GenericRProcess @ ");
+        evalString.append(format.format(new Date(System.currentTimeMillis())));
+        evalString.append("] ");
+        evalString.append(msg);
+        evalString.append("\\n\")");
+        
         try {
-            rCon.eval("cat(\"[GenericRProcess @ " + System.currentTimeMillis() + "]\", \"" + msg + "\" \\n\")");
+            rCon.eval(evalString.toString());
         }
         catch (RserveException e) {
             LOGGER.warn("Could not log message '" + msg + "'", e);
@@ -44,8 +57,16 @@ public class RUtil {
 
     public static void log(RConnection rCon, String message) {
         String msg = prepareMessage(message);
+        
+        StringBuilder evalString = new StringBuilder();
+        evalString.append("cat(\"[WPS4R @ ");
+        evalString.append(format.format(new Date(System.currentTimeMillis())));
+        evalString.append("] ");
+        evalString.append(msg);
+        evalString.append("\\n\")");
+        
         try {
-            rCon.eval("cat(\"[WPS4R @ " + System.currentTimeMillis() + "]\", \"" + msg + "\" \\n\")");
+            rCon.eval(evalString.toString());
         }
         catch (RserveException e) {
             LOGGER.warn("Could not log message '" + msg + "'", e);

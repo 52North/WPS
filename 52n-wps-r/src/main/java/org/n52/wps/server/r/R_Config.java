@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 //import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
@@ -40,6 +41,7 @@ import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
+import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -131,9 +133,7 @@ public class R_Config {
     public RConnection openRConnection() throws RserveException {
         RConnection con = null;
         try {
-            con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-            RUtil.log(con, "New connection from WPS4R...");
-            con.eval("sessionInfo()");
+            con = newConnection();
         }
         catch (RserveException e) {
             if (e.getMessage().startsWith("Cannot connect") && enableBatchStart) {
@@ -144,7 +144,7 @@ public class R_Config {
                     while (attempt <= 5) {
                         try {
                             Thread.sleep(1000); // wait for R to startup, then establish connection
-                            con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+                            con = newConnection();
                             break;
                         }
                         catch (RserveException rse) {
@@ -168,6 +168,23 @@ public class R_Config {
         finally {
             if (con != null && con.needLogin())
                 con.login(RSERVE_USER, RSERVE_PASSWORD);
+        }
+        return con;
+    }
+
+    private RConnection newConnection() throws RserveException {
+        LOGGER.debug("Creating new RConnection");
+        
+        RConnection con;
+        con = new RConnection(RSERVE_HOST, RSERVE_PORT);
+        RUtil.log(con, "New connection from WPS4R");
+
+        REXP info = con.eval("capture.output(sessionInfo())");
+        try {
+            LOGGER.info("sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
+        }
+        catch (REXPMismatchException e) {
+            // do nothing
         }
         return con;
     }

@@ -32,7 +32,7 @@ public class ResourceAnnotation extends RAnnotation {
 			HashMap<RAttribute, Object> attributeHash) throws IOException,
 			RAnnotationException {
 		super(type, attributeHash);
-		// TODO Auto-generated constructor stub
+		// 
 	}
 
 }

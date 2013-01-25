@@ -28,7 +28,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,34 +49,39 @@ import org.n52.wps.server.r.syntax.RSeperator;
 public class RAnnotationParser {
 
     private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
-    
+
     /**
      * 
      * @param script
-     * @throws RAnnotationException if script is invalid
+     * @throws RAnnotationException
+     *         if script is invalid
      * @throws IOException
-     * @throws ExceptionReport 
+     * @throws ExceptionReport
      */
-    public static void validateScript(InputStream script, String wkn) throws RAnnotationException, IOException, ExceptionReport{
-    	//TODO: improve this method to something more useful
-    	
-    	//try to parse annotations:
-    	List<RAnnotation> annotations = parseAnnotationsfromScript(script);
-    	//try to create process description:
-    	RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
-    	
-    	//TODO: WPS.des and WPS.res should only occur once or not.
-    	try {
-			descriptionCreator.createDescribeProcessType(annotations, wkn);
-		} catch (ExceptionReport e) {
-			String message ="Script validation failed when testing process description creator.";
-			LOGGER.error(message);
-			throw e;
-		}catch(RAnnotationException e){
-			String message ="Script validation failed when testing process description creator.";
-			LOGGER.error(message);
-			throw e;
-		}
+    public static void validateScript(InputStream script, String wkn) throws RAnnotationException,
+            IOException,
+            ExceptionReport {
+        // TODO: improve this method to something more useful
+
+        // try to parse annotations:
+        List<RAnnotation> annotations = parseAnnotationsfromScript(script);
+        // try to create process description:
+        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
+
+        // TODO: WPS.des and WPS.res should only occur once or not.
+        try {
+            descriptionCreator.createDescribeProcessType(annotations, wkn);
+        }
+        catch (ExceptionReport e) {
+            String message = "Script validation failed when testing process description creator.";
+            LOGGER.error(message);
+            throw e;
+        }
+        catch (RAnnotationException e) {
+            String message = "Script validation failed when testing process description creator.";
+            LOGGER.error(message);
+            throw e;
+        }
     }
 
     // TODO: Improve process script validation
@@ -90,7 +99,7 @@ public class RAnnotationParser {
         while (lineReader.ready()) {
             String line = lineReader.readLine();
             lineCounter++;
-            
+
             if (line.contains("#")) { // is a comment
                 if ( !line.startsWith("##")) { // is a double comment, do not use!
                     line = line.split("#", 2)[1];
@@ -127,13 +136,14 @@ public class RAnnotationParser {
                                 RAnnotation newAnnotation = new RAnnotation(annotationType, attrHash);
                                 annotations.add(newAnnotation);
 
-                                LOGGER.debug("Done parsing annotation " + annotationString.toString() + " >>> " + newAnnotation);
+                                LOGGER.debug("Done parsing annotation " + annotationString.toString() + " >>> "
+                                        + newAnnotation);
                             }
                         }
                     }
                     catch (RAnnotationException e) {
-                        LOGGER.error("Invalid R script with wrong annotation in Line " + lineCounter
-                                + "\n" + e.getMessage());
+                        LOGGER.error("Invalid R script with wrong annotation in Line " + lineCounter + "\n"
+                                + e.getMessage());
                     }
                 }
             }
@@ -145,10 +155,10 @@ public class RAnnotationParser {
 
     private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws IOException,
             RAnnotationException {
-    	
-    	if(anotType.equals(RAnnotationType.RESOURCE)){
-    		return hashResourceAnnotation(attributeString);
-    	}
+
+        if (anotType.equals(RAnnotationType.RESOURCE)) {
+            return hashResourceAnnotation(attributeString);
+        }
         HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
@@ -195,24 +205,36 @@ public class RAnnotationParser {
         return attrHash;
     }
 
-	private static HashMap<RAttribute, Object> hashResourceAnnotation(
-			String attributeString) {
-		HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+    private static HashMap<RAttribute, Object> hashResourceAnnotation(String attributeString) {
+        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
-                RSeperator.ATTRIBUTE_SEPARATOR.getKey());
-        String namedList = "list(";
+                                                                 RSeperator.ATTRIBUTE_SEPARATOR.getKey());
+
+        StringBuilder namedList = new StringBuilder();
+        namedList.append("list(");
         while (attrValueTokenizer.hasMoreElements()) {
-        	String resourcefile = attrValueTokenizer.nextToken();
-        	resourcefile = resourcefile.trim();
-        	namedList +="\""+ resourcefile +"\" = "+"\""+R_Config.getInstance().getResourceDirURL()+"/"+resourcefile+"\"";
-        	if(attrValueTokenizer.hasMoreElements()){
-        		namedList+=", ";
-        	}	
+            String resourcePath = attrValueTokenizer.nextToken().trim();
+            String resourceName = "\"" + resourcePath + "\"";
+            LOGGER.debug("Found new resource in annotation " + resourceName);
+
+            String fullResourcePath = deriveFullResourceURL(resourcePath);
+
+            if (fullResourcePath != null) {
+                namedList.append(resourceName + " = " + "\"" + fullResourcePath + "\"");
+                if (attrValueTokenizer.hasMoreElements()) {
+                    namedList.append(", ");
+                }
+            }
+            else
+                LOGGER.warn("Resource NOT added: " + resourceName);
         }
-        namedList+=")";
+
+        namedList.append(")");
         attributeHash.put(RAttribute.NAMED_LIST, namedList);
-		return attributeHash;
-	}
+
+        LOGGER.debug("Complete resurce list: " + Arrays.deepToString(attributeHash.entrySet().toArray()));
+        return attributeHash;
+    }
 
     // Main method for tests:
     /*
@@ -243,4 +265,67 @@ public class RAnnotationParser {
      * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
      * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); } }
      */
+
+    private static String deriveFullResourceURL(String resourcePath) {
+        String fullResourcePath = R_Config.getInstance().getResourceDirURL() + "/" + resourcePath;
+
+        URL resourceURL;
+        try {
+            resourceURL = new URL(fullResourcePath);
+        }
+        catch (MalformedURLException e) {
+            LOGGER.error("Could not create URL from resource: " + fullResourcePath, e);
+            return null;
+        }
+
+        // FIXME resource existing testing
+        // if ( !urlResourceExists(resourceURL)) {
+        // LOGGER.warn("Resource file from annotation '" + resourcePath
+        // + "' could not be found in the file system at " + resourceURL);
+        // return null;
+        // }
+
+        return resourceURL.toExternalForm();
+    }
+
+    private static boolean urlResourceExists(URL url) {
+        HttpURLConnection conn = null;
+
+        try {
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("HEAD"); // should be conn.setRequestMethod("HEAD");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+        }
+        catch (IOException e) {
+            LOGGER.error("Could not open connection to URL " + url, e);
+            return false;
+        }
+        
+        // does not work
+        long length = conn.getContentLengthLong();
+        System.out.println(length);
+        
+        try {
+            conn.connect();
+        }
+        catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+        // does not work
+        int code;
+        try {
+            code = conn.getResponseCode();
+        }
+        catch (IOException e) {
+            LOGGER.error("Could not get header from connection.", e);
+            return false;
+        }
+
+        return (code == HttpURLConnection.HTTP_OK);
+        
+        // last resort
+    }
 }
