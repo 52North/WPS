@@ -31,7 +31,7 @@
 			<ows:Identifier>in_stations</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>DESN019,DESN004 ,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050, DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076</wps:LiteralData>
+				<wps:LiteralData>DESN019,DESN004 ,DESN014,DESN017, DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050, DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 		<wps:Input>
@@ -39,7 +39,7 @@
 			<ows:Title></ows:Title>
 			<wps:Data>
 				<!-- <wps:LiteralData>$wms:time$</wps:LiteralData> -->
-				<wps:LiteralData>2011-01-01</wps:LiteralData>
+				<wps:LiteralData>2007-12-31T00:00:00.000+0100</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 	</wps:DataInputs>

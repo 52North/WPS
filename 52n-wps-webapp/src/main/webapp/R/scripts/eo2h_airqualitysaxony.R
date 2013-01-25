@@ -18,15 +18,17 @@ myLog <- function(...) {
 
 ###################### resources ###############################################
 # this resource has the required functions and data
-#wps.resource: EO2H/AirQualityMapping.RData;
+# wps.resource: EO2H/AirQualityMapping.RData;
 
 ###################### manual testing ##########################################
-# load("D:/Dokumente/52N-Geoprocessing-Community/R-in-EO2HEAVEN/AirQualityMapping.RData")
-# in_sos_url <- "http://141.30.100.135:8080/eo2heavenSOS/sos"
-# in_time <- "2012-02-02"
-# in_offering_id <- "o3"
-# in_observed_prop <- "http://www.eo2heaven.org/classifier/parameter/daily_average/O3"
-# in_stations <- "DESN019,DESN004,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050,DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076"
+# wps.off;
+load("D:/Dokumente/52N-Geoprocessing-Community/R-in-EO2HEAVEN/AirQualityMapping.RData")
+in_sos_url <- "http://141.30.100.135:8080/eo2heavenSOS/sos"
+in_time <- "2012-02-02"
+in_offering_id <- "o3"
+in_observed_prop <- "http://www.eo2heaven.org/classifier/parameter/daily_average/O3"
+in_stations <- "DESN019,DESN004,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050,DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076"
+# wps.on;
 
 ###################### input definition ########################################
 
@@ -80,10 +82,10 @@ getPollutantConentrationAsGeoTiff <- function(vector.stations,
 		vector.measurements, chr.pollutant, chr.file) {
 	#calculate raster
 	.raster.result <- function.getPollutantConcentration(vector.stations,
-			vector.measurements, chr.pollutant)
+			as.numeric(vector.measurements), chr.pollutant)
 	
 	#write result raster
-	.x <- writeRaster(raster.result, filename=chr.file, format="GTiff",
+	.x <- writeRaster(.raster.result, filename=chr.file, format="GTiff",
 			overwrite=TRUE)
 	return(.x)
 }
@@ -94,6 +96,5 @@ getPollutantConentrationAsGeoTiff <- function(vector.stations,
 output <- getPollutantConentrationAsGeoTiff(vector.stations, vector.measurements,
 		chr.pollutant, chr.file);
 #wps.out: output, geotiff;
-
-# Fehler in dataframe.observations[dataframe.observations[, 1] == names(raster.station),  : 
-# nicht-numerisches Argument für binären Operator
+myLog("Done:")
+myLog(capture.output(output))
