@@ -303,7 +303,7 @@ public class RAnnotationParser {
         }
         
         // does not work
-        long length = conn.getContentLengthLong();
+        long length = conn.getContentLength();
         System.out.println(length);
         
         try {
