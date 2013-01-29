@@ -17,7 +17,7 @@
 			<ows:Identifier>in_offering_id</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>O3</wps:LiteralData>
+				<wps:LiteralData>o3</wps:LiteralData> <!-- case sensitive -->
 			</wps:Data>
 		</wps:Input>
 		<wps:Input>

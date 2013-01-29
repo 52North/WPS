@@ -30,6 +30,14 @@ in_observed_prop <- "http://www.eo2heaven.org/classifier/parameter/daily_average
 in_stations <- "DESN019,DESN004,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050,DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076"
 # wps.on;
 
+# FIXME resource loading does not work
+load("D:/Dokumente/52N-Geoprocessing-Community/R-in-EO2HEAVEN/AirQualityMapping.RData")
+
+myLog("wd content:")
+myLog(ls())
+myLog("list.weights:")
+myLog(summary(list.weights))
+
 ###################### input definition ########################################
 
 # wps.in: in_sos_url, string, title = SOS service URL,
@@ -67,6 +75,7 @@ myLog("stations: (", length(vector.stations), "):		",
 		toString(vector.stations))
 
 ################### parse the sos request ######################################
+# TODO
 in_measurements <- "10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32"
 measurements <- str_split(string = in_measurements, pattern = ",", )[[1]]
 vector.measurements <- str_trim(measurements) 
@@ -77,15 +86,14 @@ myLog("measurements (", length(vector.measurements), "):		",
 #
 # change function to return the output object from writeRaster
 #
-chr.file <- "saxony_output.tif";
-getPollutantConentrationAsGeoTiff <- function(vector.stations,
-		vector.measurements, chr.pollutant, chr.file) {
+getPollutantConcentrationAsGeoTiff <- function(.vector.stations,
+		.vector.measurements, .chr.pollutant, .chr.file) {
 	#calculate raster
-	.raster.result <- function.getPollutantConcentration(vector.stations,
-			as.numeric(vector.measurements), chr.pollutant)
+	.raster.result <- function.getPollutantConcentration(.vector.stations,
+			.vector.measurements, .chr.pollutant)
 	
 	#write result raster
-	.x <- writeRaster(.raster.result, filename=chr.file, format="GTiff",
+	.x <- writeRaster(.raster.result, filename=.chr.file, format="GTiff",
 			overwrite=TRUE)
 	return(.x)
 }
@@ -93,8 +101,14 @@ getPollutantConentrationAsGeoTiff <- function(vector.stations,
 ##################### calculate the coverage > output ##########################
 #function.getPollutantConentrationAsGeoTiff(vector.stations, vector.measurements,
 #		chr.pollutant, chr.file);
-output <- getPollutantConentrationAsGeoTiff(vector.stations, vector.measurements,
-		chr.pollutant, chr.file);
-#wps.out: output, geotiff;
+output.file <- "saxony_output.tif";
+output.img <- getPollutantConcentrationAsGeoTiff(vector.stations, as.numeric(vector.measurements),
+		chr.pollutant, output.file);
+##wps.out: output, geotiff;
 myLog("Done:")
-myLog(capture.output(output))
+myLog(capture.output(output.img))
+
+output <- paste0(getwd(), "/", output.file)
+myLog("Output file:")
+myLog(output)
+#wps.out: output, geotiff;
