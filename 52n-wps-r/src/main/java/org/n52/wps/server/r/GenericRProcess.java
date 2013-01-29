@@ -224,6 +224,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // initializes connection and pre-settings
                 rCon = config.openRConnection();
 
+                rLog(rCon, "Running algorithm with input " + Arrays.deepToString(inputData.entrySet().toArray()));
+
                 LOGGER.debug("[R] cleaning session.");
                 // ensure that session is clean;
                 rCon.eval("rm(list = ls())");
@@ -315,13 +317,13 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     LOGGER.debug("[R] running " + statement);
                     rCon.eval(statement);
                 }
-                
+
                 // FIXME load resources
                 List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(annotations, RAnnotationType.RESOURCE);
                 for (RAnnotation res : resAnnotList) {
                     LOGGER.debug("Loading resource " + res);
                     Object objectValue = res.getObjectValue(RAttribute.NAMED_LIST);
-                    
+
                     System.out.println(objectValue);
                 }
 
@@ -359,7 +361,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             }
             catch (IOException e) {
-                String message = "Attempt to read R Script file failed:\n" + e.getClass() + " - "
+                String message = "Attempt to run R script file failed:\n" + e.getClass() + " - "
                         + e.getLocalizedMessage() + "\n" + e.getCause();
                 LOGGER.error(message, e);
                 throw new ExceptionReport(message, e.getClass().getName(), e);
@@ -651,7 +653,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             REXPMismatchException,
             RserveException,
             RAnnotationException {
+        LOGGER.debug("parsing Output with id " + result_id + " from result " + result_id + " based on connection "
+                + rCon);
+
         Class< ? extends IData> iClass = getOutputDataType(result_id);
+        LOGGER.debug("Output data type: " + iClass.toString());
 
         if (iClass.equals(GenericFileDataBinding.class)) {
             if (LOGGER.isDebugEnabled())
@@ -659,13 +665,19 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String mimeType = "application/unknown";
 
             // extract filename from R
-            File dest = new File(result.asString());
+            String resultString = result.asString();
+            File resultFile = new File(resultString);
 
+            if ( !resultFile.exists())
+                throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
+            
+            LOGGER.debug("Loading file " + resultFile.getAbsolutePath());
+            
             String filename;
-            if (dest.isAbsolute())
-                filename = dest.getAbsolutePath();
+            if (resultFile.isAbsolute())
+                filename = resultFile.getAbsolutePath();
             else
-                filename = dest.getName();
+                filename = resultFile.getName();
 
             File tempfile = streamFromRserveToWPS(rCon, filename);
 
@@ -831,7 +843,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @throws FileNotFoundException
      */
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
-
         File tempfile = new File(filename);
         if ( !tempfile.isAbsolute()) {
             // create File to stream from Rserve to WPS4R
