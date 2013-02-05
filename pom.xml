@@ -802,7 +802,7 @@
 							<connectionUrl>
 								scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
 							</connectionUrl>
-							<tag>WPS-3.0</tag>
+							<tag>WPS-3.1.0</tag>
 							<remoteTagging>false</remoteTagging>
 							<suppressCommitBeforeTag>true</suppressCommitBeforeTag>
 						</configuration>
