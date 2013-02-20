@@ -30,7 +30,7 @@ public enum RAttribute {
 	INPUT_START("wps.in", null, true), 
 	OUTPUT_START("wps.out", null, true), 
 	DESCRIPTION_START("wps.des", null, true),
-	RESOURCE_START("wps.resource",null,true),
+	RESOURCE_START("wps.res",null,true),
 	IDENTIFIER("id", null, true), 
 	TYPE("type", null, true), 
 	TITLE("title", IDENTIFIER, false), 

@@ -67,11 +67,13 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.RDataType;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.RTypeDefinition;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RegExp;
+import org.n52.wps.server.r.syntax.ResourceAnnotation;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -229,6 +231,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 LOGGER.debug("[R] cleaning session.");
                 // ensure that session is clean;
                 rCon.eval("rm(list = ls())");
+                r_basedir =  rCon.eval("getwd()").asString();
                 // rCon.eval(".First()"); // Fehler 127
 
                 // No use of this.currentWorkDir here!
@@ -236,28 +239,45 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // changed into a random sub-directory and will be deleted after
                 // session completed
 
-                // setting the R working directory relative to default R
-                // directory
-                String randomFolderName = UUID.randomUUID().toString();
 
                 // FIXED: automatically started R sessions use have the Tomcat folder as wd, this does not
                 // work
                 LOGGER.debug("Original getwd(): " + rCon.eval("getwd()").asString());
+
                 // rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
 
                 // use generated temp folder as R basedir
                 // r_basedir = config.createTemporaryRWorkDir().replace("\\", "/");
-                r_basedir = "D:/TEMP/" + randomFolderName; // FIXME use property, or try creating the
+                //r_basedir = "D:/TEMP/" + randomFolderName; // FIXME use property, or try creating the
                 // folder with Java, spaces etc. make this thing tricky...
 
-                REXP result = rCon.eval("dir.create(\"" + r_basedir + "\")"); // don't forget the escaped
+                // setting the R working directory relative to default R
+                // directory
+                String randomFolderName = UUID.randomUUID().toString();
+                //randomFolderName;
+                REXP result = rCon.eval("dir.create(\"" + randomFolderName + "\")"); // don't forget the escaped
                                                                               // quotation marks!
-                LOGGER.debug("[R] Setting working directoryt to: " + r_basedir + " | result: " + result.asString());
-                result = rCon.eval("setwd(\"" + r_basedir + "\")");
+                LOGGER.debug("[R] Setting working directory to: " + randomFolderName + " | result: " + result.asString());
+                result = rCon.eval("setwd(\"" + randomFolderName + "\")");
                 LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
 
-                rLog(rCon, "working directory:");
-                rCon.eval("getwd()");
+                rLog(rCon, "working directory: "+rCon.eval("getwd()").asString());
+
+                
+                //old code 
+                /*
+                String randomFolderName = UUID.randomUUID().toString();
+                r_basedir = rCon.eval("getwd()").asString();
+                LOGGER.debug("Original getwd(): " + r_basedir);
+                rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
+                rCon.eval("dir.create(wd)");
+                REXP result = rCon.eval("setwd(wd)");
+                LOGGER.debug("[R] Setting working directory: " + r_basedir);
+
+                LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
+
+                rCon.eval("cat(paste0(\"[GenericRProcess] work dir: \", getwd()), \"\\n\")");
+                 */
 
                 loadRUtilityScripts(rCon);
 
@@ -321,10 +341,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // FIXME load resources
                 List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(annotations, RAnnotationType.RESOURCE);
                 for (RAnnotation res : resAnnotList) {
-                    LOGGER.debug("Loading resource " + res);
-                    Object objectValue = res.getObjectValue(RAttribute.NAMED_LIST);
+                	if(!(res instanceof ResourceAnnotation))
+                		continue;
+                	ResourceAnnotation resourceAnnotation = (ResourceAnnotation) res;
+                	for (R_Resource resource : resourceAnnotation.getResources()) {
+                        LOGGER.debug("Loading resource " + res);
+                        streamFromWPSToRserve(rCon, resource.getFullResourcePath());
+					}
+                	
 
-                    System.out.println(objectValue);
                 }
 
                 // save an image that may help debugging R scripts
@@ -609,11 +634,32 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         is.close();
         // R unzips archive files and renames files with unique
         // random names
+        // TODO: check whether input is a zip archive or not
         result = rCon.eval("unzipRename(" + "\"" + inputFileName + "\", " + "\"" + randomname + "\", " + "\"" + ext
                 + "\")").asString();
         result = "\"" + result + "\"";
         return result;
     }
+    
+	private void streamFromWPSToRserve(RConnection rCon, File source) throws IOException, REXPMismatchException,
+			RserveException {
+		String result;
+
+
+		RFileOutputStream rfos = rCon.createFile(source.getName());
+
+		byte[] buffer = new byte[2048];
+		FileInputStream is = new FileInputStream(source);
+		int stop = is.read(buffer);
+
+		while (stop != -1) {
+			rfos.write(buffer, 0, stop);
+			stop = is.read(buffer);
+		}
+		rfos.flush();
+		rfos.close();
+		is.close();
+	}
 
     @SuppressWarnings("unchecked")
     private String parseLiteralInput(Class< ? extends IData> iClass, Object value) {
@@ -668,8 +714,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String resultString = result.asString();
             File resultFile = new File(resultString);
 
-            if ( !resultFile.exists())
-                throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
             
             LOGGER.debug("Loading file " + resultFile.getAbsolutePath());
             
@@ -679,7 +723,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             else
                 filename = resultFile.getName();
 
+            //Transfer file from R workdir to WPS workdir
             File tempfile = streamFromRserveToWPS(rCon, filename);
+            
+            if ( !tempfile.exists())
+                throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
 
             // extract mimetype from annotations (TODO: might have to be
             // simplified somewhen)
@@ -844,13 +892,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      */
     private File streamFromRserveToWPS(RConnection rCon, String filename) throws IOException, FileNotFoundException {
         File tempfile = new File(filename);
-        if ( !tempfile.isAbsolute()) {
-            // create File to stream from Rserve to WPS4R
-            File destination = new File(currentWPSWorkDir);
-            if ( !destination.exists())
-                destination.mkdirs();
-            tempfile = new File(destination, tempfile.getName());
-        }
+        File destination = new File(currentWPSWorkDir);
+        if ( !destination.exists())
+            destination.mkdirs();
+        tempfile = new File(destination, tempfile.getName());
 
         // Do streaming Rserve --> WPS tempfile
         RFileInputStream fis = rCon.openFile(filename);
@@ -863,7 +908,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
         fis.close();
         fos.close();
-        tempfile.deleteOnExit();
+        //tempfile.deleteOnExit();
         return tempfile;
     }
 

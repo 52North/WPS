@@ -28,9 +28,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,11 +37,13 @@ import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
+import org.n52.wps.server.r.syntax.ResourceAnnotation;
 
 public class RAnnotationParser {
 
@@ -131,9 +130,17 @@ public class RAnnotationParser {
 
                             annotationString.append(line);
                             if ( !isCurrentlyParsingAnnotation) {
-                                HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
-                                                                                      annotationString.toString());
-                                RAnnotation newAnnotation = new RAnnotation(annotationType, attrHash);
+                            	RAnnotation newAnnotation = null;
+                                if (annotationType.equals(RAnnotationType.RESOURCE)) {
+                                	newAnnotation = createResourceAnnotation(annotationString.toString());
+                                	
+                                }else{
+                                    HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
+                                            annotationString.toString());
+                                    newAnnotation = new RAnnotation(annotationType, attrHash);
+                                	
+                                }
+
                                 annotations.add(newAnnotation);
 
                                 LOGGER.debug("Done parsing annotation " + annotationString.toString() + " >>> "
@@ -156,9 +163,6 @@ public class RAnnotationParser {
     private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws IOException,
             RAnnotationException {
 
-        if (anotType.equals(RAnnotationType.RESOURCE)) {
-            return hashResourceAnnotation(attributeString);
-        }
         HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
@@ -172,6 +176,15 @@ public class RAnnotationParser {
 
         while (attrValueTokenizer.hasMoreElements()) {
             String attrValue = attrValueTokenizer.nextToken();
+            if(attrValue.trim().startsWith("\"")){
+            	
+        		for(;attrValueTokenizer.hasMoreElements() && !attrValue.trim().endsWith("\"");){
+        			attrValue += RSeperator.ATTRIBUTE_SEPARATOR + attrValueTokenizer.nextToken();
+        		}
+        		
+        		attrValue=attrValue.substring(attrValue.indexOf("\"")+1, attrValue.lastIndexOf("\""));
+            }
+            
             if (attrValue.contains(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey())) {
                 iterableOrder = false;
 
@@ -199,25 +212,39 @@ public class RAnnotationParser {
                 String[] keyValue = attrValue.split(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey());
                 RAttribute attribute = anotType.getAttribute(keyValue[0].trim());
                 String value = keyValue[1].trim();
+                if(value.startsWith("\"")){
+                	
+            		for(;attrValueTokenizer.hasMoreElements() && !value.trim().endsWith("\"");){
+            			value += RSeperator.ATTRIBUTE_SEPARATOR +attrValueTokenizer.nextToken();
+            		}
+            		
+            		value=value.substring(value.indexOf("\"")+1, value.lastIndexOf("\""));
+                }
+                
                 attrHash.put(attribute, value);
             }
         }
         return attrHash;
     }
 
-    private static HashMap<RAttribute, Object> hashResourceAnnotation(String attributeString) {
+    private static RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
         HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+        List<R_Resource> resources = new ArrayList<R_Resource>();
+        
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
 
         StringBuilder namedList = new StringBuilder();
         namedList.append("list(");
         while (attrValueTokenizer.hasMoreElements()) {
-            String resourcePath = attrValueTokenizer.nextToken().trim();
-            String resourceName = "\"" + resourcePath + "\"";
+            String resourceValue = attrValueTokenizer.nextToken().trim();
+            R_Resource r_resource = new R_Resource(resourceValue);
+            resources.add(r_resource);
+            
+            String resourceName = "\"" + resourceValue + "\"";
             LOGGER.debug("Found new resource in annotation " + resourceName);
 
-            String fullResourcePath = deriveFullResourceURL(resourcePath);
+            String fullResourcePath = r_resource.getFullResourceURL().toExternalForm();
 
             if (fullResourcePath != null) {
                 namedList.append(resourceName + " = " + "\"" + fullResourcePath + "\"");
@@ -233,7 +260,9 @@ public class RAnnotationParser {
         attributeHash.put(RAttribute.NAMED_LIST, namedList);
 
         LOGGER.debug("Complete resurce list: " + Arrays.deepToString(attributeHash.entrySet().toArray()));
-        return attributeHash;
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash, resources);
+        
+        return resourceAnnotation;
     }
 
     // Main method for tests:
@@ -266,66 +295,4 @@ public class RAnnotationParser {
      * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); } }
      */
 
-    private static String deriveFullResourceURL(String resourcePath) {
-        String fullResourcePath = R_Config.getInstance().getResourceDirURL() + "/" + resourcePath;
-
-        URL resourceURL;
-        try {
-            resourceURL = new URL(fullResourcePath);
-        }
-        catch (MalformedURLException e) {
-            LOGGER.error("Could not create URL from resource: " + fullResourcePath, e);
-            return null;
-        }
-
-        // FIXME resource existing testing
-        // if ( !urlResourceExists(resourceURL)) {
-        // LOGGER.warn("Resource file from annotation '" + resourcePath
-        // + "' could not be found in the file system at " + resourceURL);
-        // return null;
-        // }
-
-        return resourceURL.toExternalForm();
-    }
-
-    private static boolean urlResourceExists(URL url) {
-        HttpURLConnection conn = null;
-
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD"); // should be conn.setRequestMethod("HEAD");
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(3000);
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not open connection to URL " + url, e);
-            return false;
-        }
-        
-        // does not work
-        long length = conn.getContentLength();
-        System.out.println(length);
-        
-        try {
-            conn.connect();
-        }
-        catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
-        // does not work
-        int code;
-        try {
-            code = conn.getResponseCode();
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not get header from connection.", e);
-            return false;
-        }
-
-        return (code == HttpURLConnection.HTTP_OK);
-        
-        // last resort
-    }
 }
