@@ -18,7 +18,7 @@ myLog <- function(...) {
 
 ###################### resources ###############################################
 # this resource has the required functions and data
-# wps.resource: EO2H/AirQualityMapping.RData;
+# wps.res: EO2H/AirQualityMapping.RData;
 
 ###################### manual testing ##########################################
 # wps.off;
@@ -30,8 +30,8 @@ in_observed_prop <- "http://www.eo2heaven.org/classifier/parameter/daily_average
 in_stations <- "DESN019,DESN004,DESN014,DESN017,DESN001,DESN059,DESN053,DESN011,DESN052,DESN045,DESN051,DESN050,DESN049,DESN012,DESN024,DESN082,DESN080,DESN081,DESN085,DESN074,DESN079,DESN061,DESN076"
 # wps.on;
 
-# FIXME resource loading does not work
-load("D:/Dokumente/52N-Geoprocessing-Community/R-in-EO2HEAVEN/AirQualityMapping.RData")
+# FIXED resource loading does now work!
+load("AirQualityMapping.RData")
 
 myLog("wd content:")
 myLog(ls())
@@ -61,7 +61,11 @@ myLog(summary(list.weights))
 
 #################### make sos request (based on wmsConfig.xml) #################
 sos <- SOS(url = in_sos_url)
-eventTime <- sosCreateTime(sos = sos, time = in_time, operator = "TM_Equals")
+
+#FIXME 'eventTime' does not compute, errormessage: 
+#	Error in sosCreateTime(sos = sos, time = in_time, operator = "TM_Equals") : 
+#  	object '.l' not found
+#eventTime <- sosCreateTime(sos = sos, time = in_time, operator = "TM_Equals")
 myLog(" time:		 ", in_time)
 
 responseFormat <- "text/xml;subtype=&quot;om/1.0.0&quot;"
