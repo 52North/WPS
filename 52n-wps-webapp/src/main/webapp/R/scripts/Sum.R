@@ -1,3 +1,4 @@
+library(sp); library(maptools)
 # wps.des: title = Sum of attributes for Polygons, abstract = Calculates the sum of a numeric
 # attribute variable for given Polygon files
 # given by execute request: variables with identifiers "data" and "attributename";
