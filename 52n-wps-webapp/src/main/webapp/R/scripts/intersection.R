@@ -4,7 +4,8 @@
 # wps.des: intersection;
 # wps.in: r1, shp_x, Polygon1;
 # wps.in: r2, shp_x, Polygon2;
-library(rgeos)
+library(rgeos); library(maptools); library(rgdal);
+
 poly1 = readShapePoly(r1)
 poly2 = readShapePoly(r2)
 
