@@ -415,12 +415,12 @@ public class R_Config {
         return tempdir.getAbsolutePath();
     }
 
-    public String createTemporaryRWorkDir() throws IOException {
-        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-r-workdir-"
-                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
-        tempdir.mkdir();
-        return tempdir.getAbsolutePath();
-    }
+//    public String createTemporaryRWorkDir() throws IOException {
+//        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-r-workdir-"
+//                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
+//        tempdir.mkdir();
+//        return tempdir.getAbsolutePath();
+//    }
 
     public String getScriptDirFullPath() {
         return new File(WebProcessingService.BASE_DIR, SCRIPT_DIR).getAbsolutePath();

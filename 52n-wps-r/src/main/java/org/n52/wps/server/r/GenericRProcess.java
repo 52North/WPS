@@ -116,6 +116,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private RserveException rServeExceptionCause = null;
 
+	private boolean wpsWorkDirIsRWorkDir = true;
+
     public List<String> getErrors() {
         return errors;
     }
@@ -203,22 +205,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // file.mkdirs();
         LOGGER.debug("Temp folder for WPS4R: " + currentWPSWorkDir);
 
-        // retrieve R-Script from path:
-        InputStream rScriptStream = null;
-        File rScriptFile = null;
-        try {
-            rScriptFile = config.wknToFile(getWellKnownName());
-            rScriptStream = new FileInputStream(rScriptFile);
-        }
-        catch (IOException e) {
-            LOGGER.error("Error reading script file.", e);
-            throw new ExceptionReport("Could not read script file " + rScriptFile + " for algorithm "
-                    + getWellKnownName(), "Input/Output", e);
-        }
 
-        // interaction with R from here:
+        //------------------------------------
+        // interaction with R follows here:
+        //------------------------------------       
         RConnection rCon = null;
-        // REXP result = null;
         HashMap<String, IData> resulthash = new HashMap<String, IData>();
         try {
             String r_basedir = null;
@@ -231,53 +222,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 LOGGER.debug("[R] cleaning session.");
                 // ensure that session is clean;
                 rCon.eval("rm(list = ls())");
-                r_basedir =  rCon.eval("getwd()").asString();
-                // rCon.eval(".First()"); // Fehler 127
 
-                // No use of this.currentWorkDir here!
-                // R is starting from it's default workdirectory which is
-                // changed into a random sub-directory and will be deleted after
-                // session completed
-
-
-                // FIXED: automatically started R sessions use have the Tomcat folder as wd, this does not
-                // work
-                LOGGER.debug("Original getwd(): " + rCon.eval("getwd()").asString());
-
-                // rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
-
-                // use generated temp folder as R basedir
-                // r_basedir = config.createTemporaryRWorkDir().replace("\\", "/");
-                //r_basedir = "D:/TEMP/" + randomFolderName; // FIXME use property, or try creating the
-                // folder with Java, spaces etc. make this thing tricky...
-
-                // setting the R working directory relative to default R
-                // directory
-                String randomFolderName = UUID.randomUUID().toString();
-                //randomFolderName;
-                REXP result = rCon.eval("dir.create(\"" + randomFolderName + "\")"); // don't forget the escaped
-                                                                              // quotation marks!
-                LOGGER.debug("[R] Setting working directory to: " + randomFolderName + " | result: " + result.asString());
-                result = rCon.eval("setwd(\"" + randomFolderName + "\")");
-                LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
-
-                rLog(rCon, "working directory: "+rCon.eval("getwd()").asString());
-
-                
-                //old code 
-                /*
-                String randomFolderName = UUID.randomUUID().toString();
-                r_basedir = rCon.eval("getwd()").asString();
-                LOGGER.debug("Original getwd(): " + r_basedir);
-                rCon.eval("wd = paste(getwd(), \"" + randomFolderName + "\" ,sep=\"/\")");
-                rCon.eval("dir.create(wd)");
-                REXP result = rCon.eval("setwd(wd)");
-                LOGGER.debug("[R] Setting working directory: " + r_basedir);
-
-                LOGGER.debug("Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
-
-                rCon.eval("cat(paste0(\"[GenericRProcess] work dir: \", getwd()), \"\\n\")");
-                 */
+               // Retrieve the preset R working directory (R will be reset to this directory after the process run)
+        		r_basedir =  rCon.eval("getwd()").asString();
+        		// Set R working directory according to configuration
+				setRWorkingDirectoryBeforeProcessing(rCon);
 
                 loadRUtilityScripts(rCon);
 
@@ -316,7 +265,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 LOGGER.debug("Assigns: " + Arrays.toString(inputValues.entrySet().toArray()));
 
                 // delete help variables and utility functions from workspace:
-                LOGGER.debug("[R] clearing utility functions.");
+                LOGGER.debug("[R] remove utility functions.");
                 rCon.eval("rm(list = ls())");
 
                 // assign values to the (clean) workspace:
@@ -351,6 +300,19 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 	
 
                 }
+                
+                // retrieve R-Script from path:
+                InputStream rScriptStream = null;
+                File rScriptFile = null;
+                try {
+                    rScriptFile = config.wknToFile(getWellKnownName());
+                    rScriptStream = new FileInputStream(rScriptFile);
+                }
+                catch (IOException e) {
+                    LOGGER.error("Error reading script file.", e);
+                    throw new ExceptionReport("Could not read script file " + rScriptFile + " for algorithm "
+                            + getWellKnownName(), "Input/Output", e);
+                }
 
                 // save an image that may help debugging R scripts
                 if (LOGGER.isDebugEnabled()) {
@@ -364,8 +326,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 boolean success = false;
                 success = executeScript(rScriptStream, rCon);
 
+                try {
+                    //BufferedReader rScriptStream;
+					rScriptStream.close();
+                }
+                catch (IOException e) {
+                    LOGGER.warn("Connection to R script cannot be closed for process " + getWellKnownName());
+                }
+                
                 if ( !success) {
-                    rCon.close();
                     String message = "Failure while executing R script. See logs for details";
                     LOGGER.error(message);
                 }
@@ -374,7 +343,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 List<RAnnotation> outNotations = RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT);
                 for (RAnnotation rAnnotation : outNotations) {
                     String result_id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
-                    result = rCon.eval(result_id);
+                    REXP result = rCon.eval(result_id);
                     // TODO: change ParseOutput
                     // TODO depending on the generated outputs,
                     // deleteWorkDirectory must be set!
@@ -402,39 +371,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 throw e;
             }
             finally {
-                if (rCon == null || !rCon.isConnected()) {
-                    LOGGER.debug("[R] opening connection...");
-                    rCon = config.openRConnection();
-                }
-
-                // deletes R workdirectory:
-                if (r_basedir != null) {
-                    String currentwd = rCon.eval("getwd()").asString();
-
-                    LOGGER.debug("[R] setwd to " + r_basedir + " (was: " + currentwd + ")");
-
-                    // the next lines throws and exception, because r_basedir might not succesfully have been
-                    // set, so check first
-                    rCon.eval("setwd(\"" + r_basedir + "\")");
-                    // should be true usually, if not, workdirectory has been
-                    // changed unexpectedly (prob. inside script)
-                    if (currentwd != r_basedir) {
-                        LOGGER.debug("[R] unlinking (recursive) " + currentwd);
-                        rCon.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
-                    }
-                    else
-                        LOGGER.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
-                }
-
-                LOGGER.debug("[R] cleaning up and closing stream.");
-                rCon.eval("rm(list = ls())");
-                rCon.close();
-                try {
-                    rScriptStream.close();
-                }
-                catch (IOException e) {
-                    LOGGER.warn("Connection to R script cannot be closed for process " + getWellKnownName());
-                }
+                cleanUpRSession(rCon, r_basedir);
             }
 
         }
@@ -462,6 +399,149 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         LOGGER.debug("RESULT: " + Arrays.toString(resulthash.entrySet().toArray()));
         return resulthash;
     }
+
+
+
+	/**
+	 * Sets the R working directory according to the "R_Work_Dir" configuration parameter.
+	 * 4 cases are supported: default, preset, temporary and custom. 
+	 * 
+	 * Do not confuse the R working directory with the temporary WPS working directory (this.currentworkdir)! 
+	 * R and WPS use the same directory under default configuration, with Rserve on localhost, but running R on a remote machine requires 
+	 * separate working directories for WPS and R.
+	 * 
+	 * @param rCon The (open) R connection to be used. This method inherently does not call open- or close-operations.
+	 * @throws REXPMismatchException
+	 * @throws RserveException
+	 */
+	private void setRWorkingDirectoryBeforeProcessing(RConnection rCon)
+			throws REXPMismatchException, RserveException {
+		R_Config rconf = R_Config.getInstance();
+
+		LOGGER.debug("[WPS4R] Original getwd(): " + rCon.eval("getwd()").asString());
+		String config_RWorkDir = rconf.getConfigVariable(RWPSConfigVariables.R_WORK_DIR);
+		LOGGER.debug("Try to set R work directory according to "+RWPSConfigVariables.R_WORK_DIR+" | "+config_RWorkDir);
+		REXP result = null;
+		boolean isLocalhost = rconf.getConfigVariable(RWPSConfigVariables.RSERVE_HOST).equalsIgnoreCase("localhost");
+		
+		if (config_RWorkDir == null || config_RWorkDir.equals("")
+				|| config_RWorkDir.trim().equalsIgnoreCase("default")){ 
+				//Default behaviour: R work directory is the same as temporary WPS work directory if R runs locally otherwise,
+				//for remote connections, it is dependent on the configuration of R / Rserve
+			if(isLocalhost){
+				wpsWorkDirIsRWorkDir  = true;
+				result = rCon.eval("setwd(\"" +this.currentWPSWorkDir.replace("\\", "/") + "\")"); 
+			}else{
+				// setting the R working directory relative to default R directory
+				// R starts from a work directory dependent on the behaviour and configuration of the R/Rserve installation
+				String randomFolderName = "wps4r-r-workdir-"+ UUID.randomUUID().toString().substring(0, 8);
+				rCon.eval("dir.create(\"" + randomFolderName + "\")");		// quotation marks!
+				result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // don't forget the escaped
+				                                                            // quotation marks
+			}
+
+		} else if (config_RWorkDir.trim().equalsIgnoreCase("preset")) {
+			// setting the R working directory relative to default R directory
+			String randomFolderName = "wps4r-r-workdir-"+ UUID.randomUUID().toString().substring(0, 8);
+			rCon.eval("dir.create(\"" + randomFolderName + "\")");	 // quotation marks!
+			result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // quotation marks!
+		} else if (config_RWorkDir.trim().equalsIgnoreCase("temporary")) {
+			if(isLocalhost){
+				wpsWorkDirIsRWorkDir  = true;
+				result = rCon.eval("setwd(\"" +this.currentWPSWorkDir.replace("\\", "/") + "\")"); 
+			}else{
+				result = rCon.eval("setwd(\"tempdir()\")");
+			}
+		} else {
+			
+			String path = null;
+			boolean isInvalidPath = false;
+			if(isLocalhost){
+				try {
+					path = rconf.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR);
+					String randomFolderName = "wps4r-r-workdir-"+ UUID.randomUUID().toString().substring(0, 8);
+					if(new File(path).isDirectory()){
+						path = (path + "/"+randomFolderName).replace("\\", "/");
+						new File(path).mkdir();
+						result = rCon.eval("setwd(\""+path+"\")");
+					} else{
+						isInvalidPath = true;
+					}
+				} catch (ExceptionReport e) {
+					isInvalidPath = true;
+				}
+			}else{
+				boolean isExistingDir = rCon.eval("isTRUE(file.info(\""+config_RWorkDir+"\")$isdir)").asInteger() == 1;
+				if(isExistingDir){
+					String randomFolderName = "wps4r-r-workdir-"+ UUID.randomUUID().toString().substring(0, 8);
+					path = (path + "/"+randomFolderName).replace("\\", "/");
+					result = rCon.eval("setwd(\""+path+"\")");
+				}else{
+					isInvalidPath = true;
+				}
+			}
+			
+			if(isInvalidPath){
+				LOGGER.warn("[WPS4R] Invalid configurarion for variable \""
+			+	RWPSConfigVariables.R_WORK_DIR+"\" | " +config_RWorkDir+ ". Variable is switched temporary to default.");
+				rconf.setConfigVariable(RWPSConfigVariables.R_WORK_DIR, "default");
+				setRWorkingDirectoryBeforeProcessing(rCon);
+			}
+		}
+		
+		LOGGER.debug("[R] Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
+		rLog(rCon, "working directory: "+rCon.eval("getwd()").asString());
+		
+	}
+	
+	/**
+	 * @param config
+	 * @param rCon
+	 * @param r_basedir
+	 * @throws RserveException
+	 * @throws REXPMismatchException
+	 */
+	private void cleanUpRSession(RConnection rCon,
+			String r_basedir) throws RserveException, REXPMismatchException {
+		
+		R_Config config = R_Config.getInstance();
+		if (rCon == null || !rCon.isConnected()) {
+		    LOGGER.debug("[R] opening connection...");
+		    rCon = config.openRConnection();
+		}
+		
+		LOGGER.debug("[R] cleaning up workspace.");
+		rCon.eval("rm(list = ls())");
+
+		if(wpsWorkDirIsRWorkDir){ // <- R won't delete the folder if it is the same as the wps work directory
+			LOGGER.debug("[R] closing stream.");
+			rCon.close();
+			return;
+		}
+			
+
+		// deletes R work directory:
+		if (r_basedir != null) {
+		    String currentwd = rCon.eval("getwd()").asString();
+
+		    LOGGER.debug("[R] setwd to " + r_basedir + " (was: " + currentwd + ")");
+
+		    // the next lines throws and exception, because r_basedir might not succesfully have been
+		    // set, so check first
+		    rCon.eval("setwd(\"" + r_basedir + "\")");
+		    // should be true usually, if not, workdirectory has been
+		    // changed unexpectedly (prob. inside script)
+		    if (currentwd != r_basedir) {
+		        LOGGER.debug("[R] unlinking (recursive) " + currentwd);
+		        rCon.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
+		    }
+		    else
+		        LOGGER.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
+		}
+
+		LOGGER.debug("[R] closing stream.");
+		rCon.close();
+	}
 
     private void rLog(RConnection rCon, String message) {
         RUtil.logGenericRProcess(rCon, message);
@@ -535,6 +615,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private String parseInput(List<IData> input, RConnection rCon) throws IOException,
             RserveException,
             REXPMismatchException {
+    	
         String result = null;
         // building an R - vector of input entries containing more than one
         // value:
@@ -716,17 +797,21 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             
             LOGGER.debug("Loading file " + resultFile.getAbsolutePath());
+
+            if(!resultFile.isAbsolute())
+            	//relative path names are alway relative to R work directory
+            	resultFile = new File(rCon.eval("getwd()").asString(), resultFile.getName());
             
-            String filename;
-            if (resultFile.isAbsolute())
-                filename = resultFile.getAbsolutePath();
-            else
-                filename = resultFile.getName();
 
             //Transfer file from R workdir to WPS workdir
-            File tempfile = streamFromRserveToWPS(rCon, filename);
+            File outputFile = null;
+            if(!this.wpsWorkDirIsRWorkDir){		
+            		outputFile = streamFromRserveToWPS(rCon, resultFile.getAbsolutePath());
+            }else{
+            		outputFile = resultFile;
+            }
             
-            if ( !tempfile.exists())
+            if ( !outputFile.exists())
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
 
             // extract mimetype from annotations (TODO: might have to be
@@ -739,7 +824,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RAnnotation anot = list.get(0);
             String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-            GenericFileData out = new GenericFileData(tempfile, mimeType);
+            GenericFileData out = new GenericFileData(outputFile, mimeType);
 
             return new GenericFileDataBinding(out);
         }
@@ -752,9 +837,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             RAnnotation out = RAnnotation.filterAnnotations(annotations, RAnnotationType.OUTPUT).get(0);
             RTypeDefinition dataType = out.getRDataType();
-            File tempfile;
+            File outputFile;
 
-            if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2)) {
+            if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2)&& !this.wpsWorkDirIsRWorkDir) {
                 loadRUtilityScripts(rCon);
                 String zip = "";
                 REXP ev = rCon.eval("zipShp(\"" + filename + "\")");
@@ -771,7 +856,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 if ( !ev.isNull()) {
                     zip = ev.asString();
                     File zipfile = streamFromRserveToWPS(rCon, zip);
-                    tempfile = IOUtils.unzip(zipfile, "shp").get(0);
+                    outputFile = IOUtils.unzip(zipfile, "shp").get(0);
                 }
                 else {
                     LOGGER.info("R call to zip() does not work, streaming of shapefile without zipping");
@@ -781,12 +866,21 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                             streamFromRserveToWPS(rCon, f);
                     }
 
-                    tempfile = streamFromRserveToWPS(rCon, filename);
+                    outputFile = streamFromRserveToWPS(rCon, filename);
                 }
             }
             else {
-                // All (single) files which are not Shapefiles
-                tempfile = streamFromRserveToWPS(rCon, filename);
+                if(!this.wpsWorkDirIsRWorkDir){
+                		outputFile = streamFromRserveToWPS(rCon, filename);
+                }else{
+                	outputFile = new File(filename);
+                	if(!outputFile.isAbsolute())
+                    	//relative path names are alway relative to R work directory
+                		outputFile = new File(rCon.eval("getwd()").asString(), outputFile.getName());
+                		
+                }
+
+               // outputFile = streamFromRserveToWPS(rCon, filename);
             }
             // extract mimetype from annotations (TODO: might have to be
             // simplified somewhen)
@@ -799,7 +893,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
-            GenericFileData gfd = new GenericFileData(tempfile, mimeType);
+            GenericFileData gfd = new GenericFileData(outputFile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
         }
