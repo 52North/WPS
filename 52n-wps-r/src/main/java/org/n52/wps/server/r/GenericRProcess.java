@@ -1042,6 +1042,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         while (fr.ready()) {
             String line = fr.readLine();
 
+            if(line.contains("setwd(")){
+            	LOGGER.warn("The running R script contains a call to \"setwd(...)\". " +
+            			"This may cause runtime-errors and unexpected behaviour of WPS4R. " +
+            			"It is strongly advise to not use this function in process scripts.");
+            }
+            
             if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
                 // TODO: check in validation
                 throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
