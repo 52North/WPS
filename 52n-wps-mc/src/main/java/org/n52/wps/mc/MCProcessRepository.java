@@ -51,7 +51,9 @@ import org.n52.wps.server.IAlgorithmRepository;
  */
 public class MCProcessRepository implements IAlgorithmRepository {
 
-    private static final String configFileName = "processors.xml";
+    private static final String CONFIG_FILE_NAME = "processors.xml";
+
+    private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
 
     private RepositoryManager rm = RepositoryManager.getInstance();
 
@@ -61,7 +63,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
         super();
         configureMCRuntime();
 
-        // check if the repository is active (probably not needed but who knows ...)
+        // check if the repository is active
         if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
 
             // get properties to find out which remote repositories we shall invoke
@@ -69,7 +71,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
             // for each remote repository: add to RepoManager
             for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase("REPOSITORY_FEED_URL") && property.getActive()) {
+                if (property.getName().equalsIgnoreCase(REPO_FEED_URL_PARAM) && property.getActive()) {
                     // convert to URL, check and register
                     try {
                         URL repoURL = new URL(property.getStringValue());
@@ -90,6 +92,11 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
                 }
             }
+
+            // TODO start dropin watchdog
+            // TODO check the local drop-in folder
+            // new File(WebProcessingService.BASE_DIR, DROP_IN_FOLDER).getAbsolutePath();
+
         }
         else {
             logger.debug("MCProcessRepository does not contain any processes.");
@@ -125,7 +132,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
     // ----------------------------------------------------------------
     // methods and logic for processor configuration
     private static void configureMCRuntime() {
-        String configFilePath = WPSConfig.getConfigDir() + configFileName;
+        String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
         File configFile = new File(configFilePath);
         boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
         if ( !loaded) {
