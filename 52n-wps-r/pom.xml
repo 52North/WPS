@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<!-- $Id: pom.xml,v 1.1.2.2 2007/05/26 23:01:56 schaeffer Exp $ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
@@ -53,8 +53,6 @@
 	</developers>
 
 	<build>
-		<!--resources> <resource> <directory>src/main/resources</directory> <includes> 
-		<include>**/*.xml</include> </includes> </resource> </resources -->
 
 		<plugins>
 			<plugin>
@@ -74,11 +72,10 @@
 					</includes>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
-				<!-- check for correct source file headers during test phase: http://code.google.com/p/maven-license-plugin/wiki/HowTo -->
-				<!-- run "mvn license:check -Dyear=2011" to check -->
-				<!-- run "mvn license:format -Dyear=2011" to add to the files -->
+				<!-- run "mvn license:check" to check -->
+				<!-- run "mvn license:format" to add to the files -->
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
 				<version>1.9.0</version>
@@ -104,18 +101,15 @@
 				<executions>
 					<execution>
 						<phase>test</phase>
-						<!-- test will fail if license headers are not correct, run license:format 
-						to add the headers. -->
 						<goals>
 							<goal>check</goal>
-							<!-- <goal>format</goal> -->
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<!-- Here some profiles for specific environments Naming convention: env-[environmentname] 
 		means you can simple activate the profile by adding -Denv=[environmentname] 
@@ -148,7 +142,6 @@
 			<artifactId>52n-wps-server</artifactId>
 		</dependency>
 
-		<!-- R dependencies -->
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-commons</artifactId>
@@ -161,21 +154,7 @@
 			<groupId>org.rosuda</groupId>
 			<artifactId>RserveEngine</artifactId>
 		</dependency>
-		<!-- end R dependencies -->
 
 	</dependencies>
-	<!-- here are default properties, can be overwritten by profiles -->
-
-	<repositories>
-		<repository>
-			<!-- Tentative local repo for libs that are not migrated to Maven dependency 
-			mechanism and available in online repositories. -->
-			<id>lib-repository</id>
-			<name>Local Repository</name>
-			<url>file:///${basedir}/lib-repository/</url>
-		</repository>
-
-	</repositories>
-
 
 </project>
