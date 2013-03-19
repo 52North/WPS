@@ -8,7 +8,6 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.n52.wps</groupId>
 	<artifactId>52n-wps-r</artifactId>
 	<packaging>jar</packaging>
 	<name>52North WPS4R</name>
@@ -19,10 +18,10 @@
 	<mailingLists>
 		<mailingList>
 			<name>Geoprocessing</name>
-			<archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
+			<archive>http://list.52north.org/pipermail/geoprocessingservices/</archive>
 			<post>geoprocessingservices@52north.org</post>
-			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
-			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+			<subscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+			<unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
 		</mailingList>
 	</mailingLists>
 	<developers>
@@ -114,7 +113,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
 	

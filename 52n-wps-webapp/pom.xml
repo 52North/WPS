@@ -14,17 +14,17 @@
 	<mailingLists>
 		<mailingList>
 			<name>Geoprocessing</name>
-			<archive>http://www2.52north.org/pipermail/geoprocessingservices/</archive>
+			<archive>http://list.52north.org/pipermail/geoprocessingservices/</archive>
 			<post>geoprocessingservices@52north.org</post>
-			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
-			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
+			<subscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</subscribe>
+			<unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessingservices</unsubscribe>
 		</mailingList>
 		<mailingList>
 			<name>Geoprocessing Commits</name>
-			<archive>http://www2.52north.org/pipermail/geoprocessing-commits</archive>
+			<archive>http://list.52north.org/pipermail/geoprocessing-commits</archive>
 			<post>Geoprocessing-commits@52north.org</post>
-			<subscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
-			<unsubscribe>http://www2.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
+			<subscribe>http://list.52north.org/mailman/listinfo/geoprocessing-commits</subscribe>
+			<unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
 		</mailingList>
 	</mailingLists>
 	<developers>
