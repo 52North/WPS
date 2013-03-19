@@ -162,6 +162,8 @@ h3 {
 		requests[39]=datafolder+"R_meuse.xml";
 		requests[40]=datafolder+"R_meuse2.xml";
 		requests[41]=datafolder+"R_EO2H_AirQualitySaxony.xml";
+		
+		requests[100]=datafolder+"mc_echo.xml";
 
 		//fill the select element
 		var selRequest = document.getElementById("selRequest");
@@ -172,7 +174,7 @@ h3 {
 			if(requests[i] == placeholderIndex) {
 				//skip this one
 			}
-			else {
+			else if(requests[i]) {
 				try {
 					
 					var name = requests[i].substring(requests[i].lastIndexOf("/") + 1, requests[i].length);
@@ -185,6 +187,9 @@ h3 {
 					var requestTextarea = document.getElementById('requestTextarea').value = "";
 					requestTextarea.value+=txt;
 				}
+			}
+			else {
+				// request is null or empty string - do nothing
 			}
 		}
 		

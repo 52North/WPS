@@ -465,15 +465,15 @@
 			<Property name="Script_Dir" active="true">R\scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R\R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R\resources</Property>
-			<Property name="R_Work_Dir" active="true">default</Property>
+			<Property name="R_Work_Dir" active="true">D:\TEMP</Property>
 			<Property name="Enable_Batch_Start" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
-			
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
-			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="false">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
@@ -982,11 +982,11 @@
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
 		
-    <!--		
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
 			<Property name="REPOSITORY_FEED_URL" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
+			<Property name="DropInFolder" active="true">mc\drop-in</Property>
+			<Property name="DropInCheckIntervalSecs" active="true">10</Property>
 		</Repository>
-		-->
 	
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
