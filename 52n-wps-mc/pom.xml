@@ -16,31 +16,12 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<includes>
-					<include>**/*.xml</include>
-				</includes>
 			</resource>
 		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>
-							org/n52/wps/server/**
-						</include>
-						<include>
-							org/n52/wps/util/**
-						</include>
-						<include>
-							org/n52/wps/mc/**
-						</include>
-						<include>
-							de/tudresden/gis/geoprocessing/movingcode/**
-						</include>
-					</includes>
-				</configuration>
 			</plugin>
   		
 			<!-- run "mvn license:check -Dyear=2011" to check -->
