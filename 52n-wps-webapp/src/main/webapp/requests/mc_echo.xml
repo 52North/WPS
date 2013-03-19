@@ -10,7 +10,13 @@
 	<wps:DataInputs>
 		<wps:Input>
 			<ows:Identifier>CALL</ows:Identifier>
-			<wps:Reference xlink:href="http://gis.geo.tu-dresden.de/demodaten/test.txt" />
+			<wps:Data>
+				<wps:ComplexData>
+					So Much Drama in the PhD
+
+					http://www.monzy.com/intro/drama_lyrics.html
+				</wps:ComplexData>
+			</wps:Data>
 		</wps:Input>
 	</wps:DataInputs>
 
