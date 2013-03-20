@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>52n-wps-parent</artifactId>
 		<groupId>org.n52.wps</groupId>
@@ -8,7 +9,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-commons</artifactId>
 	<name>52north 52n-wps-commons</name>
-	<description>The project 52 north 52n-wps-server does something with JAVA.</description>
+	<description>Common classes for the WPS server modules.</description>
+	<inceptionYear>2006</inceptionYear>
+	
 	<build>
 		<resources>
 			<resource>
@@ -27,6 +30,40 @@
 					<execution>
 						<goals>
 							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- run "mvn license:check" to check -->
+				<!-- run "mvn license:format" to add to the files -->
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.9.0</version>
+				<configuration>
+					<header>src/main/resources/52N_license.txt</header>
+					<excludes>
+						<exclude>**/log4j*</exclude>
+						<exclude>**/test/resources/**</exclude>
+					</excludes>
+					<includes>
+						<include>**/*.java</include>
+						<include>**/*.properties</include>
+						<include>**/*.jsp</include>
+						<include>**/*.js</include>
+						<include>**/*.xml</include>
+						<include>**/*.xsl</include>
+					</includes>
+					<strictCheck>true</strictCheck>
+					<properties>
+						<year>${project.inceptionYear}</year>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>test</phase>
+						<goals>
+							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
