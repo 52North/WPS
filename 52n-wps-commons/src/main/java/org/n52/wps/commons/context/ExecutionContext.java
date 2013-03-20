@@ -45,17 +45,17 @@ public class ExecutionContext {
     }
 
     public ExecutionContext(List< ? extends OutputDefinitionType> outputs) {
-        tempFolderName = UUID.randomUUID().toString();
+        this.tempFolderName = UUID.randomUUID().toString();
         this.outputDefinitionTypes = Collections.unmodifiableList(outputs != null ? outputs
                                                                                  : Arrays.asList(new OutputDefinitionType[0]));
     }
 
     public String getTempDirectoryPath() {
 
-        return System.getProperty("java.io.tmpdir") + tempFolderName;
+        return System.getProperty("java.io.tmpdir") + this.tempFolderName;
     }
 
     public List<OutputDefinitionType> getOutputs() {
-        return outputDefinitionTypes;
+        return this.outputDefinitionTypes;
     }
 }

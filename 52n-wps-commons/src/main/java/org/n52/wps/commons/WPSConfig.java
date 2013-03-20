@@ -27,11 +27,11 @@ package org.n52.wps.commons;
 // FvK: added Property Change support
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -41,7 +41,6 @@ import javax.servlet.ServletConfig;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -68,19 +67,20 @@ public class WPSConfig implements Serializable {
 
     public static final String CONFIG_FILE_NAME = "wps_config.xml";
     private static final String CONFIG_FILE_DIR = "config";
+    private static final String URL_DECODE_ENCODING = "UTF-8";
 
     private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
         wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
 
         // FvK: added Property Change support
-        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     private WPSConfig(InputStream resourceAsStream) throws XmlException, IOException {
         wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(resourceAsStream).getWPSConfiguration();
 
         // FvK: added Property Change support
-        propertyChangeSupport = new PropertyChangeSupport(this);
+        this.propertyChangeSupport = new PropertyChangeSupport(this);
     }
 
     /**
@@ -90,7 +90,7 @@ public class WPSConfig implements Serializable {
      * @param listener
      */
     public void addPropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+        this.propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
     }
 
     /**
@@ -100,31 +100,32 @@ public class WPSConfig implements Serializable {
      * @param listener
      */
     public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+        this.propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
     }
 
     // For Testing purpose only
     public void notifyListeners() {
-        propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null, null);
+        this.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null, null);
     }
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(wpsConfigXMLBeans.xmlText());
-    }
-
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        try {
-            String wpsConfigXMLBeansAsXml = (String) oos.readObject();
-            XmlObject configXmlObject = XmlObject.Factory.parse(wpsConfigXMLBeansAsXml);
-            WPSConfigurationDocument configurationDocument = WPSConfigurationDocument.Factory.newInstance();
-            configurationDocument.addNewWPSConfiguration().set(configXmlObject);
-            wpsConfig = new WPSConfig(new ByteArrayInputStream(configurationDocument.xmlText().getBytes()));
-        }
-        catch (XmlException e) {
-            LOGGER.error(e.getMessage());
-            throw new IOException(e.getMessage());
-        }
-    }
+    // private synchronized static void writeObject(java.io.ObjectOutputStream oos) throws IOException {
+    // oos.writeObject(wpsConfigXMLBeans.xmlText());
+    // }
+    //
+    // private synchronized static void readObject(java.io.ObjectInputStream oos) throws IOException,
+    // ClassNotFoundException {
+    // try {
+    // String wpsConfigXMLBeansAsXml = (String) oos.readObject();
+    // XmlObject configXmlObject = XmlObject.Factory.parse(wpsConfigXMLBeansAsXml);
+    // WPSConfigurationDocument configurationDocument = WPSConfigurationDocument.Factory.newInstance();
+    // configurationDocument.addNewWPSConfiguration().set(configXmlObject);
+    // wpsConfig = new WPSConfig(new ByteArrayInputStream(configurationDocument.xmlText().getBytes()));
+    // }
+    // catch (XmlException e) {
+    // LOGGER.error(e.getMessage());
+    // throw new IOException(e.getMessage());
+    // }
+    // }
 
     /**
      * WPSConfig is a singleton. If there is a need for reinitialization, use this path.
@@ -303,7 +304,13 @@ public class WPSConfig implements Serializable {
         URL configPathURL = WPSConfig.class.getClassLoader().getResource(CONFIG_FILE_NAME);
         if (configPathURL != null) {
             String config = configPathURL.getFile();
-            config = URLDecoder.decode(config);
+            try {
+                config = URLDecoder.decode(config, URL_DECODE_ENCODING);
+            }
+            catch (UnsupportedEncodingException e) {
+                LOGGER.error("Could not devode URL to get config from class path.", e);
+                return null;
+            }
             return config;
         }
         return null;
@@ -314,7 +321,16 @@ public class WPSConfig implements Serializable {
         int index1 = domain.indexOf("52n-wps-parent");
         if (index1 > 0) {
             // try to load from classpath
-            String path = URLDecoder.decode(domain.substring(0, index1 + 14));
+            String ds = domain.substring(0, index1 + 14);
+            String path;
+            try {
+                path = URLDecoder.decode(ds, URL_DECODE_ENCODING);
+            }
+            catch (UnsupportedEncodingException e) {
+                LOGGER.error("could not decode URL", e);
+                return null;
+            }
+            
             path = path + File.separator + "52n-wps-webapp" + File.separator + "target";
             File f = new File(path);
             String[] dirs = f.getAbsoluteFile().list();
@@ -336,7 +352,16 @@ public class WPSConfig implements Serializable {
         int index1 = domain.indexOf("52n-wps-parent");
         if (index1 > 0) {
             // try to load from classpath
-            String path = URLDecoder.decode(domain.substring(0, index1 + 14));
+            String ds = domain.substring(0, index1 + 14);
+            String path;
+            try {
+                path = URLDecoder.decode(ds, URL_DECODE_ENCODING);
+            }
+            catch (UnsupportedEncodingException e) {
+                LOGGER.error("could not decode URL", e);
+                return null;
+            }
+            
             path = path + File.separator + "52n-wps-webapp";
             File f = new File(path);
             String[] dirs = f.getAbsoluteFile().list();

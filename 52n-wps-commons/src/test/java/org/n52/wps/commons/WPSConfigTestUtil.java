@@ -47,7 +47,9 @@ public class WPSConfigTestUtil {
                 
             } finally {
                 if (configInputStream != null) {
-                    try { configInputStream.close(); } catch (IOException ignore) {}
+                    try { configInputStream.close(); } catch (IOException ignore) {
+                        // do nothing
+                    }
                 }
             }
     }

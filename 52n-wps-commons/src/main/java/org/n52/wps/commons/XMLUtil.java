@@ -100,11 +100,12 @@ public class XMLUtil {
 
     private static void copyXML(XMLStreamReader xmlStreamReader, XMLStreamWriter xmlStreamWriter, boolean indent) throws XMLStreamException {
         try {
-            xmlStreamReader = new XMLUtil.WhiteSpaceRemovingDelegate(xmlStreamReader);
+            WhiteSpaceRemovingDelegate xmlStreamReader2 = new XMLUtil.WhiteSpaceRemovingDelegate(xmlStreamReader);
+            XMLStreamWriter xmlStreamWriter2 = xmlStreamWriter;
             if (indent) {
-                xmlStreamWriter = new IndentingXMLStreamWriter(xmlStreamWriter);
+                xmlStreamWriter2 = new IndentingXMLStreamWriter(xmlStreamWriter);
             }
-            XMLStreamUtils.copy(xmlStreamReader, xmlStreamWriter);
+            XMLStreamUtils.copy(xmlStreamReader2, xmlStreamWriter2);
         }
         finally {
             if (xmlStreamReader != null) {

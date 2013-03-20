@@ -87,7 +87,7 @@ public class ExceptionReport extends Exception {
         ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
         net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
         ExceptionType ex = exceptionReport.addNewException();
-        ex.setExceptionCode(errorKey);
+        ex.setExceptionCode(this.errorKey);
         ex.addExceptionText(this.getMessage());
         // Adding additional Java exception
         ExceptionType stackTrace = exceptionReport.addNewException();
@@ -100,13 +100,13 @@ public class ExceptionReport extends Exception {
             stackTraceRootException.addExceptionText(encodeStackTrace(this.getCause().getStackTrace()));
         }
         stackTraceRootException.setExceptionCode("JAVA_RootCause");
-        if (locator != null) {
-            ex.setLocator(locator);
+        if (this.locator != null) {
+            ex.setLocator(this.locator);
         }
         return report;
     }
 
-    private String encodeStackTrace(StackTraceElement[] elems) {
+    private static String encodeStackTrace(StackTraceElement[] elems) {
         StringBuffer exceptionBuffer = new StringBuffer();
         for (StackTraceElement stackTraceElem : elems) {
             exceptionBuffer.append(stackTraceElem.getClassName() + "." + stackTraceElem.getMethodName() + ":"
