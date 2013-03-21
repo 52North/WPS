@@ -21,27 +21,24 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
-package org.n52.wps.server.r.syntax;
 
-/**
- * Separators used in Annotations
- * 
- */
-public enum RSeperator {
-    STARTKEY_SEPARATOR(":"), ATTRIBUTE_SEPARATOR(","), ATTRIBUTE_VALUE_SEPARATOR("="), ANNOTATION_END(";");
+package org.n52.wps.server.r.util;
 
-    private String key;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 
-    private RSeperator(String key) {
-        this.key = key.toLowerCase();
+public class RSessionInfo {
+
+    public static String getVersion(RConnection rCon) throws RserveException, REXPMismatchException {
+        return getConsoleOutput(rCon, "R.version[\"version.string\"]");
     }
 
-    public String getKey() {
-        return this.key;
-    }
-    
-    public String toString(){
-    	return getKey();
+    public static String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException {
+        return getConsoleOutput(rCon, "sessionInfo()");
     }
 
+    private static String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
+        return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
+    }
 }

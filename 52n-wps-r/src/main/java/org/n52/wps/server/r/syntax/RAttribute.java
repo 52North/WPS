@@ -56,11 +56,11 @@ public enum RAttribute {
 	}
 
 	public String getKey() {
-		return key;
+		return this.key;
 	}
 
 	public Object getDefValue() {
-		return defValue;
+		return this.defValue;
 	}
 
 	/**
@@ -68,7 +68,7 @@ public enum RAttribute {
 	 *         there has to be a standard value or a value in R Annotion given
 	 */
 	public boolean isMandatory() {
-		return mandatory;
+		return this.mandatory;
 	}
 
 	private boolean mandatory;

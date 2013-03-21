@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.wps.server.r.data;
 
 import java.io.File;
@@ -35,24 +36,21 @@ import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
 
 public class R_Resource {
-	
+
     private static Logger LOGGER = Logger.getLogger(R_Resource.class);
-	
-	String resourceValue;
-	
 
+    String resourceValue;
 
-	public R_Resource(String resourceValue){
-		this.resourceValue = resourceValue;
-	}
-	
-	public String getResourceValue() {
-		return resourceValue;
-	}
-		
-	
+    public R_Resource(String resourceValue) {
+        this.resourceValue = resourceValue;
+    }
+
+    public String getResourceValue() {
+        return this.resourceValue;
+    }
+
     public URL getFullResourceURL() {
-        String fullResourceURL = R_Config.getInstance().getResourceDirURL() + "/" + resourceValue;
+        String fullResourceURL = R_Config.getInstance().getResourceDirURL() + "/" + this.resourceValue;
 
         URL resourceURL;
         try {
@@ -72,21 +70,22 @@ public class R_Resource {
 
         return resourceURL;
     }
-    
-    
+
     public File getFullResourcePath() {
         String fullResourcePath = null;
-		try {
-			fullResourcePath = R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR) + File.separatorChar + resourceValue;
-		} catch (ExceptionReport e) {
-            LOGGER.error("Cannot locate resource File: " + resourceValue, e);
-			e.printStackTrace();
-		}
+        try {
+            fullResourcePath = R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR)
+                    + File.separatorChar + this.resourceValue;
+        }
+        catch (ExceptionReport e) {
+            LOGGER.error("Cannot locate resource File: " + this.resourceValue, e);
+            e.printStackTrace();
+        }
 
         File resourceFile = new File(fullResourcePath);
-        if(!resourceFile.exists()){
-            LOGGER.error("Cannot locate resource File: " + resourceValue +", path: "+fullResourcePath);
-        	return null;
+        if ( !resourceFile.exists()) {
+            LOGGER.error("Cannot locate resource File: " + this.resourceValue + ", path: " + fullResourcePath);
+            return null;
         }
 
         // FIXME resource existing testing
@@ -99,8 +98,7 @@ public class R_Resource {
         return resourceFile;
     }
 
-
-	private static boolean urlResourceExists(URL url) {
+    private static boolean urlResourceExists(URL url) {
         HttpURLConnection conn = null;
 
         try {
@@ -113,11 +111,11 @@ public class R_Resource {
             LOGGER.error("Could not open connection to URL " + url, e);
             return false;
         }
-        
+
         // does not work
         long length = conn.getContentLength();
         System.out.println(length);
-        
+
         try {
             conn.connect();
         }
@@ -137,15 +135,14 @@ public class R_Resource {
         }
 
         return (code == HttpURLConnection.HTTP_OK);
-        
+
         // last resort
     }
 
-	@Override
-	public String toString() {
-		return "R_Resource [resourceValue=" + resourceValue
-				+ ", getFullResourceURL()=" + getFullResourceURL()
-				+ ", getFullResourcePath()=" + getFullResourcePath() + "]";
-	}
+    @Override
+    public String toString() {
+        return "R_Resource [resourceValue=" + this.resourceValue + ", getFullResourceURL()=" + getFullResourceURL()
+                + ", getFullResourcePath()=" + getFullResourcePath() + "]";
+    }
 
 }

@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.wps.server.r.data;
 
 import org.n52.wps.io.data.IData;
@@ -28,65 +29,66 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
 public class CustomDataType implements RTypeDefinition {
 
-	String key;
-	String processKey;
-	String encoding;
-	String schema;
-	boolean isComplex;
-	
-	public void setComplex(boolean isComplex) {
-		this.isComplex = isComplex;
-	}
+    String key;
+    String processKey;
+    String encoding;
+    String schema;
+    boolean isComplex;
 
-	@Override
-	public String getKey() {
-		return key;
-	}
+    public void setComplex(boolean isComplex) {
+        this.isComplex = isComplex;
+    }
 
-	@Override
-	public String getProcessKey() {
-		return processKey;
-	}
+    @Override
+    public String getKey() {
+        return this.key;
+    }
 
-	@Override
-	public boolean isComplex() {
-		return isComplex;
-	}
+    @Override
+    public String getProcessKey() {
+        return this.processKey;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    @Override
+    public boolean isComplex() {
+        return this.isComplex;
+    }
 
-	public void setProcessKey(String processKey) {
-		this.processKey = processKey;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setProcessKey(String processKey) {
+        this.processKey = processKey;
+    }
 
-	public void setSchema(String schema) {
-		schema = this.schema;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
-	@Override
-	public String getEncoding() {
-		return "base64";
-	}
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
-	@Override
-	public String getSchema() {
-		return schema;
-	}
+    @Override
+    public String getEncoding() {
+        return "base64";
+    }
 
-	@Override
-	public Class<? extends IData> getIDataClass() {
-		
-		return GenericFileDataBinding.class;
-	}
-	
-	public String toString(){
-		return key + " - " + processKey + " - " + encoding + " - " + schema + " - " + isComplex;
-	}
+    @Override
+    public String getSchema() {
+        return this.schema;
+    }
+
+    @Override
+    public Class< ? extends IData> getIDataClass() {
+
+        return GenericFileDataBinding.class;
+    }
+
+    public String toString() {
+        return this.key + " - " + this.processKey + " - " + this.encoding + " - " + this.schema + " - "
+                + this.isComplex;
+    }
 
 }

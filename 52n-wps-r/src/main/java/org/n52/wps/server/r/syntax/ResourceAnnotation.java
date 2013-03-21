@@ -41,10 +41,10 @@ public class ResourceAnnotation extends RAnnotation {
 	}
 
 	public List<R_Resource> getResources() {
-		if(resources == null)
-			resources = new ArrayList<R_Resource>();
+		if(this.resources == null)
+			this.resources = new ArrayList<R_Resource>();
 			
-		return resources;
+		return this.resources;
 	}
 
  

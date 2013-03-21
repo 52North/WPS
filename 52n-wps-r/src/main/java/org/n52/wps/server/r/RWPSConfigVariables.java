@@ -24,7 +24,6 @@
 
 package org.n52.wps.server.r;
 
-import org.n52.wps.server.ExceptionReport;
 
 public enum RWPSConfigVariables {
 

@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.wps.server.r.syntax;
 
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
 
 /**
  * Describes each annotation type considering attributes, their order and behavior
@@ -43,24 +43,23 @@ public enum RAnnotationType {
                         // RAttribute.METADATA,
                         RAttribute.DEFAULT_VALUE,
                         RAttribute.MIN_OCCURS,
-                        RAttribute.MAX_OCCURS)), 
-                        
-                        
+                        RAttribute.MAX_OCCURS)),
+
     OUTPUT(Arrays.asList(RAttribute.OUTPUT_START,
-                        RAttribute.IDENTIFIER,
-                        RAttribute.TYPE,
-                        RAttribute.TITLE,
-                        RAttribute.ABSTRACT
+                         RAttribute.IDENTIFIER,
+                         RAttribute.TYPE,
+                         RAttribute.TITLE,
+                         RAttribute.ABSTRACT
     // RAttribute.METADATA
-    )), 
-    
+    )),
+
     DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START,
     // TODO: Meaning of identifier???? -- doesn't have a meaning yet..
-                                  RAttribute.IDENTIFIER,
-                                  RAttribute.TITLE,
-                                  RAttribute.ABSTRACT,
-                                  RAttribute.AUTHOR)),
-    
+                              RAttribute.IDENTIFIER,
+                              RAttribute.TITLE,
+                              RAttribute.ABSTRACT,
+                              RAttribute.AUTHOR)),
+
     RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST));
 
     private HashMap<String, RAttribute> attributeLut = new HashMap<String, RAttribute>();
@@ -73,34 +72,34 @@ public enum RAnnotationType {
         this.attributeSequence = attributeSequence;
 
         for (RAttribute attribute : attributeSequence) {
-            attributeLut.put(attribute.getKey(), attribute);
+            this.attributeLut.put(attribute.getKey(), attribute);
             if (attribute.isMandatory()) {
-                mandatory.add(attribute);
+                this.mandatory.add(attribute);
             }
         }
     }
 
     public RAttribute getStartKey() {
-        return startKey;
+        return this.startKey;
     }
 
     public RAttribute getAttribute(String key) throws RAnnotationException {
-        key = key.toLowerCase();
-        if (attributeLut.containsKey(key))
-            return attributeLut.get(key);
-        else
-            throw new RAnnotationException("Annotation for " + this + " (" + this.startKey
-                    + " ...) contains no key named: " + key + ".");
+        String k = key.toLowerCase();
+        if (this.attributeLut.containsKey(k))
+            return this.attributeLut.get(k);
+
+        throw new RAnnotationException("Annotation for " + this + " (" + this.startKey
+                + " ...) contains no key named: " + key + ".");
     }
 
     public Iterable<RAttribute> getAttributeSequence() {
-        return attributeSequence;
+        return this.attributeSequence;
 
     }
 
     /**
-     * Checks if Annotation content is valid for process description and adds attributes / standard values
-     * if necessary
+     * Checks if Annotation content is valid for process description and adds attributes / standard values if
+     * necessary
      * 
      * @param key
      *        / value pairs given in the annotation from RSkript
@@ -118,8 +117,7 @@ public enum RAnnotationType {
         }
         catch (NumberFormatException e) {
             throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), "
-                    + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey()
-                    + e.getMessage());
+                    + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey() + e.getMessage());
         }
 
         if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {

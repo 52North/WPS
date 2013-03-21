@@ -30,8 +30,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-//import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -41,40 +39,46 @@ import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
-import org.rosuda.REngine.REXP;
+import org.n52.wps.server.r.metadata.RAnnotationParser;
+import org.n52.wps.server.r.util.RConnector;
+import org.n52.wps.server.r.util.RSessionInfo;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+
+//import java.nio.file.Files;
 
 public class R_Config {
 
     private static final int TEMPDIR_NAME_LENGTH = 8;
 
+    private static final String DEFAULT_RSERVE_HOST = "localhost";
+
     private static Logger LOGGER = Logger.getLogger(R_Config.class);
 
-    public final String SCRIPT_FILE_EXTENSION = "R";
+    public static final String SCRIPT_FILE_EXTENSION = "R";
 
-    public final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
+    public static final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
 
-    public final String WKN_PREFIX = "org.n52.wps.server.r.";
-
-    // important directories:
+    public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
     // FIXME for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
     // servlet, which is probably a better solution to keep track of files, see
     // http://www.jguru.com/faq/view.jsp?EID=10646
-    private final String R_BASE_DIR = "R";
+    private static final String R_BASE_DIR = "R";
 
     // private final String WORK_DIR = "workdir";
 
-    private final String UTILS_DIR = "utils";
+    private static final String UTILS_DIR = "utils";
 
-    public String SCRIPT_DIR = null;
+    private static final int DEFAULT_RSERVE_PORT = 6311;
+
+    public static String SCRIPT_DIR = null;
 
     /**
      * Base directory for WPS4R resources
      */
-    public String BASE_DIR_FULL = new File(WebProcessingService.BASE_DIR, R_BASE_DIR).getAbsolutePath();
+    public String BASE_DIR_FULL = new File(WebProcessingService.BASE_DIR, this.R_BASE_DIR).getAbsolutePath();
 
     /**
      * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
@@ -83,34 +87,30 @@ public class R_Config {
     // public String WORK_DIR_FULL = new File(BASE_DIR_FULL, WORK_DIR).getAbsolutePath();
 
     /** R scripts with utility functions to pre-load */
-    public String UTILS_DIR_FULL = new File(BASE_DIR_FULL, UTILS_DIR).getAbsolutePath();
+    public String UTILS_DIR_FULL = new File(this.BASE_DIR_FULL, this.UTILS_DIR).getAbsolutePath();
 
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
     // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
     // public static String SCRIPT_DIR_URL = "wps/rscripts";
 
-    /** Host IP for Rserve **/
-    public String RSERVE_HOST = "localhost";
+    public String rServeHost = DEFAULT_RSERVE_HOST;
 
-    /** Port were Rserve is listening **/
-    public int RSERVE_PORT = 6311;
+    public int rServePort = DEFAULT_RSERVE_PORT;
 
-    /** Applied user ID for Rserve (if login needed) **/
-    public String RSERVE_USER;
+    public String rServeUser;
 
-    /** Applied user password for Rserve (if login needed) **/
-    public String RSERVE_PASSWORD;
+    public String rServePassword;
 
     /** Starts R serve via batch file **/
     public boolean enableBatchStart = false;
 
-    // private String batchStartFile = "Rserve.bat";
-
-    public String RESOURCE_DIR;
+    public String resourceDirectory;
 
     private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
     private static R_Config instance = null;
+
+    private RConnector connector = new RConnector();
 
     private R_Config() {
         // singleton pattern > private constructor
@@ -118,7 +118,7 @@ public class R_Config {
         Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
         for (Property property : rConfig) {
             if (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString())) {
-                SCRIPT_DIR = property.getStringValue();
+                this.SCRIPT_DIR = property.getStringValue();
             }
         }
     }
@@ -130,71 +130,12 @@ public class R_Config {
         return instance;
     }
 
-    public RConnection openRConnection() throws RserveException {
-        RConnection con = null;
-        try {
-            con = newConnection();
-        }
-        catch (RserveException e) {
-            if (e.getMessage().startsWith("Cannot connect") && enableBatchStart) {
-                try {
-                    startRserve();
-                    // try to establish RServe connection
-                    int attempt = 1;
-                    while (attempt <= 5) {
-                        try {
-                            Thread.sleep(1000); // wait for R to startup, then establish connection
-                            con = newConnection();
-                            break;
-                        }
-                        catch (RserveException rse) {
-                            if (attempt == 5) {
-                                throw e;
-                            }
-
-                            attempt++;
-                        }
-
-                    }
-                }
-                catch (Exception e2) {
-                    LOGGER.error("Attempt to start Rserve and establish a connection failed", e2);
-                    throw e;
-                }
-            }
-            else
-                throw e;
-        }
-        finally {
-            if (con != null && con.needLogin())
-                con.login(RSERVE_USER, RSERVE_PASSWORD);
-        }
-        return con;
-    }
-
-    private RConnection newConnection() throws RserveException {
-        LOGGER.debug("Creating new RConnection");
-        
-        RConnection con;
-        con = new RConnection(RSERVE_HOST, RSERVE_PORT);
-        RUtil.log(con, "New connection from WPS4R");
-
-        REXP info = con.eval("capture.output(sessionInfo())");
-        try {
-            LOGGER.info("sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
-        }
-        catch (REXPMismatchException e) {
-            // do nothing
-        }
-        return con;
-    }
-
     public void setConfigVariable(RWPSConfigVariables key, String value) {
-        configVariables.put(key, value);
+        this.configVariables.put(key, value);
     }
 
     public String getConfigVariable(RWPSConfigVariables key) {
-        return configVariables.get(key);
+        return this.configVariables.get(key);
     }
 
     public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport {
@@ -212,70 +153,12 @@ public class R_Config {
         return testFile.getAbsolutePath();
     }
 
-    /**
-     * Captures the Console printout of R for a specific string
-     * 
-     * @param rCon
-     * @param cmd
-     *        command which has been used
-     * @return R text output as formatted string
-     * @throws RserveException
-     * @throws REXPMismatchException
-     */
-    public String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
-        return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
-
-    }
-
-    /**
-     * Retrieves R session info from current R session
-     * 
-     * @param rcon
-     *        Open R connection
-     * @return R text output as formatted string
-     * @throws RserveException
-     * @throws REXPMismatchException
-     * 
-     * @see getConsoleOutput(RConnection rCon, String cmd)
-     */
-    public String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException {
-        return getConsoleOutput(rCon, "sessionInfo()");
-    }
-
-    /**
-     * "Quiet" retrieval of the R session information
-     * 
-     * @return R text output as formatted string
-     * @throws RuntimeException
-     *         if session info cannot be retrieved
-     * @see getConsoleOutput(RConnection rCon, String cmd)
-     * @see getSessionInfo(RConnection rCon)
-     */
-    public String getSessionInfo() {
-        RConnection rCon = null;
-        String sessionInfo = "";
-        try {
-            rCon = openRConnection();
-            sessionInfo = getSessionInfo(rCon);
-        }
-        catch (Exception e) {
-            LOGGER.error("Could not open session.", e);
-            throw new RuntimeException("Error: R session info cannot be retrieved.", e);
-        }
-        finally {
-            if (rCon != null)
-                rCon.close();
-        }
-
-        return sessionInfo;
-    }
-
     public String getSessionInfoURL() {
         return getUrlPathUpToWebapp() + "/R/sessioninfo.jsp";
     }
 
     public String getResourceDirURL() {
-        return getUrlPathUpToWebapp() + "/" + RESOURCE_DIR.replace("\\", "/");
+        return getUrlPathUpToWebapp() + "/" + this.resourceDirectory.replace("\\", "/");
     }
 
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
@@ -291,7 +174,7 @@ public class R_Config {
         if (fname == null)
             return null;
 
-        URL url = new URL(getUrlPathUpToWebapp() + "/" + SCRIPT_DIR.replace("\\", "/") + "/" + fname);
+        URL url = new URL(getUrlPathUpToWebapp() + "/" + this.SCRIPT_DIR.replace("\\", "/") + "/" + fname);
         return url;
     }
 
@@ -316,48 +199,6 @@ public class R_Config {
         String urlString = getUrlPathUpToWebapp() + "/" + path;
 
         return new URL(urlString);
-    }
-
-    /**
-     * start RServe on Linux
-     * 
-     * @throws RserveException
-     * @throws InterruptedException
-     * @throws IOException
-     */
-    private void startRServeOnLinux() throws RserveException, InterruptedException, IOException {
-        String rserveStartCMD = "R CMD Rserve --vanilla --slave";
-        Runtime.getRuntime().exec(rserveStartCMD).waitFor();
-    }
-
-    /**
-     * start RServe on Windows
-     * 
-     * @throws RserveException
-     * @throws IOException
-     */
-    private void startRServeOnWindows() throws RserveException, IOException {
-        String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
-        Runtime.getRuntime().exec(rserveStartCMD);
-    }
-
-    /**
-     * tries to start Rserve (runs "Rserve.bat" if batchfile.exists() && RSERVE_HOST == "localhost")
-     * 
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws RserveException
-     */
-    public void startRserve() throws RserveException, InterruptedException, IOException {
-        if (enableBatchStart) {
-            LOGGER.debug("Trying to start Rserve locally");
-            if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
-                startRServeOnLinux();
-            }
-            else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
-                startRServeOnWindows();
-            }
-        }
     }
 
     /**
@@ -387,7 +228,7 @@ public class R_Config {
         int index = fileName.lastIndexOf('.');
         if (index > 0)
             fileName = fileName.substring(0, index);
-        return WKN_PREFIX + fileName;
+        return this.WKN_PREFIX + fileName;
     }
 
     /**
@@ -397,33 +238,33 @@ public class R_Config {
      * @throws IOException
      */
     public File wknToFile(String wkn) throws IOException {
-        String fname = wkn.replaceFirst(WKN_PREFIX, "");
+        String fname = wkn.replaceFirst(this.WKN_PREFIX, "");
         fname = getScriptDirFullPath() + "/" + fname;
-        fname = fname + SCRIPT_FILE_SUFFIX;
+        fname = fname + this.SCRIPT_FILE_SUFFIX;
         File out = new File(fname);
         if (out.isFile() && out.canRead()) {
             return out;
         }
-        else
-            throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
+
+        throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
     }
 
-    public String createTemporaryWPSWorkDir() throws IOException {
+    public String createTemporaryWPSWorkDir() {
         File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-wps-workdir-tmp-"
                 + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
         tempdir.mkdir();
         return tempdir.getAbsolutePath();
     }
 
-//    public String createTemporaryRWorkDir() throws IOException {
-//        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-r-workdir-"
-//                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
-//        tempdir.mkdir();
-//        return tempdir.getAbsolutePath();
-//    }
+    // public String createTemporaryRWorkDir() throws IOException {
+    // File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-r-workdir-"
+    // + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // + ".tmp");
+    // tempdir.mkdir();
+    // return tempdir.getAbsolutePath();
+    // }
 
     public String getScriptDirFullPath() {
-        return new File(WebProcessingService.BASE_DIR, SCRIPT_DIR).getAbsolutePath();
+        return new File(WebProcessingService.BASE_DIR, this.SCRIPT_DIR).getAbsolutePath();
         // return SCRIPT_DIR_FULL;
     }
 
@@ -474,5 +315,9 @@ public class R_Config {
         catch (Exception e1) {
             e1.printStackTrace();
         }
+    }
+
+    public RConnection openRConnection() throws RserveException {
+        return this.connector.getNewConnection(this.enableBatchStart, this.rServeHost, this.rServePort, this.rServeUser, this.rServePassword);
     }
 }

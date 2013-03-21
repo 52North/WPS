@@ -38,7 +38,6 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ITransactionalAlgorithmRepository;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.info.RProcessInfo;
-import org.n52.wps.server.request.ExecuteRequest;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
@@ -60,7 +59,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public LocalRAlgorithmRepository() {
         LOGGER.info("Initializing LocalRAlgorithmRepository");
-        algorithmMap = new HashMap<String, String>();
+        this.algorithmMap = new HashMap<String, String>();
 
         //Check WPS Config properties:
         RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
@@ -175,7 +174,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public IAlgorithm getAlgorithm(String className) {
         try {
-            return loadAlgorithm(algorithmMap.get(className));
+            return loadAlgorithm(this.algorithmMap.get(className));
         }
         catch (Exception e) {
             String message = "Could not load algorithm for class name " + className;
@@ -187,8 +186,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     public Collection<IAlgorithm> getAlgorithms() {
         Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
         try {
-            for (String algorithmClasses : algorithmMap.values()) {
-                String algName = algorithmMap.get(algorithmClasses);
+            for (String algorithmClasses : this.algorithmMap.values()) {
+                String algName = this.algorithmMap.get(algorithmClasses);
                 IAlgorithm algorithm = loadAlgorithm(algName);
                 resultList.add(algorithm);
             }
@@ -203,17 +202,17 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     }
 
     public Collection<String> getAlgorithmNames() {
-        return new ArrayList<String>(algorithmMap.keySet());
+        return new ArrayList<String>(this.algorithmMap.keySet());
     }
 
     public boolean containsAlgorithm(String className) {
-        return algorithmMap.containsKey(className);
+        return this.algorithmMap.containsKey(className);
     }
 
-    private IAlgorithm loadAlgorithm(String wellKnownName) throws Exception {
+    private static IAlgorithm loadAlgorithm(String wellKnownName) throws Exception {
         LOGGER.debug("Loading algorithm '" + wellKnownName + "'");
         
-        IAlgorithm algorithm = (IAlgorithm) new GenericRProcess(wellKnownName);
+        IAlgorithm algorithm = new GenericRProcess(wellKnownName);
         if ( !algorithm.processDescriptionIsValid()) {
             LOGGER.warn("Algorithm description is not valid: " + wellKnownName);
             throw new Exception("Could not load algorithm " + wellKnownName + ". ProcessDescription Not Valid.");
@@ -227,7 +226,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         }
         String algorithmClassName = (String) processID;
 
-        algorithmMap.put(algorithmClassName, algorithmClassName);
+        this.algorithmMap.put(algorithmClassName, algorithmClassName);
         LOGGER.info("Algorithm class registered: " + algorithmClassName);
 
         return true;
@@ -241,8 +240,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return false;
         }
         String processName = (String) processID;
-        if (algorithmMap.containsKey(processName)) {
-            algorithmMap.remove(processName);
+        if (this.algorithmMap.containsKey(processName)) {
+            this.algorithmMap.remove(processName);
         }
 
         return true;

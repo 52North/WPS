@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.wps.server.r;
+package org.n52.wps.server.r.util;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -31,9 +31,9 @@ import org.apache.log4j.Logger;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
-public class RUtil {
+public class RLogger {
 
-    private static Logger LOGGER = Logger.getLogger(RUtil.class);
+    private static Logger LOGGER = Logger.getLogger(RLogger.class);
     
     private static DateFormat format = DateFormat.getDateTimeInstance();
 

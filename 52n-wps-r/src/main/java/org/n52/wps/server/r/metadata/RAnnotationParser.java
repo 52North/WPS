@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.wps.server.r;
+package org.n52.wps.server.r.metadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,8 +84,7 @@ public class RAnnotationParser {
     }
 
     // TODO: Improve process script validation
-    public static List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws IOException,
-            RAnnotationException {
+    public static List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws IOException {
         LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
         BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
@@ -160,8 +159,7 @@ public class RAnnotationParser {
         return annotations;
     }
 
-    private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws IOException,
-            RAnnotationException {
+    private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws RAnnotationException {
 
         HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,

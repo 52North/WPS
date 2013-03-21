@@ -26,16 +26,11 @@ package org.n52.wps.server.r.data;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
-import java.net.Authenticator.RequestorType;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
-import org.geotools.resources.i18n.ErrorKeys;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
@@ -43,11 +38,11 @@ import org.n52.wps.server.r.R_Config;
 public class CustomDataTypeManager {
 
     private static final String COMMENT_CHARACTER = "#";
-    private Logger LOGGER = Logger.getLogger(this.getClass());
+    private static Logger LOGGER = Logger.getLogger(CustomDataTypeManager.class);
     private File configFile;
     private static CustomDataTypeManager instance;
 
-    private final String HINT_FILE = "file";
+    private static final String HINT_FILE = "file";
 
     private CustomDataTypeManager() {
 
@@ -69,7 +64,7 @@ public class CustomDataTypeManager {
     }
 
     private void readConfig() throws IOException, ExceptionReport {
-        configFile = new File(R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG));
+        this.configFile = new File(R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG));
         if (getConfigFile() == null) {
             LOGGER.error("Config file not availailable. Costum R data types cannot be registered.");
             return;
@@ -98,7 +93,7 @@ public class CustomDataTypeManager {
     }
 
     // TODO: add schema, default value;
-    private void addNewDataType(String key, String mimetype, String hint) {
+    private static void addNewDataType(String key, String mimetype, String hint) {
         CustomDataType type = new CustomDataType();
         type.setKey(key);
         type.setProcessKey(mimetype);
@@ -112,7 +107,7 @@ public class CustomDataTypeManager {
     }
 
     public File getConfigFile() {
-        return configFile;
+        return this.configFile;
     }
 
     public static CustomDataTypeManager getInstance() {

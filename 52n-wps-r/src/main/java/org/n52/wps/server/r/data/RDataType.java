@@ -34,7 +34,6 @@ import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
-import org.n52.wps.server.r.RWorkdirUrlBinding;
 
 /**
  * Data types which are supported by scripts Note that every IData class must be parsed from an to are to be
@@ -46,8 +45,7 @@ public enum RDataType implements RTypeDefinition {
     // literal data:
     STRING("string", "xs:string", LiteralStringBinding.class), CHARACTER("character", "xs:string",
             LiteralStringBinding.class), INTEGER("integer", "xs:integer", LiteralIntBinding.class), DOUBLE("double",
-            "xs:double", LiteralDoubleBinding.class), BOOLEAN("boolean", "xs:boolean", LiteralBooleanBinding.class), URL(
-            "text/url", "xs:string", RWorkdirUrlBinding.class),
+            "xs:double", LiteralDoubleBinding.class), BOOLEAN("boolean", "xs:boolean", LiteralBooleanBinding.class),
 
     // geodata:
     DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataBinding.class, true, null, "base64"), DGN(
@@ -135,7 +133,7 @@ public enum RDataType implements RTypeDefinition {
         if ( !RDataTypeRegistry.getInstance().containsKey(key))
             RDataTypeRegistry.getInstance().register(this);
         else
-            LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
+            this.LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
                     + "only the first definition will be used for this key.");
 
        
@@ -148,7 +146,7 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     /*
@@ -158,7 +156,7 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public String getProcessKey() {
-        return processKey;
+        return this.processKey;
     }
 
     /*
@@ -168,7 +166,7 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public boolean isComplex() {
-        return isComplex;
+        return this.isComplex;
     }
 
     /*
@@ -178,9 +176,9 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public String getEncoding() {
-    	if(!isComplex)
+    	if(!this.isComplex)
     		return null;
-        return encoding;
+        return this.encoding;
     }
 
     /*
@@ -190,7 +188,7 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public String getSchema() {
-        return schema;
+        return this.schema;
     }
 
 
@@ -201,6 +199,6 @@ public enum RDataType implements RTypeDefinition {
      */
     @Override
     public Class< ? extends IData> getIDataClass() {
-        return iDataClass;
+        return this.iDataClass;
     }
 }

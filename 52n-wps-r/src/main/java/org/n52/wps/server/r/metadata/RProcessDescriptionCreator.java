@@ -22,7 +22,7 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-package org.n52.wps.server.r;
+package org.n52.wps.server.r.metadata;
 
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -52,6 +52,7 @@ import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
@@ -144,14 +145,14 @@ public class RProcessDescriptionCreator {
      * @param annotation
      * @throws RAnnotationException 
      */
-    private void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
+    private static void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
         pdt.addNewAbstract().setStringValue("" + abstr);
         String title = annotation.getStringValue(RAttribute.TITLE);
         pdt.addNewTitle().setStringValue("" + title);
     }
 
-    private void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
+    private static void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
         InputDescriptionType input = inputs.addNewInput();
 
         String identifier = annotation.getStringValue(RAttribute.IDENTIFIER);
@@ -189,7 +190,7 @@ public class RProcessDescriptionCreator {
      * @param input
      * @throws RAnnotationException
      */
-    private void addLiteralInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addLiteralInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
         LiteralInputType literalInput = input.addNewLiteralData();
         DomainMetadataType dataType = literalInput.addNewDataType();
         dataType.setReference(annotation.getProcessDescriptionType());
@@ -206,7 +207,7 @@ public class RProcessDescriptionCreator {
      * @param input
      * @throws RAnnotationException
      */
-    private void addComplexInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addComplexInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
         SupportedComplexDataType complexInput = input.addNewComplexData();
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
         cpldata.setMimeType(annotation.getProcessDescriptionType());
@@ -233,7 +234,7 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    private void addOutput(ProcessOutputs outputs, RAnnotation out) throws RAnnotationException {
+    private static void addOutput(ProcessOutputs outputs, RAnnotation out) throws RAnnotationException {
         OutputDescriptionType output = outputs.addNewOutput();
 
         String identifier = out.getStringValue(RAttribute.IDENTIFIER);
@@ -262,7 +263,7 @@ public class RProcessDescriptionCreator {
      * @param output
      * @throws RAnnotationException
      */
-    private void addLiteralOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addLiteralOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
         LiteralOutputType literalOutput = output.addNewLiteralOutput();
         DomainMetadataType dataType = literalOutput.addNewDataType();
         dataType.setReference(out.getProcessDescriptionType());
@@ -274,7 +275,7 @@ public class RProcessDescriptionCreator {
      * @param output
      * @throws RAnnotationException
      */
-    private void addComplexOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addComplexOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
         SupportedComplexDataType complexOutput = output.addNewComplexOutput();
         ComplexDataDescriptionType complexData = complexOutput.addNewDefault().addNewFormat();
         complexData.setMimeType(out.getProcessDescriptionType());
@@ -315,7 +316,7 @@ public class RProcessDescriptionCreator {
 	 * @param complex IData class for which data handlers are searched
 	 * @param supportedClass
 	 */
-	private void addSupportedOutputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
+	private static void addSupportedOutputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
 		// retrieve a list of generators which support the supportedClass-input
 		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
@@ -361,7 +362,7 @@ public class RProcessDescriptionCreator {
 	 * @param complex IData class for which data handlers are searched
 	 * @param supportedClass
 	 */
-	private void addSupportedInputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
+	private static void addSupportedInputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
 		// retrieve a list of parsers which support the supportedClass-input
 		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
 		List<IParser> foundParsers = new ArrayList<IParser>();

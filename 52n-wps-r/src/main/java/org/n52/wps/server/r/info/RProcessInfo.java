@@ -33,8 +33,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RAnnotationParser;
 import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.metadata.RAnnotationParser;
 
 public class RProcessInfo {
 	
@@ -52,21 +52,21 @@ public class RProcessInfo {
 		try {
 			scriptfile = R_Config.getInstance().wknToFile(wkn);
 			RAnnotationParser.validateScript(new FileInputStream(scriptfile), wkn);
-			isValid = true;
+			this.isValid = true;
 		} catch (Exception e) {
 			LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
-			lastException = e;
+			this.lastException = e;
 			e.printStackTrace();
 		}
 	}
 	
 	public String getWkn() {
-		return wkn;
+		return this.wkn;
 	}
 	
 	public String getScriptURL(){
 		try {
-			return R_Config.getInstance().getScriptURL(wkn).getPath();
+			return R_Config.getInstance().getScriptURL(this.wkn).getPath();
 		} catch (ExceptionReport e) {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
@@ -77,17 +77,17 @@ public class RProcessInfo {
 	}
 	
 	public boolean isAvailable(){
-		return R_Config.getInstance().isScriptAvailable(wkn);
+		return R_Config.getInstance().isScriptAvailable(this.wkn);
 	}
 	
 	public boolean isValid(){
 
 		
-		return isValid;
+		return this.isValid;
 	}
 	
 	public Exception getLastException() {
-		return lastException;
+		return this.lastException;
 	}
 	
 	public static List<RProcessInfo> getRProcessInfoList() {
