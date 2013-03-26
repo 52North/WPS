@@ -554,10 +554,15 @@ public class ExecuteRequest extends Request implements IObserver {
 	public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
 		try {
-            
-			ExecutionContext context = getExecute().getResponseForm().isSetRawDataOutput() ?
-                    new ExecutionContext(getExecute().getResponseForm().getRawDataOutput()) :
-                    new ExecutionContext(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
+			ExecutionContext context;
+			if (getExecute().isSetResponseForm()) {
+				context = getExecute().getResponseForm().isSetRawDataOutput() ?
+	                    new ExecutionContext(getExecute().getResponseForm().getRawDataOutput()) :
+	                    new ExecutionContext(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
+			}
+			else {
+				context = new ExecutionContext();
+			}
 	
 				// register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
 			ExecutionContextFactory.registerContext(context);

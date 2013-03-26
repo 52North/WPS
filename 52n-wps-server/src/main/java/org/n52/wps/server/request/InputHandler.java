@@ -40,11 +40,8 @@ package org.n52.wps.server.request;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -53,13 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.ValueType;
@@ -70,10 +62,11 @@ import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.impl.common.IOUtil;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
@@ -304,30 +297,34 @@ public class InputHandler {
 		String complexValue;
 		InputDescriptionType inputReferenceDesc;
 		ComplexDataType data;
-		Node complexValueNode;
-                ComplexDataDescriptionType format = null;
-                String dataSchema;
-                String dataEncoding;
+        ComplexDataDescriptionType format = null;
+        String dataSchema;
+        String dataEncoding;
 		String dataMimeType = null;
 		String formatSchema = null;
 		String formatEncoding = null;
-                String potentialFormatSchema = null;
-                String potentialFormatEncoding = null;
+        String potentialFormatSchema = null;
+        String potentialFormatEncoding = null;
 		
 		inputReferenceDesc = getInputReferenceDescriptionType(inputId);
 		if(inputReferenceDesc == null) {
                     LOGGER.debug("Input cannot be found in description for " + processDesc.getIdentifier().getStringValue() + "," + inputId);
 		}
                 
-                data = input.getData().getComplexData();
-                
-                dataSchema = data.getSchema();
-                dataMimeType = data.getMimeType();
-                dataEncoding = data.getEncoding();
-                
-                complexValueNode =  input.getData().getComplexData().getDomNode();
-                complexValue = getComplexValueNodeString(complexValueNode);
-		
+        data = input.getData().getComplexData();
+        
+        dataSchema = data.getSchema();
+        dataMimeType = data.getMimeType();
+        dataEncoding = data.getEncoding();
+        
+        ComplexDataType complexData = input.getData().getComplexData();
+        XmlCursor cur = complexData.newCursor();
+        if (cur.toFirstChild() && !(cur.getObject() instanceof XmlAnyTypeImpl)) {
+        	complexValue = complexData.xmlText(new XmlOptions().setSaveInner());
+        }
+        else {
+        	complexValue = getComplexValueNodeString(complexData.getDomNode());
+        }
                 //select parser
 		//1. mimeType set?
 		//yes--> set it

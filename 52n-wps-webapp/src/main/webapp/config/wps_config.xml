@@ -473,7 +473,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
-			className="org.n52.wps.server.LocalAlgorithmRepository" active="false">
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
@@ -982,9 +982,9 @@
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
 		
-		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
+		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="false">
 			<Property name="REPOSITORY_FEED_URL" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
-			<Property name="DropInFolder" active="true">mc\drop-in</Property>
+			<Property name="DropInFolder" active="true">mc/drop-in</Property>
 			<Property name="DropInCheckIntervalSecs" active="true">10</Property>
 		</Repository>
 	
