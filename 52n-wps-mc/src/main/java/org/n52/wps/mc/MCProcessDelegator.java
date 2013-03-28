@@ -34,7 +34,7 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.n52.movingcode.runtime.RepositoryManager;
+import org.n52.movingcode.runtime.MovingCodeRepositoryManager;
 import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
 import org.n52.movingcode.runtime.iodata.IIOParameter;
 import org.n52.movingcode.runtime.iodata.IODataType;
@@ -64,7 +64,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
-        MovingCodePackage mcp = RepositoryManager.getInstance().getPackage(identifier);
+        MovingCodePackage mcp = MovingCodeRepositoryManager.getInstance().getFunction(identifier);
         AbstractProcessor processor = ProcessorFactory.getInstance().newProcessor(mcp);
 
         // assign inputs
@@ -238,7 +238,7 @@ public class MCProcessDelegator implements IAlgorithm {
     @Override
     public ProcessDescriptionType getDescription() {
         if (description == null) {
-            description = RepositoryManager.getInstance().getPackage(identifier).getDescription().getPackageDescription().getContractedFunctionality().getWpsProcessDescription();
+            description = MovingCodeRepositoryManager.getInstance().getFunction(identifier).getDescription().getPackageDescription().getContractedFunctionality().getWpsProcessDescription();
         }
 
         return description;

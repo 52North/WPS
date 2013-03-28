@@ -33,14 +33,13 @@ import java.util.Collection;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
+import org.n52.movingcode.runtime.MovingCodeRepositoryManager;
 import org.n52.movingcode.runtime.ProcessorConfig;
-import org.n52.movingcode.runtime.RepositoryManager;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-
-//import org.n52.movingcode.runtime.ProcessorConfig;
+import org.n52.wps.server.WebProcessingService;
 
 /**
  * 
@@ -55,7 +54,15 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
     private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
 
-    private RepositoryManager rm = RepositoryManager.getInstance();
+	private static final String DROP_IN_FOLDER_KEY = "DropInFolder";
+
+	private static final String DROP_IN_CHECK_INTERVAL_SECS_KEY = "DropInCheckIntervalSecs";
+
+    private MovingCodeRepositoryManager rm = MovingCodeRepositoryManager.getInstance();
+
+	private DropInFolderWatchdog dropInWatchdog;
+
+
 
     private static Logger logger = Logger.getLogger(MCProcessRepository.class);
 
@@ -93,15 +100,32 @@ public class MCProcessRepository implements IAlgorithmRepository {
                 }
             }
 
-            // TODO start dropin watchdog
-            // TODO check the local drop-in folder
-            // new File(WebProcessingService.BASE_DIR, DROP_IN_FOLDER).getAbsolutePath();
+            // start dropin watchdog
+            initDropInFolder();
 
         }
         else {
             logger.debug("MCProcessRepository does not contain any processes.");
         }
     }
+
+	private void initDropInFolder() {
+		String folderDir = null;
+		int checkInterval = 0;
+		for (Property property : WPSConfig.getInstance().getPropertiesForRepositoryClass(getClass().getName())) {
+			if (property.getName().equals(DROP_IN_FOLDER_KEY) && property.getActive()) {
+				folderDir = property.getStringValue();
+			}
+			else if (property.getName().equals(DROP_IN_CHECK_INTERVAL_SECS_KEY) && property.getActive()) {
+				checkInterval = Integer.parseInt(property.getStringValue());
+			}
+		}
+		
+		if (folderDir != null) {
+			this.dropInWatchdog = new DropInFolderWatchdog(WebProcessingService.BASE_DIR,
+					folderDir, checkInterval);
+		}
+	}
 
     @Override
     public Collection<String> getAlgorithmNames() {
@@ -115,7 +139,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
     @Override
     public ProcessDescriptionType getProcessDescription(String processID) {
-        return rm.getPackage(processID).getDescription().getPackageDescription().getContractedFunctionality().getWpsProcessDescription();
+        return rm.getFunction(processID).getDescription().getPackageDescription().getContractedFunctionality().getWpsProcessDescription();
     }
 
     @Override

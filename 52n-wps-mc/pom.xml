@@ -124,7 +124,7 @@
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
-			<version>0.5</version>
+			<version>0.6-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

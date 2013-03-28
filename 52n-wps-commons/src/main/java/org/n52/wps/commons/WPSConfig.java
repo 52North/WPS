@@ -27,6 +27,7 @@ package org.n52.wps.commons;
 // FvK: added Property Change support
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +42,7 @@ import javax.servlet.ServletConfig;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -108,6 +110,10 @@ public class WPSConfig implements Serializable {
         this.propertyChangeSupport.firePropertyChange(WPSCONFIG_PROPERTY_EVENT_NAME, null, null);
     }
 
+    public void firePropertyChange(String event) {
+    	propertyChangeSupport.firePropertyChange(event, null, null);
+    }
+    
     // private synchronized static void writeObject(java.io.ObjectOutputStream oos) throws IOException {
     // oos.writeObject(wpsConfigXMLBeans.xmlText());
     // }
