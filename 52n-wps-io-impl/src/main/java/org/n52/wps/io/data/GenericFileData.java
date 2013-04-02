@@ -1,8 +1,6 @@
 /***************************************************************
 Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
- Author: Matthias Mueller, TU Dresden; Bastian Schaeffer, IFGI
-
  Contact: Andreas Wytzisk, 
  52°North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
@@ -80,6 +78,11 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPolygon;
 
+/**
+ * 
+ * @author Matthias Mueller, TU Dresden; Bastian Schaeffer, IFGI
+ *
+ */
 public class GenericFileData {
 
 	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
@@ -336,8 +339,7 @@ public class GenericFileData {
 
 	private String unzipData(InputStream is, String extension,
 			File writeDirectory) throws IOException {
-		int bufferLength = 2048;
-		byte buffer[] = new byte[bufferLength];
+		
 		String baseFileName = UUID.randomUUID().toString();
 
 		ZipInputStream zipInputStream = new ZipInputStream(
@@ -359,21 +361,15 @@ public class GenericFileData {
 			}
 			currentFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(currentFile);
-			BufferedOutputStream bos = new BufferedOutputStream(fos,
-					bufferLength);
-
-			int cnt;
-			while ((cnt = zipInputStream.read(buffer, 0, bufferLength)) != -1) {
-				bos.write(buffer, 0, cnt);
-			}
-
-			bos.flush();
-			bos.close();
+			
+			IOUtils.copy(is, fos);
+			
 
 			if (currentExtension.equalsIgnoreCase(extension)) {
 				returnFile = currentFile.getAbsolutePath();
 			}
-
+			
+			fos.close();
 			System.gc();
 		}
 		zipInputStream.close();
@@ -381,9 +377,7 @@ public class GenericFileData {
 	}
 
 	private String justWriteData(InputStream is, String extension, File writeDirectory) throws IOException {
-
-		int bufferLength = 2048;
-		byte buffer[] = new byte[bufferLength];
+		
 		String fileName = null;
 		String baseFileName = UUID.randomUUID().toString();
 
@@ -398,16 +392,10 @@ public class GenericFileData {
 		fileName = currentFile.getAbsolutePath();
 
 		FileOutputStream fos = new FileOutputStream(currentFile);
-		BufferedOutputStream bos = new BufferedOutputStream(fos, bufferLength);
-
-		int cnt;
-		while ((cnt = is.read(buffer, 0, bufferLength)) != -1) {
-			bos.write(buffer, 0, cnt);
-		}
-
-		bos.flush();
-		bos.close();
-
+		
+		IOUtils.copy(is, fos);
+		
+		fos.close();
 		System.gc();
 
 		return fileName;
