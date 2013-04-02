@@ -27,7 +27,7 @@ package org.n52.wps.mc;
 import java.io.File;
 
 import org.n52.movingcode.runtime.coderepository.IMovingCodeRepository;
-import org.n52.movingcode.runtime.coderepository.LocalDropInFolderRepository;
+import org.n52.movingcode.runtime.coderepository.LocalZipPackageRepository;
 import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
 import org.n52.wps.commons.WPSConfig;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class DropInFolderWatchdog {
 			int checkIntervalSeconds) {
 		File folder = new File(wpsBaseDir, dropInFolderDir);
 		
-		this.repository = new LocalDropInFolderRepository(folder, checkIntervalSeconds);
+		this.repository = new LocalZipPackageRepository(folder);
 		this.repository.addRepositoryChangeListener(new RepositoryChangeListener() {
 			@Override
 			public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
