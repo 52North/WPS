@@ -26,8 +26,6 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
 package org.n52.wps.io.data;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -342,8 +340,7 @@ public class GenericFileData {
 		
 		String baseFileName = UUID.randomUUID().toString();
 
-		ZipInputStream zipInputStream = new ZipInputStream(
-				new BufferedInputStream(is));
+		ZipInputStream zipInputStream = new ZipInputStream(is);
 		ZipEntry entry;
 
 		String returnFile = null;
@@ -484,22 +481,15 @@ public class GenericFileData {
 			File dir = new File(tempFile1.getParentFile()+"/"+UUID.randomUUID().toString());
 			dir.mkdir(); 
 			FileInputStream fis = new FileInputStream(primaryFile);
-			BufferedOutputStream dest = null;
-			ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+			ZipInputStream zis = new ZipInputStream(fis);
 			ZipEntry entry;
 	        while((entry = zis.getNextEntry()) != null) {
-	            System.out.println("Extracting: " +entry);
-	            int count;
-	            byte data[] = new byte[2048];
+	            LOGGER.debug("Extracting: " +entry);
 	            // write the files to the disk
 	            FileOutputStream fos = new FileOutputStream(dir.getAbsoluteFile()+"/"+entry.getName());
-	            dest = new BufferedOutputStream(fos, 2048);
-	            while ((count = zis.read(data, 0, 2048)) 
-	              != -1) {
-	               dest.write(data, 0, count);
-	            }
-	            dest.flush();
-	            dest.close();
+	            
+	            IOUtils.copy(zis, fos);
+	            
 	         }
 	         zis.close();
 	         
