@@ -24,16 +24,15 @@
 
 package org.n52.wps.commons;
 
-// FvK: added Property Change support
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ import javax.servlet.ServletConfig;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -388,16 +386,25 @@ public class WPSConfig implements Serializable {
     }
 
     public static String tryToGetPathViaWebAppPath() {
-        String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+    	//XXX: any objections against using getResource("/") instead?
+//        String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+    	String domain;
+		try {
+			domain = new File(WPSConfig.class.getResource("/").toURI()).toString();
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
         int index = domain.indexOf("WEB-INF");
         if (index > 0) {
             String substring = domain.substring(0, index);
-            if ( !substring.endsWith("/")) {
-                substring = substring + "/";
+//            if ( !substring.endsWith("/")) {
+//                substring = substring + "/";
+//            }
+//            substring = substring + CONFIG_FILE_DIR + File.separator + CONFIG_FILE_NAME;
+            File configDir = new File(new File(substring), CONFIG_FILE_DIR);
+            if (configDir.exists() && configDir.isDirectory()) {
+            	return new File(configDir, CONFIG_FILE_NAME).getAbsolutePath();
             }
-            substring = substring + CONFIG_FILE_DIR + File.separator + CONFIG_FILE_NAME;
-
-            return substring;
         }
         return null;
     }
