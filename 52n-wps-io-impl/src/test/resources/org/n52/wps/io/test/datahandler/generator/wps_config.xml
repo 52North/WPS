@@ -30,13 +30,6 @@
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
 					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 			</Parser>
-			<Parser name="AIXM51BasicParser"
-				className="org.n52.wps.aviation.aixm.AIXM51BasicParser" active="false">
-				<Format mimetype="text/xml"
-					schema="http://www.aixm.aero/gallery/content/public/schema/5.1/AIXM_Features.xsd" />
-				<Format mimetype="text/xml; subtype=aixm/5.1"
-					schema="http://www.aixm.aero/gallery/content/public/schema/5.1/AIXM_Features.xsd" />
-			</Parser>
 			<Parser name="SimpleGMLParser"
 				className="org.n52.wps.io.datahandler.parser.SimpleGMLParser"
 				active="true">
