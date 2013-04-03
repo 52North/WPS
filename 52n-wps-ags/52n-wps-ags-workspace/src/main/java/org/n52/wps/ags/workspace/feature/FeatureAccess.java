@@ -32,9 +32,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.wps.ags.workspace.AGSPropertiesWrapper;
-import org.n52.wps.ags.workspace.AGSWorkspace;
+import org.n52.wps.ags.workspace.ServerContextFactory;
+import org.n52.wps.ags.workspace.ServerContextFactory.LockedServerContext;
 
+import com.esri.arcgis.datasourcesfile.ShapefileWorkspaceFactory;
 import com.esri.arcgis.geodatabase.IFeature;
 import com.esri.arcgis.geodatabase.IFeatureClass;
 import com.esri.arcgis.geodatabase.IFeatureCursor;
@@ -56,15 +57,12 @@ import com.esri.arcgis.geometry.Polygon;
  */
 public class FeatureAccess {
 
-	private AGSWorkspace workspace;
+	private LockedServerContext context;
 	
-	public FeatureAccess() {
-		this(new AGSWorkspace(new File(AGSPropertiesWrapper.getInstance().getWorkspaceBase())));
+	public FeatureAccess() throws IOException {
+		this.context = ServerContextFactory.retrieveContext();
 	}
 
-	public FeatureAccess(AGSWorkspace ws) {
-		this.workspace = ws;
-	}
 	
 	public IRelationalOperator resolveRelationalOperatorFromShapefile(File inputFeature) throws IOException {
 		IGeometry result = resolveGeometryFromShapefile(inputFeature);
@@ -76,7 +74,9 @@ public class FeatureAccess {
 	
 	public IGeometry resolveGeometryFromShapefile(File inputFeature) throws IOException {
 		String name = inputFeature.getName();
-		Workspace srcWorkspace = new Workspace(this.workspace.initializeShapefileWorkspace().openFromFile(inputFeature.getParent(), 0));
+		ShapefileWorkspaceFactory shpWorkspace = (ShapefileWorkspaceFactory) this.context.getContext().createObject(
+				ShapefileWorkspaceFactory.getClsid());
+		Workspace srcWorkspace = new Workspace(shpWorkspace.openFromFile(inputFeature.getParent(), 0));
 		IFeatureClass srcFeatureClass = srcWorkspace.openFeatureClass(removeFileExtension(name));
 
 		List<IGeometry> geometries = resolveGeometriesFromFeatureClass(srcFeatureClass);
@@ -100,8 +100,8 @@ public class FeatureAccess {
 	}
 	
 	private IGeometry createUnionFromGeometries(List<IGeometry> geometries) throws IOException {
-		ITopologicalOperator resultPolygon = (ITopologicalOperator) this.workspace.createObject(Polygon.getClsid());
-		IGeometryCollection geometriesToUnion = (IGeometryCollection) this.workspace.createObject(GeometryBag.getClsid());
+		ITopologicalOperator resultPolygon = (ITopologicalOperator) this.context.getContext().createObject(Polygon.getClsid());
+		IGeometryCollection geometriesToUnion = (IGeometryCollection) this.context.getContext().createObject(GeometryBag.getClsid());
 		
 		for (IGeometry geom : geometries) {
 			geometriesToUnion.addGeometry(geom, null, null);
@@ -115,6 +115,10 @@ public class FeatureAccess {
 	private String removeFileExtension(String name) {
 		int index = name.lastIndexOf(".");
 		return name.substring(0, index);
+	}
+	
+	public void releaseContext() {
+		ServerContextFactory.returnContext(this.context);
 	}
 
 

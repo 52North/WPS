@@ -47,9 +47,11 @@ public class SpatialRelationFeaturePair {
 	
 	IRelationalOperator relationFeature;
 	IGeometry geometryFeature;
+	private FeatureAccess accessToShapefile;
 	
 	public SpatialRelationFeaturePair(List<File> shapeFiles) throws IOException {
-		FeatureAccess accessToShapefile = new FeatureAccess();
+		// TODO check if context is needed when evaluating the relation! otherwise, release it directly
+		accessToShapefile = new FeatureAccess();
 		this.relationFeature = accessToShapefile.resolveRelationalOperatorFromShapefile(shapeFiles.get(0));
 		this.geometryFeature = accessToShapefile.resolveGeometryFromShapefile(shapeFiles.get(1));
 	}
@@ -89,6 +91,10 @@ public class SpatialRelationFeaturePair {
 	
 	public boolean covers() throws IOException {
 		return relationFeature.relation(geometryFeature, "RELATE (G1, G2, 'TTTFTTFFT')");
+	}
+
+	public void releaseContext() {
+		accessToShapefile.releaseContext();
 	}
 	
 }

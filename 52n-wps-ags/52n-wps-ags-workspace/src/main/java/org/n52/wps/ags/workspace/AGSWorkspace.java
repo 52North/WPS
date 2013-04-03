@@ -30,94 +30,39 @@ package org.n52.wps.ags.workspace;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.n52.wps.ags.workspace.ServerContextFactory.LockedServerContext;
 import org.n52.wps.ags.workspace.feature.SpatialRelation;
 import org.n52.wps.ags.workspace.feature.SpatialRelationFeaturePair;
 
-import com.esri.arcgis.datasourcesfile.ShapefileWorkspaceFactory;
 import com.esri.arcgis.geoprocessing.GeoProcessor;
 import com.esri.arcgis.interop.AutomationException;
 import com.esri.arcgis.server.IServerContext;
-import com.esri.arcgis.server.IServerObjectManager;
-import com.esri.arcgis.server.ServerConnection;
 import com.esri.arcgis.system.IVariantArray;
-import com.esri.arcgis.system.ServerInitializer;
 import com.esri.arcgis.system.VarArray;
 
 
 public class AGSWorkspace {
-	
+
 	private static Logger LOGGER = Logger.getLogger(AGSWorkspace.class);
-	public static IServerContext context;
 	private final File workspaceDir;
-	
-	static {
-		initializeServerObjects();
-	}
+
 
 	public AGSWorkspace(File workspace){
 		workspaceDir = workspace;
 	}
 
-	private static void initializeServerObjects() {
-		if (LOGGER.isInfoEnabled()) {
-			if (System.getProperty("JINTEGRA_NATIVE_MODE") == null) {
-				LOGGER.info("Running geoprocessor in DCOM Mode");
-			} else {
-				LOGGER.info("Running geoprocessor in Native Mode");
-			} 
-		}
 
-		try{
-			if (LOGGER.isInfoEnabled())
-				LOGGER.info("Getting AGS connection object ...");
-			ServerConnection connection = getAGSConnection();
-			IServerObjectManager som = connection.getServerObjectManager();
-			context = som.createServerContext("", "");
-		}
-		catch (AutomationException ae){
-			LOGGER.error("Caught J-Integra AutomationException: " + ae.getMessage() + "\n");
-		}
-
-		catch (IOException e){
-			LOGGER.error("Caught IOException: " + e.getMessage() + "\n");
-		}
-	}
-	
-	private static final ServerConnection getAGSConnection() throws IOException {
-		if (LOGGER.isInfoEnabled())
-			LOGGER.info("initializing server ...");
-		AGSPropertiesWrapper agsProps = AGSPropertiesWrapper.getInstance();
-		ServerInitializer serverInitializer = new ServerInitializer();
-		serverInitializer.initializeServer(agsProps.getDomain(), agsProps.getUser(), agsProps.getPass());
-		
-		ServerConnection connection = null;
-		try {
-			connection = new ServerConnection();
-			connection.connect(agsProps.getIP());
-			if (LOGGER.isInfoEnabled())
-				LOGGER.info("server initialized!");
-
-		} catch (UnknownHostException e) {
-			LOGGER.error("UnknownHostException - Could not connect to AGS host " + agsProps.getDomain() + " with user " + agsProps.getUser());
-			throw new IOException("Error connecting to ArcGIS Server.");
-		} catch (IOException e) {
-			LOGGER.error("IOException - Could not connect to AGS host " + agsProps.getDomain() + " with user " + agsProps.getUser());
-			LOGGER.info("Please check firewall setup! - and maybe the folder permissions, too");
-			throw new IOException("Error connecting to ArcGIS Server.");
-		}
-
-		return connection;
-	}
 
 	public final void executeGPTool(String toolName, String toolboxPath, String[] parameters) throws IOException {
-		try{
-			GeoProcessor gp = (GeoProcessor) (context.createObject(GeoProcessor.getClsid()));
+		LockedServerContext context = null;
+		try {
+			context = ServerContextFactory.retrieveContext();
+			GeoProcessor gp = (GeoProcessor) (context.getContext().createObject(GeoProcessor.getClsid()));
 
-			IVariantArray paramsPreparedForGeoProcessor = (VarArray)(context.createObject(VarArray.getClsid()));
+			IVariantArray paramsPreparedForGeoProcessor = (VarArray)(context.getContext().createObject(VarArray.getClsid()));
 			for (int i = 0; i < parameters.length; i++) {
 				paramsPreparedForGeoProcessor.add(parameters[i]);
 			}
@@ -143,69 +88,80 @@ public class AGSWorkspace {
 		catch (IOException e){
 			LOGGER.error("Caught IOException: " + e.getMessage() + "\n");
 			throw new IOException("Error executing ArcGIS Server geoprocessor.");
+		} finally {
+			if (context != null) 
+				ServerContextFactory.returnContext(context);
 		}
 	}
 
-	public ShapefileWorkspaceFactory initializeShapefileWorkspace() throws IOException {
-		return (ShapefileWorkspaceFactory) context.createObject(ShapefileWorkspaceFactory.getClsid());
-	}
-	
+
 	public final File getWorkspace(){
 		return this.workspaceDir;
 	}
 
 	public static void shutdown() {
 		try {
-			context.releaseContext();
-		} catch (AutomationException e) {
-			LOGGER.error(e.getMessage(), e);
+			ServerContextFactory.releaseAllCachedContexts();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
 
-	public Object createObject(String clsid) throws IOException {
+	public Object createObject(String clsid, IServerContext context) throws IOException {
 		return context.createObject(clsid);
 	}
 
-	public boolean isReady() {
-		try {
-			return this.initializeShapefileWorkspace() != null;
-		} catch (IOException e) {
-			return false;
-		}
+	public boolean isReady() throws IOException {
+		LockedServerContext context = ServerContextFactory.retrieveContext();
+		boolean result = context.getContext() != null;
+		ServerContextFactory.returnContext(context);
+		return result;
 	}
-	
+
+
+
 	private SpatialRelationFeaturePair createRelationFeaturePair(List<File> shapeFiles) throws IOException {
 		return new SpatialRelationFeaturePair(shapeFiles);
 	}
 
-	public boolean evaluateSpatialRelation(SpatialRelation within,
+	public boolean evaluateSpatialRelation(SpatialRelation relation,
 			List<File> createShapefilesForFeatures) throws IOException {
 		SpatialRelationFeaturePair pair = createRelationFeaturePair(createShapefilesForFeatures);
-		
-		switch (within) {
+
+		boolean result = false;
+
+		switch (relation) {
 		case CONTAINS:
-			return pair.contains();
+			result = pair.contains();
+			break;
 		case COVERS:
-			return pair.covers();
+			result = pair.covers();
+			break;
 		case CROSSES:
-			return pair.crosses();
+			result = pair.crosses();
+			break;
 		case OVERLAPS:
-			return pair.overlaps();
+			result = pair.overlaps();
+			break;
 		case EQUALS:
-			return pair.equals();
+			result = pair.equals();
+			break;
 		case WITHIN:
-			return pair.within();
+			result = pair.within();
+			break;
 		case INTERSECTS:
-			return !pair.disjoint();
+			result = !pair.disjoint();
+			break;
 		case DISJOINT:
-			return pair.disjoint();
+			result = pair.disjoint();
+			break;
 		case TOUCHES:
-			return pair.touches();
-		default:
-			return false;
+			result = pair.touches();
+			break;
 		}
+
+		pair.releaseContext();
+		return result;
 	}
 
 
