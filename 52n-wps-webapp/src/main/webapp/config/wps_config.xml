@@ -465,7 +465,7 @@
 			<Property name="Script_Dir" active="true">R\scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R\R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R\resources</Property>
-			<Property name="R_Work_Dir" active="true">D:\TEMP</Property>
+			<Property name="R_Work_Dir" active="true">default</Property>
 			<Property name="Enable_Batch_Start" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
