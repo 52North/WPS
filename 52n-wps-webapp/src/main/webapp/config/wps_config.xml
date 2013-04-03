@@ -982,12 +982,12 @@
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
 		
+		<!-- 
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
 			<Property name="REPOSITORY_FEED_URL" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
-			<Property name="DropInFolder" active="true">mc/drop-in</Property>
-			<Property name="DropInCheckIntervalSecs" active="true">10</Property>
+			<Property name="LOCAL_ZIP_FOLDER" active="false">C:\mypackages</Property>
 		</Repository>
-	
+		 -->
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	<Server hostname="localhost" hostport="8080"

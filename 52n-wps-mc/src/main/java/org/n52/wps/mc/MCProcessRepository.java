@@ -58,7 +58,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 	private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
 
-	private static final String REPO_FOLDER_PARAM = "REPOSITORY_FOLDER";
+	private static final String REPO_FOLDER_PARAM = "LOCAL_ZIP_FOLDER";
 
 	private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
 
