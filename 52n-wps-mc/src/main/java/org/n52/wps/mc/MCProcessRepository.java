@@ -27,6 +27,7 @@ package org.n52.wps.mc;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -35,33 +36,41 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.log4j.Logger;
 import org.n52.movingcode.runtime.GlobalRepositoryManager;
 import org.n52.movingcode.runtime.ProcessorConfig;
+import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
 import org.n52.movingcode.runtime.coderepository.IMovingCodeRepository;
 import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
+import org.n52.movingcode.runtime.processors.ProcessorFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 
 /**
+ * This class implements an {@link IAlgorithmRepository} for MovingCode Packages.
+ * This repository maintains a {@link GlobalRepositoryManager} internally and fires
+ * notification events to {@link WPSConfig}.
  * 
- * @author Matthias Mueller
+ * This class will also load the basic configuration for the MC runtime subsystem
+ * (Available Processors, Repository URLs and Folders)
  * 
- *         TODO: lazy initialization
- *         TODO: cross-check registered functions with the capabilities of the
- *               ProcessorFactory --> offer only those processes that are
- *               executable in this runtime environment
+ * @author Matthias Mueller, TU Dresden
+ * 
+ * 			TODO: lazy initialization
  * 
  */
 public class MCProcessRepository implements IAlgorithmRepository {
-
+	
+	// static string definitions
 	private static final String CONFIG_FILE_NAME = "processors.xml";
-
 	private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
-
 	private static final String REPO_FOLDER_PARAM = "LOCAL_ZIP_FOLDER";
-
+	
+	// use the GlobalRepoManager from mc-runtime for the process inventory
 	private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
-
+	
+	// valid functionIDs
+	private String[] validFunctionIDs = null;
+	
 	private static Logger logger = Logger.getLogger(MCProcessRepository.class);
 
 	public MCProcessRepository() {
@@ -122,9 +131,13 @@ public class MCProcessRepository implements IAlgorithmRepository {
 			rm.addRepositoryChangeListener(new RepositoryChangeListener() {
 				@Override
 				public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
+					// clear validFunctionIDs
+					validFunctionIDs = null;
+					
+					// trigger Capabilities update
 					logger.info("Moving Code repository content has changed. Capabilities update required.");
 					WPSConfig.getInstance().firePropertyChange(
-							WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);				
+							WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);
 				}
 			});
 
@@ -136,7 +149,32 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 	@Override
 	public Collection<String> getAlgorithmNames() {
-		return Arrays.asList(rm.getFunctionIDs());
+		
+		// run this block if validFunctionIDs are not yet available
+		// checks which available functions can be executed with current configuration
+		if (validFunctionIDs == null){
+			// 1. get all available functionIDs
+			String[] fids = rm.getFunctionIDs();
+			ArrayList<String> exFIDs = new ArrayList<String>();
+			
+			// 2. for each function ID
+			for (String currentFID : fids){
+				// 2.a retrieve implementing packages
+				MovingCodePackage[] mcps = rm.getPackageByFunction(currentFID);
+				// 2.b check whether one of them can be executed
+				for (MovingCodePackage currentMCP : mcps){
+					boolean supported = ProcessorFactory.getInstance().supportsPackage(currentMCP);
+					if (supported){
+						exFIDs.add(currentFID);
+						break;
+					}
+				}
+			}
+			
+			validFunctionIDs = exFIDs.toArray(new String[exFIDs.size()]);
+		}
+		
+		return Arrays.asList(validFunctionIDs);
 	}
 
 	@Override
