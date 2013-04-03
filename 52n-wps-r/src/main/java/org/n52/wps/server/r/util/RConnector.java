@@ -76,7 +76,11 @@ public class RConnector {
             else
                 throw rse;
         }
+    	// prevent from occasional NullPointerExceptions
+        if(con== null)
+        	throw new RserveException(null, "Cannot connect with Rserve, connection is null"); 
 
+        
         return con;
     }
 
