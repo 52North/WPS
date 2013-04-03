@@ -33,135 +33,142 @@ import java.util.Collection;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
-import org.n52.movingcode.runtime.MovingCodeRepositoryManager;
+import org.n52.movingcode.runtime.GlobalRepositoryManager;
 import org.n52.movingcode.runtime.ProcessorConfig;
+import org.n52.movingcode.runtime.coderepository.IMovingCodeRepository;
+import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.WebProcessingService;
 
 /**
  * 
  * @author Matthias Mueller
  * 
  *         TODO: lazy initialization
+ *         TODO: cross-check registered functions with the capabilities of the
+ *               ProcessorFactory --> offer only those processes that are
+ *               executable in this runtime environment
  * 
  */
 public class MCProcessRepository implements IAlgorithmRepository {
 
-    private static final String CONFIG_FILE_NAME = "processors.xml";
+	private static final String CONFIG_FILE_NAME = "processors.xml";
 
-    private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
+	private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
 
-	private static final String DROP_IN_FOLDER_KEY = "DropInFolder";
+	private static final String REPO_FOLDER_PARAM = "REPOSITORY_FOLDER";
 
-	private static final String DROP_IN_CHECK_INTERVAL_SECS_KEY = "DropInCheckIntervalSecs";
+	private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
 
-    private MovingCodeRepositoryManager rm = MovingCodeRepositoryManager.getInstance();
+	private static Logger logger = Logger.getLogger(MCProcessRepository.class);
 
-	private DropInFolderWatchdog dropInWatchdog;
+	public MCProcessRepository() {
+		super();
+		configureMCRuntime();
 
+		// check if the repository is active
+		if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
 
+			// get properties to find out which remote repositories we shall invoke
+			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
 
-    private static Logger logger = Logger.getLogger(MCProcessRepository.class);
+			// for each remote repository: add to RepoManager
+			for (Property property : propertyArray) {
+				if (property.getName().equalsIgnoreCase(REPO_FEED_URL_PARAM) && property.getActive()) {
+					// convert to URL, check and register
+					try {
+						URL repoURL = new URL(property.getStringValue());
+						rm.addRepository(repoURL);
+						logger.info("Added MovingCode Repository: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (MalformedURLException e) {
+						logger.warn("MovingCode Repository is not a valid URL: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+								+ property.getStringValue());
+					}
 
-    public MCProcessRepository() {
-        super();
-        configureMCRuntime();
-
-        // check if the repository is active
-        if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
-
-            // get properties to find out which remote repositories we shall invoke
-            Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-
-            // for each remote repository: add to RepoManager
-            for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase(REPO_FEED_URL_PARAM) && property.getActive()) {
-                    // convert to URL, check and register
-                    try {
-                        URL repoURL = new URL(property.getStringValue());
-                        rm.addRepository(repoURL);
-                        logger.info("Added MovingCode Repository: " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-                    catch (MalformedURLException e) {
-                        logger.warn("MovingCode Repository is not a valid URL: " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-                    catch (Exception e) {
-                        // catch any unexpected error; if we get here this is probably an indication for a
-                        // bug/flaw in mc-runtime ...
-                        logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-
-                }
-            }
-
-            // start dropin watchdog
-            initDropInFolder();
-
-        }
-        else {
-            logger.debug("MCProcessRepository does not contain any processes.");
-        }
-    }
-
-	private void initDropInFolder() {
-		String folderDir = null;
-		int checkInterval = 0;
-		for (Property property : WPSConfig.getInstance().getPropertiesForRepositoryClass(getClass().getName())) {
-			if (property.getName().equals(DROP_IN_FOLDER_KEY) && property.getActive()) {
-				folderDir = property.getStringValue();
+				}
 			}
-			else if (property.getName().equals(DROP_IN_CHECK_INTERVAL_SECS_KEY) && property.getActive()) {
-				checkInterval = Integer.parseInt(property.getStringValue());
+			
+			// for each remote repository: add to RepoManager
+			for (Property property : propertyArray) {
+				if (property.getName().equalsIgnoreCase(REPO_FOLDER_PARAM) && property.getActive()) {
+					// identify Folder, check and register
+					try {
+						String repoFolder = property.getStringValue();
+						rm.addLocalZipPackageRepository(repoFolder);
+						logger.info("Added MovingCode Repository: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+
+				}
 			}
+
+			// add a change listener to the GlobalRepositoryManager rm
+			rm.addRepositoryChangeListener(new RepositoryChangeListener() {
+				@Override
+				public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
+					logger.info("Moving Code repository content has changed. Capabilities update required.");
+					WPSConfig.getInstance().firePropertyChange(
+							WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);				
+				}
+			});
+
 		}
-		
-		if (folderDir != null) {
-			this.dropInWatchdog = new DropInFolderWatchdog(WebProcessingService.BASE_DIR,
-					folderDir, checkInterval);
+		else {
+			logger.debug("MCProcessRepository does not contain any processes.");
 		}
 	}
 
-    @Override
-    public Collection<String> getAlgorithmNames() {
-        return Arrays.asList(rm.getProcessIDs());
-    }
+	@Override
+	public Collection<String> getAlgorithmNames() {
+		return Arrays.asList(rm.getFunctionIDs());
+	}
 
-    @Override
-    public IAlgorithm getAlgorithm(String processID) {
-        return new MCProcessDelegator(processID);
-    }
+	@Override
+	public IAlgorithm getAlgorithm(String processID) {
+		return new MCProcessDelegator(processID);
+	}
 
-    @Override
-    public ProcessDescriptionType getProcessDescription(String processID) {
-        return rm.getFunction(processID).getDescription().getPackageDescription().getContractedFunctionality().getWpsProcessDescription();
-    }
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		return rm.getProcessDescription(processID);
+	}
 
-    @Override
-    public boolean containsAlgorithm(String processID) {
-        return rm.providesFunction(processID);
-    }
+	@Override
+	public boolean containsAlgorithm(String processID) {
+		return rm.providesFunction(processID);
+	}
 
-    @Override
-    public void shutdown() {
-        // TODO Auto-generated method stub
-        // we probably do not need any logic here
-    }
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		// we probably do not need any logic here
+	}
 
-    // ----------------------------------------------------------------
-    // methods and logic for processor configuration
-    private static void configureMCRuntime() {
-        String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
-        File configFile = new File(configFilePath);
-        boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
-        if ( !loaded) {
-            logger.error("Could not load processor configuration from " + configFilePath);
-        }
-    }
+	// ----------------------------------------------------------------
+	// methods and logic for processor configuration
+	private static void configureMCRuntime() {
+		String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
+		File configFile = new File(configFilePath);
+		boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
+		if ( !loaded) {
+			logger.error("Could not load processor configuration from " + configFilePath);
+		}
+	}
 
 }
