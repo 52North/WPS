@@ -393,6 +393,7 @@ public class GenericFileData {
 		IOUtils.copy(is, fos);
 		
 		fos.close();
+		is.close();
 		System.gc();
 
 		return fileName;
