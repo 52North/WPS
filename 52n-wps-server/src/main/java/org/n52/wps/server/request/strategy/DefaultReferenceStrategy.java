@@ -13,8 +13,6 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -30,8 +28,6 @@ import org.n52.wps.server.ExceptionReport;
  */
 public class DefaultReferenceStrategy implements IReferenceStrategy{
 	
-	// TODO: follow HTTP redirects with LaxRedirectStrategy
-	
 	Logger logger = Logger.getLogger(DefaultReferenceStrategy.class);
 	
 	//TODO: get proxy from config
@@ -44,7 +40,6 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		return true;
 	}
 	
-	// TODO: follow references, e..g 
 	
 	@Override
 	public InputStream fetchData(InputType input) throws ExceptionReport {
@@ -54,31 +49,8 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		
 		try {
 			
-//			URL dataURL = new URL(dataURLString);
-			// Do not give a direct inputstream.
-			// The XML handlers cannot handle slow connections
-//			URLConnection conn = dataURL.openConnection();
-//			conn.setRequestProperty("Accept-Encoding", "gzip");
-//			conn.setRequestProperty("Content-type", mimeType);
-			
 			// Handling POST with referenced document
 			if(input.getReference().isSetBodyReference()) {
-				
-				/**
-				 * Old code - did we ever test this?
-				 */
-//				URL dataURL = new URL(href);
-//				URLConnection conn = dataURL.openConnection();
-//				conn.setRequestProperty("Content-type", mimeType);
-//				conn.setRequestProperty("Accept-Encoding", "gzip");
-//				String bodyReference = input.getReference().getBodyReference().getHref();
-//				URL bodyReferenceURL = new URL (bodyReference);
-//				URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
-//				bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
-//				InputStream referenceInputStream = retrievingZippedContent(bodyReferenceConn);
-//				IOUtils.copy(referenceInputStream, conn.getOutputStream());
-//				InputStream inputStream = retrievingZippedContent(conn);
-//				return inputStream;
 				
 				String bodyHref = input.getReference().getBodyReference().getHref();
 				
@@ -88,19 +60,19 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 				String body = writer.toString();
 				
 				// trigger POST request
-				return httpPost(href, body, mimeType);
+				return new LazyHttpInputStream(href, body, mimeType);
 				
 			}
 			
 			// Handle POST with inline message
 			else if (input.getReference().isSetBody()) {
 				String body = input.getReference().getBody().toString();
-				return httpPost(href, body, mimeType);
+				return new LazyHttpInputStream(href, body, mimeType);
 			}
 			
 			// Handle get request
 			else {
-				return httpGet(href, mimeType);
+				return new LazyHttpInputStream(href, mimeType);
 			}
 			
 			
@@ -141,28 +113,4 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		return entity.getContent();
 	}
 	
-	/**
-	 * Make a POST request using mimeType and href
-	 * 
-	 * TODO: add support for autoretry, proxy
-	 */
-	private static InputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
-		HttpClient backend = new DefaultHttpClient();
-		
-		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
-		
-		HttpPost httppost = new HttpPost(dataURLString);
-		
-		if (mimeType != null){
-			httppost.addHeader(new BasicHeader("Content-type", mimeType));
-		}
-		
-		// set body entity
-		HttpEntity postEntity = new StringEntity(body);
-		httppost.setEntity(postEntity);
-		
-		HttpResponse response = httpclient.execute(httppost);
-		HttpEntity resultEntity = response.getEntity();
-		return resultEntity.getContent();
-	}
 }
