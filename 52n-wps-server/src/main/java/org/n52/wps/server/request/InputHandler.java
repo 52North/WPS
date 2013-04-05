@@ -190,13 +190,13 @@ public class InputHandler {
 //			if(algorithmClassName.startsWith("org.n52.wps.server.r."))
 //				return result;
 			//------------------------------------
-			//TODO (by Matthes) check if sufficient. Good point, the followin should work as well. If an exception is thrown
+			//(by Matthes) Good point, the following should work as well. If an exception is thrown
 			//go on with the default way. This has the benefit that its not hardcoded and should work for
-			//every algorithm which is created at runtime.
+			//every algorithm which is created at runtime (= having no class with that name on the classpath).
 			
 			clazz = Class.forName(algorithmClassName, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
-			LOGGER.warn("Could not find class "+ algorithmClassName, e);
+			LOGGER.info("Could not find class "+ algorithmClassName +". Skipping Input interception.", e);
 			return result;
 		}
 		
