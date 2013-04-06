@@ -9,8 +9,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-io-impl</artifactId>
 	<packaging>jar</packaging>
-	<name>52north 52n-wps-io-impl</name>
-	<description>The project 52 north 52n-wps-io-impl does something with JAVA.</description>
+	<name>52North WPS Input/Ouput Implementation</name>
+	<description>Implementation of the input/output API for WPS service</description>
 	<repositories>
 		<repository>
 			<!-- Tentative local repo for libs that are not migrated to Maven dependency 

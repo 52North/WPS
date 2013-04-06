@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-commons</artifactId>
-	<name>52north 52n-wps-commons</name>
+	<name>52North WPS Commons</name>
 	<description>Common classes for the WPS server modules.</description>
 	<inceptionYear>2006</inceptionYear>
 	

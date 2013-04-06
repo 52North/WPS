@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-mc</artifactId>
-	<name>52n-wps-mc</name>
+	<name>52North WPS Moving Code Processing Backend</name>
 	<packaging>jar</packaging>
 	<description>Moving Code module for the WPS framework</description>
 
@@ -126,7 +126,13 @@
 			<artifactId>mc-runtime</artifactId>
 			<version>0.6-SNAPSHOT</version>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.n52.mc</groupId>
+			<artifactId>mc-xml-processors</artifactId>
+			<version>0.6-SNAPSHOT</version>
+		</dependency>
+		
 	</dependencies>
     <!-- here are default properties, can be overwritten by profiles -->
 

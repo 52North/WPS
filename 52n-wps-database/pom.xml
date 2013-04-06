@@ -7,8 +7,8 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-database</artifactId>
-	<name>52north 52n-wps-database</name>
-	<description>The project 52 north 52n-wps-database does something with JAVA.</description>
+	<name>52North WPS Database</name>
+	<description>Database access facilities for the WPS service.</description>
 	<build>
 		<resources>
 			<resource>

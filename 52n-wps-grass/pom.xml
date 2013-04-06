@@ -7,8 +7,8 @@
 	</parent>
     <modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-grass</artifactId>
-	<name>52north 52n-wps-grass</name>
-	<description>Grass.</description>
+	<name>52North WPS GRASS Processing Backend</name>
+	<description>Implementation of GRASS processing backend for a WPS server</description>
 	<build>
 		<plugins>
 			<plugin>

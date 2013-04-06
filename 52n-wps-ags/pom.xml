@@ -7,9 +7,9 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-ags</artifactId>
-	<name>52n-wps-ags</name>
+	<name>52North WPS ArcGIS Server Processing Backend</name>
 	<packaging>jar</packaging>
-	<description>ProcessRepository for the ArcGIS server backend.</description>
+	<description>Implementation of a ProcessRepository for the ArcGIS server to expose ArcGIS processes in a WPS</description>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
