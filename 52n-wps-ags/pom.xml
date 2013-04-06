@@ -33,13 +33,4 @@
 			<artifactId>52n-wps-ags-workspace</artifactId>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<!-- Tentative local repo for libs that are not migrated to Maven dependency 
-				mechanism and available in online repositories. -->
-			<id>lib-repository</id>
-			<name>Local Repository</name>
-			<url>file:///${basedir}/lib-repository/</url>
-		</repository>
-	</repositories>
 </project>
