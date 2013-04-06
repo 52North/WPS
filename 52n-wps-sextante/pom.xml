@@ -9,8 +9,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>52n-wps-sextante</artifactId>
     <packaging>jar</packaging>
-    <name>52north 52n-wps-sextante</name>
-    <description>The project 52 north 52n-wps-sextante exposes the Sextante Librries as WPS processes</description>
+    <name>52North WPS Sextante Processing Backend</name>
+    <description>Exposing of the Sextante Libraries as WPS processes</description>
     <inceptionYear>2008</inceptionYear>
     <dependencies>
         <dependency>

@@ -8,8 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>52n-wps-webadmin</artifactId>
     <packaging>jar</packaging>
-    <name>52north Web admin interface</name>
-    <description>Provides the Web admin UI for maintaining WPS.</description>
+    <name>52North Web Admin Interface</name>
+    <description>Provides the Web admin UI for managing a WPS instance</description>
     
 	<dependencies>
 		<dependency>

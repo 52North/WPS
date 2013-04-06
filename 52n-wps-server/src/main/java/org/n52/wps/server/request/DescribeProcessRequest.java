@@ -61,7 +61,11 @@ import org.w3c.dom.NodeList;
  */
 public class DescribeProcessRequest extends Request {
 
-	private ProcessDescriptionsDocument document;
+	private static final String PARAM_IDENTIFIER = "identifier";
+
+    private static final String PARAM_VERSION = "version";
+	
+    private ProcessDescriptionsDocument document;
 	
 	/**
 	 * Creates a DescribeProcessRequest based on a Map (HTTP_GET)
@@ -83,13 +87,13 @@ public class DescribeProcessRequest extends Request {
 		//put the respective elements of the document in the map
 		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
 		
-		map = new CaseInsensitiveMap();
+		this.map = new CaseInsensitiveMap();
 		
 		for (int i = 0; i < nnm.getLength(); i++) {
 			
 			Node n = nnm.item(i);
 			if(n.getLocalName().equalsIgnoreCase("service")){
-			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			this.map.put(n.getLocalName(), new String[]{n.getNodeValue()});
 			}
 		}
 		//get identifier
@@ -104,8 +108,7 @@ public class DescribeProcessRequest extends Request {
 				identifierList = identifierList.concat(s + ",");
 			}
 		}		
-		map.put("identifier", new String[]{identifierList});
-		
+		this.map.put(PARAM_IDENTIFIER, new String[]{identifierList});
 	}
 	
 
@@ -115,13 +118,13 @@ public class DescribeProcessRequest extends Request {
 	 * @return True if the input is valid, False otherwise
 	 */
 	public boolean validate() throws ExceptionReport{
-		getMapValue("version", false); // not required?
-		getMapValue("identifier", true);  // required!
+		getMapValue(PARAM_VERSION, false); // not required?
+		getMapValue(PARAM_IDENTIFIER, true);  // required!
 		return true;
 	}
 	
 	public Object getAttachedResult(){
-		return document;
+		return this.document;
 	}
 	
 	/**
@@ -132,17 +135,17 @@ public class DescribeProcessRequest extends Request {
 	public Response call() throws ExceptionReport {
 		validate();
 		
-		document = ProcessDescriptionsDocument.Factory.newInstance();
-		document.addNewProcessDescriptions();
-		XmlCursor c = document.newCursor();
+		this.document = ProcessDescriptionsDocument.Factory.newInstance();
+		this.document.addNewProcessDescriptions();
+		XmlCursor c = this.document.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
 				
-		String[] identifiers = getMapValue("identifier", true).split(",");
-		document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
-		document.getProcessDescriptions().setService("WPS");
-		document.getProcessDescriptions().setVersion(Request.SUPPORTED_VERSION);
+		String[] identifiers = getMapValue(PARAM_IDENTIFIER, true).split(",");
+		this.document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
+		this.document.getProcessDescriptions().setService("WPS");
+		this.document.getProcessDescriptions().setVersion(Request.SUPPORTED_VERSION);
 		
 		if(identifiers.length==1 && identifiers[0].equalsIgnoreCase("all")){
 			List<String> identifierList = RepositoryManager.getInstance().getAlgorithms();
@@ -159,10 +162,10 @@ public class DescribeProcessRequest extends Request {
 											"parameter: identifier | value: " + algorithmName);
 			}
 			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
-			document.getProcessDescriptions().addNewProcessDescription().set(description);
+			this.document.getProcessDescriptions().addNewProcessDescription().set(description);
 		}
 		
-		LOGGER.info("Handled Request successfully for: " + getMapValue("identifier", true));
+		LOGGER.info("Handled Request successfully for: " + getMapValue(PARAM_IDENTIFIER, true));
 		return new DescribeProcessResponse(this);
 	}
 

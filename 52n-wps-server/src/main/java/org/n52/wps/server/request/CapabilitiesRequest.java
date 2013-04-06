@@ -32,6 +32,7 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
+
 package org.n52.wps.server.request;
 
 import java.util.ArrayList;
@@ -41,7 +42,6 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.CapabilitiesResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -49,98 +49,103 @@ import org.w3c.dom.NodeList;
  * Handles a CapabilitesRequest
  */
 public class CapabilitiesRequest extends Request {
-	
-	/**
-	 * Creates a CapabilitesRequest based on a Map (HTTP_GET)
-	 * @param ciMap The client input
-	 * @throws ExceptionReport
-	 */
-	public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
-		super(ciMap);
-	}
 
-	public CapabilitiesRequest(Document doc) throws ExceptionReport{
-		super(doc);
-		
-		//put the respective elements of the document in the map
-		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
-		
-		map = new CaseInsensitiveMap();
-		
-		String[] serviceArray = {"WPS"};
-			
-		map.put("service", serviceArray);
-			
-			
-		
-		NodeList nList = doc.getFirstChild().getChildNodes();
-		
-		ArrayList<String> versionList = new ArrayList<String>();
-		
-		for (int i = 0; i < nList.getLength(); i++) {
-			Node n = nList.item(i);
-			if(n.getLocalName() != null){
-				
-				if(n.getLocalName().equalsIgnoreCase("AcceptVersions")){
-					
-					NodeList nList2 = n.getChildNodes();
-					
-					for (int j = 0; j < nList2.getLength(); j++) {
-						Node n2 = nList2.item(i);
-						
-						if(n2.getLocalName() != null && n2.getLocalName().equalsIgnoreCase("Version")){
-							versionList.add(n2.getTextContent());
-						}
-					}
-					break;
-				}
-			}
-		}
-		
-		if(!versionList.isEmpty()){			
-			map.put("version", versionList.toArray(new String [versionList.size()]));	
-		}	
-		
-	}
-	
-	/**
-	 * Validates the client input
-	 * @throws ExceptionReport
-	 * @return True if the input is valid, False otherwise
-	 */
-	public boolean validate() throws ExceptionReport{
-		
-		String services = getMapValue("service", true);	
-		if(! services.equalsIgnoreCase("wps")) {
-			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services, 
-										ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
+    private static final String VERSION_ELEMENT_NAME = "Version";
+    private static final String ACCEPT_VERSIONS_ELEMENT_NAME = "AcceptVersions";
+    private static final String PARAM_SERVICE = "service";
+    private static final String PARAM_VERSION = "version";
 
-		String[] versions = getMapArray("version", false);
-		if(! requireVersion(SUPPORTED_VERSION, false)) {
-				throw new ExceptionReport("Requested versions are not supported, you requested: " + Request.accumulateString(versions),
-											ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
-		
-		//String[] sections = getMapArray("sections");
-		return true;
-	}
+    /**
+     * Creates a CapabilitesRequest based on a Map (HTTP_GET)
+     * 
+     * @param ciMap
+     *        The client input
+     * @throws ExceptionReport
+     */
+    public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
+        super(ciMap);
+    }
 
-	/**
-	 * Actually serves the Request.
-	 * @throws ExceptionReport
-	 * @return Response The result of the computation
-	 */
-	public Response call() throws ExceptionReport {
-		validate();
-		LOGGER.info("Handled GetCapabilitiesRequest successfully!");
-		return new CapabilitiesResponse(this);
-	}
+    public CapabilitiesRequest(Document doc) throws ExceptionReport {
+        super(doc);
 
-	/**
-	 * Not used in this class. Returns null;
-	 */
-	public Object getAttachedResult(){
-		return null;
-	}
+        // put the respective elements of the document in the map
+        // NamedNodeMap nnm = doc.getFirstChild().getAttributes();
+
+        this.map = new CaseInsensitiveMap();
+
+        String[] serviceArray = {"WPS"};
+
+        this.map.put(PARAM_SERVICE, serviceArray);
+
+        NodeList nList = doc.getFirstChild().getChildNodes();
+
+        ArrayList<String> versionList = new ArrayList<String>();
+
+        for (int i = 0; i < nList.getLength(); i++) {
+            Node n = nList.item(i);
+            if (n.getLocalName() != null) {
+
+                if (n.getLocalName().equalsIgnoreCase(ACCEPT_VERSIONS_ELEMENT_NAME)) {
+
+                    NodeList nList2 = n.getChildNodes();
+
+                    for (int j = 0; j < nList2.getLength(); j++) {
+                        Node n2 = nList2.item(i);
+
+                        if (n2.getLocalName() != null && n2.getLocalName().equalsIgnoreCase(VERSION_ELEMENT_NAME)) {
+                            versionList.add(n2.getTextContent());
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        if ( !versionList.isEmpty()) {
+            this.map.put("version", versionList.toArray(new String[versionList.size()]));
+        }
+
+    }
+
+    /**
+     * Validates the client input
+     * 
+     * @throws ExceptionReport
+     * @return True if the input is valid, False otherwise
+     */
+    public boolean validate() throws ExceptionReport {
+        String services = getMapValue(PARAM_SERVICE, true);
+        if ( !services.equalsIgnoreCase("wps")) {
+            throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services,
+                                      ExceptionReport.INVALID_PARAMETER_VALUE);
+        }
+
+        String[] versions = getMapArray(PARAM_VERSION, false);
+        if ( !requireVersion(SUPPORTED_VERSION, false)) {
+            throw new ExceptionReport("Requested versions are not supported, you requested: "
+                    + Request.accumulateString(versions), ExceptionReport.INVALID_PARAMETER_VALUE);
+        }
+
+        return true;
+    }
+
+    /**
+     * Actually serves the Request.
+     * 
+     * @throws ExceptionReport
+     * @return Response The result of the computation
+     */
+    public Response call() throws ExceptionReport {
+        validate();
+        LOGGER.info("Handled GetCapabilitiesRequest successfully!");
+        return new CapabilitiesResponse(this);
+    }
+
+    /**
+     * Not used in this class. Returns null;
+     */
+    public Object getAttachedResult() {
+        return null;
+    }
 }
