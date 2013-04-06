@@ -10,8 +10,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-r</artifactId>
 	<packaging>jar</packaging>
-	<name>52North WPS4R</name>
-	<description>The project WPS4R provides functionalities of R as WPS processes.</description>
+	<name>52North WPS R Processing Backend</name>
+	<description>The project WPS4R provides R scripts as WPS processes</description>
 
 	<inceptionYear>2010</inceptionYear>
 
@@ -126,7 +126,15 @@
 			<!-- junit for the unit tests -->
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>xmlunit</groupId>
+			<artifactId>xmlunit</artifactId>
+			<version>1.4</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<!-- Dependencies for Scope 'compile' -->
 		<dependency>
 			<groupId>commons-logging</groupId>
