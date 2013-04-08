@@ -54,6 +54,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
@@ -81,7 +82,7 @@ public class WebProcessingService extends HttpServlet {
     public static String SERVLET_PATH = "WebProcessingService";
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
     public static String DEFAULT_LANGUAGE = "en-US";
-    private static Logger LOGGER = Logger.getLogger(WebProcessingService.class);
+    protected static Logger LOGGER = Logger.getLogger(WebProcessingService.class);
 
     /**
      * 
@@ -95,7 +96,7 @@ public class WebProcessingService extends HttpServlet {
      * @throws IOException
      *         a task of the tomcat
      */
-    private OutputStream getConfiguredOutputStream(HttpServletRequest hsRequest, HttpServletResponse hsResponse) throws IOException {
+    private static OutputStream getConfiguredOutputStream(HttpServletRequest hsRequest, HttpServletResponse hsResponse) throws IOException {
         /*
          * Forbids clients to cache the response May solve problems with proxies and bad implementations
          */
@@ -227,9 +228,9 @@ public class WebProcessingService extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // OutputStream out = getConfiguredOutputStream(req, res);
-        OutputStream out = res.getOutputStream();
         try {
+            @SuppressWarnings("resource")
+            OutputStream out = res.getOutputStream(); // closed by res.flushBuffer();
             RequestHandler handler = new RequestHandler((Map<String, String[]>) req.getParameterMap(), out);
             String mimeType = handler.getResponseMimeType();
             res.setContentType(mimeType);
@@ -238,17 +239,22 @@ public class WebProcessingService extends HttpServlet {
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (ExceptionReport e) {
-            handleException(e, res, out);
+            handleException(e, res);
         }
-        out.flush();
-        out.close();
+        finally {
+            res.flushBuffer();
+            // out.flush();
+            // out.close();
+        }
     }
 
     public final static int MAXIMUM_REQUEST_SIZE = 128 << 20;
     public final static String SPECIAL_XML_POST_VARIABLE = "request";
+    private static final String XML_CONTENT_TYPE = "text/xml";
 
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        OutputStream os = res.getOutputStream();
+        BufferedReader reader = null;
+
         try {
             String contentType = req.getContentType();
             String characterEncoding = req.getCharacterEncoding();
@@ -259,8 +265,9 @@ public class WebProcessingService extends HttpServlet {
             int contentLength = req.getContentLength();
             if (contentLength > MAXIMUM_REQUEST_SIZE) {
                 LOGGER.warn("POST request rejected, request size of " + contentLength + " too large.");
-                handleException(new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
-                        + " bytes", ExceptionReport.NO_APPLICABLE_CODE), res, os);
+                ExceptionReport er = new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
+                        + " bytes", ExceptionReport.NO_APPLICABLE_CODE);
+                handleException(er, res);
             }
 
             LOGGER.debug("Received POST: Content-Type = " + contentType + ", Character-Encoding = " + characterEncoding
@@ -269,7 +276,7 @@ public class WebProcessingService extends HttpServlet {
             int requestSize = 0;
 
             StringWriter writer = contentLength > 0 ? new StringWriter(contentLength) : new StringWriter();
-            BufferedReader reader = req.getReader();
+            reader = req.getReader();
             char[] buffer = new char[8192];
             int read;
             while ( (read = reader.read(buffer)) != -1 && requestSize < MAXIMUM_REQUEST_SIZE) {
@@ -282,45 +289,50 @@ public class WebProcessingService extends HttpServlet {
             // Protect against denial of service attacks.
             if (requestSize >= MAXIMUM_REQUEST_SIZE && reader.read() > -1) {
                 LOGGER.warn("POST request rejected, request size of " + requestSize + " too large.");
-                handleException(new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
-                        + " bytes", ExceptionReport.NO_APPLICABLE_CODE), res, os);
+                ExceptionReport er = new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
+                        + " bytes", ExceptionReport.NO_APPLICABLE_CODE);
+                handleException(er, res);
             }
-            else {
 
-                String documentString = writer.toString();
+            String documentString = writer.toString();
 
-                // Perform URL decoding, if necessary
-                // if ("application/x-www-form-urlencoded".equals(contentType)) {
-                if ( (contentType).startsWith("application/x-www-form-urlencoded")) {
-                    if (documentString.startsWith(SPECIAL_XML_POST_VARIABLE + "=")) {
-                        // This is a hack to permit xml to be easily submitted via a form POST.
-                        // By convention, we are allowing users to post xml if they name it
-                        // with a POST parameter "request" although this is not
-                        // valid per the specification.
-                        documentString = documentString.substring(SPECIAL_XML_POST_VARIABLE.length() + 1);
-                        LOGGER.debug("POST request form variable removed");
-                    }
-                    documentString = URLDecoder.decode(documentString, characterEncoding);
-                    LOGGER.debug("Decoded of POST:\n" + documentString + "\n");
+            // Perform URL decoding, if necessary
+            // if ("application/x-www-form-urlencoded".equals(contentType)) {
+            if ( (contentType).startsWith("application/x-www-form-urlencoded")) {
+                if (documentString.startsWith(SPECIAL_XML_POST_VARIABLE + "=")) {
+                    // This is a hack to permit xml to be easily submitted via a form POST.
+                    // By convention, we are allowing users to post xml if they name it
+                    // with a POST parameter "request" although this is not
+                    // valid per the specification.
+                    documentString = documentString.substring(SPECIAL_XML_POST_VARIABLE.length() + 1);
+                    LOGGER.debug("POST request form variable removed");
                 }
-
-                RequestHandler handler = new RequestHandler(new ByteArrayInputStream(documentString.getBytes("UTF-8")),
-                                                            res.getOutputStream());
-                String mimeType = handler.getResponseMimeType();
-                res.setContentType(mimeType);
-                
-                handler.handle();
-                
-                res.setStatus(HttpServletResponse.SC_OK);
+                documentString = URLDecoder.decode(documentString, characterEncoding);
+                LOGGER.debug("Decoded of POST:\n" + documentString + "\n");
             }
+
+            RequestHandler handler = new RequestHandler(new ByteArrayInputStream(documentString.getBytes("UTF-8")),
+                                                        res.getOutputStream());
+            String mimeType = handler.getResponseMimeType();
+            res.setContentType(mimeType);
+
+            handler.handle();
+
+            res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (ExceptionReport e) {
-            handleException(e, res, os);
+            handleException(e, res);
+        }
+        catch (Exception e) {
+            ExceptionReport er = new ExceptionReport("Error handing request: " + e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE, e);
+            handleException(er, res);
         }
         finally {
-            if (os != null) {
-                os.close();
-            }
+            if (res != null)
+                res.flushBuffer();
+
+            if (reader != null)
+                reader.close();
         }
     }
 
@@ -332,13 +344,12 @@ public class WebProcessingService extends HttpServlet {
         super.service(req, res);
     }
 
-    private void handleException(ExceptionReport exception, HttpServletResponse res, OutputStream os) {
-        res.setContentType("text/xml");
+    private static void handleException(ExceptionReport exception, HttpServletResponse res) {
+        res.setContentType(XML_CONTENT_TYPE);
         try {
-            // exception.getExceptionDocument().save(res.getWriter());
-            exception.getExceptionDocument().save(os);
             LOGGER.debug(exception.toString());
-            exception.getExceptionDocument().save(res.getWriter());
+            exception.getExceptionDocument().save(res.getOutputStream()); // DO NOT MIX getWriter and
+                                                                          // getOuputStream!
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (IOException e) {
@@ -349,6 +360,7 @@ public class WebProcessingService extends HttpServlet {
             }
             catch (IOException ex) {
                 LOGGER.error("error while writing error code to client!");
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }
     }

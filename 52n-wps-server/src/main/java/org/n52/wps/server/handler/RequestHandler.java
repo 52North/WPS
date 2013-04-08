@@ -75,7 +75,7 @@ public class RequestHandler {
 
     private static final String GET_CAPABILITIES_ELEMENT_NAME = "GetCapabilities";
 
-    private static final String VERSION_ATTRIBUTE_NAME = "version";
+    public static final String VERSION_ATTRIBUTE_NAME = "version";
 
     private static final String XML_MIMETYPE = "text/xml";
 

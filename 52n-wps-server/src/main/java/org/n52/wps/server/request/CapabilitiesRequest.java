@@ -39,6 +39,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.server.response.CapabilitiesResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
@@ -50,10 +51,10 @@ import org.w3c.dom.NodeList;
  */
 public class CapabilitiesRequest extends Request {
 
-    private static final String VERSION_ELEMENT_NAME = "Version";
     private static final String ACCEPT_VERSIONS_ELEMENT_NAME = "AcceptVersions";
     private static final String PARAM_SERVICE = "service";
     private static final String PARAM_VERSION = "version";
+    private static final Object REQUEST_DOC = "document";
 
     /**
      * Creates a CapabilitesRequest based on a Map (HTTP_GET)
@@ -66,26 +67,28 @@ public class CapabilitiesRequest extends Request {
         super(ciMap);
     }
 
-    public CapabilitiesRequest(Document doc) throws ExceptionReport {
+    public CapabilitiesRequest(Document doc) {
         super(doc);
-
-        // put the respective elements of the document in the map
-        // NamedNodeMap nnm = doc.getFirstChild().getAttributes();
-
         this.map = new CaseInsensitiveMap();
 
-        String[] serviceArray = {"WPS"};
+        Node fc = this.doc.getFirstChild();
+        String name = fc.getNodeName();
+        this.map.put(REQUEST_DOC, name);
 
-        this.map.put(PARAM_SERVICE, serviceArray);
+        Node serviceItem = fc.getAttributes().getNamedItem("service");
+        if (serviceItem != null) {
+            String service = serviceItem.getNodeValue();
+            String[] serviceArray = {service};
+
+            this.map.put(PARAM_SERVICE, serviceArray);
+        }
 
         NodeList nList = doc.getFirstChild().getChildNodes();
-
         ArrayList<String> versionList = new ArrayList<String>();
 
         for (int i = 0; i < nList.getLength(); i++) {
             Node n = nList.item(i);
             if (n.getLocalName() != null) {
-
                 if (n.getLocalName().equalsIgnoreCase(ACCEPT_VERSIONS_ELEMENT_NAME)) {
 
                     NodeList nList2 = n.getChildNodes();
@@ -93,7 +96,8 @@ public class CapabilitiesRequest extends Request {
                     for (int j = 0; j < nList2.getLength(); j++) {
                         Node n2 = nList2.item(i);
 
-                        if (n2.getLocalName() != null && n2.getLocalName().equalsIgnoreCase(VERSION_ELEMENT_NAME)) {
+                        if (n2.getLocalName() != null
+                                && n2.getLocalName().equalsIgnoreCase(RequestHandler.VERSION_ATTRIBUTE_NAME)) {
                             versionList.add(n2.getTextContent());
                         }
                     }
@@ -103,7 +107,7 @@ public class CapabilitiesRequest extends Request {
         }
 
         if ( !versionList.isEmpty()) {
-            this.map.put("version", versionList.toArray(new String[versionList.size()]));
+            this.map.put(PARAM_VERSION, versionList.toArray(new String[versionList.size()]));
         }
 
     }
