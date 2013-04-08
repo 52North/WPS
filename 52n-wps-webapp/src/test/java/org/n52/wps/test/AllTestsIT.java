@@ -1,13 +1,23 @@
+
 package org.n52.wps.test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -18,18 +28,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    GetCapabilitiesKVPTests.class,
-    ExecutePOSTTester.class,
-    DescribeProcessKVPTester.class
-})
+@Suite.SuiteClasses({GetCapabilitiesKVPTests.class, ExecutePOSTTester.class, DescribeProcessKVPTester.class})
 public class AllTestsIT {
 
-//        suite.addTestSuite(DescribeProcessKVPTester.class); // test
+    // suite.addTestSuite(DescribeProcessKVPTester.class); // test
     public static int getPort() {
         return Integer.parseInt(System.getProperty("test.port", "8080"));
     }
@@ -53,11 +57,15 @@ public class AllTestsIT {
         return documentBuilder.parse(inSource);
     }
 
-    public static void validateBinaryBase64Async(String response) throws IOException, ParserConfigurationException, SAXException {
+    public static void validateBinaryBase64Async(String response) throws IOException,
+            ParserConfigurationException,
+            SAXException {
         String referencedDocument = getAsyncDoc(response);
         assertThat(referencedDocument, referencedDocument, not(containsString("ExceptionReport")));
         assertThat(referencedDocument, referencedDocument, containsString("ExecuteResponse"));
-        assertThat(referencedDocument, referencedDocument, anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"), containsString("Tk9SVEg6IDIyODUwMC4w")));
+        assertThat(referencedDocument,
+                   referencedDocument,
+                   anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"), containsString("Tk9SVEg6IDIyODUwMC4w")));
     }
 
     public static String getRefAsString(String response) throws ParserConfigurationException, SAXException, IOException {
@@ -81,7 +89,9 @@ public class AllTestsIT {
         return referencedDocument;
     }
 
-    public static InputStream getRefAsStream(String response) throws ParserConfigurationException, SAXException, IOException {
+    public static InputStream getRefAsStream(String response) throws ParserConfigurationException,
+            SAXException,
+            IOException {
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString("ProcessSucceeded"));
         assertThat(response, response, containsString("Reference"));
@@ -121,29 +131,37 @@ public class AllTestsIT {
 
         assertThat(referencedDocument, referencedDocument, not(containsString("ExceptionReport")));
         assertThat(referencedDocument, referencedDocument, containsString("Status"));
-        
-        for (int i = 0;i < 4;i++) {
-            if (!referencedDocument.contains("ProcessSucceeded") && !referencedDocument.contains("ProcessFailed") ) {
-                try { 
+
+        for (int i = 0; i < 4; i++) {
+            if ( !referencedDocument.contains("ProcessSucceeded") && !referencedDocument.contains("ProcessFailed")) {
+                try {
                     System.out.println("WPS process still processing. Waiting...");
-                    Thread.sleep(1500 * 15); 
+                    Thread.sleep(1500 * 15);
                     referencedDocument = GetClient.sendRequest(splittedURL[0] + "RetrieveResultServlet", splittedURL[1]);
-                } catch (InterruptedException ignore) { }
-            } else {
+                }
+                catch (InterruptedException ignore) {
+                    // do nothing
+                }
+            }
+            else {
                 return referencedDocument;
             }
         }
         throw new IOException("Test did not complete in allotted time");
     }
 
-    public static void checkReferenceXMLResult(String response) throws ParserConfigurationException, SAXException, IOException {
+    public static void checkReferenceXMLResult(String response) throws ParserConfigurationException,
+            SAXException,
+            IOException {
         String referencedDocument = getRefAsString(response);
         assertThat(referencedDocument, referencedDocument, not(containsString("ExceptionReport")));
         assertThat(referencedDocument, referencedDocument, containsString("LinearRing"));
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     }
 
-    public static void checkReferenceBinaryResultBase64(String response) throws ParserConfigurationException, SAXException, IOException {
+    public static void checkReferenceBinaryResultBase64(String response) throws ParserConfigurationException,
+            SAXException,
+            IOException {
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString("ProcessSucceeded"));
         assertThat(response, response, containsString("Reference"));
@@ -152,9 +170,12 @@ public class AllTestsIT {
         GeotiffParser parser = new GeotiffParser();
         IData data = parser.parseBase64(stream, "image/tiff", null);
         assertThat(data.getPayload() instanceof GridCoverage2D, is(true));
+        stream.close();
     }
 
-    public static void checkReferenceBinaryResultDefault(String response) throws ParserConfigurationException, SAXException, IOException {
+    public static void checkReferenceBinaryResultDefault(String response) throws ParserConfigurationException,
+            SAXException,
+            IOException {
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString("ProcessSucceeded"));
         assertThat(response, response, containsString("Reference"));
@@ -163,5 +184,6 @@ public class AllTestsIT {
         GeotiffParser parser = new GeotiffParser();
         IData data = parser.parse(stream, "image/tiff", null);
         assertThat(data.getPayload() instanceof GridCoverage2D, is(true));
+        stream.close();
     }
 }

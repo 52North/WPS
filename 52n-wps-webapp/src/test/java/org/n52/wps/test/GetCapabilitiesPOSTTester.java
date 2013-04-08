@@ -1,100 +1,137 @@
+
 package org.n52.wps.test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
-import java.io.StringReader;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import javax.xml.parsers.ParserConfigurationException;
-import junit.framework.TestCase;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
+
+import net.opengis.wps.x100.WPSCapabilitiesType;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.xml.sax.SAXException;
 
+public class GetCapabilitiesPOSTTester {
+    private static String url;
 
-public class GetCapabilitiesPOSTTester extends TestCase {
-	private String url;
-	
-    @Override
-	protected void setUp(){
-		url = AllTestsIT.getURL();
-	}
-	
-	/*
-	 * *GetCapabilities*
-		- POST Request with missing "request" parameter -->not possible
-		- GetCapabilities POST request
-		- GetCapabilities POST request with missing "version" paramater
-		- GetCapabilities POST request with missing "service" paramater
-	 */
-	
-	public void testGetCapabilitiesComplete(){
-			
-		String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"+ 
-		"<wps:GetCapabilities service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"+
-			"http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_request.xsd\">"+
-			"<wps:AcceptVersions>"+
-		        "<ows:Version>1.0.0</ows:Version>"+
-		    "</wps:AcceptVersions>"+
-				"</wps:GetCapabilities>";
-		
-				String response ="";
-				try {
-					response = PostClient.sendRequest(url, payload);
-				} catch (IOException e) {
-					fail(e.getMessage());
-				}
-				assertTrue(!response.contains("ExceptionReport"));
-				assertTrue(response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
-	}
-	
-	
-	
+    @BeforeClass
+    public static void before() {
+        url = AllTestsIT.getURL();
+    }
 
-	public void testGetCapabilitiesMissingVersionParameter(){
-		String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"+ 
-		"<wps:GetCapabilities service=\"WPS\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"+
-			"http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_request.xsd\">"+
-			"<wps:AcceptVersions>"+
-			"<ows:Version>1.0.0</ows:Version>"+
-		    "</wps:AcceptVersions>"+
-				"</wps:GetCapabilities>";
-		
-				String response ="";
-				try {
-					response = PostClient.sendRequest(url, payload);
-				} catch (IOException e) {
-					fail(e.getMessage());
-				}
-				assertTrue(!response.contains("ExceptionReport"));
-				assertTrue(response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
-	}
-	
-	public void testGetCapabilitiesMissingServiceParameter(){
-		String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"+ 
-		"<wps:GetCapabilities  version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"+
-			"http://schemas.opengis.net/wps/1.0.0/wpsGetCapabilities_request.xsd\">"+
-			"<wps:AcceptVersions>"+
-		        "<ows:Version>1.0.0</ows:Version>"+
-		    "</wps:AcceptVersions>"+
-				"</wps:GetCapabilities>";
-		
-				String response ="";
-				try {
-					response = PostClient.sendRequest(url, payload);
-				} catch (IOException e) {
-					fail(e.getMessage());
-				}
-				assertTrue(!response.contains("ExceptionReport"));
-				assertTrue(response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
-	
-	}
-	
-		
-	
-	private Document parseXML(String xmlString) throws ParserConfigurationException, SAXException, IOException{
-		DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		StringReader inStream = new StringReader(xmlString);
-		InputSource inSource = new InputSource(inStream);
-		return documentBuilder.parse(inSource);
-	}
+    @Test
+    public void complete() throws XmlException, IOException {
+        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/GetCapabilities.xml");
+        XmlObject payload = XmlObject.Factory.parse(resource);
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(url, payload.toString());
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        assertThat(response, response, not(containsString("ExceptionReport")));
+
+        assertThat(response, response, containsString("<wps:Capabilities"));
+        assertThat(response, response, containsString("<ows:Operation name=\"Execute\">"));
+        assertThat(response, response, containsString("<ows:ServiceType>WPS</ows:ServiceType>"));
+        assertThat(response, response, containsString("<ows:ServiceProvider>"));
+        assertThat(response, response, containsString("</ows:OperationsMetadata>"));
+        assertThat(response, response, containsString("</wps:ProcessOfferings>"));
+        assertThat(response, response, containsString("</wps:Capabilities>"));
+    }
+
+    @Test
+    public void validateCapabilities() throws XmlException, IOException {
+        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/GetCapabilities.xml");
+        XmlObject payload = XmlObject.Factory.parse(resource);
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(url, payload.toString());
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        WPSCapabilitiesType caps = WPSCapabilitiesType.Factory.parse(response);
+        XmlOptions opts = new XmlOptions();
+        ArrayList<String> errors = new ArrayList<String>();
+        opts.setErrorListener(errors);
+        boolean valid = caps.validate(opts);
+
+        assertTrue(Arrays.deepToString(errors.toArray()), valid);
+    }
+
+    @Test
+    public void wrongVersion() throws XmlException, IOException {
+        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/WrongVersion.xml");
+        XmlObject payload = XmlObject.Factory.parse(resource);
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(url, payload.toString());
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("InvalidParameterValue"));
+
+        assertThat(response, response, not(containsString("<wps:Capabilities")));
+    }
+
+    @Test
+    public void wrongServiceParameter() throws ParserConfigurationException, SAXException, IOException, XmlException {
+        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/WrongService.xml");
+        XmlObject payload = XmlObject.Factory.parse(resource);
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(GetCapabilitiesPOSTTester.url, payload.toString());
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("exceptionCode=\"InvalidParameterValue\""));
+    }
+    
+    @Test
+    public void missingServiceParameter() throws ParserConfigurationException, SAXException, IOException, XmlException {
+        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/MissingService.xml");
+        XmlObject payload = XmlObject.Factory.parse(resource);
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(GetCapabilitiesPOSTTester.url, payload.toString());
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("exceptionCode=\"MissingParameterValue\""));
+    }
 
 }
