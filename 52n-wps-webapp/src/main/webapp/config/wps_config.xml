@@ -365,6 +365,7 @@
 				<Format mimetype="application/x-geotiff" />
 				<Format mimetype="text/plain" />
 				<Format mimetype="application/pdf" />
+				<Format mimetype="application/zip" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
