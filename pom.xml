@@ -716,7 +716,7 @@
 			<dependency>
 				<groupId>jfree</groupId>
 				<artifactId>jcommon</artifactId>
-				<version>1.0.14</version>
+				<version>1.0.16</version>
 			</dependency>
 			<dependency>
 				<groupId>org.beanshell</groupId>
@@ -726,7 +726,7 @@
 			<dependency>
 				<groupId>jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.11</version>
+				<version>1.0.13</version>
 			</dependency>
 			<dependency>
 				<groupId>trove</groupId>
