@@ -182,21 +182,14 @@ public class InputHandler {
 		Map<String,InterceptorInstance> result = new HashMap<String, InterceptorInstance>();
 		Class<?> clazz;
 		
+		// Input interception is not supported by quite a few repositories.
+		// Failing here does not necessarily mean an Error
 		try {
-			//(by Matthias) This method causes exceptions for each R process because they are represented as 
-			//instances from GenericRProcess. Hence classes do not match algorithm-names in WPS4R.
-			//The following is a quick workaround, please review:
-			//------------------------------------
-//			if(algorithmClassName.startsWith("org.n52.wps.server.r."))
-//				return result;
-			//------------------------------------
-			//(by Matthes) Good point, the following should work as well. If an exception is thrown
-			//go on with the default way. This has the benefit that its not hardcoded and should work for
-			//every algorithm which is created at runtime (= having no class with that name on the classpath).
-			
 			clazz = Class.forName(algorithmClassName, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
-			LOGGER.info("Could not find class "+ algorithmClassName +". Skipping Input interception.", e);
+			// assume that the repository just doesn't support input interception and return immediately
+			LOGGER.info("Input interception failed for class "+ algorithmClassName +". Skipping Input interception.");
+			LOGGER.trace(e);
 			return result;
 		}
 		
