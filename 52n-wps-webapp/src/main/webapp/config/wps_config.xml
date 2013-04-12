@@ -985,10 +985,12 @@
 		
 		<!-- 
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
-			<Property name="REPOSITORY_FEED_URL" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
-			<Property name="LOCAL_ZIP_FOLDER" active="false">C:\mypackages</Property>
+			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
+			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
+			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
 		</Repository>
 		 -->
+		
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	<Server hostname="localhost" hostport="8080"

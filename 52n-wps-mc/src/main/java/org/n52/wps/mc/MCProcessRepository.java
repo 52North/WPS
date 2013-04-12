@@ -61,8 +61,9 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
     // static string definitions
     private static final String CONFIG_FILE_NAME = "processors.xml";
-    private static final String REPO_FEED_URL_PARAM = "REPOSITORY_FEED_URL";
-    private static final String REPO_FOLDER_PARAM = "LOCAL_ZIP_FOLDER";
+    private static final String REPO_FEED_REPO_PARAM = "REMOTE_REPOSITORY";
+    private static final String LOCAL_ZIP_REPO_PARAM = "LOCAL_REPOSITORY";
+    private static final String CACHED_REMOTE_REPO_PARAM = "CACHED_REMOTE_REPOSITORY";
 
     // use the GlobalRepoManager from mc-runtime for the process inventory
     private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
@@ -86,7 +87,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
             // service considerbly
             // for each remote repository: add to RepoManager
             for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase(REPO_FEED_URL_PARAM) && property.getActive()) {
+                if (property.getName().equalsIgnoreCase(REPO_FEED_REPO_PARAM) && property.getActive()) {
                     // convert to URL, check and register
                     try {
                         URL repoURL = new URL(property.getStringValue());
@@ -110,7 +111,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
             // for each remote repository: add to RepoManager
             for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase(REPO_FOLDER_PARAM) && property.getActive()) {
+                if (property.getName().equalsIgnoreCase(LOCAL_ZIP_REPO_PARAM) && property.getActive()) {
                     // identify Folder, check and register
                     try {
                         String repoFolder = property.getStringValue();
