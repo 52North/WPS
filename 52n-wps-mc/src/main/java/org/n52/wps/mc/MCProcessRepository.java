@@ -54,160 +54,188 @@ import org.n52.wps.server.IAlgorithmRepository;
  * 
  * @author Matthias Mueller, TU Dresden
  * 
- *         TODO: lazy initialization
- * 
  */
 public class MCProcessRepository implements IAlgorithmRepository {
 
-    // static string definitions
-    private static final String CONFIG_FILE_NAME = "processors.xml";
-    private static final String REPO_FEED_REPO_PARAM = "REMOTE_REPOSITORY";
-    private static final String LOCAL_ZIP_REPO_PARAM = "LOCAL_REPOSITORY";
-    private static final String CACHED_REMOTE_REPO_PARAM = "CACHED_REMOTE_REPOSITORY";
+	// static string definitions
+	private static final String CONFIG_FILE_NAME = "processors.xml";
+	private static final String REPO_FEED_REPO_PARAM = "REMOTE_REPOSITORY";
+	private static final String LOCAL_ZIP_REPO_PARAM = "LOCAL_REPOSITORY";
+	private static final String CACHED_REMOTE_REPO_PARAM = "CACHED_REMOTE_REPOSITORY";
 
-    // use the GlobalRepoManager from mc-runtime for the process inventory
-    private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
+	// use the GlobalRepoManager from mc-runtime for the process inventory
+	private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
 
-    // valid functionIDs
-    private String[] validFunctionIDs = null;
+	// valid functionIDs
+	private String[] validFunctionIDs = null;
 
-    private static Logger logger = Logger.getLogger(MCProcessRepository.class);
+	private static Logger logger = Logger.getLogger(MCProcessRepository.class);
 
-    public MCProcessRepository() {
-        super();
-        configureMCRuntime();
+	public MCProcessRepository() {
+		super();
 
-        // check if the repository is active
-        if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
+		// check if the repository is active
+		if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
+			// configure the runtime
+			configureMCRuntime();
+			
+			// trigger remote repo init in separate thread
+			Thread tLoadRemote = new LoadRepoThread();
+			tLoadRemote.start();
+		}
+		else {
+			logger.debug("MCProcessRepository is inactive.");
+		}
+	}
 
-            // get properties to find out which remote repositories we shall invoke
-            Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
+	@Override
+	public Collection<String> getAlgorithmNames() {
 
-            // FIXME this should go into a Thread as loading remote repost can slow down startup of the
-            // service considerbly
-            // for each remote repository: add to RepoManager
-            for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase(REPO_FEED_REPO_PARAM) && property.getActive()) {
-                    // convert to URL, check and register
-                    try {
-                        URL repoURL = new URL(property.getStringValue());
-                        rm.addRepository(repoURL);
-                        logger.info("Added MovingCode Repository: " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-                    catch (MalformedURLException e) {
-                        logger.warn("MovingCode Repository is not a valid URL: " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-                    catch (Exception e) {
-                        // catch any unexpected error; if we get here this is probably an indication for a
-                        // bug/flaw in mc-runtime ...
-                        logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
+		// run this block if validFunctionIDs are not yet available
+		// checks which available functions can be executed with current configuration
+		if (validFunctionIDs == null) {
+			// 1. get all available functionIDs
+			String[] fids = rm.getFunctionIDs();
+			ArrayList<String> exFIDs = new ArrayList<String>();
 
-                }
-            }
+			// 2. for each function ID
+			for (String currentFID : fids) {
+				// 2.a retrieve implementing packages
+				MovingCodePackage[] mcps = rm.getPackageByFunction(currentFID);
+				// 2.b check whether one of them can be executed
+				for (MovingCodePackage currentMCP : mcps) {
+					boolean supported = ProcessorFactory.getInstance().supportsPackage(currentMCP);
+					if (supported) {
+						exFIDs.add(currentFID);
+						break;
+					}
+				}
+			}
 
-            // for each remote repository: add to RepoManager
-            for (Property property : propertyArray) {
-                if (property.getName().equalsIgnoreCase(LOCAL_ZIP_REPO_PARAM) && property.getActive()) {
-                    // identify Folder, check and register
-                    try {
-                        String repoFolder = property.getStringValue();
-                        rm.addLocalZipPackageRepository(repoFolder);
-                        logger.info("Added MovingCode Repository: " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
-                    catch (Exception e) {
-                        // catch any unexpected error; if we get here this is probably an indication for a
-                        // bug/flaw in mc-runtime ...
-                        logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
-                                + property.getStringValue());
-                    }
+			validFunctionIDs = exFIDs.toArray(new String[exFIDs.size()]);
+		}
 
-                }
-            }
+		return Arrays.asList(validFunctionIDs);
+	}
 
-            // add a change listener to the GlobalRepositoryManager rm
-            rm.addRepositoryChangeListener(new RepositoryChangeListener() {
-                @Override
-                public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
-                    // clear validFunctionIDs
-                    validFunctionIDs = null;
+	@Override
+	public IAlgorithm getAlgorithm(String processID) {
+		return new MCProcessDelegator(processID);
+	}
 
-                    // trigger Capabilities update
-                    logger.info("Moving Code repository content has changed. Capabilities update required.");
-                    WPSConfig.getInstance().firePropertyChange(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);
-                }
-            });
+	@Override
+	public ProcessDescriptionType getProcessDescription(String processID) {
+		return rm.getProcessDescription(processID);
+	}
 
-        }
-        else {
-            logger.debug("MCProcessRepository does not contain any processes.");
-        }
-    }
+	@Override
+	public boolean containsAlgorithm(String processID) {
+		return rm.providesFunction(processID);
+	}
 
-    @Override
-    public Collection<String> getAlgorithmNames() {
+	@Override
+	public void shutdown() {
+		// TODO Auto-generated method stub
+		// we probably do not need any logic here
+	}
 
-        // run this block if validFunctionIDs are not yet available
-        // checks which available functions can be executed with current configuration
-        if (validFunctionIDs == null) {
-            // 1. get all available functionIDs
-            String[] fids = rm.getFunctionIDs();
-            ArrayList<String> exFIDs = new ArrayList<String>();
+	// ----------------------------------------------------------------
+	// methods and logic for processor configuration
+	private static void configureMCRuntime() {
+		String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
+		File configFile = new File(configFilePath);
+		boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
+		if ( !loaded) {
+			logger.error("Could not load processor configuration from " + configFilePath);
+		}
+	}
 
-            // 2. for each function ID
-            for (String currentFID : fids) {
-                // 2.a retrieve implementing packages
-                MovingCodePackage[] mcps = rm.getPackageByFunction(currentFID);
-                // 2.b check whether one of them can be executed
-                for (MovingCodePackage currentMCP : mcps) {
-                    boolean supported = ProcessorFactory.getInstance().supportsPackage(currentMCP);
-                    if (supported) {
-                        exFIDs.add(currentFID);
-                        break;
-                    }
-                }
-            }
+	/**
+	 * 
+	 * @author Matthias Mueller
+	 *
+	 */
+	private final class LoadRepoThread extends Thread {
 
-            validFunctionIDs = exFIDs.toArray(new String[exFIDs.size()]);
-        }
+		@Override
+		public void run() {
 
-        return Arrays.asList(validFunctionIDs);
-    }
+			// get properties to find out which remote repositories we shall invoke
+			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(MCProcessRepository.class.getCanonicalName());
 
-    @Override
-    public IAlgorithm getAlgorithm(String processID) {
-        return new MCProcessDelegator(processID);
-    }
+			// for each remote repository: add to RepoManager
+			for (Property property : propertyArray) {
+				if (property.getName().equalsIgnoreCase(REPO_FEED_REPO_PARAM) && property.getActive()) {
+					// convert to URL, check and register
+					try {
+						URL repoURL = new URL(property.getStringValue());
+						rm.addRepository(repoURL);
+						logger.info("Added MovingCode Repository: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (MalformedURLException e) {
+						logger.warn("MovingCode Repository is not a valid URL: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+								+ property.getStringValue());
+					}
 
-    @Override
-    public ProcessDescriptionType getProcessDescription(String processID) {
-        return rm.getProcessDescription(processID);
-    }
+				}
+			}
 
-    @Override
-    public boolean containsAlgorithm(String processID) {
-        return rm.providesFunction(processID);
-    }
+			// for each remote repository: add to RepoManager
+			for (Property property : propertyArray) {
+				if (property.getName().equalsIgnoreCase(LOCAL_ZIP_REPO_PARAM) && property.getActive()) {
+					// identify Folder, check and register
+					try {
+						String repoFolder = property.getStringValue();
+						rm.addLocalZipPackageRepository(repoFolder);
+						logger.info("Added MovingCode Repository: " + property.getName() + " - "
+								+ property.getStringValue());
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						logger.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+								+ property.getStringValue());
+					}
 
-    @Override
-    public void shutdown() {
-        // TODO Auto-generated method stub
-        // we probably do not need any logic here
-    }
+				}
+			}
 
-    // ----------------------------------------------------------------
-    // methods and logic for processor configuration
-    private static void configureMCRuntime() {
-        String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
-        File configFile = new File(configFilePath);
-        boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
-        if ( !loaded) {
-            logger.error("Could not load processor configuration from " + configFilePath);
-        }
-    }
+			// add a change listener to the GlobalRepositoryManager rm
+			rm.addRepositoryChangeListener(new RepositoryChangeListener() {
+				@Override
+				public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
+					// clear validFunctionIDs
+					validFunctionIDs = null;
+
+					// trigger Capabilities update
+					logger.info("Moving Code repository content has changed. Capabilities update required.");
+					WPSConfig.getInstance().firePropertyChange(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);
+				}
+			});
+			
+			// trigger Capabilities update
+			logger.info("Moving Code repositories have been loaded. Capabilities update required.");
+			WPSConfig.getInstance().firePropertyChange(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);
+
+// 			-- old code --			
+//			try {
+//				CapabilitiesConfiguration.reloadSkeleton();
+//			} catch (XmlException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			
+		}
+	}
 
 }
