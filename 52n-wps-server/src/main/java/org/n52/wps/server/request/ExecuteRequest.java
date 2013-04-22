@@ -34,11 +34,19 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import javax.xml.transform.dom.DOMSource;
 
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.wps.x100.DataInputsType;
@@ -57,9 +65,11 @@ import net.opengis.wps.x100.ResponseFormType;
 import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
@@ -116,6 +126,8 @@ public class ExecuteRequest extends Request implements IObserver {
 
 		// create an initial response
 		execRespType = new ExecuteResponseBuilder(this);
+        
+        storeRequest(execDom);
 	}
 
 	/*
@@ -132,6 +144,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		// create an initial response
 		execRespType = new ExecuteResponseBuilder(this);
 
+        storeRequest(ciMap);
 	}
 
 	/**
@@ -746,12 +759,55 @@ public class ExecuteRequest extends Request implements IObserver {
             getExecuteResponseBuilder().update();
             if (isStoreResponse()) {
                 ExecuteResponse executeResponse = new ExecuteResponse(this);
-                DatabaseFactory.getDatabase().storeResponse(
-                        executeResponse.getUniqueId().toString(),
-                        executeResponse.getAsStream());
+                InputStream is = null;
+                try {
+                    is = executeResponse.getAsStream();
+                    DatabaseFactory.getDatabase().storeResponse(
+                            getUniqueId().toString(), is);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
             }
         } catch (ExceptionReport e) {
             LOGGER.error("Update of process status failed.", e);
         }
 	}
+    
+    private void storeRequest(ExecuteDocument executeDocument) {
+        InputStream is = null;
+        try {
+            is = executeDocument.newInputStream();
+            DatabaseFactory.getDatabase().insertRequest(
+                    getUniqueId().toString(), is, true);
+        } catch (Exception e) {
+            LOGGER.error("Exception storing ExecuteRequest", e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+    
+    private void storeRequest(CaseInsensitiveMap map) {
+  
+        BufferedWriter w = null;
+        ByteArrayOutputStream os = null;
+        ByteArrayInputStream is = null;
+        try {
+            os = new ByteArrayOutputStream();
+            w = new BufferedWriter(new OutputStreamWriter(os));
+            for (Object key : map.keySet()) {
+                Object value = map.get(key);
+                w.append(key.toString()).append('=').append(value.toString());
+                w.newLine();
+            }
+            is = new ByteArrayInputStream(os.toByteArray());
+            DatabaseFactory.getDatabase().insertRequest(
+                    getUniqueId().toString(), is, true);
+        } catch (Exception e) {
+            LOGGER.error("Exception storing ExecuteRequest", e);
+        } finally {
+            IOUtils.closeQuietly(w);
+            IOUtils.closeQuietly(os);
+            IOUtils.closeQuietly(is);
+        }
+    }
 }
