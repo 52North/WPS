@@ -1,13 +1,13 @@
 package org.n52.wps.server.request.strategy;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 
 import net.opengis.wps.x100.InputType;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -47,38 +47,14 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	// TODO: follow references, e..g 
 	
 	@Override
-	public InputStream fetchData(InputType input) throws ExceptionReport {
+	public ReferenceInputStream fetchData(InputType input) throws ExceptionReport {
 		
 		String href = input.getReference().getHref();
 		String mimeType = input.getReference().getMimeType();
 		
 		try {
-			
-//			URL dataURL = new URL(dataURLString);
-			// Do not give a direct inputstream.
-			// The XML handlers cannot handle slow connections
-//			URLConnection conn = dataURL.openConnection();
-//			conn.setRequestProperty("Accept-Encoding", "gzip");
-//			conn.setRequestProperty("Content-type", mimeType);
-			
 			// Handling POST with referenced document
 			if(input.getReference().isSetBodyReference()) {
-				
-				/**
-				 * Old code - did we ever test this?
-				 */
-//				URL dataURL = new URL(href);
-//				URLConnection conn = dataURL.openConnection();
-//				conn.setRequestProperty("Content-type", mimeType);
-//				conn.setRequestProperty("Accept-Encoding", "gzip");
-//				String bodyReference = input.getReference().getBodyReference().getHref();
-//				URL bodyReferenceURL = new URL (bodyReference);
-//				URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
-//				bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
-//				InputStream referenceInputStream = retrievingZippedContent(bodyReferenceConn);
-//				IOUtils.copy(referenceInputStream, conn.getOutputStream());
-//				InputStream inputStream = retrievingZippedContent(conn);
-//				return inputStream;
 				
 				String bodyHref = input.getReference().getBodyReference().getHref();
 				
@@ -126,7 +102,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	 * 
 	 * TODO: add support for autoretry, proxy
 	 */
-	private static InputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
+	private ReferenceInputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
 		HttpClient backend = new DefaultHttpClient();
 		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 		
@@ -135,10 +111,8 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		if (mimeType != null){
 			httpget.addHeader(new BasicHeader("Content-type", mimeType));
 		}
-		
-		HttpResponse response = httpclient.execute(httpget);
-		HttpEntity entity = response.getEntity();
-		return entity.getContent();
+		        
+		return processResponse(httpclient.execute(httpget));
 	}
 	
 	/**
@@ -146,7 +120,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	 * 
 	 * TODO: add support for autoretry, proxy
 	 */
-	private static InputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
+	private ReferenceInputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
 		HttpClient backend = new DefaultHttpClient();
 		
 		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
@@ -161,8 +135,20 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		HttpEntity postEntity = new StringEntity(body);
 		httppost.setEntity(postEntity);
 		
-		HttpResponse response = httpclient.execute(httppost);
-		HttpEntity resultEntity = response.getEntity();
-		return resultEntity.getContent();
+		return processResponse(httpclient.execute(httppost));
 	}
+
+    private ReferenceInputStream processResponse(HttpResponse response) throws IOException {
+        
+        HttpEntity entity = response.getEntity();
+        Header header;
+        
+        header = entity.getContentType();
+        String mimeType = header == null ? null : header.getValue();
+        
+        header = entity.getContentEncoding();
+        String encoding = header == null ? null : header.getValue();
+        
+        return new ReferenceInputStream(entity.getContent(), mimeType, encoding);
+    }
 }

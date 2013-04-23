@@ -102,6 +102,48 @@ public class ExecutePOSTTester {
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString("LinearRing"));
     }
+    
+    /*Complex XML Input by reference, POST*/
+    @Test
+    public void testExecutePOSTreferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTreferenceComplexXMLSynchronousXMLOutput");
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.SimpleBufferAlgorithm</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Reference xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows\">"
+                + "<wps:Body>"
+                + "<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" outputFormat=\"GML2\" version=\"1.0.0\" service=\"WFS\">"
+                + "<wfs:Query typeName=\"topp:tasmania_roads\" />"
+                + "</wfs:GetFeature>"
+                + "</wps:Body>"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "<wps:Input>"
+                + "<ows:Identifier>width</ows:Identifier>"
+                + "<ows:Title>Distance which people will walk to get to a playground.</ows:Title>"
+                + "<wps:Data>"
+                + "<wps:LiteralData>20</wps:LiteralData>"
+                + "</wps:Data>"
+                + "</wps:Input>"
+                + "</wps:DataInputs>"
+                + "<wps:ResponseForm>"
+                + "<wps:ResponseDocument>"
+                + "<wps:Output>"
+                + "<ows:Identifier>result</ows:Identifier>"
+                + "</wps:Output>"
+                + "</wps:ResponseDocument>"
+                + "</wps:ResponseForm>"
+                + "</wps:Execute>";
+        String response = PostClient.sendRequest(url, payload);
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("LinearRing"));
+    }
 
     /*Complex binary Input by value */
     // Disabled test due to heap size issues. 
