@@ -28,6 +28,7 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 
 package org.n52.wps.io.data.binding.complex;
 
+import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IComplexData;
 
@@ -46,5 +47,9 @@ public class GenericFileDataBinding implements IComplexData {
 	public Class getSupportedClass() {
 		return GenericFileData.class;
 	}
-
+    
+    @Override
+	public void dispose(){
+		FileUtils.deleteQuietly(payload.getBaseFile(false));
+	}
 }

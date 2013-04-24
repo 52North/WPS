@@ -37,8 +37,6 @@ package org.n52.wps.server.request;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.URLDecoder;
@@ -46,7 +44,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import javax.xml.transform.dom.DOMSource;
 
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.wps.x100.DataInputsType;
@@ -69,9 +66,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
+import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
@@ -566,6 +563,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
+        Map<String, List<IData>> inputMap = null;
 		try {
             
 			ExecutionContext context = getExecute().getResponseForm().isSetRawDataOutput() ?
@@ -644,6 +642,22 @@ public class ExecuteRequest extends Request implements IObserver {
 			ExecutionContextFactory.unregisterContext();
             if (algorithm instanceof ISubject) {
                 ((ISubject)algorithm).removeObserver(this);
+            }
+            if (inputMap != null) {
+                for(List<IData> l : inputMap.values()) {
+                    for (IData d : l) {
+                        if (d instanceof IComplexData) {
+                            ((IComplexData)d).dispose();
+                        }
+                    }
+                }
+            }
+            if (returnResults != null) {
+                for (IData d : returnResults.values()) {
+                    if (d instanceof IComplexData) {
+                        ((IComplexData)d).dispose();
+                    }
+                }
             }
 		}
         return new ExecuteResponse(this);

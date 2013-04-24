@@ -29,4 +29,9 @@ public class GTRasterDataBinding implements IComplexData {
 	{
 		throw new RuntimeException("Deserialization of 'GTRasterDataBinding' data type not implemented yet.");
 	}
+    
+    @Override
+    public void dispose() {
+        
+    }
 }
