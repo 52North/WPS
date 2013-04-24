@@ -93,6 +93,8 @@ public class ExceptionReport extends Exception {
 		// Printing serivce Exception
 		ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
 		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
+		//Fix for Bug 903 https://bugzilla.52north.org/show_bug.cgi?id=903
+		exceptionReport.setVersion("1.0.0");
 		ExceptionType ex = exceptionReport.addNewException();
 		ex.setExceptionCode(errorKey);
 		ex.addExceptionText(this.getMessage());
