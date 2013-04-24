@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.wps.x100.WPSCapabilitiesType;
 
+import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -72,7 +73,7 @@ public class GetCapabilitiesPOSTTester {
 
         WPSCapabilitiesType caps = WPSCapabilitiesType.Factory.parse(response);
         XmlOptions opts = new XmlOptions();
-        ArrayList<String> errors = new ArrayList<String>();
+        ArrayList<XmlError> errors = new ArrayList<XmlError>();
         opts.setErrorListener(errors);
         boolean valid = caps.validate(opts);
 
