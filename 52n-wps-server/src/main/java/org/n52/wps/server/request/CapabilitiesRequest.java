@@ -110,16 +110,17 @@ public class CapabilitiesRequest extends Request {
 	 */
 	public boolean validate() throws ExceptionReport{
 		
-		String services = getMapValue("service", true);	
+		String services = getMapValue("service", true);
+		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
 		if(! services.equalsIgnoreCase("wps")) {
 			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services, 
-										ExceptionReport.INVALID_PARAMETER_VALUE);
+										ExceptionReport.INVALID_PARAMETER_VALUE, "service");
 		}
 
 		String[] versions = getMapArray("version", false);
 		if(! requireVersion(SUPPORTED_VERSION, false)) {
 				throw new ExceptionReport("Requested versions are not supported, you requested: " + Request.accumulateString(versions),
-											ExceptionReport.INVALID_PARAMETER_VALUE);
+											ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		
 		//String[] sections = getMapArray("sections");

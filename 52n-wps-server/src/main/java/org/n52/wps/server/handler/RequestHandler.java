@@ -186,7 +186,7 @@ public class RequestHandler {
 			Node versionNode = child.getAttributes().getNamedItem("version");
                         boolean isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
 			if(versionNode == null && !isCapabilitiesNode) {
-				throw new ExceptionReport("No version parameter supplied.", ExceptionReport.MISSING_PARAMETER_VALUE);
+				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 			}
 			if(isCapabilitiesNode){
 				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
@@ -207,11 +207,12 @@ public class RequestHandler {
 					"There is a internal parser configuration error",
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
+		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
 		if(version == null ) {
-			throw new ExceptionReport("version is null: " , ExceptionReport.MISSING_PARAMETER_VALUE);
+			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
 		if(!version.equals(Request.SUPPORTED_VERSION)) {
-			throw new ExceptionReport("version is null: " , ExceptionReport.INVALID_PARAMETER_VALUE);
+			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {

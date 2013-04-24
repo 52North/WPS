@@ -106,7 +106,8 @@ abstract public class Request implements Callable <Response> {
 			LOGGER.warn("Parameter <" + key + "> not found.");
 			return null;
 		}else{
-			throw new ExceptionReport("Parameter <" + key + "> is not specified", ExceptionReport.MISSING_PARAMETER_VALUE);
+			//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+			throw new ExceptionReport("Parameter <" + key + "> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, key);
 		}
 	}
 
@@ -124,7 +125,8 @@ abstract public class Request implements Callable <Response> {
 			LOGGER.warn("Parameter <" + key + "> not found.");
 			return null;
 		}else{
-			throw new ExceptionReport("Parameter <" + key + "> is not specified", ExceptionReport.MISSING_PARAMETER_VALUE);
+			//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+			throw new ExceptionReport("Parameter <" + key + "> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, key);
 		}
 	}
 	
@@ -163,7 +165,8 @@ abstract public class Request implements Callable <Response> {
 	public boolean requireVersion(String version, boolean mandatory) throws ExceptionReport{
 		String[] versions = getRequestedVersions(mandatory);
 		if(mandatory && versions == null) {
-			throw new ExceptionReport("VERSION parameter required, but null", ExceptionReport.MISSING_PARAMETER_VALUE);
+			//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+			throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
 		else if(versions == null && ! mandatory) {
 			return true;
