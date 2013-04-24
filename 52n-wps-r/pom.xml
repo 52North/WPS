@@ -8,7 +8,9 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
+
 	<artifactId>52n-wps-r</artifactId>
+
 	<packaging>jar</packaging>
 	<name>52North WPS R Processing Backend</name>
 	<description>The project WPS4R provides R scripts as WPS processes</description>
@@ -131,7 +133,6 @@
 		<dependency>
 			<groupId>xmlunit</groupId>
 			<artifactId>xmlunit</artifactId>
-			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
 		

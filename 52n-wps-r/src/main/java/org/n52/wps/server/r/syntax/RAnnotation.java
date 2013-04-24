@@ -25,7 +25,6 @@
 package org.n52.wps.server.r.syntax;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,11 +47,10 @@ import org.n52.wps.server.r.data.RTypeDefinition;
 public class RAnnotation {
 
     private RAnnotationType type;
-    private HashMap<RAttribute, Object> attributeHash;
-    static Logger LOGGER = Logger.getLogger(RAnnotation.class);
 
-    // public static String WPS_OFF_START = "wps.off:";
-    // public static String WPS_OFF_END = "wps.off.end;";
+    private HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+
+    private static Logger LOGGER = Logger.getLogger(RAnnotation.class);
 
     /**
      * 
@@ -66,8 +64,8 @@ public class RAnnotation {
             RAnnotationException {
         super();
         this.type = type;
-        this.attributeHash = attributeHash;
-        type.validDescription(this);
+        this.attributeHash.putAll(attributeHash);
+        this.type.validateDescription(this);
         LOGGER.debug("NEW " + toString());
     }
 
@@ -188,7 +186,13 @@ public class RAnnotation {
 
     @Override
     public String toString() {
-        return "RAnnotation [" + this.type + "][" + Arrays.toString(this.attributeHash.entrySet().toArray()) + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("RAnnotation [type=");
+        builder.append(this.type);
+        builder.append(", attributeHash=");
+        builder.append(this.attributeHash);
+        builder.append("]");
+        return builder.toString();
     }
 
     public boolean containsKey(RAttribute key) {

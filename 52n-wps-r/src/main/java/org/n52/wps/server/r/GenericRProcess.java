@@ -101,8 +101,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private boolean deleteWorkDirectory = false;
 
+    private RAnnotationParser parser;
+
     public GenericRProcess(String wellKnownName) {
         super(wellKnownName);
+        this.parser = new RAnnotationParser();
 
         log.info("NEW " + this.toString());
     }
@@ -128,7 +131,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      * @return
      */
     protected ProcessDescriptionType initializeDescription() {
-        log.info("Initializing description for  " + this.toString());
+        log.info("Initializing description for " + this.toString());
 
         // Reading process information from script annotations:
         InputStream rScriptStream = null;
@@ -136,6 +139,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String wkn = getWellKnownName();
             log.debug("Loading file for " + wkn);
             R_Config config = R_Config.getInstance();
+
             this.scriptFile = config.wknToFile(wkn);
             log.debug("File loaded: " + this.scriptFile.getAbsolutePath());
 
@@ -143,18 +147,53 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 log.warn("Loaded script file is " + this.scriptFile);
                 return null; // FIXME throw exception?
             }
-            else {
-                rScriptStream = new FileInputStream(this.scriptFile);
-                this.annotations = RAnnotationParser.parseAnnotationsfromScript(rScriptStream);
 
-                // submits annotation with process informations to
-                // ProcessdescriptionCreator:
-                RProcessDescriptionCreator creator = new RProcessDescriptionCreator();
-                ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations, getWellKnownName());
+            rScriptStream = new FileInputStream(this.scriptFile);
+            this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
-                log.debug("Created process description for " + wkn + ":\n" + doc.xmlText());
-                return doc;
+            // have to process the resources to get full URLs to the files
+            for (RAnnotation ann : this.annotations) {
+                if (ann.getType().equals(RAnnotationType.RESOURCE)) {
+                    if (ann instanceof ResourceAnnotation) {
+                        ResourceAnnotation rann = (ResourceAnnotation) ann;
+
+                        // FIXME problem: cannot get attributeHash here?
+                        Iterator<R_Resource> iterator = rann.getResources().iterator();
+                        while (iterator.hasNext()) {
+                            R_Resource resource = iterator.next();
+
+                            StringBuilder namedList = new StringBuilder();
+                            namedList.append("list(");
+
+                            String fullResourcePath = resource.getFullResourceURL().toExternalForm();
+
+                            String resourceName = "\"" + resource.getResourceValue() + "\"";
+
+                            if (fullResourcePath != null) {
+                                namedList.append(resourceName + " = " + "\"" + fullResourcePath + "\"");
+                                if (iterator.hasNext()) {
+                                    namedList.append(", ");
+                                }
+                            }
+                            else
+                                log.warn("Resource NOT added becaues full resource path missing: " + resourceName);
+
+                            namedList.append(")");
+                        }
+                    }
+                }
             }
+
+            // submits annotation with process informations to
+            // ProcessdescriptionCreator:
+            RProcessDescriptionCreator creator = new RProcessDescriptionCreator();
+            ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
+                                                                           wkn,
+                                                                           config.getScriptURL(wkn),
+                                                                           config.getSessionInfoURL());
+
+            log.debug("Created process description for " + wkn + ":\n" + doc.xmlText());
+            return doc;
         }
         catch (RAnnotationException rae) {
             log.error(rae.getMessage());
@@ -203,7 +242,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // initializes connection and pre-settings
                 rCon = config.openRConnection();
 
-                RLogger.logGenericRProcess(rCon, "Running algorithm with input " + Arrays.deepToString(inputData.entrySet().toArray()));
+                RLogger.logGenericRProcess(rCon,
+                                           "Running algorithm with input "
+                                                   + Arrays.deepToString(inputData.entrySet().toArray()));
 
                 log.debug("[R] cleaning session.");
                 // ensure that session is clean;
@@ -566,8 +607,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
 
         rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
-        log.debug("[R] assigned process description to variable \"" + RWPSSessionVariables.PROCESS_DESCRIPTION
-                + ":\" " + processDescription);
+        log.debug("[R] assigned process description to variable \"" + RWPSSessionVariables.PROCESS_DESCRIPTION + ":\" "
+                + processDescription);
     }
 
     /**
@@ -583,7 +624,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RAnnotationException {
         log.debug("[R] loading utility scripts.");
         R_Config config = R_Config.getInstance();
-        File[] utils = new File(config.UTILS_DIR_FULL).listFiles(new R_Config.RFileExtensionFilter());
+        File[] utils = new File(config.utilsDirFull).listFiles(new R_Config.RFileExtensionFilter());
         for (File file : utils) {
             executeScript(new FileInputStream(file), rCon);
         }
@@ -635,7 +676,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String ext = value.getFileExtension();
             result = streamFromWPSToRserve(rCon, is, ext);
             is.close();
-            
+
             return result;
         }
 
@@ -645,7 +686,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             // String ext = value.getFileExtension();
             result = streamFromWPSToRserve(rCon, is, "tiff");
             is.close();
-            
+
             return result;
         }
 
@@ -664,9 +705,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             InputStream is = new FileInputStream(shpZip);
             String ext = "shp";
             result = streamFromWPSToRserve(rCon, is, ext);
-            
+
             is.close();
-            
+
             return result;
         }
 
@@ -729,7 +770,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             rfos.write(buffer, 0, stop);
             stop = is.read(buffer);
         }
-        
+
         rfos.flush();
         rfos.close();
         is.close();
@@ -773,8 +814,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             REXPMismatchException,
             RserveException,
             RAnnotationException {
-        log.debug("parsing Output with id " + result_id + " from result " + result_id + " based on connection "
-                + rCon);
+        log.debug("parsing Output with id " + result_id + " from result " + result_id + " based on connection " + rCon);
 
         Class< ? extends IData> iClass = getOutputDataType(result_id);
         log.debug("Output data type: " + iClass.toString());
@@ -907,9 +947,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RAnnotation anot = list.get(0);
             String rType = anot.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
+
             GeotiffParser tiffPar = new GeotiffParser();
-            GTRasterDataBinding output = tiffPar.parse(new FileInputStream(tempfile), mimeType, "base64");
-            
+            FileInputStream fis = new FileInputStream(tempfile);
+            GTRasterDataBinding output = tiffPar.parse(fis, mimeType, "base64");
+            fis.close();
+
             return output;
         }
         else if (iClass.equals(LiteralBooleanBinding.class)) {
@@ -922,6 +965,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 return new LiteralBooleanBinding(true);
             case 0:
                 return new LiteralBooleanBinding(false);
+            default:
+                break;
             }
         }
 
@@ -951,8 +996,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 }
             }
         }
+
         String message = "R_Proccess: Unsuported Output Data Class declared for id " + result_id + ":" + iClass;
         log.error(message);
+
         throw new RuntimeException(message);
     }
 

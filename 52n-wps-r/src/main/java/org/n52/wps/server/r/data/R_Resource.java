@@ -39,7 +39,7 @@ public class R_Resource {
 
     private static Logger LOGGER = Logger.getLogger(R_Resource.class);
 
-    String resourceValue;
+    private String resourceValue;
 
     public R_Resource(String resourceValue) {
         this.resourceValue = resourceValue;
@@ -61,7 +61,7 @@ public class R_Resource {
             return null;
         }
 
-        // FIXME resource existing testing
+        // TODO fix resource existing testing
         // if ( !urlResourceExists(resourceURL)) {
         // LOGGER.warn("Resource file from annotation '" + resourcePath
         // + "' could not be found in the file system at " + resourceURL);
@@ -88,7 +88,7 @@ public class R_Resource {
             return null;
         }
 
-        // FIXME resource existing testing
+        // TODO fix resource existing testing
         // if ( !urlResourceExists(resourceURL)) {
         // LOGGER.warn("Resource file from annotation '" + resourcePath
         // + "' could not be found in the file system at " + resourceURL);
@@ -98,6 +98,7 @@ public class R_Resource {
         return resourceFile;
     }
 
+    @SuppressWarnings("unused")
     private static boolean urlResourceExists(URL url) {
         HttpURLConnection conn = null;
 
@@ -141,8 +142,11 @@ public class R_Resource {
 
     @Override
     public String toString() {
-        return "R_Resource [resourceValue=" + this.resourceValue + ", getFullResourceURL()=" + getFullResourceURL()
-                + ", getFullResourcePath()=" + getFullResourcePath() + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("R_Resource [resourceValue=");
+        builder.append(this.resourceValue);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

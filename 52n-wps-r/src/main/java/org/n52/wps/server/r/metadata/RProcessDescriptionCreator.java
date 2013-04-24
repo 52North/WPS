@@ -25,7 +25,7 @@
 package org.n52.wps.server.r.metadata;
 
 import java.math.BigInteger;
-import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +52,6 @@ import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
@@ -66,90 +65,101 @@ public class RProcessDescriptionCreator {
      * 
      * @param annotations
      *        contain all process description information
-     * @param wkn
+     * @param identifier
      *        Process identifier
+     * @param fileUrl
      * @return
-     * @throws ExceptionReport 
-     * @throws RAnnotationException 
+     * @throws ExceptionReport
+     * @throws RAnnotationException
      */
-    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String wkn) throws ExceptionReport, RAnnotationException {
-        ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
-        pdt.setStatusSupported(true);
-        pdt.setStoreSupported(true);
-
-        pdt.addNewIdentifier().setStringValue(wkn);
-        pdt.setProcessVersion("1.0.0");
-        MetadataType mt = pdt.addNewMetadata();
-
-        mt.setTitle("R Script used for this process");
-        //mt.setAbout("The R script which is used for this process");
-        String url;
-        try {
-            url = R_Config.getInstance().getScriptURL(wkn).toString();
-            mt.setHref(url);
-        }
-        catch (MalformedURLException e) {
-            LOGGER.error("Could not create URL for script file " + wkn, e);
-            mt.setHref("N/A");
-        }
+    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations,
+                                                            String identifier,
+                                                            URL fileUrl,
+                                                            URL sessionInfoUrl) throws ExceptionReport,
+            RAnnotationException {
+        LOGGER.debug("Creating Process Description for " + identifier);
         
-        //Add URL to resource folder
-        mt = pdt.addNewMetadata();
-        mt.setTitle("Resource Directory URL");
-        url = R_Config.getInstance().getResourceDirURL();
-		mt.setHref(url);
+        try {
+            ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
+            pdt.setStatusSupported(true);
+            pdt.setStoreSupported(true);
 
-        mt = pdt.addNewMetadata();
-        mt.setTitle("R Session Info");
-       // mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
-        url = R_Config.getInstance().getSessionInfoURL();
-        mt.setHref(url);
+            MetadataType mt = pdt.addNewMetadata();
+            mt.setTitle("R Script");
+            mt.setAbout("This process is powered by this R script.");
+            mt.setHref(fileUrl.toExternalForm());
 
-        ProcessOutputs outputs = pdt.addNewProcessOutputs();
-        DataInputs inputs = pdt.addNewDataInputs();
+            // Add URL to resource folder > FIXME rathre add resources one by one, see below.
+            // mt = pdt.addNewMetadata();
+            // mt.setTitle("Resource Directory URL");
+            // url = R_Config.getInstance().getResourceDirURL();
+            // mt.setHref(url);
 
-        // iterates over annotations,
-        // The annotation type (RAnnotationType - enumeration) determines
-        // next method call
-        for (RAnnotation annotation : annotations) {
-            switch (annotation.getType()) {
-            case INPUT:
-                addInput(inputs, annotation);
-                break;
-            case OUTPUT:
-                addOutput(outputs, annotation);
-                break;
-            case DESCRIPTION:
-                addProcessDescription(pdt, annotation);
-                break;
-			case RESOURCE:
-				//TODO: add resources to description
-				break;
-			default:
-				break;
+            mt = pdt.addNewMetadata();
+            mt.setTitle("R Session Info");
+            // mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
+            // url = R_Config.getInstance().getSessionInfoURL();
+            mt.setHref(sessionInfoUrl.toExternalForm());
+
+            ProcessOutputs outputs = pdt.addNewProcessOutputs();
+            DataInputs inputs = pdt.addNewDataInputs();
+
+            // iterates over annotations,
+            // The annotation type (RAnnotationType - enumeration) determines
+            // next method call
+            for (RAnnotation annotation : annotations) {
+                switch (annotation.getType()) {
+                case INPUT:
+                    addInput(inputs, annotation);
+                    break;
+                case OUTPUT:
+                    addOutput(outputs, annotation);
+                    break;
+                case DESCRIPTION:
+                    addProcessDescription(pdt, annotation);
+                    break;
+                case RESOURCE:
+                    // TODO: add resources to description
+                    break;
+                default:
+                    break;
+                }
             }
+
+            // // Add SessionInfo-Output
+            // OutputDescriptionType outdes = outputs.addNewOutput();
+            // outdes.addNewIdentifier().setStringValue("sessionInfo");
+            // outdes.addNewTitle().setStringValue("Information about the R session which has been used");
+            // outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
+            // outdes.addNewLiteralOutput().addNewDataType().setStringValue("xs:string");
+
+            return pdt;
         }
-
-//        // Add SessionInfo-Output
-//        OutputDescriptionType outdes = outputs.addNewOutput();
-//        outdes.addNewIdentifier().setStringValue("sessionInfo");
-//        outdes.addNewTitle().setStringValue("Information about the R session which has been used");
-//        outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
-//        outdes.addNewLiteralOutput().addNewDataType().setStringValue("xs:string");
-
-        return pdt;
+        catch (Exception e) {
+            LOGGER.error("Error creating process description.", e);
+            throw new ExceptionReport("Error creating process description.",
+                                      "NA",
+                                      RProcessDescriptionCreator.class.getName(),
+                                      e);
+        }
     }
 
     /**
      * @param pdt
      * @param annotation
-     * @throws RAnnotationException 
+     * @throws RAnnotationException
      */
     private static void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
+        String id = annotation.getStringValue(RAttribute.IDENTIFIER);
+        pdt.addNewIdentifier().setStringValue(id);
+
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
         pdt.addNewAbstract().setStringValue("" + abstr);
+
         String title = annotation.getStringValue(RAttribute.TITLE);
         pdt.addNewTitle().setStringValue("" + title);
+
+        pdt.setProcessVersion(annotation.getStringValue(RAttribute.VERSION));
     }
 
     private static void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
@@ -217,17 +227,17 @@ public class RProcessDescriptionCreator {
 
         Class< ? extends IData> iClass = annotation.getDataClass();
         if (iClass.equals(GenericFileDataBinding.class)) {
-        	ComplexDataCombinationsType supported = complexInput.addNewSupported();
+            ComplexDataCombinationsType supported = complexInput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();
             format.setMimeType(annotation.getProcessDescriptionType());
             encod = annotation.getStringValue(RAttribute.ENCODING);
             if (encod != null)
                 format.setEncoding(encod);
-	            if(encod=="base64"){
-	            	//set a format entry such that not encoded data is supported as well
-	                ComplexDataDescriptionType format2 = supported.addNewFormat();
-	                format2.setMimeType(annotation.getProcessDescriptionType());
-	            }
+            if (encod == "base64") {
+                // set a format entry such that not encoded data is supported as well
+                ComplexDataDescriptionType format2 = supported.addNewFormat();
+                format2.setMimeType(annotation.getProcessDescriptionType());
+            }
         }
         else {
             addSupportedInputFormats(complexInput, iClass);
@@ -281,23 +291,23 @@ public class RProcessDescriptionCreator {
         complexData.setMimeType(out.getProcessDescriptionType());
 
         String encod = out.getStringValue(RAttribute.ENCODING);
-        if (encod != null && encod !="base64"){
-        	//base64 shall not be default, but occur in the supported formats
+        if (encod != null && encod != "base64") {
+            // base64 shall not be default, but occur in the supported formats
             complexData.setEncoding(encod);
         }
         Class< ? extends IData> iClass = out.getDataClass();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
- 
-        	ComplexDataCombinationsType supported = complexOutput.addNewSupported();
+
+            ComplexDataCombinationsType supported = complexOutput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();
             format.setMimeType(out.getProcessDescriptionType());
             encod = out.getStringValue(RAttribute.ENCODING);
-            	
-            if (encod != null){
+
+            if (encod != null) {
                 format.setEncoding(encod);
-                if(encod=="base64"){
-                	//set a format entry such that not encoded data is supported as well
+                if (encod == "base64") {
+                    // set a format entry such that not encoded data is supported as well
                     ComplexDataDescriptionType format2 = supported.addNewFormat();
                     format2.setMimeType(out.getProcessDescriptionType());
                 }
@@ -308,95 +318,94 @@ public class RProcessDescriptionCreator {
         }
 
     }
-	
-	/**
-	 * Searches all available datahandlers for supported encodings / schemas / mime-types and adds
-	 * them to the supported list of an output
-	 * 
-	 * @param complex IData class for which data handlers are searched
-	 * @param supportedClass
-	 */
-	private static void addSupportedOutputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
-		// retrieve a list of generators which support the supportedClass-input
-		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
-		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
-		for(IGenerator generator : generators) {
-			Class<?>[] supportedClasses = generator.getSupportedDataBindings();
-			for(Class<?> clazz : supportedClasses){
-				if(clazz.equals(supportedClass)){
-					foundGenerators.add(generator);
-				}
-			}
-		}
-		
-		ComplexDataCombinationsType supported = complex.addNewSupported();
-		for(int i = 0; i<foundGenerators.size(); i++){
-				IGenerator generator = foundGenerators.get(i);
-				Format[] fullFormats = generator.getSupportedFullFormats();
-				
-				for (Format format : fullFormats) {
-					ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
-					String encoding = format.getEncoding();
-					if(encoding != null)
-						newSupportedFormat.setEncoding(encoding);
-					else
-						newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
-					
-					newSupportedFormat.setMimeType(format.getMimetype());
-					String schema = format.getSchema();
-					if(schema != null)
-						newSupportedFormat.setSchema(schema);
-				}
-				
-		}
-					
-		
-	}
 
-	
-	
-	/**
-	 * Searches all available datahandlers for supported encodings / schemas / mime-types and adds
-	 * them to the supported list of an output
-	 * 
-	 * @param complex IData class for which data handlers are searched
-	 * @param supportedClass
-	 */
-	private static void addSupportedInputFormats(SupportedComplexDataType complex, Class<? extends IData> supportedClass){	
-		// retrieve a list of parsers which support the supportedClass-input
-		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
-		List<IParser> foundParsers = new ArrayList<IParser>();
-		for(IParser parser : parsers) {
-			Class<?>[] supportedClasses = parser.getSupportedDataBindings();
-			for(Class<?> clazz : supportedClasses){
-				if(clazz.equals(supportedClass)){
-					foundParsers.add(parser);
-				}
-			}
-		}
-		
-		
-		//add properties for each parser which is found
-		ComplexDataCombinationsType supported = complex.addNewSupported();
-		for(int i = 0; i<foundParsers.size(); i++){
-				IParser parser = foundParsers.get(i);
-				Format[] fullFormats = parser.getSupportedFullFormats();
-				for (Format format : fullFormats) {
-					ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
-					String encoding = format.getEncoding();
-					if(encoding != null)
-						newSupportedFormat.setEncoding(encoding);
-					else 
-						newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
-					newSupportedFormat.setMimeType(format.getMimetype());
-					String schema = format.getSchema();
-					if(schema!=null)
-						newSupportedFormat.setSchema(schema);
-				}
-				
-			}
-					
-		
-	}
+    /**
+     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
+     * supported list of an output
+     * 
+     * @param complex
+     *        IData class for which data handlers are searched
+     * @param supportedClass
+     */
+    private static void addSupportedOutputFormats(SupportedComplexDataType complex,
+                                                  Class< ? extends IData> supportedClass) {
+        // retrieve a list of generators which support the supportedClass-input
+        List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+        List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+        for (IGenerator generator : generators) {
+            Class< ? >[] supportedClasses = generator.getSupportedDataBindings();
+            for (Class< ? > clazz : supportedClasses) {
+                if (clazz.equals(supportedClass)) {
+                    foundGenerators.add(generator);
+                }
+            }
+        }
+
+        ComplexDataCombinationsType supported = complex.addNewSupported();
+        for (int i = 0; i < foundGenerators.size(); i++) {
+            IGenerator generator = foundGenerators.get(i);
+            Format[] fullFormats = generator.getSupportedFullFormats();
+
+            for (Format format : fullFormats) {
+                ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
+                String encoding = format.getEncoding();
+                if (encoding != null)
+                    newSupportedFormat.setEncoding(encoding);
+                else
+                    newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
+
+                newSupportedFormat.setMimeType(format.getMimetype());
+                String schema = format.getSchema();
+                if (schema != null)
+                    newSupportedFormat.setSchema(schema);
+            }
+
+        }
+
+    }
+
+    /**
+     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
+     * supported list of an output
+     * 
+     * @param complex
+     *        IData class for which data handlers are searched
+     * @param supportedClass
+     */
+    private static void addSupportedInputFormats(SupportedComplexDataType complex,
+                                                 Class< ? extends IData> supportedClass) {
+        // retrieve a list of parsers which support the supportedClass-input
+        List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+        List<IParser> foundParsers = new ArrayList<IParser>();
+        for (IParser parser : parsers) {
+            Class< ? >[] supportedClasses = parser.getSupportedDataBindings();
+            for (Class< ? > clazz : supportedClasses) {
+                if (clazz.equals(supportedClass)) {
+                    foundParsers.add(parser);
+                }
+            }
+        }
+
+        // add properties for each parser which is found
+        ComplexDataCombinationsType supported = complex.addNewSupported();
+        for (int i = 0; i < foundParsers.size(); i++) {
+            IParser parser = foundParsers.get(i);
+            Format[] fullFormats = parser.getSupportedFullFormats();
+            for (Format format : fullFormats) {
+                ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
+                String encoding = format.getEncoding();
+                if (encoding != null)
+                    newSupportedFormat.setEncoding(encoding);
+                else
+                    newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
+                newSupportedFormat.setMimeType(format.getMimetype());
+                String schema = format.getSchema();
+                if (schema != null)
+                    newSupportedFormat.setSchema(schema);
+            }
+
+        }
+
+    }
 
 }

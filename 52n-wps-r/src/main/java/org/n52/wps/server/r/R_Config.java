@@ -62,7 +62,7 @@ public class R_Config {
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
-    // FIXME for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
+    // TODO for resources to be downloadable the cannot be in WEB-INF, or this must be handled with a
     // servlet, which is probably a better solution to keep track of files, see
     // http://www.jguru.com/faq/view.jsp?EID=10646
     private static final String R_BASE_DIR = "R";
@@ -78,7 +78,7 @@ public class R_Config {
     /**
      * Base directory for WPS4R resources
      */
-    public String BASE_DIR_FULL = new File(WebProcessingService.BASE_DIR, this.R_BASE_DIR).getAbsolutePath();
+    private String baseDirFull;
 
     /**
      * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
@@ -87,7 +87,7 @@ public class R_Config {
     // public String WORK_DIR_FULL = new File(BASE_DIR_FULL, WORK_DIR).getAbsolutePath();
 
     /** R scripts with utility functions to pre-load */
-    public String UTILS_DIR_FULL = new File(this.BASE_DIR_FULL, this.UTILS_DIR).getAbsolutePath();
+    public String utilsDirFull;
 
     /** Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded **/
     // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
@@ -115,11 +115,27 @@ public class R_Config {
     private R_Config() {
         // singleton pattern > private constructor
 
-        Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
+        WPSConfig wpsConfig = WPSConfig.getInstance();
+        Property[] rConfig = wpsConfig.getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
         for (Property property : rConfig) {
             if (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString())) {
-                this.SCRIPT_DIR = property.getStringValue();
+                R_Config.SCRIPT_DIR = property.getStringValue();
             }
+        }
+
+        try {
+            String wpsBasedir = WebProcessingService.BASE_DIR;
+            if (wpsBasedir != null) {
+                File f = new File(wpsBasedir, R_BASE_DIR);
+                this.baseDirFull = f.getAbsolutePath();
+                f = new File(this.baseDirFull, UTILS_DIR);
+                this.utilsDirFull = f.getAbsolutePath();
+            }
+            else
+                LOGGER.error("Could not get basedir from WPS!");
+        }
+        catch (Exception e) {
+            LOGGER.error("Error getting full path of baseDir and configDir.", e);
         }
     }
 
@@ -153,8 +169,8 @@ public class R_Config {
         return testFile.getAbsolutePath();
     }
 
-    public String getSessionInfoURL() {
-        return getUrlPathUpToWebapp() + "/R/sessioninfo.jsp";
+    public URL getSessionInfoURL() throws MalformedURLException {
+        return new URL(getUrlPathUpToWebapp() + "/R/sessioninfo.jsp");
     }
 
     public String getResourceDirURL() {
@@ -174,7 +190,7 @@ public class R_Config {
         if (fname == null)
             return null;
 
-        URL url = new URL(getUrlPathUpToWebapp() + "/" + this.SCRIPT_DIR.replace("\\", "/") + "/" + fname);
+        URL url = new URL(getUrlPathUpToWebapp() + "/" + R_Config.SCRIPT_DIR.replace("\\", "/") + "/" + fname);
         return url;
     }
 
@@ -210,7 +226,7 @@ public class R_Config {
         public boolean accept(File f) {
             if (f.isFile() && f.canRead()) {
                 String name = f.getName();
-                if (name.endsWith(getInstance().SCRIPT_FILE_SUFFIX))
+                if (name.endsWith(SCRIPT_FILE_SUFFIX))
                     return true;
             }
             return false;
@@ -228,7 +244,7 @@ public class R_Config {
         int index = fileName.lastIndexOf('.');
         if (index > 0)
             fileName = fileName.substring(0, index);
-        return this.WKN_PREFIX + fileName;
+        return R_Config.WKN_PREFIX + fileName;
     }
 
     /**
@@ -238,9 +254,9 @@ public class R_Config {
      * @throws IOException
      */
     public File wknToFile(String wkn) throws IOException {
-        String fname = wkn.replaceFirst(this.WKN_PREFIX, "");
+        String fname = wkn.replaceFirst(R_Config.WKN_PREFIX, "");
         fname = getScriptDirFullPath() + "/" + fname;
-        fname = fname + this.SCRIPT_FILE_SUFFIX;
+        fname = fname + R_Config.SCRIPT_FILE_SUFFIX;
         File out = new File(fname);
         if (out.isFile() && out.canRead()) {
             return out;
@@ -264,22 +280,22 @@ public class R_Config {
     // }
 
     public String getScriptDirFullPath() {
-        return new File(WebProcessingService.BASE_DIR, this.SCRIPT_DIR).getAbsolutePath();
+        return new File(WebProcessingService.BASE_DIR, R_Config.SCRIPT_DIR).getAbsolutePath();
         // return SCRIPT_DIR_FULL;
     }
 
     /**
      * 
-     * @param wkn
+     * @param identifier
      * @return
      */
-    public boolean isScriptAvailable(String wkn) {
+    public boolean isScriptAvailable(String identifier) {
         try {
-            wknToFile(wkn);
-            return true;
+            File f = wknToFile(identifier);
+            return f.exists();
         }
         catch (IOException e) {
-            LOGGER.error("Script file unavailable for process id " + wkn, e);
+            LOGGER.error("Script file unavailable for process id " + identifier, e);
             return false;
         }
     }
@@ -291,10 +307,15 @@ public class R_Config {
      * @return
      */
     public boolean isScriptValid(String wkn) {
+        FileInputStream fis = null;
+
         try {
             File file = wknToFile(wkn);
-            RAnnotationParser.validateScript(new FileInputStream(file), wkn);
-            return true;
+            RAnnotationParser parser = new RAnnotationParser();
+            fis = new FileInputStream(file);
+            boolean valid = parser.validateScript(fis, wkn);
+
+            return valid;
         }
         catch (IOException e) {
             LOGGER.error("Script file unavailable for process " + wkn + ".", e);
@@ -303,6 +324,15 @@ public class R_Config {
         catch (Exception e) {
             LOGGER.error("Validation of process " + wkn + " failed.", e);
             return false;
+        }
+        finally {
+            if (fis != null)
+                try {
+                    fis.close();
+                }
+                catch (IOException e) {
+                    LOGGER.error("Could not flose file input.", e);
+                }
         }
     }
 
@@ -318,6 +348,16 @@ public class R_Config {
     }
 
     public RConnection openRConnection() throws RserveException {
-        return this.connector.getNewConnection(this.enableBatchStart, this.rServeHost, this.rServePort, this.rServeUser, this.rServePassword);
+        return this.connector.getNewConnection(this.enableBatchStart,
+                                               this.rServeHost,
+                                               this.rServePort,
+                                               this.rServeUser,
+                                               this.rServePassword);
+    }
+
+    public String getCurrentSessionInfo() throws RserveException, REXPMismatchException {
+        RConnection rCon = openRConnection();
+        String info = RSessionInfo.getSessionInfo(rCon);
+        return info;
     }
 }

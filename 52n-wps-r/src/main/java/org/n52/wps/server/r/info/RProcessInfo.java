@@ -22,11 +22,11 @@
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
 
-
 package org.n52.wps.server.r.info;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,84 +37,85 @@ import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 
 public class RProcessInfo {
-	
-	private static Logger LOGGER = Logger.getLogger(RProcessInfo.class);
-	private String wkn;
-	private Exception lastException;
-	private boolean isValid;
-	
-	static List<RProcessInfo> rProcessInfoList;
 
-	public RProcessInfo(String wkn) {
-		this.wkn = wkn;
-		
-		File scriptfile;
-		try {
-			scriptfile = R_Config.getInstance().wknToFile(wkn);
-			RAnnotationParser.validateScript(new FileInputStream(scriptfile), wkn);
-			this.isValid = true;
-		} catch (Exception e) {
-			LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
-			this.lastException = e;
-			e.printStackTrace();
-		}
-	}
-	
-	public String getWkn() {
-		return this.wkn;
-	}
-	
-	public String getScriptURL(){
-		try {
-			return R_Config.getInstance().getScriptURL(this.wkn).getPath();
-		} catch (ExceptionReport e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
-	public boolean isAvailable(){
-		return R_Config.getInstance().isScriptAvailable(this.wkn);
-	}
-	
-	public boolean isValid(){
+    private static Logger LOGGER = Logger.getLogger(RProcessInfo.class);
+    private String wkn;
+    private Exception lastException;
+    private boolean isValid;
 
-		
-		return this.isValid;
-	}
-	
-	public Exception getLastException() {
-		return this.lastException;
-	}
-	
-	public static List<RProcessInfo> getRProcessInfoList() {
-		if(rProcessInfoList== null){
-			rProcessInfoList = new ArrayList<RProcessInfo>();
-		}
-		return rProcessInfoList;
-	}
+    static List<RProcessInfo> rProcessInfoList;
 
-	/**
-	 * To be set on repository startup
-	 * @param rProcessInfoList
-	 */
-	public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList) {
-		RProcessInfo.rProcessInfoList = rProcessInfoList;
-	}
-	
-	// TODO remove this code, create a test case instead
-	public static void main(String[] args) {
-		List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
-		for (RProcessInfo rProcessInfo : rProcessInfoList) {
-			rProcessInfo.getWkn();
-			rProcessInfo.isAvailable();
-			rProcessInfo.isValid();
-			rProcessInfo.getLastException().getMessage();
-			rProcessInfo.getScriptURL();
-		}
-	}
+    public RProcessInfo(String wkn) {
+        this.wkn = wkn;
+
+        File scriptfile;
+        FileInputStream fis = null;
+        try {
+            scriptfile = R_Config.getInstance().wknToFile(wkn);
+            RAnnotationParser parser = new RAnnotationParser();
+            fis = new FileInputStream(scriptfile);
+            this.isValid = parser.validateScript(fis, wkn);
+        }
+        catch (Exception e) {
+            LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
+            this.lastException = e;
+        }
+        finally {
+            if (fis != null)
+                try {
+                    fis.close();
+                }
+                catch (IOException e) {
+                    LOGGER.error("Could not close file input stream of script file.", e);
+                }
+        }
+    }
+
+    public String getWkn() {
+        return this.wkn;
+    }
+
+    public String getScriptURL() {
+        try {
+            return R_Config.getInstance().getScriptURL(this.wkn).getPath();
+        }
+        catch (ExceptionReport e) {
+            e.printStackTrace();
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public boolean isAvailable() {
+        return R_Config.getInstance().isScriptAvailable(this.wkn);
+    }
+
+    public boolean isValid() {
+
+        return this.isValid;
+    }
+
+    public Exception getLastException() {
+        return this.lastException;
+    }
+
+    public static List<RProcessInfo> getRProcessInfoList() {
+        if (rProcessInfoList == null) {
+            rProcessInfoList = new ArrayList<RProcessInfo>();
+        }
+        return rProcessInfoList;
+    }
+
+    /**
+     * To be set on repository startup
+     * 
+     * @param rProcessInfoList
+     */
+    public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList) {
+        RProcessInfo.rProcessInfoList = rProcessInfoList;
+    }
 
 }

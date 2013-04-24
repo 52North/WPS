@@ -28,12 +28,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
@@ -47,7 +50,13 @@ import org.n52.wps.server.r.syntax.ResourceAnnotation;
 
 public class RAnnotationParser {
 
+    private static final String ANNOTATION_CHARACTER = "#";
+    private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
     private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
+
+    public RAnnotationParser() {
+        LOGGER.info("New " + this);
+    }
 
     /**
      * 
@@ -57,7 +66,7 @@ public class RAnnotationParser {
      * @throws IOException
      * @throws ExceptionReport
      */
-    public static void validateScript(InputStream script, String wkn) throws RAnnotationException,
+    public boolean validateScript(InputStream script, String identifier) throws RAnnotationException,
             IOException,
             ExceptionReport {
         // TODO: improve this method to something more useful
@@ -69,7 +78,12 @@ public class RAnnotationParser {
 
         // TODO: WPS.des and WPS.res should only occur once or not.
         try {
-            descriptionCreator.createDescribeProcessType(annotations, wkn);
+            ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
+                                                                                              identifier,
+                                                                                              new URL("http://some.valid.url/"),
+                                                                                              new URL("http://some.valid.url/"));
+            boolean valid = processType.validate();
+            return valid;
         }
         catch (ExceptionReport e) {
             String message = "Script validation failed when testing process description creator.";
@@ -83,24 +97,26 @@ public class RAnnotationParser {
         }
     }
 
-    // TODO: Improve process script validation
-    public static List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws IOException {
+    public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException {
         LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
-        BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
-        int lineCounter = 0;
-        boolean isCurrentlyParsingAnnotation = false;
-        StringBuilder annotationString = null;
-        RAnnotationType annotationType = null;
-        ArrayList<RAnnotation> annotations = new ArrayList<RAnnotation>();
+        try {
+            BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
+            int lineCounter = 0;
+            boolean isCurrentlyParsingAnnotation = false;
+            StringBuilder annotationString = null;
+            RAnnotationType annotationType = null;
+            ArrayList<RAnnotation> annotations = new ArrayList<RAnnotation>();
 
-        while (lineReader.ready()) {
-            String line = lineReader.readLine();
-            lineCounter++;
+            while (lineReader.ready()) {
+                String line = lineReader.readLine();
+                lineCounter++;
 
-            if (line.contains("#")) { // is a comment
-                if ( !line.startsWith("##")) { // is a double comment, do not use!
+                if (line.startsWith(ANNOTATION_CHARACTER) && !line.startsWith(COMMENTED_ANNOTATION_CHARACTER)) {
                     line = line.split("#", 2)[1];
+                    line = line.trim();
+
+                    LOGGER.trace("Parsing annotation line " + line);
                     if ( !isCurrentlyParsingAnnotation)
                         // searches for startKey - expressions in a line
                         for (RAnnotationType anot : RAnnotationType.values()) {
@@ -129,21 +145,21 @@ public class RAnnotationParser {
 
                             annotationString.append(line);
                             if ( !isCurrentlyParsingAnnotation) {
-                            	RAnnotation newAnnotation = null;
+                                RAnnotation newAnnotation = null;
                                 if (annotationType.equals(RAnnotationType.RESOURCE)) {
-                                	newAnnotation = createResourceAnnotation(annotationString.toString());
-                                	
-                                }else{
+                                    newAnnotation = createResourceAnnotation(annotationString.toString());
+                                }
+                                else {
                                     HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
-                                            annotationString.toString());
+                                                                                          annotationString.toString());
                                     newAnnotation = new RAnnotation(annotationType, attrHash);
-                                	
+
                                 }
 
                                 annotations.add(newAnnotation);
 
-                                LOGGER.debug("Done parsing annotation " + annotationString.toString() + " >>> "
-                                        + newAnnotation);
+                                LOGGER.debug("Done parsing annotation " + newAnnotation + " > contains: "
+                                        + annotationString.toString());
                             }
                         }
                     }
@@ -153,13 +169,19 @@ public class RAnnotationParser {
                     }
                 }
             }
-        }
 
-        LOGGER.debug("Finished to parse annotations from script " + inputScript);
-        return annotations;
+            LOGGER.debug("Finished parsing " + annotations.size() + " annotations from script " + inputScript);
+            LOGGER.trace("Annotations found:" + Arrays.deepToString(annotations.toArray()));
+            return annotations;
+
+        }
+        catch (Exception e) {
+            LOGGER.error("Error parsing annotations.", e);
+            throw new RAnnotationException("Error parsing annotations.", e);
+        }
     }
 
-    private static HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws RAnnotationException {
+    private HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws RAnnotationException {
 
         HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
@@ -174,15 +196,15 @@ public class RAnnotationParser {
 
         while (attrValueTokenizer.hasMoreElements()) {
             String attrValue = attrValueTokenizer.nextToken();
-            if(attrValue.trim().startsWith("\"")){
-            	
-        		for(;attrValueTokenizer.hasMoreElements() && !attrValue.trim().endsWith("\"");){
-        			attrValue += RSeperator.ATTRIBUTE_SEPARATOR + attrValueTokenizer.nextToken();
-        		}
-        		
-        		attrValue=attrValue.substring(attrValue.indexOf("\"")+1, attrValue.lastIndexOf("\""));
+            if (attrValue.trim().startsWith("\"")) {
+
+                for (; attrValueTokenizer.hasMoreElements() && !attrValue.trim().endsWith("\"");) {
+                    attrValue += RSeperator.ATTRIBUTE_SEPARATOR + attrValueTokenizer.nextToken();
+                }
+
+                attrValue = attrValue.substring(attrValue.indexOf("\"") + 1, attrValue.lastIndexOf("\""));
             }
-            
+
             if (attrValue.contains(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey())) {
                 iterableOrder = false;
 
@@ -210,56 +232,39 @@ public class RAnnotationParser {
                 String[] keyValue = attrValue.split(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey());
                 RAttribute attribute = anotType.getAttribute(keyValue[0].trim());
                 String value = keyValue[1].trim();
-                if(value.startsWith("\"")){
-                	
-            		for(;attrValueTokenizer.hasMoreElements() && !value.trim().endsWith("\"");){
-            			value += RSeperator.ATTRIBUTE_SEPARATOR +attrValueTokenizer.nextToken();
-            		}
-            		
-            		value=value.substring(value.indexOf("\"")+1, value.lastIndexOf("\""));
+                if (value.startsWith("\"")) {
+
+                    for (; attrValueTokenizer.hasMoreElements() && !value.trim().endsWith("\"");) {
+                        value += RSeperator.ATTRIBUTE_SEPARATOR + attrValueTokenizer.nextToken();
+                    }
+
+                    value = value.substring(value.indexOf("\"") + 1, value.lastIndexOf("\""));
                 }
-                
+
                 attrHash.put(attribute, value);
             }
         }
         return attrHash;
     }
 
-    private static RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+    private RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
         List<R_Resource> resources = new ArrayList<R_Resource>();
-        
+
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
 
-        StringBuilder namedList = new StringBuilder();
-        namedList.append("list(");
         while (attrValueTokenizer.hasMoreElements()) {
             String resourceValue = attrValueTokenizer.nextToken().trim();
             R_Resource r_resource = new R_Resource(resourceValue);
             resources.add(r_resource);
-            
-            String resourceName = "\"" + resourceValue + "\"";
-            LOGGER.debug("Found new resource in annotation " + resourceName);
 
-            String fullResourcePath = r_resource.getFullResourceURL().toExternalForm();
-
-            if (fullResourcePath != null) {
-                namedList.append(resourceName + " = " + "\"" + fullResourcePath + "\"");
-                if (attrValueTokenizer.hasMoreElements()) {
-                    namedList.append(", ");
-                }
-            }
-            else
-                LOGGER.warn("Resource NOT added: " + resourceName);
+            LOGGER.debug("Found new resource in annotation: " + r_resource);
         }
 
-        namedList.append(")");
-        attributeHash.put(RAttribute.NAMED_LIST, namedList);
-
-        LOGGER.debug("Complete resurce list: " + Arrays.deepToString(attributeHash.entrySet().toArray()));
+        // add empty hasmap for now
+        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
         ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash, resources);
-        
+
         return resourceAnnotation;
     }
 

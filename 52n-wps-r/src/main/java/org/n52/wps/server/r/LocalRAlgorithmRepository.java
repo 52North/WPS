@@ -262,7 +262,6 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Override
     public void shutdown() {
         LOGGER.info("Shutting down ...");
-        // TODO Auto-generated method stub
     }
 
 }

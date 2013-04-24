@@ -21,35 +21,49 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
  * visit the Free Software Foundation web page, http://www.fsf.org.
  */
+
 package org.n52.wps.server.r.syntax;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import org.n52.wps.server.r.data.R_Resource;
 
+// TODO resources should behave more similar to regular annotations, so that i can access the resources using the getObjectValue(...)
 public class ResourceAnnotation extends RAnnotation {
 
-	private List<R_Resource> resources;
-	
-	public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash, List<R_Resource> resources) throws IOException,
-			RAnnotationException {
-		super(RAnnotationType.RESOURCE, attributeHash);
-		this.resources = resources;
-	}
+    private List<R_Resource> resources = new ArrayList<R_Resource>();
 
-	public List<R_Resource> getResources() {
-		if(this.resources == null)
-			this.resources = new ArrayList<R_Resource>();
-			
-		return this.resources;
-	}
+    public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash, List<R_Resource> resources) throws IOException,
+            RAnnotationException {
+        super(RAnnotationType.RESOURCE, attributeHash);
+        this.resources.addAll(resources);
+    }
 
- 
-   void setResources(List<R_Resource> resources) {
-		this.resources = resources;
-	}
+    public List<R_Resource> getResources() {
+        if (this.resources == null)
+            this.resources = new ArrayList<R_Resource>();
+
+        return this.resources;
+    }
+
+    void setResources(List<R_Resource> resources) {
+        this.resources = resources;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ResourceAnnotation [resources=");
+        if (this.resources != null)
+            builder.append(Arrays.toString(this.resources.toArray()));
+        else
+            builder.append("<null>");
+        builder.append("]");
+        return builder.toString();
+    }
 
 }

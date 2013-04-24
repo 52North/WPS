@@ -35,12 +35,12 @@ import java.util.List;
  * 
  */
 public enum RAnnotationType {
+    
     INPUT(Arrays.asList(RAttribute.INPUT_START,
                         RAttribute.IDENTIFIER,
                         RAttribute.TYPE,
                         RAttribute.TITLE,
                         RAttribute.ABSTRACT,
-                        // RAttribute.METADATA,
                         RAttribute.DEFAULT_VALUE,
                         RAttribute.MIN_OCCURS,
                         RAttribute.MAX_OCCURS)),
@@ -50,13 +50,12 @@ public enum RAnnotationType {
                          RAttribute.TYPE,
                          RAttribute.TITLE,
                          RAttribute.ABSTRACT
-    // RAttribute.METADATA
     )),
 
     DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START,
-    // TODO: Meaning of identifier???? -- doesn't have a meaning yet..
                               RAttribute.IDENTIFIER,
                               RAttribute.TITLE,
+                              RAttribute.VERSION,
                               RAttribute.ABSTRACT,
                               RAttribute.AUTHOR)),
 
@@ -106,7 +105,7 @@ public enum RAnnotationType {
      * @return key / value pairs ready for process description
      * @throws IOException
      */
-    public void validDescription(RAnnotation rAnnotation) throws RAnnotationException {
+    public void validateDescription(RAnnotation rAnnotation) throws RAnnotationException {
         // check minOccurs Attribute and default value:
         try {
             if (rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
