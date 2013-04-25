@@ -116,6 +116,17 @@ public class RequestHandler {
 		
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
+		
+		/*
+		 * check if service parameter is present and equals "WPS"
+		 * otherwise an ExceptionReport will be thrown
+		 */
+		String serviceType = Request.getMapValue("service", ciMap, true);
+		
+		if(!serviceType.equalsIgnoreCase("WPS")){
+			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + serviceType, 
+					ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+		}
 
 		/*
 		 * check language. if not supported, return ExceptionReport
@@ -129,6 +140,7 @@ public class RequestHandler {
 
 		// get the request type
 		String requestType = Request.getMapValue("request", ciMap, true);
+		
 		if (requestType.equalsIgnoreCase("GetCapabilities")) {
 			req = new CapabilitiesRequest(ciMap);
 		} 
@@ -195,6 +207,20 @@ public class RequestHandler {
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
 			Node versionNode = child.getAttributes().getNamedItem("version");
+			
+			/*
+			 * check for service parameter. this has to be present for all requests
+			 */
+			Node serviceNode = child.getAttributes().getNamedItem("service");
+			
+			if(serviceNode == null){
+				throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "service");
+			}else{
+				if(!serviceNode.getNodeValue().equalsIgnoreCase("WPS")){
+					throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+				}
+			}
+			
             isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
 			if(versionNode == null && !isCapabilitiesNode) {
 				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");

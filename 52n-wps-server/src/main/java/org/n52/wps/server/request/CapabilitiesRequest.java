@@ -41,7 +41,6 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.CapabilitiesResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -57,21 +56,28 @@ public class CapabilitiesRequest extends Request {
 	 */
 	public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
 		super(ciMap);
+		//Fix for https://bugzilla.52north.org/show_bug.cgi?id=907
+		String providedAcceptVersionsString = Request.getMapValue("acceptversions", ciMap, false);
+		
+		if(providedAcceptVersionsString != null){
+		
+			String[] providedAcceptVersions = providedAcceptVersionsString.split(",");
+			
+			if(providedAcceptVersions != null){
+				map.put("version", providedAcceptVersions);
+			}
+		}
 	}
 
 	public CapabilitiesRequest(Document doc) throws ExceptionReport{
 		super(doc);
 		
-		//put the respective elements of the document in the map
-		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
-		
 		map = new CaseInsensitiveMap();
 		
-		String[] serviceArray = {"WPS"};
-			
-		map.put("service", serviceArray);
-			
-			
+		//TODO why is this done? (BenjaminPross)
+//		String[] serviceArray = {"WPS"};
+//			
+//		map.put("service", serviceArray);						
 		
 		NodeList nList = doc.getFirstChild().getChildNodes();
 		
@@ -86,7 +92,7 @@ public class CapabilitiesRequest extends Request {
 					NodeList nList2 = n.getChildNodes();
 					
 					for (int j = 0; j < nList2.getLength(); j++) {
-						Node n2 = nList2.item(i);
+						Node n2 = nList2.item(j);
 						
 						if(n2.getLocalName() != null && n2.getLocalName().equalsIgnoreCase("Version")){
 							versionList.add(n2.getTextContent());
@@ -112,15 +118,16 @@ public class CapabilitiesRequest extends Request {
 		
 		String services = getMapValue("service", true);
 		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+		//TODO check, whether this can be removed as this is checked in RequestHandler
 		if(! services.equalsIgnoreCase("wps")) {
-			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services, 
+			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + services, 
 										ExceptionReport.INVALID_PARAMETER_VALUE, "service");
 		}
 
 		String[] versions = getMapArray("version", false);
 		if(! requireVersion(SUPPORTED_VERSION, false)) {
 				throw new ExceptionReport("Requested versions are not supported, you requested: " + Request.accumulateString(versions),
-											ExceptionReport.INVALID_PARAMETER_VALUE, "version");
+											ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
 		}
 		
 		//String[] sections = getMapArray("sections");

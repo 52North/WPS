@@ -173,7 +173,8 @@ abstract public class Request implements Callable <Response> {
 			return true;
 		}
 		for(String v : versions) {
-			if(v.equals(version)) {
+			//remove possible blanks
+			if(v.trim().equals(version)) {
 				return true;
 			}
 		}
@@ -187,8 +188,13 @@ abstract public class Request implements Callable <Response> {
 	 */
 	public static String accumulateString(String[] strings) {
 		StringBuffer sb = new StringBuffer();
-		for(String s : strings) {
-			sb.append(s + ", ");
+		for(int i = 0; i < strings.length; i++) {
+			String s = strings[i];
+			if(!(i == strings.length-1)){
+				sb.append(s + ", ");
+			}else{
+				sb.append(s);
+			}
 		}
 		return sb.toString();
 	}
@@ -228,7 +234,7 @@ abstract public class Request implements Callable <Response> {
 	 * After creation a Request is handled. This is done by calling this method.
 	 * This handling could contain a lot of computations. These computations should
 	 * be called from within this method.
-	 * @return A Reponse to the client Request
+	 * @return A Response to the client Request
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	abstract public Response call() throws ExceptionReport;
