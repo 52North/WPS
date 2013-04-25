@@ -447,13 +447,23 @@ public class ExecuteRequest extends Request implements IObserver {
 					ExceptionReport.INVALID_PARAMETER_VALUE, "version="
 							+ getExecute().getVersion());
 		}
+
+		//Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+		String identifier = getAlgorithmIdentifier();
+		
+		if(identifier == null){
+			throw new ExceptionReport(
+					"No process identifier supplied.",
+					ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");			
+		}
+		
 		// check if the algorithm is in our repository
 		if (!RepositoryManager.getInstance().containsAlgorithm(
-				getAlgorithmIdentifier())) {
+				identifier)) {
 			throw new ExceptionReport(
 					"Specified process identifier does not exist",
 					ExceptionReport.INVALID_PARAMETER_VALUE,
-					getAlgorithmIdentifier());
+					"identifier=" + identifier);
 		}
 
 		// validate if the process can be executed
@@ -670,9 +680,13 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * @return An identifier
 	 */
 	public String getAlgorithmIdentifier() {
-		return getExecute().getIdentifier().getStringValue();
+		//Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+		if(getExecute().getIdentifier() != null){
+			return getExecute().getIdentifier().getStringValue();
+		}
+		return null;
 	}
-
+	
 	/**
 	 * Gets the Execute that is associated with this Request
 	 * 
