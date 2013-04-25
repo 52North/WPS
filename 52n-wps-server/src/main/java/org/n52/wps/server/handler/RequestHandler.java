@@ -117,6 +117,16 @@ public class RequestHandler {
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
 
+		/*
+		 * check language. if not supported, return ExceptionReport
+		 * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
+		 */
+		String language = Request.getMapValue("language", ciMap, false);
+		
+		if(language != null){
+			Request.checkLanguageSupported(language);
+		}
+
 		// get the request type
 		String requestType = Request.getMapValue("request", ciMap, true);
 		if (requestType.equalsIgnoreCase("GetCapabilities")) {
@@ -163,6 +173,7 @@ public class RequestHandler {
 			sleepTime = "5";
 		}
 		
+		boolean isCapabilitiesNode = false;
 		
 		try {
 			System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
@@ -184,14 +195,24 @@ public class RequestHandler {
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
 			Node versionNode = child.getAttributes().getNamedItem("version");
-                        boolean isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
+            isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
 			if(versionNode == null && !isCapabilitiesNode) {
 				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 			}
+			//TODO: I think this can be removed, as capabilities requests do not have a version parameter (BenjaminPross)
 			if(isCapabilitiesNode){
 				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
 			}else{
 				version = child.getAttributes().getNamedItem("version").getNodeValue();
+			}
+			/*
+			 * check language, if not supported, return ExceptionReport
+			 * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
+			 */
+			Node languageNode = child.getAttributes().getNamedItem("language");
+			if(languageNode != null){
+				String language = languageNode.getNodeValue();
+				Request.checkLanguageSupported(language);
 			}
 		} catch (SAXException e) {
 			throw new ExceptionReport(
@@ -208,10 +229,10 @@ public class RequestHandler {
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
-		if(version == null ) {
+		if(!isCapabilitiesNode && version == null) {
 			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
-		if(!version.equals(Request.SUPPORTED_VERSION)) {
+		if(!isCapabilitiesNode && !version.equals(Request.SUPPORTED_VERSION)) {
 			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type

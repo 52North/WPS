@@ -57,6 +57,7 @@ abstract public class Request implements Callable <Response> {
 	protected static Logger LOGGER = Logger.getLogger(Request.class);
 	protected UUID id = null;
 	public static final String SUPPORTED_VERSION = "1.0.0";
+	public static final String[] SUPPORTED_LANGUAGES = new String[]{"en-US"};
 	
 	/**
 	 * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
@@ -199,6 +200,27 @@ abstract public class Request implements Callable <Response> {
 		return id;
 	}
 
+	/**
+	 * Checks, if the language is supported by the WPS.
+	 * The language parameter is optional, however, if a wrong language is requested, 
+	 * an ExceptionReport has to be returned to the client.
+	 * 
+	 * See https://bugzilla.52north.org/show_bug.cgi?id=905.
+	 * 
+	 * @param language The language to be checked.
+	 * @throws ExceptionReport If a wrong language is requested, this ExceptionReport will be returned to the client.
+	 */
+	public static void checkLanguageSupported(String language) throws ExceptionReport {
+		
+		for (String supportedLanguage : SUPPORTED_LANGUAGES) {
+			if(supportedLanguage.equals(language)){
+				return;
+			}
+		}
+		throw new ExceptionReport(
+				"The requested language " + language + " is not supported",
+				ExceptionReport.INVALID_PARAMETER_VALUE, "language");
+	}
 	
 	abstract public Object getAttachedResult();
 	
