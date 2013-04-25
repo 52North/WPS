@@ -111,6 +111,33 @@ abstract public class Request implements Callable <Response> {
 			throw new ExceptionReport("Parameter <" + key + "> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, key);
 		}
 	}
+	
+	/**
+	 * Retrieve a value from an input-map with a lookup-key
+	 * @param key The lookup-key
+	 * @param map The input-map to look in
+	 * @param required If the key-value pair must be in the map.
+	 * @return The value of the key-value pair
+	 */
+	public static String getMapValue(String key, CaseInsensitiveMap map, boolean required, String[] supportedValues) throws ExceptionReport{
+		if(map.containsKey(key)){
+			
+			String value = ((String[]) map.get(key))[0];
+			
+			for (String string : supportedValues) {
+				if(string.equalsIgnoreCase(value)){					
+					return value;
+				}
+			}
+			throw new ExceptionReport("Invalid value for parameter <" + key + ">.", ExceptionReport.INVALID_PARAMETER_VALUE, key);
+		}else if(!required){
+			LOGGER.warn("Parameter <" + key + "> not found.");
+			return null;
+		}else{
+			//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
+			throw new ExceptionReport("Parameter <" + key + "> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, key);
+		}
+	}
 
 	/**
 	 * Retrieve an array of values from an input-map with a lookup-key
@@ -138,6 +165,15 @@ abstract public class Request implements Callable <Response> {
 	 */
 	protected String getMapValue(String key, boolean required) throws ExceptionReport{
 		return Request.getMapValue(key, this.map, required);
+	}
+	
+	/**
+	 * Retrieve a value from the client-input-map with a lookup-key
+	 * @param The lookup-key
+	 * @return The value of the key-value pair
+	 */
+	protected String getMapValue(String key, boolean required, String[] supportedValues) throws ExceptionReport{
+		return Request.getMapValue(key, this.map, required, supportedValues);
 	}
 
 	/**

@@ -39,6 +39,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -221,7 +222,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = inputItems[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try {
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("encoding")) {
 						encodingAttribute = attributeValue;
 					} else if (attributeName.equalsIgnoreCase("mimeType")) {
@@ -349,7 +354,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = outputDataparameters[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try{
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {
@@ -396,7 +405,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = rawDataparameters[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try{
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {

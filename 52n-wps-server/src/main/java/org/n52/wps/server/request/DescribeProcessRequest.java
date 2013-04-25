@@ -115,7 +115,7 @@ public class DescribeProcessRequest extends Request {
 	 * @return True if the input is valid, False otherwise
 	 */
 	public boolean validate() throws ExceptionReport{
-		getMapValue("version", false); // not required?
+		getMapValue("version", true, new String[]{"1.0.0"}); // required		
 		getMapValue("identifier", true);  // required!
 		return true;
 	}
