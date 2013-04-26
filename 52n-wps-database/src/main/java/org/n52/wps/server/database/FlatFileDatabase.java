@@ -65,7 +65,7 @@ public final class FlatFileDatabase implements IDatabase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FlatFileDatabase.class);
 
-    private final static String KEY_DATABASE_ROOT = "org.52n.wps.server.database";
+    private final static String KEY_DATABASE_ROOT = "org.n52.wps.server.database";
     private final static String KEY_DATABASE_PATH = "path";
     private final static String KEY_DATABASE_WIPE_ENABLED = "wipe.enabled";
     private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
