@@ -995,13 +995,13 @@
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
 		<Database>
-            <!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
-            <!-- enable database wiping base on values below -->
-            <Property name="wipe.enabled" active="true">true</Property>
-            <!-- scans database every 1 hour-->
-            <Property name="wipe.period" active="true">PT1H</Property>
-            <!-- deletes files older than 7 days-->
-            <Property name="wipe.threshold" active="true">P7D</Property>
-        </Database>
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
+			<!-- enable database wiping base on values below -->
+			<Property name="wipe.enabled" active="true">true</Property>
+			<!-- scans database every 1 hour -->
+			<Property name="wipe.period" active="true">PT1H</Property>
+			<!-- deletes files older than 7 days -->
+			<Property name="wipe.threshold" active="true">P7D</Property>
+		</Database>
 	</Server>
 </WPSConfiguration>
