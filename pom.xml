@@ -422,6 +422,11 @@
 				<artifactId>httpcore</artifactId>
 				<version>4.2.1</version>
 			</dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+				<version>4.2.1</version>
+            </dependency>
 			<dependency>
 				<groupId>org.apache.derby</groupId>
 				<artifactId>derby</artifactId>
