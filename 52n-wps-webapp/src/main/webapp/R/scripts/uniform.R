@@ -1,4 +1,4 @@
-# wps.des: id = R_andom, title = Random number generator, version = 42,
+# wps.des: id = uniform, title = Random number generator, version = 42,
 # 	abstract = Generates random numbers for uniform distribution; 
 
 # wps.in: min, double, Minimum, All outcomes are larger than min, value = 0; 

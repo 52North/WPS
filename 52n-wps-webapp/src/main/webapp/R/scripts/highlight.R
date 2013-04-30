@@ -1,9 +1,8 @@
-# TODO: R
-# 
+#
 # Author: Matthias Hinz
 ###############################################################################
 
-# wps.des: title="Transforms an R script into HTML/CSS with syntax highlights";
+# wps.des: highlight, "Transforms an R script into HTML/CSS with syntax highlights";
 # wps.in: input, type=text, abstract = "R script to highlight";
 library(highlight)
 

@@ -4,7 +4,7 @@
 	options(digits=12)
 	options(error = expression(NULL))
 	options(warn = -1)
-	#wps.des: title = Inverse Distance Interpolation in R, 
+	#wps.des: id=idw, title = Inverse Distance Interpolation in R, 
 	#abstract = Calculates Inverse Distance Interpolation for 
 	#given point values on a specified grid;
 	

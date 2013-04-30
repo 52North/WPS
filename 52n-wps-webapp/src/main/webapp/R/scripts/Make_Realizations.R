@@ -1,7 +1,7 @@
 library(rgdal)
 library(automap)
 
-#wps.des: title = Realization process UncertWeb, abstract = Makes realizations out of two geotiffs;
+#wps.des: Make_Realizations, title = Realization process UncertWeb, abstract = Makes realizations out of two geotiffs;
 #wps.in: spdf, geotiff;
 #wps.in: uspdf, geotiff;
 

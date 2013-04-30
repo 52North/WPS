@@ -1,4 +1,4 @@
-#wps.des: title=Script that returns meuse data as rdata-files, abstract=The meuse river data set is contained in the sp-package of R - see package information;
+#wps.des: meuse_rdata, title=Script that returns meuse data as rdata-files, abstract=The meuse river data set is contained in the sp-package of R - see package information;
 #wps.in: input, integer, dummy input, value=0;
 
 require(sp)
