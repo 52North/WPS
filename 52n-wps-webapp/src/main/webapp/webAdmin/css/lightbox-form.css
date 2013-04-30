@@ -46,6 +46,20 @@
 	overflow: none;
 }
 
+#RSessionInfoBox
+{
+	display: none;
+	position: absolute;
+	top: 20%;
+	left: 20%;
+	padding: 48px;
+	margin:0;
+	border: 1px solid black;
+	background-color: white;
+	z-index:101;
+	overflow: none;
+}
+
 #boxtitle
 {
 	position:absolute;

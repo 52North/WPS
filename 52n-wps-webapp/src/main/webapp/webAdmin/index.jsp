@@ -35,6 +35,7 @@
             // upload req
             var uploadId = "";
             var WPS4RId = "";
+            var WPS4RErrors = new Array();
 
             // at page load
             $(document).ready(function(){
@@ -169,11 +170,19 @@
                             var active = true;
                             if(activeString == "false"){
 								active = false;
-                            }    
+                            }
+                                      
+                            var itemID;
                             
-                            var itemID = addListItem(listType);
+                            if (nameEntry == "LocalRAlgorithmRepository"){
+                            	itemID = addListItemForWPS4R(listType);
+                            	setWPS4RId(itemID);
+                            }else{
+                                itemID = addListItem(listType);
+                            }
+
                             if (nameEntry == "UploadedAlgorithmRepository"){setUploadId(itemID);}
-                            if (nameEntry == "LocalRAlgorithmRepository"){setWPS4RId(itemID);}
+
 
                             // now that the list item exists, add name, class and active to the elements
                             $("#" + listType + "-" + itemID + "_NameEntry").val(nameEntry);					// set the name entry 
@@ -324,6 +333,7 @@
                 return id;
             }
 
+            
             function addNewListItem(itemType) {         
                 var id = document.getElementById("id").value;
                 if(itemType == itemListTypes[itemListTypeNr.RemoteRepository]){
@@ -621,6 +631,43 @@
 	           	$("div#editSave img#editImg").remove();
 	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"editServerSettings(); return false;\" src=\"images/edit.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 								
             }
+			
+            function addListItemForWPS4R(itemType){
+                var id = document.getElementById("id").value;
+                 $("#"+itemType+"_List").append
+                    (
+    	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
+    						"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
+    						"<table class=\"nameClass\">"+
+    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
+    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
+    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
+    							"<tr><td style=\"font-weight:bold; padding-right:15px\">R</td><td>"+
+        						"<input class=\"formButtons\" name=\"showRConfig\" type=\"button\"\r\n" + 
+        						" value=\"Show sessionInfo\" style=\"border:1px solid black;background:white; width:100pt\" onclick=\"openbox('R session information', 1, 'RSessionInfoBox') ;\">"+    							
+    							"</td></tr>"+	
+    						"</table>"+
+
+    		                "<br><br>" +
+
+    		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+    						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
+    			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
+    				                "<div class=\"propListHeader\">" +
+    					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
+    					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+    				                "</div>" +
+    			                "</div>" +
+    			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
+    			            "</div>"+
+    	                "</p>"
+                    );
+          
+                var newId = (id - 1) + 2;
+                document.getElementById("id").value = newId;
+                return id;
+            }
+            
 			function rProcessInfo(){
 				this.algorithmName;
 				this.isValid;
@@ -641,7 +688,7 @@
 					out.println("\t\t\t\trProcessInfos["+i+"].isAvailable = "+   rProcessInfo.isAvailable() +";");
 					out.println("\t\t\t\trProcessInfos["+i+"].isValid = "+		 rProcessInfo.isValid()+";");
 					out.println("\t\t\t\trProcessInfos["+i+"].scriptURL = \""+	 rProcessInfo.getScriptURL()+"\";");
-					//out.print("rProcessInfos["+i+"].exception = \""+	 rProcessInfo.getLastException().getMessage()+"\";");
+					out.println("\t\t\t\trProcessInfos["+i+"].exception = \""+	 rProcessInfo.getLastErrormessage()+"\";");
 					i++;
 				}%>
 				
@@ -658,9 +705,11 @@
 								);
 						}
 					else{
-						$("#"+flagId).append(
-								"<img class=\"flagIcon\" src=\"images/script_invalid.png\" alt=\"Script not valid\" title=\"Script not valid\" style=\"background-color:transparent\"></img>"		
-						);
+						var message = rProcessInfos[i].exception;
+						WPS4RErrors[i] = message;
+ 						text = 	"<img class=\"flagIcon\" src=\"images/script_invalid.png\" alt=\"Script not valid\" "
+ 							+ "title=\"Script is not valid, click here to see the last errormessage\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>";
+ 						$("#"+flagId).append(text);
 						
 						}
 					
@@ -807,8 +856,7 @@
 			</p>
 		</form>
 	</div>
-	
-	<div id="filter"></div>
+
 	<div id="box2">
 		<span id="boxtitle"></span>
 		<form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadRFiles()">
@@ -842,6 +890,12 @@
 					or org.n52.wps.server.r.[process name]</I>
 			</p>
 		</form>
+	</div>
+
+	<div id="RSessionInfoBox" style="display:none;">
+		<span id="boxtitle"></span>
+		<iframe width="600px" height="400px" src="../R/sessioninfo.jsp"></iframe><br><br>
+		<input type="button" name="OK" value="OK" onclick="closebox('RSessionInfoBox')">
 	</div>
 
 </body>

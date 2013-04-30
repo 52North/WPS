@@ -38,7 +38,7 @@ public class RSessionInfo {
         return getConsoleOutput(rCon, "sessionInfo()");
     }
 
-    private static String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
+    public static String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
         return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
     }
 }
