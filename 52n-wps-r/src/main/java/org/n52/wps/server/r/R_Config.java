@@ -358,6 +358,7 @@ public class R_Config {
     public String getCurrentSessionInfo() throws RserveException, REXPMismatchException {
         RConnection rCon = openRConnection();
         String info = RSessionInfo.getSessionInfo(rCon);
+        rCon.close();
         return info;
     }
 }
