@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
@@ -59,6 +60,7 @@ public class RProcessInfo {
         catch (Exception e) {
             LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
             this.lastException = e;
+            this.isValid = false;
         }
         finally {
             if (fis != null)
@@ -100,6 +102,16 @@ public class RProcessInfo {
 
     public Exception getLastException() {
         return this.lastException;
+    }
+    
+    /**
+     * @return The last Error message or null
+     */
+    public String getLastErrormessage() {
+    	if(getLastException() == null)
+    		return null;
+    	else
+    		return  getLastException().getMessage();
     }
 
     public static List<RProcessInfo> getRProcessInfoList() {

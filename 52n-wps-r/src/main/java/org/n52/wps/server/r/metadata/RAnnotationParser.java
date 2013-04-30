@@ -40,6 +40,8 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.r.GenericRProcess;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -78,21 +80,27 @@ public class RAnnotationParser {
 
         // TODO: WPS.des and WPS.res should only occur once or not.
         try {
-            ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
+			ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
                                                                                               identifier,
                                                                                               new URL("http://some.valid.url/"),
                                                                                               new URL("http://some.valid.url/"));
-            boolean valid = processType.validate();
+
+           boolean valid = processType.validate();
+           if(valid==false)
+        	   throw new ExceptionReport("Invalid R algorithm. The process description created from the script is not valid.", ExceptionReport.NO_APPLICABLE_CODE);
             return valid;
+            
+
+            
         }
         catch (ExceptionReport e) {
-            String message = "Script validation failed when testing process description creator.";
-            LOGGER.error(message);
+            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
+            LOGGER.error(message, e);
             throw e;
         }
         catch (RAnnotationException e) {
-            String message = "Script validation failed when testing process description creator.";
-            LOGGER.error(message);
+            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
+            LOGGER.error(message, e);
             throw e;
         }
     }

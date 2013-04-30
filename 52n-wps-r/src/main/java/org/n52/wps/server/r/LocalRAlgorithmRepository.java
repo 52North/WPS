@@ -132,8 +132,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 					//propertyChanged=true;
 					LOGGER.error("[WPS4R] Invalid R script for process "
 							+ algorithm_wkn
-							+ ". Process ignored. Check previous logs.");
-					continue;
+							//+ ". Process ignored. Check previous logs.");
+							+ ". You may enable/disable it manually from the Web Admin console. Check previous logs for details.");
 				}
 				
 				addAlgorithm(algorithm_wkn);
