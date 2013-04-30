@@ -25,6 +25,7 @@
 package org.n52.wps.server.r;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -101,12 +102,17 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private boolean deleteWorkDirectory = false;
 
-    private RAnnotationParser parser;
+    private RAnnotationParser parser = new RAnnotationParser();
 
     public GenericRProcess(String wellKnownName) {
-        super(wellKnownName);
-        this.parser = new RAnnotationParser();
-
+    	//note that superconstructor calls method initializeDescription()
+        super(wellKnownName); 
+        log.info("NEW " + this.toString());
+    }
+    
+    public GenericRProcess() {
+    	//note that superconstructor calls method initializeDescription()
+        super();
         log.info("NEW " + this.toString());
     }
 
@@ -149,6 +155,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             }
 
             rScriptStream = new FileInputStream(this.scriptFile);
+            if(parser == null)
+            	this.parser = new RAnnotationParser(); //prevents NullpointerException
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // have to process the resources to get full URLs to the files
@@ -379,7 +387,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 }
 
                 String sessionInfo = RSessionInfo.getSessionInfo(rCon);
-                resulthash.put("sessionInfo", new LiteralStringBinding(sessionInfo));
+                InputStream byteArrayInputStream = new ByteArrayInputStream(sessionInfo.getBytes("UTF-8"));
+                resulthash.put("sessionInfo", new GenericFileDataBinding(new GenericFileData(byteArrayInputStream, GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
+  
+                String warnings = RSessionInfo.getConsoleOutput(rCon, "warnings()");
+                byteArrayInputStream = new ByteArrayInputStream(warnings.getBytes("UTF-8"));
+                resulthash.put("warnings", new GenericFileDataBinding(new GenericFileData(byteArrayInputStream, GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
 
             }
             catch (IOException e) {
@@ -1199,6 +1212,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     };
 
     public Class< ? extends IData> getOutputDataType(String id) {
+    	if(id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings")) 
+    		return GenericFileDataBinding.class;
+    	
         try {
             return getIODataType(RAnnotationType.OUTPUT, id);
         }

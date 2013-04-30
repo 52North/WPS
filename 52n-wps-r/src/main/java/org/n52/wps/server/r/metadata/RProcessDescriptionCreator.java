@@ -49,6 +49,7 @@ import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
+import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
@@ -126,13 +127,35 @@ public class RProcessDescriptionCreator {
                 }
             }
 
-            // // Add SessionInfo-Output
-            // OutputDescriptionType outdes = outputs.addNewOutput();
-            // outdes.addNewIdentifier().setStringValue("sessionInfo");
-            // outdes.addNewTitle().setStringValue("Information about the R session which has been used");
-            // outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
-            // outdes.addNewLiteralOutput().addNewDataType().setStringValue("xs:string");
+     // Add SessionInfo-Output
+        OutputDescriptionType outdes = outputs.addNewOutput();
+        outdes.addNewIdentifier().setStringValue("sessionInfo");
+        outdes.addNewTitle().setStringValue("Information about the R session which has been used");
+        outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
+        
+        SupportedComplexDataType scdt = outdes.addNewComplexOutput();
+        ComplexDataDescriptionType datatype = scdt.addNewDefault().addNewFormat();
+        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+        datatype = scdt.addNewSupported().addNewFormat();
+        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
 
+ 
+     // Add Warnings-Output
+        outdes = outputs.addNewOutput();
+        outdes.addNewIdentifier().setStringValue("warnings");
+        outdes.addNewTitle().setStringValue("Warnings from R");
+        outdes.addNewAbstract().setStringValue("Output of the warnings()-method after R-script execution");
+
+        scdt = outdes.addNewComplexOutput();
+        datatype = scdt.addNewDefault().addNewFormat();
+        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+        datatype = scdt.addNewSupported().addNewFormat();
+        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+        
             return pdt;
         }
         catch (Exception e) {
