@@ -103,7 +103,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	 * TODO: add support for autoretry, proxy
 	 */
 	private ReferenceInputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
-		HttpClient backend = HttpClientFactory.getDefaultClient();
+		HttpClient backend = new DefaultHttpClient();
 		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 		
 		HttpGet httpget = new HttpGet(dataURLString);
@@ -121,7 +121,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	 * TODO: add support for autoretry, proxy
 	 */
 	private ReferenceInputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
-		HttpClient backend = HttpClientFactory.getDefaultClient();
+		HttpClient backend = new DefaultHttpClient();
 		
 		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 		
