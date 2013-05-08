@@ -103,6 +103,39 @@ public class ExecutePOSTTester {
         assertThat(response, response, containsString("LinearRing"));
     }
     
+    /*Multiple complex XML Input by reference */
+    @Test
+    public void testExecutePOSTMultipleReferenceComplexXMLSynchronousXMLOutput() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTMultipleReferenceComplexXMLSynchronousXMLOutput");
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Reference schema=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\" xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=topp:tasmania_roads\"/>"
+                + "</wps:Input>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Reference schema=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\" xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=topp:tasmania_roads\"/>"
+                + "</wps:Input>"
+                + "</wps:DataInputs>"
+                + "<wps:ResponseForm>"
+                + "<wps:ResponseDocument>"
+                + "<wps:Output>"
+                + "<ows:Identifier>result</ows:Identifier>"
+                + "</wps:Output>"
+                + "</wps:ResponseDocument>"
+                + "</wps:ResponseForm>"
+                + "</wps:Execute>";
+        String response = PostClient.sendRequest(url, payload);
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("FeatureCollection"));
+    }
+    
     /*Complex XML Input by reference, POST*/
     @Test
     public void testExecutePOSTreferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
