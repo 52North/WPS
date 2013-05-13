@@ -176,7 +176,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler(InputStream is, OutputStream os)
 			throws ExceptionReport {
-		String nodeName, localName, nodeURI, version;
+		String nodeName, localName, nodeURI, version = null;
 		Document doc;
 		this.os = os;
 		
@@ -226,9 +226,8 @@ public class RequestHandler {
 				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 			}
 			//TODO: I think this can be removed, as capabilities requests do not have a version parameter (BenjaminPross)
-			if(isCapabilitiesNode){
-				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
-			}else{
+			if(!isCapabilitiesNode){
+//				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
 				version = child.getAttributes().getNamedItem("version").getNodeValue();
 			}
 			/*
@@ -267,16 +266,15 @@ public class RequestHandler {
 			if(req instanceof ExecuteRequest){
 				setResponseMimeType((ExecuteRequest)req);
 			}else{
-					this.responseMimeType = "text/xml";
+				this.responseMimeType = "text/xml";
 			}
-		} else if (nodeName.contains("apabilities")) {
+		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("GetCapabilities")){
 			req = new CapabilitiesRequest(doc);
 			this.responseMimeType = "text/xml";
+		} else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("DescribeProcess")) {
+			req = new DescribeProcessRequest(doc);
+			this.responseMimeType = "text/xml";
 			
-		} else if (nodeName.equals("DescribeProcess")) {
-			throw new ExceptionReport(
-					"Just HTTP GET is for describeProcess supported for now",
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}  else if(!localName.equals("Execute")){
 			throw new ExceptionReport("specified operation is not supported: "
 					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);

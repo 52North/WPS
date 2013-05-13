@@ -90,6 +90,8 @@ public class DescribeProcessRequest extends Request {
 			Node n = nnm.item(i);
 			if(n.getLocalName().equalsIgnoreCase("service")){
 			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			}else if(n.getLocalName().equalsIgnoreCase("version")){
+				map.put(n.getLocalName(), new String[]{n.getNodeValue()});				
 			}
 		}
 		//get identifier

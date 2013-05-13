@@ -41,6 +41,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.CapabilitiesResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -77,7 +78,17 @@ public class CapabilitiesRequest extends Request {
 		//TODO why is this done? (BenjaminPross)
 //		String[] serviceArray = {"WPS"};
 //			
-//		map.put("service", serviceArray);						
+//		map.put("service", serviceArray);	
+		
+		NamedNodeMap nnm = doc.getFirstChild().getAttributes();
+		
+		for (int i = 0; i < nnm.getLength(); i++) {
+			
+			Node n = nnm.item(i);
+			if(n.getLocalName().equalsIgnoreCase("service")){
+			map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			}
+		}					
 		
 		NodeList nList = doc.getFirstChild().getChildNodes();
 		
