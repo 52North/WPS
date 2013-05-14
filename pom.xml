@@ -9,7 +9,7 @@
 	<artifactId>52n-wps-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>52North Web Processing Service</name>
-	<version>3.1.1</version>
+	<version>3.1.2-SNAPSHOT</version>
 	<description>
 		52�?North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
@@ -30,9 +30,9 @@
 	<inceptionYear>2007</inceptionYear>
 	<scm>
 		<!-- Specification of the Source-Content-Managementsystem -->
-		<connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.1</connection>
-		<developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.1</developerConnection>
-		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.1</url>
+		<connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</connection>
+		<developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</url>
 	</scm>
 	<repositories>
 		<repository>
