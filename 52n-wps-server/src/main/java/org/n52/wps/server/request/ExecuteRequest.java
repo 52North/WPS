@@ -627,7 +627,8 @@ public class ExecuteRequest extends Request implements IObserver {
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			} else {
-				returnResults = algorithm.run(parser.getParsedInputData());
+				inputMap = parser.getParsedInputData();
+				returnResults = algorithm.run(inputMap);
 			} 
 
             List<String> errorList = algorithm.getErrors();
