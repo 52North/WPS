@@ -30,9 +30,9 @@
 	<inceptionYear>2007</inceptionYear>
 	<scm>
 		<!-- Specification of the Source-Content-Managementsystem -->
-		<connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.0</connection>
-		<developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.0</developerConnection>
-		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-3.1.0</url>
+		<connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</connection>
+		<developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</developerConnection>
+		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance</url>
 	</scm>
 	<repositories>
 		<repository>
@@ -93,7 +93,7 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<configuration>
 					<connectionUrl>
-						scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
+						scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance
 					</connectionUrl>
 				</configuration>
 			</plugin>
@@ -849,9 +849,9 @@
 						<artifactId>maven-release-plugin</artifactId>
 						<configuration>
 							<connectionUrl>
-								scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
+								scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/branches/WPS-3.1.0-maintenance
 							</connectionUrl>
-							<tag>WPS-3.1.0</tag>
+							<tag>WPS-3.1.1</tag>
 							<remoteTagging>false</remoteTagging>
 							<suppressCommitBeforeTag>true</suppressCommitBeforeTag>
 						</configuration>
