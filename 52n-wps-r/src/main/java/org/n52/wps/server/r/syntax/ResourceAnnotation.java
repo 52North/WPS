@@ -24,15 +24,32 @@
 package org.n52.wps.server.r.syntax;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+
+import org.n52.wps.server.r.data.R_Resource;
 
 public class ResourceAnnotation extends RAnnotation {
 
-	public ResourceAnnotation(RAnnotationType type,
-			HashMap<RAttribute, Object> attributeHash) throws IOException,
+	private List<R_Resource> resources;
+	
+	public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash, List<R_Resource> resources) throws IOException,
 			RAnnotationException {
-		super(type, attributeHash);
-		// 
+		super(RAnnotationType.RESOURCE, attributeHash);
+		this.resources = resources;
+	}
+
+	public List<R_Resource> getResources() {
+		if(resources == null)
+			resources = new ArrayList<R_Resource>();
+			
+		return resources;
+	}
+
+ 
+   void setResources(List<R_Resource> resources) {
+		this.resources = resources;
 	}
 
 }

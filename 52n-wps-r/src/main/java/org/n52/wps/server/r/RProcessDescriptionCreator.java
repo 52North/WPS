@@ -129,12 +129,12 @@ public class RProcessDescriptionCreator {
             }
         }
 
-        // Add SessionInfo-Output
-        OutputDescriptionType outdes = outputs.addNewOutput();
-        outdes.addNewIdentifier().setStringValue("sessionInfo");
-        outdes.addNewTitle().setStringValue("Information about the R session which has been used");
-        outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
-        outdes.addNewLiteralOutput().addNewDataType().setStringValue("xs:string");
+//        // Add SessionInfo-Output
+//        OutputDescriptionType outdes = outputs.addNewOutput();
+//        outdes.addNewIdentifier().setStringValue("sessionInfo");
+//        outdes.addNewTitle().setStringValue("Information about the R session which has been used");
+//        outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
+//        outdes.addNewLiteralOutput().addNewDataType().setStringValue("xs:string");
 
         return pdt;
     }

@@ -577,6 +577,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
 	/**
      * Deletes *.R file from repository
+     * TODO give this method a purpose
      */
     private boolean deleteScript(String processName) {
         boolean deleted = false;

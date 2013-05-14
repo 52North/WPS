@@ -39,5 +39,9 @@ public enum RSeperator {
     public String getKey() {
         return key;
     }
+    
+    public String toString(){
+    	return getKey();
+    }
 
 }
