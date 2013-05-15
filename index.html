@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>52°North WPS by 52North</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>52°North WPS</h1>
+        <p>The 52°North Web Processing Service enables the deployment of geo-processes on the web in a standardized way.</p>
+
+        <p class="view"><a href="https://github.com/52North/WPS">View the Project on GitHub <small>52North/WPS</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/52North/WPS/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/52North/WPS/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/52North/WPS">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in
+a standardized way. It features a pluggable architecture for processes and data encodings.
+The implementation is based on the current OpenGIS specification: 05-007r7.</p>
+
+<p>Its focus was the creation of an extensible framework to provide algorithms for generalization on the web.</p>
+
+<p>More information available at the <a href="http://52north.org/geoprocessing">52°North Geoprocessing Community</a>.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Full java-based Open Source implementation.</li>
+<li>Supports all features and operations of WPS specification version 1.0.0 (document 05-007r7)</li>
+<li>Pluggable framework for algorithms and XML data handling and processing frameworks</li>
+<li>Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)</li>
+</ul><h2>Supported Backends</h2>
+
+<p>The 52°North WPS provides wrappers to well-established (geographical) computation backends.</p>
+
+<ul>
+<li>WPS4R - R Backend</li>
+<li>GRASS out of the box extension</li>
+<li>220+ SEXTANTE Processes</li>
+<li>Experimental Transactional Profile (WPS-T)</li>
+<li>Web GUI to maintain the service</li>
+<li>ArcGIS Server Connector</li>
+</ul><h2>Development</h2>
+
+<p>Use git to clone the WPS repository:</p>
+
+<p><code>git clone https://github.com/52North/WPS.git</code></p>
+
+<p>Then just run <code>mvn clean install</code> on the repositories root directory.</p>
+
+<h2>Integration Testing</h2>
+
+<p>The WPS comes with a variety of integration tests which are performed using Jetty.
+In order to execute integration tests in a maven build, activate the dedicated profile
+through <code>mvn clean install -Pintegration-test</code>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/52North">52North</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
