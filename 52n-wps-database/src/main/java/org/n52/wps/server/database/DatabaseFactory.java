@@ -118,9 +118,9 @@ public class DatabaseFactory implements IDatabase
 	}
     
     /**
-	 * Insert a new Response into the Database.
+	 * Insert a new Request into the Database.
 	 * 
-	 * @param response  The Response to insert.
+	 * @param request  The Response to insert.
 	 * @see #storeResponse(Response)
 	 */
     @Override

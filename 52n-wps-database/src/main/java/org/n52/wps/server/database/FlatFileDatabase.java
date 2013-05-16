@@ -1,11 +1,11 @@
 /*****************************************************************
-Copyright © 2012 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright © 2012 52¡North Initiative for Geospatial Open Source Software GmbH
 
  Author: Thomas Kunicki, USGS
  
 
  Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52¡North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -23,7 +23,7 @@ Copyright © 2012 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundation?s web page, http://www.fsf.org.
 
  ***************************************************************/
 
@@ -48,6 +48,9 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
+import org.n52.wps.DatabaseDocument.Database;
+import org.n52.wps.ServerDocument.Server;
+import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.MIMEUtil;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
@@ -62,6 +65,21 @@ public final class FlatFileDatabase implements IDatabase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FlatFileDatabase.class);
 
+    private final static String KEY_DATABASE_ROOT = "org.n52.wps.server.database";
+    private final static String KEY_DATABASE_PATH = "path";
+    private final static String KEY_DATABASE_WIPE_ENABLED = "wipe.enabled";
+    private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
+    private final static String KEY_DATABASE_WIPE_THRESHOLD = "wipe.threshold";
+    
+    private final static String DEFAULT_DATABASE_PATH = 
+            Joiner.on(File.separator).join(
+                System.getProperty("java.io.tmpdir", "."),
+                "Database",
+                "Results");
+    private final static boolean DEFAULT_DATABASE_WIPE_ENABLED = true;  // P1H
+    private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60;  // P1H
+    private final static long DEFAULT_DATABASE_WIPE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // P7D
+    
     private final static String SUFFIX_MIMETYPE = "mime-type";
     private final static String SUFFIX_CONTENT_LENGTH = "content-length";
     private final static String SUFFIX_XML = "xml";
@@ -102,11 +120,17 @@ public final class FlatFileDatabase implements IDatabase {
     protected final Timer wipeTimer;
 
     protected FlatFileDatabase() {
-
-        // TODO: parameterize base path
-        String baseDirectoryPath = Joiner.on(File.separator).join(System.getProperty("java.io.tmpdir", "."),
-                                                                  "Database",
-                                                                  "Results");
+        
+        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+        Database database = server.getDatabase();
+        PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
+        
+        // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
+        baseResultURL = String.format("http://%s:%s/%s/RetrieveResultServlet?id=",
+                server.getHostname(), server.getHostport(), server.getWebappPath());
+        LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
+        
+        String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         baseDirectory = new File(baseDirectoryPath);
         LOGGER.info("Using \"{}\" as base directory for results database", baseDirectoryPath);
         if ( !baseDirectory.exists()) {
@@ -114,21 +138,18 @@ public final class FlatFileDatabase implements IDatabase {
             baseDirectory.mkdirs();
         }
 
-        // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
-        baseResultURL = "http://" + WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath() + "/"
-                + "RetrieveResultServlet?id="; // TODO: Parameterize this... Execution Context..?
-        LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
+        if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
+            
+            long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
+            long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
 
-        long periodMillis = 1000 * 60 * 60; // 1h // TODO: Parameterize this... Execution Context..?
-        long thresholdMillis = 1000 * 60 * 60 * 24 * 7; // 7d // TODO: Parameterize this... Execution
-                                                        // Context..?
-        wipeTimer = new Timer(getClass().getSimpleName() + " File Wiper", true);
-        wipeTimer.scheduleAtFixedRate(new FlatFileDatabase.WipeTimerTask(thresholdMillis), 0, periodMillis);
-        LOGGER.info("Started {} file wiper timer; period {} ms, threshold {} ms", new Object[] {getDatabaseName(),
-                                                                                                periodMillis,
-                                                                                                thresholdMillis});
+            wipeTimer = new Timer(getClass().getSimpleName() + " File Wiper", true);
+            wipeTimer.scheduleAtFixedRate(new FlatFileDatabase.WipeTimerTask(thresholdMillis), 0, periodMillis);
+            LOGGER.info("Started {} file wiper timer; period {} ms, threshold {} ms",
+                    new Object[] {getDatabaseName(),periodMillis,thresholdMillis});
+        } else {
+            wipeTimer = null;
+        }
 
         storeResponseSerialNumberLock = new Object();
     }
@@ -151,16 +172,20 @@ public final class FlatFileDatabase implements IDatabase {
         BufferedOutputStream outputStream = null;
         try {
             if (xml) {
-                outputStream = new BufferedOutputStream(new FileOutputStream(new File(responseDirectory,
-                                                                                      JOINER.join("request", SUFFIX_XML)),
-                                                                             false));
+                outputStream = new BufferedOutputStream(
+                        new FileOutputStream(
+                            new File(
+                                responseDirectory,
+                                JOINER.join("request", SUFFIX_XML)),
+                        false));
                 XMLUtil.copyXML(inputStream, outputStream, indentXML);
-            }
-            else {
-                outputStream = new BufferedOutputStream(new FileOutputStream(new File(responseDirectory,
-                                                                                      JOINER.join("request",
-                                                                                                  SUFFIX_PROPERTIES)),
-                                                                             false));
+            } else {
+                outputStream = new BufferedOutputStream(
+                        new FileOutputStream(
+                            new File(
+                                responseDirectory,
+                                JOINER.join("request", SUFFIX_PROPERTIES)),
+                        false));
                 IOUtils.copy(inputStream, outputStream);
             }
         }
@@ -267,7 +292,9 @@ public final class FlatFileDatabase implements IDatabase {
 
     @Override
     public void shutdown() {
-        wipeTimer.cancel();
+        if (wipeTimer != null) {
+            wipeTimer.cancel();
+        }
     }
 
     @Override
@@ -533,10 +560,9 @@ public final class FlatFileDatabase implements IDatabase {
                         }
                     }
                 }
+            } else {
+                LOGGER.warn("Cannot delete files, no files in root directory {}  > file list is null. ", rootFile.getAbsolutePath());
             }
-            else
-                LOGGER.warn("Cannot delete files, no files in root directory " + rootFile.getAbsolutePath()
-                        + " > file list is null.");
         }
 
         private void delete(File file) {

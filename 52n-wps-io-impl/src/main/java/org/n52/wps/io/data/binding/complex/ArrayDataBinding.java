@@ -41,4 +41,9 @@ import org.n52.wps.io.data.IComplexData;
         private synchronized void readObject(ObjectInputStream os) throws IOException, ClassNotFoundException {
             throw new UnsupportedOperationException("Deserialization of 'ArrayDataBinding' data type not implemented yet.");
         }
+        
+        @Override
+        public void dispose() {
+        
+        }
     }

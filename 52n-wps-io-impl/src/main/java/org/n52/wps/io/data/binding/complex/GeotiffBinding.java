@@ -1,6 +1,7 @@
 package org.n52.wps.io.data.binding.complex;
 
 import java.io.File;
+import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.data.IComplexData;
 
 
@@ -28,11 +29,8 @@ public class GeotiffBinding implements IComplexData{
 		return mimeType;
 	}
 	
-	protected void finalize(){
-		try{
-			geotiff.delete();
-		}catch(Exception e){
-			
-		}
+    @Override
+	public void dispose(){
+		FileUtils.deleteQuietly(geotiff);
 	}
 }

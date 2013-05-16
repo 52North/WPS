@@ -36,4 +36,9 @@ public class AsciiGrassDataBinding implements IComplexData{
 		throw new RuntimeException("Deserialization of 'AsciiGrassDataBinding' data type not implemented yet.");
 	}
 
+    @Override
+    public void dispose() {
+        
+    }
+    
 }

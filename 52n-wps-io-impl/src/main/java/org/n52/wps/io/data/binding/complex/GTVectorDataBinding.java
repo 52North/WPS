@@ -58,6 +58,9 @@ public class GTVectorDataBinding implements IComplexData{
 		this.featureCollection = data.getPayload();
 	}
 	
-	
+	@Override
+    public void dispose() {
+        
+    }
 
 }

@@ -1,18 +1,20 @@
 package org.n52.wps.server.request.strategy;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 
 import net.opengis.wps.x100.InputType;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -28,6 +30,8 @@ import org.n52.wps.server.ExceptionReport;
  */
 public class DefaultReferenceStrategy implements IReferenceStrategy{
 	
+	// TODO: follow HTTP redirects with LaxRedirectStrategy
+	
 	Logger logger = Logger.getLogger(DefaultReferenceStrategy.class);
 	
 	//TODO: get proxy from config
@@ -40,15 +44,15 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		return true;
 	}
 	
+	// TODO: follow references, e..g 
 	
 	@Override
-	public InputStream fetchData(InputType input) throws ExceptionReport {
+	public ReferenceInputStream fetchData(InputType input) throws ExceptionReport {
 		
 		String href = input.getReference().getHref();
 		String mimeType = input.getReference().getMimeType();
 		
 		try {
-			
 			// Handling POST with referenced document
 			if(input.getReference().isSetBodyReference()) {
 				
@@ -60,19 +64,19 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 				String body = writer.toString();
 				
 				// trigger POST request
-				return new LazyHttpInputStream(href, body, mimeType);
+				return httpPost(href, body, mimeType);
 				
 			}
 			
 			// Handle POST with inline message
 			else if (input.getReference().isSetBody()) {
 				String body = input.getReference().getBody().toString();
-				return new LazyHttpInputStream(href, body, mimeType);
+				return httpPost(href, body, mimeType);
 			}
 			
 			// Handle get request
 			else {
-				return new LazyHttpInputStream(href, mimeType);
+				return httpGet(href, mimeType);
 			}
 			
 			
@@ -98,7 +102,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	 * 
 	 * TODO: add support for autoretry, proxy
 	 */
-	private static InputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
+	private ReferenceInputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
 		HttpClient backend = new DefaultHttpClient();
 		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
 		
@@ -107,10 +111,44 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 		if (mimeType != null){
 			httpget.addHeader(new BasicHeader("Content-type", mimeType));
 		}
-		
-		HttpResponse response = httpclient.execute(httpget);
-		HttpEntity entity = response.getEntity();
-		return entity.getContent();
+		        
+		return processResponse(httpclient.execute(httpget));
 	}
 	
+	/**
+	 * Make a POST request using mimeType and href
+	 * 
+	 * TODO: add support for autoretry, proxy
+	 */
+	private ReferenceInputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
+		HttpClient backend = new DefaultHttpClient();
+		
+		DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
+		
+		HttpPost httppost = new HttpPost(dataURLString);
+		
+		if (mimeType != null){
+			httppost.addHeader(new BasicHeader("Content-type", mimeType));
+		}
+		
+		// set body entity
+		HttpEntity postEntity = new StringEntity(body);
+		httppost.setEntity(postEntity);
+		
+		return processResponse(httpclient.execute(httppost));
+	}
+
+    private ReferenceInputStream processResponse(HttpResponse response) throws IOException {
+        
+        HttpEntity entity = response.getEntity();
+        Header header;
+        
+        header = entity.getContentType();
+        String mimeType = header == null ? null : header.getValue();
+        
+        header = entity.getContentEncoding();
+        String encoding = header == null ? null : header.getValue();
+        
+        return new ReferenceInputStream(entity.getContent(), mimeType, encoding);
+    }
 }
