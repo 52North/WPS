@@ -12,6 +12,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.n52.wps.server.request.InputHandler;
 
 /**
  * An extension of an Input Stream with HTTP Connection abilities.
@@ -20,9 +21,13 @@ import org.apache.http.message.BasicHeader;
  * 
  * This class shall prevent timeout issues with I/O streaming in the WPS framework.
  * 
+ * @deprecated alternative implementation now used, featuring {@link ReferenceInputStream} and
+ * corresponding adjustments in {@link InputHandler}
+ * 
  * @author Matthias Mueller, TU Dresden
  *
  */
+@Deprecated
 public class LazyHttpInputStream extends InputStream {
 
 	private InputStream is;
