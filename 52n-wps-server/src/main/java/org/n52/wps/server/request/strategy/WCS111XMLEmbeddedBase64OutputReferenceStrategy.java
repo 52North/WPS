@@ -14,10 +14,15 @@ import net.opengis.wps.x100.InputType;
 
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
 
 public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenceStrategy{
+    
+    private String fetchedMimeType;
+    private String fetchedEncoding;
 
 	@Override
 	public boolean isApplicable(InputType input) {
@@ -32,7 +37,7 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 	}
 
 	@Override
-	public InputStream fetchData(InputType input) throws ExceptionReport {
+	public ReferenceInputStream fetchData(InputType input) throws ExceptionReport {
 
 		String dataURLString = input.getReference().getHref();
 	
@@ -118,8 +123,10 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 				
 			}
 			
-			InputStream bytes = new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes()));			
-			return bytes;
+			return new ReferenceInputStream(
+                    new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes())),
+                    imageContentType,
+                    null); // encoding is null since encoding was removed
 		}
 		catch(RuntimeException e) {
 			throw new ExceptionReport("Error occured while parsing XML", 

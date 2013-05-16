@@ -47,6 +47,7 @@ public interface IDatabase {
 	// Returns some name for the database, like DERBY, HSQL, ...
 	public String getDatabaseName();
     
+    // Insert a new Request into the Database. 
     public void insertRequest(String id, InputStream request, boolean xml);
 	
 	// Insert a new Response into the Database.    
@@ -59,7 +60,7 @@ public interface IDatabase {
 	// the databse, or it updates a previous Response, based on the identifier.
 	public String storeResponse(String id, InputStream reponse);
 	
-    // Retrieve the Response on a previous Request, based on an unique
+    // Retrieve the Request on a previous Request, based on an unique
 	// identifier, which was already given to the client for reference.
 	public InputStream lookupRequest(String request_id);
     

@@ -93,7 +93,9 @@ public class DescribeProcessRequest extends Request {
 			
 			Node n = nnm.item(i);
 			if(n.getLocalName().equalsIgnoreCase("service")){
-			this.map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+				map.put(n.getLocalName(), new String[]{n.getNodeValue()});
+			}else if(n.getLocalName().equalsIgnoreCase("version")){
+				map.put(n.getLocalName(), new String[]{n.getNodeValue()});				
 			}
 		}
 		//get identifier
@@ -118,7 +120,7 @@ public class DescribeProcessRequest extends Request {
 	 * @return True if the input is valid, False otherwise
 	 */
 	public boolean validate() throws ExceptionReport{
-		getMapValue(PARAM_VERSION, false); // not required?
+		getMapValue(PARAM_VERSION, true, new String[]{"1.0.0"}); // required		
 		getMapValue(PARAM_IDENTIFIER, true);  // required!
 		return true;
 	}

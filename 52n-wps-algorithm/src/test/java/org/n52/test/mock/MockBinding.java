@@ -24,4 +24,8 @@ public class MockBinding implements IComplexData {
         return MockComplexObject.class;
     }
 
+    @Override
+    public void dispose() {
+        
+    }
 }

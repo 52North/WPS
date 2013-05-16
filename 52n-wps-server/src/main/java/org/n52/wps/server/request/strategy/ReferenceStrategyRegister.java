@@ -14,7 +14,7 @@ public class ReferenceStrategyRegister {
 	private static ReferenceStrategyRegister instance;
 	
 	
-	public static ReferenceStrategyRegister getInstance(){
+	public synchronized static ReferenceStrategyRegister getInstance(){
 		if(instance==null){
 			instance = new ReferenceStrategyRegister();
 		}
@@ -30,7 +30,7 @@ public class ReferenceStrategyRegister {
 		registeredStrategies.add(strategy);
 	}
 	
-	public InputStream resolveReference(InputType input) throws ExceptionReport{
+	public ReferenceInputStream resolveReference(InputType input) throws ExceptionReport{
 		IReferenceStrategy foundStrategy = new DefaultReferenceStrategy();
 		for(IReferenceStrategy strategy : registeredStrategies){
 			if(strategy.isApplicable(input)){

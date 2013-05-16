@@ -155,6 +155,50 @@
 		<!--  module>52n-wps-ilwis</module -->
 	</modules>
 	<dependencies>
+	<dependency>
+		<groupId>org.apache.abdera</groupId>
+		<artifactId>abdera-bundle</artifactId>
+		<exclusions>
+			<exclusion>
+				<artifactId>xmlsec</artifactId>
+				<groupId>xml-security</groupId>
+			</exclusion>
+			<exclusion>
+				<artifactId>geronimo-activation_1.0.2_spec</artifactId>
+				<groupId>org.apache.geronimo.specs</groupId>
+			</exclusion>
+		</exclusions>
+	</dependency>
+	<dependency>
+		<groupId>org.n52.mc</groupId>
+		<artifactId>mc-runtime</artifactId>
+		<version>0.5</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>REngine</artifactId>
+				<groupId>org.nuiton.thirdparty</groupId>
+			</exclusion>
+			<exclusion>
+				<artifactId>Rserve</artifactId>
+				<groupId>org.nuiton.thirdparty</groupId>
+			</exclusion>
+		</exclusions>
+	</dependency>		
+	<dependency>
+		<groupId>org.n52.mc</groupId>
+ 		<artifactId>mc-schema</artifactId>
+ 		<version>1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.ws.security</groupId>
+		<artifactId>wss4j</artifactId>
+		<exclusions>
+			<exclusion>
+				<artifactId>bcprov-jdk14</artifactId>
+				<groupId>bouncycastle</groupId>
+			</exclusion>
+		</exclusions>
+	</dependency>
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -547,6 +591,11 @@
 				<scope>runtime</scope>
 				<version>1.6.4</version>
 			</dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.2</version>
+            </dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-commons</artifactId>
@@ -662,7 +711,7 @@
 			<dependency>
 				<groupId>org.n52.wps</groupId>
 				<artifactId>52n-wps-ags-workspace</artifactId>
-				<version>10.0.3-SNAPSHOT</version>
+				<version>10.0.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.wps</groupId>
@@ -716,7 +765,7 @@
 			<dependency>
 				<groupId>jfree</groupId>
 				<artifactId>jcommon</artifactId>
-				<version>1.0.16</version>
+				<version>1.0.14</version>
 			</dependency>
 			<dependency>
 				<groupId>org.beanshell</groupId>
@@ -726,7 +775,7 @@
 			<dependency>
 				<groupId>jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.13</version>
+				<version>1.0.11</version>
 			</dependency>
 			<dependency>
 				<groupId>trove</groupId>

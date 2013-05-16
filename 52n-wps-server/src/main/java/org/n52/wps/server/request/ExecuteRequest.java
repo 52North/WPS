@@ -34,6 +34,12 @@ Muenster, Germany
  ***************************************************************/
 package org.n52.wps.server.request;
 
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,11 +63,13 @@ import net.opengis.wps.x100.ResponseFormType;
 import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
+import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
@@ -116,6 +124,8 @@ public class ExecuteRequest extends Request implements IObserver {
 
 		// create an initial response
 		execRespType = new ExecuteResponseBuilder(this);
+        
+        storeRequest(execDom);
 	}
 
 	/*
@@ -132,6 +142,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		// create an initial response
 		execRespType = new ExecuteResponseBuilder(this);
 
+        storeRequest(ciMap);
 	}
 
 	/**
@@ -211,7 +222,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = inputItems[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try {
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("encoding")) {
 						encodingAttribute = attributeValue;
 					} else if (attributeName.equalsIgnoreCase("mimeType")) {
@@ -339,7 +354,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = outputDataparameters[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try{
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {
@@ -386,7 +405,11 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = rawDataparameters[i]
 							.substring(attributePos + 1);
-					attributeValue = URLDecoder.decode(attributeValue);
+					try{
+						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
 					} else if (attributeName.equalsIgnoreCase("schema")) {
@@ -437,13 +460,23 @@ public class ExecuteRequest extends Request implements IObserver {
 					ExceptionReport.INVALID_PARAMETER_VALUE, "version="
 							+ getExecute().getVersion());
 		}
+
+		//Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+		String identifier = getAlgorithmIdentifier();
+		
+		if(identifier == null){
+			throw new ExceptionReport(
+					"No process identifier supplied.",
+					ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");			
+		}
+		
 		// check if the algorithm is in our repository
 		if (!RepositoryManager.getInstance().containsAlgorithm(
-				getAlgorithmIdentifier())) {
+				identifier)) {
 			throw new ExceptionReport(
 					"Specified process identifier does not exist",
 					ExceptionReport.INVALID_PARAMETER_VALUE,
-					getAlgorithmIdentifier());
+					"identifier=" + identifier);
 		}
 
 		// validate if the process can be executed
@@ -553,6 +586,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
+        Map<String, List<IData>> inputMap = null;
 		try {
 			ExecutionContext context;
 			if (getExecute().isSetResponseForm()) {
@@ -598,7 +632,8 @@ public class ExecuteRequest extends Request implements IObserver {
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			} else {
-				returnResults = algorithm.run(parser.getParsedInputData());
+				inputMap = parser.getParsedInputData();
+				returnResults = algorithm.run(inputMap);
 			} 
 
             List<String> errorList = algorithm.getErrors();
@@ -637,6 +672,22 @@ public class ExecuteRequest extends Request implements IObserver {
             if (algorithm instanceof ISubject) {
                 ((ISubject)algorithm).removeObserver(this);
             }
+            if (inputMap != null) {
+                for(List<IData> l : inputMap.values()) {
+                    for (IData d : l) {
+                        if (d instanceof IComplexData) {
+                            ((IComplexData)d).dispose();
+                        }
+                    }
+                }
+            }
+            if (returnResults != null) {
+                for (IData d : returnResults.values()) {
+                    if (d instanceof IComplexData) {
+                        ((IComplexData)d).dispose();
+                    }
+                }
+            }
 		}
         return new ExecuteResponse(this);
 	}
@@ -648,9 +699,13 @@ public class ExecuteRequest extends Request implements IObserver {
 	 * @return An identifier
 	 */
 	public String getAlgorithmIdentifier() {
-		return getExecute().getIdentifier().getStringValue();
+		//Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+		if(getExecute().getIdentifier() != null){
+			return getExecute().getIdentifier().getStringValue();
+		}
+		return null;
 	}
-
+	
 	/**
 	 * Gets the Execute that is associated with this Request
 	 * 
@@ -751,12 +806,55 @@ public class ExecuteRequest extends Request implements IObserver {
             getExecuteResponseBuilder().update();
             if (isStoreResponse()) {
                 ExecuteResponse executeResponse = new ExecuteResponse(this);
-                DatabaseFactory.getDatabase().storeResponse(
-                        executeResponse.getUniqueId().toString(),
-                        executeResponse.getAsStream());
+                InputStream is = null;
+                try {
+                    is = executeResponse.getAsStream();
+                    DatabaseFactory.getDatabase().storeResponse(
+                            getUniqueId().toString(), is);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
             }
         } catch (ExceptionReport e) {
             LOGGER.error("Update of process status failed.", e);
         }
 	}
+    
+    private void storeRequest(ExecuteDocument executeDocument) {
+        InputStream is = null;
+        try {
+            is = executeDocument.newInputStream();
+            DatabaseFactory.getDatabase().insertRequest(
+                    getUniqueId().toString(), is, true);
+        } catch (Exception e) {
+            LOGGER.error("Exception storing ExecuteRequest", e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+    
+    private void storeRequest(CaseInsensitiveMap map) {
+  
+        BufferedWriter w = null;
+        ByteArrayOutputStream os = null;
+        ByteArrayInputStream is = null;
+        try {
+            os = new ByteArrayOutputStream();
+            w = new BufferedWriter(new OutputStreamWriter(os));
+            for (Object key : map.keySet()) {
+                Object value = map.get(key);
+                w.append(key.toString()).append('=').append(value.toString());
+                w.newLine();
+            }
+            is = new ByteArrayInputStream(os.toByteArray());
+            DatabaseFactory.getDatabase().insertRequest(
+                    getUniqueId().toString(), is, true);
+        } catch (Exception e) {
+            LOGGER.error("Exception storing ExecuteRequest", e);
+        } finally {
+            IOUtils.closeQuietly(w);
+            IOUtils.closeQuietly(os);
+            IOUtils.closeQuietly(is);
+        }
+    }
 }
