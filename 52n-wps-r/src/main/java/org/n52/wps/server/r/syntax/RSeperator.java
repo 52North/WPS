@@ -44,8 +44,4 @@ public enum RSeperator {
     	return getKey();
     }
     
-    public String toString(){
-    	return getKey();
-    }
-
 }

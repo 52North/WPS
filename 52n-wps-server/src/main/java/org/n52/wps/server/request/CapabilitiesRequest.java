@@ -67,7 +67,7 @@ public class CapabilitiesRequest extends Request {
         super(ciMap);
     }
 
-    public CapabilitiesRequest(Document doc) {
+    public CapabilitiesRequest(Document doc) throws ExceptionReport {
         super(doc);
         this.map = new CaseInsensitiveMap();
 

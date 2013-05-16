@@ -34,8 +34,8 @@
 
  Created on: 13.06.2006
  ***************************************************************/
-
 package org.n52.wps.server.handler;
+
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,34 +64,18 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * This class accepts client requests, determines its type and then schedules the {@link ExecuteRequest}'s for
- * execution. The request is executed for a short time, within the client will be served with an immediate
- * result. If the time runs out, the client will be served with a reference to the future result. The client
- * can come back later to retrieve the result. Uses "computation_timeout_seconds" from wps.properties
+ * This class accepts client requests, determines its type and then schedules
+ * the {@link ExecuteRequest}'s for execution. The request is executed for a
+ * short time, within the client will be served with an immediate result. If the
+ * time runs out, the client will be served with a reference to the future
+ * result. The client can come back later to retrieve the result. Uses
+ * "computation_timeout_seconds" from wps.properties
  * 
  * @author Timon ter Braak
  */
 public class RequestHandler {
-
-	private static final String GET_CAPABILITIES_ELEMENT_NAME = "GetCapabilities";
-
-	public static final String VERSION_ATTRIBUTE_NAME = "version";
-
-	private static final String XML_MIMETYPE = "text/xml";
-
-	private static final String EXECUTE_ELEMENT_NAME = "Execute";
-
-	private static final CharSequence DESCRIBE_PROCESS_ELEMENT_NAME = "DescribeProcess";
-
-	private static final String REQUEST_NAME_GET_CAPABILITIES = "GetCapabilities";
-
-	private static final String REQUEST_PARAM_NAME = "request";
-
-	private static final String REQUEST_NAME_DESCRIBE_PROCESS = "DescribeProcess";
 	
-	private static final String REQUEST_NAME_EXECUTE = "Execute";
-
-	private static final String REQUEST_NAME_RETRIEVE_RESULT = "RetrieveResult";
+    public static final String VERSION_ATTRIBUTE_NAME = "version";
 
 	/** Computation timeout in seconds */
 	protected static RequestExecutor pool = new RequestExecutor();
@@ -99,71 +83,96 @@ public class RequestHandler {
 	protected OutputStream os;
 
 	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
-
+	
 	protected String responseMimeType;
-
+	
 	protected Request req;
-
+	
 	// Empty constructor due to classes which extend the RequestHandler
 	protected RequestHandler() {
-
+		
 	}
 
 	/**
-	 * Handles requests of type HTTP_GET (currently capabilities and describeProcess). A Map is used to
-	 * represent the client input.
+	 * Handles requests of type HTTP_GET (currently capabilities and
+	 * describeProcess). A Map is used to represent the client input.
 	 * 
 	 * @param params
-	 *		The client input
+	 *            The client input
 	 * @param os
-	 *		The OutputStream to write the response to.
+	 *            The OutputStream to write the response to.
 	 * @throws ExceptionReport
-	 *		 If the requested operation is not supported
+	 *             If the requested operation is not supported
 	 */
-	public RequestHandler(Map<String, String[]> params, OutputStream os) throws ExceptionReport {
+	public RequestHandler(Map<String, String[]> params, OutputStream os)
+			throws ExceptionReport {
 		this.os = os;
-		// sleepingTime is 0, by default.
-		/*
-		 * if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) { this.sleepingTime =
-		 * Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT)); }
-		 * String sleepTime =
-		 * WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-		 */
-
+		//sleepingTime is 0, by default.
+		/*if(WPSConfiguration.getInstance().exists(PROPERTY_NAME_COMPUTATION_TIMEOUT)) {
+			this.sleepingTime = Integer.parseInt(WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_COMPUTATION_TIMEOUT));
+		}
+		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
+		*/
+		
+		
 		Request req;
 		CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
+		
+		/*
+		 * check if service parameter is present and equals "WPS"
+		 * otherwise an ExceptionReport will be thrown
+		 */
+		String serviceType = Request.getMapValue("service", ciMap, true);
+		
+		if(!serviceType.equalsIgnoreCase("WPS")){
+			throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + serviceType, 
+					ExceptionReport.INVALID_PARAMETER_VALUE, "service");
+		}
+
+		/*
+		 * check language. if not supported, return ExceptionReport
+		 * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
+		 */
+		String language = Request.getMapValue("language", ciMap, false);
+		
+		if(language != null){
+			Request.checkLanguageSupported(language);
+		}
 
 		// get the request type
-		String requestType = Request.getMapValue(REQUEST_PARAM_NAME, ciMap, true);
-		if (requestType.equalsIgnoreCase(REQUEST_NAME_GET_CAPABILITIES)) {
+		String requestType = Request.getMapValue("request", ciMap, true);
+		
+		if (requestType.equalsIgnoreCase("GetCapabilities")) {
 			req = new CapabilitiesRequest(ciMap);
-		}
-		else if (requestType.equalsIgnoreCase(REQUEST_NAME_DESCRIBE_PROCESS)) {
+		} 
+		else if (requestType.equalsIgnoreCase("DescribeProcess")) {
 			req = new DescribeProcessRequest(ciMap);
 		}
-		else if (requestType.equalsIgnoreCase(REQUEST_NAME_EXECUTE)) {
+		else if (requestType.equalsIgnoreCase("Execute")) {
 			req = new ExecuteRequest(ciMap);
-		}
-		else if (requestType.equalsIgnoreCase(REQUEST_NAME_RETRIEVE_RESULT)) {
+		} 
+		else if (requestType.equalsIgnoreCase("RetrieveResult")) {
 			req = new RetrieveResultRequest(ciMap);
-		}
+		} 
 		else {
-			throw new ExceptionReport("The requested Operation is for HTTP GET not supported or not applicable to the specification: "
-											  + requestType,
-									  ExceptionReport.OPERATION_NOT_SUPPORTED);
+			throw new ExceptionReport(
+					"The requested Operation is for HTTP GET not supported or not applicable to the specification: "
+							+ requestType,
+					ExceptionReport.OPERATION_NOT_SUPPORTED);
 		}
 
 		this.req = req;
 	}
 
 	/**
-	 * Handles requests of type HTTP_POST (currently executeProcess). A Document is used to represent the
-	 * client input. This Document must first be parsed from an InputStream.
+	 * Handles requests of type HTTP_POST (currently executeProcess). A Document
+	 * is used to represent the client input. This Document must first be parsed
+	 * from an InputStream.
 	 * 
 	 * @param is
-	 *		The client input
+	 *            The client input
 	 * @param os
-	 *		The OutputStream to write the response to.
+	 *            The OutputStream to write the response to.
 	 * @throws ExceptionReport
 	 */
 	public RequestHandler(InputStream is, OutputStream os)
@@ -171,11 +180,6 @@ public class RequestHandler {
 		String nodeName, localName, nodeURI, version = null;
 		Document doc;
 		this.os = os;
-		
-		String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
-		if(sleepTime==null || sleepTime.equals("")){
-			sleepTime = "5";
-		}
 		
 		boolean isCapabilitiesNode = false;
 		
@@ -198,7 +202,7 @@ public class RequestHandler {
 			nodeName = child.getNodeName();
 			localName = child.getLocalName();
 			nodeURI = child.getNamespaceURI();
-			Node versionNode = child.getAttributes().getNamedItem(VERSION_ATTRIBUTE_NAME);
+			Node versionNode = child.getAttributes().getNamedItem("version");
 			
 			/*
 			 * check for service parameter. this has to be present for all requests
@@ -213,8 +217,15 @@ public class RequestHandler {
 				}
 			}
 			
-            isCapabilitiesNode = nodeName.toLowerCase().contains(GET_CAPABILITIES_ELEMENT_NAME);
-
+            isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
+			if(versionNode == null && !isCapabilitiesNode) {
+				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
+			}
+			//TODO: I think this can be removed, as capabilities requests do not have a version parameter (BenjaminPross)
+			if(!isCapabilitiesNode){
+//				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
+				version = child.getAttributes().getNamedItem("version").getNodeValue();
+			}
 			/*
 			 * check language, if not supported, return ExceptionReport
 			 * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
@@ -239,11 +250,11 @@ public class RequestHandler {
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
-		if(!isCapabilitiesNode && versionNode == null) {
-			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, VERSION_ATTRIBUTE_NAME);
+		if(!isCapabilitiesNode && version == null) {
+			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
-		if(!isCapabilitiesNode && !versionNode.equals(Request.SUPPORTED_VERSION)) {
-			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, VERSION_ATTRIBUTE_NAME);
+		if(!isCapabilitiesNode && !version.equals(Request.SUPPORTED_VERSION)) {
+			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
@@ -271,32 +282,33 @@ public class RequestHandler {
 	}
 
 	/**
-	 * Handle a request after its type is determined. The request is scheduled for execution. If the server
-	 * has enough free resources, the client will be served immediately. If time runs out, the client will be
-	 * asked to come back later with a reference to the result.
+	 * Handle a request after its type is determined. The request is scheduled
+	 * for execution. If the server has enough free resources, the client will
+	 * be served immediately. If time runs out, the client will be asked to come
+	 * back later with a reference to the result.
 	 * 
-	 * @param req
-	 *		The request of the client.
+	 * @param req The request of the client.
 	 * @throws ExceptionReport
 	 */
 	public void handle() throws ExceptionReport {
 		Response resp = null;
-		if (this.req == null) {
-			throw new ExceptionReport("Internal Error: Request is null in handle()", "");
+		if(req ==null){
+			throw new ExceptionReport("Internal Error","");
 		}
-		if (this.req instanceof ExecuteRequest) {
-			ExecuteRequest execReq = (ExecuteRequest) this.req;
-
+		if (req instanceof ExecuteRequest) {
+			// cast the request to an executerequest
+			ExecuteRequest execReq = (ExecuteRequest) req;
+			
 			execReq.updateStatusAccepted();
-
+			
 			ExceptionReport exceptionReport = null;
 			try {
 				if (execReq.isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
 					InputStream is = resp.getAsStream();
-					IOUtils.copy(is, this.os);
+					IOUtils.copy(is, os);
 					is.close();
-					pool.submit(execReq);
+                    pool.submit(execReq);
 					return;
 				}
 				try {
@@ -309,87 +321,90 @@ public class RequestHandler {
 						// the computation threw an error
 						// probably the client input is not valid
 						if (ee.getCause() instanceof ExceptionReport) {
-							exceptionReport = (ExceptionReport) ee.getCause();
+							exceptionReport = (ExceptionReport) ee
+									.getCause();
+						} else {
+							exceptionReport = new ExceptionReport(
+									"An error occurred in the computation: "
+											+ ee.getMessage(),
+									ExceptionReport.NO_APPLICABLE_CODE);
 						}
-						else {
-							exceptionReport = new ExceptionReport("An error occurred in the computation: "
-									+ ee.getMessage(), ExceptionReport.NO_APPLICABLE_CODE);
-						}
-					}
-					catch (InterruptedException ie) {
+					} catch (InterruptedException ie) {
 						LOGGER.warn("interrupted while handling ExecuteRequest.");
 						// interrupted while waiting in the queue
-						exceptionReport = new ExceptionReport("The computation in the process was interrupted.",
-															  ExceptionReport.NO_APPLICABLE_CODE);
+						exceptionReport = new ExceptionReport(
+								"The computation in the process was interrupted.",
+								ExceptionReport.NO_APPLICABLE_CODE);
 					}
-				}
-				finally {
+				} finally {
 					if (exceptionReport != null) {
 						LOGGER.debug("ExceptionReport not null: " + exceptionReport.getMessage());
-						// NOT SURE, if this exceptionReport is also written to the DB, if required... test
-						// please!
+						// NOT SURE, if this exceptionReport is also written to the DB, if required... test please!
 						throw exceptionReport;
 					}
 					// send the result to the outputstream of the client.
-					/*
-					 * if(((ExecuteRequest) req).isQuickStatus()) { resp = new ExecuteResponse(execReq); }
-					 */
-					else if (resp == null) {
+				/*	if(((ExecuteRequest) req).isQuickStatus()) {
+						resp = new ExecuteResponse(execReq);
+					}*/
+					else if(resp == null) {
 						LOGGER.warn("null response handling ExecuteRequest.");
-						throw new ExceptionReport("Problem with handling threads in RequestHandler",
-												  ExceptionReport.NO_APPLICABLE_CODE);
+						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
 					}
-					if ( !execReq.isStoreResponse()) {
+					if(!execReq.isStoreResponse()) {
 						InputStream is = resp.getAsStream();
-						IOUtils.copy(is, this.os);
+						IOUtils.copy(is, os);
 						is.close();
 						LOGGER.info("Served ExecuteRequest.");
 					}
 				}
-			}
-			catch (RejectedExecutionException ree) {
-				LOGGER.warn("exception handling ExecuteRequest.", ree);
+			} catch (RejectedExecutionException ree) {
+                LOGGER.warn("exception handling ExecuteRequest.", ree);
 				// server too busy?
-				throw new ExceptionReport("The requested process was rejected. Maybe the server is flooded with requests.",
-										  ExceptionReport.SERVER_BUSY);
+				throw new ExceptionReport(
+						"The requested process was rejected. Maybe the server is flooded with requests.",
+						ExceptionReport.SERVER_BUSY);
+			} catch (Exception e) {
+                LOGGER.error("exception handling ExecuteRequest.", e);
+                if (e instanceof ExceptionReport) {
+                    throw (ExceptionReport)e;
+                }
+                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
 			}
-			catch (Exception e) {
-				LOGGER.error("exception handling ExecuteRequest.", e);
-				if (e instanceof ExceptionReport) {
-					throw (ExceptionReport) e;
-				}
-				throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
-			}
-		}
-		else {
+		} else {
 			// for GetCapabilities and DescribeProcess:
-			resp = this.req.call();
+			resp = req.call();
 			try {
 				InputStream is = resp.getAsStream();
-				IOUtils.copy(is, this.os);
+				IOUtils.copy(is, os);
 				is.close();
-			}
-			catch (IOException e) {
+			} catch (IOException e) {
 				throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
 			}
-
+			
 		}
 	}
-
+	
 	protected void setResponseMimeType(ExecuteRequest req) {
-		if (req.isRawData()) {
-			this.responseMimeType = req.getExecuteResponseBuilder().getMimeType();
+		if(req.isRawData()){
+			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
+		}else{
+			responseMimeType = "text/xml";
 		}
-		else {
-			this.responseMimeType = XML_MIMETYPE;
-		}
+		
+		
 	}
+	
+	
 
-	public String getResponseMimeType() {
-		if (this.responseMimeType == null) {
-			return XML_MIMETYPE;
+	public String getResponseMimeType(){
+		if(responseMimeType == null){
+			return "text/xml";
 		}
-		return this.responseMimeType.toLowerCase();
+		return responseMimeType.toLowerCase();
 	}
-
+	
+	
 }
+
+
+
