@@ -65,6 +65,17 @@ public class CapabilitiesRequest extends Request {
      */
     public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
+        //Fix for https://bugzilla.52north.org/show_bug.cgi?id=907
+        String providedAcceptVersionsString = Request.getMapValue("acceptversions", ciMap, false);
+
+        if (providedAcceptVersionsString != null) {
+
+            String[] providedAcceptVersions = providedAcceptVersionsString.split(",");
+
+            if (providedAcceptVersions != null) {
+                map.put("version", providedAcceptVersions);
+            }
+        }
     }
 
     public CapabilitiesRequest(Document doc) throws ExceptionReport {
@@ -122,13 +133,13 @@ public class CapabilitiesRequest extends Request {
         String services = getMapValue(PARAM_SERVICE, true);
         if ( !services.equalsIgnoreCase("wps")) {
             throw new ExceptionReport("Parameter <service> is not correct, expected: WPS , got: " + services,
-                                      ExceptionReport.INVALID_PARAMETER_VALUE);
+                                      ExceptionReport.INVALID_PARAMETER_VALUE, "service");
         }
 
         String[] versions = getMapArray(PARAM_VERSION, false);
         if ( !requireVersion(SUPPORTED_VERSION, false)) {
             throw new ExceptionReport("Requested versions are not supported, you requested: "
-                    + Request.accumulateString(versions), ExceptionReport.INVALID_PARAMETER_VALUE);
+                    + Request.accumulateString(versions), ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
         }
 
         return true;
