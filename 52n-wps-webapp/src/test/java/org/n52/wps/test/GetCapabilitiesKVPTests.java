@@ -1,16 +1,13 @@
 
 package org.n52.wps.test;
 
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -26,7 +23,7 @@ public class GetCapabilitiesKVPTests {
 
     @Test
     public void complete() throws ParserConfigurationException, SAXException, IOException {
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=GetCapabilities&Version=1.0.0");
+        String response = GetClient.sendRequest(url, "Service=WPS&Request=GetCapabilities");
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
@@ -53,7 +50,7 @@ public class GetCapabilitiesKVPTests {
     public void missingServiceParameter() throws IOException,
             ParserConfigurationException,
             SAXException {
-        String response = GetClient.sendRequest(url, "Request=GetCapabilities&Version=1.0.0");
+        String response = GetClient.sendRequest(url, "Request=GetCapabilities");
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
@@ -76,18 +73,18 @@ public class GetCapabilitiesKVPTests {
 
     @Test
     public void wrongVersion() throws ParserConfigurationException, SAXException, IOException {
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=GetCapabilities&Version=42.17");
+        String response = GetClient.sendRequest(url, "Service=WPS&Request=GetCapabilities&acceptVersions=42.17");
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("InvalidParameterValue"));
+        assertThat(response, response, containsString("VersionNegotiationFailed"));
 
         assertThat(response, response, not(containsString("<wps:Capabilities")));
     }
     
     @Test
     public void wrongServiceParameter() throws ParserConfigurationException, SAXException, IOException {
-        String response = GetClient.sendRequest(url, "Service=HotDogStand&Request=GetCapabilities&Version=42.17");
+        String response = GetClient.sendRequest(url, "Service=HotDogStand&Request=GetCapabilities");
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
