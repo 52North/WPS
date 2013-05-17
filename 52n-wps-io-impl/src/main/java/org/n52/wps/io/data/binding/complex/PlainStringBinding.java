@@ -28,5 +28,10 @@ public class PlainStringBinding implements IComplexData{
 	{
 		payload = (String) oos.readObject();
 	}
+    
+    @Override
+	public void dispose(){
+		
+	}
 
 }

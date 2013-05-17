@@ -2,6 +2,7 @@ package org.n52.wps.io.data.binding.complex;
 
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 
 import org.n52.wps.io.data.IComplexData;
 
@@ -32,11 +33,8 @@ public class FileDataBinding implements IComplexData {
 		throw new RuntimeException("Deserialization of 'FileDataBinding' data type not implemented yet.");
 	}
 	
-	protected void finalize(){
-		try{
-			file.delete();
-		}catch(Exception e){
-			
-		}
-	}
+	@Override
+    public void dispose() {
+        FileUtils.deleteQuietly(file);
+    }
 }

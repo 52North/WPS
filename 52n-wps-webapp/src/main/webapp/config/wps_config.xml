@@ -481,9 +481,10 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
@@ -999,6 +1000,14 @@
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
-		<Database />
+		<Database>
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
+			<!-- enable database wiping base on values below -->
+			<Property name="wipe.enabled" active="true">true</Property>
+			<!-- scans database every 1 hour -->
+			<Property name="wipe.period" active="true">PT1H</Property>
+			<!-- deletes files older than 7 days -->
+			<Property name="wipe.threshold" active="true">P7D</Property>
+		</Database>
 	</Server>
 </WPSConfiguration>

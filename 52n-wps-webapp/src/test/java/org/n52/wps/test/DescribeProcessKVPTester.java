@@ -62,8 +62,8 @@ public class DescribeProcessKVPTester {
         String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm");
      
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
+        assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class DescribeProcessKVPTester {
         String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm");
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
+        assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 
     @Test
