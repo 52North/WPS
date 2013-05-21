@@ -2,7 +2,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
          version="2.4">
-	<display-name>${project.parent.name}, SVN: ${buildNumber} @ ${timestamp}</display-name>
+	<display-name>${project.parent.name}, Git: ${buildNumber} @ ${timestamp}</display-name>
 	<description>a 52n prototype implementation of the WPS 1.0.0 spec.</description>
 	
 	<!-- security-constraint>
