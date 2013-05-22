@@ -136,6 +136,39 @@ public class ExecutePOSTTester {
         assertThat(response, response, containsString("FeatureCollection"));
     }
     
+    /*Multiple complex XML Input by reference */
+    @Test
+    public void testExecutePOSTMultipleReferenceComplexBinarySynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
+    	System.out.println("\nRunning testExecutePOSTMultipleReferenceComplexBinarySynchronousBinaryOutput");
+    	String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+    			+ "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+    			+ "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+    			+ "<ows:Identifier>org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</ows:Identifier>"
+    			+ "<wps:DataInputs>"
+    			+ "<wps:Input>"
+    			+ "<ows:Identifier xmlns:ns1=\"http://www.opengis.net/ows/1.1\">data</ows:Identifier>"
+    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\" mimeType=\"image/tiff\"/>"
+    			+ "</wps:Input>"
+    			+ "<wps:Input>"
+    			+ "<ows:Identifier xmlns:ns1=\"http://www.opengis.net/ows/1.1\">data</ows:Identifier>"
+    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\" mimeType=\"image/tiff\"/>"
+    			+ "</wps:Input>"
+    			+ "</wps:DataInputs>"
+    			+ "<wps:ResponseForm>"
+    			+ "<wps:ResponseDocument>"
+    			+ "<wps:Output mimeType=\"image/tiff\" encoding=\"base64\">"
+    			+ "<ows:Identifier>result</ows:Identifier>"
+    			+ "</wps:Output>"
+    			+ "</wps:ResponseDocument>"
+    			+ "</wps:ResponseForm>"
+    			+ "</wps:Execute>";
+    	String response = PostClient.sendRequest(url, payload);
+    	
+    	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, containsString("SUkqAHLDDQARAAABAw"));
+    }
+    
     /*Complex XML Input by reference, POST*/
     @Test
     public void testExecutePOSTreferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
