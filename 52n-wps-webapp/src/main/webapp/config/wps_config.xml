@@ -231,8 +231,20 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
