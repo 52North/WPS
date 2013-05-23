@@ -10,10 +10,12 @@ More information available at the [52°North Geoprocessing Community](http://52n
 
 ## Features
 
-* Full java-based Open Source implementation.
+* Java-based Open Source implementation.
 * Supports all features and operations of WPS specification version 1.0.0 (document 05-007r7)
 * Pluggable framework for algorithms and XML data handling and processing frameworks
-* Build up on robust libraries (JTS, geotools, xmlBeans, servlet API, derby)
+* Build up on robust libraries (JTS, geotools, XMLBeans, servlet API, derby)
+* Experimental transactional profile (WPS-T)
+* Web GUI to maintain the service
 
 ## Supported Backends
 
@@ -22,10 +24,8 @@ The 52°North WPS provides wrappers to well-established (geographical) computati
 * WPS4R - R Backend
 * GRASS out of the box extension
 * 220+ SEXTANTE Processes
-* Experimental Transactional Profile (WPS-T)
-* Web GUI to maintain the service
 * ArcGIS Server Connector
-
+* Moving Code backend, including Python support
 
 ## Development
 
