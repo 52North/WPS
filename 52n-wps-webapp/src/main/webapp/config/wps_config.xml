@@ -231,8 +231,20 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
@@ -476,6 +488,7 @@
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
