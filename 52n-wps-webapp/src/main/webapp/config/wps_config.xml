@@ -218,7 +218,7 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="WKTParser"
+			<Parser name="ZippedWKTParser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
