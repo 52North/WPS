@@ -126,7 +126,7 @@ public class ConfigUploadBean {
         // How is the path on a windows machine? may be better using:
         // savePath = savePath.substring(0, savePath.length() -
         // "wps_config.xml".length());
-        savePath = savePath.substring(0, savePath.lastIndexOf("/") + 1);
+        savePath = savePath.substring(0, savePath.lastIndexOf(File.separator) + 1);
         ServletInputStream in = request.getInputStream();
 
         line = new byte[128];
