@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -125,7 +126,7 @@ public class GrassIOHandler {
 	 * @param outputSchema the schema of the output
 	 * @return a GenericFileDataBinding containing the generated ouput
 	 */
-	public IData executeGrassProcess(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
+	public IData executeGrassProcess(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
 		
 		String outputFileName = "";
 		
@@ -316,7 +317,7 @@ public class GrassIOHandler {
 	 *            suggested mimetype of the result of the GRASS-process
 	 * @return true, if everything worked, otherwise false
 	 */
-	private boolean createInputTxt(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputFileName, String outputMimeType, String outputSchema){
+	private boolean createInputTxt(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputFileName, String outputMimeType, String outputSchema){
 	
 		try {
 			
@@ -344,7 +345,9 @@ public class GrassIOHandler {
 			
 			for (String key : complexInputData.keySet()) {
 				
-				IData data = complexInputData.get(key);
+				List<IData> dataList = complexInputData.get(key);
+				
+				for (IData data : dataList) {
 				
 				if(!(data instanceof GenericFileDataBinding)){
 					continue;
@@ -407,18 +410,22 @@ public class GrassIOHandler {
 				}					
 				
 				String filename = ((GenericFileDataBinding)data).getPayload().writeData(new File(tmpDir));
+//				String filename = ((GenericFileDataBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
 				
 				tmpBlock = tmpBlock.replace(INPUT_IDENTIFIER, key);
 				tmpBlock = tmpBlock.replace(INPUT_PATH, filename);
 				
 				inputTxtWriter.write(tmpBlock);
 				inputTxtWriter.write(lineSeparator);
+				}
 			}
 			
 			for (String key : literalInputData.keySet()) {
 				
-				IData data = literalInputData.get(key);
-							
+				List<IData> dataList = literalInputData.get(key);
+				
+				for (IData data : dataList) {
+				
 				tmpBlock = getLiteralInputDataBlock().replace(INPUT_IDENTIFIER, key);
 				
 				Class<?> supportedClass = data.getSupportedClass();
@@ -441,6 +448,8 @@ public class GrassIOHandler {
 				
 				inputTxtWriter.write(tmpBlock);
 				inputTxtWriter.write(lineSeparator);
+				
+				}
 			}
 			
 			tmpBlock = getOutputDataBlock().replace(OUTPUT_IDENTIFIER, outputID);
