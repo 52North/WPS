@@ -218,11 +218,10 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="ZippedWKTParser"
+			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-				<Property name="supportedEncoding" active="true">Base64</Property>
+				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
