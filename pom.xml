@@ -11,7 +11,7 @@
 	<name>52North Web Processing Service</name>
 	<version>3.2.0-SNAPSHOT</version>
 	<description>
-		52°North processing provides different tools for web based
+		52 North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
 	</description>
 	<url>http://52north.org/wps</url>
@@ -29,10 +29,10 @@
 	</licenses>
 	<inceptionYear>2007</inceptionYear>
 	<scm>
-		<!-- Specification of the Source-Content-Managementsystem -->
-		<connection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-null</connection>
-		<developerConnection>scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-null</developerConnection>
-		<url>https://svn.52north.org/svn/geoprocessing/main/WPS/tags/WPS-null</url>
+<!-- 		 Specification of the Source-Content-Managementsystem -->
+		<connection>scm:git:https://github.com/52North/WPS.git</connection>
+		<url>scm:git:https://github.com/52North/WPS.git</url>
+		<developerConnection>scm:git:https://github.com/52North/WPS.git</developerConnection>
 	</scm>
 	<repositories>
 		<repository>
@@ -110,7 +110,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.0</version>
+				<version>1.1</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -120,12 +120,11 @@
 					</execution>
 				</executions>
 				<configuration>
+					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+					<shortRevisionLength>8</shortRevisionLength>
 					<doCheck>false</doCheck>
 					<doUpdate>false</doUpdate>
 					<timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
-					<providerImplementations>
-						<svn>javasvn</svn>
-					</providerImplementations>
 					<revisionOnScmFailure>0</revisionOnScmFailure>
 				</configuration>
 			</plugin>

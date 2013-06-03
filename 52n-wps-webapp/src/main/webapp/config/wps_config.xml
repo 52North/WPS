@@ -218,7 +218,7 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="WKTParser"
+			<Parser name="ZippedWKTParser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
 				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
@@ -231,8 +231,20 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
@@ -463,9 +475,9 @@
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">R\scripts</Property>
-			<Property name="R_Datatype_Config" active="true">R\R_Datatype.conf</Property>
-			<Property name="Resource_Dir" active="true">R\resources</Property>
+			<Property name="Script_Dir" active="true">R/scripts</Property>
+			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
+			<Property name="Resource_Dir" active="true">R/resources</Property>
 			<Property name="R_Work_Dir" active="true">default</Property>
 			<Property name="Enable_Batch_Start" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
@@ -476,6 +488,7 @@
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
@@ -485,6 +498,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
