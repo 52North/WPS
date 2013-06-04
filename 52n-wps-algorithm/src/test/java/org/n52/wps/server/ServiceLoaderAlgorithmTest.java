@@ -35,13 +35,13 @@ import org.n52.wps.algorithm.annotation.LiteralDataOutput;
 
 import static org.hamcrest.CoreMatchers.*;
 
-public class ServiceLoaderAlgortihmTest {
+public class ServiceLoaderAlgorithmTest {
 
-	private ServiceLoaderAlgortihmRepository repo;
+	private ServiceLoaderAlgorithmRepository repo;
 
 	@Before
 	public void init() {
-		this.repo = new ServiceLoaderAlgortihmRepository();
+		this.repo = new ServiceLoaderAlgorithmRepository();
 		Assert.assertNotNull(this.repo);
 	}
 

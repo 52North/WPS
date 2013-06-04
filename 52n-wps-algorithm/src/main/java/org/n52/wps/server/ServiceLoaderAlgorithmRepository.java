@@ -33,12 +33,12 @@ import org.slf4j.LoggerFactory;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-public class ServiceLoaderAlgortihmRepository implements IAlgorithmRepository {
+public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 
-	private static final Logger logger = LoggerFactory.getLogger(ServiceLoaderAlgortihmRepository.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceLoaderAlgorithmRepository.class);
 	private Map<String, Class<? extends IAlgorithm>> currentAlgorithms;
 
-	public ServiceLoaderAlgortihmRepository() {
+	public ServiceLoaderAlgorithmRepository() {
 		this.currentAlgorithms = loadAlgorithms();
 	}
 	

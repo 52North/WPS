@@ -998,7 +998,7 @@
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
 		<Repository name="ServiceLoaderAlgorithmRepository"
-			className="org.n52.wps.server.ServiceLoaderAlgortihmRepository" active="true">
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
 		</Repository>
 		<!-- 
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
