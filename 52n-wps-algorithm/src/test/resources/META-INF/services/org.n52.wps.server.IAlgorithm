@@ -1,0 +1,2 @@
+org.n52.wps.server.ServiceLoaderAlgorithmTest$DummyAnnotatedAlgorithm
+org.n52.wps.server.ServiceLoaderAlgorithmTest$DummyIdentifiedAnnotatedAlgorithm
