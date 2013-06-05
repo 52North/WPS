@@ -95,10 +95,10 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 				System.gc();
 				LOGGER.error(e);
 				throw new RuntimeException(e);
-			} catch (IOException e1) {
+			} catch (IOException e) {
 				LOGGER.error(e);
 				System.gc();
-				throw new RuntimeException(e1);
+				throw new RuntimeException(e);
 			}			
 			
 			finalizeFiles.add(tempFile); // mark for final delete
