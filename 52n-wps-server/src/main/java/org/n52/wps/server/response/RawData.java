@@ -83,8 +83,8 @@ public class RawData extends ResponseData {
 				}else{
 					resultString = resultString + "\">";
 				}
-				double[] lowerCorner = result.getLowerCorner().getCoordinates();
-				double[] upperCorner = result.getUpperCorner().getCoordinates();
+				double[] lowerCorner = result.getLowerCorner().getCoordinate();
+				double[] upperCorner = result.getUpperCorner().getCoordinate();
 				resultString = resultString +"<ows:LowerCorner>"+lowerCorner[0]+" "+lowerCorner[1]+"</ows:LowerCorner>";
 				resultString = resultString +"<ows:UpperCorner>"+upperCorner[0]+" "+upperCorner[1]+"</ows:UpperCorner>";
 				resultString = resultString+ "</wps:BoundingBoxData>";

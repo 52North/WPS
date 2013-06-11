@@ -203,7 +203,7 @@
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<log4j.version>1.2.14</log4j.version>
 		<slf4j.version>1.7.2</slf4j.version>
-		<geotools.version>2.7.5</geotools.version>
+		<geotools.version>8.7</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
 	</properties>
