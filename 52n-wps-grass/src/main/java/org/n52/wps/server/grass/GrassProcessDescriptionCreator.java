@@ -190,7 +190,8 @@ public class GrassProcessDescriptionCreator {
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
 				checkForBase64Encoding(inputDescriptionType);
-				checkForKMLMimeType(inputDescriptionType);					
+				checkForKMLMimeType(inputDescriptionType);	
+				addZippedSHPMimeType(inputDescriptionType);
 			}			
 			
 			SupportedComplexDataType outputType = result.getProcessOutputs()
@@ -221,6 +222,10 @@ public class GrassProcessDescriptionCreator {
 																		
 						xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 						xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
+
+						ComplexDataDescriptionType xZippedShapeTypeUTF8 = outputType.getSupported().addNewFormat();
+																		
+						xZippedShapeTypeUTF8.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 
 					}
 				}
@@ -291,7 +296,7 @@ public class GrassProcessDescriptionCreator {
 		
 		if(defaultMimeType != null && defaultEncoding == null){			
 			for (String mimeType : genericFileParserMimeTypes) {
-				if(mimeType.equals(defaultMimeType)){
+				if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(defaultMimeType)){
 					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
 				}
 			}			
@@ -306,7 +311,7 @@ public class GrassProcessDescriptionCreator {
 			
 			if(supportedMimeType != null && supportedEncoding == null){			
 				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(supportedMimeType)){
+					if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(supportedMimeType)){
 						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
 					}
 				}			
@@ -331,6 +336,24 @@ public class GrassProcessDescriptionCreator {
 		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
 			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
 				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+				return;
+			}
+		}
+		
+	}
+	
+	private void addZippedSHPMimeType(InputDescriptionType inputDescriptionType) {
+		
+		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+		
+		if(complexData == null){
+			return;
+		}
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/gml/2.1.2/feature.xsd")){
+				inputDescriptionType.getComplexData().getSupported().addNewFormat().setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 				return;
 			}
 		}

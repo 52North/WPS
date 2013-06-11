@@ -408,9 +408,8 @@ public class GrassIOHandler {
 					tmpBlock = tmpBlock.replace(ENCODING, "");
 					tmpBlock = tmpBlock.replace(SCHEMA, "");
 				}					
-				
-				String filename = ((GenericFileDataBinding)data).getPayload().writeData(new File(tmpDir));
-//				String filename = ((GenericFileDataBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
+
+				String filename = ((GenericFileDataBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
 				
 				tmpBlock = tmpBlock.replace(INPUT_IDENTIFIER, key);
 				tmpBlock = tmpBlock.replace(INPUT_PATH, filename);

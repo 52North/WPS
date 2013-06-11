@@ -359,7 +359,7 @@ public class GenericFileData {
 			currentFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(currentFile);
 			
-			IOUtils.copy(is, fos);
+			IOUtils.copy(zipInputStream, fos);
 			
 
 			if (currentExtension.equalsIgnoreCase(extension)) {
@@ -367,9 +367,9 @@ public class GenericFileData {
 			}
 			
 			fos.close();
-			System.gc();
 		}
 		zipInputStream.close();
+		System.gc();
 		return returnFile;
 	}
 
