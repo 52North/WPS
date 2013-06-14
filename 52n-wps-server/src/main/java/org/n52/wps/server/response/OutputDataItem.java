@@ -182,28 +182,11 @@ public class OutputDataItem extends ResponseData {
 	public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
 		OutputDataType output = prepareOutput(res);
 		String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
-		//CodeType idType = output.addNewIdentifier();
-		//idType.setStringValue(id);
 		LiteralDataType literalData = output.addNewData().addNewLiteralData();
 		if (dataTypeReference != null) {
 			literalData.setDataType(dataTypeReference);
 		}
-		InputSource is = new InputSource();
-	    is.setCharacterStream(new StringReader(processValue));
-
-		try {
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-			XmlObject xmlObj = XmlObject.Factory.parse(doc);
-			literalData.set(xmlObj);
-		} catch (SAXException e) {
-			literalData.setStringValue(processValue);
-		} catch (IOException e) {
-			literalData.setStringValue(processValue);
-		} catch (ParserConfigurationException e) {
-			literalData.setStringValue(processValue);
-		} catch (XmlException e) {
-			literalData.setStringValue(processValue);
-		}
+	    literalData.setStringValue(processValue);
 		
 	}
 	
