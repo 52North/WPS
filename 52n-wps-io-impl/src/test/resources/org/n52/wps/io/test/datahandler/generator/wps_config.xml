@@ -236,8 +236,20 @@
 				active="true">
 				<Format mimetype="application/wkt"/>
 			</Parser>
+			
+			<Parser name="GeoJSONParser"
+				className="org.n52.wps.io.datahandler.parser.GeoJSONParser"
+				active="true">
+				<Format mimetype="application/geojson"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="GeoJSONGenerator"
+				className="org.n52.wps.io.datahandler.generator.GeoJSONGenerator"
+				active="true">
+				<Format mimetype="application/geojson"/>
+			</Generator>
 			
 			<Generator name="WKTGenerator"
 				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
