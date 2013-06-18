@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.log4j.Logger;
+import org.junit.Test;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.wps.io.datahandler.generator.GeoJSONGenerator;
 import org.n52.wps.io.datahandler.parser.GeoJSONParser;
@@ -39,9 +42,8 @@ import org.n52.wps.io.datahandler.parser.GeoJSONParser;
  *
  */
 public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerator> {
-
-	protected Logger LOGGER = Logger.getLogger(GeoJSONGenerator.class);
 	
+	@Test
 	public void testGenerator() {
 		
 		if(!isDataHandlerActive()){
@@ -56,15 +58,15 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 
 		String mimetype = theParser.getSupportedFormats()[0];
 		
-		LOGGER.info("Trying to parse GeoJSON: " + inputGeoJSONPointString);
+		System.out.println("Trying to parse GeoJSON: " + inputGeoJSONPointString);
 		
-		JTSGeometryBinding theBinding = theParser.parse(in, mimetype,
+		JTSGeometryBinding theBinding = (JTSGeometryBinding) theParser.parse(in, mimetype,
 				null);
 
 		try {
 			in.close();
 		} catch (IOException e) {
-			LOGGER.warn("Failed to close ByteArrayInputStream containing input GeoJSON.");
+			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
 		}
 		
 		assertTrue(theBinding.getPayload() != null);
@@ -75,7 +77,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			generatedStream = dataHandler.generateStream(theBinding, mimetype, null);
 			
 		} catch (IOException e) {
-			LOGGER.error("Failed to generate result inputstream.");
+			System.err.println("Failed to generate result inputstream.");
 			fail();
 		}
 		
@@ -88,21 +90,82 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 				outputGeoJSONPointString = outputGeoJSONPointString.concat(String.valueOf((char)bite));
 			}
 		} catch (IOException e) {
-			LOGGER.error("Failed to read result inputstream.");
+			System.err.println("Failed to read result inputstream.");
 			fail();
 		}
 		
 		try {
 			generatedStream.close();
 		} catch (IOException e) {
-			LOGGER.warn("Failed to close generated stream containing result GeoJSON.");
+			System.out.println("Failed to close generated stream containing result GeoJSON.");
 		}
 		
 		assertTrue(inputGeoJSONPointString.equals(outputGeoJSONPointString));
 		
-		LOGGER.info("Generated GeoJSON     : " + outputGeoJSONPointString);
+		System.out.println("Generated GeoJSON      : " + outputGeoJSONPointString);
 		
 	}
+	
+	@Test
+	public void testGeoJSONFeatureCollection(){
+		
+		String featureCollectionString = "{ \"type\": \"FeatureCollection\",                                       "+
+				"  \"features\": [                                                        "+
+				"    { \"type\": \"Feature\",                                             "+
+				"      \"geometry\": {\"type\": \"Point\", \"coordinates\": [102.0, 0.5]},"+
+				"      \"properties\": {\"prop0\": \"value0\"}                            "+
+				"      },                                                                 "+
+				"    { \"type\": \"Feature\",                                             "+
+				"      \"geometry\": {                                                    "+
+				"        \"type\": \"LineString\",                                        "+
+				"        \"coordinates\": [                                               "+
+				"          [102.0, 0.0], [103.0, 1.0], [104.0, 0.0], [105.0, 1.0]         "+
+				"          ]                                                              "+
+				"        },                                                               "+
+				"      \"properties\": {                                                  "+
+				"        \"prop0\": \"value0\"                                           "+
+				"        }                                                                "+
+				"      },                                                                 "+
+				"    { \"type\": \"Feature\",                                             "+
+				"       \"geometry\": {                                                   "+
+				"         \"type\": \"Polygon\",                                          "+
+				"         \"coordinates\": [                                              "+
+				"           [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0],                   "+
+				"             [100.0, 1.0], [100.0, 0.0] ]                                "+
+				"           ]                                                             "+
+				"       },                                                                "+
+				"       \"properties\": {                                                 "+
+				"         \"prop0\": \"value0\"                              "+
+				"         }                                                               "+
+				"       }                                                                 "+
+				"     ]                                                                   "+
+				"   }                                                                     ";
+				
+		InputStream in = new ByteArrayInputStream(featureCollectionString.getBytes());
+		
+		GeoJSONParser theParser = new GeoJSONParser();
+
+		String mimetype = theParser.getSupportedFormats()[0];
+		
+		System.out.println("Trying to parse GeoJSON: " + featureCollectionString);
+		
+		IData theBinding = theParser.parse(in, mimetype,
+				null);
+		
+		if(!(theBinding instanceof GTVectorDataBinding)){
+			fail();
+		}
+
+		try {
+			in.close();
+		} catch (IOException e) {
+			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
+		}
+		
+		assertTrue(theBinding.getPayload() != null);
+		
+	}
+	
 
 	@Override
 	protected void initializeDataHandler() {
