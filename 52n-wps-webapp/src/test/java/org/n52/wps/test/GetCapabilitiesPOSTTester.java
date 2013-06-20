@@ -94,7 +94,7 @@ public class GetCapabilitiesPOSTTester {
         }
 
         assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("InvalidParameterValue"));
+        assertThat(response, response, containsString("VersionNegotiationFailed"));
 
         assertThat(response, response, not(containsString("<wps:Capabilities")));
     }
