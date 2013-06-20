@@ -350,6 +350,7 @@ public class GTHelper {
 				
 			} catch (IOException e) {
 				LOGGER.error("Exception while storing schema.", e);
+				throw new RuntimeException("Exception while storing schema.", e);
 			}
 			return new QName(namespace, schemalocation);
 			
@@ -420,6 +421,7 @@ public class GTHelper {
 					
 				} catch (IOException e) {
 					LOGGER.error("Exception while storing schema.", e);
+					throw new RuntimeException("Exception while storing schema.", e);
 				}
 				return new QName(namespace, schemalocation);
 				
@@ -438,14 +440,14 @@ public class GTHelper {
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			int startIndex = domain.indexOf("WEB-INF");
 			if(startIndex<0){
-				//not running from as webapp				
+				//not running as webapp				
 				File f = File.createTempFile(uuid, ".xsd");
 				f.deleteOnExit();
 				FileWriter writer = new FileWriter(f);
 				writer.write(schema);
 				writer.flush();
 				writer.close();
-				return f.getName();
+				return "file:"+f.getAbsolutePath();
 			}else{
 				domain = domain.substring(0,startIndex);			
 				String baseDirLocation = domain;

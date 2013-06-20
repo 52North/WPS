@@ -92,15 +92,11 @@ public class GML3BasicGenerator extends AbstractGenerator {
             encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
            
         }else{
-        	//schemaLocation is only the file name of the schema to avoid parsing errors
-        	//add the full path here to avoid exceptions
-        	String newSchemaLocation = System.getProperty("java.io.tmpdir") + File.separator + schemaLocation; 
         	
-        	configuration = new ApplicationSchemaConfiguration(namespace, newSchemaLocation);
+        	configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
         	    
             encoder = new org.geotools.xml.Encoder(configuration );
             encoder.setNamespaceAware(true);
-            //here we use just the file name of the schema again
             encoder.setSchemaLocation("http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", namespace + " " + schemaLocation);
                       
         }
