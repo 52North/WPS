@@ -147,11 +147,6 @@ public class GML2BasicGenerator extends AbstractGenerator {
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		File tempFile = File.createTempFile("gml2", "xml");
 		finalizeFiles.add(tempFile);
 		FileWriter fw = new FileWriter(tempFile);
