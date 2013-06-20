@@ -36,15 +36,13 @@ public class GRASSKMLParser extends AbstractParser {
 
 	public GRASSKMLParser(){
 		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
-		
+		supportedIDataTypes.add(GenericFileDataBinding.class);		
 	}
 
 	@Override
 	public GenericFileDataBinding parse(InputStream stream, String mimeType, String schema) {
 		GenericFileDataBinding data = new GenericFileDataBinding(
 				new GenericFileData(stream, "text/xml"));
-
 		return data;
 	}
 

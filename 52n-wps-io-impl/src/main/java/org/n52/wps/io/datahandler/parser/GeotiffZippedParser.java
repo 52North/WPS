@@ -40,7 +40,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.data.DataSourceException;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.n52.wps.io.IOUtils;
@@ -67,14 +66,13 @@ public class GeotiffZippedParser extends AbstractParser {
 			finalizeFiles.addAll(files); // mark for final delete
 			
 			for(File file : files){
-				if(file.getName().endsWith(".tif") || file.getName().endsWith(".tiff")){
+				if(file.getName().toLowerCase().endsWith(".tif") || file.getName().toLowerCase().endsWith(".tiff")){
 					return parseTiff(file);
 				}
 			}
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error("Exception while trying to unzip tiff.", e);
 		}
 		throw new RuntimeException("Could not parse zipped geotiff.");
 	}
@@ -87,13 +85,10 @@ public class GeotiffZippedParser extends AbstractParser {
 			reader = new GeoTiffReader(file, hints);
 			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
 			return new GTRasterDataBinding(coverage);
-		} catch (DataSourceException e) {
-			LOGGER.error(e);
+		} catch (Exception e) {
+			LOGGER.error("Exception while trying to create GTRasterDataBinding out of tiff.", e);
 			throw new RuntimeException(e);
-		} catch (IOException e) {
-			LOGGER.error(e);
-			throw new RuntimeException(e);
-		}
+		} 
 	}
 
 }

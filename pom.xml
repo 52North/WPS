@@ -364,6 +364,11 @@
 				<artifactId>gt-api</artifactId>
 				<version>${geotools.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.geotools</groupId>
+				<artifactId>gt-geojson</artifactId>
+				<version>${geotools.version}</version>
+			</dependency>
 			<!-- END import geotools dependencies -->
 			<!-- START J2EE -->
 			<dependency>
