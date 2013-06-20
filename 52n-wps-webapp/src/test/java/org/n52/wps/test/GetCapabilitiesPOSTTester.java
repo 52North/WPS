@@ -17,7 +17,6 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.wps.x100.CapabilitiesDocument;
-import net.opengis.wps.x100.WPSCapabilitiesType;
 
 import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
