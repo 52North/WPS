@@ -151,11 +151,6 @@ public class GML2BasicGenerator extends AbstractGenerator {
 		finalizeFiles.add(tempFile);
 		FileWriter fw = new FileWriter(tempFile);
 		write(data, fw);
-		try{
-			fw.flush();
-		} catch (IOException e){
-			LOGGER.warn("Attempted to flush stream although it was closed already.");
-		}
 		fw.close();
 		InputStream is = new FileInputStream(tempFile);
 		return is;

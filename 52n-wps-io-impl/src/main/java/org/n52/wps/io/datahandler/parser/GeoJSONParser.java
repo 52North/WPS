@@ -33,8 +33,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
@@ -45,13 +43,13 @@ import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKTReader;
 
 /**
- * @author BenjaminPross(bpross-52n)
  * 
- *         This class parses json into JTS geometries.
+ * 
+ * This class parses json into JTS geometries.
+ *         
+ *  @author BenjaminPross(bpross-52n)
  * 
  */
 public class GeoJSONParser extends AbstractParser {

@@ -86,11 +86,6 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}		
-		
 		File tempFile = null;
 		InputStream stream = null;
 		
@@ -133,7 +128,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 		if(coll == null) {
 			return doc;
 		}
-		FeatureIterator iter = ((GTVectorDataBinding)coll).getPayload().features();
+		FeatureIterator<?> iter = ((GTVectorDataBinding)coll).getPayload().features();
 		while(iter.hasNext()) {
 			SimpleFeature feature = (SimpleFeature) iter.next();
 			StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();

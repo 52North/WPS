@@ -28,7 +28,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -38,7 +37,7 @@ import org.n52.wps.io.datahandler.parser.GeoJSONParser;
 
 /**
  * Test class for GeoJSON parser and generator
- * @author BenjaminPross(bpross-52n)
+ * @author Benjamin Pross(bpross-52n)
  *
  */
 public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerator> {

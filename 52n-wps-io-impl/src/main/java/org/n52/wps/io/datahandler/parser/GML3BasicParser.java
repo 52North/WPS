@@ -60,6 +60,7 @@ import org.geotools.xml.Configuration;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -113,6 +114,22 @@ public class GML3BasicParser extends AbstractParser {
 	}
 	
 	private GTVectorDataBinding parseXML(File file) {
+		
+		SimpleFeatureCollection fc = parseFeatureCollection(file);
+		
+		GTVectorDataBinding data = new GTVectorDataBinding(fc);
+		
+		return data;
+	}
+	
+	/**
+	 * Method to parse a SimpleFeatureCollection out of a file. Depending on the schema and schema location the Configuration will be 
+	 * a GML or ApplicationSchemaConfiguration and the Parser will be set strict or not.	 * 
+	 * 
+	 * @param file File containing a SimpleFeatureCollection
+	 * @return The parsed SimpleFeatureCollection
+	 */
+	public SimpleFeatureCollection parseFeatureCollection(File file){
 		QName schematypeTuple = determineFeatureTypeSchema(file);
 		
 		boolean schemaLocationIsRelative = false;
@@ -150,12 +167,32 @@ public class GML3BasicParser extends AbstractParser {
 		parser.setStrict(shouldSetParserStrict);
 		
 		//parse		
+		SimpleFeatureCollection fc = parseFeatureCollection(file, configuration, shouldSetParserStrict);
+		
+		return fc;
+	}
+	
+	/**
+	 * Method to parse a SimpleFeatureCollection out of a file. 
+	 * 
+	 * @param file File containing a SimpleFeatureCollection
+	 * @param configuration The Configuration for the Parser
+	 * @param shouldSetParserStrict Boolean specifying whether the Parser should be set to strict or not.
+	 * @return The parsed SimpleFeatureCollection
+	 */
+	public SimpleFeatureCollection parseFeatureCollection(File file, Configuration configuration, boolean shouldSetParserStrict){
+		
+		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+		
+		parser.setStrict(shouldSetParserStrict);
+		
+		//parse		
 		SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
 			Object parsedData =  parser.parse( new FileInputStream(file));
 			if(parsedData instanceof FeatureCollection){
 				fc = (SimpleFeatureCollection) parsedData;				
-			}else{
+			}else if(parsedData instanceof HashMap){
 				List<?> possibleSimpleFeatureList = ((ArrayList<?>)((HashMap<?,?>) parsedData).get("featureMember"));				
 				
 				if(possibleSimpleFeatureList!=null){
@@ -178,6 +215,30 @@ public class GML3BasicParser extends AbstractParser {
 				}else{
 					fc = (SimpleFeatureCollection) ((HashMap<?,?>) parsedData).get("FeatureCollection");
 				}
+			}else if(parsedData instanceof SimpleFeature){
+				
+				Collection<? extends Property> values = ((SimpleFeature) parsedData).getValue();
+				for(Property value : values){
+					Object tempValue = value.getValue();
+					if(value.getType().getBinding().isAssignableFrom(FeatureCollection.class)){
+						if(tempValue instanceof ArrayList){
+							ArrayList<?> list = (ArrayList<?>) tempValue;
+							List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+							SimpleFeatureType sft = null;
+							for(Object listValue : list){
+								if(listValue instanceof SimpleFeature){									
+									SimpleFeature sf = ((SimpleFeature)listValue);
+									if(sft == null){
+										sft = sf.getType();
+									}
+									simpleFeatureList.add(sf);
+								}
+							}
+							fc = new ListFeatureCollection(sft, simpleFeatureList);	
+						}
+					}
+				}
+				
 			}
 		
 		FeatureIterator<?> featureIterator = fc.features();
@@ -210,12 +271,9 @@ public class GML3BasicParser extends AbstractParser {
 			LOGGER.error("Exception while handling parsed GML.", e);
 			throw new RuntimeException(e);
 		}
-		
-		GTVectorDataBinding data = new GTVectorDataBinding(fc);
-		
-		return data;
+		return fc;
 	}
-	
+		
 	private QName determineFeatureTypeSchema(File file) {
 		try {
 			GML2Handler handler = new GML2Handler();
