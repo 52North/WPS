@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
@@ -51,7 +51,7 @@ public class GTBinZippedSHPParser extends AbstractParser {
 			}
 			File shp = IOUtils.unzip(tempFile, "shp").get(0);
 			DataStore store = new ShapefileDataStore(shp.toURI().toURL());
-			FeatureCollection features = store.getFeatureSource(
+			SimpleFeatureCollection features = store.getFeatureSource(
 					store.getTypeNames()[0]).getFeatures();
 			System.gc();
 			

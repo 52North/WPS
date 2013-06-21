@@ -1,10 +1,10 @@
 /***************************************************************
-Copyright � 2009 52�North Initiative for Geospatial Open Source Software GmbH
+Copyright 2009 52 North Initiative for Geospatial Open Source Software GmbH
 
  Author: Matthias Mueller, TU Dresden
  
  Contact: Andreas Wytzisk, 
- 52�North Initiative for Geospatial Open Source SoftwareGmbH, 
+ 52 North Initiative for Geospatial Open Source SoftwareGmbH, 
  Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 
  info@52north.org
@@ -22,26 +22,24 @@ Copyright � 2009 52�North Initiative for Geospatial Open Source Software Gmb
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation�s web page, http://www.fsf.org.
+ Software Foundations web page, http://www.fsf.org.
 
  ***************************************************************/
 
 package org.n52.wps.io.data;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.n52.wps.commons.WPSConfig;
+import org.apache.log4j.Logger;
 import org.n52.wps.io.IOHandler;
 
 
 public final class GenericFileDataConstants {
+	
+	private static Logger LOGGER = Logger.getLogger(GenericFileDataConstants.class);
 	
 	public static final String MIME_TYPE_ZIPPED_SHP = IOHandler.MIME_TYPE_ZIPPED_SHP;
 	public static final String MIME_TYPE_SHP = "application/shp";
@@ -72,8 +70,11 @@ public final class GenericFileDataConstants {
 	public static final String MIME_TYPE_GML310 = "text/xml; subtype=gml/3.1.0";
 	public static final String MIME_TYPE_GML311 = "text/xml; subtype=gml/3.1.1";
 	public static final String MIME_TYPE_GML321 = "text/xml; subtype=gml/3.2.1";
-	private static HashMap<String, String> lut;
 	
+	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj", "sbn", "sbx", "shp.xml"};
+	private static final String[] additionalDBFFileItems = {"dbf.xml"}; // e.g. ArcGIS backend returns shape and a metadata xml file (e.g. process pointdistance)
+	
+	private static HashMap<String, String> lut;	
 	
 	public static final HashMap<String, String> mimeTypeFileTypeLUT(){
 		
@@ -85,40 +86,18 @@ public final class GenericFileDataConstants {
 
 			try {
 
-//				String path = WPSConfig.class.getProtectionDomain()
-//						.getCodeSource().getLocation().getFile();				
-//				
-//				if(path.indexOf("lib/") != -1){
-//					//running as webapp
-//					path = path.substring(0, path.indexOf("lib/")).concat(
-//						"classes/org/n52/wps/io/io.properties");				
-//				}else{
-//					//testing, client api
-//					File f = new File(GenericFileDataConstants.class.getProtectionDomain().getCodeSource().getLocation().getFile());
-//					
-//					String projectRoot = f.getParentFile().getParentFile().getParent();//Project root
-//					
-//					path = projectRoot + "/52n-wps-webapp/src/main/webapp/WEB-INF/classes/org/n52/wps/io/io.properties";
-//				}
-//				
-//				File ioPropertiesFile = new File(path);
-
 				ioProperties.load(GenericFileDataConstants.class.getResourceAsStream("/org/n52/wps/io/io.properties"));
 
 				Enumeration<Object> en = ioProperties.keys();
 
 				while (en.hasMoreElements()) {
 					String type = (String) en.nextElement();
-					System.out.println(type + " "
-							+ ioProperties.getProperty(type));
 					lut.put(type, ioProperties.getProperty(type));
 				}
 
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (Exception e) {
+				LOGGER.error("Exception while setting up Look up table.", e);
+			} 
 		}
 		
 		return lut;
@@ -127,14 +106,6 @@ public final class GenericFileDataConstants {
 	public static final String[] getMimeTypes (){
 		return mimeTypeFileTypeLUT().keySet().toArray(new String[0]);
 	}
-	
-	
-	//public static final String RASTER_SCHEMA = "http://tu-dresden.de/fgh/geo/gis/schemas/esri/raster.xsd";
-	//public static final String VECTOR_SCHEMA = "http://tu-dresden.de/fgh/geo/gis/schemas/esri/shape.xsd";
-	
-//	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj"};
-	private static final String[] additionalSHPFileItems = {"shx", "dbf", "prj", "sbn", "sbx", "shp.xml"};
-	private static final String[] additionalDBFFileItems = {"dbf.xml"}; // e.g. ArcGIS backend returns shape and a metadata xml file (e.g. process pointdistance)
 	
 	public static final String[] getIncludeFilesByMimeType(String mimeType){
 		

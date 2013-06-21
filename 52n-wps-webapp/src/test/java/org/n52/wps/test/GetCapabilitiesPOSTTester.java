@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.wps.x100.WPSCapabilitiesType;
+import net.opengis.wps.x100.CapabilitiesDocument;
 
 import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
@@ -71,11 +71,12 @@ public class GetCapabilitiesPOSTTester {
             fail(e.getMessage());
         }
 
-        WPSCapabilitiesType caps = WPSCapabilitiesType.Factory.parse(response);
+        CapabilitiesDocument capsDoc = CapabilitiesDocument.Factory.parse(response);
+        
         XmlOptions opts = new XmlOptions();
         ArrayList<XmlError> errors = new ArrayList<XmlError>();
         opts.setErrorListener(errors);
-        boolean valid = caps.validate(opts);
+        boolean valid = capsDoc.validate(opts);
 
         assertTrue(Arrays.deepToString(errors.toArray()), valid);
     }
@@ -94,7 +95,7 @@ public class GetCapabilitiesPOSTTester {
         }
 
         assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("InvalidParameterValue"));
+        assertThat(response, response, containsString("VersionNegotiationFailed"));
 
         assertThat(response, response, not(containsString("<wps:Capabilities")));
     }
