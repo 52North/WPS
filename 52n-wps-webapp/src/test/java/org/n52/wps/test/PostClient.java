@@ -11,8 +11,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import javax.xml.messaging.URLEndpoint;
-
 public class PostClient {
 
     public String buildRequest(String value) throws UnsupportedEncodingException {

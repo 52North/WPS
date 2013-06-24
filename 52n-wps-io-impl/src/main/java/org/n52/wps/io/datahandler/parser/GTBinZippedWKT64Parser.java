@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.WKTReader2;
@@ -49,7 +49,8 @@ import org.geotools.referencing.CRS;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
@@ -126,7 +127,7 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 			}
 
 			CoordinateReferenceSystem coordinateReferenceSystem = CRS.decode("EPSG:4326");			
-			FeatureCollection inputFeatureCollection = createFeatureCollection(geometries, coordinateReferenceSystem);
+			SimpleFeatureCollection inputFeatureCollection = createFeatureCollection(geometries, coordinateReferenceSystem);
 
 			return new GTVectorDataBinding(inputFeatureCollection);
 		} catch (IOException e) {
@@ -148,9 +149,8 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 		}
 	}
 	
-	private FeatureCollection createFeatureCollection(List<com.vividsolutions.jts.geom.Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
-		
-		FeatureCollection collection = FeatureCollections.newCollection();	
+	private SimpleFeatureCollection createFeatureCollection(List<com.vividsolutions.jts.geom.Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
+
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 		if(coordinateReferenceSystem==null){
 			try {
@@ -173,12 +173,17 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 		typeBuilder.setName(nameType);
 		typeBuilder.add("GEOMETRY", geometries.get(0).getClass());
 	
+		List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();		
+		
 		SimpleFeatureType featureType = typeBuilder.buildFeatureType();
 	
 		for(int i = 0; i<geometries.size();i++){
-				Feature feature = GTHelper.createFeature(""+i, geometries.get(i), featureType, new ArrayList());
-				collection.add(feature);
-		}
+				SimpleFeature feature = GTHelper.createFeature(""+i, geometries.get(i), featureType, new ArrayList<Property>());
+				simpleFeatureList.add(feature);		}
+		
+		
+		SimpleFeatureCollection collection =  new ListFeatureCollection(featureType, simpleFeatureList);
+		
 		return collection;
 	}
 
