@@ -476,6 +476,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // setting the R working directory relative to default R directory
                 // R starts from a work directory dependent on the behaviour and configuration of the R/Rserve
                 // installation
+                this.wpsWorkDirIsRWorkDir = false;
                 String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
                 rCon.eval("dir.create(\"" + randomFolderName + "\")"); // quotation marks!
                 result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // don't forget the escaped
