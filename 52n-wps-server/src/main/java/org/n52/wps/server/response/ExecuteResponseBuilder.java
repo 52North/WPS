@@ -289,20 +289,28 @@ public class ExecuteResponseBuilder {
 			else{
 				//mimeType = "text/xml";
 				// MSS 03/02/2009 defaulting to text/xml doesn't work when the data is a complex raster
-				if(outputDescs[0].isSetLiteralOutput()){
-					mimeType = "text/xml";
-				}else{
+				//if(outputDescs[0].isSetLiteralOutput()){
+				//	mimeType = "text/xml";
+				//}else{ FIXME Matthias Hinz, this code above leads to errors --> delete or correct
 					if (def != null) {
 						mimeType = def.getMimeType();
 					} else {
 						mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
 					}
-				}
+				//}
 			}
 		}
 		if(mimeType==null){
+			
 			// TODO Default MIME type will be returned. What about alternative MIME types?
-			mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+			//FIXME corrected by Matthias
+			for(OutputDescriptionType outputDes : outputDescs){
+				if(def.getIdentifier().getStringValue().equalsIgnoreCase(outputDes.getIdentifier().getStringValue())){
+					mimeType = outputDes.getComplexOutput().getDefault().getFormat().getMimeType();
+					break;
+				}
+			}
+			//mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
 		}
 		
 		
