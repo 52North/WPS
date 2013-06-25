@@ -45,7 +45,9 @@ public enum RAttribute {
 	ENCODING("encoding", null, false), 
 	AUTHOR("author", null, false),
 	//A sequence of values:
-	NAMED_LIST("seq", null, true);
+	NAMED_LIST("seq", null, true), 
+	//derives from a named list
+	NAMED_LIST_R_SYNTAX("rseq", null, true);
 
 	private String key;
 	private Object defValue;
