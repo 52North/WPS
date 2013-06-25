@@ -7,7 +7,6 @@ import org.apache.xmlbeans.XmlException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
@@ -939,7 +938,6 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    @Ignore
     public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStatusNoEncoding() throws ParserConfigurationException, SAXException, IOException {
         System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStatusNoEncoding");
 
@@ -1078,7 +1076,6 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    @Ignore
     public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreNoEncoding() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreNoEncoding");
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
@@ -1218,7 +1215,6 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    @Ignore
     public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusNoEncoding() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusNoEncoding");
 
