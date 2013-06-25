@@ -483,6 +483,12 @@
                                         <com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>;
                                         <test.host>127.0.0.1</test.host>
                                         <test.port>9090</test.port>
+                                        <!--
+                                        <test.rserve.host>127.0.0.1</test.rserve.host>
+                                        <test.rserve.port>6311</test.rserve.port>
+                                        <test.rserve.user></test.rserve.user>
+                                        <test.rserve.pwd></test.rserve.pwd>-->
+                                        
                                         <!--<test.port>${jetty.http.port}</test.port>-->
                                         <test.context>/wps/WebProcessingService</test.context>
                                         <!-- next 2 lines are for logging configuration -->
