@@ -146,11 +146,11 @@ public class ExecutePOSTTester {
     			+ "<wps:DataInputs>"
     			+ "<wps:Input>"
     			+ "<ows:Identifier xmlns:ns1=\"http://www.opengis.net/ows/1.1\">data</ows:Identifier>"
-    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\" mimeType=\"image/tiff\"/>"
+    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\" mimeType=\"image/tiff\"/>"
     			+ "</wps:Input>"
     			+ "<wps:Input>"
     			+ "<ows:Identifier xmlns:ns1=\"http://www.opengis.net/ows/1.1\">data</ows:Identifier>"
-    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\" mimeType=\"image/tiff\"/>"
+    			+ "<wps:Reference xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\" mimeType=\"image/tiff\"/>"
     			+ "</wps:Input>"
     			+ "</wps:DataInputs>"
     			+ "<wps:ResponseForm>"
@@ -165,7 +165,7 @@ public class ExecutePOSTTester {
     	
     	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString("SUkqAHLDDQARAAABAw"));
+    	assertThat(response, response, containsString("SUkqAAgAAAASAAABAwA"));
     }
     
     /*Complex XML Input by reference, POST*/
@@ -213,8 +213,8 @@ public class ExecutePOSTTester {
     /*Complex binary Input by value */
     // Disabled test due to heap size issues. 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutput");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutput");
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
                 + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -222,12 +222,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -246,8 +246,8 @@ public class ExecutePOSTTester {
     /*Complex binary Input by reference */
     // Disabled test due to heap size issues. 
     @Test
-    public void testExecutePOSTReferenceComplexBinarySynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTReferenceComplexBinarySynchronousBinaryOutput");
+    public void testExecutePOSTReferenceComplexBinaryASynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTReferenceComplexBinaryASynchronousBinaryOutput");
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
                 + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -255,12 +255,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -528,8 +528,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTComplexXMLSynchronousXMLOutputBStoreStatusTrue() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTComplexXMLSynchronousXMLOutputBStoreStatusTrue");
+    public void testExecutePOSTComplexXMLASynchronousXMLOutputBStoreStatusTrue() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTComplexXMLASynchronousXMLOutputBStoreStatusTrue");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -567,8 +567,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTComplexXMLSynchronousXMLOutputStoreTrue() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTComplexXMLSynchronousXMLOutputStoreTrue");
+    public void testExecutePOSTComplexXMLASynchronousXMLOutputStoreTrue() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTComplexXMLASynchronousXMLOutputStoreTrue");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -607,8 +607,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTComplexXMLSynchronousXMLOutputBReferenceStoreTrue() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTComplexXMLSynchronousXMLOutputBReferenceStoreTrue");
+    public void testExecutePOSTComplexXMLASynchronousXMLOutputBReferenceStoreTrue() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTComplexXMLASynchronousXMLOutputBReferenceStoreTrue");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -774,12 +774,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -810,12 +810,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -845,12 +845,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -879,12 +879,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -912,12 +912,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -948,12 +948,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -982,12 +982,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1017,12 +1017,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1042,8 +1042,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreBase64() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreBase64");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreBase64() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreBase64");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1052,12 +1052,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1076,8 +1076,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreNoEncoding() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreNoEncoding");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreNoEncoding() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreNoEncoding");
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
                 + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -1085,12 +1085,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1111,8 +1111,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreReferenceBase64() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreReferenceBase64");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreReferenceBase64() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreReferenceBase64");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1121,12 +1121,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1146,8 +1146,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreReferenceNoEncoding() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreReferenceNoEncoding");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreReferenceNoEncoding() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreReferenceNoEncoding");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1156,12 +1156,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1181,8 +1181,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusBase64() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusBase64");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreStatusBase64() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreStatusBase64");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1191,12 +1191,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1215,8 +1215,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusNoEncoding() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputStoreStatusNoEncoding");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreStatusNoEncoding() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputStoreStatusNoEncoding");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1225,12 +1225,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1250,8 +1250,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputRawBase64() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutputRawBase64");
+    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutputRawBase64() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutputRawBase64");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
@@ -1260,12 +1260,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1296,12 +1296,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1332,12 +1332,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1366,12 +1366,12 @@ public class ExecutePOSTTester {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1450,8 +1450,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineLiteralDataSynchronousLiteralOutputStore() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineLiteralDataSynchronousLiteralOutputStore");
+    public void testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStore() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStore");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
@@ -1483,8 +1483,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineLiteralDataSynchronousLiteralOutputStoreStatus() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineLiteralDataSynchronousLiteralOutputStoreStatus");
+    public void testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStoreStatus() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStoreStatus");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
@@ -1615,8 +1615,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStore() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStore");
+    public void testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStore() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStore");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
@@ -1650,8 +1650,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreStatus() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreStatus");
+    public void testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreStatus() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreStatus");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
@@ -1790,8 +1790,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreNoEPSG() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreNoEPSG");
+    public void testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreNoEPSG() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreNoEPSG");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
@@ -1826,8 +1826,8 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreStatusNoEPSG() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineBBOXDataSynchronousBBOXOutputStoreStatusNoEPSG");
+    public void testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreStatusNoEPSG() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineBBOXDataASynchronousBBOXOutputStoreStatusNoEPSG");
 
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "

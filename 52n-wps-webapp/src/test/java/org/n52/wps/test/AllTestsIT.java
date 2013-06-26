@@ -65,7 +65,7 @@ public class AllTestsIT {
         assertThat(referencedDocument, referencedDocument, containsString("ExecuteResponse"));
         assertThat(referencedDocument,
                    referencedDocument,
-                   anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"), containsString("Tk9SVEg6IDIyODUwMC4w")));
+                   anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"), containsString("Tk9SVEg6IDIyOD"), containsString("SUkqAAgAAAASAAABAwABAAAAIwAA")));
     }
 
     public static String getRefAsString(String response) throws ParserConfigurationException, SAXException, IOException {
