@@ -39,7 +39,6 @@ import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
 import org.n52.wps.server.ExceptionReport;
 import org.opengis.geometry.Envelope;
 
