@@ -120,7 +120,7 @@ public class RAnnotationParser {
                 String line = lineReader.readLine();
                 lineCounter++;
 
-                if (line.startsWith(ANNOTATION_CHARACTER) && !line.startsWith(COMMENTED_ANNOTATION_CHARACTER)) {
+                if (line.trim().startsWith(ANNOTATION_CHARACTER) && !line.trim().startsWith(COMMENTED_ANNOTATION_CHARACTER)) {
                     line = line.split("#", 2)[1];
                     line = line.trim();
 

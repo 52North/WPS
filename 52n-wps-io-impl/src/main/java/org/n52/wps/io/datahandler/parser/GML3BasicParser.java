@@ -7,7 +7,7 @@ to the WPS version 0.4.0 (OGC 05-007r4).
  Copyright (C) 2006 by con terra GmbH
 
  Authors: 
-	 Bastian Sch�ffer, IfGI; Matthias Mueller, TU Dresden
+	 Bastian Schaeffer, IfGI; Matthias Mueller, TU Dresden
 
  Contact: Albert Remke, con terra GmbH, Martin-Luther-King-Weg 24,
  48155 Muenster, Germany, 52n@conterra.de
@@ -36,40 +36,36 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
 import org.geotools.feature.type.GeometryDescriptorImpl;
 import org.geotools.feature.type.GeometryTypeImpl;
 import org.geotools.filter.identity.GmlObjectIdImpl;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
-import org.geotools.gml3.bindings.GML3ParsingUtils;
 import org.geotools.xml.Configuration;
-import org.geotools.xml.Parser;
-import org.n52.wps.commons.context.ExecutionContext;
-import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -81,8 +77,8 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  */
 public class GML3BasicParser extends AbstractParser {
+	
 	private static Logger LOGGER = Logger.getLogger(GML3BasicParser.class);
-
 	
 	public GML3BasicParser() {
 		super();
@@ -91,8 +87,7 @@ public class GML3BasicParser extends AbstractParser {
 	
 	@Override
 	public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
-		
-		ExecutionContext context = ExecutionContextFactory.getContext();
+
 		FileOutputStream fos = null;
 		try{
 			File tempFile = File.createTempFile("wps", "tmp");
@@ -119,6 +114,22 @@ public class GML3BasicParser extends AbstractParser {
 	}
 	
 	private GTVectorDataBinding parseXML(File file) {
+		
+		SimpleFeatureCollection fc = parseFeatureCollection(file);
+		
+		GTVectorDataBinding data = new GTVectorDataBinding(fc);
+		
+		return data;
+	}
+	
+	/**
+	 * Method to parse a SimpleFeatureCollection out of a file. Depending on the schema and schema location the Configuration will be 
+	 * a GML or ApplicationSchemaConfiguration and the Parser will be set strict or not.	 * 
+	 * 
+	 * @param file File containing a SimpleFeatureCollection
+	 * @return The parsed SimpleFeatureCollection
+	 */
+	public SimpleFeatureCollection parseFeatureCollection(File file){
 		QName schematypeTuple = determineFeatureTypeSchema(file);
 		
 		boolean schemaLocationIsRelative = false;
@@ -127,12 +138,9 @@ public class GML3BasicParser extends AbstractParser {
 		}
 		
 		Configuration configuration = null;
-		if(schematypeTuple != null) {
-			//throw new NullPointerException("featureTypeSchema null for file: " + file.getPath());
 		
-			
-			//create the parser with the gml 2.0 configuration
-			//org.geotools.xml.Configuration configuration = new org.geotools.gml2.GMLConfiguration();
+		boolean shouldSetParserStrict = true;
+		if(schematypeTuple != null) {
 			
 			String schemaLocation =  schematypeTuple.getLocalPart();
 			
@@ -142,62 +150,108 @@ public class GML3BasicParser extends AbstractParser {
 			
 			if(schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")){
 				configuration = new GMLConfiguration();
-	        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
-	        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
-			}else{
-			//schemaLocation = URLEncoder.encode(schemaLocation);
-			
+				shouldSetParserStrict = false;
+			}else{			
 				if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
 					SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
 					configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
 				}else{
 					configuration = new GMLConfiguration();
-		        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
-		        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
+					shouldSetParserStrict = false;
 				}
 			}
-		}else{
-			configuration = new GMLConfiguration();
-        	configuration.getProperties().add(Parser.Properties.IGNORE_SCHEMA_LOCATION );
-        	configuration.getProperties().add(Parser.Properties.PARSE_UNKNOWN_ELEMENTS);
-
 		}
 		
 		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
 		
-		//parse
-		FeatureCollection fc = DefaultFeatureCollections.newCollection();
+		parser.setStrict(shouldSetParserStrict);
+		
+		//parse		
+		SimpleFeatureCollection fc = parseFeatureCollection(file, configuration, shouldSetParserStrict);
+		
+		return fc;
+	}
+	
+	/**
+	 * Method to parse a SimpleFeatureCollection out of a file. 
+	 * 
+	 * @param file File containing a SimpleFeatureCollection
+	 * @param configuration The Configuration for the Parser
+	 * @param shouldSetParserStrict Boolean specifying whether the Parser should be set to strict or not.
+	 * @return The parsed SimpleFeatureCollection
+	 */
+	public SimpleFeatureCollection parseFeatureCollection(File file, Configuration configuration, boolean shouldSetParserStrict){
+		
+		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
+		
+		parser.setStrict(shouldSetParserStrict);
+		
+		//parse		
+		SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
 		try {
-//			String filepath =URLDecoder.decode(uri.toASCIIString().replace("file:/", ""));
 			Object parsedData =  parser.parse( new FileInputStream(file));
 			if(parsedData instanceof FeatureCollection){
-				fc = (FeatureCollection) parsedData;
+				fc = (SimpleFeatureCollection) parsedData;				
+			}else if(parsedData instanceof HashMap){
+				List<?> possibleSimpleFeatureList = ((ArrayList<?>)((HashMap<?,?>) parsedData).get("featureMember"));				
 				
+				if(possibleSimpleFeatureList!=null){
+					List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
 					
-				
-			}else{
-				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
-				if(featureList!=null){
-					for(SimpleFeature feature : featureList){
-						fc.add(feature);
+					SimpleFeatureType sft = null;
+					
+					for (Object possibleSimpleFeature : possibleSimpleFeatureList) {
+						
+						if(possibleSimpleFeature instanceof SimpleFeature){
+							SimpleFeature sf = ((SimpleFeature)possibleSimpleFeature);
+							if(sft == null){
+								sft = sf.getType();
+							}
+							simpleFeatureList.add(sf);
+						}						
 					}
+					
+					fc = new ListFeatureCollection(sft, simpleFeatureList);										
 				}else{
-					fc = (FeatureCollection) ((HashMap) parsedData).get("FeatureCollection");
+					fc = (SimpleFeatureCollection) ((HashMap<?,?>) parsedData).get("FeatureCollection");
 				}
+			}else if(parsedData instanceof SimpleFeature){
+				
+				Collection<? extends Property> values = ((SimpleFeature) parsedData).getValue();
+				for(Property value : values){
+					Object tempValue = value.getValue();
+					if(value.getType().getBinding().isAssignableFrom(FeatureCollection.class)){
+						if(tempValue instanceof ArrayList){
+							ArrayList<?> list = (ArrayList<?>) tempValue;
+							List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+							SimpleFeatureType sft = null;
+							for(Object listValue : list){
+								if(listValue instanceof SimpleFeature){									
+									SimpleFeature sf = ((SimpleFeature)listValue);
+									if(sft == null){
+										sft = sf.getType();
+									}
+									simpleFeatureList.add(sf);
+								}
+							}
+							fc = new ListFeatureCollection(sft, simpleFeatureList);	
+						}
+					}
+				}
+				
 			}
 		
-		Iterator featureIterator = fc.iterator();
+		FeatureIterator<?> featureIterator = fc.features();
 		while(featureIterator.hasNext()){
 			SimpleFeature feature = (SimpleFeature) featureIterator.next();
 			if(feature.getDefaultGeometry()==null){
 				Collection<org.opengis.feature.Property>properties = feature.getProperties();
 				for(org.opengis.feature.Property property : properties){
-					try{
-						
+					try{						
 						Geometry g = (Geometry)property.getValue();
 						if(g!=null){
 							GeometryAttribute oldGeometryDescriptor = feature.getDefaultGeometryProperty();
-							GeometryType type = new GeometryTypeImpl(property.getName(),(Class)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
+							GeometryType type = new GeometryTypeImpl(property.getName(),(Class<?>)oldGeometryDescriptor.getType().getBinding(),oldGeometryDescriptor.getType().getCoordinateReferenceSystem(),oldGeometryDescriptor.getType().isIdentified(),oldGeometryDescriptor.getType().isAbstract(),oldGeometryDescriptor.getType().getRestrictions(),oldGeometryDescriptor.getType().getSuper(),oldGeometryDescriptor.getType().getDescription());
 																
 							GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(type,property.getName(),0,1,true,null);
 							Identifier identifier = new GmlObjectIdImpl(feature.getID());
@@ -213,22 +267,13 @@ public class GML3BasicParser extends AbstractParser {
 				}
 			}
 		}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} catch (SAXException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.error("Exception while handling parsed GML.", e);
 			throw new RuntimeException(e);
 		}
-		
-		GTVectorDataBinding data = new GTVectorDataBinding(fc);
-		
-		return data;
+		return fc;
 	}
-	
+		
 	private QName determineFeatureTypeSchema(File file) {
 		try {
 			GML2Handler handler = new GML2Handler();
@@ -242,16 +287,8 @@ public class GML3BasicParser extends AbstractParser {
 			String namespaceURI = handler.getNameSpaceURI();
 			return new QName(namespaceURI,schemaUrl);
 			
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch (IOException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch (SAXException e) {
-			throw new IllegalArgumentException(e);
-		}
-		catch(ParserConfigurationException e) {
+		} catch (Exception e) {
+			LOGGER.error("Exception while trying to determine schema of FeatureType.", e);
 			throw new IllegalArgumentException(e);
 		}
 	}

@@ -218,11 +218,10 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="WKTParser"
+			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-				<Property name="supportedEncoding" active="true">Base64</Property>
+				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -231,8 +230,20 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
@@ -476,6 +487,7 @@
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
@@ -984,7 +996,9 @@
 			<Property name="Algorithm" active="true">kerneldensity</Property>
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
-		
+		<Repository name="ServiceLoaderAlgorithmRepository"
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
+		</Repository>
 		<!-- 
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
 			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
