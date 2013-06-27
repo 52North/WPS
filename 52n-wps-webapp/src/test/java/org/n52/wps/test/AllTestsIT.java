@@ -136,7 +136,7 @@ public class AllTestsIT {
             if ( !referencedDocument.contains("ProcessSucceeded") && !referencedDocument.contains("ProcessFailed")) {
                 try {
                     System.out.println("WPS process still processing. Waiting...");
-                    Thread.sleep(1500 * 15);
+                    Thread.sleep(1000 * 10);
                     referencedDocument = GetClient.sendRequest(splittedURL[0] + "RetrieveResultServlet", splittedURL[1]);
                 }
                 catch (InterruptedException ignore) {
