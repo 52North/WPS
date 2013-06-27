@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.nullValue;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -140,7 +141,7 @@ public class WPS4RTester {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString("Test warning 4: This is a warning with longer and comlex text"));
+        assertThat(response, containsString("Test warning 4: This is a warning with some text."));
     }
 
     @Test
@@ -165,26 +166,17 @@ public class WPS4RTester {
 
     @Test
     public void responseTypeIsImage() throws IOException, XmlException {
-
         URL resource = WPS4RTester.class.getResource("/R/ExecuteTestImage.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
 
         String response = PostClient.sendRequest(wpsUrl, payload);
-        assertThat(response.split("\n", 1)[0], containsString("PNG")); // <--
-                                                                       // test
-                                                                       // if
-                                                                       // the
-                                                                       // response
-                                                                       // is a
-                                                                       // png
-                                                                       // file
+        assertThat(response.split("\n", 1)[0], containsString("PNG"));
         assertThat(response, response, not(containsString("ExceptionReport")));
     }
 
     @Test
     public void uniformIsExecuted() throws IOException, XmlException {
-
         URL resource = WPS4RTester.class.getResource("/R/ExecuteTestUniform.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
@@ -198,6 +190,38 @@ public class WPS4RTester {
         assertThat(response, containsString("\"3\""));
         assertThat(response, not(containsString("ExceptionReport")));
     }
+
+    @Test
+    public void calculatorWorksCorrectly() throws IOException, ParserConfigurationException, SAXException, XmlException {
+        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestCalculator.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+        String payload = xmlPayload.toString();
+
+        Random rand = new Random();
+        int a = rand.nextInt(100);
+        payload.replace("@@@a@@@", Integer.toString(a));
+        int b = rand.nextInt(100);
+        payload.replace("@@@a@@@", Integer.toString(b));
+        int op = rand.nextInt(3);
+        String[] ops = new String[] {"+", "-", "*"};
+        String opString = ops[op];
+        payload.replace("@@@a@@@", opString);
+        int result = Integer.MIN_VALUE;
+        if (opString.equals("+"))
+            result = a + b;
+        else if (opString.equals("-"))
+            result = a - b;
+        else if (opString.equals("*"))
+            result = a * b;
+
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, containsString(Integer.toString(result)));
+    }
+
+    // TODO add unit test for wps.off and wps.on annotations using a test script that contains various on/off
+    // statements.
 
     // /*Complex XML Input by reference */
     // @Test
