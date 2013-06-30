@@ -30,7 +30,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({GetCapabilitiesKVPTests.class, ExecutePOSTTester.class, DescribeProcessKVPTester.class})
+@Suite.SuiteClasses({GetCapabilitiesKVPTests.class, GetCapabilitiesPOSTTester.class, ExecutePOSTTester.class, DescribeProcessKVPTester.class, DescribeProcessPOSTTester.class})
 public class AllTestsIT {
 
     // suite.addTestSuite(DescribeProcessKVPTester.class); // test

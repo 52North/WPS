@@ -42,8 +42,8 @@ import java.util.List;
 
 import net.opengis.examples.packet.GMLPacketDocument;
 import net.opengis.examples.packet.PropertyType;
-import net.opengis.examples.packet.StaticFeatureType;
 import net.opengis.examples.packet.PropertyType.Value;
+import net.opengis.examples.packet.StaticFeatureType;
 import net.opengis.gml.CoordType;
 import net.opengis.gml.LineStringPropertyType;
 import net.opengis.gml.LinearRingMemberType;
@@ -53,8 +53,8 @@ import net.opengis.gml.PolygonPropertyType;
 
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
-import org.geotools.feature.DefaultFeatureCollections;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -106,8 +106,9 @@ public class SimpleGMLParser extends AbstractParser {
 	}
 	
 	private GTVectorDataBinding parseXML(GMLPacketDocument doc) {
-		FeatureCollection collection = DefaultFeatureCollections.newCollection();
+		
 		int numberOfMembers = doc.getGMLPacket().getPacketMemberArray().length;
+		List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
 		for(int i = 0; i< numberOfMembers; i++) {
 			StaticFeatureType feature = doc.getGMLPacket().getPacketMemberArray(i).getStaticFeature();
 			//at the start create the featureType and the featureBuilder
@@ -118,12 +119,15 @@ public class SimpleGMLParser extends AbstractParser {
 				
 			SimpleFeature newFeature = convertStaticFeature(feature);
 			if (newFeature != null) {
-				collection.add(newFeature);
+				simpleFeatureList.add(newFeature);
 			}
 			else {
 				LOGGER.debug("feature has no geometry, feature will not be included in featureCollection");
 			}
 		}
+		
+		SimpleFeatureCollection collection = new ListFeatureCollection(type, simpleFeatureList);
+		
 		return new GTVectorDataBinding(collection); 
 	}
 	

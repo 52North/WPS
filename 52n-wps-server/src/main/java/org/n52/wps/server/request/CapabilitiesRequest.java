@@ -105,7 +105,7 @@ public class CapabilitiesRequest extends Request {
                     NodeList nList2 = n.getChildNodes();
 
                     for (int j = 0; j < nList2.getLength(); j++) {
-                        Node n2 = nList2.item(i);
+                        Node n2 = nList2.item(j);
 
                         if (n2.getLocalName() != null
                                 && n2.getLocalName().equalsIgnoreCase(RequestHandler.VERSION_ATTRIBUTE_NAME)) {
