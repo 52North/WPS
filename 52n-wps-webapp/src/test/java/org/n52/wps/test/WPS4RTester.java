@@ -199,13 +199,13 @@ public class WPS4RTester {
 
         Random rand = new Random();
         int a = rand.nextInt(100);
-        payload.replace("@@@a@@@", Integer.toString(a));
+        payload = payload.replace("@@@a@@@", Integer.toString(a));
         int b = rand.nextInt(100);
-        payload.replace("@@@a@@@", Integer.toString(b));
+        payload = payload.replace("@@@b@@@", Integer.toString(b));
         int op = rand.nextInt(3);
         String[] ops = new String[] {"+", "-", "*"};
         String opString = ops[op];
-        payload.replace("@@@a@@@", opString);
+        payload = payload.replace("@@@op@@@", opString);
         int result = Integer.MIN_VALUE;
         if (opString.equals("+"))
             result = a + b;
