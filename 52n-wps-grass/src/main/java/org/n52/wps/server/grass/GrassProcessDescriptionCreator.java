@@ -49,7 +49,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
-import org.n52.wps.server.grass.util.StreamGobbler;
+import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
 public class GrassProcessDescriptionCreator {
 	
@@ -116,14 +116,15 @@ public class GrassProcessDescriptionCreator {
 
 		PipedInputStream pipedInError = new PipedInputStream(pipedOutError);
 		
-		// any error message?
-		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(),
+		// attach error stream reader
+		JavaProcessStreamReader errorGobbler = new JavaProcessStreamReader(proc.getErrorStream(),
 				"ERROR", pipedOutError);
 
-		// any output?
-		StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(),
+		// attach output stream reader
+		JavaProcessStreamReader outputGobbler = new JavaProcessStreamReader(proc.getInputStream(),
 				"OUTPUT", pipedOut);
 
+		// start them
 		executor.execute(errorGobbler);
 		executor.execute(outputGobbler);
 

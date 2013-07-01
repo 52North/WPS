@@ -50,7 +50,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.grass.GrassProcessRepository;
-import org.n52.wps.server.grass.util.StreamGobbler;
+import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
 public class GrassIOHandler {
 	
@@ -535,17 +535,17 @@ public class GrassIOHandler {
 	        
 	        PipedInputStream pipedIn = new PipedInputStream(pipedOut);  
 			
-			// any error message?
-			StreamGobbler errorGobbler = new StreamGobbler(proc
+			// attach error stream reader
+			JavaProcessStreamReader errorStreamReader = new JavaProcessStreamReader(proc
 					.getErrorStream(), "ERROR", pipedOut);
 
-			// any output?
-			StreamGobbler outputGobbler = new StreamGobbler(proc
+			// attach output stream reader
+			JavaProcessStreamReader outputStreamReader = new JavaProcessStreamReader(proc
 					.getInputStream(), "OUTPUT");
 			
-			// kick them off
-			errorGobbler.start();
-			outputGobbler.start();
+			// start them
+			errorStreamReader.start();
+			outputStreamReader.start();
 			
 			//fetch errors if there are any
 			BufferedReader errorReader = new BufferedReader(new InputStreamReader(pipedIn));
@@ -564,7 +564,7 @@ public class GrassIOHandler {
 			try {
 				proc.waitFor();
 			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				LOGGER.error("Java proces was interrupted.", e1);
 			}finally{
 				proc.destroy();
 			}
