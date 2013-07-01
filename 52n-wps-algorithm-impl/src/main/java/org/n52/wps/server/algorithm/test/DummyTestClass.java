@@ -1,11 +1,13 @@
 package org.n52.wps.server.algorithm.test;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
@@ -22,15 +24,13 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 	private final String outputID2 = "LiteralOutputData";
 	private final String outputID3 = "BBOXOutputData";
 	
-	private List<String> errors = new ArrayList<String>();
-	
-	
+	private List<String> errors = new ArrayList<String>();	
 
 	public List<String> getErrors() {
 		return errors;
 	}
 
-	public Class getInputDataType(String id) {
+	public Class<?> getInputDataType(String id) {
 		if (id.equalsIgnoreCase(inputID1)) {
 			return GenericFileDataBinding.class;
 		}
@@ -43,13 +43,14 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 		return null;
 		
 	}
+	
 	@Override
 	public BigInteger getMinOccurs(String identifier){
 		return new BigInteger("0");
 	}
 	
 
-	public Class getOutputDataType(String id) {
+	public Class<?> getOutputDataType(String id) {
 		if (id.equalsIgnoreCase(outputID1)) {
 			return GenericFileDataBinding.class;
 		}
@@ -85,7 +86,20 @@ public class DummyTestClass extends AbstractSelfDescribingAlgorithm {
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		HashMap<String,IData> result = new HashMap<String,IData>();
 		if(inputData.containsKey(inputID1)){
-			result.put(outputID1, inputData.get(inputID1).get(0));
+			
+			IData data = inputData.get(inputID1).get(0);
+			
+			if(data instanceof GenericFileDataBinding){
+				GenericFileDataBinding genericFileDataBinding = (GenericFileDataBinding)data;
+				GenericFileData genericFileData = genericFileDataBinding.getPayload();
+				try {
+					result.put(outputID1, new GenericFileDataBinding(new GenericFileData(genericFileData.getBaseFile(false), genericFileData.getMimeType())));
+				} catch (IOException e) {
+					errors.add(e.getMessage());
+				}
+			}else{
+				result.put(outputID1, data);
+			}
 		}
 		if(inputData.containsKey(inputID2)){
 			result.put(outputID2, inputData.get(inputID2).get(0));

@@ -337,7 +337,7 @@ public abstract class ResponseData {
 	}
 
 	protected void prepareGenerator() throws ExceptionReport {
-		Class algorithmOutput = RepositoryManager.getInstance().getOutputDataTypeForAlgorithm(this.algorithmIdentifier, id);
+		Class<?> algorithmOutput = RepositoryManager.getInstance().getOutputDataTypeForAlgorithm(this.algorithmIdentifier, id);
 		
 		LOGGER.debug("Looking for matching Generator ..." + 
 				" schema: " + schema +
