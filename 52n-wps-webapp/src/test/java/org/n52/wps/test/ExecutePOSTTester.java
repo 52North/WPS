@@ -1518,40 +1518,6 @@ public class ExecutePOSTTester {
     }
 
     @Test
-    public void testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStoreStatus() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTinlineLiteralDataASynchronousLiteralOutputStoreStatus");
-
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0 "
-                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-                + "<ows:Identifier>org.n52.wps.server.algorithm.test.DummyTestClass</ows:Identifier>"
-                + "<wps:DataInputs>"
-                + "<wps:Input>"
-                + "<ows:Identifier>LiteralInputData</ows:Identifier>"
-                + "<ows:Title>Distance which people will walk to get to a playground.</ows:Title>"
-                + "<wps:Data>"
-                + "<wps:LiteralData>007</wps:LiteralData>"
-                + "</wps:Data>"
-                + "</wps:Input>"
-                + "</wps:DataInputs>"
-                + "<wps:ResponseForm>"
-                + "<wps:ResponseDocument status=\"true\" storeExecuteResponse=\"true\">"
-                + "<wps:Output asReference=\"false\">"
-                + "<ows:Identifier>LiteralOutputData</ows:Identifier>"
-                + "</wps:Output>"
-                + "</wps:ResponseDocument>"
-                + "</wps:ResponseForm>"
-                + "</wps:Execute>";
-        String response = PostClient.sendRequest(url, payload);
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("Status"));
-        
-        String asyncDoc = AllTestsIT.getAsyncDoc(response);
-        assertThat(asyncDoc, asyncDoc, containsString("007"));
-    }
-
-    @Test
     public void testExecutePOSTinlineLiteralDataSynchronousLiteralOutputRaw() throws IOException {
         System.out.println("\nRunning testExecutePOSTinlineLiteralDataSynchronousLiteralOutputRaw");
 
