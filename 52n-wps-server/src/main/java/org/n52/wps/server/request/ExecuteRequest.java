@@ -817,6 +817,7 @@ public class ExecuteRequest extends Request implements IObserver {
             }
         } catch (ExceptionReport e) {
             LOGGER.error("Update of process status failed.", e);
+            throw new RuntimeException(e);
         }
 	}
     
