@@ -19,17 +19,13 @@ myLog("Start script... ", Sys.time())
 
 # wps.in: sos_url, string, title = SOS service URL,
 # abstract = SOS URL endpoint,
-# value = http://fluggs.wupperverband.de/sos/sos,
+# value = http://v-swe.uni-muenster.de:8080/WeatherSOS/sos,
 # minOccurs = 0, maxOccurs = 1;
-sos_url <- "http://fluggs.wupperverband.de/sos/sos"
+sos_url <- "http://v-swe.uni-muenster.de:8080/WeatherSOS/sos"
 
 # wps.in: offering_id, type = string, title = identifier for the used offering,
-# value = Luft;
-offering_id <- "Luft"
-
-## wps.in: offering_id, type = string, title = identifier for the used offering,
-## value = Luft;
-##offering_property <- "Lufttemperatur"
+# value = ATMOSPHERIC_TEMPERATURE;
+offering_id <- "ATMOSPHERIC_TEMPERATURE"
 
 # wps.in: offering_days, integer, temporal extent,
 # the number of days the plot spans to the past,
@@ -38,9 +34,9 @@ offering_id <- "Luft"
 offering_days <- 7
 
 # wps.in: offering_station, type = integer, title = identifier for the used offering,
-# value = 38,
+# value = 1,
 # minOccurs = 0, maxOccurs = 1;
-offering_station <- round(runif(n = 1, min = 30, max = 40))
+offering_station <- 1
 
 # wps.in: image_width, type = integer, title = width of the generated image in pixels,
 # value = 800, minOccurs = 0, maxOccurs = 1;
@@ -54,59 +50,49 @@ image_height = 500;
 ################################################################################
 # SOS and time series analysis
 
-converters <- SosDataFieldConvertingFunctions("Lufttemperatur" = sosConvertDouble,
-																							"Lufttemperatur" = sosConvertDouble)
-
 # establish a connection to a SOS instance with default settings
-sos <- SOS(url = sos_url, dataFieldConverters = converters)
+sos <- SOS(url = sos_url)
 
 # set up request parameters
 offering <- sosOfferings(sos)[[offering_id]]
-myLog(toString(offering))
-
-stationFilter <- sosProcedures(offering)[[offering_station]]
-observedPropertyFilter <- sosObservedProperties(offering)[1]
+stationFilter <- sosProcedures(sos)[[offering_station]]
+#observedPropertyFilter <- sosObservedProperties(offering)[offering_property]
 timeFilter <- sosCreateEventTimeList(sosCreateTimePeriod(sos = sos,
 		begin = (Sys.time() - 3600 * 24 * offering_days), end = Sys.time()))
 
 # make the request
 observation <- getObservation(sos = sos, # verbose = TRUE,
-		observedProperty = observedPropertyFilter,
+#		observedProperty = observedPropertyFilter,
 		procedure = stationFilter,
 		eventTime = timeFilter,
 		offering = offering)
 data <- sosResult(observation)
-# summary(data)
-# str(data)
-
-# create time series ###########################################################
-timeField <- "SamplingTime"
 
 valuesIndex <- 3
 values <- data[[names(data)[[valuesIndex]]]]
 
 # create time series from data and plot
-timeSeries <- xts(x = values, order.by = data[[timeField]])
+timeSeries <- xts(x = values, order.by = data[["Time"]])
 
 # calculate regression (polynomial fitting)
 regressionValues <- data[[names(data)[[valuesIndex]]]]
-regressionTime <- as.numeric(data[[timeField]])
+regressionTime <- as.numeric(data[["Time"]])
 regression = loess(regressionValues~regressionTime, na.omit(data),
 		enp.target=10)
 
-# create plot ##################################################################
+# create plot
 ## wps.out: output_image, type = image/jpeg, title = The output image, 
 ## abstract = On-the-fly generated plot for the requested time series;
 output_image <- "output.jpg"
 jpeg(file = output_image,
 		width = image_width, height = image_height, units = "px")
 p <- plot(timeSeries, main = "Dynamic Time Series Plot",
-		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
-		xlab = attr(data[[timeField]], "name"),
-		ylab = paste0(attr(values, "name"), 
-				" [", attr(values, "unit of measurement"), "]"),
+		sub = paste0(toString(unique(data[["feature"]])), "\nfrom ", sosUrl(sos)),
+		xlab = "Time",
+		ylab = paste0(attributes(values)[["name"]], 
+				" in ", attributes(values)[["unit of measurement"]]),
 		major.ticks = "days")
-lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
+lines(data$Time, regression$fitted, col = 'red', lwd = 3)
 graphics.off()
 
 myLog("Created image ", output_image)
