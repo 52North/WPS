@@ -153,56 +153,60 @@
 		<module>52n-wps-mc</module>
 		<!--  module>52n-wps-ilwis</module -->
 	</modules>
-	<dependencies>
-	<dependency>
-		<groupId>org.apache.abdera</groupId>
-		<artifactId>abdera-bundle</artifactId>
-		<exclusions>
-			<exclusion>
-				<artifactId>xmlsec</artifactId>
-				<groupId>xml-security</groupId>
-			</exclusion>
-			<exclusion>
-				<artifactId>geronimo-activation_1.0.2_spec</artifactId>
-				<groupId>org.apache.geronimo.specs</groupId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	<dependency>
-		<groupId>org.n52.mc</groupId>
-		<artifactId>mc-runtime</artifactId>
-		<version>0.5</version>
-		<exclusions>
-			<exclusion>
-				<artifactId>REngine</artifactId>
-				<groupId>org.nuiton.thirdparty</groupId>
-			</exclusion>
-			<exclusion>
-				<artifactId>Rserve</artifactId>
-				<groupId>org.nuiton.thirdparty</groupId>
-			</exclusion>
-		</exclusions>
-	</dependency>		
-	<dependency>
-		<groupId>org.n52.mc</groupId>
- 		<artifactId>mc-schema</artifactId>
- 		<version>1.0</version>
-	</dependency>
-	<dependency>
-		<groupId>org.apache.ws.security</groupId>
-		<artifactId>wss4j</artifactId>
-		<exclusions>
-			<exclusion>
-				<artifactId>bcprov-jdk14</artifactId>
-				<groupId>bouncycastle</groupId>
-			</exclusion>
-		</exclusions>
-	</dependency>
-	</dependencies>
+<!-- 	<dependencies> -->
+<!-- 	<dependency> -->
+<!-- 		<groupId>org.apache.abdera</groupId> -->
+<!-- 		<artifactId>abdera-bundle</artifactId> -->
+<!-- 		<exclusions> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>xmlsec</artifactId> -->
+<!-- 				<groupId>xml-security</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>geronimo-activation_1.0.2_spec</artifactId> -->
+<!-- 				<groupId>org.apache.geronimo.specs</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 		</exclusions> -->
+<!-- 	</dependency> -->
+<!-- 	<dependency> -->
+<!-- 		<groupId>org.n52.mc</groupId> -->
+<!-- 		<artifactId>mc-runtime</artifactId> -->
+<!-- 		<version>0.5</version> -->
+<!-- 		<exclusions> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>REngine</artifactId> -->
+<!-- 				<groupId>org.nuiton.thirdparty</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>Rserve</artifactId> -->
+<!-- 				<groupId>org.nuiton.thirdparty</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>log4j</artifactId> -->
+<!-- 				<groupId>log4j</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 		</exclusions> -->
+<!-- 	</dependency>		 -->
+<!-- 	<dependency> -->
+<!-- 		<groupId>org.n52.mc</groupId> -->
+<!--  		<artifactId>mc-schema</artifactId> -->
+<!--  		<version>1.0</version> -->
+<!-- 	</dependency> -->
+<!-- 	<dependency> -->
+<!-- 		<groupId>org.apache.ws.security</groupId> -->
+<!-- 		<artifactId>wss4j</artifactId> -->
+<!-- 		<exclusions> -->
+<!-- 			<exclusion> -->
+<!-- 				<artifactId>bcprov-jdk14</artifactId> -->
+<!-- 				<groupId>bouncycastle</groupId> -->
+<!-- 			</exclusion> -->
+<!-- 		</exclusions> -->
+<!-- 	</dependency> -->
+<!-- 	</dependencies> -->
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<log4j.version>1.2.14</log4j.version>
-		<slf4j.version>1.7.2</slf4j.version>
+		<slf4j.version>1.7.5</slf4j.version>
+		<logback.version>1.0.13</logback.version>
 		<geotools.version>8.7</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
@@ -229,11 +233,11 @@
 				<version>${slf4j.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>${slf4j.version}</version>
-				<scope>runtime</scope>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
 			</dependency>
+            
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
@@ -264,11 +268,6 @@
 				<version>1.0.4</version>
 				<!-- provided due to use of slf4j bridge -->
 				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j.version}</version>
 			</dependency>
 			<!-- START import geotools dependencies -->
 			<dependency>
@@ -605,7 +604,6 @@
 				<artifactId>52n-wps-commons</artifactId>
 				<classifier>tests</classifier>
 				<version>${project.version}</version>
-				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
