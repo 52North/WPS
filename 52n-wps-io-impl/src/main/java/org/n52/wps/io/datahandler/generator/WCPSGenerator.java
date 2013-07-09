@@ -36,13 +36,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.ArrayDataBinding;
 
 public class WCPSGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(WCPSGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(WCPSGenerator.class);
 
 	public WCPSGenerator(){
 		super();

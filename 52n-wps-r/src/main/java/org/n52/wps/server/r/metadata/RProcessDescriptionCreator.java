@@ -42,7 +42,8 @@ import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
@@ -59,7 +60,7 @@ import org.n52.wps.server.r.syntax.RAttribute;
 
 public class RProcessDescriptionCreator {
 
-    private static Logger LOGGER = Logger.getLogger(RProcessDescriptionCreator.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
     /**
      * Usually called from GenericRProcess (extends AbstractObservableAlgorithm)

@@ -41,7 +41,8 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
@@ -57,7 +58,7 @@ import org.n52.wps.server.feed.movingcode.MovingCodeUtils;
 
 public class ArcToolboxProcessDelegator implements IAlgorithm{
 	
-	private static Logger LOGGER = Logger.getLogger(ArcToolboxProcessDelegator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ArcToolboxProcessDelegator.class);
 	private AGSWorkspace agsWorkspace;
 	
 	private final File toolWorkspace;

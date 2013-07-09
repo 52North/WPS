@@ -41,7 +41,8 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
@@ -55,7 +56,7 @@ import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 public class PythonScriptDelegator implements IAlgorithm{
 	private static final String COMMAND = "cmd /c";
 	
-	private static Logger LOGGER = Logger.getLogger(PythonScriptDelegator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(PythonScriptDelegator.class);
 	
 	private final File scriptWorkspace;
 	private final File workspaceBase;

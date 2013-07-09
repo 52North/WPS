@@ -53,7 +53,8 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.StatusType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
@@ -84,7 +85,7 @@ public class ExecuteResponseBuilder {
 	private ExecuteResponseDocument doc;
 	private RawData rawDataHandler = null; 
 	private ProcessDescriptionType description;
-	private static Logger LOGGER = Logger.getLogger(ExecuteResponseBuilder.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilder.class);
 	private Calendar creationTime;
 	
 	public ExecuteResponseBuilder(ExecuteRequest request) throws ExceptionReport{

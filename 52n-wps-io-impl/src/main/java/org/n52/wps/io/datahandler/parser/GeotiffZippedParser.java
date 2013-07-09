@@ -38,7 +38,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffReader;
@@ -47,7 +48,7 @@ import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public class GeotiffZippedParser extends AbstractParser {
 	
-	private static Logger LOGGER = Logger.getLogger(GeotiffZippedParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GeotiffZippedParser.class);
 	
 	public GeotiffZippedParser() {
 		super();

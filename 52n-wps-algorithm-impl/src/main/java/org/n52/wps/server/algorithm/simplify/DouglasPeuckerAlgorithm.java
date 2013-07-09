@@ -40,7 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.IllegalAttributeException;
@@ -60,7 +61,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
-	Logger LOGGER = Logger.getLogger(DouglasPeuckerAlgorithm.class);
+	Logger LOGGER = LoggerFactory.getLogger(DouglasPeuckerAlgorithm.class);
 	
 	private List<String> errors = new ArrayList<String>();
 	

@@ -43,7 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -63,7 +64,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 
-	Logger LOGGER = Logger.getLogger(ConvexHullAlgorithm.class);
+	Logger LOGGER = LoggerFactory.getLogger(ConvexHullAlgorithm.class);
 	private List<String> errors = new ArrayList<String>();
 
 	public List<String> getErrors() {

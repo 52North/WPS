@@ -22,7 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xpath.XPathAPI;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -45,7 +46,7 @@ public class IOUtils {
 	 *             if an error occurs while writing the contents to disk
 	 */
 	
-	private static Logger LOGGER = Logger.getLogger(IOUtils.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(IOUtils.class);
 	
 	public static File writeBase64ToFile(InputStream input, String extension)
 			throws IOException {

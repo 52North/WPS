@@ -52,7 +52,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 
@@ -62,7 +63,7 @@ import org.n52.wps.commons.WPSConfig;
  * @author Florian van Keulen
  */
 public class ConfigUploadBean {
-    private static transient Logger LOGGER = Logger.getLogger(ConfigUploadBean.class);
+    private static transient Logger LOGGER = LoggerFactory.getLogger(ConfigUploadBean.class);
 
     private String savePath, filepath, filename, xmlFilepath, xmlFilename, realSavePath, boundary;
 

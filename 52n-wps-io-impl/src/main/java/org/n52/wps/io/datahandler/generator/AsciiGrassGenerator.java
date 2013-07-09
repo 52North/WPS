@@ -42,7 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataSourceException;
 import org.geotools.gce.arcgrid.ArcGridWriter;
@@ -54,7 +55,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 public class AsciiGrassGenerator extends AbstractGenerator {
 
-	private static Logger LOGGER = Logger.getLogger(AsciiGrassGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassGenerator.class);
 	
 	public AsciiGrassGenerator() {
 		super();

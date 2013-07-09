@@ -3,9 +3,9 @@ import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import org.apache.log4j.BasicConfigurator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.WPSConfigTestUtil;
@@ -13,15 +13,13 @@ import org.n52.wps.io.AbstractIOHandler;
 
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
 
-	protected Logger LOGGER = Logger.getLogger(AbstractTestCase.class);
+	protected Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
 	
 	protected String projectRoot;
 
 	protected T dataHandler;
 	
 	public AbstractTestCase() {
-		
-		BasicConfigurator.configure();
 		
 		File f = new File(this.getClass().getProtectionDomain().getCodeSource()
 				.getLocation().getFile());

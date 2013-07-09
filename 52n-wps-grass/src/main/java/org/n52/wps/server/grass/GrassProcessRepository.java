@@ -38,7 +38,8 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
@@ -48,8 +49,7 @@ import org.n52.wps.server.request.ExecuteRequest;
 
 public class GrassProcessRepository implements IAlgorithmRepository {
 
-	private static Logger LOGGER = Logger
-			.getLogger(GrassProcessRepository.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessRepository.class);
 	private Map<String, ProcessDescriptionType> registeredProcesses;
 	private Map<String, Boolean> processesAddonFlagMap;
 	private final String fileSeparator = System.getProperty("file.separator");
@@ -211,7 +211,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 							LOGGER.warn("Could not add Grass process : "
 									+ process
 									+ ". Errors while creating process description");
-							LOGGER.error(e);
+							LOGGER.error(e.getMessage(), e);
 						}
 
 					} else {
@@ -261,7 +261,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 							LOGGER.warn("Could not add Grass Addon process : "
 									+ process
 									+ ". Errors while creating process description");
-							LOGGER.error(e);
+							LOGGER.error(e.getMessage(), e);
 						}
 
 					} else {
@@ -285,7 +285,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		if (registeredProcesses.containsKey(processID)) {
 			return true;
 		}
-		LOGGER.warn("Could not find Grass process " + processID, null);
+		LOGGER.warn("Could not find Grass process " + processID);
 		return false;
 	}
 

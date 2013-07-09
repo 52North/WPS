@@ -43,7 +43,8 @@ import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
@@ -56,7 +57,7 @@ import org.n52.wps.server.grass.io.GrassIOHandler;
 
 public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
-	private static Logger LOGGER = Logger.getLogger(GrassProcessDelegator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessDelegator.class);
 
 	private String processID;
 	private boolean isAddon;

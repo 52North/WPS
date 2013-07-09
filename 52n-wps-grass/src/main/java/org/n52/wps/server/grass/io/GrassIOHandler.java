@@ -41,7 +41,8 @@ import java.net.InetAddress;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -70,7 +71,7 @@ public class GrassIOHandler {
 	private String addonPath;	
 	private String[] envp;
 	private boolean isAddon;
-	private static Logger LOGGER = Logger.getLogger(GrassIOHandler.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GrassIOHandler.class);
 	
 	private final String logFilename = ".log";
 	private final String stdErrorFilename = "_stderr.log";

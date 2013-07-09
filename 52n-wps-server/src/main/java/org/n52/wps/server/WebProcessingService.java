@@ -55,7 +55,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -82,7 +83,7 @@ public class WebProcessingService extends HttpServlet {
     public static String SERVLET_PATH = "WebProcessingService";
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
     public static String DEFAULT_LANGUAGE = "en-US";
-    protected static Logger LOGGER = Logger.getLogger(WebProcessingService.class);
+    protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
 
     /**
      * 

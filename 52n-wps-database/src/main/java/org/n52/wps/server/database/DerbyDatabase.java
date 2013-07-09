@@ -36,14 +36,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @note Uses lazy initialization without synchronization  
  */
 public class DerbyDatabase extends AbstractDatabase {
 
-	private static Logger LOGGER = Logger.getLogger(DerbyDatabase.class); // Get access to the global logger.
+	private static Logger LOGGER = LoggerFactory.getLogger(DerbyDatabase.class); // Get access to the global logger.
 	private static String connectionURL = null;
 	private static Connection conn = null;
 	private static DerbyDatabase db = new DerbyDatabase(); // Static loading.

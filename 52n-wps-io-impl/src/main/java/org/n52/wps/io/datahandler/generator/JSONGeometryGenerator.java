@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.data.GenericFileData;
@@ -51,7 +52,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class JSONGeometryGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(JSONGeometryGenerator.class); 
+	private static Logger LOGGER = LoggerFactory.getLogger(JSONGeometryGenerator.class); 
 	
 	boolean isShapefile = false; // needed for a workaround: if the input is gml without a specified crs,
 								 // the coordinates usually are swapped, compared to the shapefile

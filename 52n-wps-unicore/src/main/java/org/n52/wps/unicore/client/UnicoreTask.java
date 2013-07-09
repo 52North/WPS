@@ -11,7 +11,7 @@ import java.io.ObjectInputStream;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationDocument;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.ApplicationType;
 import org.ggf.schemas.jsdl.x2005.x11.jsdl.JobDefinitionDocument;
@@ -37,7 +37,7 @@ import de.fzj.unicore.uas.security.IUASSecurityProperties;
 
 public class UnicoreTask implements Callable<Object>
 {
-	private static Logger LOGGER = Logger.getLogger(UnicoreTask.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(UnicoreTask.class);
 
 	public static final String TARGET_SYSTEM_INPUT_FILE_NAME = "input";
 	public static final String TARGET_SYSTEM_OUTPUT_FILE_NAME = "output";

@@ -37,7 +37,8 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.GTHelper;
@@ -48,6 +49,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.ComplexDataOutput;
@@ -58,7 +60,7 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 @Algorithm(version = "1.1.0")
 public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
 
-    private static Logger LOGGER = Logger.getLogger(SimpleBufferAlgorithm.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(SimpleBufferAlgorithm.class);
     private Double percentage;
 
     public SimpleBufferAlgorithm() {

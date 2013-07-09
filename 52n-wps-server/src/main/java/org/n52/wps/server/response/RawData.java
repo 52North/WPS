@@ -33,7 +33,8 @@ import java.io.InputStream;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
@@ -48,7 +49,7 @@ import org.opengis.geometry.Envelope;
  */
 public class RawData extends ResponseData {
 
-	static Logger LOGGER = Logger.getLogger(RawData.class);
+	static Logger LOGGER = LoggerFactory.getLogger(RawData.class);
 	/**
 	 * @param obj
 	 * @param id

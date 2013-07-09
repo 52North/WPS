@@ -52,7 +52,8 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.BasicXMLTypeFactory;
@@ -71,7 +72,7 @@ import org.w3c.dom.Node;
  */
 public class OutputDataItem extends ResponseData {
 
-	private static Logger LOGGER = Logger.getLogger(OutputDataItem.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(OutputDataItem.class);
 	private static String COMPLEX_DATA_TYPE = "ComplexDataResponse";
 	private LanguageStringType title;	
 
@@ -147,16 +148,16 @@ public class OutputDataItem extends ResponseData {
 			}
 			
 		} catch(RuntimeException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (ParserConfigurationException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		
@@ -218,7 +219,7 @@ public class OutputDataItem extends ResponseData {
 			}
 		}
 		catch (IOException e){
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		

@@ -29,14 +29,16 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
 package org.n52.wps.io.datahandler.parser;
 
 import java.io.InputStream;
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
 
 public class GenericFileParser extends AbstractParser{
 	
-	private static Logger LOGGER = Logger.getLogger(GenericFileParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
 	
 	public GenericFileParser() {
 		super();

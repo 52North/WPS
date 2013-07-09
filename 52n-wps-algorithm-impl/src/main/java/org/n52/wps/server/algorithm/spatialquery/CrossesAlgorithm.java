@@ -42,7 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.data.IData;
@@ -55,7 +56,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class CrossesAlgorithm extends AbstractSelfDescribingAlgorithm {
 
-	Logger LOGGER = Logger.getLogger(CrossesAlgorithm.class);
+	Logger LOGGER = LoggerFactory.getLogger(CrossesAlgorithm.class);
 	private final String inputID1 = "LAYER1";
 	private final String inputID2 = "LAYER2";
 	private final String outputID = "RESULT";

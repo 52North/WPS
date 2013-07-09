@@ -17,7 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RemoteRepositoryDocument;
 import org.n52.wps.RemoteRepositoryDocument.RemoteRepository;
@@ -27,8 +28,7 @@ import org.n52.wps.commons.WPSConfig;
 
 public class FeedServlet extends HttpServlet {
 
-	private static transient Logger LOGGER = Logger
-			.getLogger(FeedServlet.class);
+	private static transient Logger LOGGER = LoggerFactory.getLogger(FeedServlet.class);
 
 	/**
 	 * 
@@ -70,7 +70,7 @@ public class FeedServlet extends HttpServlet {
 			while ((k = br.read()) != -1) {
 				sw.write(k);
 			}
-			LOGGER.debug(sw);
+			LOGGER.debug(sw.toString());
 			String s;
 			String reqContentType = req.getContentType();
 			if (sw.toString().startsWith("request=")) {

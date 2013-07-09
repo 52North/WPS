@@ -35,14 +35,15 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  */
 public class DatabaseFactory implements IDatabase
 {
-	private static Logger LOGGER = Logger.getLogger(DatabaseFactory.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(DatabaseFactory.class);
 	// Property of the name of the database. Used to define the database implementation.
 	public static final String PROPERTY_NAME_DATABASE_CLASS_NAME = "databaseClass";
 	private static IDatabase database;
