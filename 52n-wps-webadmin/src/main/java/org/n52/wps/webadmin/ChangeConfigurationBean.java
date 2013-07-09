@@ -39,7 +39,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.AlgorithmRepositoryListDocument.AlgorithmRepositoryList;
 import org.n52.wps.DatahandlersDocument.Datahandlers;
 import org.n52.wps.FormatDocument.Format;
@@ -61,7 +62,7 @@ import org.n52.wps.commons.WPSConfig;
  * @author Florian van Keulen
  */
 public class ChangeConfigurationBean {
-    private static transient Logger LOGGER = Logger.getLogger(ChangeConfigurationBean.class);
+    private static transient Logger LOGGER = LoggerFactory.getLogger(ChangeConfigurationBean.class);
 
     /**
      * Types represents the different types of the Entries to proceed
@@ -513,7 +514,7 @@ public class ChangeConfigurationBean {
             try {
 				propertyName = URLDecoder.decode(propertyName, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 			}
           
             String propertyValue = properties.get(processingProperty + "_Value");
@@ -523,7 +524,7 @@ public class ChangeConfigurationBean {
             try {
 				propertyValue = URLDecoder.decode(propertyValue, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 			}
             String propertyActiveString = properties.get(processingProperty + "_Activator");
             

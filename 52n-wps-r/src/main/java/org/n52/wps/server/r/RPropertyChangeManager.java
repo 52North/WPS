@@ -34,7 +34,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
@@ -44,7 +45,7 @@ import org.n52.wps.server.r.data.CustomDataTypeManager;
 
 public class RPropertyChangeManager implements PropertyChangeListener {
 
-    private static Logger LOGGER = Logger.getLogger(RPropertyChangeManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RPropertyChangeManager.class);
 
     private static RPropertyChangeManager instance;
 

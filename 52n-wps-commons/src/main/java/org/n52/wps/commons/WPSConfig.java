@@ -39,7 +39,6 @@ import java.util.ArrayList;
 
 import javax.servlet.ServletConfig;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
@@ -48,6 +47,8 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WPSConfig implements Serializable {
     /**
@@ -57,7 +58,7 @@ public class WPSConfig implements Serializable {
     private static transient WPSConfig wpsConfig;
     private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 
-    private static transient Logger LOGGER = Logger.getLogger(WPSConfig.class);
+    private static transient Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
 
     // FvK: added Property Change support
     protected final PropertyChangeSupport propertyChangeSupport;

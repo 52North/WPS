@@ -44,7 +44,8 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.ags.workspace.AGSWorkspace;
@@ -57,7 +58,7 @@ import org.w3c.dom.NodeList;
 
 public class AGSProcessRepository implements IAlgorithmRepository {
 	
-	private static Logger LOGGER = Logger.getLogger(AGSProcessRepository.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AGSProcessRepository.class);
 	
 	private Map<String, ProcessDescriptionType> registeredProcessDescriptions;
 	private Map<String, ToolParameter[]> registeredAlgorithmParameters;

@@ -49,7 +49,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
@@ -82,7 +83,7 @@ public class RequestHandler {
 
 	protected OutputStream os;
 
-	private static Logger LOGGER = Logger.getLogger(RequestHandler.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
 	
 	protected String responseMimeType;
 	

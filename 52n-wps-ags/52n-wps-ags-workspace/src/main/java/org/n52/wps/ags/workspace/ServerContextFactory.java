@@ -32,7 +32,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import com.esri.arcgis.interop.AutomationException;
 import com.esri.arcgis.server.IServerContext;
@@ -51,7 +51,7 @@ import com.esri.arcgis.system.VarArray;
 public class ServerContextFactory {
 	
 	private static final Object mutex = new Object();
-	private static Logger LOGGER = Logger.getLogger(ServerContextFactory.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ServerContextFactory.class);
 	private static List<LockedServerContext> contexts = new ArrayList<LockedServerContext>();
 
 	

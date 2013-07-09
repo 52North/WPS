@@ -39,7 +39,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
@@ -83,7 +84,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  */
 public class GenericFileData {
 
-	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileData.class);
 
 	protected final InputStream dataStream;
 	protected String fileExtension;
@@ -465,7 +466,7 @@ public class GenericFileData {
 			}
 			out.close();
 			}catch(Exception e){
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException(
 						"Something went wrong while writing the input stream to the file system",
 						e);
@@ -497,7 +498,7 @@ public class GenericFileData {
 	        	 }
 	         }
 			}catch(Exception e){
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while unzipping input data", e);
 			}
 		}
@@ -508,7 +509,7 @@ public class GenericFileData {
 		try{
 			primaryFile.delete();
 		}catch(Exception e){
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

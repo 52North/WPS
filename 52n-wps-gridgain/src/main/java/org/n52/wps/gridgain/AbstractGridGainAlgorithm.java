@@ -4,7 +4,7 @@ package org.n52.wps.gridgain;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.gridgain.grid.Grid;
 import org.gridgain.grid.GridException;
 import org.gridgain.grid.GridFactory;
@@ -18,7 +18,7 @@ import org.n52.wps.unicore.UnicoreAlgorithmOutput;
 
 public abstract class AbstractGridGainAlgorithm extends AbstractObservableAlgorithm implements IGridGainAlgorithm
 {
-	private static Logger LOGGER = Logger.getLogger(AbstractGridGainAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractGridGainAlgorithm.class);
 	
 	protected IAlgorithm embeddedAlgorithm;
 

@@ -31,7 +31,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.geojson.feature.FeatureJSON;
@@ -54,7 +55,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  */
 public class GeoJSONParser extends AbstractParser {
 
-	private static Logger LOGGER = Logger.getLogger(GeoJSONParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);
 
 	public GeoJSONParser() {
 		super();
@@ -81,7 +82,7 @@ public class GeoJSONParser extends AbstractParser {
 			try {
 				input.close();
 			} catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 

@@ -47,7 +47,8 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.GeneratorFactory;
@@ -65,7 +66,7 @@ public class ExecuteRequestBuilder {
 	ExecuteDocument execute;
 	String SUPPORTED_VERSION = "1.0.0";
 	
-	private static Logger LOGGER = Logger.getLogger(ExecuteRequestBuilder.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequestBuilder.class);
 	
 
 	public ExecuteRequestBuilder(ProcessDescriptionType processDesc) {

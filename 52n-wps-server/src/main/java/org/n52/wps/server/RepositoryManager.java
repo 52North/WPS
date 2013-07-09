@@ -44,7 +44,8 @@ import java.util.List;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
@@ -53,7 +54,7 @@ import org.n52.wps.server.request.ExecuteRequest;
 public class RepositoryManager {
 	
 	private static RepositoryManager instance;
-	private static Logger LOGGER = Logger.getLogger(RepositoryManager.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(RepositoryManager.class);
 	private List<IAlgorithmRepository> repositories;
 	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
 	private UpdateThread updateThread;
