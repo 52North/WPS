@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilderFactory;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -55,7 +55,8 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xpath.XPathAPI;
@@ -79,7 +80,7 @@ import org.w3c.dom.Node;
 public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorithm{
 	
 	private List<String> errors;
-	private static Logger LOGGER = Logger.getLogger(GenericTransactionalAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericTransactionalAlgorithm.class);
 	private ProcessDescriptionType processDescription;
 	private String workspace;
 	

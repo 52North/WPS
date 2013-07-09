@@ -25,7 +25,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.transactional.handler.TransactionalExceptionHandler;
 import org.n52.wps.transactional.handler.TransactionalRequestHandler;
@@ -38,7 +39,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class TransactionalWebProcessingService extends HttpServlet{
-	private static Logger LOGGER = Logger.getLogger(TransactionalWebProcessingService.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(TransactionalWebProcessingService.class);
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		
@@ -57,7 +58,7 @@ public class TransactionalWebProcessingService extends HttpServlet{
     	    while((k=br.read())!=-1){
     	    	sw.write(k);
     	    }
-    	    LOGGER.debug(sw);
+    	    LOGGER.debug(sw.toString());
     	    String s;
     	    String reqContentType = req.getContentType();
     	    if (sw.toString().startsWith("request=")){

@@ -43,7 +43,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
@@ -74,7 +75,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GML32BasicParser extends AbstractParser {
 	
-	private static Logger LOGGER = Logger.getLogger(GML32BasicParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML32BasicParser.class);
 	private Configuration configuration;
 
 

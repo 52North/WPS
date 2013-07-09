@@ -28,7 +28,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.wps.io.datahandler.generator.WKTGenerator;
 import org.n52.wps.io.datahandler.parser.WKTParser;
@@ -40,7 +41,7 @@ import org.n52.wps.io.datahandler.parser.WKTParser;
  */
 public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 
-	protected Logger LOGGER = Logger.getLogger(WKTParserGeneratorTest.class);
+	protected Logger LOGGER = LoggerFactory.getLogger(WKTParserGeneratorTest.class);
 	
 	public void testGenerator() {
 		

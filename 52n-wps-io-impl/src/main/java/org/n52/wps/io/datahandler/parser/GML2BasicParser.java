@@ -50,7 +50,8 @@ import java.util.UUID;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -82,7 +83,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  */
 public class GML2BasicParser extends AbstractParser {
-	private static Logger LOGGER = Logger.getLogger(GML2BasicParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
 
 	public GML2BasicParser() {
 		super();

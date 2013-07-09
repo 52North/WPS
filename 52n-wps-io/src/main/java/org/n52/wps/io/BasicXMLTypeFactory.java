@@ -37,11 +37,12 @@ package org.n52.wps.io;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
-import org.apache.log4j.Level;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.impl.util.Base64;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
@@ -59,7 +60,7 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
 public class BasicXMLTypeFactory {
 
-	private final static Logger LOGGER = Logger.getLogger(BasicXMLTypeFactory.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(BasicXMLTypeFactory.class);
     
 	// List of supported basic XML datatypes.
 	public static final String DOUBLE_URI = "xs:double";
@@ -85,7 +86,7 @@ public class BasicXMLTypeFactory {
             // bah, a checked exception on factory instantiation?
             datatypeFactory = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException ex) {
-            LOGGER.log(Level.ERROR, "Error creating DatatypeFactory for xs:datTime and xs:dateParsing");
+            LOGGER.error("Error creating DatatypeFactory for xs:datTime and xs:dateParsing");
         }
         DATATYPE_FACTORY = datatypeFactory;
     }

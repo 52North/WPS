@@ -7,7 +7,8 @@ import java.io.InputStream;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 
@@ -27,7 +28,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 {
 	private ProcessDescriptionType description; // private, force access through getter method for lazy loading.
 	private final String wkName;
-	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
 	
 	/** 
 	 * default constructor, calls the initializeDescription() Method
