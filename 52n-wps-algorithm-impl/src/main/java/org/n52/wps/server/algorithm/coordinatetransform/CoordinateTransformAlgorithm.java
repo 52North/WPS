@@ -93,10 +93,10 @@ public class CoordinateTransformAlgorithm extends
 		}
 
 		IData firstInputData = dataList.get(0);
-		FeatureCollection<?, Feature> featureCollection = ((GTVectorDataBinding) firstInputData)
+		FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData)
 				.getPayload();
 
-		FeatureIterator<Feature> featureIterator = featureCollection.features();
+		FeatureIterator<?> featureIterator = featureCollection.features();
 
 		List<IData> secondDataList = inputData
 				.get(inputIdentifierTargetReferenceSystem);		

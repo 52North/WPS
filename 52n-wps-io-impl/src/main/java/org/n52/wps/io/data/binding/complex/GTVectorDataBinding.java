@@ -15,9 +15,9 @@ import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 
 public class GTVectorDataBinding implements IComplexData{
 	
-	protected transient FeatureCollection featureCollection;	
+	protected transient FeatureCollection<?, ?> featureCollection;	
 	
-	public GTVectorDataBinding(FeatureCollection payload) {
+	public GTVectorDataBinding(FeatureCollection<?, ?> payload) {
 		this.featureCollection = payload;
 	}
 
@@ -25,7 +25,7 @@ public class GTVectorDataBinding implements IComplexData{
 		return FeatureCollection.class;
 	}
 
-	public FeatureCollection getPayload() {
+	public FeatureCollection<?, ?> getPayload() {
 			return featureCollection;
 	}
 	

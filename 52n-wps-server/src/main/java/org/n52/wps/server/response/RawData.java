@@ -39,7 +39,6 @@ import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
 import org.n52.wps.server.ExceptionReport;
 import org.opengis.geometry.Envelope;
 
@@ -83,8 +82,8 @@ public class RawData extends ResponseData {
 				}else{
 					resultString = resultString + "\">";
 				}
-				double[] lowerCorner = result.getLowerCorner().getCoordinates();
-				double[] upperCorner = result.getUpperCorner().getCoordinates();
+				double[] lowerCorner = result.getLowerCorner().getCoordinate();
+				double[] upperCorner = result.getUpperCorner().getCoordinate();
 				resultString = resultString +"<ows:LowerCorner>"+lowerCorner[0]+" "+lowerCorner[1]+"</ows:LowerCorner>";
 				resultString = resultString +"<ows:UpperCorner>"+upperCorner[0]+" "+upperCorner[1]+"</ows:UpperCorner>";
 				resultString = resultString+ "</wps:BoundingBoxData>";

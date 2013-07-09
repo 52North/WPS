@@ -218,11 +218,10 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="ZippedWKTParser"
+			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-				<Property name="supportedEncoding" active="true">Base64</Property>
+				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -497,6 +496,8 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 		</Repository>

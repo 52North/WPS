@@ -36,7 +36,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
 public class GRASSXMLGenerator extends AbstractGenerator {
-
 	
 	private static Logger LOGGER = Logger.getLogger(GRASSXMLGenerator.class);
 	private static String[] SUPPORTED_SCHEMAS = new String[]{
@@ -55,12 +54,8 @@ public class GRASSXMLGenerator extends AbstractGenerator {
 	
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
+		
 		return theStream;
 	}
 	

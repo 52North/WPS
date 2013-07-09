@@ -103,8 +103,6 @@ public class GenericFileData {
 	public GenericFileData(FeatureCollection<?, ?> featureCollection)
 			throws IOException {
 		this(getShpFile(featureCollection), IOHandler.MIME_TYPE_ZIPPED_SHP);
-		
-
 	}
 
 	public GenericFileData(File primaryTempFile, String mimeType)
@@ -328,7 +326,6 @@ public class GenericFileData {
 				fileName = justWriteData(dataStream, fileExtension, workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not write the input to " + workspaceDir);
-				e.printStackTrace();
 			}
 		}
 
@@ -424,12 +421,10 @@ public class GenericFileData {
 				return new GTVectorDataBinding(features);
 			} catch (MalformedURLException e) {
 				LOGGER.error("Something went wrong while creating data store.");
-				e.printStackTrace();
 				throw new RuntimeException(
 						"Something went wrong while creating data store.", e);
 			} catch (IOException e) {
 				LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
-				e.printStackTrace();
 				throw new RuntimeException(
 						"Something went wrong while converting shapefile to FeatureCollection",
 						e);
@@ -470,6 +465,7 @@ public class GenericFileData {
 			}
 			out.close();
 			}catch(Exception e){
+				LOGGER.error(e);
 				throw new RuntimeException(
 						"Something went wrong while writing the input stream to the file system",
 						e);
@@ -501,6 +497,7 @@ public class GenericFileData {
 	        	 }
 	         }
 			}catch(Exception e){
+				LOGGER.error(e);
 				throw new RuntimeException("Error while unzipping input data", e);
 			}
 		}
@@ -511,7 +508,7 @@ public class GenericFileData {
 		try{
 			primaryFile.delete();
 		}catch(Exception e){
-			
+			LOGGER.error(e);
 		}
 	}
 	
