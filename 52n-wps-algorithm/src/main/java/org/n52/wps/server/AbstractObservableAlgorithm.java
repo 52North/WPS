@@ -9,7 +9,8 @@ import java.util.List;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.observerpattern.IObserver;
@@ -19,7 +20,7 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 
 	protected ProcessDescriptionType description;
 	protected final String wkName;
-	private static Logger LOGGER = Logger.getLogger(AbstractAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
 	
 	/** 
 	 * default constructor, calls the initializeDescription() Method

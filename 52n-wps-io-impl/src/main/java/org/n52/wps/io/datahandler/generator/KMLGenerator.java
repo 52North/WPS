@@ -34,7 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
@@ -45,7 +46,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 public class KMLGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(KMLGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(KMLGenerator.class);
 	
 	public KMLGenerator(){
 		super();

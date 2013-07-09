@@ -40,7 +40,8 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
@@ -58,7 +59,7 @@ public class GML2BasicGenerator extends AbstractGenerator {
 	private boolean featureTransformerIncludeBounding;
 	private int featureTransformerDecimalPlaces;
 	
-	private static Logger LOGGER = Logger.getLogger(GML2BasicGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
 		
 	
 	public GML2BasicGenerator(){

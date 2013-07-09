@@ -43,7 +43,8 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.GTHelper;
@@ -61,7 +62,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 	
-	private static Logger LOGGER = Logger.getLogger(DifferenceAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(DifferenceAlgorithm.class);
 	
 	public DifferenceAlgorithm() {
 		super();

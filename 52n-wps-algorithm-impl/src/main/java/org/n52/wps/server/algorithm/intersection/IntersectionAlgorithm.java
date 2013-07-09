@@ -40,7 +40,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
@@ -63,7 +64,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 	
-	private static Logger LOGGER = Logger.getLogger(IntersectionAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(IntersectionAlgorithm.class);
 	
 	public IntersectionAlgorithm() {
 		super();

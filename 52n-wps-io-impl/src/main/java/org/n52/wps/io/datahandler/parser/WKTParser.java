@@ -28,7 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -42,7 +43,7 @@ import com.vividsolutions.jts.io.WKTReader;
  */
 public class WKTParser extends AbstractParser {
 
-	private static Logger LOGGER = Logger.getLogger(WKTParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(WKTParser.class);
 	
 	public WKTParser() {
 		super();
@@ -58,12 +59,12 @@ public class WKTParser extends AbstractParser {
 			return new JTSGeometryBinding(g);
 			
 		} catch (ParseException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 		}finally{
 			try {
 				input.close();
 			} catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 			}
 		}
 		

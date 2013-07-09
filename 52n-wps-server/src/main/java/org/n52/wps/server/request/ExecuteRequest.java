@@ -64,7 +64,8 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.context.ExecutionContext;
@@ -89,7 +90,7 @@ import org.w3c.dom.Document;
  */
 public class ExecuteRequest extends Request implements IObserver {
 
-	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
 	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilder execRespType;
@@ -110,7 +111,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			option.setLoadTrimTextBuffer();
 			this.execDom = ExecuteDocument.Factory.parse(doc, option);
 			if (this.execDom == null) {
-				LOGGER.fatal("ExecuteDocument is null");
+				LOGGER.error("ExecuteDocument is null");
 				throw new ExceptionReport("Error while parsing post data",
 						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}

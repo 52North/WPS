@@ -34,7 +34,8 @@ import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.data.IData;
@@ -47,7 +48,7 @@ import org.n52.wps.server.RepositoryManager;
  */
 public abstract class ResponseData {
 	
-	private static Logger LOGGER = Logger.getLogger(ResponseData.class); 
+	private static Logger LOGGER = LoggerFactory.getLogger(ResponseData.class); 
 	
 	protected IData obj = null;
 	protected String id;

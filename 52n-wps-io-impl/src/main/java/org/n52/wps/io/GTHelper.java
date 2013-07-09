@@ -36,7 +36,8 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -66,7 +67,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
-	private static Logger LOGGER = Logger.getLogger(GTHelper.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
 	
 	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
 		String namespace = "http://www.52north.org/"+uuid;

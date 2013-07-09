@@ -40,7 +40,8 @@ import java.util.Set;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -63,7 +64,7 @@ import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 
 
 public class SextanteProcessRepository implements IAlgorithmRepository{
-	private static Logger LOGGER = Logger.getLogger(SextanteProcessRepository.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(SextanteProcessRepository.class);
 	private Map<String, ProcessDescriptionType> registeredProcesses;
 	 
 	
@@ -139,7 +140,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		
 		
 		} catch (IOException e) {
-			LOGGER.warn("Could not add Sextante Extension Process. Identifier: Unknown", null);
+			LOGGER.warn("Could not add Sextante Extension Process. Identifier: Unknown", e);
 			e.printStackTrace();
 		} catch (XmlException e) {
 			e.printStackTrace();
@@ -160,7 +161,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		if(registeredProcesses.containsKey(processID)){
 			return true;
 		}
-		LOGGER.warn("Could not find Sextante Process " + processID, null);
+		LOGGER.warn("Could not find Sextante Process " + processID);
 		return false;
 	}
 

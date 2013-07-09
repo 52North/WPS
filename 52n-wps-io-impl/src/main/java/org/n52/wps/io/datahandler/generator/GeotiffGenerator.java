@@ -42,7 +42,8 @@ import java.util.UUID;
 
 import javax.media.jai.JAI;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
@@ -57,7 +58,7 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class GeotiffGenerator  extends AbstractGenerator {
-	private static Logger LOGGER = Logger.getLogger(GeotiffGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GeotiffGenerator.class);
 	
 	public GeotiffGenerator() {
 		super();
@@ -130,14 +131,13 @@ public class GeotiffGenerator  extends AbstractGenerator {
 			geoTiffWriter.write(coverage, (GeneralParameterValue[])paramWrite.values().toArray(new
 					GeneralParameterValue[1]));
 		} catch (IllegalArgumentException e1) {
-			LOGGER.error(e1);
+			LOGGER.error(e1.getMessage(), e1);
 			throw new RuntimeException(e1);
-		} catch (IndexOutOfBoundsException e2) {
-			LOGGER.error(e2);
-			throw new RuntimeException(e2);
-		} catch (IOException e3) {
-			LOGGER.error(e3);
-			throw new RuntimeException(e3);
+		} catch (IndexOutOfBoundsException e1) {
+			LOGGER.error(e1.getMessage(), e1);
+			throw new RuntimeException(e1);
+		} catch (IOException e1) {LOGGER.error(e1.getMessage(), e1);
+			throw new RuntimeException(e1);
 		}
 	}
 	

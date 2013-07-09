@@ -65,7 +65,7 @@ import com.esri.arcgis.system.VarArray;
 
 public class AGSProcessTest {
 
-	private static final Logger logger = Logger.getLogger(AGSProcessTest.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(AGSProcessTest.class.getName());
 	private static String domain   = "gin-rieke";
 	private static String user     = "arcgismanager";	// arcgismanager account
 	private static String password = "2asdf3";	// arcgismanager password

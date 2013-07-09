@@ -40,7 +40,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -56,7 +57,7 @@ public class ParserFactory {
 	
 	public static String PROPERTY_NAME_REGISTERED_PARSERS = "registeredParsers";
 	private static ParserFactory factory;
-	private static Logger LOGGER = Logger.getLogger(ParserFactory.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ParserFactory.class);
 	
 	private List<IParser> registeredParsers;
 

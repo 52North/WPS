@@ -38,7 +38,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -100,7 +101,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	protected static final int INSERT_COLUMN_MIME_TYPE = 5;
 	
 	/** get access to the global logger. */
-	private static Logger LOGGER = Logger.getLogger(AbstractDatabase.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractDatabase.class);
 	
 	protected static PreparedStatement insertSQL = null;
 	protected static PreparedStatement updateSQL = null;

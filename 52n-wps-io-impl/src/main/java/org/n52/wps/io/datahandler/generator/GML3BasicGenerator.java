@@ -40,7 +40,8 @@ import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
@@ -60,7 +61,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class GML3BasicGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(GML3BasicGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicGenerator.class);
 		
 	public GML3BasicGenerator(){
 		super();

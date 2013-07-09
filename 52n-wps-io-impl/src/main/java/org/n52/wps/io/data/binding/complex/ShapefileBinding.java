@@ -3,9 +3,10 @@ package org.n52.wps.io.data.binding.complex;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import org.apache.commons.io.FileUtils;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileUtilities;
@@ -22,7 +23,7 @@ public class ShapefileBinding implements IComplexData{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static Logger LOGGER = Logger.getLogger(ShapefileBinding.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ShapefileBinding.class);
 	
 	
 	protected File shpFile;
@@ -57,7 +58,7 @@ public class ShapefileBinding implements IComplexData{
 		try {
 			zipped = IOUtils.zip(shpFile, shx, dbf, prj);
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return zipped;
 

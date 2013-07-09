@@ -46,8 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.ValueType;
@@ -57,9 +59,11 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
@@ -90,7 +94,7 @@ import org.w3c.dom.Node;
  */
 public class InputHandler {
 
-	private static Logger LOGGER = Logger.getLogger(InputHandler.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(InputHandler.class);
 	private Map<String, List<IData>> inputData = new HashMap<String, List<IData>>();
 	private ProcessDescriptionType processDesc;
 	private String algorithmIdentifier = null; // Needed to take care of handling a conflict between different parsers.

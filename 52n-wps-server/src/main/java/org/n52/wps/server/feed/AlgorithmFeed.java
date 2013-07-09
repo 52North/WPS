@@ -44,11 +44,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 
 
@@ -59,7 +61,7 @@ public class AlgorithmFeed {
 	
 	private MovingCodeObject[] feedAlgorithms;
 	
-	Logger LOGGER = Logger.getLogger(AlgorithmFeed.class);
+	Logger LOGGER = LoggerFactory.getLogger(AlgorithmFeed.class);
 	
 	public AlgorithmFeed (String feedURL, String localPath){
 		this.feedURL = feedURL;

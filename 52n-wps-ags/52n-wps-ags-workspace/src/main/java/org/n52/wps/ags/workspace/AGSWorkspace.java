@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.n52.wps.ags.workspace.ServerContextFactory.LockedServerContext;
 import org.n52.wps.ags.workspace.feature.SpatialRelation;
 import org.n52.wps.ags.workspace.feature.SpatialRelationFeaturePair;
@@ -46,7 +46,7 @@ import com.esri.arcgis.system.VarArray;
 
 public class AGSWorkspace {
 
-	private static Logger LOGGER = Logger.getLogger(AGSWorkspace.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AGSWorkspace.class);
 	private final File workspaceDir;
 
 
