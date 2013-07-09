@@ -7,4 +7,4 @@ nb-configuration*.xml
 .settings
 .project
 .classpath
-
+.Rhistory
