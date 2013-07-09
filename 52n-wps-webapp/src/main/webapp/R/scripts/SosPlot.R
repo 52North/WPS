@@ -40,7 +40,7 @@ offering_days <- 7
 # wps.in: offering_station, type = integer, title = identifier for the used offering,
 # value = 38,
 # minOccurs = 0, maxOccurs = 1;
-offering_station <- round(runif(n = 1, min = 30, max = 40))
+offering_station <- 34 #round(runif(n = 1, min = 30, max = 40))
 
 # wps.in: image_width, type = integer, title = width of the generated image in pixels,
 # value = 800, minOccurs = 0, maxOccurs = 1;
@@ -55,7 +55,7 @@ image_height = 500;
 # SOS and time series analysis
 
 converters <- SosDataFieldConvertingFunctions("Lufttemperatur" = sosConvertDouble,
-																							"Lufttemperatur" = sosConvertDouble)
+																							"Luftfeuchte" = sosConvertDouble)
 
 # establish a connection to a SOS instance with default settings
 sos <- SOS(url = sos_url, dataFieldConverters = converters)
@@ -78,6 +78,8 @@ observation <- getObservation(sos = sos, # verbose = TRUE,
 data <- sosResult(observation)
 # summary(data)
 # str(data)
+
+myLog(toString(str(data)))
 
 # create time series ###########################################################
 timeField <- "SamplingTime"
@@ -109,7 +111,8 @@ p <- plot(timeSeries, main = "Dynamic Time Series Plot",
 lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
 graphics.off()
 
-myLog("Created image ", output_image)
+myLog("Created image: ", output_image)
+myLog("Working directory: ", getwd())
 
 # wps.out: output_image, type = jpeg, title = image plot, 
 # abstract = the output image in jpeg format;
