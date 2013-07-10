@@ -12,7 +12,8 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
@@ -28,7 +29,7 @@ import org.n52.wps.transactional.request.UndeployProcessRequest;
 
 
 public class GenericTransactionalProcessRepository implements ITransactionalAlgorithmRepository{
-	private static Logger LOGGER = Logger.getLogger(GenericTransactionalProcessRepository.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericTransactionalProcessRepository.class);
 	protected Map<String, ProcessDescriptionType> processDescriptionMap;
 	
 	protected IProcessManager deployManager;

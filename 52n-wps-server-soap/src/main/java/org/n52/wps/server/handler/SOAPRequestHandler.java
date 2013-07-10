@@ -2,7 +2,8 @@ package org.n52.wps.server.handler;
 
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
@@ -15,7 +16,7 @@ import org.w3c.dom.Node;
 
 public class SOAPRequestHandler extends RequestHandler {
 
-	private static Logger LOGGER = Logger.getLogger(SOAPRequestHandler.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(SOAPRequestHandler.class);
 
 	/**
 	 * Handles requests of type SOAPMessage (currently capabilities and

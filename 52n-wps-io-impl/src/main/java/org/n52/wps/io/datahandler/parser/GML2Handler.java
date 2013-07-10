@@ -32,14 +32,15 @@ import java.util.Map;
 
 import javax.xml.XMLConstants;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class GML2Handler extends DefaultHandler {
 	
-	private Logger LOGGER = Logger.getLogger(GML2Handler.class);
+	private Logger LOGGER = LoggerFactory.getLogger(GML2Handler.class);
 	// private static String SCHEMA = "http://www.opengis.net/wfs";
 	private String  schemaUrl;
 	private String nameSpaceURI;

@@ -18,7 +18,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 
 /**
@@ -32,7 +33,7 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	
 	// TODO: follow HTTP redirects with LaxRedirectStrategy
 	
-	Logger logger = Logger.getLogger(DefaultReferenceStrategy.class);
+	Logger logger = LoggerFactory.getLogger(DefaultReferenceStrategy.class);
 	
 	//TODO: get proxy from config
 	//static final HttpHost proxy = new HttpHost("127.0.0.1", 8080, "http");

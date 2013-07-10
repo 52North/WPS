@@ -39,7 +39,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
@@ -50,7 +51,7 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
  *
  */
 public class GML2BasicParser4Files extends AbstractParser {
-	private static Logger LOGGER = Logger.getLogger(GML2BasicParser4Files.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
 
 	
 	public GML2BasicParser4Files() {

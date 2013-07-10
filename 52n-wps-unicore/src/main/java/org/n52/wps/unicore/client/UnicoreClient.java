@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.unicore.UnicoreAlgorithmInput;
 import org.n52.wps.unicore.UnicoreAlgorithmOutput;
@@ -42,7 +42,7 @@ import de.fzj.unicore.wsrflite.xmlbeans.BaseFault;
 
 public class UnicoreClient
 {
-	private static Logger LOGGER = Logger.getLogger(UnicoreClient.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(UnicoreClient.class);
 
 	protected IUASSecurityProperties securityProperties;
 
