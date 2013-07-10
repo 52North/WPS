@@ -97,14 +97,14 @@ public class GeoserverWFSGenerator extends AbstractGenerator {
 			Document doc = storeLayer(data);			
 			String xmlString = XMLUtil.nodeToString(doc);			
 			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
-	    } catch(TransformerException ex){
-	    	LOGGER.error("Error generating WFS output. Reason: " + ex);
-	    	throw new RuntimeException("Error generating WFS output. Reason: " + ex);
+	    } catch(TransformerException e){
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
 	    } catch (IOException e) {
-	    	LOGGER.error("Error generating WFS output. Reason: " + e);
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
 	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
 		} catch (ParserConfigurationException e) {
-	    	LOGGER.error("Error generating WFS output. Reason: " + e);
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
 			throw new RuntimeException("Error generating WFS output. Reason: " + e);
 		}	
 		return stream;

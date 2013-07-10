@@ -102,15 +102,15 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 			Document doc = storeLayer(data);			
 			String xmlString = XMLUtil.nodeToString(doc);			
 			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
-	    } catch(TransformerException ex){
-	    	LOGGER.error("Error generating WMS output. Reason: " + ex);
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + ex);
+	    } catch(TransformerException e){
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WMS output. Reason: " + e);
 	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WMS output. Reason: " + e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error generating WCS output. Reason: " + e);
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+			throw new RuntimeException("Error generating WMS output. Reason: " + e);
 		}	
 		return stream;
 	}
