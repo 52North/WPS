@@ -25,31 +25,28 @@ Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-
 package org.n52.wps.io.datahandler.generator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GeotiffBinding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -58,6 +55,7 @@ import org.w3c.dom.Element;
 
 public class GeoserverWCSGenerator extends AbstractGenerator {
 	
+	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGenerator.class);
 	private String username;
 	private String password;
 	private String host;
@@ -98,35 +96,20 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 	
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
 
 		InputStream stream = null;	
 		try {
 			Document doc = storeLayer(data);
-			DOMSource domSource = new DOMSource(doc);
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.transform(domSource, result);
-			sw.flush();
-			sw.close();
-			
-			stream = new ByteArrayInputStream(sw.toString().getBytes("UTF-8"));
-			
-	    }
-	    catch(TransformerException ex){
-	    	ex.printStackTrace();
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + ex);
+			String xmlString = XMLUtil.nodeToString(doc);			
+			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
+	    } catch(TransformerException e){
+	    	LOGGER.error("Error generating WCS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
 	    } catch (IOException e) {
-	    	e.printStackTrace();
+	    	LOGGER.error("Error generating WCS output. Reason: ", e);
 	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+	    	LOGGER.error("Error generating WCS output. Reason: ", e);
 			throw new RuntimeException("Error generating WCS output. Reason: " + e);
 		}	
 		return stream;
@@ -135,21 +118,15 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 	private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
 		File file = null;
 		String storeName = "";
-		String wcsLayerName = "";
 		
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
-			file = fileData.getBaseFile(true);
-			int lastIndex = file.getName().lastIndexOf(".");
-			wcsLayerName = file.getName().substring(0, lastIndex);
-			
+			file = fileData.getBaseFile(true);			
 		}
 		if(coll instanceof GeotiffBinding){
 			GeotiffBinding data = (GeotiffBinding) coll;
 			file = (File) data.getPayload();
-			String path = file.getAbsolutePath();
-			wcsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 		}
 		
 		storeName = file.getName();			
@@ -158,17 +135,14 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 		
 		String result = geoserverUploader.createWorkspace();
-		System.out.println(result);
-		System.out.println("");
+		LOGGER.debug(result);
 		if(coll instanceof GTRasterDataBinding){
 			result = geoserverUploader.uploadGeotiff(file, storeName);
-		}
-		
-		System.out.println(result);
+		}		
+		LOGGER.debug(result);
 				
 		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
-		
-		
+				
 		Document doc = createXML(storeName, capabilitiesLink);
 		return doc;
 	
