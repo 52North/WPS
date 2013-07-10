@@ -91,6 +91,7 @@
 				<Format mimetype="application/x-zipped-shp" />
 				<Format mimetype="application/img" />
 				<Format mimetype="image/tiff" />
+				<Format mimetype="image/geotiff" />
 				<Format mimetype="application/geotiff" />
 				<Format mimetype="application/dbase" />
 				<Format mimetype="application/remap" />
