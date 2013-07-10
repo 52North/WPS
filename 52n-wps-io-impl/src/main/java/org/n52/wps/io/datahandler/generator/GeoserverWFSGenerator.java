@@ -38,20 +38,21 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.HttpException;
-import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class GeoserverWFSGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(GeoserverWFSGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWFSGenerator.class);
 	
 	private String username;
 	private String password;
