@@ -33,7 +33,8 @@ import java.util.Collection;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.movingcode.runtime.GlobalRepositoryManager;
 import org.n52.movingcode.runtime.ProcessorConfig;
 import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
@@ -69,7 +70,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 	// valid functionIDs
 	private String[] validFunctionIDs = null;
 
-	private static Logger logger = Logger.getLogger(MCProcessRepository.class);
+	private static Logger logger = LoggerFactory.getLogger(MCProcessRepository.class);
 
 	public MCProcessRepository() {
 		super();

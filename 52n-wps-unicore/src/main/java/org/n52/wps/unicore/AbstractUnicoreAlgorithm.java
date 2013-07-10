@@ -4,7 +4,7 @@ package org.n52.wps.unicore;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.IAlgorithm;
@@ -12,7 +12,7 @@ import org.n52.wps.unicore.client.UnicoreClient;
 
 public abstract class AbstractUnicoreAlgorithm extends AbstractObservableAlgorithm implements IUnicoreAlgorithm
 {
-	private static Logger LOGGER = Logger.getLogger(AbstractUnicoreAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractUnicoreAlgorithm.class);
 
 	protected IAlgorithm embeddedAlgorithm;
 

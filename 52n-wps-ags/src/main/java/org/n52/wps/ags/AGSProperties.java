@@ -34,7 +34,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 
@@ -50,7 +51,7 @@ public final class AGSProperties {
 	private static String processDescriptionDir;
 	private static boolean nativeDCOM;
 	
-	private static Logger LOGGER = Logger.getLogger(AGSProperties.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AGSProperties.class);
 	private static AGSProperties theProperties;
 	
 	private AGSProperties (){

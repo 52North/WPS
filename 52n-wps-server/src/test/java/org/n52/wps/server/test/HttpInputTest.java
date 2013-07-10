@@ -9,9 +9,6 @@ import java.io.InputStreamReader;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputType;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,10 +22,6 @@ public class HttpInputTest {
 	
 	@Test
 	public void testHttpInput() throws XmlException, IOException{
-		
-		// Logger stuff
-		BasicConfigurator.configure();
-		LogManager.getRootLogger().setLevel(Level.WARN);
 		
 		
 		// Arrange

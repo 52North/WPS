@@ -39,7 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.NameImpl;
@@ -62,7 +63,7 @@ import com.vividsolutions.jts.io.ParseException;
 
 public class GTBinZippedWKT64Parser extends AbstractParser {
 	
-	private static Logger LOGGER = Logger.getLogger(GTBinZippedWKT64Parser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GTBinZippedWKT64Parser.class);
 	
 	public GTBinZippedWKT64Parser() {
 		super();
@@ -94,10 +95,10 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 				stream.close();
 			} catch (FileNotFoundException e) {
 				System.gc();
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException(e);
 			} catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				System.gc();
 				throw new RuntimeException(e);
 			}			
@@ -131,19 +132,19 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 
 			return new GTVectorDataBinding(inputFeatureCollection);
 		} catch (IOException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(
 					"An error has occurred while accessing provided data", e);
 		} catch (ParseException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(
 					"An error has occurred while accessing provided data", e);		
 		} catch (NoSuchAuthorityCodeException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(
 					"An error has occurred while accessing provided data", e);		
 		} catch (FactoryException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException(
 						"An error has occurred while accessing provided data", e);			
 		}
@@ -156,11 +157,11 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 			try {
 				coordinateReferenceSystem = CRS.decode("EPSG:4326");
 			} catch (NoSuchAuthorityCodeException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException(
 						"An error has occurred while trying to decode CRS EPSG:4326", e);				
 			} catch (FactoryException e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage());
 				throw new RuntimeException(
 						"An error has occurred while trying to decode CRS EPSG:432", e);
 			}

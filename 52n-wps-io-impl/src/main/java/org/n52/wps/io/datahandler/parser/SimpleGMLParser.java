@@ -51,7 +51,8 @@ import net.opengis.gml.LinearRingType;
 import net.opengis.gml.PointPropertyType;
 import net.opengis.gml.PolygonPropertyType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -77,7 +78,7 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 public class SimpleGMLParser extends AbstractParser {
 	
-	private static Logger LOGGER = Logger.getLogger(SimpleGMLParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(SimpleGMLParser.class);
 	private SimpleFeatureType type;
 	private SimpleFeatureBuilder featureBuilder;
 	private GeometryFactory geomFactory;

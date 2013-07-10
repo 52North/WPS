@@ -26,7 +26,8 @@ package org.n52.wps.server.algorithm.test;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
@@ -38,7 +39,7 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 @Algorithm(version = "1.1.0", title="for testing multiple inputs by reference")
 public class MultiReferenceInputAlgorithm extends AbstractAnnotatedAlgorithm {
 
-    private static Logger LOGGER = Logger.getLogger(MultiReferenceInputAlgorithm.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(MultiReferenceInputAlgorithm.class);
 
     public MultiReferenceInputAlgorithm() {
         super();
