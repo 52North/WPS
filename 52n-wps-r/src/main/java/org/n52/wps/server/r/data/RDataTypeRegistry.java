@@ -28,12 +28,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RDataTypeRegistry {
 
-    private Logger LOGGER = Logger.getLogger(this.getClass());
+	private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
     private static RDataTypeRegistry instance = new RDataTypeRegistry();
 
     private RDataTypeRegistry() {

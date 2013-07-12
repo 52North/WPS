@@ -33,7 +33,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
@@ -45,6 +44,8 @@ import org.n52.wps.server.r.util.RSessionInfo;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //import java.nio.file.Files;
 
@@ -54,7 +55,7 @@ public class R_Config {
 
     private static final String DEFAULT_RSERVE_HOST = "localhost";
 
-    private static Logger LOGGER = Logger.getLogger(R_Config.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
 
     public static final String SCRIPT_FILE_EXTENSION = "R";
 

@@ -45,7 +45,6 @@ import java.util.UUID;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -85,10 +84,12 @@ import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RFileInputStream;
 import org.rosuda.REngine.Rserve.RFileOutputStream;
 import org.rosuda.REngine.Rserve.RserveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
-	private static Logger log = Logger.getLogger(GenericRProcess.class);
+	private static Logger log = LoggerFactory.getLogger(GenericRProcess.class);
 
 	// private variables holding process information - initialization in
 	// constructor
@@ -1218,7 +1219,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 				+ '\n');
 
 		if (this.debugScript && log.isDebugEnabled())
-			log.debug(text);
+			log.debug(text.toString());
 
 		// call the actual script here
 		rCon.eval(text.toString());

@@ -34,17 +34,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RPropertyChangeManager implements PropertyChangeListener {
 
-    private static Logger LOGGER = Logger.getLogger(RPropertyChangeManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RPropertyChangeManager.class);
 
     private static RPropertyChangeManager instance;
 

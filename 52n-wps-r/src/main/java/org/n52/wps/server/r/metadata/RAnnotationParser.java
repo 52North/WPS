@@ -38,7 +38,6 @@ import java.util.StringTokenizer;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.r.GenericRProcess;
@@ -49,12 +48,14 @@ import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RAnnotationParser {
 
     private static final String ANNOTATION_CHARACTER = "#";
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
-    private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
     public RAnnotationParser() {
         LOGGER.info("New " + this);
