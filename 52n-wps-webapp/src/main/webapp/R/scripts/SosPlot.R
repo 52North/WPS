@@ -33,14 +33,14 @@ offering_id <- "Luft"
 
 # wps.in: offering_days, integer, temporal extent,
 # the number of days the plot spans to the past,
-# value = 7,
+# value = 10,
 # minOccurs = 0, maxOccurs = 1;
 offering_days <- 7
 
 # wps.in: offering_station, type = integer, title = identifier for the used offering,
 # value = 38,
 # minOccurs = 0, maxOccurs = 1;
-offering_station <- 34 #round(runif(n = 1, min = 30, max = 40))
+offering_station <- c(42,46) #round(runif(n = 1, min = 30, max = 40))
 
 # wps.in: image_width, type = integer, title = width of the generated image in pixels,
 # value = 800, minOccurs = 0, maxOccurs = 1;
@@ -64,13 +64,14 @@ sos <- SOS(url = sos_url, dataFieldConverters = converters)
 offering <- sosOfferings(sos)[[offering_id]]
 myLog(toString(offering))
 
-stationFilter <- sosProcedures(offering)[[offering_station]]
+stationFilter <- sosProcedures(offering)[offering_station]
 observedPropertyFilter <- sosObservedProperties(offering)[1]
 timeFilter <- sosCreateEventTimeList(sosCreateTimePeriod(sos = sos,
 		begin = (Sys.time() - 3600 * 24 * offering_days), end = Sys.time()))
 
 # make the request
-observation <- getObservation(sos = sos, # verbose = TRUE,
+observation <- getObservation(sos = sos,# verbose = TRUE,
+		#inspect = TRUE,	
 		observedProperty = observedPropertyFilter,
 		procedure = stationFilter,
 		eventTime = timeFilter,
