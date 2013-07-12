@@ -25,40 +25,37 @@ Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-
 package org.n52.wps.io.datahandler.generator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GeotiffBinding;
 import org.n52.wps.io.data.binding.complex.ShapefileBinding;
-import org.n52.wps.io.datahandler.generator.GeoServerUploader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class GeoserverWMSGenerator extends AbstractGenerator {
 	
+	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWMSGenerator.class);	
 	private String username;
 	private String password;
 	private String host;
@@ -100,35 +97,20 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-
 		InputStream stream = null;	
 		try {
-			Document doc = storeLayer(data);
-			DOMSource domSource = new DOMSource(doc);
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.transform(domSource, result);
-			sw.flush();
-			sw.close();
-			
-			stream = new ByteArrayInputStream(sw.toString().getBytes("UTF-8"));
-			
-	    }
-	    catch(TransformerException ex){
-	    	ex.printStackTrace();
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + ex);
+			Document doc = storeLayer(data);			
+			String xmlString = XMLUtil.nodeToString(doc);			
+			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
+	    } catch(TransformerException e){
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WMS output. Reason: " + e);
 	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WMS output. Reason: " + e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error generating WCS output. Reason: " + e);
+	    	LOGGER.error("Error generating WMS output. Reason: ", e);
+			throw new RuntimeException("Error generating WMS output. Reason: " + e);
 		}	
 		return stream;
 	}
@@ -136,7 +118,6 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 	private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
 		File file = null;
 		String storeName = "";
-		String wmsLayerName = "";
 		if(coll instanceof GTVectorDataBinding){
 			GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
 			
@@ -157,29 +138,22 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 			File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
 
 			file = zipped;
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 			
 		}
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
 			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
 			file = fileData.getBaseFile(true);
-			int lastIndex = file.getName().lastIndexOf(".");
-			wmsLayerName = file.getName().substring(0, lastIndex);
 			
 		}
 		if(coll instanceof ShapefileBinding){
 			ShapefileBinding data = (ShapefileBinding) coll;
 			file = data.getZippedPayload();
-			String path = file.getAbsolutePath();
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 			
 		}
 		if(coll instanceof GeotiffBinding){
 			GeotiffBinding data = (GeotiffBinding) coll;
 			file = (File) data.getPayload();
-			String path = file.getAbsolutePath();
-			wmsLayerName = new File(path).getName().substring(0, new File(path).getName().length()-4);
 		}
 		storeName = file.getName();			
 	
@@ -187,8 +161,7 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 		
 		String result = geoserverUploader.createWorkspace();
-		System.out.println(result);
-		System.out.println("");
+		LOGGER.debug(result);
 		if(coll instanceof GTVectorDataBinding){
 			result = geoserverUploader.uploadShp(file, storeName);			
 		}
@@ -196,7 +169,7 @@ public class GeoserverWMSGenerator extends AbstractGenerator {
 			result = geoserverUploader.uploadGeotiff(file, storeName);
 		}
 		
-		System.out.println(result);
+		LOGGER.debug(result);
 				
 		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wms?Service=WMS&Request=GetCapabilities&Version=1.1.1";
 		//String directLink = geoserverBaseURL + "?Service=WMS&Request=GetMap&Version=1.1.0&Layers=N52:"+wmsLayerName+"&WIDTH=300&HEIGHT=300";;
