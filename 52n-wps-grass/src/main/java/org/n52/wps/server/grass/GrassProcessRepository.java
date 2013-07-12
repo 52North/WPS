@@ -158,28 +158,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 						 */
 					}
 				}
-			}
-
-			try {
-				
-				File n52appDataDir = new File(System.getenv("APPDATA") + fileSeparator + "52nWPS");
-				
-				if(!n52appDataDir.exists()){
-					n52appDataDir.mkdir();
-				}
-				
-				BufferedWriter bwrite = new BufferedWriter(new FileWriter(n52appDataDir + fileSeparator + "config.txt"));
-				
-				bwrite.write("Python_Home = " + pythonHome + "\n");
-				bwrite.write("Addon_Dir = " + addonPath);
-				
-				bwrite.flush();
-				bwrite.close();
-				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
+			}			
 			
 			// initialize after properties are fetched
 			GrassProcessDescriptionCreator creator = new GrassProcessDescriptionCreator();
