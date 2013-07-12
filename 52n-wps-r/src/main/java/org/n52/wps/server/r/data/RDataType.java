@@ -24,8 +24,7 @@
 
 package org.n52.wps.server.r.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -92,7 +91,7 @@ public enum RDataType implements RTypeDefinition {
     private String processKey;
     private Class< ? extends IData> iDataClass;
     private boolean isComplex;
-    private Logger LOGGER = LoggerFactory.getLogger(RDataType.class);
+    private Logger LOGGER = Logger.getLogger(RDataType.class);
     String schema;
     String encoding = "UTF-8";
 

@@ -29,8 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.RTypeDefinition;
@@ -51,7 +50,7 @@ public class RAnnotation {
 
     private HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RAnnotation.class);
+    private static Logger LOGGER = Logger.getLogger(RAnnotation.class);
 
     /**
      * 

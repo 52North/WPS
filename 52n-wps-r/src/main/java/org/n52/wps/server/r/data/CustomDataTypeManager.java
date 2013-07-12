@@ -30,8 +30,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
@@ -39,7 +38,7 @@ import org.n52.wps.server.r.R_Config;
 public class CustomDataTypeManager {
 
     private static final String COMMENT_CHARACTER = "#";
-    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
+    private static Logger LOGGER = Logger.getLogger(CustomDataTypeManager.class);
     private File configFile;
     private static CustomDataTypeManager instance;
 

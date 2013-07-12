@@ -473,7 +473,7 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
 			<Property name="Script_Dir" active="true">R/scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R/resources</Property>

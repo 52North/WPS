@@ -27,14 +27,13 @@ package org.n52.wps.server.r.util;
 import java.text.DateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 
 public class RLogger {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RLogger.class);
+    private static Logger LOGGER = Logger.getLogger(RLogger.class);
     
     private static DateFormat format = DateFormat.getDateTimeInstance();
 

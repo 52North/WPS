@@ -31,8 +31,7 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
@@ -50,7 +49,7 @@ import org.rosuda.REngine.Rserve.RserveException;
  */
 public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
+    private static Logger LOGGER = Logger.getLogger(LocalRAlgorithmRepository.class);
 
     // registered Processes
     private Map<String, String> algorithmMap;

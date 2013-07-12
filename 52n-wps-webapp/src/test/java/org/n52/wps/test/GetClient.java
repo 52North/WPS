@@ -9,11 +9,20 @@ import java.net.URLConnection;
 
 public class GetClient {
 
+	public static String sendRequest(String targetURL) throws IOException {
+		return sendRequest(targetURL, null);
+	}
+	
     public static String sendRequest(String targetURL, String payload) throws IOException {
 //		 Construct data
         // Send data
-        payload = payload.replace("?", "");
-        URL url = new URL(targetURL + "?" + payload);
+    	URL url = null;
+    	if(payload == null || payload.equalsIgnoreCase("")){
+    		url = new URL(targetURL);
+    	}else{
+    		payload = payload.replace("?", "");
+    		url = new URL(targetURL + "?" + payload);
+    	}
 
         URLConnection conn = url.openConnection();
 
