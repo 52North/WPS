@@ -36,7 +36,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
 import org.n52.wps.io.data.binding.complex.AsciiGrassDataBinding;
@@ -44,7 +45,7 @@ import org.opengis.coverage.grid.GridCoverageReader;
 
 public class AsciiGrassParser extends AbstractParser {
 
-	private static Logger LOGGER = Logger.getLogger(AsciiGrassParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
 	
 	public AsciiGrassParser(){
 		super();
@@ -68,7 +69,7 @@ public class AsciiGrassParser extends AbstractParser {
 			LOGGER.info("getEnvelope():" + grid.getEnvelope2D().toString());
 			
 		} catch (Exception e) {
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 		return new AsciiGrassDataBinding(grid);

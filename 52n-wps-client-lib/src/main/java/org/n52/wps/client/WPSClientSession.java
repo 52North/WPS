@@ -28,7 +28,8 @@ import net.opengis.wps.x100.ProcessBriefType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -47,7 +48,7 @@ import org.xml.sax.SAXException;
 
 public class WPSClientSession {
 	
-	private static Logger LOGGER = Logger.getLogger(WPSClientSession.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(WPSClientSession.class);
 	private static final String OGC_OWS_URI = "http://www.opengeospatial.net/ows";
 	private static String SUPPORTED_VERSION = "1.0.0"; 
 	

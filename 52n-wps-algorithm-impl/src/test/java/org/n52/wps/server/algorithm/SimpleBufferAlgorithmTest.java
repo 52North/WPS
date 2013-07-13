@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
@@ -19,9 +21,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
+
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -37,9 +42,9 @@ public class SimpleBufferAlgorithmTest {
         try {
             WPSConfig.forceInitialization("../52n-wps-webapp/src/main/webapp/config/wps_config.xml");
         } catch (XmlException ex) {
-            Logger.getLogger(SimpleBufferAlgorithmTest.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SimpleBufferAlgorithmTest.class.getName()).error(ex.getMessage());
         } catch (IOException ex) {
-            Logger.getLogger(SimpleBufferAlgorithmTest.class.getName()).log(Level.SEVERE, null, ex);
+            LoggerFactory.getLogger(SimpleBufferAlgorithmTest.class.getName()).error(ex.getMessage());
         }
     }
     

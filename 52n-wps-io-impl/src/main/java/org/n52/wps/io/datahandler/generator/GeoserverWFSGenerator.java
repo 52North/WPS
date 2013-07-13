@@ -25,37 +25,34 @@ Copyright © 2011 52°North Initiative for Geospatial Open Source Software GmbH
  Software Foundation’s web page, http://www.fsf.org.
 
  ***************************************************************/
-
-
 package org.n52.wps.io.datahandler.generator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.httpclient.HttpException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.datahandler.generator.GeoServerUploader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 
 public class GeoserverWFSGenerator extends AbstractGenerator {
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWFSGenerator.class);
 	
 	private String username;
 	private String password;
@@ -94,35 +91,20 @@ public class GeoserverWFSGenerator extends AbstractGenerator {
 
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-
+	
 		InputStream stream = null;	
 		try {
-			Document doc = storeLayer(data);
-			DOMSource domSource = new DOMSource(doc);
-			StringWriter sw = new StringWriter();
-			StreamResult result = new StreamResult(sw);
-			TransformerFactory tf = TransformerFactory.newInstance();
-			Transformer transformer = tf.newTransformer();
-			transformer.transform(domSource, result);
-			sw.flush();
-			sw.close();
-			
-			stream = new ByteArrayInputStream(sw.toString().getBytes("UTF-8"));
-			
-	    }
-	    catch(TransformerException ex){
-	    	ex.printStackTrace();
-	    	throw new RuntimeException("Error generating WFS output. Reason: " + ex);
+			Document doc = storeLayer(data);			
+			String xmlString = XMLUtil.nodeToString(doc);			
+			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
+	    } catch(TransformerException e){
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
+	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
 	    } catch (IOException e) {
-	    	e.printStackTrace();
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
 	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+	    	LOGGER.error("Error generating WFS output. Reason: ", e);
 			throw new RuntimeException("Error generating WFS output. Reason: " + e);
 		}	
 		return stream;
@@ -152,13 +134,11 @@ public class GeoserverWFSGenerator extends AbstractGenerator {
 		layerName = layerName +"_" + UUID.randomUUID();
 		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
 		
-		String result = geoserverUploader.createWorkspace();
-		System.out.println(result);
-		System.out.println("");
-		result = geoserverUploader.uploadShp(zipped, layerName);
-		System.out.println(result);
-		
-		
+		String result = geoserverUploader.createWorkspace();		
+		LOGGER.debug(result);
+		result = geoserverUploader.uploadShp(zipped, layerName);		
+		LOGGER.debug(result);
+				
 		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Request=GetCapabilities&Version=1.1.0";
 		//String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
 		

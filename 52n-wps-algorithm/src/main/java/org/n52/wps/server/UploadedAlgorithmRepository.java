@@ -36,14 +36,15 @@
 
 
 	import java.util.ArrayList;
-	import java.util.Collection;
-	import java.util.HashMap;
-	import java.util.Map;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-	import org.apache.log4j.Logger;
-	import org.n52.wps.PropertyDocument.Property;
+	import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 
 
@@ -55,7 +56,7 @@ import org.n52.wps.commons.WPSConfig;
 	 */
 	public class UploadedAlgorithmRepository implements ITransactionalAlgorithmRepository{
 		
-		private static Logger LOGGER = Logger.getLogger(LocalAlgorithmRepository.class);
+		private static Logger LOGGER = LoggerFactory.getLogger(LocalAlgorithmRepository.class);
 		private Map<String, String> algorithmMap;
 		private Map<String, ProcessDescriptionType> processDescriptionMap;
 		

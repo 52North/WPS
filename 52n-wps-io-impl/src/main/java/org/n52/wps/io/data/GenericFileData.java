@@ -39,7 +39,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.DefaultTransaction;
@@ -83,7 +84,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  */
 public class GenericFileData {
 
-	private static Logger LOGGER = Logger.getLogger(GenericFileData.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileData.class);
 
 	protected final InputStream dataStream;
 	protected String fileExtension;
@@ -103,8 +104,6 @@ public class GenericFileData {
 	public GenericFileData(FeatureCollection<?, ?> featureCollection)
 			throws IOException {
 		this(getShpFile(featureCollection), IOHandler.MIME_TYPE_ZIPPED_SHP);
-		
-
 	}
 
 	public GenericFileData(File primaryTempFile, String mimeType)
@@ -328,7 +327,6 @@ public class GenericFileData {
 				fileName = justWriteData(dataStream, fileExtension, workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not write the input to " + workspaceDir);
-				e.printStackTrace();
 			}
 		}
 
@@ -424,12 +422,10 @@ public class GenericFileData {
 				return new GTVectorDataBinding(features);
 			} catch (MalformedURLException e) {
 				LOGGER.error("Something went wrong while creating data store.");
-				e.printStackTrace();
 				throw new RuntimeException(
 						"Something went wrong while creating data store.", e);
 			} catch (IOException e) {
 				LOGGER.error("Something went wrong while converting shapefile to FeatureCollection");
-				e.printStackTrace();
 				throw new RuntimeException(
 						"Something went wrong while converting shapefile to FeatureCollection",
 						e);
@@ -470,6 +466,7 @@ public class GenericFileData {
 			}
 			out.close();
 			}catch(Exception e){
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException(
 						"Something went wrong while writing the input stream to the file system",
 						e);
@@ -501,6 +498,7 @@ public class GenericFileData {
 	        	 }
 	         }
 			}catch(Exception e){
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while unzipping input data", e);
 			}
 		}
@@ -511,7 +509,7 @@ public class GenericFileData {
 		try{
 			primaryFile.delete();
 		}catch(Exception e){
-			
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 	

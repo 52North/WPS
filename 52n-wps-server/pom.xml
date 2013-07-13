@@ -93,10 +93,6 @@
 			<artifactId>gt-opengis</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>log4j</groupId>
-		    <artifactId>log4j</artifactId>
-	  	</dependency>
-		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
 	  	</dependency>
@@ -108,6 +104,11 @@
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-algorithm-impl</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
 		</dependency>
     </dependencies>
 </project>
