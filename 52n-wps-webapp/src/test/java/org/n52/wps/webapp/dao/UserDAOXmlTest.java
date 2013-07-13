@@ -42,13 +42,13 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.n52.wps.webapp.entities.User;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class UserDAOXmlTest extends AbstracTest {
+public class UserDAOXmlTest extends AbstractTest {
 
 	@Autowired
 	@InjectMocks

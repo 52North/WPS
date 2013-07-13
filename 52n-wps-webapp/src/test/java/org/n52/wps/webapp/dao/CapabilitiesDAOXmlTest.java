@@ -39,14 +39,14 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class CapabilitiesDAOXmlTest extends AbstracTest {
+public class CapabilitiesDAOXmlTest extends AbstractTest {
 
 	@Autowired
 	@InjectMocks

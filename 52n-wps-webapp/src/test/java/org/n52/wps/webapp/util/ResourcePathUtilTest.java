@@ -30,10 +30,10 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ResourcePathUtilTest extends AbstracTest {
+public class ResourcePathUtilTest extends AbstractTest {
 	
 	@Autowired
 	ResourcePathUtil resourcePathUtil;

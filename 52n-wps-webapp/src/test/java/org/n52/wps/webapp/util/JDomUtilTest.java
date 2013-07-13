@@ -37,10 +37,10 @@ import org.jdom.JDOMException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class JDomUtilTest extends AbstracTest {
+public class JDomUtilTest extends AbstractTest {
 	
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;

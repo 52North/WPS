@@ -30,10 +30,10 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class LogPropertiesDAOImplTest extends AbstracTest {
+public class LogPropertiesDAOImplTest extends AbstractTest {
 	
 	@Autowired
 	LogPropertiesDAO logPropertiesDAO;

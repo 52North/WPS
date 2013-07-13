@@ -32,6 +32,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {("classpath:spring/spring-root-config.xml")})
 @WebAppConfiguration
-public class AbstracTest {
+public class AbstractTest {
 
 }

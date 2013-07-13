@@ -40,10 +40,10 @@ import org.mockito.MockitoAnnotations;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
-import org.n52.wps.webapp.common.AbstracTest;
+import org.n52.wps.webapp.common.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConfigurationDAOXmlTest extends AbstracTest {
+public class ConfigurationDAOXmlTest extends AbstractTest {
 	
 	@Autowired
 	@InjectMocks
