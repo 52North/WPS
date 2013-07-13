@@ -2,8 +2,14 @@
 
 <tiles-definitions>
 
-    <definition name="base">
+	<definition name="base" template="/WEB-INF/tiles/template.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/common/header.jsp" />
+		<put-attribute name="body" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/common/footer.jsp" />
+	</definition>
 
-    </definition>
+	<definition name="index" extends="base">
+		<put-attribute name="body" value="/WEB-INF/tiles/content/index.jsp"></put-attribute>
+	</definition>
 
 </tiles-definitions>
