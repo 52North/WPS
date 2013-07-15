@@ -30,18 +30,19 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JDomUtil {
 
-	private static Logger LOGGER = Logger.getLogger(JDomUtil.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(JDomUtil.class);
 
 	/**
 	 * Parse a resource to a {@code Document}

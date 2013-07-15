@@ -27,18 +27,19 @@ package org.n52.wps.webapp.dao;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository(value = "configurationDAOXml")
 public class ConfigurationDAOXml implements ConfigurationDAO {
 
-	private static Logger LOGGER = Logger.getLogger(ConfigurationDAOXml.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationDAOXml.class);
 	
 	@Autowired
 	WPSConfigurationImpl wpsConfigurationImpl;

@@ -28,7 +28,8 @@ import java.io.IOException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Repository;
@@ -38,7 +39,7 @@ public class LogPropertiesDAOImpl implements LogPropertiesDAO {
 
 	public static String FILE_NAME = "log4j.properties";
 
-	private static Logger LOGGER = Logger.getLogger(LogPropertiesDAOImpl.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(LogPropertiesDAOImpl.class);
 
 	@Override
 	public PropertiesConfiguration load() {

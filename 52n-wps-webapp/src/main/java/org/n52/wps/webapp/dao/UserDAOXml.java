@@ -28,13 +28,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.n52.wps.webapp.entities.User;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -49,7 +50,7 @@ public class UserDAOXml implements UserDAO {
 	
 	public static String FILE_NAME = "users.xml";
 	
-	private static Logger LOGGER = Logger.getLogger(UserDAOXml.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(UserDAOXml.class);
 	
 	@Override
 	public User getUser(String username) {

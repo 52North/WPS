@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -38,6 +37,8 @@ import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -46,7 +47,7 @@ public class CapabilitiesDAOXml implements CapabilitiesDAO {
 
 	public static final String FILE_NAME = "config" + File.separator + "wpsCapabilitiesSkeleton.xml";
 	public static final String NAMESPACE = "http://www.opengis.net/ows/1.1";
-	private static Logger LOGGER = Logger.getLogger(CapabilitiesDAOXml.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(CapabilitiesDAOXml.class);
 
 	@Autowired
 	JDomUtil jDomUtil;
