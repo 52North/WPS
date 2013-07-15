@@ -594,6 +594,11 @@
                 <artifactId>joda-time</artifactId>
                 <version>2.2</version>
             </dependency>
+            <dependency>
+				<groupId>edu.umn.gis</groupId>
+				<artifactId>mapscript</artifactId>
+				<version>6.0.3</version>
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-commons</artifactId>
