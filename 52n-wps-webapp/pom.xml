@@ -445,9 +445,9 @@
 								</goals>
 								<configuration>
 									<!-- <includes><include></include></includes> -->
-									<excludes>
-										<exclude>**/AllTestsIT*</exclude>
-									</excludes>
+<!-- 									<excludes> -->
+<!-- 										<exclude>**/AllTestsIT*</exclude> -->
+<!-- 									</excludes> -->
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
 									<systemPropertyVariables>
@@ -503,7 +503,6 @@
 								</systemProperty>
 								<systemProperty>
 									<name>com.sun.media.jai.disableMediaLib</name>
-									;
 									<value>true</value>
 								</systemProperty>
 							</systemProperties>

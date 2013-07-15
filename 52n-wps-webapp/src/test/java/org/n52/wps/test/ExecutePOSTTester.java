@@ -1357,6 +1357,7 @@ public class ExecutePOSTTester {
         GeotiffParser parser = new GeotiffParser();
         IData iData = parser.parseBase64(stream, "image/tiff", null);
         assertThat(iData, is(not(nullValue())));
+        stream.close();
     }
 
     @Test
@@ -1390,6 +1391,7 @@ public class ExecutePOSTTester {
         GeotiffParser parser = new GeotiffParser();
         IData iData = parser.parse(stream, "image/tiff", null);
         assertThat(iData, is(not(nullValue())));
+        stream.close();
     }
 
     @Test
