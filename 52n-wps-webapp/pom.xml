@@ -445,9 +445,9 @@
 								</goals>
 								<configuration>
 									<!-- <includes><include></include></includes> -->
-<!-- 									<excludes> -->
-<!-- 										<exclude>**/AllTestsIT*</exclude> -->
-<!-- 									</excludes> -->
+									<excludes>
+										<exclude>**/AllTestsIT*</exclude>
+									</excludes>
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
 									<systemPropertyVariables>
@@ -472,7 +472,7 @@
 					<plugin>
 						<groupId>org.mortbay.jetty</groupId>
 						<artifactId>jetty-maven-plugin</artifactId>
-						<version>8.1.8.v20121106</version>
+						<version>8.1.11.v20130520</version>
 						<configuration>
 							<!-- This is a hack to get Jetty to run on a non-standard (8080) port -->
 							<connectors>

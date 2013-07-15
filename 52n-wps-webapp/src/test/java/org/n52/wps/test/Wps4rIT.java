@@ -10,6 +10,8 @@ import static org.hamcrest.Matchers.nullValue;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,6 +21,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.xml.sax.SAXException;
@@ -26,6 +30,8 @@ import org.xml.sax.SAXException;
 public class Wps4rIT {
 
     private static String wpsUrl;
+
+    private static Collection<String> requiredRPackages = Arrays.asList(new String[] {"rgdal"});
 
     @BeforeClass
     public static void beforeClass() {
@@ -42,11 +48,20 @@ public class Wps4rIT {
         String password = System.getProperty("test.rserve.pwd", null);
         try {
             RConnection c = getNewConnection(host, port, user, password);
+
+            // TODO check if required packages for testing are installed
+            REXP eval = c.eval("require(\"rgdal\")");
+            System.out.println(eval);
+            System.out.println(eval.asString());
+
             c.close();
         }
-        catch (RserveException e1) {
-            e1.printStackTrace();
+        catch (RserveException e) {
+            e.printStackTrace();
             throw new AssertionError("Cannot connect to Rserve. Skip the tests.");
+        }
+        catch (REXPMismatchException e) {
+            throw new AssertionError("Error checking R environment. Skip the tests.");
         }
     }
 
@@ -69,7 +84,9 @@ public class Wps4rIT {
         URL urlSessionInfo = new URL(temp + "/R/sessioninfo.jsp");
         try {
             String response = GetClient.sendRequest(urlSessionInfo.toExternalForm());
-            assertThat(response, containsString("R version "));
+            assertThat(response, containsString("R ")); // "R version" fails if using unstable R!
+            assertThat(response, containsString("Platform:"));
+            assertThat(response, containsString("attached base packages:"));
         }
         catch (IOException e) {
             String message = "Cannot retrieve the R session info from WPS.";
@@ -146,22 +163,23 @@ public class Wps4rIT {
 
     @Test
     public void decribeProcess() throws IOException, ParserConfigurationException, SAXException {
-        String identifier = "org.n52.wps.server.r.test_resources";
+        String identifier = "test_resources_id";
         String response = GetClient.sendRequest(wpsUrl, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier="
                 + identifier);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString(identifier));
+        assertThat(response, containsString("<ows:Identifier>" + identifier + "</ows:Identifier>"));
     }
 
     @Test
     public void capabilitiesContainProcess() throws IOException, ParserConfigurationException, SAXException {
+        String identifier = "test_resources_id";
         String response = GetClient.sendRequest(wpsUrl, "Service=WPS&Request=GetCapabilities");
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("org.n52.wps.server.r.test_resources"));
+        assertThat(response, containsString(identifier));
     }
 
     @Test

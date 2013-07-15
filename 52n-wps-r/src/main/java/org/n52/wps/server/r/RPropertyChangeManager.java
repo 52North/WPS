@@ -207,24 +207,28 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     }
 
     private boolean checkPropertyOrder(Property[] oldPropertyArray, boolean propertyChanged) {
+        boolean pChange = propertyChanged;
+        
         // check if properties need to be re-ordered:
         if ( !propertyChanged) {
             PropertyComparator comp = new PropertyComparator();
             for (int i = 0; i < oldPropertyArray.length - 1; i++) {
                 int order = comp.compare(oldPropertyArray[i], oldPropertyArray[i + 1]);
                 if (order > 0) {
-                    propertyChanged = true;
+                    pChange = true;
                     break;
                 }
             }
         }
-        return propertyChanged;
+        return pChange;
     }
 
     private boolean addMissingAlgorithms(Repository repositoryDocument,
                                          HashMap<String, Property> algorithmPropertyHash,
                                          boolean propertyChanged,
                                          ArrayList<Property> newPropertyList) {
+        boolean pChanged = propertyChanged;
+        
         // check script dir for R process files
         // adjusts WPS config
         String scriptDir = R_Config.getInstance().getScriptDirFullPath();
@@ -246,7 +250,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     newPropertyList.add(prop);
                     LOGGER.debug("Added new algorithm property to repo document: " + prop);
 
-                    propertyChanged = true;
+                    pChanged = true;
                 }
                 else {
                     LOGGER.debug("Algorithm property already repo document: " + prop);
@@ -258,13 +262,14 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                  */
             }
         }
-        return propertyChanged;
+        return pChanged;
     }
 
     private boolean checkMandatoryParameters(Repository repositoryDocument,
                                              boolean propertyChanged,
                                              ArrayList<Property> newPropertyList,
                                              HashSet<String> configVariableNames) {
+        boolean pChanged = propertyChanged;
         /*
          * mandatory paramters, the ones from param that have not been covered yet.
          */
@@ -276,7 +281,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             host.setName(RWPSConfigVariables.RSERVE_HOST.toString());
             host.setStringValue(R_Config.getInstance().rServeHost);
             newPropertyList.add(host);
-            propertyChanged = true;
+            pChanged = true;
         }
 
         if (configVariableNames.contains(RWPSConfigVariables.RSERVE_PORT.toString().toLowerCase())) {
@@ -285,9 +290,9 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             port.setName(RWPSConfigVariables.RSERVE_PORT.toString());
             port.setStringValue(Integer.toString(R_Config.getInstance().rServePort));
             newPropertyList.add(port);
-            propertyChanged = true;
+            pChanged = true;
         }
-        return propertyChanged;
+        return pChanged;
     }
 
     /**
@@ -329,8 +334,9 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             R_Config.getInstance().rServePassword = property.getStringValue();
         }
         else if (pname.equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString()) && property.getActive()) {
-            R_Config.getInstance().SCRIPT_DIR = property.getStringValue();
-            LOGGER.info("Using script dir " + R_Config.getInstance().SCRIPT_DIR);
+            R_Config.getInstance();
+            R_Config.SCRIPT_DIR = property.getStringValue();
+            LOGGER.info("Using script dir " + R_Config.SCRIPT_DIR);
         }
         else if (pname.equalsIgnoreCase(RWPSConfigVariables.RESOURCE_DIR.toString()) && property.getActive()) {
             R_Config.getInstance().resourceDirectory = property.getStringValue();
@@ -366,10 +372,6 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     + "error was not expected:\n" + e.getLocalizedMessage());
         }
         return deleted;
-
-    }
-
-    public void registerScript(File destFile) {
 
     }
 
