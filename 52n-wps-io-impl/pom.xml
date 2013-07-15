@@ -144,6 +144,10 @@
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>edu.umn.gis</groupId>
+			<artifactId>mapscript</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
