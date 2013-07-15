@@ -30,9 +30,9 @@
 	<inceptionYear>2007</inceptionYear>
 	<scm>
 <!-- 		 Specification of the Source-Content-Managementsystem -->
-		<connection>scm:git:https://github.com/52North/WPS.git</connection>
-		<url>scm:git:https://github.com/52North/WPS.git</url>
-		<developerConnection>scm:git:https://github.com/52North/WPS.git</developerConnection>
+		<connection>scm:git:git://github.com/52North/WPS.git</connection>
+		<url>https://github.com/52North/WPS</url>
+		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	</scm>
 	<repositories>
 		<repository>
@@ -87,14 +87,6 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptor>src/main/assembly/assembly.xml</descriptor>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<connectionUrl>
-						scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
-					</connectionUrl>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -834,31 +826,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<profiles>
-		<profile>
-			<id>env-ci</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>ci</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<configuration>
-							<connectionUrl>
-								scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
-							</connectionUrl>
-							<tag>WPS-3.1.0</tag>
-							<remoteTagging>false</remoteTagging>
-							<suppressCommitBeforeTag>true</suppressCommitBeforeTag>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
