@@ -23,7 +23,7 @@ import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.xml.sax.SAXException;
 
-public class WPS4RTester {
+public class Wps4rIT {
 
     private static String wpsUrl;
 
@@ -83,7 +83,7 @@ public class WPS4RTester {
             ParserConfigurationException,
             SAXException,
             XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
@@ -101,7 +101,7 @@ public class WPS4RTester {
             ParserConfigurationException,
             SAXException,
             XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
@@ -117,7 +117,7 @@ public class WPS4RTester {
             ParserConfigurationException,
             SAXException,
             XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
@@ -134,7 +134,7 @@ public class WPS4RTester {
             XmlException {
 
         // FIXME This test fails
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
@@ -166,7 +166,7 @@ public class WPS4RTester {
 
     @Test
     public void responseTypeIsImage() throws IOException, XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestImage.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestImage.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
 
@@ -177,7 +177,7 @@ public class WPS4RTester {
 
     @Test
     public void uniformIsExecuted() throws IOException, XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestUniform.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestUniform.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
 
@@ -193,7 +193,7 @@ public class WPS4RTester {
 
     @Test
     public void calculatorWorksCorrectly() throws IOException, ParserConfigurationException, SAXException, XmlException {
-        URL resource = WPS4RTester.class.getResource("/R/ExecuteTestCalculator.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCalculator.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
 
