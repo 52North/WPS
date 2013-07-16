@@ -92,7 +92,11 @@ public enum RDataType implements RTypeDefinition {
     private String processKey;
     private Class< ? extends IData> iDataClass;
     private boolean isComplex;
-    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
+
+    //this will not be available in the constructor - enum constructors are
+    //called first
+    //private static final Logger LOGGER = LoggerFactory.getLogger(RDataType.class);
+    
     String schema;
     String encoding = "UTF-8";
 
@@ -130,13 +134,13 @@ public enum RDataType implements RTypeDefinition {
         setKey(processKey);
     }
 
+    
     private void setKey(String key) {
         if ( !RDataTypeRegistry.getInstance().containsKey(key))
             RDataTypeRegistry.getInstance().register(this);
         else
-            this.LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
+        	LoggerFactory.getLogger(RDataType.class).warn("Doubled definition of data type-key for notation: " + key + "\n"
                     + "only the first definition will be used for this key.");
-
        
     }
 
