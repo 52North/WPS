@@ -27,10 +27,7 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
  ***************************************************************/
 package org.n52.wps.server.grass;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,14 +35,13 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.grass.util.GRASSWPSConfigVariables;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GrassProcessRepository implements IAlgorithmRepository {
 
@@ -158,28 +154,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 						 */
 					}
 				}
-			}
-
-			try {
-				
-				File n52appDataDir = new File(System.getenv("APPDATA") + fileSeparator + "52nWPS");
-				
-				if(!n52appDataDir.exists()){
-					n52appDataDir.mkdir();
-				}
-				
-				BufferedWriter bwrite = new BufferedWriter(new FileWriter(n52appDataDir + fileSeparator + "config.txt"));
-				
-				bwrite.write("Python_Home = " + pythonHome + "\n");
-				bwrite.write("Addon_Dir = " + addonPath);
-				
-				bwrite.flush();
-				bwrite.close();
-				
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
+			}			
 			
 			// initialize after properties are fetched
 			GrassProcessDescriptionCreator creator = new GrassProcessDescriptionCreator();
