@@ -458,6 +458,13 @@
 				<Property name="Geoserver_host" active="true">localhost</Property>
 				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>
+			<Generator name="MapserverWMSGenerator" className="org.n52.wps.io.datahandler.generator.MapserverWMSGenerator" active="false">
+				<Format mimetype="application/WMS"/>
+				<Property name="Mapserver_workspace" active="true">C:/ms4w/Apache/htdocs/52northWPS/</Property>
+				<Property name="Mapserver_mapfile" active="true">wps.map</Property>
+				<Property name="Mapserver_dataRepository" active="true">data/tmp/</Property>
+				<Property name="Mapserver_wmsUrl" active="true">http://localhost/cgi-bin/52northWPSWrapper.exe</Property>
+			</Generator>
 			<Generator name="KMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.KMLGenerator"
 				active="true">

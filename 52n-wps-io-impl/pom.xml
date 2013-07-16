@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>3.3.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-io-impl</artifactId>
@@ -142,6 +142,10 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>edu.umn.gis</groupId>
+			<artifactId>mapscript</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
