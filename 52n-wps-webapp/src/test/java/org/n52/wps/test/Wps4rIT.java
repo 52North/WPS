@@ -17,6 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.AfterClass;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -45,8 +46,7 @@ public class Wps4rIT {
             c.close();
         }
         catch (RserveException e1) {
-            e1.printStackTrace();
-            throw new AssertionError("Cannot connect to Rserve. Skip the tests.");
+           Assume.assumeNoException(e1);
         }
     }
 
