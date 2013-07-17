@@ -32,11 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RProcessInfo {
 

@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.RTypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines Syntax and Semantics for Annotations in R Skripts

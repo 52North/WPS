@@ -9,7 +9,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 	
         @Override
 	protected void setUp(){
-		url = AllTestsIT.getURL();
+		this.url = AllTestsIT.getURL();
 	}
 	
 	/*
@@ -32,7 +32,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 				String response ="";
 				try {
-					response = PostClient.sendRequest(url, payload);
+					response = PostClient.sendRequest(this.url, payload);
 //					parseXML(response);
 				} catch (Exception e) {
 					fail(e.getMessage());
@@ -51,7 +51,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 				String response ="";
 				try {
-					response = PostClient.sendRequest(url, payload);
+					response = PostClient.sendRequest(this.url, payload);
 //					parseXML(response);
 				} catch (Exception e) {
 					fail(e.getMessage());
@@ -72,7 +72,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 //			parseXML(response);
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -93,7 +93,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 //			parseXML(response);
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -116,7 +116,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -134,7 +134,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -151,7 +151,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}
@@ -169,7 +169,7 @@ public class DescribeProcessPOSTTester extends TestCase {
 		
 		String response ="";
 		try {
-			response = PostClient.sendRequest(url, payload);
+			response = PostClient.sendRequest(this.url, payload);
 		} catch (IOException e) {
 			fail(e.getMessage());
 		}

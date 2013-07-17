@@ -24,8 +24,6 @@
 
 package org.n52.wps.server.r.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -35,6 +33,8 @@ import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Data types which are supported by scripts Note that every IData class must be parsed from an to are to be
@@ -92,7 +92,11 @@ public enum RDataType implements RTypeDefinition {
     private String processKey;
     private Class< ? extends IData> iDataClass;
     private boolean isComplex;
-    private Logger LOGGER = LoggerFactory.getLogger(RDataType.class);
+
+    //this will not be available in the constructor - enum constructors are
+    //called first
+    //private static final Logger LOGGER = LoggerFactory.getLogger(RDataType.class);
+    
     String schema;
     String encoding = "UTF-8";
 
@@ -130,13 +134,13 @@ public enum RDataType implements RTypeDefinition {
         setKey(processKey);
     }
 
+    
     private void setKey(String key) {
         if ( !RDataTypeRegistry.getInstance().containsKey(key))
             RDataTypeRegistry.getInstance().register(this);
         else
-            this.LOGGER.warn("Doubled definition of data type-key for notation: " + key + "\n"
+        	LoggerFactory.getLogger(RDataType.class).warn("Doubled definition of data type-key for notation: " + key + "\n"
                     + "only the first definition will be used for this key.");
-
        
     }
 
