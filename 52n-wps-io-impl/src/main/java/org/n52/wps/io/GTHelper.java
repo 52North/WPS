@@ -36,7 +36,8 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -53,8 +54,6 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -68,30 +67,19 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
-	private static Logger LOGGER = Logger.getLogger(GTHelper.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
 	
 	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
 		String namespace = "http://www.52north.org/"+uuid;
 		
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 		if(coordinateReferenceSystem==null){
-			try {
-				coordinateReferenceSystem = CRS.decode("EPSG:4326");
-			} catch (NoSuchAuthorityCodeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FactoryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			coordinateReferenceSystem= getDefaultCRS();			
 		}
 		typeBuilder.setCRS(coordinateReferenceSystem);
 		typeBuilder.setNamespaceURI(namespace);
 		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
 		typeBuilder.setName(nameType);
-		
-		
 		
 		for(Property property : attributes){
 			if(property.getValue()!=null){ 
@@ -169,24 +157,12 @@ public class GTHelper {
 		
 		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
 		if(coordinateReferenceSystem==null){
-			try {
-				coordinateReferenceSystem = CRS.decode("EPSG:4326");
-			} catch (NoSuchAuthorityCodeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FactoryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			coordinateReferenceSystem= getDefaultCRS();
 		}
 		typeBuilder.setCRS(coordinateReferenceSystem);
 		typeBuilder.setNamespaceURI(namespace);
 		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
-		typeBuilder.setName(nameType);
-		
-		
-		
+		typeBuilder.setName(nameType);		
 					
 		typeBuilder.add("GEOMETRY", newGeometry.getClass());
 					
@@ -196,7 +172,7 @@ public class GTHelper {
 		return featureType;
 	}
 	
-	public static Feature createFeature(String id, Geometry geometry, SimpleFeatureType featureType, Collection<Property> originalAttributes) {
+	public static SimpleFeature createFeature(String id, Geometry geometry, SimpleFeatureType featureType, Collection<Property> originalAttributes) {
 		
 			if(geometry==null || geometry.isEmpty()){
 				return null;
@@ -214,7 +190,6 @@ public class GTHelper {
 					if(propertyDescriptor.getName().getLocalPart().equals(originalProperty.getName().getLocalPart())){
 						if(propertyDescriptor instanceof GeometryDescriptor){
 							newData[i] = geometry;
-//							System.out.println("Geometry");
 						}else{
 							newData[i] = originalProperty.getValue();
 						}
@@ -222,7 +197,6 @@ public class GTHelper {
 				}
 				
 				if(propertyDescriptor instanceof GeometryDescriptor){
-//					System.out.println("Geometry");
 					if(geometry.getGeometryType().equals("Point")){
 						Point[] points = new Point[1];
 						points[0] = (Point)geometry;
@@ -260,7 +234,6 @@ public class GTHelper {
 		
 		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 		SimpleFeature feature = null;
-//		Collection<PropertyDescriptor> featureTypeAttributes = featureType.getDescriptors();
 					
 		Object[] newData = new Object[featureType.getDescriptors().size()];
 		
@@ -331,10 +304,7 @@ public class GTHelper {
 					"<xs:complexContent> " +
 					"<xs:extension base=\"gml:AbstractFeatureType\"> "+
 					"<xs:sequence> " +
-					//"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
-					
-					
-					
+					//"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+					
 					"<xs:element name=\"GEOMETRY\" type=\"gml:"+geometryTypeName+"\"> "+
 					"</xs:element> ";
 			
@@ -380,8 +350,8 @@ public class GTHelper {
 				schemalocation = storeSchema(schema, uuid);
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("Exception while storing schema.", e);
+				throw new RuntimeException("Exception while storing schema.", e);
 			}
 			return new QName(namespace, schemalocation);
 			
@@ -451,8 +421,8 @@ public class GTHelper {
 					schemalocation = storeSchema(schema, uuid);
 					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Exception while storing schema.", e);
+					throw new RuntimeException("Exception while storing schema.", e);
 				}
 				return new QName(namespace, schemalocation);
 				
@@ -470,14 +440,15 @@ public class GTHelper {
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			int startIndex = domain.indexOf("WEB-INF");
-			if(startIndex<0){				
+			if(startIndex<0){
+				//not running as webapp				
 				File f = File.createTempFile(uuid, ".xsd");
 				f.deleteOnExit();
 				FileWriter writer = new FileWriter(f);
 				writer.write(schema);
 				writer.flush();
 				writer.close();
-				return f.getAbsolutePath();
+				return "file:"+f.getAbsolutePath();
 			}else{
 				domain = domain.substring(0,startIndex);			
 				String baseDirLocation = domain;
@@ -498,5 +469,14 @@ public class GTHelper {
 			}
 		}
 		
+		private static CoordinateReferenceSystem getDefaultCRS(){
+
+			try {
+				return CRS.decode("EPSG:4326");
+			} catch (Exception e) {
+				LOGGER.error("Exception while decoding CRS EPSG:4326", e);
+			}
+			return null;
+		}
 
 }

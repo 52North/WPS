@@ -1,3 +1,4 @@
+
 package org.n52.wps.test;
 
 import java.io.BufferedReader;
@@ -11,8 +12,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-import javax.xml.messaging.URLEndpoint;
-
 public class PostClient {
 
     public String buildRequest(String value) throws UnsupportedEncodingException {
@@ -24,10 +23,10 @@ public class PostClient {
     }
 
     public static String sendRequest(String targetURL, String payload) throws IOException {
-//		 Construct data
-        payload = URLEncoder.encode(payload, "UTF-8");
+        // Construct data
+        String payloadP = URLEncoder.encode(payload, "UTF-8");
 
-        payload = "request=" + payload;
+        payloadP = "request=" + payloadP;
 
         // Send data
         URL url = new URL(targetURL);
@@ -36,20 +35,20 @@ public class PostClient {
 
         conn.setRequestMethod("POST");
 
-//        URLConnection conn = url.openConnection();
+        // URLConnection conn = url.openConnection();
 
         conn.setDoOutput(true);
 
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
-        wr.write(payload);
+        wr.write(payloadP);
         wr.flush();
 
         // Get the response
         StringBuffer response = new StringBuffer();
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
-        while ((line = rd.readLine()) != null) {
+        while ( (line = rd.readLine()) != null) {
             response = response.append(line + "\n");
         }
         wr.close();
@@ -60,7 +59,7 @@ public class PostClient {
     }
 
     public static InputStream sendRequestForInputStream(String targetURL, String payload) throws IOException {
-//		 Construct data
+        // Construct data
 
         // Send data
         URL url = new URL(targetURL);

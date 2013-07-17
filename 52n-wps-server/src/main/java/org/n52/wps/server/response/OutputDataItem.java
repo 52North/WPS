@@ -33,7 +33,6 @@ package org.n52.wps.server.response;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,20 +52,19 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
-import org.n52.wps.io.BasicXMLTypeFactory;
 import org.opengis.geometry.Envelope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /*
  * @author foerster
@@ -74,11 +72,9 @@ import org.xml.sax.SAXException;
  */
 public class OutputDataItem extends ResponseData {
 
-	private static Logger LOGGER = Logger.getLogger(OutputDataItem.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(OutputDataItem.class);
 	private static String COMPLEX_DATA_TYPE = "ComplexDataResponse";
-	private LanguageStringType title;
-	
-	
+	private LanguageStringType title;	
 
 	/**
 	 * 
@@ -152,16 +148,16 @@ public class OutputDataItem extends ResponseData {
 			}
 			
 		} catch(RuntimeException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Complex Data from the process result. Check encoding (base64 for inline binary data or UTF-8 for XML based data)", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Could not create Inline Base64 Complex Data from the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		
@@ -182,28 +178,11 @@ public class OutputDataItem extends ResponseData {
 	public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
 		OutputDataType output = prepareOutput(res);
 		String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
-		//CodeType idType = output.addNewIdentifier();
-		//idType.setStringValue(id);
 		LiteralDataType literalData = output.addNewData().addNewLiteralData();
 		if (dataTypeReference != null) {
 			literalData.setDataType(dataTypeReference);
 		}
-		InputSource is = new InputSource();
-	    is.setCharacterStream(new StringReader(processValue));
-
-		try {
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
-			XmlObject xmlObj = XmlObject.Factory.parse(doc);
-			literalData.set(xmlObj);
-		} catch (SAXException e) {
-			literalData.setStringValue(processValue);
-		} catch (IOException e) {
-			literalData.setStringValue(processValue);
-		} catch (ParserConfigurationException e) {
-			literalData.setStringValue(processValue);
-		} catch (XmlException e) {
-			literalData.setStringValue(processValue);
-		}
+	    literalData.setStringValue(processValue);
 		
 	}
 	
@@ -240,6 +219,7 @@ public class OutputDataItem extends ResponseData {
 			}
 		}
 		catch (IOException e){
+			LOGGER.error(e.getMessage(), e);
 			throw new ExceptionReport("Error while generating Complex Data out of the process result", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		
@@ -263,27 +243,22 @@ public class OutputDataItem extends ResponseData {
 		Envelope bbox = (Envelope) obj.getPayload();
 		OutputDataType output = prepareOutput(res);
 		BoundingBoxType bboxData = output.addNewData().addNewBoundingBoxData();
-		if(obj == null){
-			bboxData.setNil();
-		}else{
-				
-			if(bbox.getCoordinateReferenceSystem()!=null && bbox.getCoordinateReferenceSystem().getIdentifiers().size()>0){
-				bboxData.setCrs(bbox.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString());
-			}
-			double[] lowerCorner = bbox.getLowerCorner().getCoordinate();
-			List<Double> lowerCornerList = new ArrayList<Double>();
-			for(double d : lowerCorner){
-				lowerCornerList.add(d);
-			}
-			double[] upperCorner = bbox.getUpperCorner().getCoordinate();
-			List<Double> upperCornerList = new ArrayList<Double>();
-			for(double d : upperCorner){
-				upperCornerList.add(d);
-			}
-			
-			bboxData.setLowerCorner(lowerCornerList);
-			bboxData.setUpperCorner(upperCornerList);
+		if(bbox.getCoordinateReferenceSystem()!=null && bbox.getCoordinateReferenceSystem().getIdentifiers().size()>0){
+			bboxData.setCrs(bbox.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString());
 		}
+		double[] lowerCorner = bbox.getLowerCorner().getCoordinate();
+		List<Double> lowerCornerList = new ArrayList<Double>();
+		for(double d : lowerCorner){
+			lowerCornerList.add(d);
+		}
+		double[] upperCorner = bbox.getUpperCorner().getCoordinate();
+		List<Double> upperCornerList = new ArrayList<Double>();
+		for(double d : upperCorner){
+			upperCornerList.add(d);
+		}
+		
+		bboxData.setLowerCorner(lowerCornerList);
+		bboxData.setUpperCorner(upperCornerList);
 		
 	}
 }

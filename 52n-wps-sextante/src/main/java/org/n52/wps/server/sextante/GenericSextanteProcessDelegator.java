@@ -45,7 +45,8 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
@@ -95,7 +96,7 @@ import es.unex.sextante.parameters.ParameterVectorLayer;
 
 public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteConstants {
 
-	private static Logger LOGGER = Logger.getLogger(GenericSextanteProcessDelegator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericSextanteProcessDelegator.class);
 
 	private String processID;
 	private ProcessDescriptionType processDescription;
@@ -264,25 +265,25 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
 
 			} catch (InstantiationException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ".");
 			} catch (IllegalAccessException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ".");
 			} catch (ClassNotFoundException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ". ");
 			} catch (WrongOutputIDException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ". ");
 			} catch (GeoAlgorithmExecutionException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ".");
 			} catch (IOException e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ".");
 			} catch (Exception e) {
-				LOGGER.error(e);
+				LOGGER.error(e.getMessage(), e);
 				throw new RuntimeException("Error while executing process " + processID + ".");
 			}
 

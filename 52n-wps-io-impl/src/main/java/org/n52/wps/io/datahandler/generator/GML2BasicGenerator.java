@@ -40,7 +40,8 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
@@ -58,7 +59,7 @@ public class GML2BasicGenerator extends AbstractGenerator {
 	private boolean featureTransformerIncludeBounding;
 	private int featureTransformerDecimalPlaces;
 	
-	private static Logger LOGGER = Logger.getLogger(GML2BasicGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
 		
 	
 	public GML2BasicGenerator(){
@@ -147,20 +148,10 @@ public class GML2BasicGenerator extends AbstractGenerator {
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		File tempFile = File.createTempFile("gml2", "xml");
 		finalizeFiles.add(tempFile);
 		FileWriter fw = new FileWriter(tempFile);
 		write(data, fw);
-		try{
-			fw.flush();
-		} catch (IOException e){
-			LOGGER.warn("Attempted to flush stream although it was closed already.");
-		}
 		fw.close();
 		InputStream is = new FileInputStream(tempFile);
 		return is;

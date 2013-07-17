@@ -218,11 +218,10 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="WKTParser"
+			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-				<Property name="supportedEncoding" active="true">Base64</Property>
+				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -231,8 +230,20 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
@@ -447,6 +458,13 @@
 				<Property name="Geoserver_host" active="true">localhost</Property>
 				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>
+			<Generator name="MapserverWMSGenerator" className="org.n52.wps.io.datahandler.generator.MapserverWMSGenerator" active="false">
+				<Format mimetype="application/WMS"/>
+				<Property name="Mapserver_workspace" active="true">C:/ms4w/Apache/htdocs/52northWPS/</Property>
+				<Property name="Mapserver_mapfile" active="true">wps.map</Property>
+				<Property name="Mapserver_dataRepository" active="true">data/tmp/</Property>
+				<Property name="Mapserver_wmsUrl" active="true">http://localhost/cgi-bin/52northWPSWrapper.exe</Property>
+			</Generator>
 			<Generator name="KMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.KMLGenerator"
 				active="true">
@@ -462,7 +480,7 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
 			<Property name="Script_Dir" active="true">R/scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R/resources</Property>
@@ -476,6 +494,7 @@
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
@@ -484,6 +503,8 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 		</Repository>
@@ -984,7 +1005,9 @@
 			<Property name="Algorithm" active="true">kerneldensity</Property>
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
-		
+		<Repository name="ServiceLoaderAlgorithmRepository"
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
+		</Repository>
 		<!-- 
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
 			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
@@ -995,6 +1018,7 @@
 		
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
+	
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">

@@ -1,8 +1,14 @@
 
+$(document).ready(function(){  
+  $("#link_processdescription").attr("href", "../../WebProcessingService?Request=DescribeSensor&Service=WPS&version=1.0.0&Identifier=" + processIdentifier);
+  //alert($("#link_processdescription").attr("href"));
+});
+
 var processIdentifier = 'org.n52.wps.server.r.SosPlot';
 var outputIdentifier = 'output_image';
+var offering = 'Luft';
 
-var requestPlot = function(days, offering) {
+var requestPlot = function(requestedDays, requestedOffering) {
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
@@ -12,7 +18,7 @@ var requestPlot = function(days, offering) {
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
 			+ '<wps:LiteralData>'
-			+ days
+			+ requestedDays
 			+ '</wps:LiteralData></wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
@@ -20,7 +26,7 @@ var requestPlot = function(days, offering) {
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
 			+ '<wps:LiteralData>'
-			+ offering
+			+ requestedOffering
 			+ '</wps:LiteralData>'
 			+ '</wps:Data>'
 			+ '</wps:Input>'
@@ -67,7 +73,7 @@ var requestPlot = function(days, offering) {
 		success : handleResponse
 	});
 
-}
+};
 
 var showResponse = function(executeResponse) {
 	var status = $(executeResponse).find("ns\\:Status");
@@ -98,19 +104,18 @@ var showResponse = function(executeResponse) {
 															+ "' />");
 										}
 
-										// $("#resultLog").append(
-										// "<div class=\"info\">" + link +
-										// "</div>");
+										$("#resultLog").append(
+												"<div class=\"info\">" + link
+														+ "</div>");
 									});
 						}
 					});
-}
+};
 
 $(function() {
 
 	$("#executeRequest").click(function() {
 		var days = $("#slider-days").val();
-		var offering = 'ATMOSPHERIC_TEMPERATURE';
 		$("#resultLog").html("Days: " + days + " | Offering: " + offering);
 
 		requestPlot(days, offering);

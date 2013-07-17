@@ -38,7 +38,6 @@ import java.util.StringTokenizer;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.r.GenericRProcess;
@@ -49,12 +48,14 @@ import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RAnnotationParser {
 
     private static final String ANNOTATION_CHARACTER = "#";
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
-    private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
     public RAnnotationParser() {
         LOGGER.info("New " + this);
@@ -78,7 +79,7 @@ public class RAnnotationParser {
         // try to create process description:
         RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
 
-        // TODO: WPS.des and WPS.res should only occur once or not.
+        // TODO: WPS.des and WPS.res should only occur once or not at all
         try {
 			ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
                                                                                               identifier,
@@ -120,7 +121,7 @@ public class RAnnotationParser {
                 String line = lineReader.readLine();
                 lineCounter++;
 
-                if (line.startsWith(ANNOTATION_CHARACTER) && !line.startsWith(COMMENTED_ANNOTATION_CHARACTER)) {
+                if (line.trim().startsWith(ANNOTATION_CHARACTER) && !line.trim().startsWith(COMMENTED_ANNOTATION_CHARACTER)) {
                     line = line.split("#", 2)[1];
                     line = line.trim();
 

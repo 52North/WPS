@@ -44,11 +44,6 @@ public class GenericFileGenerator extends AbstractGenerator {
 	
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
 		return theStream;
 	}

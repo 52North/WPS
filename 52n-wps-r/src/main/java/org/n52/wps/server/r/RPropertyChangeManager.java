@@ -34,17 +34,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.WPSConfigurationDocument.WPSConfiguration;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RPropertyChangeManager implements PropertyChangeListener {
 
-    private static Logger LOGGER = Logger.getLogger(RPropertyChangeManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RPropertyChangeManager.class);
 
     private static RPropertyChangeManager instance;
 
@@ -207,24 +208,28 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     }
 
     private boolean checkPropertyOrder(Property[] oldPropertyArray, boolean propertyChanged) {
+        boolean pChange = propertyChanged;
+        
         // check if properties need to be re-ordered:
         if ( !propertyChanged) {
             PropertyComparator comp = new PropertyComparator();
             for (int i = 0; i < oldPropertyArray.length - 1; i++) {
                 int order = comp.compare(oldPropertyArray[i], oldPropertyArray[i + 1]);
                 if (order > 0) {
-                    propertyChanged = true;
+                    pChange = true;
                     break;
                 }
             }
         }
-        return propertyChanged;
+        return pChange;
     }
 
     private boolean addMissingAlgorithms(Repository repositoryDocument,
                                          HashMap<String, Property> algorithmPropertyHash,
                                          boolean propertyChanged,
                                          ArrayList<Property> newPropertyList) {
+        boolean pChanged = propertyChanged;
+        
         // check script dir for R process files
         // adjusts WPS config
         String scriptDir = R_Config.getInstance().getScriptDirFullPath();
@@ -246,7 +251,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     newPropertyList.add(prop);
                     LOGGER.debug("Added new algorithm property to repo document: " + prop);
 
-                    propertyChanged = true;
+                    pChanged = true;
                 }
                 else {
                     LOGGER.debug("Algorithm property already repo document: " + prop);
@@ -258,13 +263,14 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                  */
             }
         }
-        return propertyChanged;
+        return pChanged;
     }
 
     private boolean checkMandatoryParameters(Repository repositoryDocument,
                                              boolean propertyChanged,
                                              ArrayList<Property> newPropertyList,
                                              HashSet<String> configVariableNames) {
+        boolean pChanged = propertyChanged;
         /*
          * mandatory paramters, the ones from param that have not been covered yet.
          */
@@ -276,7 +282,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             host.setName(RWPSConfigVariables.RSERVE_HOST.toString());
             host.setStringValue(R_Config.getInstance().rServeHost);
             newPropertyList.add(host);
-            propertyChanged = true;
+            pChanged = true;
         }
 
         if (configVariableNames.contains(RWPSConfigVariables.RSERVE_PORT.toString().toLowerCase())) {

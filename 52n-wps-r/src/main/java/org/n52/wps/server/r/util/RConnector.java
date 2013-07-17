@@ -27,11 +27,12 @@ package org.n52.wps.server.r.util;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.log4j.Logger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RConnector {
 
@@ -39,7 +40,7 @@ public class RConnector {
 
     private static final int START_ATTEMP_COUNT = 5;
 
-    private static Logger log = Logger.getLogger(RConnector.class);
+    private static Logger log = LoggerFactory.getLogger(RConnector.class);
 
     public RConnection getNewConnection(boolean enableBatchStart, String host, int port, String user, String password) throws RserveException {
         RConnection con = null;

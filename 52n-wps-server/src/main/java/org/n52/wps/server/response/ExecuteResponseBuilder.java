@@ -39,23 +39,22 @@ package org.n52.wps.server.response;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import javax.management.RuntimeErrorException;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.LanguageStringType;
-import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
 import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.StatusType;
-import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
@@ -86,7 +85,7 @@ public class ExecuteResponseBuilder {
 	private ExecuteResponseDocument doc;
 	private RawData rawDataHandler = null; 
 	private ProcessDescriptionType description;
-	private static Logger LOGGER = Logger.getLogger(ExecuteResponseBuilder.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilder.class);
 	private Calendar creationTime;
 	
 	public ExecuteResponseBuilder(ExecuteRequest request) throws ExceptionReport{
@@ -108,6 +107,7 @@ public class ExecuteResponseBuilder {
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}
+		
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
@@ -151,9 +151,6 @@ public class ExecuteResponseBuilder {
 						generateLiteralDataOutput(id, doc, true, reference, schema, mimeType, encoding, desc.getTitle());
 					}
 					else if (desc.isSetBoundingBoxOutput()) {
-						String mimeType = null;
-						String schema = null;
-						String encoding = null;
 						generateBBOXOutput(id, doc, true, desc.getTitle());
 					}
 					return;
@@ -183,9 +180,6 @@ public class ExecuteResponseBuilder {
 						generateLiteralDataOutput(responseID, doc, false, reference, schema, mimeType, encoding, desc.getTitle());
 					}
 					else if (desc.isSetBoundingBoxOutput()) {
-						String mimeType = null;
-						String schema = null;
-						String encoding = null;
 						generateBBOXOutput(responseID, doc, false, desc.getTitle());
 					}
 					else{
@@ -234,23 +228,7 @@ public class ExecuteResponseBuilder {
 		}
 		
 		return schema;
-	}
-	
-	private static String getDefaultSchema(OutputDescriptionType desc, OutputDefinitionType def) {
-		String schema = null;
-		if(schema == null) {
-			ComplexDataDescriptionType[] formats = desc.getComplexOutput().getSupported().getFormatArray();
-			for (ComplexDataDescriptionType format : formats) {
-				if (format.getSchema() == null) {
-					return null;
-				}
-			}
-		// TODO Default schema will be returned. What about alternative schemas? 
-			return desc.getComplexOutput().getDefault().getFormat().getSchema();
-		}
-		return null;
-	}
-	
+	}	
 
 	private static String getEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
 		String encoding = null;
@@ -260,56 +238,88 @@ public class ExecuteResponseBuilder {
 		return encoding;
 	}
 	
-	private static String getDefaultEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
-		String encoding = null;
-		if(def != null) {
-			encoding = def.getEncoding();
-		}
-		if(encoding == null) {
-			// TODO Default encoding will be returned. What about alternative encodings? 
-			return desc.getComplexOutput().getDefault().getFormat().getEncoding();
-		}
-		return encoding;
-	}
-	
 	public String getMimeType() {
 		return getMimeType(null);
 	}
 	
 	public String getMimeType(OutputDefinitionType def) {
+		
 		String mimeType = "";
-		OutputDescriptionType[] outputDescs = description.getProcessOutputs().getOutputArray();
-		if (request.getExecute().isSetResponseForm()) {
-			// Get the outputdescriptions from the algorithm
-			if(request.isRawData()) {
-				mimeType = request.getExecute().getResponseForm().getRawDataOutput().getMimeType();
-				
-				
+		OutputDescriptionType[] outputDescs = description.getProcessOutputs()
+				.getOutputArray();
+
+		boolean isResponseForm = request.getExecute().isSetResponseForm();
+
+		String inputID = "";
+
+		if(def != null){
+			inputID = def.getIdentifier().getStringValue();
+		}else if(isResponseForm){
+			
+			if (request.getExecute().getResponseForm().isSetRawDataOutput()) {
+				inputID = request.getExecute().getResponseForm().getRawDataOutput()
+						.getIdentifier().getStringValue();
+			} else if (request.getExecute().getResponseForm()
+							.isSetResponseDocument()) {
+				inputID = request.getExecute().getResponseForm()
+						.getResponseDocument().getOutputArray(0).getIdentifier()
+						.getStringValue();
 			}
-			else{
-				//mimeType = "text/xml";
-				// MSS 03/02/2009 defaulting to text/xml doesn't work when the data is a complex raster
-				if(outputDescs[0].isSetLiteralOutput()){
-					mimeType = "text/xml";
-				}else{
+		}
+
+		OutputDescriptionType outputDes = null;
+
+		for (OutputDescriptionType tmpOutputDes : outputDescs) {
+			if (inputID.equalsIgnoreCase(tmpOutputDes.getIdentifier()
+					.getStringValue())) {
+				outputDes = tmpOutputDes;
+				break;
+			}
+		}
+
+		if (isResponseForm) {
+			// Get the outputdescriptions from the algorithm
+			if (request.isRawData()) {
+				mimeType = request.getExecute().getResponseForm()
+						.getRawDataOutput().getMimeType();
+			} else {
+				// mimeType = "text/xml";
+				// MSS 03/02/2009 defaulting to text/xml doesn't work when the
+				// data is a complex raster
+				if (outputDes.isSetLiteralOutput()
+						|| outputDes.isSetBoundingBoxOutput()) {
+					mimeType = "text/plain";
+				} else {
 					if (def != null) {
 						mimeType = def.getMimeType();
 					} else {
-						mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+						if (outputDes.isSetComplexOutput()) {
+							mimeType = outputDes.getComplexOutput()
+									.getDefault().getFormat().getMimeType();
+							LOGGER.warn("Using default mime type: "
+									+ mimeType
+									+ " for input: "
+									+ inputID);
+						}
 					}
 				}
 			}
 		}
-		if(mimeType==null){
-			// TODO Default MIME type will be returned. What about alternative MIME types?
-			mimeType = outputDescs[0].getComplexOutput().getDefault().getFormat().getMimeType();
+		if (mimeType == null) {
+			if (outputDes.isSetLiteralOutput()
+					|| outputDes.isSetBoundingBoxOutput()) {
+				mimeType = "text/plain";
+			} else if (outputDes.isSetComplexOutput()) {
+				mimeType = outputDes.getComplexOutput().getDefault()
+						.getFormat().getMimeType();
+				LOGGER.warn("Using default mime type: " + mimeType
+						+ " for input: "
+						+ inputID);
+			}
 		}
-		
-		
+
 		return mimeType;
 	}
-
-
 
 	private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
 		IData obj = request.getAttachedResult().get(responseID);

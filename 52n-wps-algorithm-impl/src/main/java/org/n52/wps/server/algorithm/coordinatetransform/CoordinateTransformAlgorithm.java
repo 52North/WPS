@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -31,7 +32,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class CoordinateTransformAlgorithm extends
 		AbstractSelfDescribingAlgorithm {
 	
-	private static Logger LOGGER = Logger.getLogger(CoordinateTransformAlgorithm.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(CoordinateTransformAlgorithm.class);
 
 	private final String inputIdentifierFeatures = "InputData";
 	private final String inputIdentifierTransformation = "Transformation";
@@ -93,10 +94,10 @@ public class CoordinateTransformAlgorithm extends
 		}
 
 		IData firstInputData = dataList.get(0);
-		FeatureCollection<?, Feature> featureCollection = ((GTVectorDataBinding) firstInputData)
+		FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData)
 				.getPayload();
 
-		FeatureIterator<Feature> featureIterator = featureCollection.features();
+		FeatureIterator<?> featureIterator = featureCollection.features();
 
 		List<IData> secondDataList = inputData
 				.get(inputIdentifierTargetReferenceSystem);		

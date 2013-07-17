@@ -34,7 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.kml.KML;
 import org.geotools.kml.KMLConfiguration;
@@ -45,7 +46,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 public class KMLGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(KMLGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(KMLGenerator.class);
 	
 	public KMLGenerator(){
 		super();
@@ -54,11 +55,6 @@ public class KMLGenerator extends AbstractGenerator {
 	
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}		
 		
 		File tempFile = null;
 		InputStream stream = null;
@@ -80,7 +76,7 @@ public class KMLGenerator extends AbstractGenerator {
 	}
 
 	private void writeToStream(IData coll, OutputStream os) {
-		FeatureCollection fc = ((GTVectorDataBinding)coll).getPayload();
+		FeatureCollection<?, ?> fc = ((GTVectorDataBinding)coll).getPayload();
 		
         Configuration configuration = new KMLConfiguration();
         Encoder encoder = new org.geotools.xml.Encoder(configuration);

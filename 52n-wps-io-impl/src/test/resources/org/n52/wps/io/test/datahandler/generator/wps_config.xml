@@ -102,7 +102,15 @@
 				<Format mimetype="application/x-geotiff" />
 				<Format mimetype="application/hdf4-eos" />
 				<Format mimetype="text/plain" />
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
 
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
 				<Format mimetype="application/x-zipped-shp" encoding="base64" />
 				<Format mimetype="application/img" encoding="base64" />
 				<Format mimetype="image/tiff" encoding="base64" />
@@ -210,11 +218,10 @@
 					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Parser>
 
-			<Parser name="WKTParser"
+			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-				<Property name="supportedEncoding" active="true">Base64</Property>
+				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -223,8 +230,32 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
+			
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
+			
+			<Parser name="GeoJSONParser"
+				className="org.n52.wps.io.datahandler.parser.GeoJSONParser"
+				active="true">
+				<Format mimetype="application/geojson"/>
+			</Parser>
 		</ParserList>
 		<GeneratorList>
+			
+			<Generator name="GeoJSONGenerator"
+				className="org.n52.wps.io.datahandler.generator.GeoJSONGenerator"
+				active="true">
+				<Format mimetype="application/geojson"/>
+			</Generator>
+			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
@@ -331,7 +362,16 @@
 				<Format mimetype="image/png" encoding="base64" />
 				<Format mimetype="application/x-geotiff" encoding="base64" />
 				<Format mimetype="text/plain" encoding="base64" />
-
+				<Format mimetype="application/x-zipped-shp" encoding="base64" />
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
+				
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
 				<Format mimetype="application/x-zipped-shp" />
 				<Format mimetype="application/shp" />
 				<Format mimetype="application/img" />
@@ -348,6 +388,7 @@
 				<Format mimetype="application/x-geotiff" />
 				<Format mimetype="text/plain" />
 				<Format mimetype="application/pdf" />
+				<Format mimetype="application/zip" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
@@ -444,43 +485,34 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
-			<Property name="Script_Dir" active="true">R\scripts</Property>
-			<Property name="Resource_Dir" active="true">R\resources</Property>
-			<Property name="Enable_Batch_Start" active="true">false</Property>
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
+			<Property name="Script_Dir" active="true">R/scripts</Property>
+			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
+			<Property name="Resource_Dir" active="true">R/resources</Property>
+			<Property name="R_Work_Dir" active="true">default</Property>
+			<Property name="Enable_Batch_Start" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
-			className="org.n52.wps.server.LocalAlgorithmRepository" active="false">
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.coordinatetransform.CoordinateTransformAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.convexhull.ConvexHullAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.raster.AddRasterValues</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
-		</Repository>
-		<Repository name="AviationProcessRepository"
-			className="org.n52.wps.aviation.AviationProcessRepository"
-			active="false">
-			<Property name="SpatialAnalysisProviderClassName" active="true">org.n52.wps.ags.AGSAnalysisViaWorkspaceProvider</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.AIXMIntersection</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMContains</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMCovers</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMCrosses</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMDisjoint</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMEquals</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMIntersects</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMOverlaps</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMTouches</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.aviation.spatialrelation.AIXMWithin</Property>
 		</Repository>
 		<Repository name="GrassRepository"
 			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
@@ -976,11 +1008,31 @@
 			<Property name="Algorithm" active="true">kerneldensity</Property>
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
-	</AlgorithmRepositoryList>
+		
+		<!-- 
+		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
+			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
+			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
+			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
+		</Repository>
+		 -->
+		
+  </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
-		<Database />
+		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
+             the response document will be replaced with the server URL used in the HTTP request. --> 
+        <Property name="responseURLFilterEnabled" active="true">false</Property>
+		<Database>
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
+			<!-- enable database wiping base on values below -->
+			<Property name="wipe.enabled" active="true">true</Property>
+			<!-- scans database every 1 hour -->
+			<Property name="wipe.period" active="true">PT1H</Property>
+			<!-- deletes files older than 7 days -->
+			<Property name="wipe.threshold" active="true">P7D</Property>
+		</Database>
 	</Server>
 </WPSConfiguration>
