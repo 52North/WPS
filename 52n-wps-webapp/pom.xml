@@ -463,6 +463,10 @@
 									<goal>verify</goal>
 								</goals>
 								<configuration>
+									<excludes>
+										<exclude>**/AllTestsIT*</exclude>
+									</excludes>
+								
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
 									<systemPropertyVariables>

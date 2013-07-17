@@ -46,7 +46,7 @@ public class Wps4rIT {
             c.close();
         }
         catch (RserveException e1) {
-           Assume.assumeNoException(e1);
+            Assume.assumeNoException(e1);
         }
     }
 
@@ -127,7 +127,7 @@ public class Wps4rIT {
         assertThat(response, containsString("warnings"));
     }
 
-    @Test
+    // @Test
     public void responseContainsWarningsContent() throws IOException,
             ParserConfigurationException,
             SAXException,
