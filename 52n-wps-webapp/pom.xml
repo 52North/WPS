@@ -265,11 +265,11 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 	</dependencies>
-	
+
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
 	</properties>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -464,10 +464,10 @@
 									<goal>verify</goal>
 								</goals>
 								<configuration>
-									<excludes>
-										<exclude>**/AllTestsIT*</exclude>
-									</excludes>
-								
+<!-- 									<excludes> -->
+<!-- 										<exclude>**/AllTestsIT*</exclude> -->
+<!-- 									</excludes> -->
+
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
 									<systemPropertyVariables>
