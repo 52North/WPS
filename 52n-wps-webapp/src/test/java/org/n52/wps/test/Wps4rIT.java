@@ -87,7 +87,6 @@ public class Wps4rIT {
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
-
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));

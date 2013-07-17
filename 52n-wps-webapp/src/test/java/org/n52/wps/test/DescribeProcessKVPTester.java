@@ -1,10 +1,15 @@
 package org.n52.wps.test;
 
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.xmlbeans.XmlException;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -14,7 +19,7 @@ public class DescribeProcessKVPTester {
     private static String url;
 
     @BeforeClass
-    public static void beforeClass() throws XmlException, IOException {
+    public static void beforeClass() {
         url = AllTestsIT.getURL();
     }
 

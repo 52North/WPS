@@ -113,6 +113,7 @@
 			<organizationUrl>http://52north.org</organizationUrl>
 		</contributor>
 	</contributors>
+	
 	<!-- here are the dependencies of the project -->
 	<dependencies>
 		<!-- Dependencies for Scope 'test' -->

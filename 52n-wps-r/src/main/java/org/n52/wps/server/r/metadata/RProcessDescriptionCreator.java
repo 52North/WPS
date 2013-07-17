@@ -140,7 +140,7 @@ public class RProcessDescriptionCreator {
                 }
             }
 
-     // Add SessionInfo-Output
+     	// Add SessionInfo-Output
         OutputDescriptionType outdes = outputs.addNewOutput();
         outdes.addNewIdentifier().setStringValue("sessionInfo");
         outdes.addNewTitle().setStringValue("Information about the R session which has been used");
@@ -155,7 +155,7 @@ public class RProcessDescriptionCreator {
         datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
 
  
-     // Add Warnings-Output
+     	// Add Warnings-Output
         outdes = outputs.addNewOutput();
         outdes.addNewIdentifier().setStringValue("warnings");
         outdes.addNewTitle().setStringValue("Warnings from R");

@@ -79,7 +79,7 @@ public class RAnnotationParser {
         // try to create process description:
         RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
 
-        // TODO: WPS.des and WPS.res should only occur once or not.
+        // TODO: WPS.des and WPS.res should only occur once or not at all
         try {
 			ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
                                                                                               identifier,

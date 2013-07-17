@@ -108,12 +108,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 	public GenericRProcess(String wellKnownName) {
 		// note that superconstructor calls method initializeDescription()
 		super(wellKnownName);
+		
 		log.info("NEW " + this.toString());
 	}
 
 	public GenericRProcess() {
 		// note that superconstructor calls method initializeDescription()
 		super();
+		
 		log.info("NEW " + this.toString());
 	}
 
