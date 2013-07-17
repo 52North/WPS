@@ -69,7 +69,9 @@ public class Wps4rIT {
         URL urlSessionInfo = new URL(temp + "/R/sessioninfo.jsp");
         try {
             String response = GetClient.sendRequest(urlSessionInfo.toExternalForm());
-            assertThat(response, containsString("R version "));
+            assertThat(response, containsString("R ")); // "R version" fails if using unstable R!
+            assertThat(response, containsString("Platform:"));
+            assertThat(response, containsString("attached base packages:"));
         }
         catch (IOException e) {
             String message = "Cannot retrieve the R session info from WPS.";
@@ -152,6 +154,9 @@ public class Wps4rIT {
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
         assertThat(response, containsString(identifier));
+
+        // TODO fix test: assertThat(response, containsString("<ows:Identifier>" + identifier +
+        // "</ows:Identifier>"));
     }
 
     @Test
