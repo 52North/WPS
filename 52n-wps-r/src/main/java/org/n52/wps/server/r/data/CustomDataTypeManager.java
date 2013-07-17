@@ -30,11 +30,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomDataTypeManager {
 

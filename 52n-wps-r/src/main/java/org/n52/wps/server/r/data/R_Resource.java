@@ -30,15 +30,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class R_Resource {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(R_Resource.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
 
     private String resourceValue;
 
