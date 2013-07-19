@@ -11,8 +11,9 @@
 						http://www.springframework.org/schema/jdbc 
 						http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
-	<context:component-scan base-package="org.n52.wps.webapp">
+	<context:component-scan base-package="org.n52.wps">
 		<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+		<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*"/>
 	</context:component-scan>
 
 	<tx:annotation-driven />
