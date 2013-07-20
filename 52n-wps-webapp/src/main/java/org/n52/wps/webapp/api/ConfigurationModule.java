@@ -44,17 +44,26 @@ public interface ConfigurationModule {
 	boolean isActive();
 
 	/**
+	 * Identify the category for the configuration module. See {@code ConfigurationCategory} for a list of avaliable
+	 * categories.
+	 * 
+	 * @return the category for the configuration module
+	 */
+	ConfigurationCategory getCategory();
+
+	/**
 	 * List of all configurations entries for this configuration module. Configuration entries can be of type String,
 	 * Integer, Boolean, Double, File, and URI
+	 * 
+	 * @return the list of configuration entries
 	 * @see StringConfigurationEntry
 	 * @see IntegerConfigurationEntry
 	 * @see BooleanConfigurationEntry
 	 * @see DoubleConfigurationEntry
 	 * @see FileConfigurationEntry
 	 * @see URIConfigurationEntry
-	 * @return the list of configuration entries
 	 */
-	List<ConfigurationEntry<?>> getConfigurationEntries();
+	List<? extends ConfigurationEntry<?>> getConfigurationEntries();
 
 	/**
 	 * List of algorithms for this configuration module.
