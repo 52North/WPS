@@ -24,10 +24,53 @@
 
 package org.n52.wps.webapp.dao;
 
+import org.n52.wps.webapp.api.AlgorithmEntry;
+
 public interface ConfigurationDAO {
-	
+
 	/**
-	 * Write {@code WPSConfigurationImpl} configurations to wps_config.xml
+	 * Get the stored configuration entry value
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the configuration entry
+	 * @param entryKey
+	 *            the configuration entry key
+	 * @return The stored configuration entry value or {@code null} if no entry is found.
 	 */
-	void save();
+	Object getConfigurationEntryValue(String moduleClassName, String entryKey);
+
+	/**
+	 * Store the configuration entry value
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the configuration entry
+	 * @param entryKey
+	 *            the configuration entry key
+	 * @param value
+	 *            the value to be stored
+	 */
+	void insertConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
+
+	/**
+	 * Get the stored algorithm entry value
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param algorithm
+	 *            the algorithm name
+	 * @return The algorithm entry or {@code null} if no entry is found.
+	 */
+	AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm);
+
+	/**
+	 * Store the algorithm entry value
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param algorithm
+	 *            the algorithm name
+	 * @param active
+	 *            the algorithm status
+	 */
+	void insertAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
 }
