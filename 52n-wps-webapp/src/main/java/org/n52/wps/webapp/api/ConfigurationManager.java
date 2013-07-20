@@ -31,40 +31,74 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 public interface ConfigurationManager {
 
 	/**
-	 * Get all the configuration modules and configuration entries for each module. Configuration entries are mapped by
-	 * their keys.
-	 * <p>
-	 * To get a specific configuration entry {@code getAllConfigurationModule().get(module).get(entryKey)}.
-	 * </p>
+	 * Get all classes that implements the {@code ConfigurationModule} interface. Modules are mapped by their fully
+	 * qualified name.
 	 * 
-	 * @return the map of map for all configuration modules and entries
+	 * @return A map of all configuration modules.
 	 */
-	Map<ConfigurationModule, Map<String, ConfigurationEntry<?>>> getAllConfigurationModules();
+	Map<String, ConfigurationModule> getAllConfigurationModules();
 
 	/**
-	 * Get the configuration module instance by passing the class of the configuration module.
+	 * Get all configuration modules of a particular category.
 	 * 
-	 * @param clazz
-	 *            the class of the module required
-	 * @return the instance of the configuration module, or {@code null} if no module is found.
+	 * @param category
+	 *            the category of the modules
+	 * @return A map of all configuration modules of the specified category.
+	 * @see ConfigurationCategory
 	 */
-	ConfigurationModule getConfigurationModule(Class<? extends ConfigurationModule> clazz);
+	Map<String, ConfigurationModule> getAllConfigurationModulesByCategory(ConfigurationCategory category);
 
 	/**
-	 * Get the configuration module instance by passing the fully qualified name of the module's class.
+	 * Get only active configuration modules of a particular category.
+	 * 
+	 * @param category
+	 *            the category of the modules
+	 * @return A map of all active configuration modules of the specified category.
+	 * @see ConfigurationCategory
+	 */
+	Map<String, ConfigurationModule> getActiveConfigurationModulesByCategory(ConfigurationCategory category);
+
+	/**
+	 * Get a configuration module by its fully qualified name.
 	 * 
 	 * @param moduleClassName
 	 *            the fully qualified name of the module required
-	 * @return the instance of the configuration module, or {@code null} if no module is found.
+	 * @return The configuration module or {@code null} if no module is found.
 	 */
-	ConfigurationModule getConfigurationModuleByName(String moduleClassName);
+	ConfigurationModule getConfigurationModule(String moduleClassName);
 
 	/**
-	 * Set the value of a configuration entry. The method retrieves the entry using the entry key, checks the entry
-	 * type, and attempts to parse the value before setting it.
+	 * Get a configuration entry.
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the configuration entry
+	 * @param entryKey
+	 *            the configuration entry key
+	 * @return The configuration entry or {@code null} if no entry is found.
+	 */
+	ConfigurationEntry<?> getConfigurationEntry(String moduleClassName, String entryKey);
+
+	/**
+	 * Get the configuration entry value and return it as the expected type.
 	 * 
 	 * @param module
-	 *            the configuration module which holds the configuration entry
+	 *            the fully qualified name of the module holding the configuration entry
+	 * @param entryKey
+	 *            the configuration entry key
+	 * @param requiredType
+	 *            the required type of the return value
+	 * @return The entry value in the required type
+	 * @throws WPSConfigurationException
+	 *             if the entry's value type cannot be be parsed to the required type
+	 */
+	<T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
+			throws WPSConfigurationException;
+
+	/**
+	 * Set the value of a configuration entry. The {@code Object} value will be parsed to the entry type.
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the configuration entry
 	 * @param entryKey
 	 *            the entry key
 	 * @param value
@@ -72,56 +106,29 @@ public interface ConfigurationManager {
 	 * @throws WPSConfigurationException
 	 *             if the value cannot be parsed to the correct entry type
 	 */
-	void setValue(ConfigurationModule module, String entryKey, Object value) throws WPSConfigurationException;
+	void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
+			throws WPSConfigurationException;
 
 	/**
-	 * Sync the value of a configuration entry from the configurations datasource during initialization. The method is
-	 * similar to {@link #setValue} except it doesn't store the value after updating the entry (since the value is
-	 * already coming from the stored data). This method is used by the internally sync configuration entries. Use
-	 * {@link #setValue} if you have a value passed from a client (i.e. controller).
+	 * Get an algorithm entry.
 	 * 
-	 * @param module
-	 *            the configuration module which holds the configuration entry
-	 * @param entryKey
-	 *            the configuration entry key
-	 * @param value
-	 *            the value to be set
-	 * @throws WPSConfigurationException
-	 *             if the value cannot be parsed to the correct entry type;
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param algorithm
+	 *            the algorithm name
+	 * @return The algorithm entry or {@code null} if no entry is found.
 	 */
-	void syncValue(ConfigurationModule module, String entryKey, Object value) throws WPSConfigurationException;;
+	AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm);
 
 	/**
-	 * Get the configuration entry value and return it as the expected type. Example:
-	 * {@code Boolean value = getValue(module, "key",
-	 * Boolean.class);}. This method is used internally by the {@link passValueToConfigurationModule} method.
+	 * Set the value of an algorithm entry.
 	 * 
-	 * @param module
-	 *            the configuration module which holds the configuration entry
-	 * @param entryKey
-	 *            the configuration entry key
-	 * @param requiredType
-	 *            the required type of the return value
-	 * @return the entry value in the required type
-	 * @throws WPSConfigurationException
-	 *             if the entry's value type cannot be be parsed to the required type
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param algorithm
+	 *            the algorithm name
+	 * @param active
+	 *            the algorithm status
 	 */
-	<T> T getValue(ConfigurationModule module, String entryKey, Class<T> requiredType) throws WPSConfigurationException;
-
-	/**
-	 * Pass the value of the configuration entry to an annotated set method in a configuration module. To have a value
-	 * passed to a member variable in the configuration module, annotate its setter method with
-	 * {@code ConfigurationKey(key="entry.key")}. The member variable type and the configuration entry must be of the
-	 * same type.
-	 * 
-	 * @param module
-	 *            the configuration module which holds the setter method
-	 * @param entryKey
-	 *            the configuration entry key
-	 * @throws WPSConfigurationException
-	 *             if the entry value type is not compatible with the member variable type, or if the setter method have more
-	 *             than one parameter
-	 */
-	void passValueToConfigurationModule(ConfigurationModule module, String entryKey) throws WPSConfigurationException;
-
+	void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
 }

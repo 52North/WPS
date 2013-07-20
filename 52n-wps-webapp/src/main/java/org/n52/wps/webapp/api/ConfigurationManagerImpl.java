@@ -24,22 +24,12 @@
 
 package org.n52.wps.webapp.api;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
-import org.n52.wps.webapp.api.types.FileConfigurationEntry;
-import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
-import org.n52.wps.webapp.api.types.StringConfigurationEntry;
-import org.n52.wps.webapp.api.types.URIConfigurationEntry;
-import org.n52.wps.webapp.service.RepositoryService;
+import org.n52.wps.webapp.service.ConfigurationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,173 +39,69 @@ import org.springframework.stereotype.Component;
 public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
-	private ConfigurationModules configurationModules;
-
-	@Autowired
-	private RepositoryService repositoryService;
-
-	@Autowired
-	private ValueParser valueParser;
+	private ConfigurationService configurationService;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationManagerImpl.class);
 
 	@Override
-	public Map<ConfigurationModule, Map<String, ConfigurationEntry<?>>> getAllConfigurationModules() {
-		return configurationModules.getAllConfigurationModules();
+	public Map<String, ConfigurationModule> getAllConfigurationModules() {
+		return configurationService.getAllConfigurationModules();
 	}
 
 	@Override
-	public ConfigurationModule getConfigurationModule(Class<? extends ConfigurationModule> clazz) {
-		return configurationModules.getConfigurationModule(clazz);
+	public Map<String, ConfigurationModule> getAllConfigurationModulesByCategory(ConfigurationCategory category) {
+		return configurationService.getConfigurationModulesByCategory(category);
 	}
 
 	@Override
-	public ConfigurationModule getConfigurationModuleByName(String moduleClassName) {
-		return configurationModules.getConfigurationModuleByName(moduleClassName);
+	public Map<String, ConfigurationModule> getActiveConfigurationModulesByCategory(ConfigurationCategory category) {
+		return configurationService.getConfigurationModulesByCategory(category, true);
 	}
 
 	@Override
-	public void setValue(ConfigurationModule module, String entryKey, Object value) throws WPSConfigurationException {
-		try {
-			setValueHelper(module, entryKey, value);
-		} catch (WPSConfigurationException e) {
-			String errorMessage = "Unable to set value '" + value + "' in module '" + module.getClass().getName()
-					+ "' for entry '" + entryKey + "': " + e.getMessage();
-			LOGGER.error(errorMessage);
-			throw new WPSConfigurationException(errorMessage);
-		}
-		repositoryService.storeValue(module, entryKey, value);
-		passValueToConfigurationModule(module, entryKey);
+	public ConfigurationModule getConfigurationModule(String moduleClassName) {
+		return configurationService.getConfigurationModule(moduleClassName);
 	}
-
+	
 	@Override
-	public void syncValue(ConfigurationModule module, String entryKey, Object value) throws WPSConfigurationException {
-		try {
-			setValueHelper(module, entryKey, value);
-		} catch (WPSConfigurationException e) {
-			String errorMessage = "Unable to sync value '" + value + "' in module '" + module.getClass().getName()
-					+ "' for entry '" + entryKey + "': " + e.getMessage();
-			LOGGER.error(errorMessage);
-			throw new WPSConfigurationException(errorMessage);
-		}
+	public ConfigurationEntry<?> getConfigurationEntry(String moduleClassName, String entryKey) {
+		return configurationService.getConfigurationEntry(moduleClassName, entryKey);
 	}
-
-	private void setValueHelper(ConfigurationModule module, String entryKey, Object value)
+	
+	@Override
+	public <T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
 			throws WPSConfigurationException {
-		ConfigurationEntry<?> entry = getAllConfigurationModules().get(module).get(entryKey);
-		switch (entry.getType()) {
-		case STRING:
-			setStringValue((StringConfigurationEntry) entry, value);
-			break;
-		case BOOLEAN:
-			setBooleanValue((BooleanConfigurationEntry) entry, value);
-			break;
-		case DOUBLE:
-			setDoubleValue((DoubleConfigurationEntry) entry, value);
-			break;
-		case FILE:
-			setFileValue((FileConfigurationEntry) entry, value);
-			break;
-		case INTEGER:
-			setIntegerValue((IntegerConfigurationEntry) entry, value);
-			break;
-		case URI:
-			setURIValue((URIConfigurationEntry) entry, value);
-			break;
-		default:
-			break;
+		try {
+			return configurationService.getConfigurationEntryValue(moduleClassName, entryKey, requiredType);
+		} catch (WPSConfigurationException e) {
+			throw new WPSConfigurationException(e);
 		}
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T getValue(ConfigurationModule module, String entryKey, Class<T> requiredType) throws WPSConfigurationException {
-		ConfigurationEntry<?> entry = configurationModules.getAllConfigurationModules().get(module).get(entryKey);
-		Object value = entry.getValue();
-		if (requiredType != null && !requiredType.isAssignableFrom(value.getClass())) {
-			String errorMessage = "The required type is '" + requiredType.getSimpleName()
-					+ "' but the entry value type is '" + entry.getType().toString() + "'.";
-			LOGGER.error(errorMessage);
-			throw new WPSConfigurationException(errorMessage);
+	public void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
+			throws WPSConfigurationException {
+		try {
+			configurationService.setConfigurationEntryValue(moduleClassName, entryKey, value);
+		} catch (WPSConfigurationException e) {
+			throw new WPSConfigurationException(e);
 		}
-		return (T) value;
+	}
+	
+	@Override
+	public AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm) {
+		return configurationService.getAlgorithmEntry(moduleClassName, algorithm);
+	}
+	
+	@Override
+	public void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active) {
+		configurationService.setAlgorithmEntry(moduleClassName, algorithm, active);
 	}
 
 	@PostConstruct
-	public void initializeConfigurations() {
+	private void initializeConfigurations() {
 		LOGGER.debug("Initializing configurations...");
-		repositoryService.syncRepositories();
+		configurationService.syncConfigurations();
 		LOGGER.debug("Configurations initialized.");
-	}
-
-	@Override
-	public void passValueToConfigurationModule(ConfigurationModule module, String entryKey) throws WPSConfigurationException {
-
-		for (Method method : module.getClass().getMethods()) {
-			if (method.isAnnotationPresent(ConfigurationKey.class)) {
-				ConfigurationKey configurationKey = method.getAnnotation(ConfigurationKey.class);
-				if (configurationKey.key().equals(entryKey)) {
-					Class<?>[] clazz = method.getParameterTypes();
-					try {
-						if (method.getParameterTypes().length != 1) {
-							throw new WPSConfigurationException("The method has more than one parameter.");
-						}
-						
-						if (clazz[0].isPrimitive()) {
-							if(clazz[0].toString().equals("int")) {
-								clazz[0] = Integer.class;
-							}
-							if(clazz[0].toString().equals("double")) {
-								clazz[0] = Double.class;
-							}
-							if(clazz[0].toString().equals("boolean")) {
-								clazz[0] = Boolean.class;
-							}
-						}
-						
-						Object value = getValue(module, entryKey, clazz[0]);
-						method.invoke(module, value);
-						LOGGER.debug("Value '" + value.toString() + "' passed to method '" + method.getName() + "' in module '" + module.getClass().getName() + "'." );
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-							| WPSConfigurationException e) {
-						String errorMessage = "Cannot pass value to method '" + method.getName() + "' in module '"
-								+ module.getClass().getName() + "' for entry '" + configurationKey.key() + "': "
-								+ e.getMessage();
-						LOGGER.error(errorMessage);
-						throw new WPSConfigurationException(errorMessage);
-					}
-				}
-			}
-		}
-	}
-
-	private void setStringValue(ConfigurationEntry<String> entry, Object value) throws WPSConfigurationException {
-		String parsedValue = String.class.cast(valueParser.parseString(value));
-		entry.setValue(parsedValue);
-	}
-
-	private void setIntegerValue(ConfigurationEntry<Integer> entry, Object value) throws WPSConfigurationException {
-		Integer parsedValue = Integer.class.cast(valueParser.parseInteger(value));
-		entry.setValue(parsedValue);
-	}
-
-	private void setDoubleValue(ConfigurationEntry<Double> entry, Object value) throws WPSConfigurationException {
-		Double parsedValue = Double.class.cast(valueParser.parseDouble(value));
-		entry.setValue(parsedValue);
-	}
-
-	private void setBooleanValue(ConfigurationEntry<Boolean> entry, Object value) throws WPSConfigurationException {
-		Boolean parsedValue = Boolean.class.cast(valueParser.parseBoolean(value));
-		entry.setValue(parsedValue);
-	}
-
-	private void setFileValue(ConfigurationEntry<File> entry, Object value) throws WPSConfigurationException {
-		File parsedValue = File.class.cast(valueParser.parseFile(value));
-		entry.setValue(parsedValue);
-	}
-
-	private void setURIValue(ConfigurationEntry<URI> entry, Object value) throws WPSConfigurationException {
-		URI parsedValue = URI.class.cast(valueParser.parseURI(value));
-		entry.setValue(parsedValue);
 	}
 }
