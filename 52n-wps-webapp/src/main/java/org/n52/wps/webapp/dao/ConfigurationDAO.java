@@ -40,7 +40,7 @@ public interface ConfigurationDAO {
 	Object getConfigurationEntryValue(String moduleClassName, String entryKey);
 
 	/**
-	 * Store the configuration entry value
+	 * Insert new configuration entry value
 	 * 
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
@@ -50,6 +50,18 @@ public interface ConfigurationDAO {
 	 *            the value to be stored
 	 */
 	void insertConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
+	
+	/**
+	 * Update a configuration entry value
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the configuration entry
+	 * @param entryKey
+	 *            the configuration entry key
+	 * @param value
+	 *            the value to be stored
+	 */
+	void updateConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
 
 	/**
 	 * Get the stored algorithm entry value
@@ -63,7 +75,7 @@ public interface ConfigurationDAO {
 	AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm);
 
 	/**
-	 * Store the algorithm entry value
+	 * Insert new algorithm entry value
 	 * 
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
@@ -73,4 +85,16 @@ public interface ConfigurationDAO {
 	 *            the algorithm status
 	 */
 	void insertAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
+	
+	/**
+	 * Update an algorithm entry
+	 * 
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param algorithm
+	 *            the algorithm name to be updated
+	 * @param active
+	 *            the new algorithm status
+	 */
+	void updateAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
 }
