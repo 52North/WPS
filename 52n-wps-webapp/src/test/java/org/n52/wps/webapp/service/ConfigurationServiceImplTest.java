@@ -341,24 +341,33 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 	}
 
 	@Test
-	public void testSetValidConfigurationEntryValue() throws WPSConfigurationException, URISyntaxException {
+	public void testSetConfigurationEntryValue() throws WPSConfigurationException, URISyntaxException {
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
 		assertEquals("test value", testModule1.getConfigurationEntries().get(0).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.integer.key", 12);
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.integer.key", 12);
 		assertEquals(12, testModule1.getConfigurationEntries().get(1).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.double.key", 14.2);
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.double.key", 14.2);
 		assertEquals(14.2, testModule1.getConfigurationEntries().get(2).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.boolean.key", true);
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.boolean.key", true);
 		assertEquals(true, testModule1.getConfigurationEntries().get(3).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.file.key", new File("file_path"));
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.file.key", new File("file_path"));
 		assertEquals(new File("file_path"), testModule1.getConfigurationEntries().get(4).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.uri.key", new URI("uri_path"));
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.uri.key", new URI("uri_path"));
 		assertEquals(new URI("uri_path"), testModule1.getConfigurationEntries().get(5).getValue());
+		
+		configurationService.setConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
+		verify(configurationDAO, never()).updateConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
 	}
 
 	@Test
@@ -412,10 +421,10 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 		configurationService.setAlgorithmEntry(testModule1ClassName, algorithm, false);
 		assertEquals("name1", testModule1.getAlgorithmEntries().get(0).getAlgorithm());
 		assertEquals(false, testModule1.getAlgorithmEntries().get(0).isActive());
-		verify(configurationDAO).insertAlgorithmEntry(testModule1ClassName, algorithm, false);
+		verify(configurationDAO).updateAlgorithmEntry(testModule1ClassName, algorithm, false);
 
 		String nonExisting = "non.existing.algorithm";
-		verify(configurationDAO, never()).insertAlgorithmEntry(testModule1ClassName, nonExisting, false);
+		verify(configurationDAO, never()).updateAlgorithmEntry(testModule1ClassName, nonExisting, false);
 	}
 
 	@Test

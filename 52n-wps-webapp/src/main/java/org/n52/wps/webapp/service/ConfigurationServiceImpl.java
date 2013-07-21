@@ -187,7 +187,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		}
 		return null;
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
@@ -210,11 +210,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
 			throws WPSConfigurationException {
-		try {
-			setConfigurationEntryValueHelper(moduleClassName, entryKey, value);
-			configurationDAO.insertConfigurationEntryValue(moduleClassName, entryKey, value);
-		} catch (WPSConfigurationException e) {
-			throw new WPSConfigurationException(e);
+		ConfigurationEntry<?> entry = getConfigurationEntry(moduleClassName, entryKey);
+		if (entry != null) {
+			try {
+				setConfigurationEntryValueHelper(moduleClassName, entryKey, value);
+				configurationDAO.updateConfigurationEntryValue(moduleClassName, entryKey, value);
+			} catch (WPSConfigurationException e) {
+				throw new WPSConfigurationException(e);
+			}
 		}
 	}
 
@@ -272,7 +275,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active) {
 		setAlgorithmEntryHelper(moduleClassName, algorithm, active);
-		configurationDAO.insertAlgorithmEntry(moduleClassName, algorithm, active);
+		configurationDAO.updateAlgorithmEntry(moduleClassName, algorithm, active);
 	}
 
 	/*
@@ -284,7 +287,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			entry.setActive(active);
 		}
 	}
-	
+
 	@Override
 	public void passValueToConfigurationModule(String moduleClassName, String entryKey)
 			throws WPSConfigurationException {
