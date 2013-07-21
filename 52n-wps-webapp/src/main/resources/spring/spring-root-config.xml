@@ -13,7 +13,7 @@
 
 	<context:component-scan base-package="org.n52.wps">
 		<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
-		<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*"/>
+		<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
 	</context:component-scan>
 
 	<tx:annotation-driven />
@@ -27,7 +27,7 @@
 		<property name="initialSize" value="5"></property>
 		<property name="maxActive" value="10"></property>
 	</bean>
-	
+
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
 	</bean>
@@ -39,5 +39,13 @@
 	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
 		<constructor-arg ref="dataSource" />
 	</bean>
+
+	<beans profile="test">
+		<!-- In-memory database to be used during testing -->
+		<jdbc:embedded-database id="dataSource" type="HSQL">
+			<jdbc:script location="classpath:db/schema.sql" />
+			<jdbc:script location="classpath:test-data.sql" />
+		</jdbc:embedded-database>
+	</beans>
 
 </beans>

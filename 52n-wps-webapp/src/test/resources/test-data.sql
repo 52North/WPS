@@ -1,0 +1,8 @@
+INSERT INTO CONFIGURATIONENTRY VALUES('test.boolean.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','true')
+INSERT INTO CONFIGURATIONENTRY VALUES('test.double.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','11.3')
+INSERT INTO CONFIGURATIONENTRY VALUES('test.file.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','test_path')
+INSERT INTO CONFIGURATIONENTRY VALUES('test.integer.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','23')
+INSERT INTO CONFIGURATIONENTRY VALUES('test.string.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','Test Value')
+INSERT INTO CONFIGURATIONENTRY VALUES('test.uri.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','test_path')
+INSERT INTO ALGORITHMENTRY VALUES('name1','org.n52.wps.webapp.testmodules.TestConfigurationModule1',TRUE)
+INSERT INTO ALGORITHMENTRY VALUES('name2','org.n52.wps.webapp.testmodules.TestConfigurationModule1',TRUE)
