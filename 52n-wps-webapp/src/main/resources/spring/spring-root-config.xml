@@ -18,14 +18,6 @@
 
 	<tx:annotation-driven />
 
-	<bean id="wpsConfig" class="org.n52.wps.commons.WPSConfig" factory-method="getInstance" />
-
-	<bean id="wpsConfigurationImpl" factory-bean="wpsConfig" factory-method="getWPSConfig" />
-
-	<bean id="wpsConfigurationDocument" class="org.n52.wps.WPSConfigurationDocument.Factory" factory-method="newInstance" />
-
-	<bean id="wpsConfiguration" factory-bean="wpsConfigurationDocument" factory-method="addNewWPSConfiguration" />
-
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver"></property>
 		<property name="url"
