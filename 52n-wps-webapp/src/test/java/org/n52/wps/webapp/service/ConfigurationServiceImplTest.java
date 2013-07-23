@@ -231,10 +231,10 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 	@Test
 	public void testGetConfigurationModulesByCategory() {
 		Map<String, ConfigurationModule> processModules = configurationService
-				.getConfigurationModulesByCategory(ConfigurationCategory.PROCESS);
+				.getConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY);
 		assertNotNull(processModules);
 		for (ConfigurationModule module : processModules.values()) {
-			assertTrue(module.getCategory() == ConfigurationCategory.PROCESS);
+			assertTrue(module.getCategory() == ConfigurationCategory.REPOSITORY);
 		}
 
 		// No ConfigurationCategory.GENERAL test module in the testmodules package
@@ -246,15 +246,15 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 	@Test
 	public void testGetActiveConfigurationModulesByCategory() {
 		Map<String, ConfigurationModule> allProcessModules = configurationService.getConfigurationModulesByCategory(
-				ConfigurationCategory.PROCESS, false);
+				ConfigurationCategory.REPOSITORY, false);
 		assertTrue(allProcessModules.size() > 1);
 
 		Map<String, ConfigurationModule> onlyActiveProcessModules = configurationService
-				.getConfigurationModulesByCategory(ConfigurationCategory.PROCESS, true);
+				.getConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY, true);
 		assertEquals(1, onlyActiveProcessModules.size());
 
 		for (ConfigurationModule module : onlyActiveProcessModules.values()) {
-			assertTrue(module.getCategory() == ConfigurationCategory.PROCESS);
+			assertTrue(module.getCategory() == ConfigurationCategory.REPOSITORY);
 			assertTrue(module.isActive());
 		}
 	}

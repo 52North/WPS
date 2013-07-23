@@ -86,7 +86,7 @@ public class TestConfigurationModule2 implements ConfigurationModule {
 
 	@Override
 	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PROCESS;
+		return ConfigurationCategory.REPOSITORY;
 	}
 
 	public String getStringMember() {

@@ -25,5 +25,5 @@
 package org.n52.wps.webapp.api;
 
 public enum ConfigurationCategory {
-	PROCESS, GENERATOR, PARSER, GENERAL;
+	REPOSITORY, GENERATOR, PARSER, GENERAL;
 }
