@@ -29,19 +29,24 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.wps.webapp.common.AbstractTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ValueParserTest extends AbstractTest {
+public class ValueParserTest {
 	
 	@Autowired
 	ValueParser valueParser;
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
+	
+	@Before
+	public void setup() {
+		valueParser = new ValueParser();
+	}
 	
 	@Test
 	public void testParseString() throws WPSConfigurationException {

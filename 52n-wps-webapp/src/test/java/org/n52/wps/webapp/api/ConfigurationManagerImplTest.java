@@ -37,14 +37,11 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.common.AbstractTest;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConfigurationManagerImplTest extends AbstractTest {
+public class ConfigurationManagerImplTest {
 
-	@Autowired
 	@InjectMocks
 	ConfigurationManager configurationManager;
 
@@ -57,8 +54,10 @@ public class ConfigurationManagerImplTest extends AbstractTest {
 	private String testModuleClassName = TestConfigurationModule1.class.getName();
 
 	@Before
-	public void initModule() throws URISyntaxException {
+	public void initModule() {
+		configurationManager = new ConfigurationManagerImpl();
 		MockitoAnnotations.initMocks(this);
+		
 	}
 
 	@Test

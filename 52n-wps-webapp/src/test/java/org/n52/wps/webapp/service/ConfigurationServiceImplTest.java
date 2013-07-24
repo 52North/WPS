@@ -56,19 +56,17 @@ import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.ConfigurationType;
+import org.n52.wps.webapp.api.ValueParser;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.common.AbstractTest;
 import org.n52.wps.webapp.dao.ConfigurationDAO;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule2;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule3;
 import org.springframework.beans.factory.ListableBeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConfigurationServiceImplTest extends AbstractTest {
+public class ConfigurationServiceImplTest {
 
-	@Autowired
 	@InjectMocks
 	private ConfigurationService configurationService;
 
@@ -77,6 +75,9 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
 	@Mock
 	private ConfigurationDAO configurationDAO;
+
+	@Mock
+	private ValueParser valueParser;
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -90,7 +91,8 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 	private TestConfigurationModule3 testModule3 = new TestConfigurationModule3();
 
 	@Before
-	public void init() {
+	public void init() throws WPSConfigurationException, URISyntaxException {
+		configurationService = new ConfigurationServiceImpl();
 		MockitoAnnotations.initMocks(this);
 		when(listableBeanFactory.getBeansOfType(ConfigurationModule.class)).thenReturn(testMap());
 	}
@@ -121,14 +123,13 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 				verify(configurationDAO).getConfigurationEntryValue(module.getClass().getName(), entry.getKey());
 
 				Object value = null;
-
-				if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
-					value = entry.getValue().toString();
-				} else {
-					value = entry.getValue();
+				if ((value = entry.getValue()) != null) {
+					if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
+						value = entry.getValue().toString();
+					}
+					verify(configurationDAO).insertConfigurationEntryValue(module.getClass().getName(), entry.getKey(),
+							value);
 				}
-				verify(configurationDAO).insertConfigurationEntryValue(module.getClass().getName(), entry.getKey(),
-						value);
 			}
 
 			for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
@@ -141,7 +142,7 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 	}
 
 	@Test
-	public void testSyncExistingConfigurations() throws URISyntaxException {
+	public void testSyncExistingConfigurations() throws URISyntaxException, WPSConfigurationException {
 
 		String classModuleNames = "org.n52.wps.webapp.testmodules.TestConfigurationModule";
 		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.string.key")))
@@ -166,6 +167,13 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
 		when(configurationDAO.getAlgorithmEntry(startsWith(classModuleNames), eq("name2"))).thenReturn(
 				new AlgorithmEntry("name2", false));
+
+		when(valueParser.parseString("synced string")).thenReturn("synced string");
+		when(valueParser.parseInteger(99)).thenReturn(99);
+		when(valueParser.parseDouble(1.2)).thenReturn(1.2);
+		when(valueParser.parseBoolean(false)).thenReturn(false);
+		when(valueParser.parseFile(new File("synced_path"))).thenReturn(new File("synced_path"));
+		when(valueParser.parseURI(new URI("synced_path"))).thenReturn(new URI("synced_path"));
 
 		configurationService.syncConfigurations();
 
@@ -342,6 +350,13 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 
 	@Test
 	public void testSetConfigurationEntryValue() throws WPSConfigurationException, URISyntaxException {
+		when(valueParser.parseString("test value")).thenReturn("test value");
+		when(valueParser.parseInteger(12)).thenReturn(12);
+		when(valueParser.parseDouble(14.2)).thenReturn(14.2);
+		when(valueParser.parseBoolean(true)).thenReturn(true);
+		when(valueParser.parseFile(new File("file_path"))).thenReturn(new File("file_path"));
+		when(valueParser.parseURI(new URI("uri_path"))).thenReturn(new URI("uri_path"));
+
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
 		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
 		assertEquals("test value", testModule1.getConfigurationEntries().get(0).getValue());
@@ -359,49 +374,63 @@ public class ConfigurationServiceImplTest extends AbstractTest {
 		assertEquals(true, testModule1.getConfigurationEntries().get(3).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.file.key", new File("file_path"));
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.file.key", new File("file_path"));
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.file.key",
+				new File("file_path"));
 		assertEquals(new File("file_path"), testModule1.getConfigurationEntries().get(4).getValue());
 
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.uri.key", new URI("uri_path"));
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.uri.key", new URI("uri_path"));
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.uri.key",
+				new URI("uri_path"));
 		assertEquals(new URI("uri_path"), testModule1.getConfigurationEntries().get(5).getValue());
-		
+
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
 		verify(configurationDAO, never()).updateConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testSetInvalidStringalue() throws WPSConfigurationException {
+		when(valueParser.parseString("")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.string.key", "");
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testSetInvalidIntegerValue() throws WPSConfigurationException {
+		when(valueParser.parseInteger("invalid_integer")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.integer.key", "invalid_integer");
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testSetInvalidDoubleValue() throws WPSConfigurationException {
+		when(valueParser.parseDouble("invalid_double")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.double.key", "invalid_double");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testSetInvalidBooleanValue() throws WPSConfigurationException {
+		when(valueParser.parseBoolean("invalid_boolean")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.boolean.key", "invalid_boolean");
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testSetInvalidFileValue() throws WPSConfigurationException {
+		when(valueParser.parseFile("")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.file.key", "");
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testSetInvalidURIValue() throws WPSConfigurationException {
+		when(valueParser.parseURI("")).thenThrow(WPSConfigurationException.class);
 		exception.expect(WPSConfigurationException.class);
 		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.uri.key", "");
 	}
