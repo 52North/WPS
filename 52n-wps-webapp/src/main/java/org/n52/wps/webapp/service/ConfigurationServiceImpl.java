@@ -95,7 +95,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		Object storedValue = configurationDAO.getConfigurationEntryValue(moduleClassName, entry.getKey());
 		if (storedValue != null) {
 			try {
-				setConfigurationEntryValueHelper(moduleClassName, entry.getKey(), storedValue);
+				setConfigurationEntryValueHelper(moduleClassName, entry, storedValue);
 				LOGGER.debug("Done syncing configuration value '" + storedValue + "' for entry '" + entry.getKey()
 						+ "' in module'" + moduleClassName + "' from the database.");
 			} catch (WPSConfigurationException e) {
@@ -103,15 +103,14 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			}
 		} else {
 			Object value = null;
-
-			if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
-				value = entry.getValue().toString();
-			} else {
-				value = entry.getValue();
+			if ((value = entry.getValue()) != null) {
+				if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
+					value = entry.getValue().toString();
+				}
+				configurationDAO.insertConfigurationEntryValue(moduleClassName, entry.getKey(), value);
+				LOGGER.debug("Done writing configuration value '" + value + "' for entry '" + entry.getKey()
+						+ "' in module'" + moduleClassName + "' to the database.");
 			}
-			configurationDAO.insertConfigurationEntryValue(moduleClassName, entry.getKey(), value);
-			LOGGER.debug("Done writing configuration value '" + value + "' for entry '" + entry.getKey()
-					+ "' in module'" + moduleClassName + "' to the database.");
 		}
 	}
 
@@ -193,9 +192,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public <T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
 			throws WPSConfigurationException {
 		Object value = getConfigurationEntryValueHelper(moduleClassName, entryKey);
-		if (requiredType != null && !requiredType.isAssignableFrom(value.getClass())) {
+		if (value == null || (requiredType != null && !requiredType.isAssignableFrom(value.getClass()))) {
 			String errorMessage = "The value '" + value + "' cannot be assigned to a/an '"
-					+ requiredType.getSimpleName() + "' type.";
+					+ requiredType.getSimpleName() + "' type";
 			LOGGER.error(errorMessage);
 			throw new WPSConfigurationException(errorMessage);
 		}
@@ -213,8 +212,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		ConfigurationEntry<?> entry = getConfigurationEntry(moduleClassName, entryKey);
 		if (entry != null) {
 			try {
-				setConfigurationEntryValueHelper(moduleClassName, entryKey, value);
+				setConfigurationEntryValueHelper(moduleClassName, entry, value);
 				configurationDAO.updateConfigurationEntryValue(moduleClassName, entryKey, value);
+				LOGGER.debug("Value '" + value + "' has been set for entry '" + entryKey + "' in module '"
+						+ moduleClassName + "'");
 			} catch (WPSConfigurationException e) {
 				throw new WPSConfigurationException(e);
 			}
@@ -224,40 +225,37 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	/*
 	 * Used internally to set the value without calling configurationDAO
 	 */
-	private void setConfigurationEntryValueHelper(String moduleClassName, String entryKey, Object value)
+	private void setConfigurationEntryValueHelper(String moduleClassName, ConfigurationEntry<?> entry, Object value)
 			throws WPSConfigurationException {
-		ConfigurationEntry<?> entry = getConfigurationEntry(moduleClassName, entryKey);
-		if (entry != null) {
-			try {
-				switch (entry.getType()) {
-				case STRING:
-					setStringValue((StringConfigurationEntry) entry, value);
-					break;
-				case BOOLEAN:
-					setBooleanValue((BooleanConfigurationEntry) entry, value);
-					break;
-				case DOUBLE:
-					setDoubleValue((DoubleConfigurationEntry) entry, value);
-					break;
-				case FILE:
-					setFileValue((FileConfigurationEntry) entry, value);
-					break;
-				case INTEGER:
-					setIntegerValue((IntegerConfigurationEntry) entry, value);
-					break;
-				case URI:
-					setURIValue((URIConfigurationEntry) entry, value);
-					break;
-				default:
-					break;
-				}
-				passValueToConfigurationModule(moduleClassName, entryKey);
-			} catch (WPSConfigurationException e) {
-				String errorMessage = "Unable to set value '" + value + "' in module '" + moduleClassName
-						+ "' for entry '" + entryKey + "': " + e.getMessage();
-				LOGGER.error(errorMessage);
-				throw new WPSConfigurationException(errorMessage);
+		try {
+			switch (entry.getType()) {
+			case STRING:
+				setStringValue((StringConfigurationEntry) entry, value);
+				break;
+			case BOOLEAN:
+				setBooleanValue((BooleanConfigurationEntry) entry, value);
+				break;
+			case DOUBLE:
+				setDoubleValue((DoubleConfigurationEntry) entry, value);
+				break;
+			case FILE:
+				setFileValue((FileConfigurationEntry) entry, value);
+				break;
+			case INTEGER:
+				setIntegerValue((IntegerConfigurationEntry) entry, value);
+				break;
+			case URI:
+				setURIValue((URIConfigurationEntry) entry, value);
+				break;
+			default:
+				break;
 			}
+			passValueToConfigurationModule(moduleClassName, entry.getKey());
+		} catch (WPSConfigurationException e) {
+			String errorMessage = "Unable to set value '" + value + "' in module '" + moduleClassName + "' for entry '"
+					+ entry.getKey() + "': " + e.getMessage();
+			LOGGER.error(errorMessage);
+			throw new WPSConfigurationException(errorMessage);
 		}
 	}
 
@@ -315,9 +313,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 						}
 
 						Object value = getConfigurationEntryValue(moduleClassName, entryKey, clazz[0]);
-						method.invoke(module, value);
-						LOGGER.debug("Value '" + value.toString() + "' passed to method '" + method.getName()
-								+ "' in module '" + module.getClass().getName() + "'.");
+						if (value != null) {
+							method.invoke(module, value);
+							LOGGER.debug("Value '" + value.toString() + "' passed to method '" + method.getName()
+									+ "' in module '" + module.getClass().getName() + "'.");
+						}
+
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 							| WPSConfigurationException e) {
 						String errorMessage = "Cannot pass value to method '" + method.getName() + "' in module '"
@@ -332,32 +333,32 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	private void setStringValue(ConfigurationEntry<String> entry, Object value) throws WPSConfigurationException {
-		String parsedValue = String.class.cast(valueParser.parseString(value));
+		String parsedValue = valueParser.parseString(value);
 		entry.setValue(parsedValue);
 	}
 
 	private void setIntegerValue(ConfigurationEntry<Integer> entry, Object value) throws WPSConfigurationException {
-		Integer parsedValue = Integer.class.cast(valueParser.parseInteger(value));
+		Integer parsedValue = valueParser.parseInteger(value);
 		entry.setValue(parsedValue);
 	}
 
 	private void setDoubleValue(ConfigurationEntry<Double> entry, Object value) throws WPSConfigurationException {
-		Double parsedValue = Double.class.cast(valueParser.parseDouble(value));
+		Double parsedValue = valueParser.parseDouble(value);
 		entry.setValue(parsedValue);
 	}
 
 	private void setBooleanValue(ConfigurationEntry<Boolean> entry, Object value) throws WPSConfigurationException {
-		Boolean parsedValue = Boolean.class.cast(valueParser.parseBoolean(value));
+		Boolean parsedValue = valueParser.parseBoolean(value);
 		entry.setValue(parsedValue);
 	}
 
 	private void setFileValue(ConfigurationEntry<File> entry, Object value) throws WPSConfigurationException {
-		File parsedValue = File.class.cast(valueParser.parseFile(value));
+		File parsedValue = valueParser.parseFile(value);
 		entry.setValue(parsedValue);
 	}
 
 	private void setURIValue(ConfigurationEntry<URI> entry, Object value) throws WPSConfigurationException {
-		URI parsedValue = URI.class.cast(valueParser.parseURI(value));
+		URI parsedValue = valueParser.parseURI(value);
 		entry.setValue(parsedValue);
 	}
 }
