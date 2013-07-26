@@ -14,7 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-public class DescribeProcessKVPTester {
+public class DescribeProcessKvpIT {
 
     private static String url;
 

@@ -12,7 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-public class GetCapabilitiesKVPTests {
+public class GetCapabilitiesKvpIT {
 
     private static String url;
 
