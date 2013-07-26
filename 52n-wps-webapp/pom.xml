@@ -112,6 +112,7 @@
 			<organizationUrl>http://52north.org</organizationUrl>
 		</contributor>
 	</contributors>
+	
 	<!-- here are the dependencies of the project -->
 	<dependencies>
 		<!-- Dependencies for Scope 'test' -->
@@ -263,11 +264,11 @@
 			<artifactId>logback-classic</artifactId>
 		</dependency>
 	</dependencies>
-	
+
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
 	</properties>
-	
+
 	<build>
 		<resources>
 			<resource>
@@ -461,13 +462,21 @@
 									<goal>verify</goal>
 								</goals>
 								<configuration>
+<!-- 									<excludes> -->
+<!-- 										<exclude>**/AllTestsIT*</exclude> -->
+<!-- 									</excludes> -->
+
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
 									<systemPropertyVariables>
 										<com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>
-										;
 										<test.host>127.0.0.1</test.host>
 										<test.port>9090</test.port>
+										<!-- <test.rserve.host>127.0.0.1</test.rserve.host>
+											<test.rserve.port>6311</test.rserve.port>
+											<test.rserve.user></test.rserve.user>
+											<test.rserve.pwd></test.rserve.pwd> -->
+
 										<!--<test.port>${jetty.http.port}</test.port> -->
 										<test.context>/wps/WebProcessingService</test.context>
 										<!-- next 2 lines are for logging configuration -->

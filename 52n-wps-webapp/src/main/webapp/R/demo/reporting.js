@@ -1,5 +1,15 @@
 var outputIdentifier = "report";
 
+var processIdentifier_pegel = "org.n52.wps.server.r.pegel-report";
+var processIdentifier_sweavefoo = "org.n52.wps.server.r.sweave-foo";
+
+$(document).ready(function(){  
+	  $("#link_processdescription_pegel").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + processIdentifier_pegel);
+	  $("#link_processdescription_sweavefoo").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + processIdentifier_sweavefoo);
+	  //alert($("#link_processdescription").attr("href"));
+	});
+
+
 var sendRequest = function(processId, outputId, outputSourceId, outputFormat) {
 
 	var beforeOutput = '<?xml version="1.0" encoding="UTF-8"?>'

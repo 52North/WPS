@@ -107,6 +107,7 @@ public class ExecuteResponseBuilder {
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}
+		
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
