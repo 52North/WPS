@@ -29,22 +29,51 @@ import java.util.List;
 import org.n52.wps.webapp.entities.User;
 
 public interface UserDAO {
+
 	/**
-	 * Retrieve the user from the underlining datastore
-	 * @param username
-	 * @return {@code User} instance
+	 * Get user by user id
+	 * 
+	 * @param userId
+	 *            the id of the user
+	 * @return The user specified by the id
 	 */
-	User getUser(String username);
-	
+	User getUserById(int userId);
+
 	/**
-	 * Retrieve all users from the underling datastore
-	 * @return list of all users
+	 * Get user by username
+	 * 
+	 * @param username
+	 *            the username of the user
+	 * @return The user specified by the username
+	 */
+	User getUserByUsername(String username);
+
+	/**
+	 * Get all users
+	 * 
+	 * @return The list of all users
 	 */
 	List<User> getAllUsers();
-	
+
 	/**
-	 * Save user to the underlining datastore
-	 * @param {{@code User} instance
+	 * Insert new user
+	 * 
+	 * @param user
 	 */
-	void save(User user);
+	void insertUser(User user);
+
+	/**
+	 * Update existing user
+	 * 
+	 * @param user
+	 */
+	void updateUser(User user);
+
+	/**
+	 * Delete user
+	 * 
+	 * @param userId
+	 *            the id of the user to be deleted
+	 */
+	void deleteUser(int userId);
 }
