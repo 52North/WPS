@@ -24,18 +24,26 @@
 
 package org.n52.wps.webapp.dao;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.n52.wps.webapp.api.WPSConfigurationException;
+import org.n52.wps.webapp.entities.LogConfigurations;
 
-public interface LogPropertiesDAO {
+public interface LogConfigurationsDAO {
 	/**
-	 * Load log4j.properties from the classpath
-	 * @return log4j.properties as {@code PropertiesConfiguration}
+	 * Get the log configuration file and parse it to a {@code LogConfigurations} object
+	 * 
+	 * @return Log configurations object
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be loaded
 	 */
-	PropertiesConfiguration load();
-	
+	LogConfigurations getLogConfigurations() throws WPSConfigurationException;
+
 	/**
-	 * Write to log4j.properties
-	 * @param {@code PropertiesConfiguration} properties instance
+	 * Write a {@code LogConfigurations} object to log file
+	 * 
+	 * @param logConfigurations
+	 *            the log configurations object
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be written
 	 */
-	void save(PropertiesConfiguration properties);
+	void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException;
 }
