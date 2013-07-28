@@ -6,3 +6,5 @@ INSERT INTO CONFIGURATIONENTRY VALUES('test.string.key','org.n52.wps.webapp.test
 INSERT INTO CONFIGURATIONENTRY VALUES('test.uri.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','test_path')
 INSERT INTO ALGORITHMENTRY VALUES('name1','org.n52.wps.webapp.testmodules.TestConfigurationModule1',TRUE)
 INSERT INTO ALGORITHMENTRY VALUES('name2','org.n52.wps.webapp.testmodules.TestConfigurationModule1',TRUE)
+INSERT INTO USERS VALUES(1,'testUser1','testPassword', 'ROLE_ADMIN')
+INSERT INTO USERS VALUES(2,'testUser2','testPassword', 'ROLE_USER')
