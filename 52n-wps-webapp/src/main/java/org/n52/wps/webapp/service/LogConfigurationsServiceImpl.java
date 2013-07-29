@@ -24,15 +24,15 @@
 
 package org.n52.wps.webapp.service;
 
-import org.apache.abdera.ext.serializer.annotation.Service;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.dao.LogConfigurationsDAO;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Service
+@Service("logConfigurationsService")
 public class LogConfigurationsServiceImpl implements LogConfigurationsService {
 
 	@Autowired

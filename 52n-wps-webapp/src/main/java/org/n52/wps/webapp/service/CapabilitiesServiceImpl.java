@@ -30,7 +30,9 @@ import org.n52.wps.webapp.entities.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service("capabilitiesService")
 public class CapabilitiesServiceImpl implements CapabilitiesService {
 
 	@Autowired
