@@ -28,101 +28,104 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.common.AbstractTest;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
-public class CapabilitiesDAOXmlTest extends AbstractTest {
+public class XmlCapabilitiesDAOTest {
 
-	@Autowired
 	@InjectMocks
 	CapabilitiesDAO capabilitiesDAO;
 
 	@Mock
 	JDomUtil jDomUtil;
 
-	@Autowired
+	@Mock
 	ResourcePathUtil resourcePathUtil;
 
 	@Before
-	public void setup() {
+	public void setup() throws Exception {
+		capabilitiesDAO = new XmlCapabilitiesDAO();
 		MockitoAnnotations.initMocks(this);
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+	}
+
+	@After
+	public void tearDown() {
+		capabilitiesDAO = null;
 	}
 
 	@Test
-	public void testGetServiceIdentification() throws JDOMException, IOException {
-		String absolutePath = resourcePathUtil.getWebAppResourcePath(CapabilitiesDAOXml.FILE_NAME);
-		when(jDomUtil.load(absolutePath)).thenReturn(createTestServiceIdentificationDoc());
+	public void testGetServiceIdentification() throws Exception {
+		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
+				createTestServiceIdentificationDoc());
 		ServiceIdentification serviceIdentification = capabilitiesDAO.getServiceIdentification();
-		assertEquals(serviceIdentification.getTitle(), "Created Doc Title");
-		assertEquals(serviceIdentification.getServiceAbstract(), "Created Doc Abstract");
+		assertEquals("Created Doc Title", serviceIdentification.getTitle());
+		assertEquals("Created Doc Abstract", serviceIdentification.getServiceAbstract());
 	}
 
 	@Test
-	public void testGetServiceProvider() throws IOException, JDOMException {
-		String absolutePath = resourcePathUtil.getWebAppResourcePath(CapabilitiesDAOXml.FILE_NAME);
-		when(jDomUtil.load(absolutePath)).thenReturn(createTestServiceProviderDoc());
+	public void testGetServiceProvider() throws Exception {
+		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
+				createTestServiceProviderDoc());
 		ServiceProvider serviceProvider = capabilitiesDAO.getServiceProvider();
-		assertEquals(serviceProvider.getProviderName(), "Created Doc Provider Name");
-		assertEquals(serviceProvider.getProviderSite(), "www.createdtestlink.com");
+		assertEquals("Created Doc Provider Name", serviceProvider.getProviderName());
+		assertEquals("www.createdtestlink.com", serviceProvider.getProviderSite());
 	}
 
 	@Test
-	public void testSaveServiceIdentification() throws JDOMException, IOException {
+	public void testSaveServiceIdentification() throws Exception {
 		Document testDoc = createTestServiceIdentificationDoc();
-		String absolutePath = resourcePathUtil.getWebAppResourcePath(CapabilitiesDAOXml.FILE_NAME);
-		when(jDomUtil.load(absolutePath)).thenReturn(testDoc);
+		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceIdentification serviceIdentification = new ServiceIdentification();
 		serviceIdentification.setTitle("New Test Title");
 		serviceIdentification.setServiceAbstract("New Test Abstract");
 		capabilitiesDAO.save(serviceIdentification);
 		Element root = testDoc.getRootElement();
 		Element serviceIdentificationElement = root.getChild("ServiceIdentification",
-				Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE));
+				Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE));
 		assertEquals(
+				"New Test Title",
 				serviceIdentificationElement.getChildText("Title",
-						Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE)), "New Test Title");
+						Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE)));
 		assertEquals(
+				"New Test Abstract",
 				serviceIdentificationElement.getChildText("Abstract",
-						Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE)), "New Test Abstract");
-		verify(jDomUtil).write(testDoc, absolutePath);
+						Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE)));
+		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
 
 	@Test
-	public void testSaveServiceProvider() throws JDOMException, IOException {
+	public void testSaveServiceProvider() throws Exception {
 		Document testDoc = createTestServiceProviderDoc();
-		String absolutePath = resourcePathUtil.getWebAppResourcePath(CapabilitiesDAOXml.FILE_NAME);
-		when(jDomUtil.load(absolutePath)).thenReturn(testDoc);
+		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceProvider serviceProvider = new ServiceProvider();
 		serviceProvider.setProviderName("Test Provider Name");
 		serviceProvider.setProviderSite("www.test.com");
 		capabilitiesDAO.save(serviceProvider);
 		Element root = testDoc.getRootElement();
 		Element serviceProviderElement = root.getChild("ServiceProvider",
-				Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE));
+				Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE));
 		Element providerSite = serviceProviderElement.getChild("ProviderSite",
-				Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE));
+				Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE));
 		assertEquals(
+				"Test Provider Name",
 				serviceProviderElement.getChildText("ProviderName",
-						Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE)), "Test Provider Name");
-		assertEquals(
-				providerSite.getAttributeValue("href", Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink")),
-				"www.test.com");
-		verify(jDomUtil).write(testDoc, absolutePath);
+						Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE)));
+		assertEquals("www.test.com",
+				providerSite.getAttributeValue("href", Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink")));
+		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
 
 	private Document createTestServiceIdentificationDoc() {
@@ -130,10 +133,10 @@ public class CapabilitiesDAOXmlTest extends AbstractTest {
 				"http://www.opengis.net/wps/1.0.0")));
 		Element root = document.getRootElement();
 		Element serviceIdentification = new Element("ServiceIdentification", Namespace.getNamespace("ows",
-				CapabilitiesDAOXml.NAMESPACE));
-		Element title = new Element("Title", Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE))
+				XmlCapabilitiesDAO.NAMESPACE));
+		Element title = new Element("Title", Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE))
 				.setText("Created Doc Title");
-		Element serviceAbstract = new Element("Abstract", Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE))
+		Element serviceAbstract = new Element("Abstract", Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE))
 				.setText("Created Doc Abstract");
 		serviceIdentification.addContent(title);
 		serviceIdentification.addContent(serviceAbstract);
@@ -146,10 +149,10 @@ public class CapabilitiesDAOXmlTest extends AbstractTest {
 				"http://www.opengis.net/wps/1.0.0")));
 		Element root = document.getRootElement();
 		Element serviceProvider = new Element("ServiceProvider", Namespace.getNamespace("ows",
-				CapabilitiesDAOXml.NAMESPACE));
-		Element providerName = new Element("ProviderName", Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE))
+				XmlCapabilitiesDAO.NAMESPACE));
+		Element providerName = new Element("ProviderName", Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE))
 				.setText("Created Doc Provider Name");
-		Element providerSite = new Element("ProviderSite", Namespace.getNamespace("ows", CapabilitiesDAOXml.NAMESPACE))
+		Element providerSite = new Element("ProviderSite", Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE))
 				.setAttribute("href", "www.createdtestlink.com",
 						Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink"));
 		serviceProvider.addContent(providerName);

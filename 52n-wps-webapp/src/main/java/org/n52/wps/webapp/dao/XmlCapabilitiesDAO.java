@@ -42,12 +42,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class CapabilitiesDAOXml implements CapabilitiesDAO {
+@Repository("capabilitiesDAO")
+public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 
 	public static final String FILE_NAME = "config" + File.separator + "wpsCapabilitiesSkeleton.xml";
 	public static final String NAMESPACE = "http://www.opengis.net/ows/1.1";
-	private static Logger LOGGER = LoggerFactory.getLogger(CapabilitiesDAOXml.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(XmlCapabilitiesDAO.class);
 
 	@Autowired
 	JDomUtil jDomUtil;
