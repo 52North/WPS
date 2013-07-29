@@ -24,9 +24,14 @@
 
 package org.n52.wps.webapp.api;
 
+import java.util.List;
 import java.util.Map;
 
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.entities.LogConfigurations;
+import org.n52.wps.webapp.entities.ServiceIdentification;
+import org.n52.wps.webapp.entities.ServiceProvider;
+import org.n52.wps.webapp.entities.User;
 
 public interface ConfigurationManager {
 
@@ -131,4 +136,106 @@ public interface ConfigurationManager {
 	 *            the algorithm status
 	 */
 	void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
+	
+	/**
+	 * Get user by user id
+	 * 
+	 * @param userId
+	 *            the id of the user
+	 * @return The user specified by the id
+	 */
+	User getUser(int userId);
+
+	/**
+	 * Get user by username
+	 * 
+	 * @param username
+	 *            the username of the user
+	 * @return The user specified by the username
+	 */
+	User getUser(String username);
+
+	/**
+	 * Get all users
+	 * 
+	 * @return The list of all users
+	 */
+	List<User> getAllUsers();
+
+	/**
+	 * Insert new user
+	 * 
+	 * @param user
+	 */
+	void insertUser(User user);
+
+	/**
+	 * Update existing user
+	 * 
+	 * @param user
+	 */
+	void updateUser(User user);
+
+	/**
+	 * Delete user
+	 * 
+	 * @param userId
+	 *            the id of the user to be deleted
+	 */
+	void deleteUser(int userId);
+	
+	/**
+	 * Get the service identification information
+	 * 
+	 * @return service identification information
+	 * @throws WPSConfigurationException
+	 *             if the information cannot be retrieved
+	 */
+	ServiceIdentification getServiceIdentification() throws WPSConfigurationException;
+
+	/**
+	 * Get the service provider information
+	 * 
+	 * @return service provider information
+	 * @throws WPSConfigurationException
+	 *             if the information cannot be retrieved
+	 */
+	ServiceProvider getServiceProvider() throws WPSConfigurationException;
+
+	/**
+	 * Save the service identification information to file
+	 * 
+	 * @param serviceIdentification
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be written
+	 */
+	void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException;
+
+	/**
+	 * Save the service provider information to file
+	 * 
+	 * @param serviceProvider
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be written
+	 */
+	void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException;
+	
+	/**
+	 * Get the {@code LogConfigurations} object
+	 * 
+	 * @return Log configurations object
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be retrieved
+	 */
+	LogConfigurations getLogConfigurations() throws WPSConfigurationException;
+	
+	/**
+	 * Save a {@code LogConfigurations} object to log file
+	 * 
+	 * @param logConfigurations
+	 *            the log configurations object
+	 * @throws WPSConfigurationException
+	 *             if the file cannot be saved
+	 */
+	void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException;
 }

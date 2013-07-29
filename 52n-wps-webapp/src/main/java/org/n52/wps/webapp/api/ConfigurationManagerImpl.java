@@ -24,12 +24,20 @@
 
 package org.n52.wps.webapp.api;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.entities.LogConfigurations;
+import org.n52.wps.webapp.entities.ServiceIdentification;
+import org.n52.wps.webapp.entities.ServiceProvider;
+import org.n52.wps.webapp.entities.User;
+import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
+import org.n52.wps.webapp.service.LogConfigurationsService;
+import org.n52.wps.webapp.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +48,15 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
 	private ConfigurationService configurationService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private CapabilitiesService capabilitiesService;
+	
+	@Autowired
+	private LogConfigurationsService logConfigurationsService;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationManagerImpl.class);
 
@@ -103,5 +120,65 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 		LOGGER.debug("Initializing configurations...");
 		configurationService.syncConfigurations();
 		LOGGER.debug("Configurations initialized.");
+	}
+
+	@Override
+	public User getUser(int userId) {
+		return userService.getUser(userId);
+	}
+
+	@Override
+	public User getUser(String username) {
+		return userService.getUser(username);
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return userService.getAllUsers();
+	}
+
+	@Override
+	public void insertUser(User user) {
+		userService.insertUser(user);
+	}
+
+	@Override
+	public void updateUser(User user) {
+		userService.updateUser(user);
+	}
+
+	@Override
+	public void deleteUser(int userId) {
+		userService.deleteUser(userId);
+	}
+
+	@Override
+	public ServiceIdentification getServiceIdentification() throws WPSConfigurationException {
+		return capabilitiesService.getServiceIdentification();
+	}
+
+	@Override
+	public ServiceProvider getServiceProvider() throws WPSConfigurationException {
+		return capabilitiesService.getServiceProvider();
+	}
+
+	@Override
+	public void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException {
+		capabilitiesService.saveServiceIdentification(serviceIdentification);
+	}
+
+	@Override
+	public void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException {
+		capabilitiesService.saveServiceProvider(serviceProvider);
+	}
+
+	@Override
+	public LogConfigurations getLogConfigurations() throws WPSConfigurationException {
+		return logConfigurationsService.getLogConfigurations();
+	}
+
+	@Override
+	public void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException {
+		logConfigurationsService.saveLogConfigurations(logConfigurations);
 	}
 }
