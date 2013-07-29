@@ -1,51 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 						http://www.springframework.org/schema/context
-						http://www.springframework.org/schema/context/spring-context-3.2.xsd
-						http://www.springframework.org/schema/tx 
-						http://www.springframework.org/schema/tx/spring-tx.xsd
-						http://www.springframework.org/schema/jdbc 
-						http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
+						http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<import resource="spring-db-config.xml" />
+	<import resource="spring-security-config.xml" />
 
 	<context:component-scan base-package="org.n52.wps">
 		<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
 		<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
 	</context:component-scan>
-
-	<tx:annotation-driven />
-
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver"></property>
-		<property name="url"
-			value="jdbc:hsqldb:file:src/main/webapp/WEB-INF/sql/wpsconfig;shutdown=true;hsqldb.write_delay=false;"></property>
-		<property name="username" value="SA"></property>
-		<property name="password" value=""></property>
-		<property name="initialSize" value="5"></property>
-		<property name="maxActive" value="10"></property>
-	</bean>
-
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
-	<jdbc:initialize-database data-source="dataSource">
-		<jdbc:script location="classpath:db/schema.sql" />
-	</jdbc:initialize-database>
-
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-		<constructor-arg ref="dataSource" />
-	</bean>
-
-	<beans profile="test">
-		<!-- In-memory database to be used during testing -->
-		<jdbc:embedded-database id="dataSource" type="HSQL">
-			<jdbc:script location="classpath:db/schema.sql" />
-			<jdbc:script location="classpath:test-data.sql" />
-		</jdbc:embedded-database>
-	</beans>
 
 </beans>
