@@ -44,7 +44,7 @@ public class LogConfigurationsServiceImplTest {
 	private LogConfigurationsService logConfigurationsService;
 	
 	@Mock
-	LogConfigurationsDAO logConfigurationsDAO;
+	private LogConfigurationsDAO logConfigurationsDAO;
 	
 	@Before
 	public void setup() {

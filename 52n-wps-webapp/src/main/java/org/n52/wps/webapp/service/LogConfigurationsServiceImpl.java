@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LogConfigurationsServiceImpl implements LogConfigurationsService {
 
 	@Autowired
-	LogConfigurationsDAO logConfigurationsDAO;
+	private LogConfigurationsDAO logConfigurationsDAO;
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
 	

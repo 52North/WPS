@@ -57,7 +57,7 @@ public class JDomUtil {
 		Document document = null;
 		try (FileInputStream inputStream = new FileInputStream(new File(absoluteFilePath))) {
 			document = sb.build(inputStream);
-			LOGGER.info(absoluteFilePath + " is loaded and a Document is created.");
+			LOGGER.info(absoluteFilePath + " is loaded and a Document is returned.");
 		} catch (JDOMException e) {
 			throw new JDOMException(e.getMessage());
 		} catch (FileNotFoundException e) {
@@ -78,7 +78,7 @@ public class JDomUtil {
 	 */
 	public void write(Document document, String absoluteFilePath) throws IOException {
 		XMLOutputter xmlOutputter = new XMLOutputter();
-		xmlOutputter.setFormat(Format.getPrettyFormat());
+		xmlOutputter.setFormat(Format.getRawFormat());
 		try (FileOutputStream outputStream = new FileOutputStream(new File(absoluteFilePath))) {
 			xmlOutputter.output(document, outputStream);
 			LOGGER.info(absoluteFilePath + " is written.");

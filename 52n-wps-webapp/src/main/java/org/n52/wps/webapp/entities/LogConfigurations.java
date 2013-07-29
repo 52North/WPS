@@ -32,7 +32,7 @@ public class LogConfigurations {
 	private String wpsfileAppenderMaxHistory;
 	private String wpsfileAppenderEncoderPattern;
 	private String wpsconsoleEncoderPattern;
-	SortedMap<String, String> loggers = new TreeMap<String, String>();
+	private SortedMap<String, String> loggers = new TreeMap<String, String>();
 	private String rootLevel;
 	private List<String> rootAppenderRefs;
 

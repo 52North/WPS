@@ -52,14 +52,14 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class XmlLogConfigurationsDAOTest {
 
 	@InjectMocks
-	LogConfigurationsDAO logConfigurationsDAO = new XmlLogConfigurationsDAO();;
+	private LogConfigurationsDAO logConfigurationsDAO = new XmlLogConfigurationsDAO();;
 
 	@Mock
-	ResourcePathUtil resourcePathUtil;
+	private ResourcePathUtil resourcePathUtil;
 
-	JDomUtil jDomUtil = new JDomUtil();
-	Document originalTestLogDocument;
-	String originalTestLogDocumentPath;
+	private JDomUtil jDomUtil = new JDomUtil();
+	private Document originalTestLogDocument;
+	private String originalTestLogDocumentPath;
 
 	@Before
 	public void setUp() throws IOException {

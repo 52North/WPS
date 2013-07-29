@@ -36,7 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ResourcePathUtilTest extends AbstractTest {
 	
 	@Autowired
-	ResourcePathUtil resourcePathUtil;
+	private ResourcePathUtil resourcePathUtil;
 	
 	@Test
 	public void testWebAppResourcePath() throws IOException {

@@ -28,7 +28,6 @@ import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,10 +42,10 @@ import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
 public class ConfigurationManagerImplTest {
 
 	@InjectMocks
-	ConfigurationManager configurationManager;
+	private ConfigurationManager configurationManager;
 
 	@Mock
-	ConfigurationService configurationService;
+	private ConfigurationService configurationService;
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -57,7 +56,6 @@ public class ConfigurationManagerImplTest {
 	public void initModule() {
 		configurationManager = new ConfigurationManagerImpl();
 		MockitoAnnotations.initMocks(this);
-		
 	}
 
 	@Test
@@ -91,7 +89,7 @@ public class ConfigurationManagerImplTest {
 	}
 
 	@Test
-	public void testSetConfigurationEntryValue() throws WPSConfigurationException, URISyntaxException {
+	public void testSetConfigurationEntryValue() throws Exception {
 		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.string.key", "test value");
 		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.string.key", "test value");
 
@@ -112,7 +110,7 @@ public class ConfigurationManagerImplTest {
 	}
 	
 	@Test
-	public void testGetConfigurationEntryValue() throws WPSConfigurationException {
+	public void testGetConfigurationEntryValue() throws Exception {
 		configurationManager.getConfigurationEntryValue(testModuleClassName, "test.boolean.key", Boolean.class);
 		verify(configurationService).getConfigurationEntryValue(testModuleClassName, "test.boolean.key", Boolean.class);
 	}

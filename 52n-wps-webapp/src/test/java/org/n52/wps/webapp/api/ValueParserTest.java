@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ValueParserTest {
 	
 	@Autowired
-	ValueParser valueParser;
+	private ValueParser valueParser;
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();

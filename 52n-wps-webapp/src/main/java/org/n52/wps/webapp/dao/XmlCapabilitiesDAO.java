@@ -134,7 +134,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 	}
 
 	@Override
-	public void save(ServiceIdentification serviceIdentification) {
+	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
 		Document document = null;
 		try {
 			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
@@ -171,7 +171,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 	}
 
 	@Override
-	public void save(ServiceProvider serviceProvider) {
+	public void saveServiceProvider(ServiceProvider serviceProvider) {
 		Document document = null;
 		try {
 			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);

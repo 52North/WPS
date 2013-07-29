@@ -45,13 +45,13 @@ import org.n52.wps.webapp.util.ResourcePathUtil;
 public class XmlCapabilitiesDAOTest {
 
 	@InjectMocks
-	CapabilitiesDAO capabilitiesDAO;
+	private CapabilitiesDAO capabilitiesDAO;
 
 	@Mock
-	JDomUtil jDomUtil;
+	private JDomUtil jDomUtil;
 
 	@Mock
-	ResourcePathUtil resourcePathUtil;
+	private ResourcePathUtil resourcePathUtil;
 
 	@Before
 	public void setup() throws Exception {
@@ -91,7 +91,7 @@ public class XmlCapabilitiesDAOTest {
 		ServiceIdentification serviceIdentification = new ServiceIdentification();
 		serviceIdentification.setTitle("New Test Title");
 		serviceIdentification.setServiceAbstract("New Test Abstract");
-		capabilitiesDAO.save(serviceIdentification);
+		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
 		Element root = testDoc.getRootElement();
 		Element serviceIdentificationElement = root.getChild("ServiceIdentification",
 				Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE));
@@ -113,7 +113,7 @@ public class XmlCapabilitiesDAOTest {
 		ServiceProvider serviceProvider = new ServiceProvider();
 		serviceProvider.setProviderName("Test Provider Name");
 		serviceProvider.setProviderSite("www.test.com");
-		capabilitiesDAO.save(serviceProvider);
+		capabilitiesDAO.saveServiceProvider(serviceProvider);
 		Element root = testDoc.getRootElement();
 		Element serviceProviderElement = root.getChild("ServiceProvider",
 				Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE));

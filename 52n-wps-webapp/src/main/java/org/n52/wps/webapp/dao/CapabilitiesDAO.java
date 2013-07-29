@@ -49,12 +49,12 @@ public interface CapabilitiesDAO {
 	 * 
 	 * @param {@code ServiceIdentification}
 	 */
-	void save(ServiceIdentification serviceIdentification);
+	void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
 	/**
 	 * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
 	 * 
 	 * @param {@code ServiceProvider}
 	 */
-	void save(ServiceProvider serviceProvider);
+	void saveServiceProvider(ServiceProvider serviceProvider);
 }
