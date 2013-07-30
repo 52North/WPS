@@ -25,81 +25,88 @@
 package org.n52.wps.webapp.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.jdom.Document;
-import org.jdom.JDOMException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.wps.webapp.common.AbstractTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.n52.wps.webapp.api.WPSConfigurationException;
 
-public class JDomUtilTest extends AbstractTest {
+public class JDomUtilTest {
 	
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
-	
-	@Autowired
 	private JDomUtil jDomUtil;
+	private String path = JDomUtilTest.class.getResource("/testfiles/").getPath();
 	
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
-	@Test
-	public void testLoad() throws IOException, JDOMException {
-		String releativePath = "config" + File.separator +  "wpsCapabilitiesSkeleton.xml";
-		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
-		Document document = jDomUtil.load(absoultPath);
-		assertNotNull(document);
-		assertEquals(document.getRootElement().getName(), "Capabilities");
-		assertEquals(document.getRootElement().getNamespaceURI(), "http://www.opengis.net/wps/1.0.0");
-		assertEquals(document.getRootElement().getAttributeValue("service"), "WPS");
+	@Before
+	public void setup() {
+		jDomUtil = new JDomUtil();
+	}
+	
+	@After
+	public void tearDown() {
+		jDomUtil = null;
 	}
 	
 	@Test
-	public void testNonExistingFileLoad() throws JDOMException, IOException {
-		String releativePath = "nonExistingFile.xml";
-		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
-		assertFalse(new File(absoultPath).exists());
-		exception.expect(FileNotFoundException.class);
-		jDomUtil.load(absoultPath);
+	public void parse_validXmlFile_validPath() throws Exception {
+		Document document = jDomUtil.parse(path + "testdata.xml");
+		assertEquals("Products", document.getRootElement().getName());
+		assertEquals("Product", document.getRootElement().getChild("Product").getName());
+		assertEquals("PC", document.getRootElement().getChild("Product").getChild("Name").getValue());
+		assertEquals("HP", document.getRootElement().getChild("Product").getChild("Brand").getValue());
+		assertEquals("999", document.getRootElement().getChild("Product").getChild("Price").getValue());
 	}
 	
 	@Test
-	public void testWrongFormatLoad() throws JDOMException, IOException {
-		String releativePath = "webAdmin" + File.separator + "images" + File.separator + "add.png";
-		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
-		exception.expect(IOException.class);
-		jDomUtil.load(absoultPath);
+	public void parse_invalidPath() throws Exception {
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("FileNotFoundException");
+		@SuppressWarnings("unused")
+		Document document = jDomUtil.parse(path + "non_existing_file");
 	}
 	
 	@Test
-	public void testWrite() throws JDOMException, IOException {
-		
-		//load file and check the value of service attribute
-		String releativePath = "config" + File.separator +  "wpsCapabilitiesSkeleton.xml";
-		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
-		Document document = jDomUtil.load(absoultPath);
-		assertEquals(document.getRootElement().getAttributeValue("service"), "WPS");
-		
-		//edit service attribute and write to a new file
-		document.getRootElement().setAttribute("service", "TestValue@^45");
-		String newReleativePath = "config" + File.separator +  "wpsCapabilitiesSkeleton2.xml";
-		String newAbsoultPath = resourcePathUtil.getWebAppResourcePath(newReleativePath);
-		jDomUtil.write(document, newAbsoultPath);
-		
-		//check new file
-		document = jDomUtil.load(newAbsoultPath);
-		assertEquals(document.getRootElement().getAttributeValue("service"), "TestValue@^45");
-		
-		//delete test file
-		new File(newAbsoultPath).delete();
+	public void parse_invalidXmlFormat_validPath() throws Exception {
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("JDOMParseException");
+		@SuppressWarnings("unused")
+		Document document = jDomUtil.parse(path + "52n-logo.gif");
 	}
 	
+	@Test
+	public void write_validDocument_validPath() throws Exception {
+		Document document = jDomUtil.parse(path + "testdata.xml");
+		
+		assertEquals("PC", document.getRootElement().getChild("Product").getChild("Name").getValue());
+		document.getRootElement().getChild("Product").getChild("Name").setText("New PC Name");
+		jDomUtil.write(document, path + "testdata2.xml");
+		
+		Document updatedDocument = jDomUtil.parse(path + "testdata2.xml");
+		assertEquals("New PC Name", updatedDocument.getRootElement().getChild("Product").getChild("Name").getValue());
+		
+		new File(path + "testdata2.xml").delete();
+	}
+	
+	@Test
+	public void write_nullDocument_validPath() throws Exception {
+		Document document = null;
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("NullPointerException");
+		jDomUtil.write(document, path + "testdata2.xml");
+	}
+	
+	@Test
+	public void write_validDocument_invalidPath() throws Exception {
+		Document document = jDomUtil.parse(path + "testdata.xml");
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("FileNotFoundException");
+		jDomUtil.write(document, path + "2/" + "testdata2.xml");
+	}
 }

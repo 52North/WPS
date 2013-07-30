@@ -26,7 +26,6 @@ package org.n52.wps.webapp.util;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -35,6 +34,7 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,45 +45,48 @@ public class JDomUtil {
 	private static Logger LOGGER = LoggerFactory.getLogger(JDomUtil.class);
 
 	/**
-	 * Parse a resource to a {@code Document}
+	 * Parse a file to a {@code Document}
 	 * 
-	 * @param Absolute file path of the resource to be parsed
-	 * @return Populated {@code Document} object
-	 * @throws JDOMException
-	 * @throws IOException
+	 * @param filePath
+	 *            file path of the file to be parsed
+	 * @return Parsed {@code Document} object
+	 * @throws WPSConfigurationException
+	 *             if the path or the format of the file are invalid
 	 */
-	public Document load(String absoluteFilePath) throws JDOMException, IOException {
+	public Document parse(String filePath) throws WPSConfigurationException {
 		SAXBuilder sb = new SAXBuilder();
 		Document document = null;
-		try (FileInputStream inputStream = new FileInputStream(new File(absoluteFilePath))) {
+		
+		try (FileInputStream inputStream = new FileInputStream(new File(filePath))) {
 			document = sb.build(inputStream);
-			LOGGER.info(absoluteFilePath + " is loaded and a Document is returned.");
-		} catch (JDOMException e) {
-			throw new JDOMException(e.getMessage());
-		} catch (FileNotFoundException e) {
-			throw new FileNotFoundException(absoluteFilePath + " is not found.");
-		} catch (IOException e) {
-			throw new IOException(e.getMessage());
+			LOGGER.info("{} is parsed and a Document is returned.", filePath);
+		} catch (JDOMException | IOException e) {
+			LOGGER.error("Unable to parse '{}':", filePath, e);
+			throw new WPSConfigurationException(e);
 		}
 
 		return document;
 	}
 
 	/**
-	 * Write {@code Document} to a file
+	 * Write a {@code Document} to a file
 	 * 
-	 * @param Document to be written
-	 * @param Absolute file path to write to
-	 * @throws IOException
+	 * @param document
+	 *            the document to be written
+	 * @param filePath
+	 *            the path to write to
+	 * @throws WPSConfigurationException
+	 *             if the path is invalid or the document is null
 	 */
-	public void write(Document document, String absoluteFilePath) throws IOException {
+	public void write(Document document, String filePath) throws WPSConfigurationException {
 		XMLOutputter xmlOutputter = new XMLOutputter();
 		xmlOutputter.setFormat(Format.getRawFormat());
-		try (FileOutputStream outputStream = new FileOutputStream(new File(absoluteFilePath))) {
+		try (FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
 			xmlOutputter.output(document, outputStream);
-			LOGGER.info(absoluteFilePath + " is written.");
-		} catch (IOException e) {
-			throw new IOException("Unable to write to: " + absoluteFilePath + ": " + e.getMessage());
+			LOGGER.info("{} is written successfully.", filePath);
+		} catch (IOException | NullPointerException e) {
+			LOGGER.error("Unable to write Document to '{}':", filePath, e);
+			throw new WPSConfigurationException(e);
 		}
 	}
 }
