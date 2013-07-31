@@ -28,6 +28,9 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
+import org.n52.wps.webapp.api.WPSConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -40,39 +43,48 @@ public class ResourcePathUtil {
 	@Autowired
 	private ServletContext servletContext;
 
+	private static Logger LOGGER = LoggerFactory.getLogger(ResourcePathUtil.class);
+
 	/**
-	 * Returns the absolute path for web app resources and directories. The
-	 * method will return the path only. It's up to the caller to check if the
-	 * resource exists and whether to create a new one.
+	 * Returns the absolute path for web app resources and directories.
 	 * 
-	 * @param Relative path of a resource or a directory
-	 * @return Absolute path of a resource or a directory
-	 * @throws IOException
+	 * @param relativePath
+	 *            the relative path of a resource or a directory
+	 * @return The absoulte path of a resource or a directory
+	 * @throws WPSConfigurationException
+	 *             if the path cannot be resolved
 	 */
-	public String getWebAppResourcePath(String relativePath) throws IOException {
+	public String getWebAppResourcePath(String relativePath) throws WPSConfigurationException {
 		Resource resource = new ServletContextResource(servletContext, relativePath);
 		try {
-			return resource.getFile().getAbsolutePath();
+			String absolutePath = resource.getFile().getAbsolutePath();
+			LOGGER.info("Resolved webapp resource'{}' to '{}'", relativePath, absolutePath);
+			return absolutePath;
 		} catch (IOException e) {
-			throw new IOException("Cannot resolve: " + relativePath + ": " + e.getMessage());
+			LOGGER.error("Unable to resolve '{}' to a webapp resource path:", relativePath, e);
+			throw new WPSConfigurationException(e);
 		}
 	}
 
 	/**
-	 * Returns the absolute path for classpath resources and directories. The
-	 * method will return the path only. It's up to the caller to check if the
-	 * resource exists and whether to create a new one.
+	 * Returns the absolute path for classpath resources and directories.
 	 * 
-	 * @param Relative path of a resource or a directory
-	 * @return Absolute path of a resource or a directory
-	 * @throws IOException
+	 * @param relativePath
+	 *            the relative path of a resource or a directory
+	 * @return The absoulte path of a resource or a directory
+	 * @throws WPSConfigurationException
+	 *             if the path cannot be resolved
 	 */
-	public String getClassPathResourcePath(String relativePath) throws IOException {
+	public String getClassPathResourcePath(String relativePath) throws WPSConfigurationException {
 		Resource resource = new ClassPathResource(relativePath);
 		try {
-			return resource.getFile().getAbsolutePath();
+			String absolutePath = resource.getFile().getAbsolutePath();
+			LOGGER.info("Resolved classpath resource '{}' to '{}'", relativePath, absolutePath);
+			return absolutePath;
 		} catch (IOException e) {
-			throw new IOException("Cannot resolve: " + relativePath + ": " + e.getMessage());
+			LOGGER.error("Unable to resolve '{}' to a calsspath resource:", relativePath, e);
+			throw new WPSConfigurationException(e);
 		}
 	}
+
 }
