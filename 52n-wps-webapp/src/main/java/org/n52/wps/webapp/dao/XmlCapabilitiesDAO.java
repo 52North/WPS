@@ -24,15 +24,13 @@
 
 package org.n52.wps.webapp.dao;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
+import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -45,169 +43,158 @@ import org.springframework.stereotype.Repository;
 @Repository("capabilitiesDAO")
 public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 
-	public static final String FILE_NAME = "config" + File.separator + "wpsCapabilitiesSkeleton.xml";
+	public static final String FILE_NAME = "config/wpsCapabilitiesSkeleton.xml";
 	public static final String NAMESPACE = "http://www.opengis.net/ows/1.1";
 	private static Logger LOGGER = LoggerFactory.getLogger(XmlCapabilitiesDAO.class);
 
 	@Autowired
-	JDomUtil jDomUtil;
+	private JDomUtil jDomUtil;
 
 	@Autowired
-	ResourcePathUtil resourcePathUtil;
+	private ResourcePathUtil resourcePathUtil;
 
 	@Override
-	public ServiceIdentification getServiceIdentification() {
+	public ServiceIdentification getServiceIdentification() throws WPSConfigurationException {
 		Document document = null;
 		ServiceIdentification serviceIdentification = new ServiceIdentification();
-		try {
-			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				Element root = document.getRootElement();
-				Element serviceIdentificationElement = root.getChild("ServiceIdentification",
-						Namespace.getNamespace(NAMESPACE));
-				serviceIdentification.setTitle(getValue(serviceIdentificationElement, "Title"));
-				serviceIdentification.setServiceAbstract(getValue(serviceIdentificationElement, "Abstract"));
-				serviceIdentification.setServiceType(getValue(serviceIdentificationElement, "ServiceType"));
-				serviceIdentification
-						.setServiceTypeVersion(getValue(serviceIdentificationElement, "ServiceTypeVersion"));
-				serviceIdentification.setFees(getValue(serviceIdentificationElement, "Fees"));
-				serviceIdentification.setAccessConstraints(getValue(serviceIdentificationElement, "AccessConstraints"));
+		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+		Element root = document.getRootElement();
+		Element serviceIdentificationElement = root
+				.getChild("ServiceIdentification", Namespace.getNamespace(NAMESPACE));
+		serviceIdentification.setTitle(getValue(serviceIdentificationElement, "Title"));
+		serviceIdentification.setServiceAbstract(getValue(serviceIdentificationElement, "Abstract"));
+		serviceIdentification.setServiceType(getValue(serviceIdentificationElement, "ServiceType"));
+		serviceIdentification.setServiceTypeVersion(getValue(serviceIdentificationElement, "ServiceTypeVersion"));
+		serviceIdentification.setFees(getValue(serviceIdentificationElement, "Fees"));
+		serviceIdentification.setAccessConstraints(getValue(serviceIdentificationElement, "AccessConstraints"));
 
-				// keywords
-				Element keywords = serviceIdentificationElement.getChild("Keywords", Namespace.getNamespace(NAMESPACE));
-				if (keywords != null) {
-					Set<String> keywrodsSet = new HashSet<String>();
-					for (Object keyword : keywords.getChildren()) {
-						keywrodsSet.add(((Element) keyword).getValue());
-					}
-					serviceIdentification.setKeywords(keywrodsSet);
-				}
+		// keywords
+		Element keywords = serviceIdentificationElement.getChild("Keywords", Namespace.getNamespace(NAMESPACE));
+		if (keywords != null) {
+			Set<String> keywrodsSet = new HashSet<String>();
+			for (Object keyword : keywords.getChildren()) {
+				keywrodsSet.add(((Element) keyword).getValue());
 			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
+			serviceIdentification.setKeywords(keywrodsSet);
 		}
+		LOGGER.info("'{}' is parsed and a ServiceIdentification object is returned", absolutePath);
 		return serviceIdentification;
 	}
 
 	@Override
-	public ServiceProvider getServiceProvider() {
+	public void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException {
+		if (serviceIdentification == null) {
+			NullPointerException e = new NullPointerException("ServiceIdentification is null");
+			LOGGER.error("Unable to save ServiceIdentification to file: ", e);
+			throw new WPSConfigurationException(e);
+		}
+
+		Document document = null;
+		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+
+		Element root = document.getRootElement();
+		Element serviceIdentificationElement = getElement(root, "ServiceIdentification");
+		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
+		setElement(getElement(serviceIdentificationElement, "Abstract"), serviceIdentification.getServiceAbstract());
+		setElement(getElement(serviceIdentificationElement, "ServiceType"), serviceIdentification.getServiceType());
+		setElement(getElement(serviceIdentificationElement, "ServiceTypeVersion"),
+				serviceIdentification.getServiceTypeVersion());
+		setElement(getElement(serviceIdentificationElement, "Fees"), serviceIdentification.getFees());
+		setElement(getElement(serviceIdentificationElement, "AccessConstraints"),
+				serviceIdentification.getAccessConstraints());
+		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
+		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
+
+		Element keywords = getElement(serviceIdentificationElement, "Keywords");
+		if (keywords != null) {
+			keywords.removeChildren("Keyword", Namespace.getNamespace(NAMESPACE));
+			for (String newKeyword : serviceIdentification.getKeywords()) {
+				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE)).setText(newKeyword);
+				keywords.addContent(keyword);
+			}
+		}
+		jDomUtil.write(document, absolutePath);
+		LOGGER.info("ServiceIdentification values written to '{}'", absolutePath);
+	}
+
+	@Override
+	public ServiceProvider getServiceProvider() throws WPSConfigurationException {
 		Document document = null;
 		ServiceProvider serviceProvider = new ServiceProvider();
-		try {
-			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				Element root = document.getRootElement();
-				Element serviceProviderElement = getElement(root, "ServiceProvider");;
-				serviceProvider.setProviderName(getValue(serviceProviderElement, "ProviderName"));
 
-				// a special case, an attribute with a namespace
-				serviceProvider.setProviderSite(serviceProviderElement.getChild("ProviderSite",
-						Namespace.getNamespace(NAMESPACE)).getAttributeValue("href",
-						Namespace.getNamespace("http://www.w3.org/1999/xlink")));
+		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+		Element root = document.getRootElement();
+		Element serviceProviderElement = getElement(root, "ServiceProvider");
+		
+		serviceProvider.setProviderName(getValue(serviceProviderElement, "ProviderName"));
 
-				// contact info
-				Element serviceContact = getElement(serviceProviderElement, "serviceContact");
-				serviceProvider.setIndividualName(getValue(serviceContact, "IndividualName"));
-				serviceProvider.setPosition(getValue(serviceContact, "PositionName"));
+		// a special case, an attribute with a namespace
+		serviceProvider.setProviderSite(serviceProviderElement.getChild("ProviderSite",
+				Namespace.getNamespace(NAMESPACE)).getAttributeValue("href",
+				Namespace.getNamespace("http://www.w3.org/1999/xlink")));
 
-				// phone
-				Element contactInfo = getElement(serviceContact, "ContactInfo");
-				Element phone = getElement(contactInfo, "Phone");
-				serviceProvider.setPhone(getValue(phone, "Voice"));
-				serviceProvider.setFacsimile(getValue(phone, "Facsimile"));
+		// contact info
+		Element serviceContact = getElement(serviceProviderElement, "serviceContact");
+		serviceProvider.setIndividualName(getValue(serviceContact, "IndividualName"));
+		serviceProvider.setPosition(getValue(serviceContact, "PositionName"));
 
-				// address
-				Element address = getElement(contactInfo, "Address");				
-				serviceProvider.setDeliveryPoint(getValue(address, "DeliveryPoint"));
-				serviceProvider.setCity(getValue(address, "City"));
-				serviceProvider.setAdministrativeArea(getValue(address, "AdministrativeArea"));
-				serviceProvider.setPostalCode(getValue(address, "PostalCode"));
-				serviceProvider.setCountry(getValue(address, "Country"));
-				serviceProvider.setEmail(getValue(address, "ElectronicMailAddress"));
-			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
-		}
+		// phone
+		Element contactInfo = getElement(serviceContact, "ContactInfo");
+		Element phone = getElement(contactInfo, "Phone");
+		serviceProvider.setPhone(getValue(phone, "Voice"));
+		serviceProvider.setFacsimile(getValue(phone, "Facsimile"));
+
+		// address
+		Element address = getElement(contactInfo, "Address");
+		serviceProvider.setDeliveryPoint(getValue(address, "DeliveryPoint"));
+		serviceProvider.setCity(getValue(address, "City"));
+		serviceProvider.setAdministrativeArea(getValue(address, "AdministrativeArea"));
+		serviceProvider.setPostalCode(getValue(address, "PostalCode"));
+		serviceProvider.setCountry(getValue(address, "Country"));
+		serviceProvider.setEmail(getValue(address, "ElectronicMailAddress"));
+		LOGGER.info("'{}' is parsed and a ServiceProvider object is returned", absolutePath);
 		return serviceProvider;
 	}
-
+	
 	@Override
-	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
-		Document document = null;
-		try {
-			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				if (serviceIdentification != null) {
-					Element root = document.getRootElement();
-					Element serviceIdentificationElement = getElement(root, "ServiceIdentification");
-					setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
-					setElement(getElement(serviceIdentificationElement, "Abstract"), serviceIdentification.getServiceAbstract());
-					setElement(getElement(serviceIdentificationElement, "ServiceType"), serviceIdentification.getServiceType());
-					setElement(getElement(serviceIdentificationElement, "ServiceTypeVersion"), serviceIdentification.getServiceTypeVersion());
-					setElement(getElement(serviceIdentificationElement, "Fees"), serviceIdentification.getFees());
-					setElement(getElement(serviceIdentificationElement, "AccessConstraints"), serviceIdentification.getAccessConstraints());
-					setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
-					setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
-
-					Element keywords = getElement(serviceIdentificationElement, "Keywords");
-					if (keywords != null) {
-						keywords.removeChildren("Keyword", Namespace.getNamespace(NAMESPACE));
-						for (String newKeyword : serviceIdentification.getKeywords()) {
-							Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE))
-									.setText(newKeyword);
-							keywords.addContent(keyword);
-						}
-					}
-					
-					jDomUtil.write(document, absolutePath);
-				}
-			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
+	public void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException {
+		if (serviceProvider == null) {
+			NullPointerException e = new NullPointerException("ServiceProvider is null");
+			LOGGER.error("Unable to save ServiceProvider to file: ", e);
+			throw new WPSConfigurationException(e);
 		}
-	}
-
-	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) {
+		
 		Document document = null;
-		try {
-			String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				if (serviceProvider != null) {
-					Element root = document.getRootElement();
-					Element serviceProviderElement = getElement(root, "ServiceProvider");
-					
-					setElement(getElement(serviceProviderElement, "ProviderName"), serviceProvider.getProviderName());
-					getElement(serviceProviderElement, "ProviderSite").setAttribute("href",
-							serviceProvider.getProviderSite(),
-							Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink"));
+		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+		Element root = document.getRootElement();
+		Element serviceProviderElement = getElement(root, "ServiceProvider");
 
-					Element serviceContact = getElement(serviceProviderElement, "ServiceContact");
-					setElement(getElement(serviceContact, "IndividualName"), serviceProvider.getIndividualName());
-					setElement(getElement(serviceContact, "PositionName"), serviceProvider.getPosition());
+		setElement(getElement(serviceProviderElement, "ProviderName"), serviceProvider.getProviderName());
+		getElement(serviceProviderElement, "ProviderSite").setAttribute("href", serviceProvider.getProviderSite(),
+				Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink"));
 
-					Element contactInfo = getElement(serviceContact, "ContactInfo");
-					Element phone = getElement(contactInfo, "Phone");
-					setElement(getElement(phone, "Voice"), serviceProvider.getPhone());
-					setElement(getElement(phone, "Facsimile"), serviceProvider.getFacsimile());
+		Element serviceContact = getElement(serviceProviderElement, "ServiceContact");
+		setElement(getElement(serviceContact, "IndividualName"), serviceProvider.getIndividualName());
+		setElement(getElement(serviceContact, "PositionName"), serviceProvider.getPosition());
 
-					Element address = getElement(contactInfo, "Address");
-					setElement(getElement(address, "DeliveryPoint"), serviceProvider.getDeliveryPoint());
-					setElement(getElement(address, "City"), serviceProvider.getCity());
-					setElement(getElement(address, "AdministrativeArea"), serviceProvider.getAdministrativeArea());
-					setElement(getElement(address, "PostalCode"), serviceProvider.getPostalCode());
-					setElement(getElement(address, "Country"), serviceProvider.getCountry());
-					setElement(getElement(address, "ElectronicMailAddress"), serviceProvider.getEmail());
-					jDomUtil.write(document, absolutePath);
-				}
-			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
-		}
+		Element contactInfo = getElement(serviceContact, "ContactInfo");
+		Element phone = getElement(contactInfo, "Phone");
+		setElement(getElement(phone, "Voice"), serviceProvider.getPhone());
+		setElement(getElement(phone, "Facsimile"), serviceProvider.getFacsimile());
+
+		Element address = getElement(contactInfo, "Address");
+		setElement(getElement(address, "DeliveryPoint"), serviceProvider.getDeliveryPoint());
+		setElement(getElement(address, "City"), serviceProvider.getCity());
+		setElement(getElement(address, "AdministrativeArea"), serviceProvider.getAdministrativeArea());
+		setElement(getElement(address, "PostalCode"), serviceProvider.getPostalCode());
+		setElement(getElement(address, "Country"), serviceProvider.getCountry());
+		setElement(getElement(address, "ElectronicMailAddress"), serviceProvider.getEmail());
+		jDomUtil.write(document, absolutePath);
+		LOGGER.info("ServiceProvider values written to '{}'", absolutePath);
 	}
 
 	private String getValue(Element element, String child) {
@@ -226,7 +213,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		}
 		return null;
 	}
-	
+
 	private void setElement(Element element, String value) {
 		if (element != null) {
 			element.setText(value);

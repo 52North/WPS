@@ -33,10 +33,13 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -53,12 +56,13 @@ public class XmlCapabilitiesDAOTest {
 	@Mock
 	private ResourcePathUtil resourcePathUtil;
 
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+
 	@Before
 	public void setup() throws Exception {
 		capabilitiesDAO = new XmlCapabilitiesDAO();
 		MockitoAnnotations.initMocks(this);
-		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
-				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
 
 	@After
@@ -67,8 +71,10 @@ public class XmlCapabilitiesDAOTest {
 	}
 
 	@Test
-	public void testGetServiceIdentification() throws Exception {
-		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
+	public void getServiceIdentification() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
 				createTestServiceIdentificationDoc());
 		ServiceIdentification serviceIdentification = capabilitiesDAO.getServiceIdentification();
 		assertEquals("Created Doc Title", serviceIdentification.getTitle());
@@ -76,18 +82,11 @@ public class XmlCapabilitiesDAOTest {
 	}
 
 	@Test
-	public void testGetServiceProvider() throws Exception {
-		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
-				createTestServiceProviderDoc());
-		ServiceProvider serviceProvider = capabilitiesDAO.getServiceProvider();
-		assertEquals("Created Doc Provider Name", serviceProvider.getProviderName());
-		assertEquals("www.createdtestlink.com", serviceProvider.getProviderSite());
-	}
-
-	@Test
-	public void testSaveServiceIdentification() throws Exception {
+	public void saveServiceIdentification_validServiceIdentification() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 		Document testDoc = createTestServiceIdentificationDoc();
-		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceIdentification serviceIdentification = new ServiceIdentification();
 		serviceIdentification.setTitle("New Test Title");
 		serviceIdentification.setServiceAbstract("New Test Abstract");
@@ -105,11 +104,36 @@ public class XmlCapabilitiesDAOTest {
 						Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE)));
 		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
+	
+	@Test
+	public void saveServiceIdentification_nullServiceIdentification() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+		Document testDoc = createTestServiceIdentificationDoc();
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
+		ServiceIdentification serviceIdentification = null;
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("NullPointerException");
+		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
+	}
+	
+	@Test
+	public void getServiceProvider() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(
+				createTestServiceProviderDoc());
+		ServiceProvider serviceProvider = capabilitiesDAO.getServiceProvider();
+		assertEquals("Created Doc Provider Name", serviceProvider.getProviderName());
+		assertEquals("www.createdtestlink.com", serviceProvider.getProviderSite());
+	}
 
 	@Test
-	public void testSaveServiceProvider() throws Exception {
+	public void saveServiceProvider_validServiceProvider() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 		Document testDoc = createTestServiceProviderDoc();
-		when(jDomUtil.load("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceProvider serviceProvider = new ServiceProvider();
 		serviceProvider.setProviderName("Test Provider Name");
 		serviceProvider.setProviderSite("www.test.com");
@@ -126,6 +150,18 @@ public class XmlCapabilitiesDAOTest {
 		assertEquals("www.test.com",
 				providerSite.getAttributeValue("href", Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink")));
 		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+	}
+	
+	@Test
+	public void saveServiceIdentification_nullServiceProvider() throws Exception {
+		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
+				"mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
+		Document testDoc = createTestServiceProviderDoc();
+		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
+		ServiceProvider serviceProvider = null;
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("NullPointerException");
+		capabilitiesDAO.saveServiceProvider(serviceProvider);
 	}
 
 	private Document createTestServiceIdentificationDoc() {

@@ -24,37 +24,45 @@
 
 package org.n52.wps.webapp.dao;
 
+import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 public interface CapabilitiesDAO {
 	/**
-	 * Parse wpsCapabilitiesSkeleton.xml and map service identification
-	 * properties to a {@code ServiceIdentification} object
+	 * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}
+	 * object
 	 * 
 	 * @return Populated {@code ServiceIdentification} object
+	 * @throws WPSConfigurationException
+	 *             if the {@code ServiceIdentification} cannot be constructed
 	 */
-	ServiceIdentification getServiceIdentification();
-
-	/**
-	 * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to
-	 * a {@code ServiceProvider} object
-	 * 
-	 * @return Populated {@code ServiceProvider} object
-	 */
-	ServiceProvider getServiceProvider();
+	ServiceIdentification getServiceIdentification() throws WPSConfigurationException;
 
 	/**
 	 * Write {@code ServiceIdentification} values to wpsCapabilitiesSkeleton.xml
 	 * 
 	 * @param {@code ServiceIdentification}
+	 * @throws WPSConfigurationException
+	 *             if {@code ServiceIdentification} is null or if unable to write to file
 	 */
-	void saveServiceIdentification(ServiceIdentification serviceIdentification);
+	void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException;
+
+	/**
+	 * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to a {@code ServiceProvider} object
+	 * 
+	 * @return Populated {@code ServiceProvider} object
+	 * @throws WPSConfigurationException
+	 *             if the {@code ServiceProvider} cannot be constructed
+	 */
+	ServiceProvider getServiceProvider() throws WPSConfigurationException;
 
 	/**
 	 * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
 	 * 
 	 * @param {@code ServiceProvider}
+	 * @throws WPSConfigurationException
+	 *             if {@code ServiceProvider} is null or if unable to write to file
 	 */
-	void saveServiceProvider(ServiceProvider serviceProvider);
+	void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException;
 }
