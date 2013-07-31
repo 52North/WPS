@@ -25,10 +25,9 @@
 package org.n52.wps.webapp.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -37,54 +36,54 @@ import java.util.TreeMap;
 import org.jdom.Document;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class XmlLogConfigurationsDAOTest {
 
 	@InjectMocks
-	private LogConfigurationsDAO logConfigurationsDAO = new XmlLogConfigurationsDAO();;
+	private LogConfigurationsDAO logConfigurationsDAO;
 
 	@Mock
 	private ResourcePathUtil resourcePathUtil;
 
-	private JDomUtil jDomUtil = new JDomUtil();
+	@Mock
+	private JDomUtil jDomUtil;
+
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+
 	private Document originalTestLogDocument;
-	private String originalTestLogDocumentPath;
+	private String testLogDocumentPath;
 
 	@Before
-	public void setUp() throws IOException {
-		ReflectionTestUtils.invokeSetterMethod(logConfigurationsDAO, "setjDomUtil", jDomUtil);
+	public void setUp() throws Exception {
+		logConfigurationsDAO = new XmlLogConfigurationsDAO();
 		MockitoAnnotations.initMocks(this);
-		
-		doAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				Object[] args = invocation.getArguments();
-				// change argument to test log file
-				args[0] = "testfiles" + File.separator + "testlogback.xml";
-				
-				// make a copy of the original test log file
-				originalTestLogDocumentPath = (String)invocation.callRealMethod();
-				originalTestLogDocument = jDomUtil.load(originalTestLogDocumentPath);
-				
-				return invocation.callRealMethod();
-			}
+		testLogDocumentPath = XmlLogConfigurationsDAOTest.class.getResource("/testfiles/testlogback.xml").getPath();
+		when(resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME)).thenReturn(
+				testLogDocumentPath);
+		when(jDomUtil.parse(testLogDocumentPath)).thenCallRealMethod();
+		doCallRealMethod().when(jDomUtil).write(originalTestLogDocument, testLogDocumentPath);
+		originalTestLogDocument = jDomUtil.parse(testLogDocumentPath);
+	}
 
-		}).when(resourcePathUtil).getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);		
+	@After
+	public void resetTestDocument() throws Exception {
+		jDomUtil.write(originalTestLogDocument, testLogDocumentPath);
+		logConfigurationsDAO = null;
 	}
 
 	@Test
-	public void testGetLogConfigurations() throws WPSConfigurationException  {
+	public void getLogConfigurations() throws Exception {
 		LogConfigurations logConfigurations = logConfigurationsDAO.getLogConfigurations();
 		assertEquals("${logFile}/%d{yyyy-MM-dd}.log", logConfigurations.getWpsfileAppenderFileNamePattern());
 		assertEquals("14", logConfigurations.getWpsfileAppenderMaxHistory());
@@ -100,7 +99,7 @@ public class XmlLogConfigurationsDAOTest {
 	}
 
 	@Test
-	public void testSaveLogConfigurations() throws WPSConfigurationException {
+	public void saveLogConfigurations_validLogConfigurations() throws Exception {
 		LogConfigurations logConfigurations = logConfigurationsDAO.getLogConfigurations();
 		logConfigurations.setWpsfileAppenderFileNamePattern("testFileAppenderFileNamePattern");
 		logConfigurations.setWpsfileAppenderMaxHistory("10");
@@ -117,7 +116,7 @@ public class XmlLogConfigurationsDAOTest {
 		loggers.put("org.n52.wps.server.WebProcessingService", "ERROR");
 		logConfigurations.setLoggers(loggers);
 		logConfigurationsDAO.saveLogConfigurations(logConfigurations);
-		
+
 		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
 		assertEquals("10", logConfigurations.getWpsfileAppenderMaxHistory());
 		assertEquals("testFileAppenderEncoderPattern", logConfigurations.getWpsfileAppenderEncoderPattern());
@@ -130,9 +129,12 @@ public class XmlLogConfigurationsDAOTest {
 		assertEquals("ERROR", logConfigurations.getLoggers().get("org.n52.wps.server.WebProcessingService"));
 		assertEquals(null, logConfigurations.getLoggers().get("org.apache.http.headers"));
 	}
-	
-	@After
-	public void resetTestDocument() throws IOException  {
-		jDomUtil.write(originalTestLogDocument, originalTestLogDocumentPath);
+
+	@Test
+	public void saveLogConfigurations_nullLogConfigurations() throws Exception {
+		LogConfigurations logConfigurations = null;
+		exception.expect(WPSConfigurationException.class);
+		exception.expectMessage("NullPointerException");
+		logConfigurationsDAO.saveLogConfigurations(logConfigurations);
 	}
 }

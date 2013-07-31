@@ -24,7 +24,6 @@
 
 package org.n52.wps.webapp.dao;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ import java.util.TreeMap;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -49,129 +47,111 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 	public static String FILE_NAME = "logback.xml";
 	private static Logger LOGGER = LoggerFactory.getLogger(XmlLogConfigurationsDAO.class);
 
-	JDomUtil jDomUtil;
-
-	ResourcePathUtil resourcePathUtil;
+	@Autowired
+	private JDomUtil jDomUtil;
 
 	@Autowired
-	public void setjDomUtil(JDomUtil jDomUtil) {
-		this.jDomUtil = jDomUtil;
-	}
-
-	@Autowired
-	public void setResourcePathUtil(ResourcePathUtil resourcePathUtil) {
-		this.resourcePathUtil = resourcePathUtil;
-	}
+	private ResourcePathUtil resourcePathUtil;
 
 	@Override
 	public LogConfigurations getLogConfigurations() throws WPSConfigurationException {
 		Document document = null;
 		LogConfigurations logConfigurations = new LogConfigurations();
-		try {
-			String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				Element root = document.getRootElement();
+		String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+		Element root = document.getRootElement();
 
-				@SuppressWarnings("unchecked")
-				List<Element> appenders = root.getChildren("appender");
+		@SuppressWarnings("unchecked")
+		List<Element> appenders = root.getChildren("appender");
 
-				Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
-						.getChild("fileNamePattern");
-				logConfigurations.setWpsfileAppenderFileNamePattern(getValue(fileAppenderFileNamePatternElement));
+		Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
+				.getChild("fileNamePattern");
+		logConfigurations.setWpsfileAppenderFileNamePattern(getValue(fileAppenderFileNamePatternElement));
 
-				Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy")
-						.getChild("maxHistory");
-				logConfigurations.setWpsfileAppenderMaxHistory(getValue(fileAppenderMaxHistoryElement));
+		Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
+		logConfigurations.setWpsfileAppenderMaxHistory(getValue(fileAppenderMaxHistoryElement));
 
-				Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
-				logConfigurations.setWpsfileAppenderEncoderPattern(getValue(fileAppenderEncoderPatternElement));
+		Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
+		logConfigurations.setWpsfileAppenderEncoderPattern(getValue(fileAppenderEncoderPatternElement));
 
-				Element consoleAppenderEncoderPatternElement = appenders.get(1).getChild("encoder").getChild("pattern");
-				logConfigurations.setWpsconsoleEncoderPattern(getValue(consoleAppenderEncoderPatternElement));
+		Element consoleAppenderEncoderPatternElement = appenders.get(1).getChild("encoder").getChild("pattern");
+		logConfigurations.setWpsconsoleEncoderPattern(getValue(consoleAppenderEncoderPatternElement));
 
-				@SuppressWarnings("unchecked")
-				List<Element> loggersElements = root.getChildren("logger");
-				SortedMap<String, String> loggersMap = new TreeMap<String, String>();
+		@SuppressWarnings("unchecked")
+		List<Element> loggersElements = root.getChildren("logger");
+		SortedMap<String, String> loggersMap = new TreeMap<String, String>();
 
-				for (Element element : loggersElements) {
-					loggersMap.put(element.getAttributeValue("name"), element.getAttributeValue("level"));
-				}
-				logConfigurations.setLoggers(loggersMap);
-
-				Element rootLevelElement = root.getChild("root");
-				logConfigurations.setRootLevel(rootLevelElement.getAttributeValue("level"));
-
-				@SuppressWarnings("unchecked")
-				List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
-				List<String> rootAppenderRefs = new ArrayList<String>();
-				for (Element element : rootAppenderRefsElements) {
-					rootAppenderRefs.add(element.getAttributeValue("ref"));
-				}
-				logConfigurations.setRootAppenderRefs(rootAppenderRefs);
-			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
+		for (Element element : loggersElements) {
+			loggersMap.put(element.getAttributeValue("name"), element.getAttributeValue("level"));
 		}
+		logConfigurations.setLoggers(loggersMap);
+
+		Element rootLevelElement = root.getChild("root");
+		logConfigurations.setRootLevel(rootLevelElement.getAttributeValue("level"));
+
+		@SuppressWarnings("unchecked")
+		List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
+		List<String> rootAppenderRefs = new ArrayList<String>();
+		for (Element element : rootAppenderRefsElements) {
+			rootAppenderRefs.add(element.getAttributeValue("ref"));
+		}
+		logConfigurations.setRootAppenderRefs(rootAppenderRefs);
+		LOGGER.info("'{}' is parsed and a LogConfigurations object is returned", absolutePath);
 		return logConfigurations;
 	}
 
 	@Override
 	public void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException {
-		Document document = null;
-		try {
-			String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
-			document = jDomUtil.load(absolutePath);
-			if (document != null) {
-				if (logConfigurations != null) {
-					
-					Element root = document.getRootElement();
-
-					@SuppressWarnings("unchecked")
-					List<Element> appenders = root.getChildren("appender");
-
-					Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
-							.getChild("fileNamePattern");
-					setElement(fileAppenderFileNamePatternElement, logConfigurations.getWpsfileAppenderFileNamePattern());
-
-					Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy")
-							.getChild("maxHistory");
-					setElement(fileAppenderMaxHistoryElement, logConfigurations.getWpsfileAppenderMaxHistory());
-
-					Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
-					setElement(fileAppenderEncoderPatternElement, logConfigurations.getWpsfileAppenderEncoderPattern());
-					
-					Element consoleAppenderEncoderPatternElement = appenders.get(1).getChild("encoder").getChild("pattern");
-					setElement(consoleAppenderEncoderPatternElement, logConfigurations.getWpsconsoleEncoderPattern());
-
-					root.removeChildren("logger");
-					SortedMap<String, String> loggersMap = logConfigurations.getLoggers();
-
-
-					for (Map.Entry<String, String> entry : loggersMap.entrySet()) {
-						Element element = new Element("logger");
-						element.setAttribute("name", entry.getKey());
-						element.setAttribute("level", entry.getValue());
-						root.addContent(element);
-					}
-					
-
-					Element rootLevelElement = root.getChild("root");
-					rootLevelElement.setAttribute("level", logConfigurations.getRootLevel());
-					
-					@SuppressWarnings("unchecked")
-					List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
-					List<String> rootAppenderRefs = logConfigurations.getRootAppenderRefs();					
-					for (int i = 0; i < rootAppenderRefsElements.size(); i++) {
-						rootAppenderRefsElements.get(i).setAttribute("ref", rootAppenderRefs.get(i));
-					}
-
-					jDomUtil.write(document, absolutePath);
-				}
-			}
-		} catch (JDOMException | IOException e) {
-			LOGGER.error(e.getMessage());
+		if (logConfigurations == null) {
+			NullPointerException e = new NullPointerException("LogConfigurations is null");
+			LOGGER.error("Unable to save LogConfigurations to file: ", e);
+			throw new WPSConfigurationException(e);
 		}
+
+		Document document = null;
+		String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
+		document = jDomUtil.parse(absolutePath);
+
+		Element root = document.getRootElement();
+
+		@SuppressWarnings("unchecked")
+		List<Element> appenders = root.getChildren("appender");
+
+		Element fileAppenderFileNamePatternElement = appenders.get(0).getChild("rollingPolicy")
+				.getChild("fileNamePattern");
+		setElement(fileAppenderFileNamePatternElement, logConfigurations.getWpsfileAppenderFileNamePattern());
+
+		Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
+		setElement(fileAppenderMaxHistoryElement, logConfigurations.getWpsfileAppenderMaxHistory());
+
+		Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
+		setElement(fileAppenderEncoderPatternElement, logConfigurations.getWpsfileAppenderEncoderPattern());
+
+		Element consoleAppenderEncoderPatternElement = appenders.get(1).getChild("encoder").getChild("pattern");
+		setElement(consoleAppenderEncoderPatternElement, logConfigurations.getWpsconsoleEncoderPattern());
+
+		root.removeChildren("logger");
+		SortedMap<String, String> loggersMap = logConfigurations.getLoggers();
+
+		for (Map.Entry<String, String> entry : loggersMap.entrySet()) {
+			Element element = new Element("logger");
+			element.setAttribute("name", entry.getKey());
+			element.setAttribute("level", entry.getValue());
+			root.addContent(element);
+		}
+
+		Element rootLevelElement = root.getChild("root");
+		rootLevelElement.setAttribute("level", logConfigurations.getRootLevel());
+
+		@SuppressWarnings("unchecked")
+		List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
+		List<String> rootAppenderRefs = logConfigurations.getRootAppenderRefs();
+		for (int i = 0; i < rootAppenderRefsElements.size(); i++) {
+			rootAppenderRefsElements.get(i).setAttribute("ref", rootAppenderRefs.get(i));
+		}
+
+		jDomUtil.write(document, absolutePath);
+		LOGGER.info("LogConfigurations values written to '{}'", absolutePath);
 	}
 
 	private String getValue(Element element) {
@@ -180,7 +160,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		}
 		return null;
 	}
-	
+
 	private void setElement(Element element, String value) {
 		if (element != null) {
 			element.setText(value);
