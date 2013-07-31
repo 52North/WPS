@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Products>
+	<Product>
+		<Name>PC</Name>
+		<Brand>HP</Brand>
+		<Price currency="US Dollar">999</Price>
+	</Product>
+</Products>
