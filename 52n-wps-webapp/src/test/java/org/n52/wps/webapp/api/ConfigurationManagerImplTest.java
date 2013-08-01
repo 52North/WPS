@@ -24,106 +24,64 @@
 
 package org.n52.wps.webapp.api;
 
-import static org.mockito.Mockito.verify;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
-import java.net.URI;
-
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
-import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
+import org.n52.wps.webapp.service.LogConfigurationsService;
+import org.n52.wps.webapp.service.UserService;
 
 public class ConfigurationManagerImplTest {
 
 	@InjectMocks
 	private ConfigurationManager configurationManager;
-
+	
 	@Mock
 	private ConfigurationService configurationService;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-		
-	private String testModuleClassName = TestConfigurationModule1.class.getName();
+	@Mock
+	private UserService userService;
 
+	@Mock
+	private CapabilitiesService capabilitiesService;
+
+	@Mock
+	private LogConfigurationsService logConfigurationsService;
+		
 	@Before
-	public void initModule() {
+	public void setup() {
 		configurationManager = new ConfigurationManagerImpl();
 		MockitoAnnotations.initMocks(this);
 	}
-
-	@Test
-	public void testGetAllConfigurationModules() {
-		configurationManager.getAllConfigurationModules();
-		verify(configurationService).getAllConfigurationModules();
+	
+	@After
+	public void tearDown() {
+		configurationManager = null;
 	}
 
 	@Test
-	public void testGetAllConfigurationModulesByCategory() {
-		configurationManager.getAllConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
-		verify(configurationService).getConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
-	}
-
-	@Test
-	public void testActiveGetConfigurationModulesByCategory() {
-		configurationManager.getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
-		verify(configurationService).getConfigurationModulesByCategory(ConfigurationCategory.GENERATOR, true);
+	public void getConfigurationServices() {
+		assertNotNull(configurationManager.getConfigurationServices());
 	}
 	
 	@Test
-	public void getConfigurationModule() {
-		configurationManager.getConfigurationModule(testModuleClassName);
-		verify(configurationService).getConfigurationModule(testModuleClassName);
+	public void getUserServices() {
+		assertNotNull(configurationManager.getUserServices());
 	}
 	
 	@Test
-	public void testGetConfigurationEntry() {
-		configurationManager.getConfigurationEntry(testModuleClassName, "test.string.key");
-		verify(configurationService).getConfigurationEntry(testModuleClassName, "test.string.key");
-	}
-
-	@Test
-	public void testSetConfigurationEntryValue() throws Exception {
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.string.key", "test value");
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.string.key", "test value");
-
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.integer.key", 12);
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.integer.key", 12);
-
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.double.key", 14.2);
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.double.key", 14.2);
-
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.boolean.key", true);
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.boolean.key", true);
-
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.file.key", new File("file_path"));
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.file.key", new File("file_path"));
-
-		configurationManager.setConfigurationEntryValue(testModuleClassName, "test.uri.key", new URI("uri_path"));
-		verify(configurationService).setConfigurationEntryValue(testModuleClassName, "test.uri.key", new URI("uri_path"));
+	public void getCapabilitiesServices() {
+		assertNotNull(configurationManager.getCapabilitiesServices());
 	}
 	
 	@Test
-	public void testGetConfigurationEntryValue() throws Exception {
-		configurationManager.getConfigurationEntryValue(testModuleClassName, "test.boolean.key", Boolean.class);
-		verify(configurationService).getConfigurationEntryValue(testModuleClassName, "test.boolean.key", Boolean.class);
-	}
-	
-	@Test
-	public void testGetAlgorithmEntry() {
-		configurationManager.getAlgorithmEntry(testModuleClassName, "algorithmName");
-		verify(configurationService).getAlgorithmEntry(testModuleClassName, "algorithmName");
-	}
-	
-	@Test
-	public void testSetAlgorithmEntry() {
-		configurationManager.setAlgorithmEntry(testModuleClassName, "algorithmName", false);
-		verify(configurationService).setAlgorithmEntry(testModuleClassName, "algorithmName", false);
+	public void getLogConfigurationsServices() {
+		assertNotNull(configurationManager.getLogConfigurationsServices());
 	}
 }

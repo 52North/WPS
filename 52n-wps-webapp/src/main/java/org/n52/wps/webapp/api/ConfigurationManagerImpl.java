@@ -24,16 +24,8 @@
 
 package org.n52.wps.webapp.api;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 
-import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.entities.LogConfigurations;
-import org.n52.wps.webapp.entities.ServiceIdentification;
-import org.n52.wps.webapp.entities.ServiceProvider;
-import org.n52.wps.webapp.entities.User;
 import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.service.LogConfigurationsService;
@@ -48,137 +40,42 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
 	private ConfigurationService configurationService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private CapabilitiesService capabilitiesService;
-	
+
 	@Autowired
 	private LogConfigurationsService logConfigurationsService;
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationManagerImpl.class);
 
-	@Override
-	public Map<String, ConfigurationModule> getAllConfigurationModules() {
-		return configurationService.getAllConfigurationModules();
-	}
-
-	@Override
-	public Map<String, ConfigurationModule> getAllConfigurationModulesByCategory(ConfigurationCategory category) {
-		return configurationService.getConfigurationModulesByCategory(category);
-	}
-
-	@Override
-	public Map<String, ConfigurationModule> getActiveConfigurationModulesByCategory(ConfigurationCategory category) {
-		return configurationService.getConfigurationModulesByCategory(category, true);
-	}
-
-	@Override
-	public ConfigurationModule getConfigurationModule(String moduleClassName) {
-		return configurationService.getConfigurationModule(moduleClassName);
-	}
-	
-	@Override
-	public ConfigurationEntry<?> getConfigurationEntry(String moduleClassName, String entryKey) {
-		return configurationService.getConfigurationEntry(moduleClassName, entryKey);
-	}
-	
-	@Override
-	public <T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
-			throws WPSConfigurationException {
-		try {
-			return configurationService.getConfigurationEntryValue(moduleClassName, entryKey, requiredType);
-		} catch (WPSConfigurationException e) {
-			throw new WPSConfigurationException(e);
-		}
-	}
-
-	@Override
-	public void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
-			throws WPSConfigurationException {
-		try {
-			configurationService.setConfigurationEntryValue(moduleClassName, entryKey, value);
-		} catch (WPSConfigurationException e) {
-			throw new WPSConfigurationException(e);
-		}
-	}
-	
-	@Override
-	public AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm) {
-		return configurationService.getAlgorithmEntry(moduleClassName, algorithm);
-	}
-	
-	@Override
-	public void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active) {
-		configurationService.setAlgorithmEntry(moduleClassName, algorithm, active);
-	}
-
 	@PostConstruct
 	private void initializeConfigurations() {
-		LOGGER.debug("Initializing configurations...");
+		LOGGER.info("Initializing configurations...");
 		configurationService.syncConfigurations();
-		LOGGER.debug("Configurations initialized.");
+		LOGGER.info("Configurations initialized.");
 	}
 
 	@Override
-	public User getUser(int userId) {
-		return userService.getUser(userId);
+	public ConfigurationService getConfigurationServices() {
+		return configurationService;
 	}
 
 	@Override
-	public User getUser(String username) {
-		return userService.getUser(username);
+	public UserService getUserServices() {
+		return userService;
 	}
 
 	@Override
-	public List<User> getAllUsers() {
-		return userService.getAllUsers();
+	public CapabilitiesService getCapabilitiesServices() {
+		return capabilitiesService;
 	}
 
 	@Override
-	public void insertUser(User user) {
-		userService.insertUser(user);
-	}
-
-	@Override
-	public void updateUser(User user) {
-		userService.updateUser(user);
-	}
-
-	@Override
-	public void deleteUser(int userId) {
-		userService.deleteUser(userId);
-	}
-
-	@Override
-	public ServiceIdentification getServiceIdentification() throws WPSConfigurationException {
-		return capabilitiesService.getServiceIdentification();
-	}
-
-	@Override
-	public ServiceProvider getServiceProvider() throws WPSConfigurationException {
-		return capabilitiesService.getServiceProvider();
-	}
-
-	@Override
-	public void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException {
-		capabilitiesService.saveServiceIdentification(serviceIdentification);
-	}
-
-	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException {
-		capabilitiesService.saveServiceProvider(serviceProvider);
-	}
-
-	@Override
-	public LogConfigurations getLogConfigurations() throws WPSConfigurationException {
-		return logConfigurationsService.getLogConfigurations();
-	}
-
-	@Override
-	public void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException {
-		logConfigurationsService.saveLogConfigurations(logConfigurations);
+	public LogConfigurationsService getLogConfigurationsServices() {
+		return logConfigurationsService;
 	}
 }
