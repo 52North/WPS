@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.ows.x11.BoundingBoxType;
+import net.opengis.ows.x11.ExceptionType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -789,17 +790,18 @@ public class ExecuteRequest extends Request implements IObserver {
         StatusType status = StatusType.Factory.newInstance();
         status.setProcessSucceeded("Process successful");
         updateStatus(status);
-    }
+    }	
     
     public void updateStatusError(String errorMessage) {
-        StatusType status = StatusType.Factory.newInstance();
-        status.addNewProcessFailed().
-                addNewExceptionReport().
-                addNewException().
-                addNewExceptionText().
-                setStringValue(errorMessage);
-        updateStatus(status);
-    }
+		StatusType status = StatusType.Factory.newInstance();
+		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep = status
+				.addNewProcessFailed().addNewExceptionReport();
+		excRep.setVersion("1.0.0");
+		ExceptionType excType = excRep.addNewException();
+		excType.addNewExceptionText().setStringValue(errorMessage);
+		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
+		updateStatus(status);
+	}
 	
 	private void updateStatus(StatusType status) {
 		getExecuteResponseBuilder().setStatus(status);
