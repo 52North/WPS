@@ -36,11 +36,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("configurationDAO")
 public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Override
 	public Object getConfigurationEntryValue(String moduleClassName, String entryKey) {
@@ -49,7 +49,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("configuration_module", moduleClassName);
 		String sql = "SELECT configuration_value FROM configurationentry WHERE entry_key = :entry_key AND configuration_module = :configuration_module";
 
-		List<Object> values = jdbcTemplate.query(sql, parameters, new RowMapper<Object>() {
+		List<Object> values = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<Object>() {
 
 			@Override
 			public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -72,7 +72,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("entry_key", entryKey);
 		parameters.put("configuration_module", moduleClassName);
 		parameters.put("configuration_value", value);
-		jdbcTemplate.update("INSERT INTO configurationentry (entry_key, configuration_module, configuration_value)"
+		namedParameterJdbcTemplate.update("INSERT INTO configurationentry (entry_key, configuration_module, configuration_value)"
 				+ "VALUES(:entry_key, :configuration_module, :configuration_value)", parameters);
 	}
 
@@ -82,7 +82,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("entry_key", entryKey);
 		parameters.put("configuration_module", moduleClassName);
 		parameters.put("configuration_value", value);
-		jdbcTemplate.update("UPDATE configurationentry SET configuration_value = :configuration_value "
+		namedParameterJdbcTemplate.update("UPDATE configurationentry SET configuration_value = :configuration_value "
 				+ "WHERE entry_key = :entry_key AND configuration_module = :configuration_module", parameters);
 	}
 
@@ -93,7 +93,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("configuration_module", moduleClassName);
 		String sql = "SELECT * FROM algorithmentry WHERE algorithm_name = :algorithm_name AND configuration_module = :configuration_module";
 
-		List<AlgorithmEntry> entries = jdbcTemplate.query(sql, parameters, new RowMapper<AlgorithmEntry>() {
+		List<AlgorithmEntry> entries = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<AlgorithmEntry>() {
 
 			@Override
 			public AlgorithmEntry mapRow(ResultSet rs, int rowNo) throws SQLException {
@@ -118,7 +118,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("algorithm_name", algorithm);
 		parameters.put("configuration_module", moduleClassName);
 		parameters.put("active", active);
-		jdbcTemplate.update("INSERT INTO algorithmentry (algorithm_name, configuration_module, active)"
+		namedParameterJdbcTemplate.update("INSERT INTO algorithmentry (algorithm_name, configuration_module, active)"
 				+ "VALUES(:algorithm_name, :configuration_module, :active)", parameters);
 	}
 
@@ -128,7 +128,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 		parameters.put("algorithm_name", algorithm);
 		parameters.put("configuration_module", moduleClassName);
 		parameters.put("active", active);
-		jdbcTemplate.update("UPDATE algorithmentry SET active = :active "
+		namedParameterJdbcTemplate.update("UPDATE algorithmentry SET active = :active "
 				+ "WHERE algorithm_name = :algorithm_name AND configuration_module = :configuration_module", parameters);
 	}
 }
