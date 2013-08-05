@@ -35,7 +35,7 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 public interface ConfigurationService {
 
 	/**
-	 * Sync configuration entries and values with the datastore
+	 * Sync configuration entries and values with the database
 	 */
 	void syncConfigurations();
 
@@ -62,6 +62,8 @@ public interface ConfigurationService {
 	 * 
 	 * @param category
 	 *            the category of the modules
+	 * @param active
+	 *            whether to return only active modules
 	 * @return A map of all active configuration modules of the specified category.
 	 * @see ConfigurationCategory
 	 */
@@ -79,28 +81,28 @@ public interface ConfigurationService {
 	/**
 	 * Get a configuration entry.
 	 * 
-	 * @param moduleClassName
-	 *            the fully qualified name of the module holding the configuration entry
+	 * @param module
+	 *            the configuration module holding the configuration entry
 	 * @param entryKey
 	 *            the configuration entry key
 	 * @return The configuration entry or {@code null} if no entry is found.
 	 */
-	ConfigurationEntry<?> getConfigurationEntry(String moduleClassName, String entryKey);
+	ConfigurationEntry<?> getConfigurationEntry(ConfigurationModule module, String entryKey);
 
 	/**
 	 * Get the configuration entry value and return it as the expected type.
 	 * 
 	 * @param module
-	 *            the fully qualified name of the module holding the configuration entry
-	 * @param entryKey
-	 *            the configuration entry key
+	 *            the configuration module holding the configuration entry
+	 * @param entry
+	 *            the configuration entry
 	 * @param requiredType
-	 *            the required type of the return value
+	 *            the required type
 	 * @return The entry value in the required type
 	 * @throws WPSConfigurationException
-	 *             if the entry's value type cannot be be parsed to the required type
+	 *             if the entry value cannot be be parsed to the required type
 	 */
-	<T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
+	<T> T getConfigurationEntryValue(ConfigurationModule module, ConfigurationEntry<?> entry, Class<T> requiredType)
 			throws WPSConfigurationException;
 
 	/**
@@ -121,13 +123,13 @@ public interface ConfigurationService {
 	/**
 	 * Get an algorithm entry.
 	 * 
-	 * @param moduleClassName
-	 *            the fully qualified name of the module holding the algorithm entry
+	 * @param module
+	 *            the configuration module holding the algorithm entry
 	 * @param algorithm
 	 *            the algorithm name
 	 * @return The algorithm entry or {@code null} if no entry is found.
 	 */
-	AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm);
+	AlgorithmEntry getAlgorithmEntry(ConfigurationModule module, String algorithm);
 
 	/**
 	 * Set the value of an algorithm entry.
@@ -147,12 +149,9 @@ public interface ConfigurationService {
 	 * {@code ConfigurationKey(key="entry.key")}.
 	 * 
 	 * @param module
-	 *            the fully qualified name of the module holding the algorithm entry
-	 * @param entryKey
-	 *            the entry key
-	 * @throws WPSConfigurationException
-	 *             if the entry value type is not compatible with the member variable type, or if the setter method have
-	 *             more than one parameter
+	 *            the configuration module holding the configuration entry
+	 * @param entry
+	 *            the configuration entry
 	 */
-	void passValueToConfigurationModule(String moduleClassName, String entryKey) throws WPSConfigurationException;
+	void passValueToConfigurationModule(ConfigurationModule module, ConfigurationEntry<?> entry);
 }

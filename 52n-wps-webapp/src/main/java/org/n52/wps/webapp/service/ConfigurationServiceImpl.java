@@ -31,6 +31,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationKey;
@@ -66,40 +68,42 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
+	private Map<String, ConfigurationModule> allConfigurationModules;
+
 	@Override
 	public void syncConfigurations() {
-		LOGGER.debug("Initializing and syncing configuration modules.");
+		LOGGER.info("Initializing and syncing configuration modules.");
 		for (ConfigurationModule module : getAllConfigurationModules().values()) {
-			LOGGER.debug("Initializing and syncing configuration module '" + module.getClass().getName() + "'.");
+			LOGGER.info("Initializing and syncing configuration module '{}'.", module.getClass().getName());
 
 			if (module.getConfigurationEntries() != null) {
 				for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
-					syncConfigurationEntry(module.getClass().getName(), entry);
+					syncConfigurationEntry(module, entry);
 				}
 			}
 
 			if (module.getAlgorithmEntries() != null) {
 				for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
-					syncAlgorithmEntry(module.getClass().getName(), entry);
+					syncAlgorithmEntry(module, entry);
 				}
 			}
 
-			LOGGER.debug("Done initializing and syncing configuration module '" + module.getClass().getName() + "'.");
+			LOGGER.info("Done initializing and syncing configuration module '{}'.", module.getClass().getName());
 		}
-		LOGGER.debug("Done initializing and syncing configuration modules.");
+		LOGGER.info("Done initializing and syncing all configuration modules.");
 	}
 
-	private void syncConfigurationEntry(String moduleClassName, ConfigurationEntry<?> entry) {
-		LOGGER.debug("Syncing configuration entry '" + entry.getKey() + "' in module'" + moduleClassName + "'.");
+	private void syncConfigurationEntry(ConfigurationModule module, ConfigurationEntry<?> entry) {
+		LOGGER.debug("Syncing configuration entry '{}' in module'{}'.", entry.getKey(), module.getClass().getName());
 
-		Object storedValue = configurationDAO.getConfigurationEntryValue(moduleClassName, entry.getKey());
+		Object storedValue = configurationDAO.getConfigurationEntryValue(module.getClass().getName(), entry.getKey());
 		if (storedValue != null) {
 			try {
-				setConfigurationEntryValueHelper(moduleClassName, entry, storedValue);
-				LOGGER.debug("Done syncing configuration value '" + storedValue + "' for entry '" + entry.getKey()
-						+ "' in module'" + moduleClassName + "' from the database.");
+				setConfigurationEntryValueHelper(module, entry, storedValue);
+				LOGGER.debug("Done syncing configuration value '{}' for entry '{}' in module'{}' from the database.",
+						storedValue, entry.getKey(), module.getClass().getName());
 			} catch (WPSConfigurationException e) {
-				// Do nothing, error already logged by the setConfigurationEntryValueHelper method
+				LOGGER.error("Error setting value: ", e);
 			}
 		} else {
 			Object value = null;
@@ -107,39 +111,44 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
 					value = entry.getValue().toString();
 				}
-				configurationDAO.insertConfigurationEntryValue(moduleClassName, entry.getKey(), value);
-				LOGGER.debug("Done writing configuration value '" + value + "' for entry '" + entry.getKey()
-						+ "' in module'" + moduleClassName + "' to the database.");
+				configurationDAO.insertConfigurationEntryValue(module.getClass().getName(), entry.getKey(), value);
+				LOGGER.debug("Done writing configuration value '{}' for entry '{}' in module'{}' to the database.",
+						value, entry.getKey(), module.getClass().getName());
 			}
 		}
 	}
 
-	private void syncAlgorithmEntry(String moduleClassName, AlgorithmEntry entry) {
-		LOGGER.debug("Syncing algorithm entry '" + entry.getAlgorithm() + "' in module'" + moduleClassName + "'.");
+	private void syncAlgorithmEntry(ConfigurationModule module, AlgorithmEntry entry) {
+		LOGGER.debug("Syncing algorithm entry '{}' in module '{}'.", entry.getAlgorithm(), module.getClass().getName());
 
-		AlgorithmEntry storedEntry = configurationDAO.getAlgorithmEntry(moduleClassName, entry.getAlgorithm());
+		AlgorithmEntry storedEntry = configurationDAO.getAlgorithmEntry(module.getClass().getName(),
+				entry.getAlgorithm());
 		if (storedEntry != null) {
-			setAlgorithmEntryHelper(moduleClassName, entry.getAlgorithm(), storedEntry.isActive());
-			LOGGER.debug("Done setting algorithm '" + entry.getAlgorithm() + "' to active status: '"
-					+ storedEntry.isActive() + "' in module'" + moduleClassName + "' from the database.");
+			setAlgorithmEntryHelper(module, entry, storedEntry.isActive());
+			LOGGER.debug("Done setting algorithm '{}' to active status '{}' in module '{}' from the database.",
+					entry.getAlgorithm(), storedEntry.isActive(), module.getClass().getName());
 
 		} else {
-			configurationDAO.insertAlgorithmEntry(moduleClassName, entry.getAlgorithm(), entry.isActive());
-			LOGGER.debug("Done writing algorithm '" + entry.getAlgorithm() + "' with active status: '"
-					+ entry.isActive() + "' in module'" + moduleClassName + "' to the database.");
+			configurationDAO.insertAlgorithmEntry(module.getClass().getName(), entry.getAlgorithm(), entry.isActive());
+			LOGGER.debug("Done writing algorithm '{}' with active status '{}' in module '{}' to the database.",
+					entry.getAlgorithm(), entry.isActive(), module.getClass().getName());
+		}
+	}
+
+	@PostConstruct
+	private void buildConfigurationModulesMap() {
+		Map<String, ConfigurationModule> initialModulesMap = listableBeanFactory
+				.getBeansOfType(ConfigurationModule.class);
+
+		allConfigurationModules = new HashMap<String, ConfigurationModule>();
+		for (ConfigurationModule entry : initialModulesMap.values()) {
+			allConfigurationModules.put(entry.getClass().getName(), entry);
 		}
 	}
 
 	@Override
 	public Map<String, ConfigurationModule> getAllConfigurationModules() {
-		Map<String, ConfigurationModule> initialModulesMap = listableBeanFactory
-				.getBeansOfType(ConfigurationModule.class);
-
-		Map<String, ConfigurationModule> classNameToModuleMap = new HashMap<String, ConfigurationModule>();
-		for (ConfigurationModule entry : initialModulesMap.values()) {
-			classNameToModuleMap.put(entry.getClass().getName(), entry);
-		}
-		return classNameToModuleMap;
+		return allConfigurationModules;
 	}
 
 	@Override
@@ -151,6 +160,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 				byCategoryNameToModuleMap.put(entry.getKey(), entry.getValue());
 			}
 		}
+		LOGGER.debug("Returning '{}' configuration modules under '{}' category.", byCategoryNameToModuleMap.size(),
+				category);
 		return byCategoryNameToModuleMap;
 	}
 
@@ -165,6 +176,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					activeByCategoryNameToModuleMap.put(entry.getKey(), entry.getValue());
 				}
 			}
+			LOGGER.debug("Returning '{}' active configuration modules under '{}' category.",
+					activeByCategoryNameToModuleMap.size(), category);
 			return activeByCategoryNameToModuleMap;
 		} else {
 			return byCategoryNameToModuleMap;
@@ -173,14 +186,19 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public ConfigurationModule getConfigurationModule(String moduleClassName) {
-		return getAllConfigurationModules().get(moduleClassName);
+		ConfigurationModule module = getAllConfigurationModules().get(moduleClassName);
+		if (module != null) {
+			LOGGER.debug("Returning configuration module '{}'.", moduleClassName);
+		}
+		return module;
 	}
 
 	@Override
-	public ConfigurationEntry<?> getConfigurationEntry(String moduleClassName, String entryKey) {
-		ConfigurationModule module = getConfigurationModule(moduleClassName);
+	public ConfigurationEntry<?> getConfigurationEntry(ConfigurationModule module, String entryKey) {
 		for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
 			if (entry.getKey().equals(entryKey)) {
+				LOGGER.debug("Returning configuration entry '{}' in module '{}'.", entryKey, module.getClass()
+						.getName());
 				return entry;
 			}
 		}
@@ -189,81 +207,70 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getConfigurationEntryValue(String moduleClassName, String entryKey, Class<T> requiredType)
-			throws WPSConfigurationException {
-		Object value = getConfigurationEntryValueHelper(moduleClassName, entryKey);
+	public <T> T getConfigurationEntryValue(ConfigurationModule module, ConfigurationEntry<?> entry,
+			Class<T> requiredType) throws WPSConfigurationException {
+		Object value = entry.getValue();
 		if (value == null || (requiredType != null && !requiredType.isAssignableFrom(value.getClass()))) {
 			String errorMessage = "The value '" + value + "' cannot be assigned to a/an '"
-					+ requiredType.getSimpleName() + "' type";
-			LOGGER.error(errorMessage);
+					+ requiredType.getSimpleName() + "' type.";
 			throw new WPSConfigurationException(errorMessage);
 		}
+		LOGGER.debug("Returning value '{}' of type '{}' for configuration entry '{}' in module '{}'.", value,
+				requiredType.getSimpleName(), entry.getKey(), module.getClass().getName());
 		return (T) value;
-	}
-
-	private Object getConfigurationEntryValueHelper(String moduleClassName, String entryKey) {
-		ConfigurationEntry<?> entry = getConfigurationEntry(moduleClassName, entryKey);
-		return entry.getValue();
 	}
 
 	@Override
 	public void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
 			throws WPSConfigurationException {
-		ConfigurationEntry<?> entry = getConfigurationEntry(moduleClassName, entryKey);
+		ConfigurationModule module = getConfigurationModule(moduleClassName);
+		ConfigurationEntry<?> entry = getConfigurationEntry(module, entryKey);
 		if (entry != null) {
-			try {
-				setConfigurationEntryValueHelper(moduleClassName, entry, value);
-				configurationDAO.updateConfigurationEntryValue(moduleClassName, entryKey, value);
-				LOGGER.debug("Value '" + value + "' has been set for entry '" + entryKey + "' in module '"
-						+ moduleClassName + "'");
-			} catch (WPSConfigurationException e) {
-				throw new WPSConfigurationException(e);
-			}
+			setConfigurationEntryValueHelper(module, entry, value);
+			configurationDAO.updateConfigurationEntryValue(moduleClassName, entryKey, value);
+			LOGGER.debug("Value '{}' for entry '{}' in module '{}' has been saved to the database.", value, entryKey,
+					moduleClassName);
 		}
 	}
 
 	/*
 	 * Used internally to set the value without calling configurationDAO
 	 */
-	private void setConfigurationEntryValueHelper(String moduleClassName, ConfigurationEntry<?> entry, Object value)
+	private void setConfigurationEntryValueHelper(ConfigurationModule module, ConfigurationEntry<?> entry, Object value)
 			throws WPSConfigurationException {
-		try {
-			switch (entry.getType()) {
-			case STRING:
-				setStringValue((StringConfigurationEntry) entry, value);
-				break;
-			case BOOLEAN:
-				setBooleanValue((BooleanConfigurationEntry) entry, value);
-				break;
-			case DOUBLE:
-				setDoubleValue((DoubleConfigurationEntry) entry, value);
-				break;
-			case FILE:
-				setFileValue((FileConfigurationEntry) entry, value);
-				break;
-			case INTEGER:
-				setIntegerValue((IntegerConfigurationEntry) entry, value);
-				break;
-			case URI:
-				setURIValue((URIConfigurationEntry) entry, value);
-				break;
-			default:
-				break;
-			}
-			passValueToConfigurationModule(moduleClassName, entry.getKey());
-		} catch (WPSConfigurationException e) {
-			String errorMessage = "Unable to set value '" + value + "' in module '" + moduleClassName + "' for entry '"
-					+ entry.getKey() + "': " + e.getMessage();
-			LOGGER.error(errorMessage);
-			throw new WPSConfigurationException(errorMessage);
+		switch (entry.getType()) {
+		case STRING:
+			setStringValue((StringConfigurationEntry) entry, value);
+			break;
+		case BOOLEAN:
+			setBooleanValue((BooleanConfigurationEntry) entry, value);
+			break;
+		case DOUBLE:
+			setDoubleValue((DoubleConfigurationEntry) entry, value);
+			break;
+		case FILE:
+			setFileValue((FileConfigurationEntry) entry, value);
+			break;
+		case INTEGER:
+			setIntegerValue((IntegerConfigurationEntry) entry, value);
+			break;
+		case URI:
+			setURIValue((URIConfigurationEntry) entry, value);
+			break;
+		default:
+			break;
 		}
+		LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(), module.getClass()
+				.getName());
+		passValueToConfigurationModule(module, entry);
 	}
 
 	@Override
-	public AlgorithmEntry getAlgorithmEntry(String moduleClassName, String algorithm) {
-		ConfigurationModule module = getConfigurationModule(moduleClassName);
+	public AlgorithmEntry getAlgorithmEntry(ConfigurationModule module, String algorithm) {
 		for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
 			if (entry.getAlgorithm().equals(algorithm)) {
+				LOGGER.debug("Returning algorithm '{}' with status '{}' in module '{}'.", entry.getAlgorithm(),
+						entry.isActive(), module.getClass().getName());
 				return entry;
 			}
 		}
@@ -272,32 +279,36 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active) {
-		setAlgorithmEntryHelper(moduleClassName, algorithm, active);
-		configurationDAO.updateAlgorithmEntry(moduleClassName, algorithm, active);
-	}
-
-	/*
-	 * Used internally to set the status without calling configurationDAO
-	 */
-	private void setAlgorithmEntryHelper(String moduleClassName, String algorithm, boolean active) {
-		AlgorithmEntry entry = getAlgorithmEntry(moduleClassName, algorithm);
+		ConfigurationModule module = getConfigurationModule(moduleClassName);
+		AlgorithmEntry entry = getAlgorithmEntry(module, algorithm);
 		if (entry != null) {
-			entry.setActive(active);
+			setAlgorithmEntryHelper(module, entry, active);
+			configurationDAO.updateAlgorithmEntry(moduleClassName, algorithm, active);
+			LOGGER.debug("Algorithm '{}' in module '{}' with status {} has been saved to the database.", algorithm,
+					moduleClassName, active);
 		}
 	}
 
+	/*
+	 * Used internally to set algorithm status without calling configurationDAO
+	 */
+	private void setAlgorithmEntryHelper(ConfigurationModule module, AlgorithmEntry entry, boolean active) {
+		entry.setActive(active);
+		LOGGER.debug("Algorithm '{}' in module '{}' has been set to {}.", entry.getAlgorithm(), module.getClass()
+				.getName(), active);
+	}
+
 	@Override
-	public void passValueToConfigurationModule(String moduleClassName, String entryKey)
-			throws WPSConfigurationException {
-		ConfigurationModule module = getConfigurationModule(moduleClassName);
+	public void passValueToConfigurationModule(ConfigurationModule module, ConfigurationEntry<?> entry) {
 		for (Method method : module.getClass().getMethods()) {
 			if (method.isAnnotationPresent(ConfigurationKey.class)) {
 				ConfigurationKey configurationKey = method.getAnnotation(ConfigurationKey.class);
-				if (configurationKey.key().equals(entryKey)) {
+				if (configurationKey.key().equals(entry.getKey())) {
 					Class<?>[] clazz = method.getParameterTypes();
 					try {
 						if (method.getParameterTypes().length != 1) {
-							throw new WPSConfigurationException("The method has more than one parameter.");
+							throw new WPSConfigurationException(
+									"The method has the wrong number of parameters, it must be 1.");
 						}
 
 						if (clazz[0].isPrimitive()) {
@@ -312,20 +323,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 							}
 						}
 
-						Object value = getConfigurationEntryValue(moduleClassName, entryKey, clazz[0]);
+						Object value = getConfigurationEntryValue(module, entry, clazz[0]);
 						if (value != null) {
 							method.invoke(module, value);
-							LOGGER.debug("Value '" + value.toString() + "' passed to method '" + method.getName()
-									+ "' in module '" + module.getClass().getName() + "'.");
+							LOGGER.debug("Value '{}' passed to method '{}' in module '{}'.", value.toString(),
+									method.getName(), module.getClass().getName());
 						}
 
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 							| WPSConfigurationException e) {
-						String errorMessage = "Cannot pass value to method '" + method.getName() + "' in module '"
-								+ module.getClass().getName() + "' for entry '" + configurationKey.key() + "': "
-								+ e.getMessage();
-						LOGGER.error(errorMessage);
-						throw new WPSConfigurationException(errorMessage);
+						LOGGER.error("Cannot pass value to method '{}' in module '{}' for entry '{}': ",
+								method.getName(), module.getClass().getName(), configurationKey.key(), e);
 					}
 				}
 			}
