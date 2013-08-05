@@ -2,7 +2,6 @@ package org.n52.wps.webapp.testmodules;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,44 +24,33 @@ public class TestConfigurationModule2 implements ConfigurationModule {
 	private boolean booleanMember;
 	private File fileMember;
 	private URI uriMember;
-	@SuppressWarnings("unused")
 	private int intInvalidMember;
 
-	private static ConfigurationEntry<String> entry1 = new StringConfigurationEntry("test.string.key", "String Title",
-			"Desc", true, "Initial Value");
-	private static ConfigurationEntry<Integer> entry2 = new IntegerConfigurationEntry("test.integer.key",
-			"Integer Title", "Integer Desc", true, 44);
-	private static ConfigurationEntry<Double> entry3 = new DoubleConfigurationEntry("test.double.key", "Double Title",
+	private ConfigurationEntry<String> entry1 = new StringConfigurationEntry("test.string.key", "String Title", "Desc",
+			true, "Initial Value");
+	private ConfigurationEntry<Integer> entry2 = new IntegerConfigurationEntry("test.integer.key", "Integer Title",
+			"Integer Desc", true, 44);
+	private ConfigurationEntry<Double> entry3 = new DoubleConfigurationEntry("test.double.key", "Double Title",
 			"Double Desc", true, 10.4);
-	private static ConfigurationEntry<Boolean> entry4 = new BooleanConfigurationEntry("test.boolean.key",
-			"Boolean Title", "Boolean Desc", true, true);
-	private static ConfigurationEntry<File> entry5 = new FileConfigurationEntry("test.file.key", "File Title",
-			"File Desc", true, new File("path"));
+	private ConfigurationEntry<Boolean> entry4 = new BooleanConfigurationEntry("test.boolean.key", "Boolean Title",
+			"Boolean Desc", true, true);
+	private ConfigurationEntry<File> entry5 = new FileConfigurationEntry("test.file.key", "File Title", "File Desc",
+			true, new File("path"));
+	private ConfigurationEntry<URI> entry6 = new URIConfigurationEntry("test.uri.key", "URI Title", "URI Desc", true,
+			URI.create("path"));
 
-	private static ConfigurationEntry<URI> entry6 = new URIConfigurationEntry("test.uri.key", "URI Title");
-
-	static {
-		try {
-			entry6.setDescription("URI Desc");
-			entry6.setRequired(true);
-			entry6.setValue(new URI("path"));
-		} catch (URISyntaxException e) {
-			// do nothing
-		}
-	}
-
-	private static ConfigurationEntry<String> entry7 = new StringConfigurationEntry("test.string.key2", "String Title",
+	private ConfigurationEntry<String> entry7 = new StringConfigurationEntry("test.string.key2", "String Title",
 			"Desc", true, "Initial Value 2");
-	private static IntegerConfigurationEntry entry8 = new IntegerConfigurationEntry("test.integer.key2",
-			"Integer Title", "Integer Desc", true, 15);
+	private IntegerConfigurationEntry entry8 = new IntegerConfigurationEntry("test.integer.key2", "Integer Title",
+			"Integer Desc", true, 15);
 
-	private static AlgorithmEntry algorithmEntry = new AlgorithmEntry("name1", true);
-	private static AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("name2", true);
+	private AlgorithmEntry algorithmEntry = new AlgorithmEntry("name1", true);
+	private AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("name2", true);
 
-	private static List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(entry1, entry2, entry3,
-			entry4, entry5, entry6, entry7, entry8);
+	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(entry1, entry2, entry3, entry4,
+			entry5, entry6, entry7, entry8);
 
-	private static List<AlgorithmEntry> algorithmEntries = Arrays.asList(algorithmEntry, algorithmEntry2);
+	private List<AlgorithmEntry> algorithmEntries = Arrays.asList(algorithmEntry, algorithmEntry2);
 
 	@Override
 	public String getModuleName() {
@@ -151,5 +139,9 @@ public class TestConfigurationModule2 implements ConfigurationModule {
 	@ConfigurationKey(key = "test.integer.key2")
 	public void setIntInvalidMember(int intInvalidMember, int secondParameter) {
 		this.intInvalidMember = intInvalidMember;
+	}
+
+	public int getIntInvalidMember() {
+		return intInvalidMember;
 	}
 }
