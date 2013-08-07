@@ -32,22 +32,18 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-
 package org.n52.wps.io;
-
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.GeneratorDocument.Generator;
-import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GeneratorFactory {
 	
@@ -127,7 +123,7 @@ public class GeneratorFactory {
 		return factory;
 	}
 	
-	public IGenerator getGenerator(String schema, String format, String encoding, Class outputInternalClass) {
+	public IGenerator getGenerator(String schema, String format, String encoding, Class<?> outputInternalClass) {
 		
 		// dealing with NULL encoding
 		if (encoding == null){
@@ -135,8 +131,8 @@ public class GeneratorFactory {
 		}
 		
 		for(IGenerator generator : registeredGenerators) {
-			Class[] supportedBindings = generator.getSupportedDataBindings();
-			for(Class clazz : supportedBindings){
+			Class<?>[] supportedBindings = generator.getSupportedDataBindings();
+			for(Class<?> clazz : supportedBindings){
 				if(clazz.equals(outputInternalClass)) {
 					if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) && generator.isSupportedFormat(format)){
 						return generator;

@@ -10,5 +10,5 @@ public interface IData extends Serializable {
 	 * For special cases like Grass, it is recommended to
 	 * Create your own wrapper class, for e.g. a File in the filesystem.
 	*/
-	public abstract Class getSupportedClass();
+	public abstract Class<?> getSupportedClass();
 }
