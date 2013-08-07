@@ -26,7 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-public class GetCapabilitiesPOSTTester {
+public class GetCapabilitiesPostIT {
     private static String url;
 
     @BeforeClass
@@ -36,7 +36,7 @@ public class GetCapabilitiesPOSTTester {
 
     @Test
     public void complete() throws XmlException, IOException {
-        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/GetCapabilities.xml");
+        URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/GetCapabilities.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
         String response = "";
@@ -60,7 +60,7 @@ public class GetCapabilitiesPOSTTester {
 
     @Test
     public void validateCapabilities() throws XmlException, IOException {
-        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/GetCapabilities.xml");
+        URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/GetCapabilities.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
         String response = "";
@@ -83,7 +83,7 @@ public class GetCapabilitiesPOSTTester {
 
     @Test
     public void wrongVersion() throws XmlException, IOException {
-        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/WrongVersion.xml");
+        URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/WrongVersion.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
         String response = "";
@@ -102,12 +102,12 @@ public class GetCapabilitiesPOSTTester {
 
     @Test
     public void wrongServiceParameter() throws ParserConfigurationException, SAXException, IOException, XmlException {
-        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/WrongService.xml");
+        URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/WrongService.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
         String response = "";
         try {
-            response = PostClient.sendRequest(GetCapabilitiesPOSTTester.url, payload.toString());
+            response = PostClient.sendRequest(GetCapabilitiesPostIT.url, payload.toString());
         }
         catch (IOException e) {
             fail(e.getMessage());
@@ -120,12 +120,12 @@ public class GetCapabilitiesPOSTTester {
     
     @Test
     public void missingServiceParameter() throws ParserConfigurationException, SAXException, IOException, XmlException {
-        URL resource = GetCapabilitiesPOSTTester.class.getResource("/GetCapabilities/MissingService.xml");
+        URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/MissingService.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
         String response = "";
         try {
-            response = PostClient.sendRequest(GetCapabilitiesPOSTTester.url, payload.toString());
+            response = PostClient.sendRequest(GetCapabilitiesPostIT.url, payload.toString());
         }
         catch (IOException e) {
             fail(e.getMessage());
