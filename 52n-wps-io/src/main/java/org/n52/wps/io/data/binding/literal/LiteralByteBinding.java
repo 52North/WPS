@@ -2,9 +2,11 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralByteBinding implements ILiteralData {
+public class LiteralByteBinding extends AbstractLiteralDataBinding {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6673960070211065274L;
 	private transient Byte payload;
 
 	public LiteralByteBinding(Byte payload) {
@@ -15,7 +17,7 @@ public class LiteralByteBinding implements ILiteralData {
 		return payload;
 	}
 
-	public Class<?> getSupportedClass() {
+	public Class<Byte> getSupportedClass() {
 		return Byte.class;
 	}
 	
