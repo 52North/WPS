@@ -237,7 +237,7 @@ public class ExecuteResponseBuilderTest {
 				if(identifier.contains("Complex")){				
 					assertTrue(mimeType.equals(originalMimeType));
 				}else{
-					assertTrue(mimeType.equals("text/plain"));
+					assertTrue(mimeType.equals("text/plain") || mimeType.equals("text/xml"));
 				}
 				
 			}
@@ -279,7 +279,7 @@ public class ExecuteResponseBuilderTest {
 				if(identifier.contains("Complex")){				
 					assertTrue(mimeType.equals(originalMimeType));
 				}else{
-					assertTrue(mimeType.equals("text/plain"));
+					assertTrue(mimeType.equals("text/plain") || mimeType.equals("text/xml"));
 				}
 				
 			}
@@ -316,9 +316,9 @@ public class ExecuteResponseBuilderTest {
 					.getMimeType(definition);
 
 			/*
-			 * this should be text/plain as BBOXData was requested
+			 * this should be text/xml as BBOXData was requested
 			 */
-			assertTrue(mimeType.equals("text/plain"));
+			assertTrue(mimeType.equals("text/xml"));
 
 		} catch (Exception e) {
 			fail(e.getMessage());
@@ -352,9 +352,9 @@ public class ExecuteResponseBuilderTest {
 					.getMimeType(definition);
 			
 			/*
-			 * this should be text/plain as BBOXData was requested
+			 * this should be text/xml as BBOXData was requested
 			 */
-			assertTrue(mimeType.equals("text/plain"));
+			assertTrue(mimeType.equals("text/xml"));
 			
 		} catch (Exception e) {
 			fail(e.getMessage());
