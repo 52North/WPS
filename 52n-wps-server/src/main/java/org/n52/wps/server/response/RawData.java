@@ -79,7 +79,7 @@ public class RawData extends ResponseData {
 				if(result.getCoordinateReferenceSystem()!=null && result.getCoordinateReferenceSystem().getIdentifiers().size()>0){
 					String crs = result.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString();
 					resultString = resultString + "crs=\""+crs+"\"";
-				
+					resultString = resultString + " dimensions=\""+result.getDimension()+"\"";					
 				}
 				resultString = resultString + ">";
 				double[] lowerCorner = result.getLowerCorner().getCoordinate();
