@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule2;
+import org.n52.wps.webapp.testmodules.TestConfigurationModule3;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -31,8 +32,12 @@ public class JdbcConfigurationDAOTest {
 	private EmbeddedDatabaseBuilder builder;
 	private EmbeddedDatabase db;
 
-	private String moduleClassName = TestConfigurationModule1.class.getName();
+	private String module1ClassName = TestConfigurationModule1.class.getName();
 	private String module2ClassName = TestConfigurationModule2.class.getName();
+	
+	private TestConfigurationModule1 testModule1;
+	private TestConfigurationModule2 testModule2;
+	private TestConfigurationModule3 testModule3;
 
 	@Before
 	public void setup() {
@@ -41,39 +46,78 @@ public class JdbcConfigurationDAOTest {
 				.addScript("test-data.sql").build();
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(db);
 		configurationDAO = new JdbcConfigurationDAO();
+		testModule1 = new TestConfigurationModule1();
+		testModule2 = new TestConfigurationModule2();
+		testModule3 = new TestConfigurationModule3();
 		ReflectionTestUtils.setField(configurationDAO, "namedParameterJdbcTemplate", namedParameterJdbcTemplate);
 	}
 
 	@After
 	public void tearDown() {
 		db.shutdown();
+		testModule1 =  null;
+		testModule2 = null;
+		testModule3 = null;
 		configurationDAO = null;
 	}
 
 	@Test
+	public void getConfigurationModuleStatus_existingModule() {
+		boolean statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
+		assertTrue(statusOfModule1);
+		boolean statusOfModule2 = configurationDAO.getConfigurationModuleStatus(testModule2);
+		assertFalse(statusOfModule2);
+	}
+	
+	@Test
+	public void getConfigurationModuleStatus_nonExistingModule() {
+		Boolean statusOfModule = configurationDAO.getConfigurationModuleStatus(testModule3);
+		assertNull(statusOfModule);
+	}
+	
+	@Test
+	public void insertConfigurationModule() {
+		Boolean statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
+		assertNull(statusOfModule3);
+		configurationDAO.insertConfigurationModule(testModule3);
+		statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
+		assertTrue(statusOfModule3);
+	}
+	
+	@Test
+	public void updateConfigurationModule() {
+		boolean statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
+		assertTrue(statusOfModule1);
+		testModule1.setActive(false);
+		configurationDAO.updateConfigurationModule(testModule1);
+		statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
+		assertFalse(statusOfModule1);
+	}
+	
+	@Test
 	public void getConfigurationEntryValue_validEntry() throws Exception {
-		Object stringValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.string.key");
+		Object stringValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.string.key");
 		assertEquals("Test Value", stringValue);
 
-		Object integerValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.integer.key");
+		Object integerValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.integer.key");
 		assertEquals(23, Integer.parseInt(integerValue.toString()));
 
-		Object doubleValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.double.key");
+		Object doubleValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.double.key");
 		assertEquals(11.3, Double.parseDouble(doubleValue.toString()), 0);
 
-		Object booleanValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.boolean.key");
+		Object booleanValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.boolean.key");
 		assertEquals(true, Boolean.parseBoolean(booleanValue.toString()));
 
-		Object fileValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.file.key");
+		Object fileValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.file.key");
 		assertEquals(new File("test_path"), new File(fileValue.toString()));
 
-		Object uriValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.uri.key");
+		Object uriValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.uri.key");
 		assertEquals(new URI("test_path"), new URI(uriValue.toString()));
 	}
 
 	@Test
 	public void getConfigurationEntryValue_nullEntry() throws Exception {
-		Object nullValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "non.existing.entry");
+		Object nullValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "non.existing.entry");
 		assertNull(nullValue);
 	}
 
@@ -112,57 +156,57 @@ public class JdbcConfigurationDAOTest {
 
 	@Test
 	public void updateConfigurationEntryValue() throws Exception {
-		Object stringValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.string.key");
+		Object stringValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.string.key");
 		assertEquals("Test Value", stringValue);
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.string.key", "inserted string");
-		stringValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.string.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.string.key", "inserted string");
+		stringValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.string.key");
 		assertEquals("inserted string", stringValue);
 
-		Object integerValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.integer.key");
+		Object integerValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.integer.key");
 		assertEquals(23, Integer.parseInt(integerValue.toString()));
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.integer.key", 99);
-		integerValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.integer.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.integer.key", 99);
+		integerValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.integer.key");
 		assertEquals(99, Integer.parseInt(integerValue.toString()));
 
-		Object doubleValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.double.key");
+		Object doubleValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.double.key");
 		assertEquals(11.3, Double.parseDouble(doubleValue.toString()), 0);
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.double.key", 99.9);
-		doubleValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.double.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.double.key", 99.9);
+		doubleValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.double.key");
 		assertEquals(99.9, Double.parseDouble(doubleValue.toString()), 0);
 
-		Object booleanValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.boolean.key");
+		Object booleanValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.boolean.key");
 		assertEquals(true, Boolean.parseBoolean(booleanValue.toString()));
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.boolean.key", false);
-		booleanValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.boolean.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.boolean.key", false);
+		booleanValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.boolean.key");
 		assertEquals(false, Boolean.parseBoolean(booleanValue.toString()));
 
-		Object fileValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.file.key");
+		Object fileValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.file.key");
 		assertEquals(new File("test_path"), new File(fileValue.toString()));
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.file.key", "inserted_path");
-		fileValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.file.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.file.key", "inserted_path");
+		fileValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.file.key");
 		assertEquals(new File("inserted_path"), new File(fileValue.toString()));
 
-		Object uriValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.uri.key");
+		Object uriValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.uri.key");
 		assertEquals(new URI("test_path"), new URI(uriValue.toString()));
-		configurationDAO.updateConfigurationEntryValue(moduleClassName, "test.uri.key", "inserted_path");
-		uriValue = configurationDAO.getConfigurationEntryValue(moduleClassName, "test.uri.key");
+		configurationDAO.updateConfigurationEntryValue(module1ClassName, "test.uri.key", "inserted_path");
+		uriValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.uri.key");
 		assertEquals(new URI("inserted_path"), new URI(uriValue.toString()));
 	}
 
 	@Test
 	public void getAlgorithmEntry_validEntry() {
-		AlgorithmEntry entry1 = configurationDAO.getAlgorithmEntry(moduleClassName, "name1");
+		AlgorithmEntry entry1 = configurationDAO.getAlgorithmEntry(module1ClassName, "name1");
 		assertEquals("name1", entry1.getAlgorithm());
 		assertTrue(entry1.isActive());
 
-		AlgorithmEntry entry2 = configurationDAO.getAlgorithmEntry(moduleClassName, "name2");
+		AlgorithmEntry entry2 = configurationDAO.getAlgorithmEntry(module1ClassName, "name2");
 		assertEquals("name2", entry2.getAlgorithm());
 		assertTrue(entry2.isActive());
 	}
 
 	@Test
 	public void getAlgorithmEntry_nullEntry() {
-		AlgorithmEntry entry = configurationDAO.getAlgorithmEntry(moduleClassName, "non.existing.entry");
+		AlgorithmEntry entry = configurationDAO.getAlgorithmEntry(module1ClassName, "non.existing.entry");
 		assertNull(entry);
 	}
 
@@ -177,10 +221,10 @@ public class JdbcConfigurationDAOTest {
 
 	@Test
 	public void updateAlgorithmEntry() {
-		AlgorithmEntry entry1 = configurationDAO.getAlgorithmEntry(moduleClassName, "name1");
+		AlgorithmEntry entry1 = configurationDAO.getAlgorithmEntry(module1ClassName, "name1");
 		assertTrue(entry1.isActive());
-		configurationDAO.updateAlgorithmEntry(moduleClassName, "name1", false);
-		entry1 = configurationDAO.getAlgorithmEntry(moduleClassName, "name1");
+		configurationDAO.updateAlgorithmEntry(module1ClassName, "name1", false);
+		entry1 = configurationDAO.getAlgorithmEntry(module1ClassName, "name1");
 		assertFalse(entry1.isActive());
 	}
 }

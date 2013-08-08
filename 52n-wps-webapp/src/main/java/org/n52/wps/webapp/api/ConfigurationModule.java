@@ -37,11 +37,19 @@ public interface ConfigurationModule {
 	String getModuleName();
 
 	/**
-	 * Whether the module is active or inactive by default
+	 * Get the active status of the module
 	 * 
 	 * @return the status of the module
 	 */
 	boolean isActive();
+
+	/**
+	 * Set the module status to active/inactive
+	 * 
+	 * @param active
+	 *            the new status
+	 */
+	void setActive(boolean active);
 
 	/**
 	 * Identify the category for the configuration module. See {@code ConfigurationCategory} for a list of avaliable

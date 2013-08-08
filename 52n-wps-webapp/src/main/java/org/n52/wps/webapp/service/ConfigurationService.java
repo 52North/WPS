@@ -79,6 +79,14 @@ public interface ConfigurationService {
 	ConfigurationModule getConfigurationModule(String moduleClassName);
 
 	/**
+	 * Update a configuration module
+	 * 
+	 * @param module
+	 *            the module to be updated
+	 */
+	void updateConfigurationModule(ConfigurationModule module);
+
+	/**
 	 * Get a configuration entry.
 	 * 
 	 * @param module

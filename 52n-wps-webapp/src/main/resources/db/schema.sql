@@ -1,8 +1,15 @@
+CREATE TABLE IF NOT EXISTS configurationmodule (
+  module_class_name varchar(255),
+  status boolean,
+  PRIMARY KEY (module_class_name)
+);
+
 CREATE TABLE IF NOT EXISTS configurationentry (
   entry_key varchar(255),
   configuration_module varchar(255),
   configuration_value varchar(255) DEFAULT NULL,
-  PRIMARY KEY (entry_key, configuration_module)
+  PRIMARY KEY (entry_key, configuration_module),
+  FOREIGN KEY (configuration_module) REFERENCES configurationmodule (module_class_name)
 );
 
 CREATE TABLE IF NOT EXISTS algorithmentry (

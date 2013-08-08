@@ -290,6 +290,12 @@ public class ConfigurationServiceImplTest {
 			assertTrue(module.isActive());
 		}
 	}
+	
+	@Test
+	public void updateConfigurationModule() {
+		configurationService.updateConfigurationModule(testModule1);
+		verify(configurationDAO).updateConfigurationModule(testModule1);
+	}
 
 	@Test
 	public void getConfigurationModule_validModule() {

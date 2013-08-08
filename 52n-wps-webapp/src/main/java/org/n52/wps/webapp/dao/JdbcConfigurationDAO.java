@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -41,6 +42,47 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+	@Override
+	public void insertConfigurationModule(ConfigurationModule module) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("module_class_name", module.getClass().getName());
+		parameters.put("status", module.isActive());
+		namedParameterJdbcTemplate.update("INSERT INTO configurationmodule (module_class_name, status)"
+				+ "VALUES(:module_class_name, :status)", parameters);
+	}
+	
+	@Override
+	public void updateConfigurationModule(ConfigurationModule module) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("module_class_name", module.getClass().getName());
+		parameters.put("status", module.isActive());
+		namedParameterJdbcTemplate.update("UPDATE configurationmodule SET status = :status "
+				+ "WHERE module_class_name = :module_class_name", parameters);
+	}
+	
+	@Override
+	public Boolean getConfigurationModuleStatus(ConfigurationModule module) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("module_class_name", module.getClass().getName());
+		String sql = "SELECT status FROM configurationmodule WHERE module_class_name = :module_class_name";
+
+		List<Boolean> status = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<Boolean>() {
+
+			@Override
+			public Boolean mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return rs.getBoolean("status");
+			}
+		});
+
+		if (status.isEmpty()) {
+			return null;
+		} else if (status.size() == 1) {
+			return status.get(0);
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public Object getConfigurationEntryValue(String moduleClassName, String entryKey) {

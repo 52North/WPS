@@ -25,8 +25,34 @@
 package org.n52.wps.webapp.dao;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationModule;
 
 public interface ConfigurationDAO {
+
+	/**
+	 * Insert a new module
+	 * 
+	 * @param module
+	 *            the module to be inserted
+	 * 
+	 */
+	void insertConfigurationModule(ConfigurationModule module);
+
+	/**
+	 * Update an existing module
+	 * 
+	 * @param module
+	 *            the module to be updated
+	 */
+	void updateConfigurationModule(ConfigurationModule module);
+	
+	/**
+	 * Get the active/inactive status of a configuration module
+	 * 
+	 * @param module
+	 * @return The module status
+	 */
+	Boolean getConfigurationModuleStatus(ConfigurationModule module);
 
 	/**
 	 * Get the stored configuration entry value
@@ -50,7 +76,7 @@ public interface ConfigurationDAO {
 	 *            the value to be stored
 	 */
 	void insertConfigurationEntryValue(String moduleClassName, String entryKey, Object value);
-	
+
 	/**
 	 * Update a configuration entry value
 	 * 
@@ -85,7 +111,7 @@ public interface ConfigurationDAO {
 	 *            the algorithm status
 	 */
 	void insertAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
-	
+
 	/**
 	 * Update an algorithm entry
 	 * 

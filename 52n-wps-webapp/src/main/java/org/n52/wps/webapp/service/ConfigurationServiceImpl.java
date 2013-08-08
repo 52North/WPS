@@ -75,13 +75,23 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		LOGGER.info("Initializing and syncing configuration modules.");
 		for (ConfigurationModule module : getAllConfigurationModules().values()) {
 			LOGGER.info("Initializing and syncing configuration module '{}'.", module.getClass().getName());
-
+			
+			//sync configuration module status
+			Boolean moduleStatus = configurationDAO.getConfigurationModuleStatus(module);
+			if (moduleStatus != null) {
+				module.setActive(moduleStatus);
+			} else {
+				configurationDAO.insertConfigurationModule(module);
+			}
+			
+			//sync configuration entries
 			if (module.getConfigurationEntries() != null) {
 				for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
 					syncConfigurationEntry(module, entry);
 				}
 			}
 
+			//sync algorithm entries
 			if (module.getAlgorithmEntries() != null) {
 				for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
 					syncAlgorithmEntry(module, entry);
@@ -191,6 +201,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			LOGGER.debug("Returning configuration module '{}'.", moduleClassName);
 		}
 		return module;
+	}
+	
+	@Override
+	public void updateConfigurationModule(ConfigurationModule module) {
+		configurationDAO.updateConfigurationModule(module);
 	}
 
 	@Override

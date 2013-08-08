@@ -18,6 +18,7 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
 public class TestConfigurationModule3 implements ConfigurationModule {
+	private boolean active = true;
 	private String stringMember;
 	private int intMember;
 	private double doubleMember;
@@ -59,7 +60,12 @@ public class TestConfigurationModule3 implements ConfigurationModule {
 
 	@Override
 	public boolean isActive() {
-		return true;
+		return active;
+	}
+	
+	@Override
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 	@Override

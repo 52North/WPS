@@ -1,3 +1,5 @@
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.testmodules.TestConfigurationModule1', 'true')
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.testmodules.TestConfigurationModule2', 'false')
 INSERT INTO CONFIGURATIONENTRY VALUES('test.boolean.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','true')
 INSERT INTO CONFIGURATIONENTRY VALUES('test.double.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','11.3')
 INSERT INTO CONFIGURATIONENTRY VALUES('test.file.key','org.n52.wps.webapp.testmodules.TestConfigurationModule1','test_path')
