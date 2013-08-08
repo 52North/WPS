@@ -54,7 +54,7 @@ public class DescribeProcessResponse extends Response{
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
 			XmlOptions opts = new XmlOptions();
-            HashMap ns = new HashMap();
+            HashMap<String, String> ns = new HashMap<String, String>();
             ns.put("http://www.opengis.net/wps/1.0.0", "wps");
             ns.put("http://www.opengis.net/ows/1.1", "ows");
             opts.setSaveNamespacesFirst().

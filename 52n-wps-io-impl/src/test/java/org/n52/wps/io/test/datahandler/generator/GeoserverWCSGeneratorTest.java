@@ -10,7 +10,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator;
 import org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator;
@@ -20,7 +21,7 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGenerator> {
 
 
-	Logger LOGGER = Logger.getLogger(GeoserverWCSGeneratorTest.class);
+	Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGeneratorTest.class);
 
 	
 	public void testGenerator() {

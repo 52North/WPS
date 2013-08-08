@@ -9,7 +9,7 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
@@ -20,7 +20,7 @@ import org.n52.wps.unicore.UnicoreAlgorithmRepository;
 
 public class GridGainAlgorithmRepository implements IAlgorithmRepository
 {
-	private static Logger LOGGER = Logger.getLogger(GridGainAlgorithmRepository.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GridGainAlgorithmRepository.class);
 
 //	public static String CFG_REGISTRY = "Registry";
 //	public static String CFG_KEYSTORE = "Keystore";

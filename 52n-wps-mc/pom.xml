@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<inceptionYear>2012</inceptionYear>
 	<parent>
 		<artifactId>52n-wps-parent</artifactId>
 		<groupId>org.n52.wps</groupId>
-		<version>3.2.0-SNAPSHOT</version>
+		<version>3.3.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-mc</artifactId>
@@ -69,6 +68,7 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -101,8 +101,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 
 		<dependency>
@@ -118,19 +118,16 @@
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-schema</artifactId>
-			<version>1.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
-			<version>0.6-SNAPSHOT</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-xml-processors</artifactId>
-			<version>0.6-SNAPSHOT</version>
 		</dependency>
 		
 	</dependencies>

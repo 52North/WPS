@@ -54,7 +54,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.LargeBufferStream;
 
 
@@ -198,7 +199,7 @@ class RequestSizeInfoWrapper extends HttpServletRequestWrapper {
  *
  */
 public final class CommunicationSizeLogFilter implements Filter {
-	private static Logger LOGGER = Logger.getLogger(CommunicationSizeLogFilter.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(CommunicationSizeLogFilter.class);
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain)
 	throws IOException, ServletException {

@@ -36,7 +36,8 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -69,7 +70,7 @@ public class DeployProcessRequest implements ITransactionalRequest {
 						"Error. Could not find schema in the deployment profile",
 						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
-			Logger.getLogger(DeployProcessRequest.class).info(
+			LoggerFactory.getLogger(DeployProcessRequest.class).info(
 					"process ID: " + processID);
 			String deployManagerClass = TransactionalHelper
 					.getDeploymentProfileForSchema(schema);

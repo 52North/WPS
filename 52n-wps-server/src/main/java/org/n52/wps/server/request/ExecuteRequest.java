@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.ows.x11.BoundingBoxType;
+import net.opengis.ows.x11.ExceptionType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -64,7 +65,8 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.context.ExecutionContext;
@@ -89,7 +91,7 @@ import org.w3c.dom.Document;
  */
 public class ExecuteRequest extends Request implements IObserver {
 
-	private static Logger LOGGER = Logger.getLogger(ExecuteRequest.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
 	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilder execRespType;
@@ -110,7 +112,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			option.setLoadTrimTextBuffer();
 			this.execDom = ExecuteDocument.Factory.parse(doc, option);
 			if (this.execDom == null) {
-				LOGGER.fatal("ExecuteDocument is null");
+				LOGGER.error("ExecuteDocument is null");
 				throw new ExceptionReport("Error while parsing post data",
 						ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
@@ -788,17 +790,18 @@ public class ExecuteRequest extends Request implements IObserver {
         StatusType status = StatusType.Factory.newInstance();
         status.setProcessSucceeded("Process successful");
         updateStatus(status);
-    }
+    }	
     
     public void updateStatusError(String errorMessage) {
-        StatusType status = StatusType.Factory.newInstance();
-        status.addNewProcessFailed().
-                addNewExceptionReport().
-                addNewException().
-                addNewExceptionText().
-                setStringValue(errorMessage);
-        updateStatus(status);
-    }
+		StatusType status = StatusType.Factory.newInstance();
+		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep = status
+				.addNewProcessFailed().addNewExceptionReport();
+		excRep.setVersion("1.0.0");
+		ExceptionType excType = excRep.addNewException();
+		excType.addNewExceptionText().setStringValue(errorMessage);
+		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
+		updateStatus(status);
+	}
 	
 	private void updateStatus(StatusType status) {
 		getExecuteResponseBuilder().setStatus(status);
@@ -817,6 +820,7 @@ public class ExecuteRequest extends Request implements IObserver {
             }
         } catch (ExceptionReport e) {
             LOGGER.error("Update of process status failed.", e);
+            throw new RuntimeException(e);
         }
 	}
     

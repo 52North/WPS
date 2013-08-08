@@ -39,7 +39,8 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
@@ -54,7 +55,7 @@ abstract public class Request implements Callable <Response> {
 
 	protected CaseInsensitiveMap map = null;
 	protected Document doc = null;
-	protected static Logger LOGGER = Logger.getLogger(Request.class);
+	protected static Logger LOGGER = LoggerFactory.getLogger(Request.class);
 	protected UUID id = null;
 	public static final String SUPPORTED_VERSION = "1.0.0";
 	public static final String[] SUPPORTED_LANGUAGES = new String[]{"en-US"};

@@ -24,6 +24,12 @@
 
 package org.n52.wps.server.r.metadata;
 
+import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.data.R_Resource;
+
+import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
+
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -42,7 +48,6 @@ import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
@@ -56,10 +61,13 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.TypeType;
 
 public class RProcessDescriptionCreator {
 
-    private static Logger LOGGER = Logger.getLogger(RProcessDescriptionCreator.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
     /**
      * Usually called from GenericRProcess (extends AbstractObservableAlgorithm)
@@ -86,8 +94,14 @@ public class RProcessDescriptionCreator {
             pdt.setStoreSupported(true);
 
             MetadataType mt = pdt.addNewMetadata();
+            // note that the "about" argument for ows:Metadata has type anyURI so it cannot
+            // be used for textual description of the ows:metadata element
+            
+            // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was not used for the resources
+            // because validation fails with the cause:
+            //    "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type' of element 'ows:Metadata' is not valid
+            //   	with respect to the corresponding attribute use. Attribute 'xlin:type' has a fixed value of 'simple'."
             mt.setTitle("R Script");
-            mt.setAbout("This process is powered by this R script.");
             mt.setHref(fileUrl.toExternalForm());
 
             // Add URL to resource folder > FIXME rathre add resources one by one, see below.
@@ -95,11 +109,10 @@ public class RProcessDescriptionCreator {
             // mt.setTitle("Resource Directory URL");
             // url = R_Config.getInstance().getResourceDirURL();
             // mt.setHref(url);
+            
 
             mt = pdt.addNewMetadata();
             mt.setTitle("R Session Info");
-            // mt.setAbout("R Console output of sessionInfo() method in R, content is generated dynamically for the current state");
-            // url = R_Config.getInstance().getSessionInfoURL();
             mt.setHref(sessionInfoUrl.toExternalForm());
 
             ProcessOutputs outputs = pdt.addNewProcessOutputs();
@@ -120,14 +133,14 @@ public class RProcessDescriptionCreator {
                     addProcessDescription(pdt, annotation);
                     break;
                 case RESOURCE:
-                    // TODO: add resources to description
+                	addProcessResources(pdt, annotation);
                     break;
                 default:
                     break;
                 }
             }
 
-     // Add SessionInfo-Output
+     	// Add SessionInfo-Output
         OutputDescriptionType outdes = outputs.addNewOutput();
         outdes.addNewIdentifier().setStringValue("sessionInfo");
         outdes.addNewTitle().setStringValue("Information about the R session which has been used");
@@ -142,7 +155,7 @@ public class RProcessDescriptionCreator {
         datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
 
  
-     // Add Warnings-Output
+     	// Add Warnings-Output
         outdes = outputs.addNewOutput();
         outdes.addNewIdentifier().setStringValue("warnings");
         outdes.addNewTitle().setStringValue("Warnings from R");
@@ -167,13 +180,35 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    /**
+    private void addProcessResources(ProcessDescriptionType pdt,
+			RAnnotation annotation) {
+        // Add URL to resource folder > FIXME rathre add resources one by one, see below.
+    	
+    	 try {
+    		Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
+    		if(obj instanceof List<?>){
+				List<R_Resource> namedList = (List<R_Resource>) obj;
+				for(R_Resource resource : namedList){
+					MetadataType mt = pdt.addNewMetadata();
+					mt.setTitle("Resource: "+resource.getResourceValue());
+		         
+					URL url = resource.getFullResourceURL();
+					mt.setHref(url.toExternalForm());
+				}
+			}
+ 		} catch (RAnnotationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
      * @param pdt
      * @param annotation
      * @throws RAnnotationException
      */
     private static void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
-        String id = annotation.getStringValue(RAttribute.IDENTIFIER);
+        String id = R_Config.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);

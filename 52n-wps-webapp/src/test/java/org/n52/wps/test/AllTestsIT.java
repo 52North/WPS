@@ -19,8 +19,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.w3c.dom.Document;
@@ -29,11 +27,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({GetCapabilitiesKVPTests.class, GetCapabilitiesPOSTTester.class, ExecutePOSTTester.class, DescribeProcessKVPTester.class, DescribeProcessPOSTTester.class})
 public class AllTestsIT {
 
-    // suite.addTestSuite(DescribeProcessKVPTester.class); // test
     public static int getPort() {
         return Integer.parseInt(System.getProperty("test.port", "8080"));
     }
@@ -65,7 +60,9 @@ public class AllTestsIT {
         assertThat(referencedDocument, referencedDocument, containsString("ExecuteResponse"));
         assertThat(referencedDocument,
                    referencedDocument,
-                   anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"), containsString("Tk9SVEg6IDIyODUwMC4w")));
+                   anyOf(containsString("AAEGAAMAAAABAAEAAAEVAAMAAAABA"),
+                         containsString("Tk9SVEg6IDIyOD"),
+                         containsString("SUkqAAgAAAASAAABAwABAAAAIwAA")));
     }
 
     public static String getRefAsString(String response) throws ParserConfigurationException, SAXException, IOException {
@@ -136,7 +133,7 @@ public class AllTestsIT {
             if ( !referencedDocument.contains("ProcessSucceeded") && !referencedDocument.contains("ProcessFailed")) {
                 try {
                     System.out.println("WPS process still processing. Waiting...");
-                    Thread.sleep(1500 * 15);
+                    Thread.sleep(1000 * 10);
                     referencedDocument = GetClient.sendRequest(splittedURL[0] + "RetrieveResultServlet", splittedURL[1]);
                 }
                 catch (InterruptedException ignore) {

@@ -44,7 +44,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollections;
@@ -78,7 +79,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GML3BasicParser extends AbstractParser {
 	
-	private static Logger LOGGER = Logger.getLogger(GML3BasicParser.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicParser.class);
 	
 	public GML3BasicParser() {
 		super();
