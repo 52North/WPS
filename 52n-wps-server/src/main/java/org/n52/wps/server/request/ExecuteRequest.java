@@ -37,7 +37,6 @@ package org.n52.wps.server.request;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -52,11 +51,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.ExceptionType;
+import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
-import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
@@ -70,8 +69,6 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -90,6 +87,8 @@ import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
 import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -904,12 +903,19 @@ public class ExecuteRequest extends Request implements IObserver {
             w = new BufferedWriter(new OutputStreamWriter(os));
             for (Object key : map.keySet()) {
                 Object value = map.get(key);
-                w.append(key.toString()).append('=').append(value.toString());
+                String valueString = "";                
+                if(value instanceof String[]){
+                	valueString = ((String[])value)[0];
+                }else{
+                	valueString = value.toString();
+                }
+                w.append(key.toString()).append('=').append(valueString);
                 w.newLine();
             }
+            w.flush();
             is = new ByteArrayInputStream(os.toByteArray());
             DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, true);
+                    getUniqueId().toString(), is, false);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {
