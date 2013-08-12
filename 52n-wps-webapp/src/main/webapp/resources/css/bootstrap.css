@@ -4918,6 +4918,7 @@ td.visible-print {
 	padding: 15px 15px;
 	float: right;
 	border-left: 1px solid #e5e5e5;
+	width: 11.666666666666664%;
 }
 /* end of added */
 .accordion-inner {
@@ -4929,6 +4930,7 @@ td.visible-print {
 /* added */
 #overlay {
     position: fixed;
+    text-align: center;
     top: 0;
     left: 0;
     width: 100%;
@@ -4941,3 +4943,11 @@ td.visible-print {
 /*     z-index: 10000; */
 }
 /* end of added */
+
+.help-block {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #737373;
+  font-size: 85%; /* added */
+}

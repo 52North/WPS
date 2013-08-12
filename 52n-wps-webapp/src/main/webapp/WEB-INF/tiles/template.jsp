@@ -8,8 +8,10 @@
 <link href="<c:url value="/resources/css/bootstrap-glyphicons.css" />" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<script src="<c:url value="/resources/js/jquery-1.10.1.js" />"></script>
-	<script src="<c:url value="/resources/js/bootstrap.js" />"></script>
+	<script src="<c:url value="/resources/js/library/jquery-1.10.1.js" />"></script>
+	<script src="<c:url value="/resources/js/library/bootstrap.js" />"></script>
+	<script src="<c:url value="/resources/js/commonjs.js" />"></script>
+
 	<tiles:insertAttribute name="header" />
 	<div class="container">
 		<div class="row">
