@@ -8,6 +8,10 @@
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:spring/spring-root-config.xml</param-value>
 	</context-param>
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>production</param-value>
+	</context-param>
 
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -92,4 +96,12 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error</location>
+	</error-page>
 </web-app>
