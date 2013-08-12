@@ -34,9 +34,7 @@ import org.springframework.stereotype.Component;
 public class ValueParser {
 
 	public String parseString(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
+		nullOrEmptyCheck(value);
 		try {
 			return String.valueOf(value);
 		} catch (IllegalArgumentException e) {
@@ -45,9 +43,7 @@ public class ValueParser {
 	}
 
 	public Integer parseInteger(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
+		nullOrEmptyCheck(value);
 		try {
 			return Integer.parseInt(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
@@ -56,9 +52,7 @@ public class ValueParser {
 	}
 
 	public Double parseDouble(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
+		nullOrEmptyCheck(value);
 		try {
 			return Double.parseDouble(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
@@ -67,10 +61,7 @@ public class ValueParser {
 	}
 
 	public Boolean parseBoolean(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
-
+		nullOrEmptyCheck(value);
 		String stringValue = value.toString();
 		if ((stringValue.trim().equalsIgnoreCase("true")) || (stringValue.trim().equalsIgnoreCase("false"))) {
 			return Boolean.valueOf(String.valueOf(value));
@@ -81,10 +72,7 @@ public class ValueParser {
 	}
 
 	public File parseFile(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
-
+		nullOrEmptyCheck(value);
 		try {
 			return new File(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
@@ -94,9 +82,7 @@ public class ValueParser {
 	}
 
 	public URI parseURI(Object value) throws WPSConfigurationException {
-		if (nullOrEmpty(value)) {
-			throw new WPSConfigurationException("Empty or null value");
-		}
+		nullOrEmptyCheck(value);
 		try {
 			return new URI(String.valueOf(value));
 		} catch (URISyntaxException e) {
@@ -104,10 +90,9 @@ public class ValueParser {
 		}
 	}
 
-	private boolean nullOrEmpty(Object value) {
+	private void nullOrEmptyCheck(Object value) throws WPSConfigurationException {
 		if (value == null || value.toString().trim().isEmpty()) {
-			return true;
+			throw new WPSConfigurationException(new NullPointerException("Empty or null value"));
 		}
-		return false;
 	}
 }

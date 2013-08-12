@@ -117,6 +117,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			}
 		} else {
 			Object value = null;
+			if (entry.getValue() == null) {
+				configurationDAO.insertConfigurationEntryValue(module.getClass().getName(), entry.getKey(), null);
+				LOGGER.debug("Done writing configuration value '{}' for entry '{}' in module'{}' to the database.",
+						value, entry.getKey(), module.getClass().getName());
+			}
 			if ((value = entry.getValue()) != null) {
 				if (entry.getType() == ConfigurationType.FILE || entry.getType() == ConfigurationType.URI) {
 					value = entry.getValue().toString();
@@ -253,31 +258,42 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	private void setConfigurationEntryValueHelper(ConfigurationModule module, ConfigurationEntry<?> entry, Object value)
 			throws WPSConfigurationException {
-		switch (entry.getType()) {
-		case STRING:
-			setStringValue((StringConfigurationEntry) entry, value);
-			break;
-		case BOOLEAN:
-			setBooleanValue((BooleanConfigurationEntry) entry, value);
-			break;
-		case DOUBLE:
-			setDoubleValue((DoubleConfigurationEntry) entry, value);
-			break;
-		case FILE:
-			setFileValue((FileConfigurationEntry) entry, value);
-			break;
-		case INTEGER:
-			setIntegerValue((IntegerConfigurationEntry) entry, value);
-			break;
-		case URI:
-			setURIValue((URIConfigurationEntry) entry, value);
-			break;
-		default:
-			break;
+		try {
+			switch (entry.getType()) {
+			case STRING:
+				setStringValue((StringConfigurationEntry) entry, value);
+				break;
+			case BOOLEAN:
+				setBooleanValue((BooleanConfigurationEntry) entry, value);
+				break;
+			case DOUBLE:
+				setDoubleValue((DoubleConfigurationEntry) entry, value);
+				break;
+			case FILE:
+				setFileValue((FileConfigurationEntry) entry, value);
+				break;
+			case INTEGER:
+				setIntegerValue((IntegerConfigurationEntry) entry, value);
+				break;
+			case URI:
+				setURIValue((URIConfigurationEntry) entry, value);
+				break;
+			default:
+				break;
+			}
+			LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(), module.getClass()
+					.getName());
+			passValueToConfigurationModule(module, entry);
+		} catch (WPSConfigurationException e) {
+			// only throw the null exception if the entry is required "not allowed to be null"
+			if (e.getCause() != null && e.getCause().toString().contains("NullPointerException")) {
+				if (entry.isRequired()) {
+					throw e;
+				} 
+			} else {
+				throw e;
+			}
 		}
-		LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(), module.getClass()
-				.getName());
-		passValueToConfigurationModule(module, entry);
 	}
 
 	@Override
