@@ -81,7 +81,7 @@
 		<put-attribute name="description" value="Test capabilities generated document" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/get_capabilities.jsp"></put-attribute>
 	</definition>
-	
+
 	<definition name="test_client" extends="base">
 		<put-attribute name="title" value="Test Client - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Test Client" type="string" />
@@ -94,5 +94,12 @@
 		<put-attribute name="pageHeader" value="Login" type="string" />
 		<put-attribute name="description" value="Enter your username and password" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/login.jsp"></put-attribute>
+	</definition>
+
+	<definition name="error" extends="base">
+		<put-attribute name="title" value="Error - 52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="Error" type="string" />
+		<put-attribute name="description" value="An error was encountered" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/error.jsp"></put-attribute>
 	</definition>
 </tiles-definitions>
