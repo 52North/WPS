@@ -25,35 +25,23 @@ package org.n52.wps.webapp.web;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.api.WPSConfigurationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
 @RequestMapping("repositories")
-public class RepositoriesController {
-
-	@Autowired
-	private ConfigurationManager configurationManager;
-
-	private static Logger LOGGER = LoggerFactory.getLogger(RepositoriesController.class);
+public class RepositoriesController extends BaseConfigurationsController {
 
 	/**
-	 * Get all repository configuration modules
+	 * Display repository configuration modules
 	 * 
 	 * @return The repositories view
 	 */
@@ -67,67 +55,20 @@ public class RepositoriesController {
 		return "repositories";
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "/json", method = RequestMethod.GET)
-	public Map<String, ConfigurationModule> getJSON() {
-		ConfigurationCategory category = ConfigurationCategory.REPOSITORY;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-				.getConfigurationModulesByCategory(category);
-		return configurations;
-	}
-
-	/**
-	 * Process a repository configuration module form post
-	 * 
-	 * @throws WPSConfigurationException
-	 *             if a value cannot be set
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public void processPost(HttpServletRequest request) throws WPSConfigurationException {
-		String[] keys = request.getParameterValues("key");
-		String[] values = request.getParameterValues("value");
-		String moduleClassName = request.getParameter("module");
-
-		LOGGER.debug("Processing module '{}' values.", moduleClassName);
-		for (int i = 0; i < keys.length; i++) {
-			LOGGER.debug("Setting entry '{}' in module '{}' to value '{}'", keys[i], moduleClassName, values[i]);
-			try {
-				configurationManager.getConfigurationServices().setConfigurationEntryValue(moduleClassName, keys[i],
-						values[i]);
-			} catch (WPSConfigurationException e) {
-				throw new WPSConfigurationException("Cannot set entry '" + keys[i] + "' in module '" + moduleClassName
-						+ "': " + e.getMessage());
-			}
-		}
-		LOGGER.info("Configuration module '{}' values has been saved.", moduleClassName);
-	}
-
-	@RequestMapping(value = "repositories/activate/{moduleClassName}", method = RequestMethod.POST)
-	public String toggleRepositoryStatus(@PathVariable String moduleClassName) {
-		// TODO
-		return "redirect:/repositories";
-	}
-
 	/**
 	 * Toggle the status of an algorithm
 	 */
-	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}", method = RequestMethod.POST)
-	public String toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm) {
+	// {algorithm:.+} is used in case the name has dots, otherwise, it will be truncated
+	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm:.+}", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm) {
 		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
 				moduleClassName);
-		boolean currentStatus = configurationManager.getConfigurationServices().getAlgorithmEntry(module, algorithm)
-				.isActive();
+		AlgorithmEntry algorithmEntry = configurationManager.getConfigurationServices().getAlgorithmEntry(module,
+				algorithm);
+		boolean currentStatus = algorithmEntry.isActive();
 		configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, !currentStatus);
 		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName,
 				!currentStatus);
-		return "redirect:/repositories";
-	}
-
-	@ExceptionHandler(WPSConfigurationException.class)
-	@ResponseBody
-	public String exceptionMessage(WPSConfigurationException e, HttpServletResponse response) {
-		response.setStatus(400);
-		LOGGER.error("Error setting entry value:", e);
-		return e.getMessage();
 	}
 }

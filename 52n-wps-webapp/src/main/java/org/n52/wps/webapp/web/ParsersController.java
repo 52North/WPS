@@ -26,11 +26,7 @@ package org.n52.wps.webapp.web;
 import java.util.Map;
 
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,19 +34,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("parsers")
-public class ParsersController {
+public class ParsersController extends BaseConfigurationsController {
 
-	@Autowired
-	private ConfigurationManager configurationManager;
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(ParsersController.class);
-	
+	/**
+	 * Display parser configuration modules
+	 * 
+	 * @return The parsers view
+	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String displayParsers(Model model) {
+	public String displayRepositories(Model model) {
 		ConfigurationCategory category = ConfigurationCategory.PARSER;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices().getConfigurationModulesByCategory(category);
+		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
+				.getConfigurationModulesByCategory(category);
 		model.addAttribute("configurations", configurations);
-		LOGGER.debug("Reterived '" + category + "' configurations.");
+		LOGGER.info("Reterived '{}' configurations.", category);
 		return "parsers";
 	}
 }

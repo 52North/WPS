@@ -26,11 +26,7 @@ package org.n52.wps.webapp.web;
 import java.util.Map;
 
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,19 +34,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("generators")
-public class GeneratorsController {
-	
-	@Autowired
-	private ConfigurationManager configurationManager;
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GeneratorsController.class);
+public class GeneratorsController extends BaseConfigurationsController {
 
+	/**
+	 * Display generator configuration modules
+	 * 
+	 * @return The generators view
+	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String displayGenerators(Model model) {
+	public String displayRepositories(Model model) {
 		ConfigurationCategory category = ConfigurationCategory.GENERATOR;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices().getConfigurationModulesByCategory(category);
+		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
+				.getConfigurationModulesByCategory(category);
 		model.addAttribute("configurations", configurations);
-		LOGGER.debug("Reterived '" + category + "' configurations.");
+		LOGGER.info("Reterived '{}' configurations.", category);
 		return "generators";
 	}
 }
