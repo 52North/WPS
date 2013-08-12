@@ -35,7 +35,7 @@ public interface LogConfigurationsService {
 	 * @throws WPSConfigurationException
 	 *             if the file cannot be retrieved
 	 */
-	LogConfigurations getLogConfigurations() throws WPSConfigurationException;
+	LogConfigurations getLogConfigurations();
 	
 	/**
 	 * Save a {@code LogConfigurations} object to log file
@@ -45,5 +45,5 @@ public interface LogConfigurationsService {
 	 * @throws WPSConfigurationException
 	 *             if the file cannot be saved
 	 */
-	void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException;
+	void saveLogConfigurations(LogConfigurations logConfigurations);
 }

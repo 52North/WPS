@@ -28,7 +28,6 @@ import java.io.IOException;
 
 import javax.servlet.ServletContext;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,19 +49,18 @@ public class ResourcePathUtil {
 	 * 
 	 * @param relativePath
 	 *            the relative path of a resource or a directory
-	 * @return The absoulte path of a resource or a directory
-	 * @throws WPSConfigurationException
+	 * @return The absolute path of a resource or a directory
+	 * @throws RuntimeException
 	 *             if the path cannot be resolved
 	 */
-	public String getWebAppResourcePath(String relativePath) throws WPSConfigurationException {
+	public String getWebAppResourcePath(String relativePath) {
 		Resource resource = new ServletContextResource(servletContext, relativePath);
 		try {
 			String absolutePath = resource.getFile().getAbsolutePath();
 			LOGGER.info("Resolved webapp resource'{}' to '{}'", relativePath, absolutePath);
 			return absolutePath;
 		} catch (IOException e) {
-			LOGGER.error("Unable to resolve '{}' to a webapp resource path:", relativePath, e);
-			throw new WPSConfigurationException(e);
+			throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a webapp resource:", e);
 		}
 	}
 
@@ -71,19 +69,18 @@ public class ResourcePathUtil {
 	 * 
 	 * @param relativePath
 	 *            the relative path of a resource or a directory
-	 * @return The absoulte path of a resource or a directory
-	 * @throws WPSConfigurationException
+	 * @return The absolute path of a resource or a directory
+	 * @throws RuntimeException
 	 *             if the path cannot be resolved
 	 */
-	public String getClassPathResourcePath(String relativePath) throws WPSConfigurationException {
+	public String getClassPathResourcePath(String relativePath) {
 		Resource resource = new ClassPathResource(relativePath);
 		try {
 			String absolutePath = resource.getFile().getAbsolutePath();
 			LOGGER.info("Resolved classpath resource '{}' to '{}'", relativePath, absolutePath);
 			return absolutePath;
 		} catch (IOException e) {
-			LOGGER.error("Unable to resolve '{}' to a calsspath resource:", relativePath, e);
-			throw new WPSConfigurationException(e);
+			throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a calsspath resource:", e);
 		}
 	}
 

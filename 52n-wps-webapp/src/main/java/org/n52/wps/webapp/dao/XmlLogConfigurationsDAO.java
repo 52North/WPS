@@ -32,7 +32,6 @@ import java.util.TreeMap;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
@@ -54,7 +53,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 	private ResourcePathUtil resourcePathUtil;
 
 	@Override
-	public LogConfigurations getLogConfigurations() throws WPSConfigurationException {
+	public LogConfigurations getLogConfigurations() {
 		Document document = null;
 		LogConfigurations logConfigurations = new LogConfigurations();
 		String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
@@ -101,13 +100,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 	}
 
 	@Override
-	public void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException {
-		if (logConfigurations == null) {
-			NullPointerException e = new NullPointerException("LogConfigurations is null");
-			LOGGER.error("Unable to save LogConfigurations to file: ", e);
-			throw new WPSConfigurationException(e);
-		}
-
+	public void saveLogConfigurations(LogConfigurations logConfigurations) {
 		Document document = null;
 		String absolutePath = resourcePathUtil.getClassPathResourcePath(FILE_NAME);
 		document = jDomUtil.parse(absolutePath);

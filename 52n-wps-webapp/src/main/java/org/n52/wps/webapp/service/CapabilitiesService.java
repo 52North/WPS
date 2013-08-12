@@ -23,44 +23,37 @@
  */
 package org.n52.wps.webapp.service;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 public interface CapabilitiesService {
+	void updateServiceIdentification();
+	void updateServiceProvider();
 	/**
 	 * Get the service identification information
 	 * 
 	 * @return service identification information
-	 * @throws WPSConfigurationException
-	 *             if the information cannot be retrieved
 	 */
-	ServiceIdentification getServiceIdentification() throws WPSConfigurationException;
+	ServiceIdentification getServiceIdentification();
 
 	/**
 	 * Get the service provider information
 	 * 
 	 * @return service provider information
-	 * @throws WPSConfigurationException
-	 *             if the information cannot be retrieved
 	 */
-	ServiceProvider getServiceProvider() throws WPSConfigurationException;
+	ServiceProvider getServiceProvider();
 
 	/**
 	 * Save the service identification information to file
 	 * 
 	 * @param serviceIdentification
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be written
 	 */
-	void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException;
+	void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
 	/**
 	 * Save the service provider information to file
 	 * 
 	 * @param serviceProvider
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be written
 	 */
-	void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException;
+	void saveServiceProvider(ServiceProvider serviceProvider);
 }

@@ -34,7 +34,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -50,10 +49,10 @@ public class JDomUtil {
 	 * @param filePath
 	 *            file path of the file to be parsed
 	 * @return Parsed {@code Document} object
-	 * @throws WPSConfigurationException
+	 * @throws RuntimeException
 	 *             if the path or the format of the file are invalid
 	 */
-	public Document parse(String filePath) throws WPSConfigurationException {
+	public Document parse(String filePath) {
 		SAXBuilder sb = new SAXBuilder();
 		Document document = null;
 		
@@ -61,10 +60,8 @@ public class JDomUtil {
 			document = sb.build(inputStream);
 			LOGGER.info("{} is parsed and a Document is returned.", filePath);
 		} catch (JDOMException | IOException e) {
-			LOGGER.error("Unable to parse '{}':", filePath, e);
-			throw new WPSConfigurationException(e);
+			throw new RuntimeException("Unable to parse '" + filePath +"': ", e);
 		}
-
 		return document;
 	}
 
@@ -75,18 +72,17 @@ public class JDomUtil {
 	 *            the document to be written
 	 * @param filePath
 	 *            the path to write to
-	 * @throws WPSConfigurationException
+	 * @throws RuntimeException
 	 *             if the path is invalid or the document is null
 	 */
-	public void write(Document document, String filePath) throws WPSConfigurationException {
+	public void write(Document document, String filePath) {
 		XMLOutputter xmlOutputter = new XMLOutputter();
-		xmlOutputter.setFormat(Format.getRawFormat());
+		xmlOutputter.setFormat(Format.getPrettyFormat());
 		try (FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
 			xmlOutputter.output(document, outputStream);
 			LOGGER.info("{} is written successfully.", filePath);
-		} catch (IOException | NullPointerException e) {
-			LOGGER.error("Unable to write Document to '{}':", filePath, e);
-			throw new WPSConfigurationException(e);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to write Document to '" + filePath +"': ");
 		}
 	}
 }

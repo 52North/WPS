@@ -24,7 +24,6 @@
 
 package org.n52.wps.webapp.dao;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 
 public interface LogConfigurationsDAO {
@@ -32,18 +31,14 @@ public interface LogConfigurationsDAO {
 	 * Get the log configuration file and parse it to a {@code LogConfigurations} object
 	 * 
 	 * @return Log configurations object
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be loaded
 	 */
-	LogConfigurations getLogConfigurations() throws WPSConfigurationException;
+	LogConfigurations getLogConfigurations();
 
 	/**
 	 * Write a {@code LogConfigurations} object to log file
 	 * 
 	 * @param logConfigurations
 	 *            the log configurations object
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be written
 	 */
-	void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException;
+	void saveLogConfigurations(LogConfigurations logConfigurations);
 }

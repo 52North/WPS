@@ -23,12 +23,9 @@
  */
 package org.n52.wps.webapp.service;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.dao.CapabilitiesDAO;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,31 +35,39 @@ public class CapabilitiesServiceImpl implements CapabilitiesService {
 	@Autowired
 	private CapabilitiesDAO capabilitiesDAO;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(CapabilitiesServiceImpl.class);
-
+	@Autowired
+	private ServiceIdentification serviceIdentification;
+	
+	@Autowired
+	private ServiceProvider serviceProvider;
+	
 	@Override
-	public ServiceIdentification getServiceIdentification() throws WPSConfigurationException {
+	public void updateServiceIdentification() {
+		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
+	}
+	
+	@Override
+	public void updateServiceProvider() {
+		capabilitiesDAO.saveServiceProvider(serviceProvider);
+	}
+	
+	@Override
+	public ServiceIdentification getServiceIdentification() {
 		return capabilitiesDAO.getServiceIdentification();
 	}
 
 	@Override
-	public ServiceProvider getServiceProvider() throws WPSConfigurationException {
+	public ServiceProvider getServiceProvider() {
 		return capabilitiesDAO.getServiceProvider();
 	}
 
 	@Override
-	public void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException {
-		if (serviceIdentification != null) {
+	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
 			capabilitiesDAO.saveServiceIdentification(serviceIdentification);
-			LOGGER.debug("Service identification information has been updated");
-		}
 	}
 
 	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException {
-		if (serviceProvider != null) {
+	public void saveServiceProvider(ServiceProvider serviceProvider) {
 			capabilitiesDAO.saveServiceProvider(serviceProvider);
-			LOGGER.debug("Service provider information has been updated");
-		}
 	}
 }

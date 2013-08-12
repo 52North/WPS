@@ -30,7 +30,6 @@ import java.util.Set;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -54,7 +53,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 	private ResourcePathUtil resourcePathUtil;
 
 	@Override
-	public ServiceIdentification getServiceIdentification() throws WPSConfigurationException {
+	public ServiceIdentification getServiceIdentification() {
 		Document document = null;
 		ServiceIdentification serviceIdentification = new ServiceIdentification();
 		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
@@ -76,20 +75,14 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 			for (Object keyword : keywords.getChildren()) {
 				keywrodsSet.add(((Element) keyword).getValue());
 			}
-			serviceIdentification.setKeywords(keywrodsSet);
+			serviceIdentification.setKeywords(keywrodsSet.toString());
 		}
 		LOGGER.info("'{}' is parsed and a ServiceIdentification object is returned", absolutePath);
 		return serviceIdentification;
 	}
 
 	@Override
-	public void saveServiceIdentification(ServiceIdentification serviceIdentification) throws WPSConfigurationException {
-		if (serviceIdentification == null) {
-			NullPointerException e = new NullPointerException("ServiceIdentification is null");
-			LOGGER.error("Unable to save ServiceIdentification to file: ", e);
-			throw new WPSConfigurationException(e);
-		}
-
+	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
 		Document document = null;
 		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
 		document = jDomUtil.parse(absolutePath);
@@ -120,7 +113,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 	}
 
 	@Override
-	public ServiceProvider getServiceProvider() throws WPSConfigurationException {
+	public ServiceProvider getServiceProvider() {
 		Document document = null;
 		ServiceProvider serviceProvider = new ServiceProvider();
 
@@ -160,13 +153,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 	}
 	
 	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) throws WPSConfigurationException {
-		if (serviceProvider == null) {
-			NullPointerException e = new NullPointerException("ServiceProvider is null");
-			LOGGER.error("Unable to save ServiceProvider to file: ", e);
-			throw new WPSConfigurationException(e);
-		}
-		
+	public void saveServiceProvider(ServiceProvider serviceProvider) {		
 		Document document = null;
 		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
 		document = jDomUtil.parse(absolutePath);

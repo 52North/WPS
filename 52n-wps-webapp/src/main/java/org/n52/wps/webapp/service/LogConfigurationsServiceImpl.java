@@ -24,7 +24,6 @@
 
 package org.n52.wps.webapp.service;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.dao.LogConfigurationsDAO;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.slf4j.Logger;
@@ -41,12 +40,12 @@ public class LogConfigurationsServiceImpl implements LogConfigurationsService {
 	private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
 	
 	@Override
-	public LogConfigurations getLogConfigurations() throws WPSConfigurationException {
+	public LogConfigurations getLogConfigurations() {
 		return logConfigurationsDAO.getLogConfigurations();
 	}
 
 	@Override
-	public void saveLogConfigurations(LogConfigurations logConfigurations) throws WPSConfigurationException {
+	public void saveLogConfigurations(LogConfigurations logConfigurations) {
 		if (logConfigurations != null) {
 			logConfigurationsDAO.saveLogConfigurations(logConfigurations);
 			LOGGER.debug("Log configurations has been updated.");
