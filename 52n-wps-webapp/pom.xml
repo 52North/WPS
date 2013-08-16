@@ -387,8 +387,8 @@
 		<!-- Database dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>4.2.3.Final</version>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.0.1.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
