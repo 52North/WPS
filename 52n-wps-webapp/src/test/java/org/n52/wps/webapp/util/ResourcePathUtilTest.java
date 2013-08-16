@@ -27,28 +27,62 @@ package org.n52.wps.webapp.util;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.n52.wps.webapp.common.AbstractTest;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.rules.ExpectedException;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
-public class ResourcePathUtilTest extends AbstractTest {
+public class ResourcePathUtilTest {
 	
-	@Autowired
 	private ResourcePathUtil resourcePathUtil;
 	
+	@Rule
+	public ExpectedException exception = ExpectedException.none();
+	
+	private MockServletContext mockServletContext;
+	
+	@Before
+	public void setup() {
+		resourcePathUtil = new ResourcePathUtil();
+		mockServletContext = new MockServletContext();
+		ReflectionTestUtils.setField(resourcePathUtil, "servletContext", mockServletContext);
+	}
+	
+	@After
+	public void tearDown() {
+		resourcePathUtil = null;
+		mockServletContext = null;
+	}
+	
 	@Test
-	public void testWebAppResourcePath() throws IOException {
-		String releativePath = "config/wpsCapabilitiesSkeleton.xml";
+	public void getWebAppResourcePath_validPath() {
+		String releativePath = "testfiles/wpsCapabilitiesSkeleton.xml";
 		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
 		assertTrue(new File(absoultPath).exists());
 	}
 	
 	@Test
-	public void testClassPathResourcePath() throws IOException {
-		String releativePath = "log4j.properties";
+	public void getWebAppResourcePath_invalidPath() {
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("nonExistingResource");
+		resourcePathUtil.getWebAppResourcePath("nonExistingResource");
+	}
+	
+	@Test
+	public void getClassPathResourcePath_validPath() throws Exception {
+		String releativePath = "logback.xml";
 		String absoultPath = resourcePathUtil.getClassPathResourcePath(releativePath);
 		assertTrue(new File(absoultPath).exists());
+	}
+	
+	@Test
+	public void getClassPathResourcePath_invalidPath() {
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("nonExistingResource");
+		resourcePathUtil.getClassPathResourcePath("nonExistingResource");
 	}
 }
