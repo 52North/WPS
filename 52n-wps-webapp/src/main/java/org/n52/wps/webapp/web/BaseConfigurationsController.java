@@ -75,7 +75,7 @@ public class BaseConfigurationsController {
 	// {moduleClassName:.+} is used in case the name has dots, otherwise, it will be truncated
 	@RequestMapping(value = "activate/{moduleClassName:.+}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleRepositoryStatus(@PathVariable String moduleClassName) {
+	public void toggleModuleStatus(@PathVariable String moduleClassName) {
 		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
 				moduleClassName);
 		boolean currentStatus = module.isActive();
