@@ -42,7 +42,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
@@ -133,8 +132,7 @@ public class XmlLogConfigurationsDAOTest {
 	@Test
 	public void saveLogConfigurations_nullLogConfigurations() throws Exception {
 		LogConfigurations logConfigurations = null;
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("NullPointerException");
+		exception.expect(NullPointerException.class);
 		logConfigurationsDAO.saveLogConfigurations(logConfigurations);
 	}
 }

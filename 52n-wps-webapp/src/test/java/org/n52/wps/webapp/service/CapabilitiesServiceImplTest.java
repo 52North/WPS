@@ -24,7 +24,6 @@
 package org.n52.wps.webapp.service;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,23 +71,9 @@ public class CapabilitiesServiceImplTest {
 	}
 	
 	@Test
-	public void testSaveServiceIdentification_nullServiceIdentification() throws Exception {
-		ServiceIdentification serviceIdentification = null;
-		capabilitiesService.saveServiceIdentification(serviceIdentification);
-		verify(capabilitiesDAO, never()).saveServiceIdentification(serviceIdentification);
-	}
-	
-	@Test
 	public void testSaveServiceProvider_validServiceProvider() throws Exception {
 		ServiceProvider serviceProvider = new ServiceProvider();
 		capabilitiesService.saveServiceProvider(serviceProvider);
 		verify(capabilitiesDAO).saveServiceProvider(serviceProvider);
-	}
-	
-	@Test
-	public void testSaveServiceProvider_nullServiceProvider() throws Exception {
-		ServiceProvider serviceProvider = null;
-		capabilitiesService.saveServiceProvider(serviceProvider);
-		verify(capabilitiesDAO, never()).saveServiceProvider(serviceProvider);
 	}
 }

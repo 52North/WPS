@@ -39,7 +39,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -112,8 +111,7 @@ public class XmlCapabilitiesDAOTest {
 		Document testDoc = createTestServiceIdentificationDoc();
 		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceIdentification serviceIdentification = null;
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("NullPointerException");
+		exception.expect(NullPointerException.class);
 		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
 	}
 	
@@ -159,8 +157,7 @@ public class XmlCapabilitiesDAOTest {
 		Document testDoc = createTestServiceProviderDoc();
 		when(jDomUtil.parse("mocked_wpsCapabilitiesSkeleton_xml_absolute_path")).thenReturn(testDoc);
 		ServiceProvider serviceProvider = null;
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("NullPointerException");
+		exception.expect(NullPointerException.class);
 		capabilitiesDAO.saveServiceProvider(serviceProvider);
 	}
 
