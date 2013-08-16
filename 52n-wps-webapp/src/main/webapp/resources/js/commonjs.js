@@ -48,6 +48,24 @@ $(document).ready(
 					}
 				});
 			});
+			
+			$('a#deleteUser').click(function(event) {
+				event.preventDefault();
+				var a = $(this);
+				var row = a.parents("tr");
+				var url = a.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					success : function() {
+						(row).remove();
+						alertMessage("", "User deleted", "alert alert-success", a);
+					},
+					error : function(textStatus, errorThrown) {
+						alertMessage("Error: ", "Unable to delete user", "alert alert-danger", a);
+					}
+				});
+			});
 
 			$('button#algorithmButton').click(
 					function(event) {

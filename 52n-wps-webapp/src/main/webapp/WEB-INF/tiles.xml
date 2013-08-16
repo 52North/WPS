@@ -51,7 +51,28 @@
 		<put-attribute name="title" value="Users Configurations - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Users Configurations" type="string" />
 		<put-attribute name="description" value="Configure users and access settings" type="string" />
-		<put-attribute name="body" value="/WEB-INF/tiles/content/users.jsp"></put-attribute>
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/users.jsp"></put-attribute>
+	</definition>
+
+	<definition name="add_user" extends="base">
+		<put-attribute name="title" value="Add User - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Add User" type="string" />
+		<put-attribute name="description" value="Create a new user" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/add_user.jsp"></put-attribute>
+	</definition>
+
+	<definition name="edit_user" extends="base">
+		<put-attribute name="title" value="Edit User - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Edit User" type="string" />
+		<put-attribute name="description" value="Update user information" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/edit_user.jsp"></put-attribute>
+	</definition>
+
+	<definition name="change_password" extends="base">
+		<put-attribute name="title" value="Change Password - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Change Password" type="string" />
+		<put-attribute name="description" value="Update your password" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/change_password.jsp"></put-attribute>
 	</definition>
 
 	<definition name="log" extends="base">
