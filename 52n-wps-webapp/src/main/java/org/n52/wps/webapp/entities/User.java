@@ -24,15 +24,15 @@
 
 package org.n52.wps.webapp.entities;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class User {
 	private int userId;
-	
-	@NotEmpty(message="Username must not be blank.")
+
+	@NotBlank(message="Username must not be blank.")
 	private String username;
-	
-	@NotEmpty(message="Password must not be blank.")
+
+	@NotBlank(message="Password must not be blank.")
 	private String password;
 	private String role;
 

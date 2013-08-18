@@ -20,6 +20,7 @@
 		<div class="col-lg-4">
 			<label>New Password</label>
 			<input type="password" class="form-control" name="newPassword" class="form-control" placeholder="New Password..." />
+			<div class="text-danger">${newPasswordError}</div>
 		</div>
 	</div>
 	<button type="submit" class="btn btn-default">Change</button>

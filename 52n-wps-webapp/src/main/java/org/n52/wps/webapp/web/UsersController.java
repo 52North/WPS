@@ -71,6 +71,10 @@ public class UsersController {
 			@RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword) {
 		User user = configurationManager.getUserServices().getUser(principal.getName());
 		if (passwordEncoder.matches(currentPassword, user.getPassword())) {
+			if (newPassword.trim().isEmpty()) {
+				model.addAttribute("newPasswordError", "New password cannot be empty.");
+				return "change_password";
+			}
 			user.setPassword(passwordEncoder.encode(newPassword));
 			configurationManager.getUserServices().updateUser(user);
 			return "redirect:/";
