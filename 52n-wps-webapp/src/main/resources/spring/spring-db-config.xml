@@ -22,7 +22,7 @@
 		<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 			<property name="driverClassName" value="org.hsqldb.jdbcDriver"></property>
 			<property name="url"
-				value="jdbc:hsqldb:file:C:/Users/Khalid/Dropbox/Programing/git/WPS/52n-wps-webapp/src/main/webapp/database/wpsconfig;shutdown=true;hsqldb.write_delay=false;"></property>
+				value="jdbc:hsqldb:file:${webroot}WEB-INF/classes/db/wpsconfig;shutdown=true;hsqldb.write_delay=false;"></property>
 			<property name="username" value="SA"></property>
 			<property name="password" value=""></property>
 			<property name="initialSize" value="5"></property>
