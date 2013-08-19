@@ -97,14 +97,16 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		setElement(getElement(serviceIdentificationElement, "Fees"), serviceIdentification.getFees());
 		setElement(getElement(serviceIdentificationElement, "AccessConstraints"),
 				serviceIdentification.getAccessConstraints());
-		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
-		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
 
 		Element keywords = getElement(serviceIdentificationElement, "Keywords");
 		if (keywords != null) {
 			keywords.removeChildren("Keyword", Namespace.getNamespace(NAMESPACE));
+		}
+		
+		if (serviceIdentification.getKeywords() != null) {
 			for (String newKeyword : serviceIdentification.getKeywords()) {
-				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE)).setText(newKeyword);
+				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE))
+						.setText(newKeyword);
 				keywords.addContent(keyword);
 			}
 		}
@@ -121,7 +123,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		document = jDomUtil.parse(absolutePath);
 		Element root = document.getRootElement();
 		Element serviceProviderElement = getElement(root, "ServiceProvider");
-		
+
 		serviceProvider.setProviderName(getValue(serviceProviderElement, "ProviderName"));
 
 		// a special case, an attribute with a namespace
@@ -151,9 +153,9 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		LOGGER.info("'{}' is parsed and a ServiceProvider object is returned", absolutePath);
 		return serviceProvider;
 	}
-	
+
 	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) {		
+	public void saveServiceProvider(ServiceProvider serviceProvider) {
 		Document document = null;
 		String absolutePath = resourcePathUtil.getWebAppResourcePath(FILE_NAME);
 		document = jDomUtil.parse(absolutePath);
