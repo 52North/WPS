@@ -16,7 +16,7 @@
 			<ows:Identifier>offering_id</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>ATMOSPHERIC_TEMPERATURE</wps:LiteralData>
+				<wps:LiteralData>Luft</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 		<wps:Input>

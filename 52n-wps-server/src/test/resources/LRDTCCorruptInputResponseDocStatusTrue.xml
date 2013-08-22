@@ -1,0 +1,19 @@
+<wps:Execute xmlns:wps="http://www.opengis.net/wps/1.0.0" version="1.0.0" service="WPS" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsAll.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</ows:Identifier>
+	<wps:DataInputs>
+		<wps:Input>
+			<ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">ComplexInputData</ows:Identifier>
+			<ows:Title xmlns:ows="http://www.opengis.net/ows/1.1">ComplexInputData</ows:Title>
+			<wps:Reference mimeType="image/tiff" xlink:href="" xmlns:xlink="http://www.w3.org/1999/xlink" method="GET"/>
+		</wps:Input>
+	</wps:DataInputs>
+	<wps:ResponseForm>
+		<wps:ResponseDocument storeExecuteResponse="true">
+			<wps:Output asReference="true" mimeType="application/PDF">
+				<ows:Identifier xmlns:ows="http://www.opengis.net/ows/1.1">ComplexOutputData</ows:Identifier>
+				<ows:Title xmlns:ows="http://www.opengis.net/ows/1.1"/>
+				<ows:Abstract xmlns:ows="http://www.opengis.net/ows/1.1"/>
+			</wps:Output>
+		</wps:ResponseDocument>
+	</wps:ResponseForm>
+</wps:Execute>

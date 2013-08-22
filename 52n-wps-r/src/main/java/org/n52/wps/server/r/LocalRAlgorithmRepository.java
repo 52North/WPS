@@ -31,8 +31,6 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
@@ -41,6 +39,8 @@ import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.info.RProcessInfo;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A static repository to retrieve the available algorithms.

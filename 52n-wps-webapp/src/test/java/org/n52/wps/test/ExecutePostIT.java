@@ -13,7 +13,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.xml.sax.SAXException;
 
-public class ExecutePOSTTester {
+public class ExecutePostIT {
 
     private final static String TIFF_MAGIC = "<![CDATA[MM";
     private static String url;
@@ -1890,6 +1890,7 @@ public class ExecutePOSTTester {
                 + "</wps:ResponseForm>"
                 + "</wps:Execute>";
         String response = PostClient.sendRequest(url, payload);
+        
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, not(containsString("Response")));
         assertThat(response, response, not(containsString("EPSG")));

@@ -1,16 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>52-North</artifactId>
 		<groupId>org.n52</groupId>
-		<version>5.6.4</version>
+		<version>5.6.6</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
 	<artifactId>52n-wps-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>52North Web Processing Service</name>
-	<version>3.2.0-SNAPSHOT</version>
+	<version>3.3.0-SNAPSHOT</version>
 	<description>
 		52 North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
@@ -30,10 +29,10 @@
 	</licenses>
 	<inceptionYear>2007</inceptionYear>
 	<scm>
-		<!-- Specification of the Source-Content-Managementsystem -->
-		<connection>scm:git:https://github.com/52North/WPS.git</connection>
-		<url>scm:git:https://github.com/52North/WPS.git</url>
-		<developerConnection>scm:git:https://github.com/52North/WPS.git</developerConnection>
+<!-- 		 Specification of the Source-Content-Managementsystem -->
+		<connection>scm:git:git://github.com/52North/WPS.git</connection>
+		<url>https://github.com/52North/WPS</url>
+		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	</scm>
 	<repositories>
 		<repository>
@@ -67,7 +66,7 @@
 			<id>OpenGEO</id>
 			<name>opengeo repository</name>
 			<url>http://repo.opengeo.org</url>
-		</repository>
+		</repository>    
 	</repositories>
 	<build>
 		<pluginManagement>
@@ -91,21 +90,13 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<connectionUrl>
-						scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
-					</connectionUrl>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-scm-plugin</artifactId>
 				<version>1.0-rc1</version>
 				<configuration>
 					<connectionType>connection</connectionType>
 					<runChangeLog>true</runChangeLog>
 					<goalsDirectory>./..</goalsDirectory>
-					<!--checkoutDirectory>${basedir}/src</checkoutDirectory -->
+					<!--checkoutDirectory>${basedir}/src</checkoutDirectory-->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -140,8 +131,8 @@
 		<module>52n-wps-algorithm</module>
 		<module>52n-wps-algorithm-impl</module>
 		<module>52n-wps-database</module>
-		<!-- module>52n-wps-unicore</module -->
-		<!-- module>52n-wps-gridgain</module -->
+		<!-- module>52n-wps-unicore</module-->
+		<!-- module>52n-wps-gridgain</module-->
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
 		<module>52n-wps-sextante</module>
@@ -152,58 +143,8 @@
 		<module>52n-wps-python</module>
 		<module>52n-wps-r</module>
 		<module>52n-wps-mc</module>
-		<!-- module>52n-wps-ilwis</module -->
+		<!--  module>52n-wps-ilwis</module -->
 	</modules>
-	<!-- <dependencies> -->
-	<!-- <dependency> -->
-	<!-- <groupId>org.apache.abdera</groupId> -->
-	<!-- <artifactId>abdera-bundle</artifactId> -->
-	<!-- <exclusions> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>xmlsec</artifactId> -->
-	<!-- <groupId>xml-security</groupId> -->
-	<!-- </exclusion> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>geronimo-activation_1.0.2_spec</artifactId> -->
-	<!-- <groupId>org.apache.geronimo.specs</groupId> -->
-	<!-- </exclusion> -->
-	<!-- </exclusions> -->
-	<!-- </dependency> -->
-	<!-- <dependency> -->
-	<!-- <groupId>org.n52.mc</groupId> -->
-	<!-- <artifactId>mc-runtime</artifactId> -->
-	<!-- <version>0.5</version> -->
-	<!-- <exclusions> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>REngine</artifactId> -->
-	<!-- <groupId>org.nuiton.thirdparty</groupId> -->
-	<!-- </exclusion> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>Rserve</artifactId> -->
-	<!-- <groupId>org.nuiton.thirdparty</groupId> -->
-	<!-- </exclusion> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>log4j</artifactId> -->
-	<!-- <groupId>log4j</groupId> -->
-	<!-- </exclusion> -->
-	<!-- </exclusions> -->
-	<!-- </dependency> -->
-	<!-- <dependency> -->
-	<!-- <groupId>org.n52.mc</groupId> -->
-	<!-- <artifactId>mc-schema</artifactId> -->
-	<!-- <version>1.0</version> -->
-	<!-- </dependency> -->
-	<!-- <dependency> -->
-	<!-- <groupId>org.apache.ws.security</groupId> -->
-	<!-- <artifactId>wss4j</artifactId> -->
-	<!-- <exclusions> -->
-	<!-- <exclusion> -->
-	<!-- <artifactId>bcprov-jdk14</artifactId> -->
-	<!-- <groupId>bouncycastle</groupId> -->
-	<!-- </exclusion> -->
-	<!-- </exclusions> -->
-	<!-- </dependency> -->
-	<!-- </dependencies> -->
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
@@ -238,7 +179,7 @@
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-
+            
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
@@ -413,7 +354,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<!--<version>1.3.1</version> -->
+				<!--<version>1.3.1</version>-->
 				<version>2.0</version>
 			</dependency>
 			<dependency>
@@ -457,6 +398,16 @@
 				<groupId>org.apache.abdera</groupId>
 				<artifactId>abdera-bundle</artifactId>
 				<version>1.1.2</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>xmlsec</artifactId>
+						<groupId>xml-security</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>geronimo-activation_1.0.2_spec</artifactId>
+						<groupId>org.apache.geronimo.specs</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.axis2</groupId>
@@ -512,6 +463,12 @@
 				<groupId>org.apache.ws.security</groupId>
 				<artifactId>wss4j</artifactId>
 				<version>1.5.6</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>bcprov-jdk14</artifactId>
+						<groupId>bouncycastle</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.woodstox</groupId>
@@ -578,7 +535,7 @@
 				<groupId>stax</groupId>
 				<artifactId>stax-api</artifactId>
 				<version>1.0.1</version>
-			</dependency>
+			</dependency>	
 			<dependency>
 				<groupId>net.java.dev.stax-utils</groupId>
 				<artifactId>stax-utils</artifactId>
@@ -591,15 +548,41 @@
 				</exclusions>
 			</dependency>
 			<dependency>
+				<groupId>org.n52.mc</groupId>
+				<artifactId>mc-schema</artifactId>
+				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.mc</groupId>
+				<artifactId>mc-runtime</artifactId>
+				<version>0.6</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>log4j</artifactId>
+						<groupId>log4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>		
+			<dependency>
+				<groupId>org.n52.mc</groupId>
+				<artifactId>mc-xml-processors</artifactId>
+				<version>0.6</version>
+			</dependency>
+			<dependency>
 				<groupId>net.sourceforge.pjl-comp-filter</groupId>
 				<artifactId>pjl-comp-filter</artifactId>
 				<scope>runtime</scope>
 				<version>1.6.4</version>
 			</dependency>
-			<dependency>
-				<groupId>joda-time</groupId>
-				<artifactId>joda-time</artifactId>
-				<version>2.2</version>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
+				<groupId>edu.umn.gis</groupId>
+				<artifactId>mapscript</artifactId>
+				<version>6.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -651,7 +634,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grid</artifactId>
 				<version>${project.version}</version>
-			</dependency>
+			</dependency>            
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-webapp</artifactId>
@@ -666,7 +649,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-sextante</artifactId>
 				<version>${project.version}</version>
-			</dependency>
+			</dependency> 
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>
@@ -767,11 +750,6 @@
 				<version>1.0.1</version>
 			</dependency>
 			<dependency>
-				<groupId>jfree</groupId>
-				<artifactId>jcommon</artifactId>
-				<version>1.0.14</version>
-			</dependency>
-			<dependency>
 				<groupId>org.beanshell</groupId>
 				<artifactId>bsh</artifactId>
 				<version>2.0b4</version>
@@ -779,7 +757,7 @@
 			<dependency>
 				<groupId>jfree</groupId>
 				<artifactId>jfreechart</artifactId>
-				<version>1.0.11</version>
+				<version>1.0.13</version>
 			</dependency>
 			<dependency>
 				<groupId>trove</groupId>
@@ -837,31 +815,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	<profiles>
-		<profile>
-			<id>env-ci</id>
-			<activation>
-				<property>
-					<name>env</name>
-					<value>ci</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-release-plugin</artifactId>
-						<configuration>
-							<connectionUrl>
-								scm:svn:https://svn.52north.org/svn/geoprocessing/main/WPS/trunk/WPS/${project.artifactId}
-							</connectionUrl>
-							<tag>WPS-3.1.0</tag>
-							<remoteTagging>false</remoteTagging>
-							<suppressCommitBeforeTag>true</suppressCommitBeforeTag>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
