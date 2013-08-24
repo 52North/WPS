@@ -4951,3 +4951,40 @@ td.visible-print {
   color: #737373;
   font-size: 85%; /* added */
 }
+
+label {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-weight: normal; /* override bold */
+}
+
+pre {
+  display: block;
+  padding: 0px; /*change to 0px */
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.428571429;
+  color: #333333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5; 
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+pre.editor {
+  background-color: #ffffff; /*change to #ffffff */
+}
+
+/* Added */
+.CodeMirror-line-numbers {
+	width: 2.2em;
+	color: #aaa;
+	background-color: #eee;
+	text-align: right;
+	padding-right: .3em;
+	font-size: 10pt;
+	font-family: monospace;
+	padding-top: .4em;
+}
+/* end of added */

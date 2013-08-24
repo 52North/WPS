@@ -12,7 +12,7 @@
 		<li><a href="<c:url value="/service_identification" />">Service Identification</a></li>
 		<li><a href="<c:url value="/service_provider" />">Service Provider</a></li>
 		<li class="nav-header">Testing</li>
-		<li><a href="<c:url value="/get_capabilities" />">Get Capabilities</a></li>
+		<li><a href="<c:url value="/WebProcessingService?Request=GetCapabilities&Service=WPS" />">Get Capabilities</a></li>
 		<li><a href="<c:url value="/test_client" />">Test Client</a></li>
 	</ul>
 </div>
