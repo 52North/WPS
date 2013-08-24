@@ -79,13 +79,11 @@ public class JdbcUserDAOTest {
 		User user = userDAO.getUserById(1);
 		assertEquals(1, user.getUserId());
 		assertEquals("testUser1", user.getUsername());
-		assertEquals("testPassword", user.getPassword());
 		assertEquals("ROLE_ADMIN", user.getRole());
 		
 		User user2 = userDAO.getUserById(2);
 		assertEquals(2, user2.getUserId());
 		assertEquals("testUser2", user2.getUsername());
-		assertEquals("testPassword", user2.getPassword());
 		assertEquals("ROLE_USER", user2.getRole());
 		
 		User nullUser = userDAO.getUserById(3);
@@ -97,13 +95,11 @@ public class JdbcUserDAOTest {
 		User user = userDAO.getUserByUsername("testUser1");
 		assertEquals(1, user.getUserId());
 		assertEquals("testUser1", user.getUsername());
-		assertEquals("testPassword", user.getPassword());
 		assertEquals("ROLE_ADMIN", user.getRole());
 		
 		User user2 = userDAO.getUserByUsername("testUser2");
 		assertEquals(2, user2.getUserId());
 		assertEquals("testUser2", user2.getUsername());
-		assertEquals("testPassword", user2.getPassword());
 		assertEquals("ROLE_USER", user2.getRole());
 		
 		User nullUser = userDAO.getUserByUsername("nonExistingUser");
@@ -117,12 +113,10 @@ public class JdbcUserDAOTest {
 		assertEquals(2, users.size());
 		assertEquals(1, users.get(0).getUserId());
 		assertEquals("testUser1", users.get(0).getUsername());
-		assertEquals("testPassword", users.get(0).getPassword());
 		assertEquals("ROLE_ADMIN", users.get(0).getRole());
 		
 		assertEquals(2, users.get(1).getUserId());
 		assertEquals("testUser2", users.get(1).getUsername());
-		assertEquals("testPassword", users.get(1).getPassword());
 		assertEquals("ROLE_USER", users.get(1).getRole());
 	}
 	
@@ -151,7 +145,7 @@ public class JdbcUserDAOTest {
 	@Test
 	public void testUpdateUser() {
 		User user = userDAO.getUserById(1);
-		assertEquals("testPassword", user.getPassword());
+		assertEquals("testUser1", user.getUsername());
 		assertEquals("ROLE_ADMIN", user.getRole());
 		user.setPassword("updatedPassword");
 		user.setRole("ROLE_USER");

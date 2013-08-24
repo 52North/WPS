@@ -34,7 +34,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.wps.webapp.api.WPSConfigurationException;
 
 public class JDomUtilTest {
 	
@@ -66,18 +65,16 @@ public class JDomUtilTest {
 	
 	@Test
 	public void parse_invalidPath() throws Exception {
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("FileNotFoundException");
-		@SuppressWarnings("unused")
-		Document document = jDomUtil.parse(path + "non_existing_file");
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("Unable to parse");
+		jDomUtil.parse(path + "non_existing_file");
 	}
 	
 	@Test
 	public void parse_invalidXmlFormat_validPath() throws Exception {
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("JDOMParseException");
-		@SuppressWarnings("unused")
-		Document document = jDomUtil.parse(path + "52n-logo.gif");
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("Unable to parse");
+		jDomUtil.parse(path + "52n-logo.gif");
 	}
 	
 	@Test
@@ -97,16 +94,15 @@ public class JDomUtilTest {
 	@Test
 	public void write_nullDocument_validPath() throws Exception {
 		Document document = null;
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("NullPointerException");
+		exception.expect(NullPointerException.class);
 		jDomUtil.write(document, path + "testdata2.xml");
 	}
 	
 	@Test
 	public void write_validDocument_invalidPath() throws Exception {
 		Document document = jDomUtil.parse(path + "testdata.xml");
-		exception.expect(WPSConfigurationException.class);
-		exception.expectMessage("FileNotFoundException");
+		exception.expect(RuntimeException.class);
+		exception.expectMessage("Unable to write");
 		jDomUtil.write(document, path + "2/" + "testdata2.xml");
 	}
 }
