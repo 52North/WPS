@@ -24,7 +24,6 @@
 
 package org.n52.wps.webapp.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -68,7 +67,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		logConfigurations.setWpsfileAppenderFileNamePattern(getValue(fileAppenderFileNamePatternElement));
 
 		Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
-		logConfigurations.setWpsfileAppenderMaxHistory(getValue(fileAppenderMaxHistoryElement));
+		logConfigurations.setWpsfileAppenderMaxHistory(Integer.parseInt(getValue(fileAppenderMaxHistoryElement)));
 
 		Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
 		logConfigurations.setWpsfileAppenderEncoderPattern(getValue(fileAppenderEncoderPatternElement));
@@ -90,11 +89,14 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 
 		@SuppressWarnings("unchecked")
 		List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
-		List<String> rootAppenderRefs = new ArrayList<String>();
 		for (Element element : rootAppenderRefsElements) {
-			rootAppenderRefs.add(element.getAttributeValue("ref"));
+			String value = element.getAttributeValue("ref");
+			if (value.equals("wpsfile")) {
+				logConfigurations.setFileAppenderEnabled(true);
+			} else if (value.equals("wpsconsole")) {
+				logConfigurations.setConsoleAppenderEnabled(true);
+			}
 		}
-		logConfigurations.setRootAppenderRefs(rootAppenderRefs);
 		LOGGER.info("'{}' is parsed and a LogConfigurations object is returned", absolutePath);
 		return logConfigurations;
 	}
@@ -115,7 +117,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		setElement(fileAppenderFileNamePatternElement, logConfigurations.getWpsfileAppenderFileNamePattern());
 
 		Element fileAppenderMaxHistoryElement = appenders.get(0).getChild("rollingPolicy").getChild("maxHistory");
-		setElement(fileAppenderMaxHistoryElement, logConfigurations.getWpsfileAppenderMaxHistory());
+		setElement(fileAppenderMaxHistoryElement, String.valueOf(logConfigurations.getWpsfileAppenderMaxHistory()));
 
 		Element fileAppenderEncoderPatternElement = appenders.get(0).getChild("encoder").getChild("pattern");
 		setElement(fileAppenderEncoderPatternElement, logConfigurations.getWpsfileAppenderEncoderPattern());
@@ -126,27 +128,30 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		root.removeChildren("logger");
 		SortedMap<String, String> loggersMap = logConfigurations.getLoggers();
 
-		for (Map.Entry<String, String> entry : loggersMap.entrySet()) {
-			Element element = new Element("logger");
-			element.setAttribute("name", entry.getKey());
-			element.setAttribute("level", entry.getValue());
-			root.addContent(element);
+		if (loggersMap != null) {
+			for (Map.Entry<String, String> entry : loggersMap.entrySet()) {
+				Element element = new Element("logger");
+				element.setAttribute("name", entry.getKey());
+				element.setAttribute("level", entry.getValue());
+				root.addContent(element);
+			}
 		}
 
 		Element rootLevelElement = root.getChild("root");
 		rootLevelElement.setAttribute("level", logConfigurations.getRootLevel());
 
-		@SuppressWarnings("unchecked")
-		List<Element> rootAppenderRefsElements = rootLevelElement.getChildren("appender-ref");
-		List<String> rootAppenderRefs = logConfigurations.getRootAppenderRefs();
-		for (int i = 0; i < rootAppenderRefsElements.size(); i++) {
-			rootAppenderRefsElements.get(i).setAttribute("ref", rootAppenderRefs.get(i));
+		rootLevelElement.removeChildren("appender-ref");
+		if (logConfigurations.isFileAppenderEnabled()) {
+			setAppender(rootLevelElement, "wpsfile");
 		}
-
+		
+		if (logConfigurations.isConsoleAppenderEnabled()) {
+			setAppender(rootLevelElement, "wpsconsole");
+		}
 		jDomUtil.write(document, absolutePath);
 		LOGGER.info("LogConfigurations values written to '{}'", absolutePath);
 	}
-
+	
 	private String getValue(Element element) {
 		if (element != null) {
 			return element.getValue();
@@ -158,6 +163,12 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		if (element != null) {
 			element.setText(value);
 		}
+	}
+	
+	private void setAppender(Element rootLevelElement, String appender) {
+		Element appenderElement = new Element("appender-ref");
+		appenderElement.setAttribute("ref", appender);
+		rootLevelElement.addContent(appenderElement);
 	}
 
 }

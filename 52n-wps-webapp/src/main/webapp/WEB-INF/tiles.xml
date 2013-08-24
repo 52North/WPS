@@ -22,7 +22,7 @@
 	<definition name="server" extends="base">
 		<put-attribute name="title" value="Server Configurations - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Server Configurations" type="string" />
-		<put-attribute name="description" value="Configure server" type="string" />
+		<put-attribute name="description" value="Configure the server" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/server.jsp"></put-attribute>
 	</definition>
 
@@ -78,7 +78,7 @@
 	<definition name="log" extends="base">
 		<put-attribute name="title" value="Log Configurations - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Log Configurations" type="string" />
-		<put-attribute name="description" value="Configure log" type="string" />
+		<put-attribute name="description" value="" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/log.jsp"></put-attribute>
 	</definition>
 

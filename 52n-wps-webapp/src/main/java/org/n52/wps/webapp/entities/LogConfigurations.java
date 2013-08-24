@@ -23,22 +23,34 @@
  */
 package org.n52.wps.webapp.entities;
 
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class LogConfigurations {
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+public class LogConfigurations  {
+	@NotBlank(message="File  name pattern cannot be empty.")	
 	private String wpsfileAppenderFileNamePattern;
-	private String wpsfileAppenderMaxHistory;
+	
+	@Digits(integer=10, fraction=0, message="Max history must be an integer.")
+	@NotNull(message="Max history cannot be empty.")
+	@Min(value = 1, message="Minimum value is 1.")
+	private int wpsfileAppenderMaxHistory;
+	
+	@NotBlank(message="File encoder pattern cannot be empty.")	
 	private String wpsfileAppenderEncoderPattern;
+	
+	@NotBlank(message="Console encoder pattern cannot be empty.")	
 	private String wpsconsoleEncoderPattern;
+	
 	private SortedMap<String, String> loggers = new TreeMap<String, String>();
 	private String rootLevel;
-	private List<String> rootAppenderRefs;
-
-	public enum Level {
-		OFF, INFO, DEBUG, ERROR
-	}
+	private boolean fileAppenderEnabled;
+	private boolean consoleAppenderEnabled;
 
 	public String getWpsfileAppenderFileNamePattern() {
 		return wpsfileAppenderFileNamePattern;
@@ -48,11 +60,11 @@ public class LogConfigurations {
 		this.wpsfileAppenderFileNamePattern = wpsfileAppenderFileNamePattern;
 	}
 
-	public String getWpsfileAppenderMaxHistory() {
+	public int getWpsfileAppenderMaxHistory() {
 		return wpsfileAppenderMaxHistory;
 	}
 
-	public void setWpsfileAppenderMaxHistory(String wpsfileAppenderMaxHistory) {
+	public void setWpsfileAppenderMaxHistory(int wpsfileAppenderMaxHistory) {
 		this.wpsfileAppenderMaxHistory = wpsfileAppenderMaxHistory;
 	}
 
@@ -88,12 +100,20 @@ public class LogConfigurations {
 		this.rootLevel = rootLevel;
 	}
 
-	public List<String> getRootAppenderRefs() {
-		return rootAppenderRefs;
+	public boolean isFileAppenderEnabled() {
+		return fileAppenderEnabled;
 	}
 
-	public void setRootAppenderRefs(List<String> rootAppenderRefs) {
-		this.rootAppenderRefs = rootAppenderRefs;
+	public void setFileAppenderEnabled(boolean fileAppenderEnabled) {
+		this.fileAppenderEnabled = fileAppenderEnabled;
+	}
+
+	public boolean isConsoleAppenderEnabled() {
+		return consoleAppenderEnabled;
+	}
+
+	public void setConsoleAppenderEnabled(boolean consoleAppenderEnabled) {
+		this.consoleAppenderEnabled = consoleAppenderEnabled;
 	}
 
 }
