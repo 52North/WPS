@@ -62,8 +62,8 @@ public class BaseConfigurationsController {
 				throw new WPSConfigurationException("Cannot set entry '" + keys[i] + "' in module '" + moduleClassName
 						+ "': " + e.getMessage());
 			}
-			LOGGER.info("Configuration module '{}' values has been saved.", moduleClassName);
 		}
+		LOGGER.info("Configuration module '{}' values has been saved.", moduleClassName);
 		if (getClass() == ServiceProviderController.class || getClass() == ServiceIdentificationController.class) {
 			configurationManager.getCapabilitiesServices().updateServiceIdentification();
 		}
@@ -75,7 +75,7 @@ public class BaseConfigurationsController {
 	// {moduleClassName:.+} is used in case the name has dots, otherwise, it will be truncated
 	@RequestMapping(value = "activate/{moduleClassName:.+}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleModuleStatus(@PathVariable String moduleClassName) {
+	protected void toggleModuleStatus(@PathVariable String moduleClassName) {
 		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
 				moduleClassName);
 		boolean currentStatus = module.isActive();

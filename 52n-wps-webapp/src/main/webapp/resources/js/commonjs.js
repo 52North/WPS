@@ -3,13 +3,17 @@ $(document).ready(
 			$('form#module').submit(function(event) {
 				event.preventDefault();
 				var form = $(this);
-				form.each(function() {
-					//if the checkbox is checked, disable the default hidden value
-					var checkbox = form.find(':checkbox[name=value]');
-					if (checkbox.is(':checked')) {
-						 document.getElementById('valueHidden').disabled = true;
+				
+				//if checkbox is unchecked, enable hidden value of false
+				$('form input[type=checkbox]').each(function() {
+					var disabled = $(this).prev("#valueHidden");
+					if ($(this).is(':checked')) {
+						disabled.attr('disabled', 'disabled');
+					} else {
+						disabled.removeAttr('disabled');
 					}
 				});
+				
 				$.ajax({
 					type : form.attr('method'),
 					url : form.attr('action'),
@@ -30,25 +34,28 @@ $(document).ready(
 					}
 				});
 			});
-			
-			$('a#moduleStatusButton').click(function(event) {
-				event.preventDefault();
-				var button = $(this);
-				var url = button.attr('href');
-				$.ajax({
-					type : "POST",
-					url : url,
-					success : function() {
-						button.toggleClass("btn-success btn-danger").text(
-								button.text() == 'Active' ? "Inactive" : "Active");
-						alertMessage("", "Module status updated", "alert alert-success", button);
-					},
-					error : function(textStatus, errorThrown) {
-						alertMessage("Error: ", "Unable to update module status", "alert alert-danger", button);
-					}
-				});
-			});
-			
+
+			$('a#moduleStatusButton').click(
+					function(event) {
+						event.preventDefault();
+						var button = $(this);
+						var url = button.attr('href');
+						$
+								.ajax({
+									type : "POST",
+									url : url,
+									success : function() {
+										button.toggleClass("btn-success btn-danger").text(
+												button.text() == 'Active' ? "Inactive" : "Active");
+										alertMessage("", "Module status updated", "alert alert-success", button);
+									},
+									error : function(textStatus, errorThrown) {
+										alertMessage("Error: ", "Unable to update module status", "alert alert-danger",
+												button);
+									}
+								});
+					});
+
 			$('a#deleteUser').click(function(event) {
 				event.preventDefault();
 				var a = $(this);
@@ -106,7 +113,7 @@ function alertMessage(title, text, messageClass, object) {
 	$("<strong>").text(title).appendTo(message);
 	$("<span>").text(text).appendTo(message);
 	overlayDiv.append(message);
-	//if it is an error, don't fade out
+	// if it is an error, don't fade out
 	if (title.indexOf("Error") != -1) {
 		overlayDiv.appendTo($("body"));
 	} else {
