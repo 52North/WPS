@@ -9,6 +9,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,11 +19,19 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.opengis.wps.x100.ComplexDataType;
+import net.opengis.wps.x100.DataType;
+import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse.ProcessOutputs;
+import net.opengis.wps.x100.OutputDataType;
+
+import org.apache.commons.codec.binary.Base64;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -182,5 +191,50 @@ public class AllTestsIT {
         IData data = parser.parse(stream, "image/tiff", null);
         assertThat(data.getPayload() instanceof GridCoverage2D, is(true));
         stream.close();
+    }
+    
+    public static void checkInlineResultBase64(String response){
+    	
+    	ExecuteResponseDocument document = null;
+    	
+    	try {    		
+    		document = ExecuteResponseDocument.Factory.parse(response);	    		
+		} catch (Exception e) {
+			System.err.println("Could not parse execute response document.");
+		}   	
+    	
+    	assertThat(document, not(nullValue()));    	
+    	
+    	ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
+    	
+    	assertThat(outputs, not(nullValue()));    	
+    	assertThat(outputs.sizeOfOutputArray(), not(0)); 
+    	
+    	OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+    	
+    	assertThat(outputDataType, not(nullValue()));       	
+    	
+    	DataType data = outputDataType.getData();
+    	
+    	assertTrue(data.isSetComplexData());    	
+    	
+    	ComplexDataType complexData = outputDataType.getData().getComplexData();
+    	
+    	assertThat(complexData, not(nullValue())); 
+    	
+    	Node domNode = complexData.getDomNode();
+    	
+    	assertThat(domNode, not(nullValue()));       
+    	
+    	Node firstChild = domNode.getFirstChild();
+    	
+    	assertThat(firstChild, not(nullValue()));       
+    	
+    	String nodeValue = firstChild.getNodeValue();
+    	
+    	assertThat(nodeValue, not(nullValue()));   
+		
+		assertTrue(Base64.isBase64(nodeValue));
+    	
     }
 }
