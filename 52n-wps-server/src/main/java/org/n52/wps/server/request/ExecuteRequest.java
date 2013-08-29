@@ -274,9 +274,6 @@ public class ExecuteRequest extends Request implements IObserver {
 						reference.setHref(hrefAttribute);
 						if (schemaAttribute != null) {
 							reference.setSchema(schemaAttribute);
-						} else {
-							reference.setSchema(inputDesc.getComplexData()
-									.getDefault().getFormat().getSchema());
 						}
 						if (mimeTypeAttribute != null) {
 							reference.setMimeType(mimeTypeAttribute);
