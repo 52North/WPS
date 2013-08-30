@@ -24,18 +24,19 @@
  */
 package org.n52.wps.io.datahandler.generator;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
 
 /**
  * This class generates a GeoJSON String representation out of a JTS Geometry.
@@ -47,6 +48,7 @@ public class GeoJSONGenerator extends AbstractGenerator {
 	public GeoJSONGenerator(){
 		super();
 		supportedIDataTypes.add(JTSGeometryBinding.class);
+		supportedIDataTypes.add(GTVectorDataBinding.class);
 	}
 	
 	@Override
@@ -60,6 +62,18 @@ public class GeoJSONGenerator extends AbstractGenerator {
 			finalizeFiles.add(tempFile); // mark for final delete
 			
 			 new GeometryJSON().write(g, tempFile);
+					
+			InputStream is = new FileInputStream(tempFile);
+			
+			return is;
+		}else if(data instanceof GTVectorDataBinding){
+			
+			SimpleFeatureCollection f = (SimpleFeatureCollection)data.getPayload();
+			
+			File tempFile = File.createTempFile("wps", "json");
+			finalizeFiles.add(tempFile); // mark for final delete
+			
+			 new FeatureJSON().writeFeatureCollection(f, tempFile);
 					
 			InputStream is = new FileInputStream(tempFile);
 			
