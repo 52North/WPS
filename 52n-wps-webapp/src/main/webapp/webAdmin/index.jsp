@@ -700,8 +700,10 @@
 							);
 					}else
 						if(!rProcessInfos[i].isAvailable){
+							var message = rProcessInfos[i].exception;
+							WPS4RErrors[i] = message;
 							$("#"+flagId).append(
-									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent\"></img>"		
+									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>"		
 								);
 						}
 					else{
