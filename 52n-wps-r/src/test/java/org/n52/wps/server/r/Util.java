@@ -30,14 +30,14 @@ import java.net.URL;
 import org.junit.Assert;
 
 public class Util {
-    
-    public static File loadFile(String filePath) {
+
+    public static File loadFile(String filePath)
+    {
         URL r = AnnotationParser.class.getResource(filePath);
         File f;
         try {
             f = new File(r.toURI());
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             Assert.fail("Invalid file path (not URI).");
             return null;
         }
