@@ -101,7 +101,25 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      */
     private String currentWPSWorkDir;
 
-    private boolean deleteWorkDirectory = false;
+    /**
+     * Indicates if the WPS working directory should be deleted after process
+     * execution
+     */
+    private boolean deleteWPSWorkDirectory = true;
+
+    /**
+     * Indicates if the R working directory should be deleted after process
+     * execution If wpsWorkDirIsRWorkDir is set true, deletion of the directory
+     * shall be determined by deleteWPSWorDirectory
+     * 
+     */
+    private boolean deleteRWorkDirectory = true;
+
+    /**
+     * In case of errors, this variable may be changed to false during runtime
+     * to prevent the system from deleting the wrong files
+     */
+    private boolean temporaryPreventRWorkingDirectoryFromDelete = false;
 
     private RAnnotationParser parser = new RAnnotationParser();
 
@@ -158,7 +176,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             if (this.scriptFile == null) {
                 log.warn("Loaded script file is " + this.scriptFile);
-                return null; // FIXME throw exception?
+                throw new ExceptionReport("Cannot create process description because R script fill is null", ExceptionReport.NO_APPLICABLE_CODE);
             }
 
             rScriptStream = new FileInputStream(this.scriptFile);
@@ -166,41 +184,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 this.parser = new RAnnotationParser(); // prevents
                                                        // NullpointerException
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
-
-            // // have to process the resources to get full URLs to the files
-            // for (RAnnotation ann : this.annotations) {
-            // if (ann.getType().equals(RAnnotationType.RESOURCE)) {
-            // Collection<R_Resource> res = (Collection<R_Resource>) ann
-            // .getObjectValue(RAttribute.NAMED_LIST);
-            //
-            // // FIXME problem: cannot get attributeHash here?
-            // Iterator<R_Resource> iterator = res.iterator();
-            // while (iterator.hasNext()) {
-            // R_Resource resource = iterator.next();
-            //
-            // StringBuilder namedList = new StringBuilder();
-            // namedList.append("list(");
-            //
-            // String fullResourcePath = resource.getFullResourceURL()
-            // .toExternalForm();
-            //
-            // String resourceName = "\""
-            // + resource.getResourceValue() + "\"";
-            //
-            // if (fullResourcePath != null) {
-            // namedList.append(resourceName + " = " + "\""
-            // + fullResourcePath + "\"");
-            // if (iterator.hasNext()) {
-            // namedList.append(", ");
-            // }
-            // } else
-            // log.warn("Resource NOT added becaues full resource path missing: "
-            // + resourceName);
-            //
-            // namedList.append(")");
-            // }
-            // }
-            // }
 
             // submits annotation with process informations to
             // ProcessdescriptionCreator:
@@ -431,7 +414,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
 
         // try to delete current local workdir - folder
-        if (this.deleteWorkDirectory) {
+        if (this.deleteWPSWorkDirectory) {
             File workdir = new File(this.currentWPSWorkDir);
             boolean deleted = deleteRecursive(workdir);
             if (!deleted)
@@ -480,8 +463,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
      *            does not call open- or close-operations.
      * @throws REXPMismatchException
      * @throws RserveException
+     * @throws ExceptionReport
      */
-    private void setRWorkingDirectoryBeforeProcessing(RConnection rCon) throws REXPMismatchException, RserveException
+    private void setRWorkingDirectoryBeforeProcessing(RConnection rCon) throws REXPMismatchException, RserveException, ExceptionReport
     {
         R_Config rconf = R_Config.getInstance();
 
@@ -506,6 +490,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 // R starts from a work directory dependent on the behaviour and
                 // configuration of the R/Rserve
                 // installation
+                this.wpsWorkDirIsRWorkDir = false;
                 String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
                 rCon.eval("dir.create(\"" + randomFolderName + "\")"); // quotation
                                                                        // marks!
@@ -519,19 +504,28 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         } else if (config_RWorkDir.trim().equalsIgnoreCase("preset")) {
             // setting the R working directory relative to default R directory
+            this.wpsWorkDirIsRWorkDir = false;
             String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
             rCon.eval("dir.create(\"" + randomFolderName + "\")"); // quotation
                                                                    // marks!
             result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // quotation
-                                                                       // marks!
-        } else if (config_RWorkDir.trim().equalsIgnoreCase("temporary")) {
+        }                                                              // marks!
+        // setting the R working directory in a temporal folder
+        else if (config_RWorkDir.trim().equalsIgnoreCase("temporary")) {
             if (isLocalhost) {
                 this.wpsWorkDirIsRWorkDir = true;
                 result = rCon.eval("setwd(\"" + this.currentWPSWorkDir.replace("\\", "/") + "\")");
             } else {
+                this.wpsWorkDirIsRWorkDir = false;
+                try {
                 result = rCon.eval("setwd(\"tempdir()\")");
+                } catch (RserveException e) {
+                    temporaryPreventRWorkingDirectoryFromDelete = true;
+                    throw new ExceptionReport("Invalid configuration of WPS4R, failed to create temporal working directory", ExceptionReport.REMOTE_COMPUTATION_ERROR, e);
             }
-        } else {
+
+            }
+        } else if (config_RWorkDir.trim().equalsIgnoreCase("manual")) {
 
             String path = null;
             boolean isInvalidPath = false;
@@ -550,6 +544,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     isInvalidPath = true;
                 }
             } else {
+                this.wpsWorkDirIsRWorkDir = false;
                 boolean isExistingDir = rCon.eval("isTRUE(file.info(\"" + config_RWorkDir + "\")$isdir)").asInteger() == 1;
                 if (isExistingDir) {
                     String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
@@ -565,6 +560,13 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 rconf.setConfigVariable(RWPSConfigVariables.R_WORK_DIR, "default");
                 setRWorkingDirectoryBeforeProcessing(rCon);
             }
+        }
+
+
+        if (rCon.eval("length(dir()) == 0").asInteger() != 1) {
+            temporaryPreventRWorkingDirectoryFromDelete = true;
+            throw new ExceptionReport("Non-empty R working directory on process startup. The process will not be executed to prevent the system from damage."
+                    + "Please reconsider the configuration of WPS4R", ExceptionReport.REMOTE_COMPUTATION_ERROR);
         }
 
         log.debug("[R] Old wd: " + result.asString() + " | New wd: " + rCon.eval("getwd()").asString());
@@ -595,6 +597,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                          // is the same as the wps work
                                          // directory
             log.debug("[R] closing stream.");
+            //connection.
             connection.close();
             return;
         }
@@ -611,9 +614,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             connection.eval("setwd(\"" + r_basedir + "\")");
             // should be true usually, if not, workdirectory has been
             // changed unexpectedly (prob. inside script)
-            if (currentwd != r_basedir) {
+            if (currentwd != r_basedir && deleteRWorkDirectory) {
+                if (!temporaryPreventRWorkingDirectoryFromDelete) {
                 log.debug("[R] unlinking (recursive) " + currentwd);
                 connection.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
+            } else
+                    temporaryPreventRWorkingDirectoryFromDelete = false;
             } else
                 log.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
         }
