@@ -49,14 +49,26 @@ public class RConnector {
             String password) throws RserveException
     {
         RConnection con = null;
+        log.debug("Creating new RConnection");
         con = getNewConnection(enableBatchStart, host, port);
+
+        // Login MUSST be the next request after connection
+        // otherwise the connection is broken even if login is requested later
         if (con != null && con.needLogin())
             con.login(user, password);
+
+        RLogger.log(con, "New connection from WPS4R");
+        REXP info = con.eval("capture.output(sessionInfo())");
+        try {
+            log.debug("NEW CONNECTION >>> sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
+        } catch (REXPMismatchException e) {
+            log.warn("Error creating session info.", e);
+        }
 
         return con;
     }
 
-    public RConnection getNewConnection(boolean enableBatchStart,
+    private RConnection getNewConnection(boolean enableBatchStart,
             String host,
             int port) throws RserveException
     {
@@ -64,7 +76,7 @@ public class RConnector {
 
         RConnection con = null;
         try {
-            con = newConnection(host, port);
+            con = new RConnection(host, port);
         } catch (RserveException rse) {
             log.error("Could not connect to RServe.", rse);
 
@@ -100,7 +112,7 @@ public class RConnector {
             try {
                 Thread.sleep(START_ATTEMPT_SLEEP); // wait for R to startup,
                                                    // then establish connection
-                con = newConnection(host, port);
+                con = new RConnection(host, port);
                 break;
             } catch (RserveException rse) {
                 if (attempt >= 5) {
@@ -109,24 +121,6 @@ public class RConnector {
 
                 attempt++;
             }
-        }
-        return con;
-    }
-
-    private static RConnection newConnection(String host,
-            int port) throws RserveException
-    {
-        log.debug("Creating new RConnection");
-
-        RConnection con;
-        con = new RConnection(host, port);
-        RLogger.log(con, "New connection from WPS4R");
-
-        REXP info = con.eval("capture.output(sessionInfo())");
-        try {
-            log.debug("NEW CONNECTION >>> sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
-        } catch (REXPMismatchException e) {
-            log.warn("Error creating session info.", e);
         }
         return con;
     }
