@@ -32,7 +32,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.never;
@@ -94,6 +93,22 @@ public class ConfigurationServiceImplTest {
 	private TestConfigurationModule2 testModule2;
 	private TestConfigurationModule3 testModule3;
 
+	private String stringKey = "test.string.key";
+	private String integerKey = "test.integer.key";
+	private String doubleKey = "test.double.key";
+	private String booleanKey = "test.boolean.key";
+	private String fileKey = "test.file.key";
+	private String uriKey = "test.uri.key";
+	private String invalidStringKey = "test.string.key2";
+	private String invalidIntegerKey = "test.integer.key2";
+
+	private String testStringValue = "test value";
+	private int testIntValue = 12;
+	private double testDoubleValue = 14.2;
+	private boolean testBooleanValue = true;
+	private File testFileValue = new File("file_path");
+	private URI testUriValue = URI.create("uri_path");
+
 	@Before
 	public void setup() throws WPSConfigurationException, URISyntaxException {
 		configurationService = new ConfigurationServiceImpl();
@@ -102,13 +117,12 @@ public class ConfigurationServiceImplTest {
 		testModule3 = new TestConfigurationModule3();
 		MockitoAnnotations.initMocks(this);
 		when(listableBeanFactory.getBeansOfType(ConfigurationModule.class)).thenReturn(getTestMap());
-		//invoke private PostConstruct method
 		ReflectionTestUtils.invokeMethod(configurationService, "buildConfigurationModulesMap");
 	}
-	
+
 	@After
 	public void tearDown() {
-		testModule1 =  null;
+		testModule1 = null;
 		testModule2 = null;
 		testModule3 = null;
 		configurationService = null;
@@ -124,18 +138,22 @@ public class ConfigurationServiceImplTest {
 
 	@Test
 	public void syncConfigurations_newConfigurations() {
-
 		String classModuleNames = "org.n52.wps.webapp.testmodules.TestConfigurationModule";
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), contains("key"))).thenReturn(
-				null);
+		when(configurationDAO.getConfigurationModuleStatus(any(ConfigurationModule.class))).thenReturn(null);
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), anyString())).thenReturn(null);
 		when(configurationDAO.getAlgorithmEntry(startsWith(classModuleNames), anyString())).thenReturn(null);
-		configurationService.syncConfigurations();
+
+		// syncConfigurations is a private @PostConstruct, invoking via reflection
+		ReflectionTestUtils.invokeMethod(configurationService, "syncConfigurations");
 
 		/*
 		 * verify that every entry value and algorithm are checked for existence. Since values are null (don't exist),
 		 * verify that they're inserted
 		 */
 		for (ConfigurationModule module : getTestMap().values()) {
+			verify(configurationDAO).getConfigurationModuleStatus(module);
+			verify(configurationDAO).insertConfigurationModule(module);
+
 			for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
 				verify(configurationDAO).getConfigurationEntryValue(module.getClass().getName(), entry.getKey());
 
@@ -162,21 +180,20 @@ public class ConfigurationServiceImplTest {
 	public void syncConfigurations_existingConfigurations() throws Exception {
 
 		String classModuleNames = "org.n52.wps.webapp.testmodules.TestConfigurationModule";
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.string.key")))
-				.thenReturn("synced string");
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.integer.key")))
-				.thenReturn(99);
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.double.key")))
-				.thenReturn(1.2);
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.boolean.key")))
-				.thenReturn(false);
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.file.key")))
-				.thenReturn(new File("synced_path"));
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.uri.key"))).thenReturn(
+		when(configurationDAO.getConfigurationModuleStatus(any(ConfigurationModule.class))).thenReturn(true);
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(stringKey))).thenReturn(
+				"synced string");
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(integerKey))).thenReturn(99);
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(doubleKey))).thenReturn(1.2);
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(booleanKey))).thenReturn(
+				false);
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(fileKey))).thenReturn(
+				new File("synced_path"));
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(uriKey))).thenReturn(
 				new URI("synced_path"));
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.string.key2")))
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(invalidStringKey)))
 				.thenReturn("synced string");
-		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq("test.integer.key2")))
+		when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(invalidIntegerKey)))
 				.thenReturn(99);
 
 		when(configurationDAO.getAlgorithmEntry(startsWith(classModuleNames), eq("name1"))).thenReturn(
@@ -192,36 +209,41 @@ public class ConfigurationServiceImplTest {
 		when(valueParser.parseFile(new File("synced_path"))).thenReturn(new File("synced_path"));
 		when(valueParser.parseURI(new URI("synced_path"))).thenReturn(new URI("synced_path"));
 
-		configurationService.syncConfigurations();
+		// syncConfigurations is a private @PostConstruct, invoking via reflection
+		ReflectionTestUtils.invokeMethod(configurationService, "syncConfigurations");
 
 		/*
 		 * verify that every entry value and algorithm are checked for existence. Since values do exist, read them to
 		 * configuration modules
 		 */
 		for (ConfigurationModule module : getTestMap().values()) {
+			verify(configurationDAO).getConfigurationModuleStatus(module);
+			verify(configurationDAO, never()).insertConfigurationModule(module);
+
 			for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
 				verify(configurationDAO).getConfigurationEntryValue(module.getClass().getName(), entry.getKey());
-
 				verify(configurationDAO, never()).insertConfigurationEntryValue(eq(module.getClass().getName()),
+						eq(entry.getKey()), any());
+				verify(configurationDAO, never()).updateConfigurationEntryValue(eq(module.getClass().getName()),
 						eq(entry.getKey()), any());
 
 				Object value = entry.getValue();
-				if (entry.getKey().equals("test.string.key")) {
+				if (entry.getKey().equals(stringKey)) {
 					assertEquals("synced string", value);
 				}
-				if (entry.getKey().equals("test.integer.key")) {
+				if (entry.getKey().equals(integerKey)) {
 					assertEquals(99, value);
 				}
-				if (entry.getKey().equals("test.double.key")) {
+				if (entry.getKey().equals(doubleKey)) {
 					assertEquals(1.2, value);
 				}
-				if (entry.getKey().equals("test.boolean.key")) {
+				if (entry.getKey().equals(booleanKey)) {
 					assertEquals(false, value);
 				}
-				if (entry.getKey().equals("test.file.key")) {
+				if (entry.getKey().equals(fileKey)) {
 					assertEquals(new File("synced_path"), value);
 				}
-				if (entry.getKey().equals("test.uri.key")) {
+				if (entry.getKey().equals(uriKey)) {
 					assertEquals(new URI("synced_path"), value);
 				}
 			}
@@ -229,6 +251,8 @@ public class ConfigurationServiceImplTest {
 			for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
 				verify(configurationDAO).getAlgorithmEntry(module.getClass().getName(), entry.getAlgorithm());
 				verify(configurationDAO, never()).insertAlgorithmEntry(module.getClass().getName(),
+						entry.getAlgorithm(), entry.isActive());
+				verify(configurationDAO, never()).updateAlgorithmEntry(module.getClass().getName(),
 						entry.getAlgorithm(), entry.isActive());
 				if (entry.getAlgorithm().equals("name1")) {
 					assertTrue(entry.isActive());
@@ -251,7 +275,7 @@ public class ConfigurationServiceImplTest {
 		Assert.assertEquals("Test Module Name 3",
 				configurationService.getAllConfigurationModules().get(testModule3ClassName).getModuleName());
 	}
-	
+
 	@Test
 	public void getAllConfigurationModules_nonExistingModules() {
 		assertNull(configurationService.getAllConfigurationModules().get("non.existing.module"));
@@ -266,7 +290,7 @@ public class ConfigurationServiceImplTest {
 			assertTrue(module.getCategory() == ConfigurationCategory.REPOSITORY);
 		}
 	}
-	
+
 	@Test
 	public void getConfigurationModulesByCategory_nonExistingModules() {
 		// No ConfigurationCategory.GENERAL test module in the testmodules package
@@ -277,222 +301,253 @@ public class ConfigurationServiceImplTest {
 
 	@Test
 	public void getActiveConfigurationModulesByCategory() {
-		Map<String, ConfigurationModule> allRepositoryModules = configurationService.getConfigurationModulesByCategory(
-				ConfigurationCategory.REPOSITORY, false);
-		assertTrue(allRepositoryModules.size() > 1);
-
 		Map<String, ConfigurationModule> onlyActiveRepositoryModules = configurationService
-				.getConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY, true);
-		assertEquals(1, onlyActiveRepositoryModules.size());
+				.getActiveConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY);
 
 		for (ConfigurationModule module : onlyActiveRepositoryModules.values()) {
 			assertTrue(module.getCategory() == ConfigurationCategory.REPOSITORY);
 			assertTrue(module.isActive());
 		}
 	}
-	
+
 	@Test
-	public void updateConfigurationModule() {
-		configurationService.updateConfigurationModule(testModule1);
-		verify(configurationDAO).updateConfigurationModule(testModule1);
+	public void updateConfigurationModuleStatus() {
+		assertTrue(testModule1.isActive());
+		configurationService.updateConfigurationModuleStatus(testModule1ClassName, false);
+		assertFalse(testModule1.isActive());
+		verify(configurationDAO).updateConfigurationModuleStatus(testModule1);
 	}
 
 	@Test
-	public void getConfigurationModule_validModule() {
+	public void getConfigurationModule_existingModule() {
 		ConfigurationModule module = configurationService.getConfigurationModule(testModule1ClassName);
 		assertEquals("Test Module Name 1", module.getModuleName());
 	}
-	
+
 	@Test
-	public void getConfigurationModule_nullModule() {
+	public void getConfigurationModule_nonExistingModule() {
 		ConfigurationModule nullModule = configurationService.getConfigurationModule("non.existing.module");
 		assertNull(nullModule);
 	}
 
 	@Test
-	public void getConfigurationEntry_validEntry() {
-		ConfigurationEntry<?> entry = configurationService.getConfigurationEntry(testModule1,
-				"test.integer.key");
-		assertEquals(entry.getType(), ConfigurationType.INTEGER);
-		assertEquals(entry.getKey(), "test.integer.key");
+	public void getConfigurationEntry_existingEntry() {
+		ConfigurationEntry<?> entry = configurationService.getConfigurationEntry(testModule1, integerKey);
+		assertEquals(ConfigurationType.INTEGER, entry.getType());
+		assertEquals(integerKey, entry.getKey());
 	}
-	
+
 	@Test
-	public void getConfigurationEntry_nullEntry() {
+	public void getConfigurationEntry_nonExistingEntry() {
 		assertNull(configurationService.getConfigurationEntry(testModule1, "non.existing.entry"));
 	}
 
 	@Test
-	public void getConfigurationEntryValue_validValues() throws Exception {
-
+	public void getConfigurationEntryValue_validStringValue() throws Exception {
 		String stringValue = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(0),
-				String.class);
+				.getConfigurationEntries().get(0), String.class);
 		assertEquals("Initial Value", stringValue);
+	}
 
+	@Test
+	public void getConfigurationEntryValue_validIntegerValue() throws Exception {
 		int intValue = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(1),
-				Integer.class);
+				.getConfigurationEntries().get(1), Integer.class);
 		assertEquals(44, intValue);
+	}
 
+	@Test
+	public void getConfigurationEntryValue_validDoubleValue() throws Exception {
 		double doubleValue = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(2),
-				Double.class);
+				.getConfigurationEntries().get(2), Double.class);
 		assertEquals(10.4, doubleValue, 0);
+	}
 
+	@Test
+	public void getConfigurationEntryValue_validBooleanValue() throws Exception {
 		boolean boolValue = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(3),
-				Boolean.class);
+				.getConfigurationEntries().get(3), Boolean.class);
 		assertEquals(true, boolValue);
+	}
 
-		File file = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(4), File.class);
+	@Test
+	public void getConfigurationEntryValue_validFileValue() throws Exception {
+		File file = configurationService.getConfigurationEntryValue(testModule2, testModule2.getConfigurationEntries()
+				.get(4), File.class);
 		assertEquals(new File("path"), file);
+	}
 
-		URI uri = configurationService.getConfigurationEntryValue(testModule2, testModule2
-				.getConfigurationEntries().get(5), URI.class);
+	@Test
+	public void getConfigurationEntryValue_validURIValue() throws Exception {
+		URI uri = configurationService.getConfigurationEntryValue(testModule2, testModule2.getConfigurationEntries()
+				.get(5), URI.class);
 		assertEquals(new URI("path"), uri);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidStringValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(0), Integer.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(0),
+				Integer.class);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidIntegerValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(1), Boolean.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(1),
+				Boolean.class);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidDoubleValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(2), Boolean.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(2),
+				Boolean.class);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidBooleanValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(3), Double.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(3),
+				Double.class);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidFileValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(4), Integer.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(4),
+				Integer.class);
 	}
 
 	@Test
 	public void getConfigurationEntryValue_invalidUriValue() throws Exception {
 		exception.expect(WPSConfigurationException.class);
-		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(5), Integer.class);
+		configurationService.getConfigurationEntryValue(testModule1, testModule1.getConfigurationEntries().get(5),
+				Integer.class);
 	}
 
 	@Test
-	public void setConfigurationEntryValue_validValues() throws Exception {
-		when(valueParser.parseString("test value")).thenReturn("test value");
-		when(valueParser.parseInteger(12)).thenReturn(12);
-		when(valueParser.parseDouble(14.2)).thenReturn(14.2);
-		when(valueParser.parseBoolean(true)).thenReturn(true);
-		when(valueParser.parseFile(new File("file_path"))).thenReturn(new File("file_path"));
-		when(valueParser.parseURI(new URI("uri_path"))).thenReturn(new URI("uri_path"));
+	public void setConfigurationModuleValues_validValues_newModule() throws Exception {
+		when(valueParser.parseString(testStringValue)).thenReturn(testStringValue);
+		when(valueParser.parseInteger(testIntValue)).thenReturn(testIntValue);
+		when(valueParser.parseDouble(testDoubleValue)).thenReturn(testDoubleValue);
+		when(valueParser.parseBoolean(testBooleanValue)).thenReturn(testBooleanValue);
+		when(valueParser.parseFile(testFileValue)).thenReturn(testFileValue);
+		when(valueParser.parseURI(testUriValue)).thenReturn(testUriValue);
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.string.key", "test value");
-		assertEquals("test value", testModule1.getConfigurationEntries().get(0).getValue());
+		String[] keys = { stringKey, integerKey, doubleKey, booleanKey, fileKey, uriKey };
+		Object[] values = { testStringValue, testIntValue, testDoubleValue, testBooleanValue, testFileValue,
+				testUriValue };
+		configurationService.setConfigurationModuleValues(testModule1ClassName, keys, values);
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.integer.key", 12);
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.integer.key", 12);
-		assertEquals(12, testModule1.getConfigurationEntries().get(1).getValue());
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, stringKey, testStringValue);
+		assertEquals(testStringValue, testModule1.getConfigurationEntries().get(0).getValue());
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.double.key", 14.2);
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.double.key", 14.2);
-		assertEquals(14.2, testModule1.getConfigurationEntries().get(2).getValue());
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, integerKey, testIntValue);
+		assertEquals(testIntValue, testModule1.getConfigurationEntries().get(1).getValue());
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.boolean.key", true);
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.boolean.key", true);
-		assertEquals(true, testModule1.getConfigurationEntries().get(3).getValue());
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, doubleKey, testDoubleValue);
+		assertEquals(testDoubleValue, testModule1.getConfigurationEntries().get(2).getValue());
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.file.key", new File("file_path"));
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.file.key",
-				new File("file_path"));
-		assertEquals(new File("file_path"), testModule1.getConfigurationEntries().get(4).getValue());
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, booleanKey, testBooleanValue);
+		assertEquals(testBooleanValue, testModule1.getConfigurationEntries().get(3).getValue());
 
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.uri.key", new URI("uri_path"));
-		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, "test.uri.key",
-				new URI("uri_path"));
-		assertEquals(new URI("uri_path"), testModule1.getConfigurationEntries().get(5).getValue());
-	}
-	
-	@Test
-	public void setConfigurationEntryValue_nonExistingEntry() throws Exception {
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
-		verify(configurationDAO, never()).updateConfigurationEntryValue(testModule1ClassName, "non.existing.entry", 12);
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, fileKey, testFileValue.toString());
+		assertEquals(testFileValue, testModule1.getConfigurationEntries().get(4).getValue());
+
+		verify(configurationDAO).insertConfigurationEntryValue(testModule1ClassName, uriKey, testUriValue.toString());
+		assertEquals(testUriValue, testModule1.getConfigurationEntries().get(5).getValue());
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
-	public void setConfigurationEntryValue_invalidStringValue() throws Exception {
-		when(valueParser.parseString("")).thenThrow(WPSConfigurationException.class);
-		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.string.key", "");
-		verifyZeroInteractions(configurationDAO);
-	}
+	public void setConfigurationModuleValues_validValues_existingModule() throws Exception {
+		when(valueParser.parseString(testStringValue)).thenReturn(testStringValue);
+		when(valueParser.parseInteger(testIntValue)).thenReturn(testIntValue);
+		when(valueParser.parseDouble(testDoubleValue)).thenReturn(testDoubleValue);
+		when(valueParser.parseBoolean(testBooleanValue)).thenReturn(testBooleanValue);
+		when(valueParser.parseFile(testFileValue)).thenReturn(testFileValue);
+		when(valueParser.parseURI(testUriValue)).thenReturn(testUriValue);
+		when(configurationDAO.getConfigurationEntryValue(eq(testModule1ClassName), anyString())).thenReturn(
+				new Object());
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void setConfigurationEntryValue_invalidIntegerValue() throws Exception {
-		when(valueParser.parseInteger("invalid_integer")).thenThrow(WPSConfigurationException.class);
-		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.integer.key", "invalid_integer");
-		verifyZeroInteractions(configurationDAO);
-	}
+		String[] keys = { stringKey, integerKey, doubleKey, booleanKey, fileKey, uriKey };
+		Object[] values = { testStringValue, testIntValue, testDoubleValue, testBooleanValue, testFileValue,
+				testUriValue };
+		configurationService.setConfigurationModuleValues(testModule1ClassName, keys, values);
 
-	@Test
-	@SuppressWarnings("unchecked")
-	public void setConfigurationEntryValue_invalidDoubleValue() throws Exception {
-		when(valueParser.parseDouble("invalid_double")).thenThrow(WPSConfigurationException.class);
-		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.double.key", "invalid_double");
-		verifyZeroInteractions(configurationDAO);
-	}
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, stringKey, testStringValue);
+		assertEquals(testStringValue, testModule1.getConfigurationEntries().get(0).getValue());
 
-	@SuppressWarnings("unchecked")
-	@Test
-	public void setConfigurationEntryValue_invalidBooleanValue() throws Exception {
-		when(valueParser.parseBoolean("invalid_boolean")).thenThrow(WPSConfigurationException.class);
-		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.boolean.key", "invalid_boolean");
-		verifyZeroInteractions(configurationDAO);
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, integerKey, testIntValue);
+		assertEquals(testIntValue, testModule1.getConfigurationEntries().get(1).getValue());
+
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, doubleKey, testDoubleValue);
+		assertEquals(testDoubleValue, testModule1.getConfigurationEntries().get(2).getValue());
+
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, booleanKey, testBooleanValue);
+		assertEquals(testBooleanValue, testModule1.getConfigurationEntries().get(3).getValue());
+
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, fileKey, testFileValue.toString());
+		assertEquals(testFileValue, testModule1.getConfigurationEntries().get(4).getValue());
+
+		verify(configurationDAO).updateConfigurationEntryValue(testModule1ClassName, uriKey, testUriValue.toString());
+		assertEquals(testUriValue, testModule1.getConfigurationEntries().get(5).getValue());
 	}
 
 	@Test
 	@SuppressWarnings("unchecked")
-	public void setConfigurationEntryValue_invalidFileValue() throws Exception {
-		when(valueParser.parseFile("")).thenThrow(WPSConfigurationException.class);
+	public void setConfigurationModuleValues_invalidValues() throws Exception {
+		when(valueParser.parseString(testStringValue)).thenReturn(testStringValue);
+		when(valueParser.parseInteger("twelve")).thenThrow(WPSConfigurationException.class);
+		when(valueParser.parseDouble(testDoubleValue)).thenReturn(testDoubleValue);
+		when(valueParser.parseBoolean(testBooleanValue)).thenReturn(testBooleanValue);
+		when(valueParser.parseFile(testFileValue)).thenReturn(testFileValue);
+		when(valueParser.parseURI(testUriValue)).thenReturn(testUriValue);
+
+		String[] keys = { stringKey, integerKey, doubleKey, booleanKey, fileKey, uriKey };
+		Object[] values = { testStringValue, "twelve", testDoubleValue, testBooleanValue, testFileValue, testUriValue };
+
 		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.file.key", "");
+		configurationService.setConfigurationModuleValues(testModule1ClassName, keys, values);
 		verifyZeroInteractions(configurationDAO);
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
-	public void setConfigurationEntryValue_invalidUriValue() throws Exception {
-		when(valueParser.parseURI("")).thenThrow(WPSConfigurationException.class);
-		exception.expect(WPSConfigurationException.class);
-		configurationService.setConfigurationEntryValue(testModule1ClassName, "test.uri.key", "");
-		verifyZeroInteractions(configurationDAO);
+	public void passConfigurationModuleValuesToMembers() throws Exception {
+		when(valueParser.parseString(testStringValue)).thenReturn(testStringValue);
+		when(valueParser.parseInteger(testIntValue)).thenReturn(testIntValue);
+		when(valueParser.parseDouble(testDoubleValue)).thenReturn(testDoubleValue);
+		when(valueParser.parseBoolean(testBooleanValue)).thenReturn(testBooleanValue);
+		when(valueParser.parseFile(testFileValue)).thenReturn(testFileValue);
+		when(valueParser.parseURI(testUriValue)).thenReturn(testUriValue);
+
+		String[] keys = { stringKey, integerKey, doubleKey, booleanKey, fileKey, uriKey, invalidStringKey,
+				invalidIntegerKey };
+		Object[] values = { testStringValue, testIntValue, testDoubleValue, testBooleanValue, testFileValue,
+				testUriValue, testStringValue, testIntValue };
+		configurationService.setConfigurationModuleValues(testModule1ClassName, keys, values);
+
+		assertEquals(testStringValue, testModule1.getStringMember());
+		assertEquals(testIntValue, testModule1.getIntMember());
+		assertEquals(testDoubleValue, testModule1.getDoubleMember(), 0);
+		assertEquals(testBooleanValue, testModule1.isBooleanMember());
+		assertEquals(testFileValue, testModule1.getFileMember());
+		assertEquals(testUriValue, testModule1.getUriMember());
+
+		// the module is trying to pass string to integer module
+		assertNotEquals(testStringValue, testModule1.getIntInvalidMember());
+
+		// the module is trying to pass integer to a method with the wrong signature (more than 1 parameter)
+		assertNotEquals(testIntValue, testModule1.getIntInvalidMember());
 	}
 
 	@Test
-	public void getAlgorithmEntry_validEntry() {
+	public void getAlgorithmEntry_existingEntry() {
 		AlgorithmEntry entry = configurationService.getAlgorithmEntry(testModule1, "name2");
 		assertEquals("name2", entry.getAlgorithm());
 		assertTrue(entry.isActive());
 	}
-	
+
 	@Test
 	public void getAlgorithmEntry_nullEntry() {
 		assertNull(configurationService.getAlgorithmEntry(testModule1, "non.existing.algorithm"));
@@ -506,44 +561,11 @@ public class ConfigurationServiceImplTest {
 		assertEquals(false, testModule1.getAlgorithmEntries().get(0).isActive());
 		verify(configurationDAO).updateAlgorithmEntry(testModule1ClassName, algorithm, false);
 	}
-	
+
 	@Test
 	public void setAlgorithmEntry_nonExistingEntry() {
 		String nonExisting = "non.existing.algorithm";
 		configurationService.setAlgorithmEntry(testModule1ClassName, nonExisting, false);
 		verify(configurationDAO, never()).updateAlgorithmEntry(testModule1ClassName, nonExisting, false);
-	}
-
-	@Test
-	public void passValueToConfigurationModule_validValues() throws Exception  {
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(0));
-		assertEquals("Initial Value", testModule2.getStringMember());
-
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(1));
-		assertEquals(44, testModule2.getIntMember());
-
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(2));
-		assertEquals(10.4, testModule2.getDoubleMember(), 0);
-
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(3));
-		assertEquals(true, testModule2.isBooleanMember());
-
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(4));
-		assertEquals(new File("path"), testModule2.getFileMember());
-
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(5));
-		assertEquals(new URI("path"), testModule2.getUriMember());
-	}
-
-	@Test
-	public void passValueToConfigurationModule_invalidValue() {
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(6));
-		assertNotEquals("Initial Value 2", testModule2.getIntInvalidMember());
-	}
-
-	@Test
-	public void passValueToConfigurationModule_invalidMethodParameters() {
-		configurationService.passValueToConfigurationModule(testModule2, testModule2.getConfigurationEntries().get(7));
-		assertNotEquals(15, testModule2.getIntInvalidMember());
 	}
 }

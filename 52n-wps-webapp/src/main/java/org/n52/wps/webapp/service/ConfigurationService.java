@@ -35,11 +35,6 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 public interface ConfigurationService {
 
 	/**
-	 * Sync configuration entries and values with the database
-	 */
-	void syncConfigurations();
-
-	/**
 	 * Get all classes that implements the {@code ConfigurationModule} interface. Modules are mapped by their fully
 	 * qualified name.
 	 * 
@@ -62,12 +57,10 @@ public interface ConfigurationService {
 	 * 
 	 * @param category
 	 *            the category of the modules
-	 * @param active
-	 *            whether to return only active modules
 	 * @return A map of all active configuration modules of the specified category.
 	 * @see ConfigurationCategory
 	 */
-	Map<String, ConfigurationModule> getConfigurationModulesByCategory(ConfigurationCategory category, boolean active);
+	Map<String, ConfigurationModule> getActiveConfigurationModulesByCategory(ConfigurationCategory category);
 
 	/**
 	 * Get a configuration module by its fully qualified name.
@@ -79,12 +72,14 @@ public interface ConfigurationService {
 	ConfigurationModule getConfigurationModule(String moduleClassName);
 
 	/**
-	 * Update a configuration module
+	 * Update a configuration module activation status
 	 * 
-	 * @param module
-	 *            the module to be updated
+	 * @param moduleClassName
+	 *            the fully qualified name of the module to be updated
+	 * @param status
+	 *            the new status
 	 */
-	void updateConfigurationModule(ConfigurationModule module);
+	void updateConfigurationModuleStatus(String moduleClassName, boolean status);
 
 	/**
 	 * Get a configuration entry.
@@ -98,7 +93,7 @@ public interface ConfigurationService {
 	ConfigurationEntry<?> getConfigurationEntry(ConfigurationModule module, String entryKey);
 
 	/**
-	 * Get the configuration entry value and return it as the expected type.
+	 * Get the configuration entry value and return it as the required type.
 	 * 
 	 * @param module
 	 *            the configuration module holding the configuration entry
@@ -114,18 +109,18 @@ public interface ConfigurationService {
 			throws WPSConfigurationException;
 
 	/**
-	 * Set the value of a configuration entry. The {@code Object} value will be parsed to the entry type.
+	 * Set the values for a configuration module. The {@code Object} values will be parsed to the entry types.
 	 * 
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
-	 * @param entryKey
-	 *            the entry key
-	 * @param value
-	 *            the value to be set
+	 * @param entryKeys
+	 *            the keys of the entries to be set
+	 * @param values
+	 *            the values to be set
 	 * @throws WPSConfigurationException
 	 *             if the value cannot be parsed to the correct entry type
 	 */
-	void setConfigurationEntryValue(String moduleClassName, String entryKey, Object value)
+	void setConfigurationModuleValues(String moduleClassName, String[] entryKeys, Object[] values)
 			throws WPSConfigurationException;
 
 	/**
@@ -146,20 +141,9 @@ public interface ConfigurationService {
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithm
 	 *            the algorithm name
-	 * @param active
-	 *            the algorithm status
+	 * @param status
+	 *            the algorithm active status
 	 */
-	void setAlgorithmEntry(String moduleClassName, String algorithm, boolean active);
+	void setAlgorithmEntry(String moduleClassName, String algorithm, boolean status);
 
-	/**
-	 * Pass the value of the configuration entry to an annotated setter method in a configuration module. A value of
-	 * entry with key "entry.key" will be passed to a setter method annotated with
-	 * {@code ConfigurationKey(key="entry.key")}.
-	 * 
-	 * @param module
-	 *            the configuration module holding the configuration entry
-	 * @param entry
-	 *            the configuration entry
-	 */
-	void passValueToConfigurationModule(ConfigurationModule module, ConfigurationEntry<?> entry);
 }
