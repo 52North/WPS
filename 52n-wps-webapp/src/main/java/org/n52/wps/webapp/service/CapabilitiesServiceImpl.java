@@ -34,22 +34,6 @@ public class CapabilitiesServiceImpl implements CapabilitiesService {
 
 	@Autowired
 	private CapabilitiesDAO capabilitiesDAO;
-
-	@Autowired
-	private ServiceIdentification serviceIdentification;
-	
-	@Autowired
-	private ServiceProvider serviceProvider;
-	
-	@Override
-	public void updateServiceIdentification() {
-		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
-	}
-	
-	@Override
-	public void updateServiceProvider() {
-		capabilitiesDAO.saveServiceProvider(serviceProvider);
-	}
 	
 	@Override
 	public ServiceIdentification getServiceIdentification() {

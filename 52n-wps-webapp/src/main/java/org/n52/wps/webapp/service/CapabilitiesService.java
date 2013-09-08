@@ -27,8 +27,6 @@ import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 public interface CapabilitiesService {
-	void updateServiceIdentification();
-	void updateServiceProvider();
 	/**
 	 * Get the service identification information
 	 * 

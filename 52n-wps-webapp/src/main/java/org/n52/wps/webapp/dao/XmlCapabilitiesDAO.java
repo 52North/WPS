@@ -24,9 +24,6 @@
 
 package org.n52.wps.webapp.dao;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -71,11 +68,11 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		// keywords
 		Element keywords = serviceIdentificationElement.getChild("Keywords", Namespace.getNamespace(NAMESPACE));
 		if (keywords != null) {
-			Set<String> keywrodsSet = new HashSet<String>();
+			StringBuilder sb = new StringBuilder();
 			for (Object keyword : keywords.getChildren()) {
-				keywrodsSet.add(((Element) keyword).getValue());
+				sb.append(((Element) keyword).getValue() + "; ");
 			}
-			serviceIdentification.setKeywords(keywrodsSet.toString());
+			serviceIdentification.setKeywords(sb.toString());
 		}
 		LOGGER.info("'{}' is parsed and a ServiceIdentification object is returned", absolutePath);
 		return serviceIdentification;
@@ -104,7 +101,8 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		}
 		
 		if (serviceIdentification.getKeywords() != null) {
-			for (String newKeyword : serviceIdentification.getKeywords()) {
+			String [] keywordsArray = serviceIdentification.getKeywords().trim().split(";");
+			for (String newKeyword : keywordsArray) {
 				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE))
 						.setText(newKeyword);
 				keywords.addContent(keyword);
