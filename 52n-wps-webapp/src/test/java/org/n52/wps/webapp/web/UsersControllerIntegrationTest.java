@@ -124,7 +124,7 @@ public class UsersControllerIntegrationTest extends AbstractIntegrationTest {
 		RequestBuilder request = post("/users/add_user").param("username", "testUser3")
 				.param("password", "testPassword3").param("role", "ROLE_USER");
 		ResultActions result = this.mockMvc.perform(request);
-		result.andExpect(status().isMovedTemporarily()).andExpect(view().name("redirect:/users"));
+		result.andExpect(status().isOk());
 		user = configurationManager.getUserServices().getUser(3);
 		assertEquals(3, user.getUserId());
 		assertEquals("testUser3", user.getUsername());
@@ -136,7 +136,6 @@ public class UsersControllerIntegrationTest extends AbstractIntegrationTest {
 		RequestBuilder request = post("/users/add_user").param("username", "testUser3").param("password", "")
 				.param("role", "ROLE_USER");
 		ResultActions result = this.mockMvc.perform(request);
-		result.andExpect(status().isOk()).andExpect(view().name("add_user"))
-				.andExpect(model().attributeHasFieldErrors("user", "password"));
+		result.andExpect(status().isBadRequest());
 	}
 }

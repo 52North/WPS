@@ -24,9 +24,10 @@
 package org.n52.wps.webapp.web;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -38,20 +39,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class UsersController {
 	@Autowired
 	ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	PasswordEncoder passwordEncoder;
 
@@ -109,23 +111,31 @@ public class UsersController {
 	}
 
 	@RequestMapping(value = "users/add_user", method = RequestMethod.POST)
-	public String processAddUserForm(@ModelAttribute("user") @Valid User user, BindingResult result, Model model) {
+	@ResponseBody
+	public ValidationResponse processAddUserForm(@ModelAttribute("user") @Valid User user, BindingResult result,
+			Model model, HttpServletResponse response) {
+		ValidationResponse validationResponse = new ValidationResponse();
 		if (result.hasErrors()) {
-			model.addAttribute("user", user);
-			return "add_user";
+			validationResponse.setErrorMessageList(result.getFieldErrors());
+			response.setStatus(400);
 		} else {
 			String shaPassword = passwordEncoder.encode(user.getPassword());
 			user.setPassword(shaPassword);
 			configurationManager.getUserServices().insertUser(user);
-			return "redirect:/users";
 		}
+		return validationResponse;
 	}
 
 	@ExceptionHandler(DuplicateKeyException.class)
-	public ModelAndView hanleException(DuplicateKeyException e) {
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("error", "Username already exist. Please choose a different username.");
-		model.put("user", new User());
-		return new ModelAndView("add_user", model);
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ValidationResponse hanleException(DuplicateKeyException e) {
+		ValidationResponse validationResponse = new ValidationResponse();
+		List<FieldError> listOfErros = new ArrayList<FieldError>();
+		FieldError error = new FieldError("User", "username",
+				"Username already exist. Please choose a different username.");
+		listOfErros.add(error);
+		validationResponse.setErrorMessageList(listOfErros);
+		return validationResponse;
 	}
 }
