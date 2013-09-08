@@ -49,7 +49,7 @@ public class LogConfigurationsController {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
+	private final Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsController.class);
 
 	/**
 	 * Display the log module
