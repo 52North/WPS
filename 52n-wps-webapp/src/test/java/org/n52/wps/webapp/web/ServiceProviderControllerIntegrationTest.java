@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.jdom.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractIntegrationTest;
 import org.n52.wps.webapp.dao.XmlCapabilitiesDAO;
 import org.n52.wps.webapp.entities.ServiceProvider;
@@ -27,8 +28,8 @@ public class ServiceProviderControllerIntegrationTest extends AbstractIntegratio
 	private MockMvc mockMvc;
 
 	@Autowired
-	private ServiceProvider module;
-
+	private ConfigurationManager configurationManager;
+	
 	@Autowired
 	private JDomUtil jDomUtil;
 	
@@ -45,7 +46,7 @@ public class ServiceProviderControllerIntegrationTest extends AbstractIntegratio
 		RequestBuilder builder = get("/service_provider").accept(MediaType.TEXT_HTML);
 		ResultActions result = this.mockMvc.perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("service_provider"))
-				.andExpect(model().attributeExists("configurationModule"));
+				.andExpect(model().attributeExists("serviceProvider"));
 	}
 
 	@Test
@@ -53,12 +54,23 @@ public class ServiceProviderControllerIntegrationTest extends AbstractIntegratio
 		String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
 		Document originalDoc = jDomUtil.parse(path);
 		
-		RequestBuilder request = post("/service_provider").param("key", "provider_name")
-				.param("value", "Posted Name").param("module", module.getClass().getName());
+		RequestBuilder request = post("/service_provider")
+				.param("providerName", "providerName")
+				.param("providerSite", "providerSite")
+				.param("individualName", "individualName")
+				.param("position", "position")
+				.param("phone", "phone")
+				.param("facsimile", "facsimile")
+				.param("email", "email")
+				.param("deliveryPoint", "deliveryPoint")
+				.param("city", "city")
+				.param("administrativeArea", "administrativeArea")
+				.param("postalCode", "postalCode")
+				.param("country", "country");
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());
-		assertEquals("Posted Name", module.getProviderName());
-		assertEquals("Posted Name", module.getConfigurationEntries().get(0).getValue());
+		ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
+		assertEquals("providerName", serviceProvider.getProviderName());
 		
 		//reset document to original state
 		jDomUtil.write(originalDoc, path);
@@ -66,8 +78,19 @@ public class ServiceProviderControllerIntegrationTest extends AbstractIntegratio
 
 	@Test
 	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/service_provider").param("key", "provider_name")
-				.param("value", "").param("module", module.getClass().getName());
+		RequestBuilder request = post("/service_provider")
+				.param("providerName", "")
+				.param("providerSite", "providerSite")
+				.param("individualName", "individualName")
+				.param("position", "position")
+				.param("phone", "phone")
+				.param("facsimile", "facsimile")
+				.param("email", "email")
+				.param("deliveryPoint", "deliveryPoint")
+				.param("city", "city")
+				.param("administrativeArea", "administrativeArea")
+				.param("postalCode", "postalCode")
+				.param("country", "country");
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isBadRequest());
 	}

@@ -24,96 +24,53 @@
 
 package org.n52.wps.webapp.entities;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+import org.hibernate.validator.constraints.NotBlank;
 
-import org.n52.wps.webapp.api.AlgorithmEntry;
-import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationKey;
-import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.api.types.StringConfigurationEntry;
-import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
-public class ServiceProvider implements ConfigurationModule {
-	private ConfigurationEntry<String> providerNameEntry = new StringConfigurationEntry("provider_name",
-			"Provider Name", "Your or your company's name", true, "52North");
-	private ConfigurationEntry<URI> providerSiteEntry = new URIConfigurationEntry("provider_site", "Provider Site",
-			"Your website", true, URI.create("http://www.52north.org/"));
-	private ConfigurationEntry<String> individualNameEntry = new StringConfigurationEntry("individual_name",
-			"Responsible Person", "The name of the responsible person of this service", true, "");
-	private ConfigurationEntry<String> positionEntry = new StringConfigurationEntry("position", "Position",
-			"The position of the responsible person", true, "");
-	private ConfigurationEntry<String> phoneEntry = new StringConfigurationEntry("phone", "Phone",
-			"The phone number of the responsible person", true, "");
-	private ConfigurationEntry<String> facsimileEntry = new StringConfigurationEntry("facsimile", "Fax",
-			"The fax number of the responsible person", true, "");
-	private ConfigurationEntry<String> deliveryPointEntry = new StringConfigurationEntry("delivery_point",
-			"Delivery Point", "The street address of the responsible person", true, "");
-	private ConfigurationEntry<String> cityEntry = new StringConfigurationEntry("city", "City",
-			"The city the responsible person", true, "");
-	private ConfigurationEntry<String> administrativeAreaEntry = new StringConfigurationEntry("administrative_area",
-			"Administrative Area", "The administrative area of the responsible person", true, "");
-	private ConfigurationEntry<String> postalCodeEntry = new StringConfigurationEntry("postal_code", "Postal Code",
-			"The postal code of the responsible person", true, "");
-	private ConfigurationEntry<String> countryEntry = new StringConfigurationEntry("country", "Country",
-			"The country the responsible person", true, "");
-	private ConfigurationEntry<String> emailEntry = new StringConfigurationEntry("email", "Email",
-			"The e-mail address of the responsible person", true, "");
+public class ServiceProvider  {
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(providerNameEntry,
-			providerSiteEntry, individualNameEntry, positionEntry, phoneEntry, emailEntry, facsimileEntry,
-			deliveryPointEntry, cityEntry, administrativeAreaEntry, postalCodeEntry, countryEntry);
+	private final String blankErrorMessage = "Field cannot be blank.";
 
+	@NotBlank(message = blankErrorMessage)
 	private String providerName;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String providerSite;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String individualName;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String position;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String phone;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String facsimile;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String deliveryPoint;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String city;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String administrativeArea;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String postalCode;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String country;
+	
+	@NotBlank(message = blankErrorMessage)
 	private String email;
-
-	@Override
-	public String getModuleName() {
-		return "Service Identification Settings";
-	}
-
-	@Override
-	public boolean isActive() {
-		return true;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-
-	}
-
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.GENERAL;
-	}
-
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
-
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
-
+	
 	public String getProviderName() {
 		return providerName;
 	}
 
-	@ConfigurationKey(key = "provider_name")
 	public void setProviderName(String providerName) {
 		this.providerName = providerName;
 	}
@@ -122,7 +79,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return providerSite;
 	}
 
-	@ConfigurationKey(key = "provider_site")
 	public void setProviderSite(String providerSite) {
 		this.providerSite = providerSite;
 	}
@@ -131,7 +87,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return individualName;
 	}
 
-	@ConfigurationKey(key = "individual_name")
 	public void setIndividualName(String individualName) {
 		this.individualName = individualName;
 	}
@@ -140,7 +95,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return position;
 	}
 
-	@ConfigurationKey(key = "position")
 	public void setPosition(String position) {
 		this.position = position;
 	}
@@ -149,7 +103,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return phone;
 	}
 
-	@ConfigurationKey(key = "phone")
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
@@ -158,7 +111,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return facsimile;
 	}
 
-	@ConfigurationKey(key = "facsimile")
 	public void setFacsimile(String facsimile) {
 		this.facsimile = facsimile;
 	}
@@ -167,7 +119,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return deliveryPoint;
 	}
 
-	@ConfigurationKey(key = "delivery_point")
 	public void setDeliveryPoint(String deliveryPoint) {
 		this.deliveryPoint = deliveryPoint;
 	}
@@ -176,7 +127,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return city;
 	}
 
-	@ConfigurationKey(key = "city")
 	public void setCity(String city) {
 		this.city = city;
 	}
@@ -185,7 +135,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return administrativeArea;
 	}
 
-	@ConfigurationKey(key = "administrative_area")
 	public void setAdministrativeArea(String administrativeArea) {
 		this.administrativeArea = administrativeArea;
 	}
@@ -194,7 +143,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return postalCode;
 	}
 
-	@ConfigurationKey(key = "postal_code")
 	public void setPostalCode(String postalCode) {
 		this.postalCode = postalCode;
 	}
@@ -203,7 +151,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return country;
 	}
 
-	@ConfigurationKey(key = "country")
 	public void setCountry(String country) {
 		this.country = country;
 	}
@@ -212,7 +159,6 @@ public class ServiceProvider implements ConfigurationModule {
 		return email;
 	}
 
-	@ConfigurationKey(key = "email")
 	public void setEmail(String email) {
 		this.email = email;
 	}
