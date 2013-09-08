@@ -24,14 +24,10 @@
 
 package org.n52.wps.webapp.api;
 
-import javax.annotation.PostConstruct;
-
 import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.service.LogConfigurationsService;
 import org.n52.wps.webapp.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,15 +45,6 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
 	private LogConfigurationsService logConfigurationsService;
-
-	private static Logger LOGGER = LoggerFactory.getLogger(ConfigurationManagerImpl.class);
-
-	@PostConstruct
-	private void initializeConfigurations() {
-		LOGGER.info("Initializing configurations...");
-		configurationService.syncConfigurations();
-		LOGGER.info("Configurations initialized.");
-	}
 
 	@Override
 	public ConfigurationService getConfigurationServices() {
