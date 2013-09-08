@@ -61,7 +61,7 @@ public class ParsersControllerIntegrationTest extends AbstractIntegrationTest {
 	@Test
 	public void toggleModuleStatus() throws Exception {
 		assertTrue(module.isActive());
-		RequestBuilder request = post("/parsers/activate/{moduleClassName}", module.getClass().getName());
+		RequestBuilder request = post("/parsers/activate/{moduleClassName}/false", module.getClass().getName());
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());
 		assertFalse(module.isActive());

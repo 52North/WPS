@@ -25,7 +25,6 @@ package org.n52.wps.webapp.web;
 
 import java.util.Map;
 
-import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.springframework.http.HttpStatus;
@@ -58,17 +57,11 @@ public class RepositoriesController extends BaseConfigurationsController {
 	/**
 	 * Toggle the status of an algorithm
 	 */
-	// {algorithm:.+} is used in case the name has dots, otherwise, it will be truncated
-	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm:.+}", method = RequestMethod.POST)
+	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm) {
-		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-				moduleClassName);
-		AlgorithmEntry algorithmEntry = configurationManager.getConfigurationServices().getAlgorithmEntry(module,
-				algorithm);
-		boolean currentStatus = algorithmEntry.isActive();
-		configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, !currentStatus);
-		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName,
-				!currentStatus);
+	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm,
+			@PathVariable boolean status) {
+		configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, status);
+		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
 	}
 }

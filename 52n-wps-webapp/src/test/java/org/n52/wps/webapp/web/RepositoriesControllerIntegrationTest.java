@@ -58,7 +58,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractIntegrationTe
 	@Test
 	public void toggleModuleStatus() throws Exception {
 		assertTrue(module1.isActive());
-		RequestBuilder request = post("/repositories/activate/{moduleClassName}", module1.getClass().getName());
+		RequestBuilder request = post("/repositories/activate/{moduleClassName}/false", module1.getClass().getName());
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());
 		assertFalse(module1.isActive());
@@ -67,7 +67,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractIntegrationTe
 	@Test
 	public void toggleAlgorithmStatus() throws Exception {
 		assertTrue(module1.getAlgorithmEntries().get(0).isActive());
-		RequestBuilder request = post("/repositories/algorithms/activate/{moduleClassName}/{algorithm}",
+		RequestBuilder request = post("/repositories/algorithms/activate/{moduleClassName}/{algorithm}/false",
 				module1.getClass().getName(), module1.getAlgorithmEntries().get(0).getAlgorithm());
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());

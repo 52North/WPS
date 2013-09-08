@@ -11,8 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.common.AbstractIntegrationTest;
 import org.n52.wps.webapp.entities.Server;
-import org.n52.wps.webapp.util.JDomUtil;
-import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,12 +24,6 @@ public class ServerControllerIntegrationTest extends AbstractIntegrationTest {
 
 	@Autowired
 	private Server server;
-
-	@Autowired
-	private JDomUtil jDomUtil;
-	
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
 	
 	@Before
 	public void setup() {

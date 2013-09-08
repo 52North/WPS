@@ -23,15 +23,18 @@
  */
 package org.n52.wps.webapp.web;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.n52.wps.webapp.api.ConfigurationManager;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,43 +55,31 @@ public class BaseConfigurationsController {
 		String[] values = request.getParameterValues("value");
 		String moduleClassName = request.getParameter("module");
 
-		LOGGER.debug("Processing module '{}' values.", moduleClassName);
-		for (int i = 0; i < keys.length; i++) {
-			LOGGER.debug("Setting entry '{}' in module '{}' to value '{}'.", keys[i], moduleClassName, values[i]);
-			try {
-				configurationManager.getConfigurationServices().setConfigurationEntryValue(moduleClassName, keys[i],
-						values[i]);
-			} catch (WPSConfigurationException e) {
-				throw new WPSConfigurationException("Cannot set entry '" + keys[i] + "' in module '" + moduleClassName
-						+ "': " + e.getMessage());
-			}
-		}
+		LOGGER.debug("Processing module '{}' submitted values.", moduleClassName);
+		configurationManager.getConfigurationServices().setConfigurationModuleValues(moduleClassName, keys, values);
 		LOGGER.info("Configuration module '{}' values has been saved.", moduleClassName);
-		if (getClass() == ServiceProviderController.class || getClass() == ServiceIdentificationController.class) {
-			configurationManager.getCapabilitiesServices().updateServiceIdentification();
-		}
 	}
 
 	/**
-	 * Toggle the status of a configuration module
+	 * Set the status of a configuration module
 	 */
-	// {moduleClassName:.+} is used in case the name has dots, otherwise, it will be truncated
-	@RequestMapping(value = "activate/{moduleClassName:.+}", method = RequestMethod.POST)
+	@RequestMapping(value = "activate/{moduleClassName}/{status}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	protected void toggleModuleStatus(@PathVariable String moduleClassName) {
-		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-				moduleClassName);
-		boolean currentStatus = module.isActive();
-		module.setActive(!currentStatus);
-		configurationManager.getConfigurationServices().updateConfigurationModule(module);
-		LOGGER.info("Module '{}' status has been updated to '{}'", moduleClassName, !currentStatus);
+	protected void toggleModuleStatus(@PathVariable String moduleClassName, @PathVariable boolean status) {
+		configurationManager.getConfigurationServices().updateConfigurationModuleStatus(moduleClassName, status);
+		LOGGER.info("Module '{}' status has been updated to '{}'", moduleClassName, status);
 	}
 
 	@ExceptionHandler(WPSConfigurationException.class)
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-	protected String displayError(WPSConfigurationException e) {
-		LOGGER.error("Error setting entry value:", e);
-		return e.getMessage();
+	protected ValidationResponse displayError(WPSConfigurationException e) {
+		ValidationResponse validationResponse = new ValidationResponse();
+		List<FieldError> listOfErros = new ArrayList<FieldError>();
+		FieldError error = new FieldError("ConfigurationEntry", e.getField(),
+				e.getMessage());
+		listOfErros.add(error);
+		validationResponse.setErrorMessageList(listOfErros);
+		return validationResponse;
 	}
 }
