@@ -47,7 +47,7 @@ public class ValueParser {
 		try {
 			return Integer.parseInt(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException(e);
+			throw new WPSConfigurationException("'" + value + "' is not a valid integer value.");
 		}
 	}
 
@@ -56,7 +56,7 @@ public class ValueParser {
 		try {
 			return Double.parseDouble(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException(e);
+			throw new WPSConfigurationException("'" + value + "' is not a valid double value.");
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ValueParser {
 		if ((stringValue.trim().equalsIgnoreCase("true")) || (stringValue.trim().equalsIgnoreCase("false"))) {
 			return Boolean.valueOf(String.valueOf(value));
 		} else {
-			throw new WPSConfigurationException("The value '" + value + "' is not a valid boolean value.");
+			throw new WPSConfigurationException("'" + value + "' is not a valid boolean value.");
 		}
 
 	}
@@ -76,7 +76,7 @@ public class ValueParser {
 		try {
 			return new File(String.valueOf(value));
 		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException(e);
+			throw new WPSConfigurationException("'" + value + "' is not a valid file path.");
 		}
 
 	}
@@ -86,13 +86,13 @@ public class ValueParser {
 		try {
 			return new URI(String.valueOf(value));
 		} catch (URISyntaxException e) {
-			throw new WPSConfigurationException(e);
+			throw new WPSConfigurationException("'" + value + "' is not a valid URI path.");
 		}
 	}
 
 	private void nullOrEmptyCheck(Object value) throws WPSConfigurationException {
 		if (value == null || value.toString().trim().isEmpty()) {
-			throw new WPSConfigurationException(new NullPointerException("Empty or null value"));
+			throw new WPSConfigurationException(new NullPointerException("The field cannot be empty."));
 		}
 	}
 }
