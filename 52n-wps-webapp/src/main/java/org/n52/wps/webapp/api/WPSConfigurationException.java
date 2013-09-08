@@ -31,6 +31,8 @@ public class WPSConfigurationException extends Exception {
 	 */
 	private static final long serialVersionUID = -1311630308994476529L;
 
+	private String field;
+	
 	public WPSConfigurationException() {
 		super();
 	}
@@ -45,5 +47,13 @@ public class WPSConfigurationException extends Exception {
 
 	public WPSConfigurationException(Throwable cause) {
 		super(cause);
+	}
+
+	public String getField() {
+		return field;
+	}
+
+	public void setField(String field) {
+		this.field = field;
 	}
 }
