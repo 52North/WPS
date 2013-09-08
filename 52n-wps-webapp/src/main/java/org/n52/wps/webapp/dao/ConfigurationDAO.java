@@ -39,12 +39,12 @@ public interface ConfigurationDAO {
 	void insertConfigurationModule(ConfigurationModule module);
 
 	/**
-	 * Update an existing module
+	 * Update an existing module status
 	 * 
 	 * @param module
 	 *            the module to be updated
 	 */
-	void updateConfigurationModule(ConfigurationModule module);
+	void updateConfigurationModuleStatus(ConfigurationModule module);
 	
 	/**
 	 * Get the active/inactive status of a configuration module

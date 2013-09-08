@@ -89,7 +89,7 @@ public class JdbcConfigurationDAOTest {
 		boolean statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
 		assertTrue(statusOfModule1);
 		testModule1.setActive(false);
-		configurationDAO.updateConfigurationModule(testModule1);
+		configurationDAO.updateConfigurationModuleStatus(testModule1);
 		statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
 		assertFalse(statusOfModule1);
 	}
