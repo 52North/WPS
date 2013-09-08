@@ -1,17 +1,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-<%@ taglib prefix="input" tagdir="/WEB-INF/tags/"%>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags"%>
 
 <p class="text-danger">${error}</p>
 
-<form:form modelAttribute="logConfigurations" method="POST" action="log" class="form-horizontal">
+<form:form id="customForm" modelAttribute="logConfigurations" method="POST" action="log" class="form-horizontal">
 	<legend>Patterns &amp; Formats</legend>
-	<input:textInput label="File Name Pattern" field="wpsfileAppenderFileNamePattern" />
-	<input:textInput label="File Encoder Pattern" field="wpsfileAppenderEncoderPattern" />
-	<input:textInput label="Console Encoder Pattern" field="wpsconsoleEncoderPattern" />
+	<input:customInput label="File Name Pattern" field="wpsfileAppenderFileNamePattern" />
+	<input:customInput label="File Encoder Pattern" field="wpsfileAppenderEncoderPattern" />
+	<input:customInput label="Console Encoder Pattern" field="wpsconsoleEncoderPattern" />
 
 	<legend>General</legend>
-	<input:textInput label="Max History" field="wpsfileAppenderMaxHistory" desc="In days" />
+	<input:customInput label="Max History" field="wpsfileAppenderMaxHistory" desc="In days" />
 
 	<legend>Appenders &amp; Loggers</legend>
 	<div class="form-group">
@@ -28,8 +28,8 @@
 	<div class="form-group">
 		<form:label class="col-lg-3 control-label" path="rootLevel">Appenders</form:label>
 		<div class="col-lg-6">
-			<input:checkbox label="File" field="fileAppenderEnabled" val="wpsFile" />
-			<input:checkbox label="Console" field="consoleAppenderEnabled" val="wpsConsole" />
+			<input:customInput label="File" field="fileAppenderEnabled" type="checkbox" val="wpsFile" />
+			<input:customInput label="Console" field="consoleAppenderEnabled" type="checkbox" val="wpsConsole" />
 		</div>
 	</div>
 	<form:label class="col-lg-3 control-label" path="loggers">Loggers</form:label>
@@ -55,41 +55,6 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="form-group">
-		<div class="col-lg-offset-3 col-lg-8">
-			<button type="submit" class="btn btn-primary">Save</button>
-		</div>
-	</div>
+	<input:customInput label="Save" type="submit" />
 </form:form>
-
-<script>
-	$('form').submit(function(event) {
-		event.preventDefault();
-		var form = $(this);
-
-		//reset and clear errors
-		form.find('#error').remove();
-		$(".form-group").each(function() {
-			$(this).removeClass("has-error");
-		});
-		$.ajax({
-			type : form.attr('method'),
-			url : form.attr('action'),
-			data : form.serialize(),
-			success : function() {
-				alertMessage("", "Configurations updated", "alert alert-success", form);
-			},
-			error : function(xhr) {
-				var errors = xhr.responseJSON.errorMessageList;
-				for ( var i = 0; i < errors.length; i++) {
-					var item = errors[i];
-					
-					//display the error after the field
-					var field = $('#' + item.field);
-					field.parents(".form-group").addClass("has-error");
-					$("<div id='error' class='text-danger'>" + item.defaultMessage + "</div>").insertAfter(field);
-				}
-			}
-		});
-	});
-</script>
+<script src="<c:url value="/resources/js/custom.module.js" />"></script>

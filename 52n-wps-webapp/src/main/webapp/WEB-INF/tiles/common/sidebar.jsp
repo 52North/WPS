@@ -7,13 +7,13 @@
 		<li class="generators"><a href="<c:url value="/generators" />">Generators</a></li>
 		<li class="parsers"><a href="<c:url value="/parsers" />">Parsers</a></li>
 		<li class="nav-header">Settings</li>
-		<li><a href="<c:url value="/users" />">Users</a></li>
-		<li><a href="<c:url value="/log" />">Log</a></li>
-		<li><a href="<c:url value="/service_identification" />">Service Identification</a></li>
-		<li><a href="<c:url value="/service_provider" />">Service Provider</a></li>
+		<li class="users"><a href="<c:url value="/users" />">Users</a></li>
+		<li class="log"><a href="<c:url value="/log" />">Log</a></li>
+		<li class="service_identification"><a href="<c:url value="/service_identification" />">Service Identification</a></li>
+		<li class="service_provider"><a href="<c:url value="/service_provider" />">Service Provider</a></li>
 		<li class="nav-header">Testing</li>
 		<li><a href="<c:url value="/WebProcessingService?Request=GetCapabilities&Service=WPS" />">Get Capabilities</a></li>
-		<li><a href="<c:url value="/test_client" />">Test Client</a></li>
+		<li class="test_client"><a href="<c:url value="/test_client" />">Test Client</a></li>
 	</ul>
 </div>
 <c:set var="activeMenu" value="${requestScope['javax.servlet.forward.servlet_path']}" />

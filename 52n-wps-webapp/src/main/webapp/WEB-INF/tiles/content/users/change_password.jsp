@@ -23,5 +23,5 @@
 			<div class="text-danger">${newPasswordError}</div>
 		</div>
 	</div>
-	<button type="submit" class="btn btn-default">Change</button>
+	<button type="submit" class="btn btn-primary">Change</button>
 </form>

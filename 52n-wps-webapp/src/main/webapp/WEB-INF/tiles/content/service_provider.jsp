@@ -1,35 +1,25 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="input" tagdir="/WEB-INF/tags"%>
 
-<c:set var="moduleName" value="${configurationModule.moduleName}" />
-<c:set var="fullClassName" value="${configurationModule['class'].name}" />
-<c:set var="simpleClassName" value="${configurationModule['class'].simpleName}" />
-
-<form id="module" class="form-horizontal" method="POST" action="<c:url value="/service_provider" />">
-	<c:forEach var="configurationEntry" items="${configurationModule.configurationEntries}">
-		<div class="form-group">
-			<label class="col-lg-3 control-label">${configurationEntry.title}</label>
-			<div class="col-lg-7">
-				<c:choose>
-					<c:when test="${configurationEntry.type eq 'BOOLEAN'}">
-						<input name="value" id='valueHidden' type='hidden' value='false'>
-						<input name="value" type="checkbox" value="true" <c:if test="${configurationEntry.value}">checked</c:if> />
-					</c:when>
-					<c:otherwise>
-						<input name="value" class="form-control" type="text" value="${configurationEntry.value}" />
-					</c:otherwise>
-				</c:choose>
-				<span class="help-block"> ${configurationEntry.description} </span>
-			</div>
-			<input name="key" type="hidden" value="${configurationEntry.key}" />
-			<input name="module" type="hidden" value="${fullClassName}" />
-			<c:if test="${configurationEntry.required and configurationEntry.type ne 'BOOLEAN'}">
-				<span class="label label-danger">Required</span>
-			</c:if>
-		</div>
-	</c:forEach>
-	<div class="form-group">
-		<div class="col-lg-offset-3 col-lg-8">
-			<button type="submit" class="btn btn-primary">Save</button>
-		</div>
-	</div>
-</form>
+<form:form id="customForm" modelAttribute="serviceProvider" method="POST" action="service_provider" class="form-horizontal">
+	<legend>Info</legend>
+	<input:customInput label="Provider Name" field="providerName" desc="Your or your company's name" />
+	<input:customInput label="Provider Site" field="providerSite" desc="Your website" />
+	<legend>Contact</legend>
+	<input:customInput label="Responsible Person" field="individualName"
+		desc="The name of the responsible person of this service" />
+	<input:customInput label="Position" field="position" desc="The position of the responsible person" />
+	<input:customInput label="Phone" field="phone" desc="The phone number of the responsible person" />
+	<input:customInput label="Fax" field="facsimile" desc="The fax number of the responsible person" />
+	<input:customInput label="Email" field="email" desc="The e-mail address of the responsible person" />
+	<legend>Address</legend>
+	<input:customInput label="Delivery Point" field="deliveryPoint" desc="YThe street address of the responsible person" />
+	<input:customInput label="City" field="city" desc="The city the responsible person" />
+	<input:customInput label="Administrative Area" field="administrativeArea"
+		desc="The administrative area of the responsible person" />
+	<input:customInput label="Postal Code" field="postalCode" desc="The postal code of the responsible person" />
+	<input:customInput label="Country" field="country" desc="The country of the responsible person" />
+	<input:customInput label="Save" type="submit" />
+</form:form>
+<script src="<c:url value="/resources/js/custom.module.js" />"></script>
