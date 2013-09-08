@@ -23,16 +23,30 @@
  */
 package org.n52.wps.webapp.web;
 
-import org.n52.wps.webapp.api.ConfigurationModule;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.entities.ServiceIdentification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("service_identification")
-public class ServiceIdentificationController extends BaseConfigurationsController {
+public class ServiceIdentificationController  {
+	
+	@Autowired
+	private ConfigurationManager configurationManager;
+
+	private final Logger LOGGER = LoggerFactory.getLogger(ServiceIdentificationController.class);
 	
 	/**
 	 * Display the service identification module
@@ -41,10 +55,30 @@ public class ServiceIdentificationController extends BaseConfigurationsControlle
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String display(Model model) {
-		ConfigurationModule module = configurationManager.getConfigurationServices().getConfigurationModule(
-				ServiceIdentification.class.getName());
-		model.addAttribute("configurationModule", module);
-		LOGGER.info("Reterived '{}' configuration module.", module.getClass().getName());
+		ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices().getServiceIdentification();
+		model.addAttribute("serviceIdentification", serviceIdentification);
+		LOGGER.info("Reterived '{}' configuration module.", serviceIdentification.getClass().getName());
 		return "service_identification";
+	}
+	
+	/**
+	 * Process form submission
+	 * 
+	 * @return Success or failure, and all field errors in case of failure
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
+	public ValidationResponse processPost(@ModelAttribute("serviceIdentification") @Valid ServiceIdentification serviceIdentification,
+			BindingResult result, Model model, HttpServletResponse response) {
+		ValidationResponse validationResponse = new ValidationResponse();
+		if (result.hasErrors()) {
+			validationResponse.setErrorMessageList(result.getFieldErrors());
+			validationResponse.setStatus("Fail");
+			response.setStatus(400);
+		} else {
+			configurationManager.getCapabilitiesServices().saveServiceIdentification(serviceIdentification);
+			validationResponse.setStatus("Sucess");
+		}
+		return validationResponse;
 	}
 }

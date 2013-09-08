@@ -24,78 +24,36 @@
 
 package org.n52.wps.webapp.entities;
 
-import java.util.Arrays;
-import java.util.List;
+import org.hibernate.validator.constraints.NotBlank;
 
-import org.n52.wps.webapp.api.AlgorithmEntry;
-import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationKey;
-import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.api.types.StringConfigurationEntry;
+public class ServiceIdentification {
 
-public class ServiceIdentification implements ConfigurationModule {
-	private ConfigurationEntry<String> titleEntry = new StringConfigurationEntry("title", "Title", "The title of the service", true,
-			"52°North WPS ${version}");
-	private ConfigurationEntry<String> serviceAbstractEntry = new StringConfigurationEntry("service_abstract",
-			"Abstract", "A brief description of the service", true, "Service based on the 52°North implementation of WPS 1.0.0");
-	private ConfigurationEntry<String> keywordsEntry = new StringConfigurationEntry("keywords", "Keywords", "Separated by a semicolon ';'", true,
-			"52°North WPS ${version}");
-	private ConfigurationEntry<String> serviceTypeEntry = new StringConfigurationEntry("service_type", "Service Type",
-			"", true, "WPS");
-	private ConfigurationEntry<String> serviceTypeVersionEntry = new StringConfigurationEntry("service_type_version",
-			"Service Type Version", "", true, "1.0.0");
-	private ConfigurationEntry<String> feesEntry = new StringConfigurationEntry("fees", "Fees", "", true, "NONE");
-	private ConfigurationEntry<String> accessConstraintsEntry = new StringConfigurationEntry("access_constraints",
-			"Access Constraints", "", true, "NONE");
+	private final String blankErrorMessage = "Field cannot be blank.";
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(titleEntry,
-			serviceAbstractEntry, serviceTypeEntry, serviceTypeVersionEntry, keywordsEntry, feesEntry,
-			accessConstraintsEntry);
-
+	@NotBlank(message = blankErrorMessage)
 	private String title;
+
+	@NotBlank(message = blankErrorMessage)
 	private String serviceAbstract;
-	private String[] keywords;
+
+	private String keywords;
+
+	@NotBlank(message = blankErrorMessage)
 	private String serviceType;
+
+	@NotBlank(message = blankErrorMessage)
 	private String serviceTypeVersion;
+
+	@NotBlank(message = blankErrorMessage)
 	private String fees;
+
+	@NotBlank(message = blankErrorMessage)
 	private String accessConstraints;
-
-	@Override
-	public String getModuleName() {
-		return "Service Identification Settings";
-	}
-
-	@Override
-	public boolean isActive() {
-		return true;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-
-	}
-
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.GENERAL;
-	}
-
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
-
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
 
 	public String getTitle() {
 		return title;
 	}
 
-	@ConfigurationKey(key = "title")
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -104,26 +62,22 @@ public class ServiceIdentification implements ConfigurationModule {
 		return serviceAbstract;
 	}
 
-	@ConfigurationKey(key = "service_abstract")
 	public void setServiceAbstract(String serviceAbstract) {
 		this.serviceAbstract = serviceAbstract;
 	}
 
-	public String[] getKeywords() {
+	public String getKeywords() {
 		return keywords;
 	}
 
-	@ConfigurationKey(key = "keywords")
 	public void setKeywords(String keywords) {
-		this.keywords = keywords.split(";");
-		;
+		this.keywords = keywords;
 	}
 
 	public String getServiceType() {
 		return serviceType;
 	}
 
-	@ConfigurationKey(key = "service_type")
 	public void setServiceType(String serviceType) {
 		this.serviceType = serviceType;
 	}
@@ -132,7 +86,6 @@ public class ServiceIdentification implements ConfigurationModule {
 		return serviceTypeVersion;
 	}
 
-	@ConfigurationKey(key = "service_type_version")
 	public void setServiceTypeVersion(String serviceTypeVersion) {
 		this.serviceTypeVersion = serviceTypeVersion;
 	}
@@ -141,7 +94,6 @@ public class ServiceIdentification implements ConfigurationModule {
 		return fees;
 	}
 
-	@ConfigurationKey(key = "fees")
 	public void setFees(String fees) {
 		this.fees = fees;
 	}
@@ -150,7 +102,6 @@ public class ServiceIdentification implements ConfigurationModule {
 		return accessConstraints;
 	}
 
-	@ConfigurationKey(key = "access_constraints")
 	public void setAccessConstraints(String accessConstraints) {
 		this.accessConstraints = accessConstraints;
 	}

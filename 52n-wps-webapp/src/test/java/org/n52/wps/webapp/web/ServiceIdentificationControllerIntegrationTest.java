@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.jdom.Document;
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractIntegrationTest;
 import org.n52.wps.webapp.dao.XmlCapabilitiesDAO;
 import org.n52.wps.webapp.entities.ServiceIdentification;
@@ -25,9 +26,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class ServiceIdentificationControllerIntegrationTest extends AbstractIntegrationTest {
 
 	private MockMvc mockMvc;
-
+	
 	@Autowired
-	private ServiceIdentification module;
+	ConfigurationManager configurationManager;
 	
 	@Autowired
 	private JDomUtil jDomUtil;
@@ -45,7 +46,7 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractInte
 		RequestBuilder builder = get("/service_identification").accept(MediaType.TEXT_HTML);
 		ResultActions result = this.mockMvc.perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("service_identification"))
-				.andExpect(model().attributeExists("configurationModule"));
+				.andExpect(model().attributeExists("serviceIdentification"));
 	}
 
 	@Test
@@ -53,12 +54,18 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractInte
 		String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
 		Document originalDoc = jDomUtil.parse(path);
 		
-		RequestBuilder request = post("/service_identification").param("key", "title")
-				.param("value", "Posted Title").param("module", module.getClass().getName());
+		RequestBuilder request = post("/service_identification")
+				.param("title", "Posted Title")
+				.param("serviceAbstract", "Posted Service Abstract")
+				.param("serviceType", "Posted Service Type")
+				.param("serviceTypeVersion", "Posted Service vERSION")
+				.param("keywords", "keyword1;keyword2")
+				.param("fees", "Posted Fees")
+				.param("accessConstraints", "Posted Access Constraints");
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());
-		assertEquals("Posted Title", module.getTitle());
-		assertEquals("Posted Title", module.getConfigurationEntries().get(0).getValue());
+		ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices().getServiceIdentification();
+		assertEquals("Posted Title", serviceIdentification.getTitle());
 		
 		//reset document to original state
 		jDomUtil.write(originalDoc, path);
@@ -66,8 +73,7 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractInte
 
 	@Test
 	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/service_identification").param("key", "title")
-				.param("value", "").param("module", module.getClass().getName());
+		RequestBuilder request = post("/service_identification").param("title", "");
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isBadRequest());
 	}
