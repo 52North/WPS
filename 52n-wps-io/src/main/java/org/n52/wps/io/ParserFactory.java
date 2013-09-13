@@ -32,7 +32,6 @@ Muenster, Germany
 
  Created on: 13.06.2006
  ***************************************************************/
-
 package org.n52.wps.io;
 
 import java.beans.PropertyChangeEvent;
@@ -45,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-//import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
@@ -134,7 +132,7 @@ public class ParserFactory {
 		return factory;
 	}
 	
-	public IParser getParser(String schema, String format, String encoding, Class requiredInputClass) {
+	public IParser getParser(String schema, String format, String encoding, Class<?> requiredInputClass) {
 		
 		// dealing with NULL encoding
 		if (encoding == null){
@@ -143,8 +141,8 @@ public class ParserFactory {
 		
 		//first, look if we can find a direct way		
 		for(IParser parser : registeredParsers) {
-			Class[] supportedClasses = parser.getSupportedDataBindings();
-			for(Class clazz : supportedClasses){
+			Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+			for(Class<?> clazz : supportedClasses){
 				if(clazz.equals(requiredInputClass)) {
 					if(parser.isSupportedSchema(schema) &&	parser.isSupportedEncoding(encoding) && parser.isSupportedFormat(format)) {
 						LOGGER.info("Matching parser found: " + parser);
@@ -159,10 +157,6 @@ public class ParserFactory {
 		//TODO
 		return null;
 	}
-	
-//	public IParser getSimpleParser() {
-//		return (IParser)new SimpleGMLParser();
-//	}
 
 	public List<IParser> getAllParsers() {
 		return registeredParsers;

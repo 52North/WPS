@@ -5,9 +5,11 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralDateTimeBinding implements ILiteralData {
+public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4336688658437832346L;
 	private transient Date date;
 
 	public LiteralDateTimeBinding(Date date) {
@@ -32,7 +34,7 @@ public class LiteralDateTimeBinding implements ILiteralData {
 	}
 
 	@Override
-	public Class<?> getSupportedClass() {
+	public Class<Date> getSupportedClass() {
 		return Date.class;
 	}
 	

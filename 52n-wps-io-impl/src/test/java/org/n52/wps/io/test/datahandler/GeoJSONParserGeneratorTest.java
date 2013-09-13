@@ -43,7 +43,7 @@ import org.n52.wps.io.datahandler.parser.GeoJSONParser;
 public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerator> {
 	
 	@Test
-	public void testGenerator() {
+	public void testParseWriteGeoJSONPoint() {
 		
 		if(!isDataHandlerActive()){
 			return;
@@ -106,7 +106,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 	}
 	
 	@Test
-	public void testGeoJSONFeatureCollection(){
+	public void testParseWriteGeoJSONFeatureCollection(){
 		
 		String featureCollectionString = "{ \"type\": \"FeatureCollection\",                                       "+
 				"  \"features\": [                                                        "+
@@ -163,9 +163,82 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 		
 		assertTrue(theBinding.getPayload() != null);
 		
-	}
-	
+		try {
+			InputStream is = dataHandler.generateStream(theBinding, mimetype, null);
+			
+			IData theGeneratedParsedBinding = theParser.parse(is, mimetype,
+					null);
+			
+			if(!(theGeneratedParsedBinding instanceof GTVectorDataBinding)){
+				fail();
+			}
+			
+			try {
+				is.close();
+			} catch (IOException e) {
+				System.err.println("Failed to close InputStream containing input GeoJSON.");
+			}
+			
+			assertTrue(theBinding.getPayload() != null);
+			
+		} catch (IOException e) {
+			System.err.println("Failed to generate stream from GTVectorDataBinding.");
+		}
+		
+	}	
 
+	@Test
+	public void testParseWriteGeoJSONFeature(){
+		
+		String featureCollectionString = "{\"type\":\"Feature\", \"properties\":{}, \"geometry\":{\"type\":\"Polygon\", \"coordinates\":[[[56.390622854233, 29.90625500679], [67.640622854233, 49.59375500679], [82.406247854233, 39.75000500679], [69.749997854233, 23.57813000679], [56.390622854233, 29.90625500679]]]}, \"crs\":{\"type\":\"name\", \"properties\":{\"name\":\"EPSG:4326\"}}}";
+				
+		InputStream in = new ByteArrayInputStream(featureCollectionString.getBytes());
+		
+		GeoJSONParser theParser = new GeoJSONParser();
+
+		String mimetype = theParser.getSupportedFormats()[0];
+		
+		System.out.println("Trying to parse GeoJSON: " + featureCollectionString);
+		
+		IData theBinding = theParser.parse(in, mimetype,
+				null);
+		
+		if(!(theBinding instanceof GTVectorDataBinding)){
+			fail();
+		}
+
+		try {
+			in.close();
+		} catch (IOException e) {
+			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
+		}
+		
+		assertTrue(theBinding.getPayload() != null);
+		
+		try {
+			InputStream is = dataHandler.generateStream(theBinding, mimetype, null);
+			
+			IData theGeneratedParsedBinding = theParser.parse(is, mimetype,
+					null);
+			
+			if(!(theGeneratedParsedBinding instanceof GTVectorDataBinding)){
+				fail();
+			}
+			
+			try {
+				is.close();
+			} catch (IOException e) {
+				System.err.println("Failed to close InputStream containing input GeoJSON.");
+			}
+			
+			assertTrue(theBinding.getPayload() != null);
+			
+		} catch (IOException e) {
+			System.err.println("Failed to generate stream from GTVectorDataBinding.");
+		}
+		
+	}	
+	
 	@Override
 	protected void initializeDataHandler() {
 		dataHandler = new GeoJSONGenerator();		
