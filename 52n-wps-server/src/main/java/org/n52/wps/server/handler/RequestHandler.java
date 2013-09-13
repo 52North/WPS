@@ -151,6 +151,7 @@ public class RequestHandler {
 		}
 		else if (requestType.equalsIgnoreCase("Execute")) {
 			req = new ExecuteRequest(ciMap);
+			setResponseMimeType((ExecuteRequest)req);
 		} 
 		else if (requestType.equalsIgnoreCase("RetrieveResult")) {
 			req = new RetrieveResultRequest(ciMap);
@@ -192,8 +193,6 @@ public class RequestHandler {
 
 			// parse the InputStream to create a Document
 			doc = fac.newDocumentBuilder().parse(is);
-		
-		
 			
 			// Get the first non-comment child.
 			Node child = doc.getFirstChild();
@@ -260,11 +259,7 @@ public class RequestHandler {
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
 			req = new ExecuteRequest(doc);
-			if(req instanceof ExecuteRequest){
-				setResponseMimeType((ExecuteRequest)req);
-			}else{
-				this.responseMimeType = "text/xml";
-			}
+			setResponseMimeType((ExecuteRequest)req);
 		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("GetCapabilities")){
 			req = new CapabilitiesRequest(doc);
 			this.responseMimeType = "text/xml";

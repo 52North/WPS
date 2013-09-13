@@ -75,18 +75,17 @@ public class RawData extends ResponseData {
 			if(obj instanceof IBBOXData){
 				Envelope result = (Envelope) obj.getPayload();
 				String resultString  = "";
-				resultString = resultString + "<wps:BoundingBoxData ";
+				resultString = resultString + "<wps:BoundingBoxData xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" ";
 				if(result.getCoordinateReferenceSystem()!=null && result.getCoordinateReferenceSystem().getIdentifiers().size()>0){
 					String crs = result.getCoordinateReferenceSystem().getIdentifiers().iterator().next().toString();
 					resultString = resultString + "crs=\""+crs+"\"";
-				
-				}else{
-					resultString = resultString + "\">";
+					resultString = resultString + " dimensions=\""+result.getDimension()+"\"";					
 				}
+				resultString = resultString + ">";
 				double[] lowerCorner = result.getLowerCorner().getCoordinate();
 				double[] upperCorner = result.getUpperCorner().getCoordinate();
-				resultString = resultString +"<ows:LowerCorner>"+lowerCorner[0]+" "+lowerCorner[1]+"</ows:LowerCorner>";
-				resultString = resultString +"<ows:UpperCorner>"+upperCorner[0]+" "+upperCorner[1]+"</ows:UpperCorner>";
+				resultString = resultString +"<ows:LowerCorner xmlns:ows=\"http://www.opengis.net/ows/1.1\">"+lowerCorner[0]+" "+lowerCorner[1]+"</ows:LowerCorner>";
+				resultString = resultString +"<ows:UpperCorner xmlns:ows=\"http://www.opengis.net/ows/1.1\">"+upperCorner[0]+" "+upperCorner[1]+"</ows:UpperCorner>";
 				resultString = resultString+ "</wps:BoundingBoxData>";
 				InputStream is = new ByteArrayInputStream(resultString.getBytes());
 				return is;

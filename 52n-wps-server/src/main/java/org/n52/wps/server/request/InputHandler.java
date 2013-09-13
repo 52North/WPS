@@ -71,6 +71,7 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.GTReferenceEnvelope;
+import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -636,6 +637,7 @@ public class InputHandler {
 		String inputID = input.getIdentifier().getStringValue();
 		String parameter = input.getData().getLiteralData().getStringValue();
 		String xmlDataType = input.getData().getLiteralData().getDataType();
+		String uom = input.getData().getLiteralData().getUom();
 		
 		InputDescriptionType inputDesc = null;
 		for(InputDescriptionType tempDesc : this.processDesc.getDataInputs().getInputArray()) {
@@ -690,13 +692,19 @@ public class InputHandler {
 				}
 				
 			}
-		}
-		
+		}		
 		
 		if(parameterObj == null) {
 			throw new ExceptionReport("XML datatype as LiteralParameter is not supported by the server: dataType " + xmlDataType, 
 					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
+		
+		if(uom != null && !uom.equals("")){
+			if(parameterObj instanceof AbstractLiteralDataBinding){
+				((AbstractLiteralDataBinding)parameterObj).setUnitOfMeasurement(uom);
+			}
+		}
+		
 		//enable maxxoccurs of parameters with the same name.
 		if(inputData.containsKey(inputID)) {
 			List<IData> list = inputData.get(inputID);

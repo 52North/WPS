@@ -53,6 +53,7 @@ import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
@@ -899,7 +900,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 	private String parseLiteralInput(Class<? extends IData> iClass, Object value) {
 		String result = null;
 
-		List<Class<? extends ILiteralData>> easyLiterals = Arrays.asList(
+		List<Class<? extends AbstractLiteralDataBinding>> easyLiterals = Arrays.asList(
 				LiteralByteBinding.class, LiteralDoubleBinding.class,
 				LiteralFloatBinding.class, LiteralIntBinding.class,
 				LiteralLongBinding.class, LiteralShortBinding.class);

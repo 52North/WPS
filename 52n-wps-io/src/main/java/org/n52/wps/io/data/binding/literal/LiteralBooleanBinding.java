@@ -2,9 +2,11 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralBooleanBinding implements ILiteralData {
+public class LiteralBooleanBinding extends AbstractLiteralDataBinding {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8476435383089241416L;
 	private transient boolean payload;
 	
 	public LiteralBooleanBinding(boolean payload){
@@ -15,7 +17,7 @@ public class LiteralBooleanBinding implements ILiteralData {
 		return payload;
 	}
 
-	public Class getSupportedClass() {
+	public Class<Boolean> getSupportedClass() {
 		return Boolean.class;
 	}
 	

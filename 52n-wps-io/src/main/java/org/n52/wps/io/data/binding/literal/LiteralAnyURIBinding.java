@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralAnyURIBinding implements ILiteralData {
+public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1148340565647119514L;
 	private transient URI uri;
 
 	public LiteralAnyURIBinding(URI uri) {
@@ -23,7 +25,7 @@ public class LiteralAnyURIBinding implements ILiteralData {
 	}
 
 	@Override
-	public Class<?> getSupportedClass() {
+	public Class<URI> getSupportedClass() {
 		return URI.class;
 	}
 

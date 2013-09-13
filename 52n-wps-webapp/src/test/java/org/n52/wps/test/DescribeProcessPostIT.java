@@ -34,7 +34,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
             // parseXML(response);
         }
         catch (Exception e) {
@@ -55,7 +55,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
             // parseXML(response);
         }
         catch (Exception e) {
@@ -78,7 +78,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
             // parseXML(response);
         }
         catch (Exception e) {
@@ -101,7 +101,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
             // parseXML(response);
         }
         catch (Exception e) {
@@ -125,7 +125,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
         }
         catch (IOException e) {
             fail(e.getMessage());
@@ -145,7 +145,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
         }
         catch (IOException e) {
             fail(e.getMessage());
@@ -164,7 +164,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
         }
         catch (IOException e) {
             fail(e.getMessage());
@@ -183,7 +183,7 @@ public class DescribeProcessPostIT {
 
         String response = "";
         try {
-            response = PostClient.sendRequest(this.url, payload);
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
         }
         catch (IOException e) {
             fail(e.getMessage());
