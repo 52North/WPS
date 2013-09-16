@@ -123,4 +123,11 @@
 		<put-attribute name="description" value="An error was encountered" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/error.jsp"></put-attribute>
 	</definition>
+
+	<definition name="backup" extends="base">
+		<put-attribute name="title" value="Backup and Restore - 52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="Backup and Restore" type="string" />
+		<put-attribute name="description" value="" type="Backup and restore your configurations" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/backup.jsp"></put-attribute>
+	</definition>
 </tiles-definitions>

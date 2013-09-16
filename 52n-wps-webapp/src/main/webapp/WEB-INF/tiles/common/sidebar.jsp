@@ -12,8 +12,9 @@
 		<li class="service_identification"><a href="<c:url value="/service_identification" />">Service Identification</a></li>
 		<li class="service_provider"><a href="<c:url value="/service_provider" />">Service Provider</a></li>
 		<li class="nav-header">Testing</li>
-		<li><a href="<c:url value="/WebProcessingService?Request=GetCapabilities&Service=WPS" />">Get Capabilities</a></li>
 		<li class="test_client"><a href="<c:url value="/test_client" />">Test Client</a></li>
+		<li class="divider"></li>
+		<li class="backup"><a href="<c:url value="/backup" />">Backup &amp; Restore</a></li>
 	</ul>
 </div>
 <c:set var="activeMenu" value="${requestScope['javax.servlet.forward.servlet_path']}" />

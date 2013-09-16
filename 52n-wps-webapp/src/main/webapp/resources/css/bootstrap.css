@@ -4848,7 +4848,7 @@ td.visible-print {
 	*margin: -5px 0 5px;
 	overflow: hidden;
 	background-color: #e5e5e5;
-	border-bottom: 1px solid #ffffff;
+	border-bottom: 1px solid #e5e5e5;
 }
 /* end of copied */
 
@@ -4986,5 +4986,11 @@ pre.editor {
 	font-size: 10pt;
 	font-family: monospace;
 	padding-top: .4em;
+}
+/* end of added */
+
+/* Added */
+.topSpace {
+	padding-top: 15px;
 }
 /* end of added */
