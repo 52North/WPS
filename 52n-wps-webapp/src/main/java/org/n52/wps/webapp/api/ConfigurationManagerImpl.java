@@ -24,6 +24,7 @@
 
 package org.n52.wps.webapp.api;
 
+import org.n52.wps.webapp.service.BackupService;
 import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.service.LogConfigurationsService;
@@ -45,6 +46,9 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
 	private LogConfigurationsService logConfigurationsService;
+	
+	@Autowired
+	private BackupService backupService;
 
 	@Override
 	public ConfigurationService getConfigurationServices() {
@@ -64,5 +68,10 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 	@Override
 	public LogConfigurationsService getLogConfigurationsServices() {
 		return logConfigurationsService;
+	}
+
+	@Override
+	public BackupService getBackupServices() {
+		return backupService;
 	}
 }

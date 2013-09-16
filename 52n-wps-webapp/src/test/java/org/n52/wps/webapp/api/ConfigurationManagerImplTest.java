@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.n52.wps.webapp.service.BackupService;
 import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.service.LogConfigurationsService;
@@ -53,6 +54,9 @@ public class ConfigurationManagerImplTest {
 
 	@Mock
 	private LogConfigurationsService logConfigurationsService;
+	
+	@Mock
+	private BackupService backupService;
 		
 	@Before
 	public void setup() {
@@ -83,5 +87,10 @@ public class ConfigurationManagerImplTest {
 	@Test
 	public void getLogConfigurationsServices() {
 		assertNotNull(configurationManager.getLogConfigurationsServices());
+	}
+	
+	@Test
+	public void getLogBackupServices() {
+		assertNotNull(configurationManager.getBackupServices());
 	}
 }

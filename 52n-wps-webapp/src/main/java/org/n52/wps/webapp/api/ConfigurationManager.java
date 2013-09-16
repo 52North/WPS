@@ -24,6 +24,7 @@
 
 package org.n52.wps.webapp.api;
 
+import org.n52.wps.webapp.service.BackupService;
 import org.n52.wps.webapp.service.CapabilitiesService;
 import org.n52.wps.webapp.service.ConfigurationService;
 import org.n52.wps.webapp.service.LogConfigurationsService;
@@ -53,4 +54,10 @@ public interface ConfigurationManager {
 	 * @return {@code LogConfigurationsService}
 	 */
 	LogConfigurationsService getLogConfigurationsServices();
+	
+	/**
+	 * Access backup and restore services and operations
+	 * @return {@code BackupService}
+	 */
+	BackupService getBackupServices();
 }
