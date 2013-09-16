@@ -376,8 +376,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			LOGGER.debug("Value '{}' has been set for entry '{}' in module '{}'.", value, entry.getKey(), module
 					.getClass().getName());
 		} catch (WPSConfigurationException e) {
-			// only throw the null exception if the entry is required "not allowed to be null"
-			if (e.getCause() != null && e.getCause().toString().contains("NullPointerException")) {
+			// only show an error if the entry is required "not allowed to be empty"
+			if (e.getMessage() != null && e.getMessage().equals("The field cannot be empty.")) {
 				if (entry.isRequired()) {
 					e.setField(entry.getKey());
 					throw e;

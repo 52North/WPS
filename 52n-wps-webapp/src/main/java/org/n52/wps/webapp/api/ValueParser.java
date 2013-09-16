@@ -92,7 +92,7 @@ public class ValueParser {
 
 	private void nullOrEmptyCheck(Object value) throws WPSConfigurationException {
 		if (value == null || value.toString().trim().isEmpty()) {
-			throw new WPSConfigurationException(new NullPointerException("The field cannot be empty."));
+			throw new WPSConfigurationException("The field cannot be empty.");
 		}
 	}
 }
