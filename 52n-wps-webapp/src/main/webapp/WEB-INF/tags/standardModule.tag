@@ -40,21 +40,30 @@
 						<%--  Create an input for each configuration entry --%>
 						<c:forEach var="configurationEntry" items="${configurationModule.value.configurationEntries}">
 							<div id="${configurationEntry.key}" class="form-group">
-								<label class="col-lg-3 control-label">${configurationEntry.title}</label>
-								<div class="col-lg-7">
 
-									<%-- If the entry is boolean, display a checkbox, otherwise, display a text input --%>
-									<c:choose>
-										<c:when test="${configurationEntry.type eq 'BOOLEAN'}">
-											<input name="value" id='valueHidden' type='hidden' value='false'>
-											<input name="value" type="checkbox" value="true" <c:if test="${configurationEntry.value}">checked</c:if> />
-										</c:when>
-										<c:otherwise>
+								<%-- If the entry is boolean, display a checkbox, else, display a text input --%>
+								<c:choose>
+									<c:when test="${configurationEntry.type eq 'BOOLEAN'}">
+										<div class="col-lg-offset-3 col-lg-7">
+											<div class="checkbox">
+												<label>
+													<input name="value" id='valueHidden' type='hidden' value='false'>
+													<input name="value" type="checkbox" value="true" <c:if test="${configurationEntry.value}">checked</c:if> />
+													${configurationEntry.title}
+												</label>
+												<span class="help-block"> ${configurationEntry.description} </span>
+											</div>
+										</div>
+									</c:when>
+									<c:otherwise>
+										<label class="col-lg-3 control-label">${configurationEntry.title}</label>
+										<div class="col-lg-7">
 											<input name="value" class="form-control" type="text" value="${configurationEntry.value}" />
-										</c:otherwise>
-									</c:choose>
-									<span class="help-block"> ${configurationEntry.description} </span>
-								</div>
+											<span class="help-block"> ${configurationEntry.description} </span>
+										</div>
+									</c:otherwise>
+								</c:choose>
+
 
 								<%-- Hidden fields to identify and process the entry and module --%>
 								<input name="key" type="hidden" value="${configurationEntry.key}" />
