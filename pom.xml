@@ -29,7 +29,7 @@
 	</licenses>
 	<inceptionYear>2007</inceptionYear>
 	<scm>
-<!-- 		 Specification of the Source-Content-Managementsystem -->
+		<!-- Specification of the Source-Content-Managementsystem -->
 		<connection>scm:git:git://github.com/52North/WPS.git</connection>
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
@@ -66,7 +66,7 @@
 			<id>OpenGEO</id>
 			<name>opengeo repository</name>
 			<url>http://repo.opengeo.org</url>
-		</repository>    
+		</repository>
 	</repositories>
 	<build>
 		<pluginManagement>
@@ -96,7 +96,7 @@
 					<connectionType>connection</connectionType>
 					<runChangeLog>true</runChangeLog>
 					<goalsDirectory>./..</goalsDirectory>
-					<!--checkoutDirectory>${basedir}/src</checkoutDirectory-->
+					<!--checkoutDirectory>${basedir}/src</checkoutDirectory -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -131,8 +131,8 @@
 		<module>52n-wps-algorithm</module>
 		<module>52n-wps-algorithm-impl</module>
 		<module>52n-wps-database</module>
-		<!-- module>52n-wps-unicore</module-->
-		<!-- module>52n-wps-gridgain</module-->
+		<!-- module>52n-wps-unicore</module -->
+		<!-- module>52n-wps-gridgain</module -->
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
 		<module>52n-wps-sextante</module>
@@ -143,7 +143,7 @@
 		<module>52n-wps-python</module>
 		<module>52n-wps-r</module>
 		<module>52n-wps-mc</module>
-		<!--  module>52n-wps-ilwis</module -->
+		<!-- module>52n-wps-ilwis</module -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -179,7 +179,7 @@
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-            
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
@@ -276,14 +276,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
+				<artifactId>gt-epsg-wkt</artifactId>
 				<version>${geotools.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>hsqldb</groupId>
-						<artifactId>hsqldb</artifactId>
-					</exclusion>
-				</exclusions>
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
@@ -354,7 +348,7 @@
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<!--<version>1.3.1</version>-->
+				<!--<version>1.3.1</version> -->
 				<version>2.0</version>
 			</dependency>
 			<dependency>
@@ -535,7 +529,7 @@
 				<groupId>stax</groupId>
 				<artifactId>stax-api</artifactId>
 				<version>1.0.1</version>
-			</dependency>	
+			</dependency>
 			<dependency>
 				<groupId>net.java.dev.stax-utils</groupId>
 				<artifactId>stax-utils</artifactId>
@@ -562,7 +556,7 @@
 						<groupId>log4j</groupId>
 					</exclusion>
 				</exclusions>
-			</dependency>		
+			</dependency>
 			<dependency>
 				<groupId>org.n52.mc</groupId>
 				<artifactId>mc-xml-processors</artifactId>
@@ -574,12 +568,12 @@
 				<scope>runtime</scope>
 				<version>1.6.4</version>
 			</dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.2</version>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.2</version>
+			</dependency>
+			<dependency>
 				<groupId>edu.umn.gis</groupId>
 				<artifactId>mapscript</artifactId>
 				<version>6.0.3</version>
@@ -634,7 +628,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grid</artifactId>
 				<version>${project.version}</version>
-			</dependency>            
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-webapp</artifactId>
@@ -649,7 +643,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-sextante</artifactId>
 				<version>${project.version}</version>
-			</dependency> 
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>
