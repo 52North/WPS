@@ -34,133 +34,160 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FilenameUtils;
+import org.hsqldb.lib.tar.DbBackup;
+import org.hsqldb.lib.tar.TarMalformatException;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service("backupService")
 public class BackupServiceImpl implements BackupService {
-	private final static String ZIP_FILE_PATH = "/resources";
-	private final static String DATABASE_FOLDER_PATH = "WEB-INF/classes/db/data";
-	private final static String LOG_PATH = "WEB-INF/classes/logback.xml";
-	private final static String WPS_CAPABILITIES_SKELETON_PATH = "config/wpsCapabilitiesSkeleton.xml";
+	public final static String RESOURCES_FOLDER = "resources";
+	public final static String DATABASE_FOLDER = "WEB-INF/classes/db/data";
+	public final static String LOG = "WEB-INF/classes/logback.xml";
+	public final static String WPS_CAPABILITIES_SKELETON = "config/wpsCapabilitiesSkeleton.xml";
 
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
+
+	@Autowired
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	private final Logger LOGGER = LoggerFactory.getLogger(BackupService.class);
 
 	@Override
 	public String createBackup(String[] itemsToBackup) throws IOException {
+		LOGGER.debug("Starting backup process.");
+		String zipPath = null;
+		if (itemsToBackup != null && itemsToBackup.length > 0) {
+			// Zip archive will be saved as WPSConfig_{date}.zip (e.g. WPSConfig_2013-09-12.zip)
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			zipPath = getResourcesFolderPath() + File.separator + "WPSBackup_" + format.format(new Date()) + ".zip";
+			ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipPath));
 
-		// Zip archive will be saved as WPSConfig_date.zip (e.g. WPSConfig_2013-09-12.zip)
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		String zipPath = resourcePathUtil.getWebAppResourcePath(ZIP_FILE_PATH) + File.separator + "WPSBackup_"
-				+ format.format(new Date()) + ".zip";
-		ZipOutputStream zipOutput = new ZipOutputStream(new FileOutputStream(zipPath));
+			String logAbsolutePath = getLogFilePath();
+			String wpsCapabilitiesSkeletonAbsolutePath = getCapabilitiesPath();
 
-		String databaseAbsolutePath = resourcePathUtil.getWebAppResourcePath(DATABASE_FOLDER_PATH);
-		String logAbsolutePath = resourcePathUtil.getWebAppResourcePath(LOG_PATH);
-		String wpsCapabilitiesSkeletonAbsolutePath = resourcePathUtil
-				.getWebAppResourcePath(WPS_CAPABILITIES_SKELETON_PATH);
-
-		for (String s : itemsToBackup) {
-			if (s.equals("database")) {
-				LOGGER.debug("Trying to backup '{}'.", databaseAbsolutePath);
-				backupDatabase(new File(databaseAbsolutePath), zipOutput);
+			for (String s : itemsToBackup) {
+				if (s.equals("database")) {
+					LOGGER.debug("Trying to backup the database.");
+					backupDatabase(zipOutput);
+				}
+				if (s.equals("log")) {
+					LOGGER.debug("Trying to backup '{}'.", logAbsolutePath);
+					writeToZip(new File(logAbsolutePath), zipOutput);
+				}
+				if (s.equals("wpscapabilities")) {
+					LOGGER.debug("Trying to backup '{}'.", wpsCapabilitiesSkeletonAbsolutePath);
+					writeToZip(new File(wpsCapabilitiesSkeletonAbsolutePath), zipOutput);
+				}
 			}
-			if (s.equals("log")) {
-				LOGGER.debug("Trying to backup '{}'.", logAbsolutePath);
-				writeToZip(new File(logAbsolutePath), zipOutput);
-			}
-			if (s.equals("wpscapabilities")) {
-				LOGGER.debug("Trying to backup '{}'.", wpsCapabilitiesSkeletonAbsolutePath);
-				writeToZip(new File(wpsCapabilitiesSkeletonAbsolutePath), zipOutput);
-			}
+			zipOutput.close();
+			LOGGER.debug("Backup file '{}' is created.", zipPath);
 		}
-		zipOutput.close();
-
 		return zipPath;
 	}
 
 	@Override
-	public void restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException {
-		ZipInputStream zipInput = new ZipInputStream(zipFile);
-		ZipEntry entry = null;
-		String databaseAbsolutePath = resourcePathUtil.getWebAppResourcePath(DATABASE_FOLDER_PATH);
-		String logAbsolutePath = resourcePathUtil.getWebAppResourcePath(LOG_PATH);
-		String wpsCapabilitiesSkeletonAbsolutePath = resourcePathUtil
-				.getWebAppResourcePath(WPS_CAPABILITIES_SKELETON_PATH);
-		boolean itemsFound = false;
-		while ((entry = zipInput.getNextEntry()) != null) {
-			if (entry.getName().contains("data")) {
-				LOGGER.debug("Trying to restore '{}'.", databaseAbsolutePath);
-				File destinationFile = new File(databaseAbsolutePath + File.separator + FilenameUtils.getName(entry.getName()));
-				extractToFile(destinationFile, zipInput);
-				itemsFound = true;
+	public int restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException {
+		LOGGER.debug("Starting restore process.");
+		int numberOfItemsRestored = 0;
+		if (zipFile != null) {
+			ZipInputStream zipInput = new ZipInputStream(zipFile);
+			ZipEntry entry = null;
+			while ((entry = zipInput.getNextEntry()) != null) {
+				if (entry.getName().endsWith(".tar.gz")) {
+					LOGGER.debug("Trying to restore the database from '{}'.", entry.getName());
+					extractToFile(new File(getResourcesFolderPath() + "/" + entry.getName()), zipInput);
+					restoreDatabase(entry.getName());
+					numberOfItemsRestored++;
+				}
+				if (entry.getName().endsWith("logback.xml")) {
+					LOGGER.debug("Trying to restore '{}'.", entry.getName());
+					extractToFile(new File(getLogFilePath()), zipInput);
+					numberOfItemsRestored++;
+				}
+				if (entry.getName().endsWith("wpsCapabilitiesSkeleton.xml")) {
+					LOGGER.debug("Trying to restore '{}'.", entry.getName());
+					extractToFile(new File(getCapabilitiesPath()), zipInput);
+					numberOfItemsRestored++;
+				}
 			}
-			if (entry.getName().equals("logback.xml")) {
-				LOGGER.debug("Trying to restore '{}'.", logAbsolutePath);
-				extractToFile(new File(logAbsolutePath), zipInput);
-				itemsFound = true;
-			}
-			if (entry.getName().equals("wpsCapabilitiesSkeleton.xml")) {
-				LOGGER.debug("Trying to restore '{}'.", wpsCapabilitiesSkeletonAbsolutePath);
-				extractToFile(new File(wpsCapabilitiesSkeletonAbsolutePath), zipInput);
-				itemsFound = true;
+			zipInput.close();
+
+			// if no items were found, the Zip archive is not a valid WPSBackup
+			if (numberOfItemsRestored < 1) {
+				throw new WPSConfigurationException("Not a valid WPSBackup Zip archive.");
 			}
 		}
-		zipInput.close();
+		LOGGER.debug("Restored '{}' items.", numberOfItemsRestored);
+		return numberOfItemsRestored;
+	}
 
-		// if no items were found, the Zip archive is not a valid WPSBackup
-		if (!itemsFound) {
-			throw new WPSConfigurationException("Not a valid WPSBackup Zip archive.");
+	/*
+	 * Backup the HSQLDB database to a tar.gz file
+	 */
+	private void backupDatabase(ZipOutputStream zipOutput) throws IOException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+		// Create a database backup with the following name DbBackup_{date}.tar.gz
+		String tarPath = getResourcesFolderPath() + File.separator + "DbBackup_" + format.format(new Date())
+				+ ".tar.gz";
+		namedParameterJdbcTemplate.getJdbcOperations().execute("BACKUP DATABASE TO '" + tarPath + "'");
+		File dbTarFile = new File(tarPath);
+		writeToZip(dbTarFile, zipOutput);
+
+		// The tar file has been included in the overall backup zip file, so delete it
+		if (dbTarFile.exists()) {
+			dbTarFile.delete();
 		}
 	}
 
 	/*
-	 * Backup the database folder located at provided folder path
+	 * Restore the database
 	 */
-	private void backupDatabase(File folder, ZipOutputStream zipOutput) throws IOException {
-		// ignore temp subdirectories and lck files
-		for (File file : folder.listFiles()) {
-			if (file.isDirectory()) {
-				continue;
-			}
-			if (FilenameUtils.getExtension(file.getName()).equals("lck")) {
-				continue;
-			}
-			writeToZip(file, zipOutput);
+	private void restoreDatabase(String tarFileName) throws IOException {
+		String tarPath = getResourcesFolderPath() + File.separator + tarFileName;
+		String databaseFolder = getDatabaseFolderPath();
+
+		// Must shutdown the database first before restoring
+		namedParameterJdbcTemplate.getJdbcOperations().execute("SHUTDOWN SCRIPT");
+		try {
+			DbBackup.main(new String[] { "--extract", "--overwrite", tarPath, databaseFolder });
+		} catch (TarMalformatException e) {
+			LOGGER.error("Unable to restore the database from the supplied tar.gz file: ", e);
+		} finally {
+			// Delete the tag.gz file
+			new File(tarPath).delete();
 		}
 	}
-	
+
 	private void writeToZip(File file, ZipOutputStream zipOutput) throws IOException {
-		FileInputStream input = new FileInputStream(file);
-		
-		// if it is a database file, add it to a data folder within the Zip archive
-		if (file.getAbsolutePath().contains("data")) {
-			zipOutput.putNextEntry(new ZipEntry("data/" + file.getName()));
-		} else {
+		FileInputStream input = null;
+		if (file.exists()) {
+			input = new FileInputStream(file);
 			zipOutput.putNextEntry(new ZipEntry(file.getName()));
-		}
 
-		// write to Zip
-		byte[] buffer = new byte[1024];
-		int bytesRead;
-		while ((bytesRead = input.read(buffer)) > 0) {
-			zipOutput.write(buffer, 0, bytesRead);
-		}
+			// write to Zip
+			byte[] buffer = new byte[1024];
+			int bytesRead;
+			while ((bytesRead = input.read(buffer)) > 0) {
+				zipOutput.write(buffer, 0, bytesRead);
+			}
 
-		input.close();
+			input.close();
+		}
 		zipOutput.closeEntry();
-
 	}
 
 	private void extractToFile(File file, ZipInputStream zipInput) throws IOException {
+		if (!file.exists()) {
+			file.createNewFile();
+		}
 		FileOutputStream output = new FileOutputStream(file);
 
 		// write to file
@@ -172,5 +199,21 @@ public class BackupServiceImpl implements BackupService {
 		}
 		output.close();
 		zipInput.closeEntry();
+	}
+
+	private String getResourcesFolderPath() {
+		return resourcePathUtil.getWebAppResourcePath(RESOURCES_FOLDER);
+	}
+
+	private String getDatabaseFolderPath() {
+		return resourcePathUtil.getWebAppResourcePath(DATABASE_FOLDER);
+	}
+
+	private String getLogFilePath() {
+		return resourcePathUtil.getWebAppResourcePath(LOG);
+	}
+
+	private String getCapabilitiesPath() {
+		return resourcePathUtil.getWebAppResourcePath(WPS_CAPABILITIES_SKELETON);
 	}
 }

@@ -14,7 +14,9 @@
 					<input type="checkbox" name="backupSelections" value="database">
 					Server, Repositories, Generators, Parsers, and Users
 				</label>
-				<span class="help-block">Backup "/WEB-INF/classes/db/data"</span>
+				<span class="help-block">
+					Backup "/WEB-INF/classes/db/data".<br>Note: The database will be locked during backup.
+				</span>
 			</div>
 			<div class="checkbox topSpace">
 				<label>
@@ -43,6 +45,8 @@
 	</div>
 	<div class="tab-pane" id="restore">
 		<p class="topSpace">The content of the uploaded Zip archive will overwrite current configurations.</p>
+		<p class="text-warning">WARNING: If you're restoring the database, you MUST restart the application to restart the
+			database and resync the values.</p>
 		<form id="upload" class="form-horizontal" method="POST" action="<c:url value="/backup/restore" />"
 			enctype="multipart/form-data">
 			<div class="form-group">
@@ -107,7 +111,7 @@
 		$(".form-group").each(function() {
 			$(this).removeClass("has-error");
 		});
-		
+
 		$.ajax({
 			url : url,
 			data : formData,

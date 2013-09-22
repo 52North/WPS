@@ -38,17 +38,18 @@ public interface BackupService {
 	 * @throws IOException
 	 *             if an item cannot be found in the expected path
 	 */
-	public String createBackup(String[] itemsToBackup) throws IOException;
+	String createBackup(String[] itemsToBackup) throws IOException;
 
 	/**
 	 * Extract a created Zip archive and overwrite configuration files
 	 * 
 	 * @param zipFile
 	 *            the backup Zip archive inputstream
+	 * @return the number of items restored
 	 * @throws IOException
 	 *             if the archive cannot be extracted or the content cannot be written
 	 * @throws WPSConfigurationException
 	 *             if the archive contains invalid configuration files
 	 */
-	public void restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException;
+	int restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException;
 }
