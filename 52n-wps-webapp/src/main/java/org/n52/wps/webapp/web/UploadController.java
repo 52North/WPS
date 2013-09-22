@@ -14,11 +14,11 @@ import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +34,9 @@ public class UploadController {
 	@Autowired
 	private ConfigurationManager configurationManager;
 
+	@Autowired
+	private ResourcePathUtil resourcePathUtil;
+
 	/**
 	 * Handle upload requests, forward to the appropriate method based on the type of file uploaded
 	 * 
@@ -43,7 +46,7 @@ public class UploadController {
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
 	@ResponseBody
-	public ValidationResponse upload(MultipartHttpServletRequest request, HttpServletResponse response, Model model) {
+	public ValidationResponse upload(MultipartHttpServletRequest request, HttpServletResponse response) {
 
 		ValidationResponse validationResponse = new ValidationResponse();
 		List<FieldError> listOfErros = new ArrayList<FieldError>();
@@ -70,11 +73,9 @@ public class UploadController {
 	 * Handle the uploading of process and process description.
 	 */
 	private ValidationResponse uploadProcess(MultipartHttpServletRequest request, HttpServletResponse response) {
-
 		ValidationResponse validationResponse = new ValidationResponse();
 		List<FieldError> listOfErros = new ArrayList<FieldError>();
 		validationResponse.setErrorMessageList(listOfErros);
-
 		MultipartFile java = request.getFile("javaFile");
 		MultipartFile xml = request.getFile("xmlFile");
 		String savePath = null;
@@ -169,17 +170,18 @@ public class UploadController {
 	 * Write & save the Java file
 	 */
 	private String saveJava(MultipartFile java, HttpServletRequest request) throws IOException {
+		LOGGER.debug("Trying to upload '{}'.", java.getOriginalFilename());
 
 		// base directory
-		StringBuilder directoryPath = new StringBuilder(request.getSession().getServletContext()
-				.getRealPath("/WEB-INF/classes/uploaded"));
+		StringBuilder directoryPath = new StringBuilder(
+				resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes/uploaded"));
 
 		// try to get the package name from the file, read line by line
-		File file = new File(java.getOriginalFilename());
+		File tempFile = new File(java.getOriginalFilename());
 		String packageName = null;
 
-		FileUtils.writeByteArrayToFile(file, java.getBytes());
-		List<String> lines = FileUtils.readLines(file);
+		FileUtils.writeByteArrayToFile(tempFile, java.getBytes());
+		List<String> lines = FileUtils.readLines(tempFile);
 
 		// find the first line with the word package at it's beginning
 		for (String line : lines) {
@@ -198,7 +200,9 @@ public class UploadController {
 		}
 
 		// copy the file to the final directory
-		FileUtils.copyFileToDirectory(file, new File(directoryPath.toString()));
+		FileUtils.copyFileToDirectory(tempFile, new File(directoryPath.toString()));
+		LOGGER.info("Uploaded file saved in '{}'.", directoryPath.toString());
+		tempFile.delete();
 		return directoryPath.toString();
 	}
 
@@ -207,8 +211,12 @@ public class UploadController {
 	 */
 	private void saveXml(MultipartFile xml, String savePath) throws IOException {
 		if (xml != null) {
-			File file = new File(savePath + "/" + xml.getOriginalFilename());
-			FileUtils.writeByteArrayToFile(file, xml.getBytes());
+			LOGGER.debug("Trying to upload '{}'.", xml.getOriginalFilename());
+			String xmlPath = savePath + "/" + xml.getOriginalFilename();
+			if (xml != null) {
+				FileUtils.writeByteArrayToFile(new File(xmlPath), xml.getBytes());
+			}
+			LOGGER.info("Uploaded file saved in '{}'.", xmlPath);
 		}
 	}
 
@@ -217,6 +225,7 @@ public class UploadController {
 	 */
 	private void saveRScript(MultipartFile rScript, HttpServletRequest request) throws WPSConfigurationException,
 			IOException {
+		LOGGER.debug("Trying to upload '{}'.", rScript.getOriginalFilename());
 
 		// check if the user entered a process name
 		String processName = null;
@@ -250,12 +259,15 @@ public class UploadController {
 					"Script_Dir");
 			String scriptDirectory = configurationManager.getConfigurationServices().getConfigurationEntryValue(module,
 					entry, String.class);
-			directoryPath = request.getSession().getServletContext().getRealPath(scriptDirectory);
+			directoryPath = resourcePathUtil.getWebAppResourcePath(scriptDirectory);
 		} catch (NullPointerException ex) {
 			throw new WPSConfigurationException(ex);
 		}
 
-		File file = new File(directoryPath + "/" + fileName);
+		String rScriptPath = directoryPath + "/" + fileName;
+		File file = new File(rScriptPath);
 		FileUtils.writeByteArrayToFile(file, rScript.getBytes());
+
+		LOGGER.info("Uploaded file saved in '{}'.", rScriptPath);
 	}
 }
