@@ -27,6 +27,10 @@ package org.n52.wps.webapp.dao;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
+/**
+ * Read and write to/from the capabilities configuration file to/from {@link ServiceIdentification} and
+ * {@link ServiceProvider} objects.
+ */
 public interface CapabilitiesDAO {
 	/**
 	 * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}

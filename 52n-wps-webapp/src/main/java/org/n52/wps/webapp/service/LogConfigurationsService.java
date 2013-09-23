@@ -24,26 +24,24 @@
 
 package org.n52.wps.webapp.service;
 
-import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.entities.LogConfigurations;
 
+/**
+ * Used for configuring log settings. The interface gets and saves {@link LogConfigurations} object.
+ */
 public interface LogConfigurationsService {
 	/**
 	 * Get the {@code LogConfigurations} object
 	 * 
 	 * @return Log configurations object
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be retrieved
 	 */
 	LogConfigurations getLogConfigurations();
-	
+
 	/**
 	 * Save a {@code LogConfigurations} object to log file
 	 * 
 	 * @param logConfigurations
 	 *            the log configurations object
-	 * @throws WPSConfigurationException
-	 *             if the file cannot be saved
 	 */
 	void saveLogConfigurations(LogConfigurations logConfigurations);
 }

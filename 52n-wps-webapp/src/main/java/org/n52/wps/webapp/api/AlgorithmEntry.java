@@ -24,6 +24,9 @@
 
 package org.n52.wps.webapp.api;
 
+/**
+ * Used by repository {@link ConfigurationModule} implementations to create a list of algorithms they contain.
+ */
 public class AlgorithmEntry {
 	private String algorithm;
 	private boolean active;

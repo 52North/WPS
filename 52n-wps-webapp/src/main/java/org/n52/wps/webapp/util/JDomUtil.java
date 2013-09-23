@@ -37,7 +37,9 @@ import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
+/**
+ * Parse and write to and from XML files.
+ */
 @Component
 public class JDomUtil {
 

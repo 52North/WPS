@@ -31,6 +31,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Used by {@link ConfigurationModule} implementations to pass a configuration entry value to a setter method. A setter
+ * method should be annotated with the key of the configuration entry to get its value.
+ * <p>
+ * Example:
+ * </p>
+ * 
+ * <pre>
+ * <code>
+ * private String stringMember;
+ * 
+ * // a configuration entry with a 'test.string.key' key;
+ * 
+ * {@literal @}ConfigurationKey(key = "test.string.key")
+ * public void setStringMember(String stringMember) {
+ * 	  this.stringMember = stringMember;
+ * }
+ * </code>
+ * </pre>
+ */
 @Inherited
 @Documented
 @Target(ElementType.METHOD)

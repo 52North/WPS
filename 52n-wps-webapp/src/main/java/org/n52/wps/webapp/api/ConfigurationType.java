@@ -24,11 +24,16 @@
 
 package org.n52.wps.webapp.api;
 
+/**
+ * User by {@link ConfigurationEntry<T>} implementations to specify their type. Each type has its own class.
+ * 
+ * @see StringConfigurationEntry
+ * @see IntegerConfigurationEntry
+ * @see BooleanConfigurationEntry
+ * @see DoubleConfigurationEntry
+ * @see FileConfigurationEntry
+ * @see URIConfigurationEntry
+ */
 public enum ConfigurationType {
-	INTEGER,
-	FILE,
-	STRING,
-	URI,
-	DOUBLE,
-	BOOLEAN
+	INTEGER, FILE, STRING, URI, DOUBLE, BOOLEAN
 }

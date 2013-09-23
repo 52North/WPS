@@ -44,6 +44,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+/**
+ * Handles URI requests and mapping for the backup & restore pages.
+ */
 @Controller
 @RequestMapping("backup")
 public class BackupController {

@@ -24,15 +24,15 @@
 
 package org.n52.wps.webapp.api;
 
+/**
+ * Used to throw custom exceptions. The class can hold the field that caused the exception.
+ */
 public class WPSConfigurationException extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1311630308994476529L;
 
 	private String field;
-	
+
 	public WPSConfigurationException() {
 		super();
 	}

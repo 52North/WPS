@@ -39,6 +39,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/**
+ * An implementation for the {@link LogConfigurationsDAO} interface. This implementation uses {@code JDom} to parse the
+ * {@code lobback.xml} file.
+ */
 @Repository
 public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 

@@ -32,6 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * An implementation for the {@link UserService} interface. This implementation uses the {@link UserDAO} for database
+ * operations.
+ */
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
@@ -58,7 +62,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void insertUser(User user) {
 		userDAO.insertUser(user);
-		LOGGER.debug("New user '" + user.getUsername() + "' with role '" + user.getRole() + "' has been inserted.");
+		LOGGER.debug("New user '{}' with role '{}' has been inserted.", user.getUsername(), user.getRole());
 	}
 
 	@Override
@@ -66,7 +70,7 @@ public class UserServiceImpl implements UserService {
 		User userToUpdate = userDAO.getUserById(user.getUserId());
 		if (userToUpdate != null) {
 			userDAO.updateUser(user);
-			LOGGER.debug("User '" + user.getUsername() + "' with role '" + user.getRole() + "' has been updated.");
+			LOGGER.debug("New user '{}' with role '{}' has been updated.", user.getUsername(), user.getRole());
 		}
 	}
 
@@ -75,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		User user = userDAO.getUserById(userId);
 		if (user != null) {
 			userDAO.deleteUser(userId);
-			LOGGER.debug("User '" + user.getUsername() + "' with role '" + user.getRole() + "' has been deleted.");
+			LOGGER.debug("New user '{}' with role '{}' has been deleted.", user.getUsername(), user.getRole());
 		}
 	}
 

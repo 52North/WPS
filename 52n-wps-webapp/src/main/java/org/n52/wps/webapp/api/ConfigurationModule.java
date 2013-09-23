@@ -28,6 +28,10 @@ import java.util.List;
 
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
+/**
+ * Configuration modules in the application need to implement this interface to recognized and added to the application.
+ * Spring will scan the context for any class implementing this interface and register it as a configuration module.
+ */
 public interface ConfigurationModule {
 	/**
 	 * The name of the module which will appear on the user interface. (e.g. Grass Repository)

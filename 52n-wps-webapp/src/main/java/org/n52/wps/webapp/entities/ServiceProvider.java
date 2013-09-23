@@ -26,7 +26,12 @@ package org.n52.wps.webapp.entities;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-
+/**
+ * Holds parsed service provider values.
+ * 
+ * @see CapabilitiesService
+ * @see CapabilitiesDAO
+ */
 public class ServiceProvider  {
 
 	private final String blankErrorMessage = "Field cannot be blank.";

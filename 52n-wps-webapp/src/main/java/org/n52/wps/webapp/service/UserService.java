@@ -26,7 +26,9 @@ package org.n52.wps.webapp.service;
 import java.util.List;
 
 import org.n52.wps.webapp.entities.User;
-
+/**
+ * Used for configuring and managing users.
+ */
 public interface UserService {
 
 	/**

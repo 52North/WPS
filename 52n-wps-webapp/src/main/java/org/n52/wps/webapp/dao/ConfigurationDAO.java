@@ -27,6 +27,9 @@ package org.n52.wps.webapp.dao;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationModule;
 
+/**
+ * CRUD operations on configuration modules, entries, and values to the underlying datastore.
+ */
 public interface ConfigurationDAO {
 
 	/**

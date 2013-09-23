@@ -27,6 +27,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * Handles special URI requests that don't fit with other modules.
+ */
 @Controller
 public class MainController {
 			

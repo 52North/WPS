@@ -30,12 +30,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * Handles the server configuration module URI requests and mapping.
+ */
 @Controller
 @RequestMapping("server")
 public class ServerController extends BaseConfigurationsController {
 	
 	/**
-	 * Display the server module
+	 * Display the server configuration module
 	 * 
 	 * @return The server view
 	 */

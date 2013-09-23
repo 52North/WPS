@@ -28,6 +28,9 @@ import java.util.List;
 
 import org.n52.wps.webapp.entities.User;
 
+/**
+ * CRUD operations on user objects to the underlying datastore.
+ */
 public interface UserDAO {
 
 	/**

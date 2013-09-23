@@ -26,6 +26,10 @@ package org.n52.wps.webapp.service;
 import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
+/**
+ * Used for configuring the capabilities document information. The interface gets and saves
+ * {@link ServiceIdentification} and {@link ServiceProvider} objects.
+ */
 public interface CapabilitiesService {
 	/**
 	 * Get the service identification information

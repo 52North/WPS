@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+/**
+ * Handles upload requests and mapping.
+ */
 @Controller
 public class UploadController {
 
@@ -38,11 +41,12 @@ public class UploadController {
 	private ResourcePathUtil resourcePathUtil;
 
 	/**
-	 * Handle upload requests, forward to the appropriate method based on the type of file uploaded
+	 * Process all upload requests; forward to the appropriate method based on the type of file uploaded. The method
+	 * will return an HTTP 200 status code if there are no errors, else, it will return a 400 status code.
 	 * 
 	 * @param request
 	 * @param response
-	 * @return {@code ValidationResponse}
+	 * @return A {@code ValidationResponse} object which contains the list of errors, if any.
 	 */
 	@RequestMapping(value = "upload", method = RequestMethod.POST)
 	@ResponseBody
@@ -60,7 +64,7 @@ public class UploadController {
 		} else if ((file = request.getFile("rScript")) != null) {
 			validationResponse = uploadRScript(request, response);
 		} else {
-			// if nothing is uploaded, return an HTTP 500 status
+			// if nothing is uploaded, return an error status
 			response.setStatus(400);
 			FieldError error = new FieldError("alert", "alert", "Please select a file to upload.");
 			listOfErros.add(error);

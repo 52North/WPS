@@ -35,7 +35,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.ServletContextResource;
-
+/**
+ * Return the absolute path for the supplied relative web or class path.
+ */
 @Component
 public class ResourcePathUtil {
 

@@ -36,6 +36,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * An implementation for the {@link UserDAO} interface. This implementation uses JDBC through Spring's
+ * {@code NamedParameterJdbcTemplate}.
+ */
 @Repository("userDAO")
 public class JdbcUserDAO implements UserDAO {
 

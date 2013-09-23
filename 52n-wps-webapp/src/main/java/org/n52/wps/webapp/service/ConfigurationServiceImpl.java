@@ -54,6 +54,15 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * An implementation for the {@link ConfigurationService} interface. This implementation initialize and sync the
+ * configurations, register configuration modules with Spring, and pass configuration entries values to configuration
+ * modules setter methods.
+ * <p>
+ * The class uses the {@link ConfigurationDAO} for database operations and {@link ValueParser} for values validation and
+ * parsing.
+ * </p>
+ */
 @Service("configurationService")
 public class ConfigurationServiceImpl implements ConfigurationService {
 
@@ -75,9 +84,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 */
 	@PostConstruct
 	private void syncConfigurations() {
-		
+
 		buildConfigurationModulesMap();
-		
+
 		LOGGER.info("Initializing and syncing configuration modules.");
 		for (ConfigurationModule module : getAllConfigurationModules().values()) {
 			LOGGER.info("Initializing and syncing configuration module '{}'.", module.getClass().getName());
@@ -267,8 +276,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			// entry exist, update
 			configurationDAO.updateConfigurationEntryValue(module.getClass().getName(), entry.getKey(), value);
 		}
-		LOGGER.debug("Value '{}' for entry '{}' in module'{}' has been saved to the database.", value,
-				entry.getKey(), module.getClass().getName());
+		LOGGER.debug("Value '{}' for entry '{}' in module'{}' has been saved to the database.", value, entry.getKey(),
+				module.getClass().getName());
 	}
 
 	/*

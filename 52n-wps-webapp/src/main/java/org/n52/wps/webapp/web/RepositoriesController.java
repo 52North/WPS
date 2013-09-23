@@ -35,12 +35,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Handles repositories specific URI requests and mapping.
+ */
 @Controller
 @RequestMapping("repositories")
 public class RepositoriesController extends BaseConfigurationsController {
 
 	/**
-	 * Display repository configuration modules
+	 * Display repositories configuration modules
 	 * 
 	 * @return The repositories view
 	 */
@@ -55,7 +58,14 @@ public class RepositoriesController extends BaseConfigurationsController {
 	}
 
 	/**
-	 * Toggle the status of an algorithm
+	 * Set the status of a configuration algorithm to active/inactive
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithm
+	 *            The algorithm name
+	 * @param status
+	 *            The new status
 	 */
 	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)

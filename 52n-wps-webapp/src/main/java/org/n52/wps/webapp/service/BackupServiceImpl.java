@@ -43,7 +43,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
-
+/**
+ * The implementation for the {@link BackupService} interface.
+ */
 @Service("backupService")
 public class BackupServiceImpl implements BackupService {
 	public final static String RESOURCES_FOLDER = "resources";

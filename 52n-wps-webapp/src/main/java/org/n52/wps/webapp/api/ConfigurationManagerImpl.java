@@ -32,6 +32,9 @@ import org.n52.wps.webapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * The implementation for the {@link ConfigurationManager} interface.
+ */
 @Component("configurationManager")
 public class ConfigurationManagerImpl implements ConfigurationManager {
 
@@ -49,7 +52,7 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 	
 	@Autowired
 	private BackupService backupService;
-
+	
 	@Override
 	public ConfigurationService getConfigurationServices() {
 		return configurationService;

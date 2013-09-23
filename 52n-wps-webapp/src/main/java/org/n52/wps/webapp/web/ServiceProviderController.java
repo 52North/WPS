@@ -39,6 +39,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Handles the service provider module URI requests and mapping.
+ */
 @Controller
 @RequestMapping("service_provider")
 public class ServiceProviderController {
@@ -50,6 +53,7 @@ public class ServiceProviderController {
 	/**
 	 * Display the service provider module
 	 * 
+	 * @param model
 	 * @return The service provider view
 	 */
 	@RequestMapping(method = RequestMethod.GET)
@@ -61,9 +65,16 @@ public class ServiceProviderController {
 	}
 
 	/**
-	 * Process form submission
+	 * Process form submission. The method will return an HTTP 200 status code if there
+	 * are no errors, else, it will return a 400 status code.
 	 * 
-	 * @return Success or failure, and all field errors in case of failure
+	 * @param serviceProvider
+	 *            The model holding the service provider values
+	 * @param result
+	 * @param model
+	 * @param response
+	 * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
+	 *         errors.
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody

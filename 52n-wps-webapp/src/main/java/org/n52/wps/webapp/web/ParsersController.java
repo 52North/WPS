@@ -32,12 +32,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * Handles parsers specific URI requests and mapping.
+ */
 @Controller
 @RequestMapping("parsers")
 public class ParsersController extends BaseConfigurationsController {
 
 	/**
-	 * Display parser configuration modules
+	 * Display parsers configuration modules
 	 * 
 	 * @return The parsers view
 	 */

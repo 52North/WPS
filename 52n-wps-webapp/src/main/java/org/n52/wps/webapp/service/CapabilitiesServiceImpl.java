@@ -29,12 +29,16 @@ import org.n52.wps.webapp.entities.ServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * An implementation for the {@link CapabilitiesService} interface. This implementation uses the {@link CapabilitiesDAO}
+ * interface to perform get and save from/to the capabilities skeleton file.
+ */
 @Service("capabilitiesService")
 public class CapabilitiesServiceImpl implements CapabilitiesService {
 
 	@Autowired
 	private CapabilitiesDAO capabilitiesDAO;
-	
+
 	@Override
 	public ServiceIdentification getServiceIdentification() {
 		return capabilitiesDAO.getServiceIdentification();
@@ -47,11 +51,11 @@ public class CapabilitiesServiceImpl implements CapabilitiesService {
 
 	@Override
 	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
-			capabilitiesDAO.saveServiceIdentification(serviceIdentification);
+		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
 	}
 
 	@Override
 	public void saveServiceProvider(ServiceProvider serviceProvider) {
-			capabilitiesDAO.saveServiceProvider(serviceProvider);
+		capabilitiesDAO.saveServiceProvider(serviceProvider);
 	}
 }

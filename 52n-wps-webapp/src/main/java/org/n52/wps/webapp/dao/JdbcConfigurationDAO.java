@@ -39,6 +39,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * An implementation for the {@link ConfigurationDAO} interface. This implementation uses JDBC through Spring's
+ * {@code NamedParameterJdbcTemplate}.
+ */
 @Repository("configurationDAO")
 public class JdbcConfigurationDAO implements ConfigurationDAO {
 
@@ -173,7 +177,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 	@Override
 	public void insertAlgorithmEntry(String moduleClassName, String algorithm, boolean active) {
-		LOGGER.debug("Inserting algorithm entry '{}' in configuration module '{}' with the status of '{}' into the database.",
+		LOGGER.debug(
+				"Inserting algorithm entry '{}' in configuration module '{}' with the status of '{}' into the database.",
 				algorithm, moduleClassName, active);
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("algorithm_name", algorithm);

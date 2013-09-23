@@ -24,9 +24,19 @@
 
 package org.n52.wps.webapp.api.types;
 
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.ConfigurationType;
 
-
+/**
+ * Used by {@link ConfigurationModule} implementations to create type safe configuration entries by using implementing classes.
+ * 
+ * @see StringConfigurationEntry
+ * @see IntegerConfigurationEntry
+ * @see BooleanConfigurationEntry
+ * @see DoubleConfigurationEntry
+ * @see FileConfigurationEntry
+ * @see URIConfigurationEntry
+ */
 public abstract class ConfigurationEntry<T> {
 	private T value;
 	private String key;
@@ -34,14 +44,15 @@ public abstract class ConfigurationEntry<T> {
 	private String description;
 	private boolean required;
 	private ConfigurationType type;
-	
+
 	protected ConfigurationEntry(String key, String title, ConfigurationType type) {
 		this.key = key;
 		this.title = title;
 		this.type = type;
 	}
-	
-	protected ConfigurationEntry(String key, String title, String description, boolean required, T value, ConfigurationType type) {
+
+	protected ConfigurationEntry(String key, String title, String description, boolean required, T value,
+			ConfigurationType type) {
 		this.key = key;
 		this.title = title;
 		this.description = description;
@@ -49,7 +60,7 @@ public abstract class ConfigurationEntry<T> {
 		this.value = value;
 		this.type = type;
 	}
-	
+
 	public T getValue() {
 		return value;
 	}

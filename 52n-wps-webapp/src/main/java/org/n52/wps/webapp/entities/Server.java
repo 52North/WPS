@@ -12,6 +12,9 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
+/**
+ * A {@link ConfigurationModule} implementation. This configuration module is used to configure the server.
+ */
 public class Server implements ConfigurationModule {
 
 	private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",

@@ -28,23 +28,35 @@ import java.io.InputStream;
 
 import org.n52.wps.webapp.api.WPSConfigurationException;
 
+/**
+ * Used to backup and restore configurations database and files.
+ */
 public interface BackupService {
 	/**
-	 * Create a Zip archive of the items provided.
+	 * Create a backup archive for the items provided. Supported items are:
+	 * <p>
+	 * "database" to backup the database.
+	 * </p>
+	 * <p>
+	 * "log" to backup the logback.xml file.
+	 * </p>
+	 * <p>
+	 * "wpscapabilities" to backup the wpsCapabilitiesSkeleton.xml file.
+	 * </p>
 	 * 
 	 * @param itemsToBackup
 	 *            a list of items to back up
-	 * @return the location of the created Zip archive
+	 * @return the location of the created backup archive
 	 * @throws IOException
 	 *             if an item cannot be found in the expected path
 	 */
 	String createBackup(String[] itemsToBackup) throws IOException;
 
 	/**
-	 * Extract a created Zip archive and overwrite configuration files
+	 * Extract and restore a backup archive
 	 * 
 	 * @param zipFile
-	 *            the backup Zip archive inputstream
+	 *            the backup archive inputstream
 	 * @return the number of items restored
 	 * @throws IOException
 	 *             if the archive cannot be extracted or the content cannot be written

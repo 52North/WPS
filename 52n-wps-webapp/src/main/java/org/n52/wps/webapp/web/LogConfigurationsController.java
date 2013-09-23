@@ -42,6 +42,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * Handles the log configuration module URI requests and mapping.
+ */
 @Controller
 @RequestMapping("log")
 public class LogConfigurationsController {
@@ -52,8 +55,9 @@ public class LogConfigurationsController {
 	private final Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsController.class);
 
 	/**
-	 * Display the log module
+	 * Display the log configuration module
 	 * 
+	 * @param model
 	 * @return The log view
 	 */
 	@RequestMapping(method = RequestMethod.GET)
@@ -71,14 +75,22 @@ public class LogConfigurationsController {
 	}
 
 	/**
-	 * Process form submission
+	 * Process form submission. The method will return an HTTP 200 status code if there are no errors, else, it will
+	 * return a 400 status code.
 	 * 
-	 * @return Success or failure, and all field errors in case of failure
+	 * @param logConfigurations
+	 *            The model holding the log configuration values
+	 * @param result
+	 * @param model
+	 * @param response
+	 * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
+	 *         errors.
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public ValidationResponse processPost(@ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations,
-			BindingResult result, Model model, HttpServletResponse response) {
+	public ValidationResponse processPost(
+			@ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations, BindingResult result,
+			Model model, HttpServletResponse response) {
 		ValidationResponse res = new ValidationResponse();
 		if (result.hasErrors()) {
 			model.addAttribute("logConfigurations", logConfigurations);

@@ -36,6 +36,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+/**
+ * An implementation for the {@link CapabilitiesDAO} interface. This implementation uses {@code JDom} to parse the
+ * {@code wpsCapabilitiesSkeleton.xml} file.
+ */
 @Repository("capabilitiesDAO")
 public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 
@@ -99,12 +103,11 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		if (keywords != null) {
 			keywords.removeChildren("Keyword", Namespace.getNamespace(NAMESPACE));
 		}
-		
+
 		if (serviceIdentification.getKeywords() != null) {
-			String [] keywordsArray = serviceIdentification.getKeywords().trim().split(";");
+			String[] keywordsArray = serviceIdentification.getKeywords().trim().split(";");
 			for (String newKeyword : keywordsArray) {
-				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE))
-						.setText(newKeyword);
+				Element keyword = new Element("Keyword", Namespace.getNamespace("ows", NAMESPACE)).setText(newKeyword);
 				keywords.addContent(keyword);
 			}
 		}

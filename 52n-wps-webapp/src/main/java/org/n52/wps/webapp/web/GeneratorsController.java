@@ -32,12 +32,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+
+/**
+ * Handles generators specific URI requests and mapping.
+ */
 @Controller
 @RequestMapping("generators")
 public class GeneratorsController extends BaseConfigurationsController {
 
 	/**
-	 * Display generator configuration modules
+	 * Display generators configuration modules
 	 * 
 	 * @return The generators view
 	 */

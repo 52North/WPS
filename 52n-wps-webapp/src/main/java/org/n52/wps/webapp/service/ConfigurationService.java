@@ -32,6 +32,18 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
+/**
+ * Retrieves and sets configuration modules, configurations entries, algorithm entries, and values. This interface is
+ * responsible for managing standard configurations in a type safe manner.
+ * <p>
+ * Different service interfaces are used to handle special configurations such as log or user configurations.
+ * </p>
+ * 
+ * @see UserService
+ * @see LogConfigurationsService
+ * @see CapabilitiesService
+ * @see LogConfigurationsService
+ */
 public interface ConfigurationService {
 
 	/**
