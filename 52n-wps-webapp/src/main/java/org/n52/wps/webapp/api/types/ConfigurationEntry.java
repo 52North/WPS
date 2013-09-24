@@ -28,7 +28,7 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.ConfigurationType;
 
 /**
- * Used by {@link ConfigurationModule} implementations to create type safe configuration entries by using implementing classes.
+ * Used by {@link ConfigurationModule} implementations to create type safe configuration entries using the extending classes.
  * 
  * @see StringConfigurationEntry
  * @see IntegerConfigurationEntry
