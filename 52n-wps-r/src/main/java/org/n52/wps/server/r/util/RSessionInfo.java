@@ -30,15 +30,19 @@ import org.rosuda.REngine.Rserve.RserveException;
 
 public class RSessionInfo {
 
-    public static String getVersion(RConnection rCon) throws RserveException, REXPMismatchException {
+    public static String getVersion(RConnection rCon) throws RserveException, REXPMismatchException
+    {
         return getConsoleOutput(rCon, "R.version[\"version.string\"]");
     }
 
-    public static String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException {
+    public static String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException
+    {
         return getConsoleOutput(rCon, "sessionInfo()");
     }
 
-    public static String getConsoleOutput(RConnection rCon, String cmd) throws RserveException, REXPMismatchException {
+    public static String getConsoleOutput(RConnection rCon,
+            String cmd) throws RserveException, REXPMismatchException
+    {
         return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
     }
 }

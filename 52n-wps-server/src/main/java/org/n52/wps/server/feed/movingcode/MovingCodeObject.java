@@ -48,7 +48,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 
@@ -63,7 +64,7 @@ public class MovingCodeObject {
 	private ProcessDescriptionType processDescription;
 	private AlgorithmDescription algorithmDescription;
 	
-	static Logger LOGGER = Logger.getLogger(MovingCodeObject.class);
+	static Logger LOGGER = LoggerFactory.getLogger(MovingCodeObject.class);
 	
 	public MovingCodeObject (ProcessDescriptionType pd, AlgorithmDescription ad, File algorithmWorkspace){
 		

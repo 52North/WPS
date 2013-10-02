@@ -38,10 +38,7 @@ import java.util.StringTokenizer;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.r.GenericRProcess;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -49,12 +46,16 @@ import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RAnnotationParser {
 
     private static final String ANNOTATION_CHARACTER = "#";
+
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
-    private static Logger LOGGER = Logger.getLogger(RAnnotationParser.class);
+
+    private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
     public RAnnotationParser() {
         LOGGER.info("New " + this);
@@ -64,13 +65,13 @@ public class RAnnotationParser {
      * 
      * @param script
      * @throws RAnnotationException
-     *         if script is invalid
+     *             if script is invalid
      * @throws IOException
      * @throws ExceptionReport
      */
-    public boolean validateScript(InputStream script, String identifier) throws RAnnotationException,
-            IOException,
-            ExceptionReport {
+    public boolean validateScript(InputStream script,
+            String identifier) throws RAnnotationException, IOException, ExceptionReport
+    {
         // TODO: improve this method to something more useful
 
         // try to parse annotations:
@@ -78,34 +79,28 @@ public class RAnnotationParser {
         // try to create process description:
         RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
 
-        // TODO: WPS.des and WPS.res should only occur once or not.
+        // TODO: WPS.des and WPS.res should only occur once or not at all
         try {
-			ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
-                                                                                              identifier,
-                                                                                              new URL("http://some.valid.url/"),
-                                                                                              new URL("http://some.valid.url/"));
+            ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations, identifier, new URL("http://some.valid.url/"), new URL("http://some.valid.url/"));
 
-           boolean valid = processType.validate();
-           if(valid==false)
-        	   throw new ExceptionReport("Invalid R algorithm. The process description created from the script is not valid.", ExceptionReport.NO_APPLICABLE_CODE);
+            boolean valid = processType.validate();
+            if (valid == false)
+                throw new ExceptionReport("Invalid R algorithm. The process description created from the script is not valid.", ExceptionReport.NO_APPLICABLE_CODE);
             return valid;
-            
 
-            
-        }
-        catch (ExceptionReport e) {
+        } catch (ExceptionReport e) {
             String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
             LOGGER.error(message, e);
             throw e;
-        }
-        catch (RAnnotationException e) {
+        } catch (RAnnotationException e) {
             String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
             LOGGER.error(message, e);
             throw e;
         }
     }
 
-    public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException {
+    public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException
+    {
         LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
         try {
@@ -125,7 +120,7 @@ public class RAnnotationParser {
                     line = line.trim();
 
                     LOGGER.trace("Parsing annotation line " + line);
-                    if ( !isCurrentlyParsingAnnotation)
+                    if (!isCurrentlyParsingAnnotation)
                         // searches for startKey - expressions in a line
                         for (RAnnotationType anot : RAnnotationType.values()) {
                             String startKey = anot.getStartKey().getKey();
@@ -133,7 +128,8 @@ public class RAnnotationParser {
                                 if (LOGGER.isDebugEnabled())
                                     LOGGER.debug("Parsing annotation " + startKey);
 
-                                // start parsing an annotation, which might spread several lines
+                                // start parsing an annotation, which might
+                                // spread several lines
                                 line = line.split(RSeperator.STARTKEY_SEPARATOR.getKey(), 2)[1];
                                 annotationString = new StringBuilder();
                                 annotationType = anot;
@@ -152,28 +148,23 @@ public class RAnnotationParser {
                             }
 
                             annotationString.append(line);
-                            if ( !isCurrentlyParsingAnnotation) {
+                            if (!isCurrentlyParsingAnnotation) {
                                 RAnnotation newAnnotation = null;
                                 if (annotationType.equals(RAnnotationType.RESOURCE)) {
                                     newAnnotation = createResourceAnnotation(annotationString.toString());
-                                }
-                                else {
-                                    HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
-                                                                                          annotationString.toString());
+                                } else {
+                                    HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType, annotationString.toString());
                                     newAnnotation = new RAnnotation(annotationType, attrHash);
 
                                 }
 
                                 annotations.add(newAnnotation);
 
-                                LOGGER.debug("Done parsing annotation " + newAnnotation + " > contains: "
-                                        + annotationString.toString());
+                                LOGGER.debug("Done parsing annotation " + newAnnotation + " > contains: " + annotationString.toString());
                             }
                         }
-                    }
-                    catch (RAnnotationException e) {
-                        LOGGER.error("Invalid R script with wrong annotation in Line " + lineCounter + "\n"
-                                + e.getMessage());
+                    } catch (RAnnotationException e) {
+                        LOGGER.error("Invalid R script with wrong annotation in Line " + lineCounter + "\n" + e.getMessage());
                     }
                 }
             }
@@ -182,18 +173,18 @@ public class RAnnotationParser {
             LOGGER.trace("Annotations found:" + Arrays.deepToString(annotations.toArray()));
             return annotations;
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error parsing annotations.", e);
             throw new RAnnotationException("Error parsing annotations.", e);
         }
     }
 
-    private HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws RAnnotationException {
+    private HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType,
+            String attributeString) throws RAnnotationException
+    {
 
         HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
-        StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
-                                                                 RSeperator.ATTRIBUTE_SEPARATOR.getKey());
+        StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString, RSeperator.ATTRIBUTE_SEPARATOR.getKey());
         boolean iterableOrder = true;
         // iterates over the attribute sequence of an Annotation
         Iterator<RAttribute> attrKeyIterator = anotType.getAttributeSequence().iterator();
@@ -216,13 +207,14 @@ public class RAnnotationParser {
             if (attrValue.contains(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey())) {
                 iterableOrder = false;
 
-                // in the following case, the annotation contains no sequential order and
-                // lacks an explicit attribute declaration --> Annotation cannot be interpreted
-                // e.g. value1, value2, attribute9 = value9, value4 --> parser error for "value4"
-            }
-            else if ( !iterableOrder) {
-                throw new RAnnotationException("Annotation contains no valid order: " + "\""
-                        + anotType.getStartKey().getKey() + " " + attributeString + "\"");
+                // in the following case, the annotation contains no sequential
+                // order and
+                // lacks an explicit attribute declaration --> Annotation cannot
+                // be interpreted
+                // e.g. value1, value2, attribute9 = value9, value4 --> parser
+                // error for "value4"
+            } else if (!iterableOrder) {
+                throw new RAnnotationException("Annotation contains no valid order: " + "\"" + anotType.getStartKey().getKey() + " " + attributeString + "\"");
             }
 
             // Valid annotations:
@@ -235,8 +227,7 @@ public class RAnnotationParser {
             if (iterableOrder) {
                 attrHash.put(attrKeyIterator.next(), attrValue.trim());
 
-            }
-            else {
+            } else {
                 String[] keyValue = attrValue.split(RSeperator.ATTRIBUTE_VALUE_SEPARATOR.getKey());
                 RAttribute attribute = anotType.getAttribute(keyValue[0].trim());
                 String value = keyValue[1].trim();
@@ -255,11 +246,11 @@ public class RAnnotationParser {
         return attrHash;
     }
 
-    private RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
+    private RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException
+    {
         List<R_Resource> resources = new ArrayList<R_Resource>();
 
-        StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
-                                                                 RSeperator.ATTRIBUTE_SEPARATOR.getKey());
+        StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString, RSeperator.ATTRIBUTE_SEPARATOR.getKey());
 
         while (attrValueTokenizer.hasMoreElements()) {
             String resourceValue = attrValueTokenizer.nextToken().trim();
@@ -275,35 +266,5 @@ public class RAnnotationParser {
 
         return resourceAnnotation;
     }
-
-    // Main method for tests:
-    /*
-     * public static void main(String[] args){ try { parseAnnotationsfromSkript(new FileInputStream("Idw.R"));
-     * 
-     * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
-     * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); }
-     * 
-     * 
-     * try { parseAnnotationsfromSkript(new FileInputStream("Idw_falsch1.R"));
-     * 
-     * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
-     * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); }
-     * 
-     * try { parseAnnotationsfromSkript(new FileInputStream("Idw_falsch2.R"));
-     * 
-     * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
-     * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); }
-     * 
-     * 
-     * try { parseAnnotationsfromSkript(new FileInputStream("Idw_falsch3.R"));
-     * 
-     * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
-     * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); }
-     * 
-     * try { parseAnnotationsfromSkript(new FileInputStream("Idw_falsch4.R"));
-     * 
-     * } catch (FileNotFoundException e) { System.out.println(e.getLocalizedMessage()); e.printStackTrace(); }
-     * catch (IOException e) { System.out.println(e.getLocalizedMessage()); //e.printStackTrace(); } }
-     */
 
 }

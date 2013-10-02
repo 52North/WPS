@@ -31,17 +31,20 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RProcessInfo {
 
-    private static Logger LOGGER = Logger.getLogger(RProcessInfo.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RProcessInfo.class);
+
     private String wkn;
+
     private Exception lastException;
+
     private boolean isValid;
 
     static List<RProcessInfo> rProcessInfoList;
@@ -56,65 +59,67 @@ public class RProcessInfo {
             RAnnotationParser parser = new RAnnotationParser();
             fis = new FileInputStream(scriptfile);
             this.isValid = parser.validateScript(fis, wkn);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
             this.lastException = e;
             this.isValid = false;
-        }
-        finally {
+        } finally {
             if (fis != null)
                 try {
                     fis.close();
-                }
-                catch (IOException e) {
+                } catch (IOException e) {
                     LOGGER.error("Could not close file input stream of script file.", e);
                 }
         }
     }
 
-    public String getWkn() {
+    public String getWkn()
+    {
         return this.wkn;
     }
 
-    public String getScriptURL() {
+    public String getScriptURL()
+    {
         try {
             return R_Config.getInstance().getScriptURL(this.wkn).getPath();
-        }
-        catch (ExceptionReport e) {
+        } catch (ExceptionReport e) {
             e.printStackTrace();
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public boolean isAvailable() {
+    public boolean isAvailable()
+    {
         return R_Config.getInstance().isScriptAvailable(this.wkn);
     }
 
-    public boolean isValid() {
+    public boolean isValid()
+    {
 
         return this.isValid;
     }
 
-    public Exception getLastException() {
+    public Exception getLastException()
+    {
         return this.lastException;
     }
-    
+
     /**
      * @return The last Error message or null
      */
-    public String getLastErrormessage() {
-    	if(getLastException() == null)
-    		return null;
-    	else
-    		return  getLastException().getMessage();
+    public String getLastErrormessage()
+    {
+        if (getLastException() == null)
+            return null;
+        else
+            return getLastException().getMessage();
     }
 
-    public static List<RProcessInfo> getRProcessInfoList() {
+    public static List<RProcessInfo> getRProcessInfoList()
+    {
         if (rProcessInfoList == null) {
             rProcessInfoList = new ArrayList<RProcessInfo>();
         }
@@ -126,7 +131,8 @@ public class RProcessInfo {
      * 
      * @param rProcessInfoList
      */
-    public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList) {
+    public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList)
+    {
         RProcessInfo.rProcessInfoList = rProcessInfoList;
     }
 

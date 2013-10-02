@@ -30,16 +30,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CustomDataTypeManager {
 
     private static final String COMMENT_CHARACTER = "#";
-    private static Logger LOGGER = Logger.getLogger(CustomDataTypeManager.class);
+
+    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
+
     private File configFile;
+
     private static CustomDataTypeManager instance;
 
     private static final String HINT_FILE = "file";
@@ -48,22 +52,23 @@ public class CustomDataTypeManager {
 
     }
 
-    // Call by RPropertyChangeManager and eventually after config file was changed
-    public void update() {
+    // Call by RPropertyChangeManager and eventually after config file was
+    // changed
+    public void update()
+    {
         try {
             readConfig();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Invalid r config file. Costum R data types cannot be registered.", e);
             RDataTypeRegistry.getInstance().clearCustomDataTypes();
-        }
-        catch (ExceptionReport e) {
+        } catch (ExceptionReport e) {
             LOGGER.error("Failed to retrieve r config file. Costum R data types cannot be registered.", e);
             RDataTypeRegistry.getInstance().clearCustomDataTypes();
         }
     }
 
-    private void readConfig() throws IOException, ExceptionReport {
+    private void readConfig() throws IOException, ExceptionReport
+    {
         this.configFile = new File(R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG));
         if (getConfigFile() == null) {
             LOGGER.error("Config file not availailable. Costum R data types cannot be registered.");
@@ -93,7 +98,10 @@ public class CustomDataTypeManager {
     }
 
     // TODO: add schema, default value;
-    private static void addNewDataType(String key, String mimetype, String hint) {
+    private static void addNewDataType(String key,
+            String mimetype,
+            String hint)
+    {
         CustomDataType type = new CustomDataType();
         type.setKey(key);
         type.setProcessKey(mimetype);
@@ -106,11 +114,13 @@ public class CustomDataTypeManager {
 
     }
 
-    public File getConfigFile() {
+    public File getConfigFile()
+    {
         return this.configFile;
     }
 
-    public static CustomDataTypeManager getInstance() {
+    public static CustomDataTypeManager getInstance()
+    {
         if (instance == null)
             instance = new CustomDataTypeManager();
         return instance;

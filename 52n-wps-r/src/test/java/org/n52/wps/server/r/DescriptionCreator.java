@@ -52,7 +52,8 @@ public class DescriptionCreator {
     private List<RAnnotation> annotations;
 
     @Before
-    public void loadAnnotations() throws IOException, RAnnotationException {
+    public void loadAnnotations() throws IOException, RAnnotationException
+    {
         File scriptFile = Util.loadFile("/uniform.R");
 
         // GenericRProcess process = new GenericRProcess("R_andom");
@@ -63,16 +64,14 @@ public class DescriptionCreator {
     }
 
     @Test
-    public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException {
+    public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException
+    {
         File descriptionFile = Util.loadFile("/uniform.xml");
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(descriptionFile);
         RProcessDescriptionCreator creator = new RProcessDescriptionCreator();
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/sessioninfo.jsp"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom", new URL("http://my.url/myScript.R"), new URL("http://my.url/sessioninfo.jsp"));
         ProcessDescriptionsDocument testDoc = ProcessDescriptionsDocument.Factory.newInstance();
         testDoc.addNewProcessDescriptions().addNewProcessDescription().set(testType);
         // System.out.println(testDoc.xmlText());
@@ -98,7 +97,8 @@ public class DescriptionCreator {
         // test full document > some namespace issues! FIXME
         // Document controlDocument = (Document) control.getDomNode();
         // Document testDocument = (Document) testDoc.getDomNode();
-        // XMLAssert.assertXMLEqual("Comparing process descriptions for uniform.", controlDocument,
+        // XMLAssert.assertXMLEqual("Comparing process descriptions for uniform.",
+        // controlDocument,
         // testDocument);
 
         fis.close();

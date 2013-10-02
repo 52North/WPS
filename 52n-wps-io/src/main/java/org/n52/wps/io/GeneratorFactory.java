@@ -41,7 +41,8 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
@@ -52,7 +53,7 @@ public class GeneratorFactory {
 	
 	public static String PROPERTY_NAME_REGISTERED_GENERATORS = "registeredGenerators";
 	private static GeneratorFactory factory;
-	private static Logger LOGGER = Logger.getLogger(GeneratorFactory.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GeneratorFactory.class);
 	
 	private List<IGenerator> registeredGenerators;
 

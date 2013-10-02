@@ -28,19 +28,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RDataTypeRegistry {
 
-    private Logger LOGGER = Logger.getLogger(this.getClass());
+    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
+
     private static RDataTypeRegistry instance = new RDataTypeRegistry();
 
     private RDataTypeRegistry() {
 
     }
 
-    public static RDataTypeRegistry getInstance() {
+    public static RDataTypeRegistry getInstance()
+    {
         if (instance == null) {
             instance = new RDataTypeRegistry();
         }
@@ -48,38 +51,43 @@ public class RDataTypeRegistry {
     }
 
     private HashMap<String, RTypeDefinition> customDataTypes = new HashMap<String, RTypeDefinition>();
+
     private HashMap<String, RTypeDefinition> rDataTypeKeys = new HashMap<String, RTypeDefinition>();
+
     private HashMap<String, RTypeDefinition> rDataTypeAlias = new HashMap<String, RTypeDefinition>();
 
     // TODO: Eventually throw Exceptions here?
-    public void register(RDataType type) {
+    public void register(RDataType type)
+    {
         this.rDataTypeKeys.put(type.getKey(), type);
 
-        // put process key, i.e. mimetype or xml-notation for literal type, as alternative key (alias) into
+        // put process key, i.e. mimetype or xml-notation for literal type, as
+        // alternative key (alias) into
         // Hashmap:
-        if ( !containsKey(type.getProcessKey()))
+        if (!containsKey(type.getProcessKey()))
             this.rDataTypeAlias.put(type.getProcessKey(), type);
         else
-            this.LOGGER.warn("Doubled definition of data type-key for notation: "
-                    + type.getProcessKey()
-                    + "\n"
-                    + "only the first definition will be used for this key.+"
+            LOGGER.warn("Doubled definition of data type-key for notation: " + type.getProcessKey() + "\n" + "only the first definition will be used for this key.+"
                     + "(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
     }
 
-    public boolean containsKey(String key) {
+    public boolean containsKey(String key)
+    {
         return this.rDataTypeKeys.containsKey(key) || this.rDataTypeAlias.containsKey(key);
     }
 
     /**
-     * This method is important for parsers to request the meaning of a specific key
+     * This method is important for parsers to request the meaning of a specific
+     * key
      * 
      * @param key
-     *        process keys and self defined short keys are recognized as dataType keys
+     *            process keys and self defined short keys are recognized as
+     *            dataType keys
      * @return
      * @throws RAnnotationException
      */
-    public RTypeDefinition getType(String key) throws RAnnotationException {
+    public RTypeDefinition getType(String key) throws RAnnotationException
+    {
         RTypeDefinition out = this.rDataTypeKeys.get(key);
         if (out == null)
             out = this.rDataTypeAlias.get(key);
@@ -91,20 +99,24 @@ public class RDataTypeRegistry {
         return out;
     }
 
-    public Collection<RTypeDefinition> getDefinitions() {
+    public Collection<RTypeDefinition> getDefinitions()
+    {
         ArrayList<RTypeDefinition> definitions = new ArrayList<RTypeDefinition>();
         definitions.addAll(this.rDataTypeKeys.values());
         definitions.addAll(getCustomDataTypes());
         return definitions;
     }
 
-    public Collection<RTypeDefinition> getCustomDataTypes() {
+    public Collection<RTypeDefinition> getCustomDataTypes()
+    {
         return this.customDataTypes.values();
     }
 
     public static RTypeDefinition test = RDataType.DOUBLE;
 
-    private static String addTabbs(String s, int nmax) {
+    private static String addTabbs(String s,
+            int nmax)
+    {
         int n = nmax - s.length();
         String out = "";
         for (int i = 0; i < n; i++) {
@@ -113,7 +125,8 @@ public class RDataTypeRegistry {
         return out;
     }
 
-    public String toString() {
+    public String toString()
+    {
         String out = "Key\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
         out += "\n-------------------------------------------------------------------------------------------------";
         out += "---------------------------";
@@ -151,20 +164,24 @@ public class RDataTypeRegistry {
         return out + literal + complex;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
         System.out.println(RDataTypeRegistry.getInstance());
     }
 
-    public void register(CustomDataType type) {
+    public void register(CustomDataType type)
+    {
         this.customDataTypes.put(type.getKey(), type);
 
     }
 
     /**
-     * Deletes all registered custom type definitions (Useful for instance, if the config file was changed)
+     * Deletes all registered custom type definitions (Useful for instance, if
+     * the config file was changed)
      */
-    public void clearCustomDataTypes() {
+    public void clearCustomDataTypes()
+    {
         this.customDataTypes.clear();
     }
 

@@ -33,13 +33,14 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.IOHandler;
 
 
 public final class GenericFileDataConstants {
 	
-	private static Logger LOGGER = Logger.getLogger(GenericFileDataConstants.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileDataConstants.class);
 	
 	public static final String MIME_TYPE_ZIPPED_SHP = IOHandler.MIME_TYPE_ZIPPED_SHP;
 	public static final String MIME_TYPE_SHP = "application/shp";

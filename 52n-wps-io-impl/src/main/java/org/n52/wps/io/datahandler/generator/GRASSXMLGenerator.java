@@ -31,13 +31,14 @@ package org.n52.wps.io.datahandler.generator;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 
 public class GRASSXMLGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = Logger.getLogger(GRASSXMLGenerator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
 	private static String[] SUPPORTED_SCHEMAS = new String[]{
 //		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
 		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",

@@ -43,7 +43,8 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -62,7 +63,7 @@ public class GrassProcessDescriptionCreator {
 
 	private String[] envp = null;
 	
-	private static Logger LOGGER = Logger.getLogger(GrassProcessDescriptionCreator.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessDescriptionCreator.class);
 	private final String wpsProcessDescCmd = " --wps-process-description";
 	private Runtime rt = Runtime.getRuntime();
 	private ExecutorService executor = Executors.newFixedThreadPool(10);

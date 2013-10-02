@@ -24,7 +24,8 @@
  */
 package org.n52.wps.server.algorithm;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.ComplexDataOutput;
@@ -42,7 +43,7 @@ import com.vividsolutions.jts.geom.Geometry;
 @Algorithm(version = "1.1.0")
 public class JTSConvexHullAlgorithm extends AbstractAnnotatedAlgorithm {
 
-    private static Logger LOGGER = Logger.getLogger(JTSConvexHullAlgorithm.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(JTSConvexHullAlgorithm.class);
 
     public JTSConvexHullAlgorithm() {
         super();

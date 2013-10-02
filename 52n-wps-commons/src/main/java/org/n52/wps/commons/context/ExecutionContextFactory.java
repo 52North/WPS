@@ -24,11 +24,12 @@
 
 package org.n52.wps.commons.context;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecutionContextFactory {
 
-    private static Logger log = Logger.getLogger(ExecutionContextFactory.class);
+    private static Logger log = LoggerFactory.getLogger(ExecutionContextFactory.class);
     
     private final static ThreadLocal<ExecutionContext> threadContexts = new ThreadLocal<ExecutionContext>();
 

@@ -458,6 +458,13 @@
 				<Property name="Geoserver_host" active="true">localhost</Property>
 				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>
+			<Generator name="MapserverWMSGenerator" className="org.n52.wps.io.datahandler.generator.MapserverWMSGenerator" active="false">
+				<Format mimetype="application/WMS"/>
+				<Property name="Mapserver_workspace" active="true">C:/ms4w/Apache/htdocs/52northWPS/</Property>
+				<Property name="Mapserver_mapfile" active="true">wps.map</Property>
+				<Property name="Mapserver_dataRepository" active="true">data/tmp/</Property>
+				<Property name="Mapserver_wmsUrl" active="true">http://localhost/cgi-bin/52northWPSWrapper.exe</Property>
+			</Generator>
 			<Generator name="KMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.KMLGenerator"
 				active="true">
@@ -473,7 +480,7 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
 			<Property name="Script_Dir" active="true">R/scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R/resources</Property>
@@ -496,6 +503,8 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 		</Repository>
@@ -1009,6 +1018,7 @@
 		
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
+	
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
