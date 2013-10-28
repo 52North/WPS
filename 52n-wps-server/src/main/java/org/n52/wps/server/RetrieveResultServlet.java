@@ -24,6 +24,8 @@ Copyright ? 2012 52?North Initiative for Geospatial Open Source Software GmbH
  Boston, MA 02111-1307, USA or visit the Free
  Software Foundation?s web page, http://www.fsf.org.
 
+TEST TEST TEST TEST
+
  ***************************************************************/
 package org.n52.wps.server;
 
@@ -62,8 +64,16 @@ public class RetrieveResultServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        // id of result to retrieve.
-        String id = request.getParameter("id");
+		// id of result to retrieve.
+		String id = request.getParameter("id");
+
+		// optional alternate name for filename (rename the file when retrieving
+		// if requested)
+		boolean altName = false;
+		String alternateFilename = request.getParameter("filename");
+		if (!StringUtils.isEmpty(alternateFilename)) {
+			altName = true;
+		}
 
         // return result as attachment (instructs browser to offer user "Save" dialog)
         String attachment = request.getParameter("attachment");
@@ -89,11 +99,15 @@ public class RetrieveResultServlet extends HttpServlet {
                     String suffix = MIMEUtil.getSuffixFromMIMEType(mimeType).toLowerCase();
 
                     // if attachment parameter unset, default to false for mime-type of 'xml' and true for everything else.
-                    boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix)) || Boolean.parseBoolean(attachment);
-                    if (useAttachment) {
-                        String attachmentName = (new StringBuilder(id)).append('.').append(suffix).toString();
-                        response.addHeader("Content-Disposition", "attachment; filename=\"" + attachmentName + "\"");
-                    }
+					boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix)) || Boolean.parseBoolean(attachment);
+					if (useAttachment) {
+						String attachmentName = (new StringBuilder(id)).append('.').append(suffix).toString();
+
+						if (altName) {
+							attachmentName = (new StringBuilder(alternateFilename)).append('.').append(suffix).toString();
+						}
+						response.addHeader("Content-Disposition", "attachment; filename=\"" + attachmentName + "\"");
+					}
 
                     response.setContentType(mimeType);
 
