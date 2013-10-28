@@ -24,8 +24,6 @@ Copyright ? 2012 52?North Initiative for Geospatial Open Source Software GmbH
  Boston, MA 02111-1307, USA or visit the Free
  Software Foundation?s web page, http://www.fsf.org.
 
-TEST TEST TEST TEST
-
  ***************************************************************/
 package org.n52.wps.server;
 
