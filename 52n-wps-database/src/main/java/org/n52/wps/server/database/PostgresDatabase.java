@@ -108,7 +108,7 @@ public class PostgresDatabase extends AbstractDatabase {
     private PostgresDatabase() {
         try {
             Class.forName("org.postgresql.Driver");
-            PostgresDatabase.connectionURL = "jdbc:postgresql:" + getDatabasePath() + File.separator + getDatabaseName();
+            PostgresDatabase.connectionURL = "jdbc:postgresql:" + getDatabasePath() + "/" + getDatabaseName();
             LOGGER.debug("Database connection URL is: " + PostgresDatabase.connectionURL);
 
             // Create lock object
@@ -121,7 +121,7 @@ public class PostgresDatabase extends AbstractDatabase {
                 long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
 
                 wipeTimer = new Timer(getClass().getSimpleName() + " Postgres Wiper", true);
-                wipeTimer.scheduleAtFixedRate(new PostgresDatabase.WipeTimerTask(thresholdMillis), 0, periodMillis);
+                wipeTimer.scheduleAtFixedRate(new PostgresDatabase.WipeTimerTask(thresholdMillis), 15000, periodMillis);
                 LOGGER.info("Started {} Postgres wiper timer; period {} ms, threshold {} ms",
                         new Object[]{getDatabaseName(), periodMillis, thresholdMillis});
             } else {
@@ -327,7 +327,7 @@ public class PostgresDatabase extends AbstractDatabase {
 
                 meta = PostgresDatabase.conn.getMetaData();
 
-                rs = meta.getTables(null, null, "RESULTS", new String[]{"TABLE"});
+                rs = meta.getTables(null, null, "results", new String[]{"TABLE"});
                 if (rs.next()) {
                     LOGGER.info("Succesfully created table RESULTS.");
                 } else {
