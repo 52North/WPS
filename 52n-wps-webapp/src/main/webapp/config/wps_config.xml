@@ -1054,10 +1054,9 @@
             want this if you have large results).
             
             JNDI Configuration:
-            
             <Database>
                 <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
-                <Property active="true" name="jndiName">gdp</Property> 
+                <Property active="true" name="jndiName">jndiname</Property> 
                 <Property active="true" name="saveResultsToDb">false</Property>
                 <Property name="wipe.enabled" active="true">true</Property>
                 <Property name="wipe.period" active="true">PT1H</Property>
