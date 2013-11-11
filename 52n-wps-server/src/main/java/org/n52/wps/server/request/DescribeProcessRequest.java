@@ -99,15 +99,21 @@ public class DescribeProcessRequest extends Request {
 		
 		NodeList nList = doc.getFirstChild().getChildNodes();
 		
+		boolean identifierParameterExists = false;
+		
 		for (int i = 0; i < nList.getLength(); i++) {
 			Node n = nList.item(i);
 			if(n.getLocalName() != null && n.getLocalName().equalsIgnoreCase("identifier")){
+				identifierParameterExists = true;
 				String s = n.getTextContent();
-				identifierList = identifierList.concat(s + ",");
+				if(s != null && !s.equals("")){
+					identifierList = identifierList.concat(s + ",");
+				}
 			}
-		}		
-		map.put("identifier", new String[]{identifierList});
-		
+		}
+		if(identifierParameterExists){
+			map.put("identifier", new String[]{identifierList});
+		}
 	}
 	
 
@@ -154,11 +160,24 @@ public class DescribeProcessRequest extends Request {
 			}
 		}
 		
+//		if(identifiers.length == 0){
+//			throw new ExceptionReport("No process identifier specified for describe process operation.", 
+//					ExceptionReport.MISSING_PARAMETER_VALUE, 
+//					"parameter: identifier");
+//		}else 
+		if(identifiers.length == 1){
+			if(identifiers[0] == null || identifiers[0].equals("")){
+				throw new ExceptionReport("Process description request with empty identifier.", 
+						ExceptionReport.INVALID_PARAMETER_VALUE, 
+						"identifier");
+			}
+		}
+		
 		for(String algorithmName : identifiers) {
 			if(!RepositoryManager.getInstance().containsAlgorithm(algorithmName)) {
 				throw new ExceptionReport("Algorithm does not exist: " + algorithmName, 
 											ExceptionReport.INVALID_PARAMETER_VALUE, 
-											"parameter: identifier | value: " + algorithmName);
+											"identifier");
 			}
 			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
 			document.getProcessDescriptions().addNewProcessDescription().set(description);
