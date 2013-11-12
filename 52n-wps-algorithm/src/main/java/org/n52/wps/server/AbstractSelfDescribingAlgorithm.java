@@ -68,7 +68,12 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			
 			Class<?> inputDataTypeClass = this.getInputDataType(identifier);
 			Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
-						
+			
+			//we have to add this because of the new AbstractLiteralDataBinding class 
+			if(interfaces.length == 0){
+				interfaces = inputDataTypeClass.getSuperclass().getInterfaces();
+			}
+			
 			for(Class<?> implementedInterface : interfaces){
 				if(implementedInterface.equals(ILiteralData.class)){
 					LiteralInputType literalData = dataInput.addNewLiteralData();
@@ -145,6 +150,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 			Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
 			Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
 			
+			//we have to add this because of the new AbstractLiteralDataBinding class 
+			if(interfaces.length == 0){
+				interfaces = outputDataTypeClass.getSuperclass().getInterfaces();
+			}
 			for(Class<?> implementedInterface : interfaces){
 					
 				

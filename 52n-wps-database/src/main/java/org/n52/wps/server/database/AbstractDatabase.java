@@ -126,7 +126,7 @@ public abstract class AbstractDatabase implements IDatabase{
     
     @Override
 	public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {			
-        insertResultEntity(inputStream, id, "ExecuteRequest", xml ? "text/xml" : "text/plain");
+        insertResultEntity(inputStream, "REQ_" + id, "ExecuteRequest", xml ? "text/xml" : "text/plain");
 	}
     
 	/**
@@ -138,7 +138,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */
     @Override
 	public synchronized String insertResponse(String id, InputStream inputStream) {			
-        return insertResultEntity(inputStream, "REQ_" + id, "ExecuteResponse", "text/xml");
+        return insertResultEntity(inputStream, id, "ExecuteResponse", "text/xml");
 	}
 	
 	/**

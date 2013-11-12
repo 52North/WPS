@@ -48,6 +48,16 @@ public class RConnector {
         if (con != null && con.needLogin())
             con.login(user, password);
 
+        RLogger.log(con, "New connection from WPS4R");
+
+        REXP info = con.eval("capture.output(sessionInfo())");
+        try {
+            log.debug("NEW CONNECTION >>> sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
+        }
+        catch (REXPMismatchException e) {
+            log.warn("Error creating session info.", e);
+        }
+        
         return con;
     }
 
@@ -112,15 +122,7 @@ public class RConnector {
 
         RConnection con;
         con = new RConnection(host, port);
-        RLogger.log(con, "New connection from WPS4R");
 
-        REXP info = con.eval("capture.output(sessionInfo())");
-        try {
-            log.debug("NEW CONNECTION >>> sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
-        }
-        catch (REXPMismatchException e) {
-            log.warn("Error creating session info.", e);
-        }
         return con;
     }
 

@@ -480,7 +480,7 @@
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
-			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="true">
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
 			<Property name="Script_Dir" active="true">R/scripts</Property>
 			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
 			<Property name="Resource_Dir" active="true">R/resources</Property>
@@ -1034,5 +1034,48 @@
 			<!-- deletes files older than 7 days -->
 			<Property name="wipe.threshold" active="true">P7D</Property>
 		</Database>
+        
+        <!-- 
+            POSTGRES Connector 
+            ==================
+            
+            Ensure that the postgres driver is available to the server during 
+            launch. The server will fail to start if Postgres is active but the
+            driver is missing. However, if the driver exists and the database 
+            cannot be connected to (unavailable, username/pass issue, etc), the
+            framework will fail-over to the Flatfile Database
+
+            jndiName or username/password: If jndiName exists, username
+            and password are not used.
+             
+            saveResultsToDb: Setting to false will save results output to file
+            and put the URI link to the file in the database. Setting to true 
+            stores the actual result output in the database (You probably don't 
+            want this if you have large results).
+            
+            JNDI Configuration:
+            <Database>
+                <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
+                <Property active="true" name="jndiName">jndiname</Property> 
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+
+            Direct connection configuration:
+            <Database>
+                Alternative connection method    
+                <Property active="true" name="databaseName">postgres</Property>
+                <Property active="true" name="databasePath">//localhost:5432</Property>
+                <Property active="true" name="username">username</Property>
+                <Property active="true" name="password">password</Property>
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+-->
+
 	</Server>
 </WPSConfiguration>
