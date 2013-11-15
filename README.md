@@ -1,4 +1,4 @@
-# 52°North Web Processing Service
+# 52°North Web Processing Service [![Build Status](https://travis-ci.org/bpross-52n/WPS.png)](https://travis-ci.org/bpross-52n/WPS)
 
 The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in
 a standardized way. It features a pluggable architecture for processes and data encodings.
