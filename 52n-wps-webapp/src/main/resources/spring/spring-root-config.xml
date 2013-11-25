@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<import resource="spring-db-config.xml" />
+	<import resource="spring-security-config.xml" />
+
+	<beans profile="production">
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+		</context:component-scan>
+	</beans>
+
+	<beans profile="test">
+		<!-- Include test modules in the context for integration testing -->
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+		</context:component-scan>
+	</beans>
+
+</beans>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration 
-		$ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration $ -->
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
@@ -112,7 +112,14 @@
 			<organizationUrl>http://52north.org</organizationUrl>
 		</contributor>
 	</contributors>
-	
+
+	<!-- Spring properties -->
+	<properties>
+		<org.springframework.version>3.2.3.RELEASE</org.springframework.version>
+		<org.spring-security.version>3.1.4.RELEASE</org.spring-security.version>
+		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
+	</properties>
+
 	<!-- here are the dependencies of the project -->
 	<dependencies>
 		<!-- Dependencies for Scope 'test' -->
@@ -239,8 +246,7 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into 
-				slf4j -->
+			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into slf4j -->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -263,11 +269,153 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${org.spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${org.spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${org.spring-security.version}</version>
+		</dependency>
+		<!-- End of Spring dependencies -->
+		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>jstl</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>1.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-extras</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<!-- Database dependencies -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>5.0.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-pool</groupId>
+			<artifactId>commons-pool</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
+		<!-- End of database dependencies -->
 	</dependencies>
 
-	<properties>
-		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
-	</properties>
+
 
 	<build>
 		<resources>
@@ -368,19 +516,14 @@
 		<!-- </profile> -->
 		<profile>
 			<id>with-deploy</id>
-			<!-- server configuration for settings.xml ===================================== 
-				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username> 
-				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server> 
-				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings> 
-				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port> 
-				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties> 
-				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven 
-				(Run Configuration in Eclipse) ============================================= 
-				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging 
-				in Eclipse =========================== Add Java options to Tomcat: -Xdebug 
-				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote 
-				Java Application as debugging configuration and use the address above as 
-				the connection port. -->
+			<!-- server configuration for settings.xml ===================================== <server> <id>loho</id> <configuration> 
+				<cargo.remote.username>admin</cargo.remote.username> <cargo.remote.password>admin</cargo.remote.password> </configuration> 
+				</server> <profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings> <conf.wps.remote.server>localhost</conf.wps.remote.server> 
+				<conf.wps.remote.port>8080</conf.wps.remote.port> <conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties> 
+				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" 
+				/> Run with Maven (Run Configuration in Eclipse) ============================================= - start Tomcat - mvn install 
+				-Pwps-localhost,with-deploy Remote Debugging in Eclipse =========================== Add Java options to Tomcat: -Xdebug -Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n 
+				Add new Remote Java Application as debugging configuration and use the address above as the connection port. -->
 			<build>
 				<finalName>WPS</finalName>
 				<plugins>
@@ -445,11 +588,10 @@
 			<id>integration-test</id>
 			<build>
 				<plugins>
-					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
-						<version>1.7</version> <executions> <execution> <id>reserve-network-port</id> 
-						<goals> <goal>reserve-network-port</goal> </goals> <phase>initialize</phase> 
-						<configuration> <portNames> <portName>jetty.http.port</portName> <portName>jetty.http.stop.port</portName> 
-						</portNames> </configuration> </execution> </executions> </plugin> -->
+					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> <version>1.7</version> 
+						<executions> <execution> <id>reserve-network-port</id> <goals> <goal>reserve-network-port</goal> </goals> <phase>initialize</phase> 
+						<configuration> <portNames> <portName>jetty.http.port</portName> <portName>jetty.http.stop.port</portName> </portNames> </configuration> 
+						</execution> </executions> </plugin> -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -462,9 +604,9 @@
 									<goal>verify</goal>
 								</goals>
 								<configuration>
-<!-- 									<excludes> -->
-<!-- 										<exclude>**/AllTestsIT*</exclude> -->
-<!-- 									</excludes> -->
+									<!-- <excludes> -->
+									<!-- <exclude>**/AllTestsIT*</exclude> -->
+									<!-- </excludes> -->
 
 									<argLine>-Xmx1024m</argLine>
 									<summaryFile>target/failsafe-reports/failsafe-summary.xml</summaryFile>
@@ -472,9 +614,7 @@
 										<com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>
 										<test.host>127.0.0.1</test.host>
 										<test.port>9090</test.port>
-										<!-- <test.rserve.host>127.0.0.1</test.rserve.host>
-											<test.rserve.port>6311</test.rserve.port>
-											<test.rserve.user></test.rserve.user>
+										<!-- <test.rserve.host>127.0.0.1</test.rserve.host> <test.rserve.port>6311</test.rserve.port> <test.rserve.user></test.rserve.user> 
 											<test.rserve.pwd></test.rserve.pwd> -->
 
 										<!--<test.port>${jetty.http.port}</test.port> -->
@@ -508,8 +648,8 @@
 								<contextPath>/wps</contextPath>
 							</webAppConfig>
 							<systemProperties>
-								<!-- This hack is to set catalina.base to the current jetty base 
-									directory while the plugin runs so log4j will log somewhere and not complain -->
+								<!-- This hack is to set catalina.base to the current jetty base directory while the plugin runs so log4j will log 
+									somewhere and not complain -->
 								<systemProperty>
 									<name>catalina.base</name>
 									<value>${project.build.directory}</value>

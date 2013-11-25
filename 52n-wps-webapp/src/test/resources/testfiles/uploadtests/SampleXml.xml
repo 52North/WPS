@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.density.linedensity</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Title>LineDensity_sa</ows:Title>
+		<ows:Abstract>Calculates a magnitude per unit area from polyline features that fall within a radius around each cell. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
+		<DataInputs>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>input features</ows:Identifier><!-- 0 -->
+				<ows:Title>input polyline features</ows:Title>
+				<ows:Abstract>the input polyline feature to calculate the density for</ows:Abstract>
+				<ComplexData>
+					<Default>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/x-zipped-shp</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexData>
+			</Input>
+			<Input minOccurs="1" maxOccurs="1">
+				<ows:Identifier>field</ows:Identifier><!-- 1 -->
+				<ows:Title>population field as string</ows:Title>
+				<ows:Abstract>Field denoting population values for each feature. the population field is the count or quantity to be spread across the landscape to create continuous surface. values may be integer or floating point. a valid field name of the input features is required.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AnyValue/>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>cell size</ows:Identifier><!-- 3 -->
+				<ows:Title>output cell size</ows:Title>
+				<ows:Abstract>The cell size at which the output raster will be created. If the environment is not set, then cell size is the shorter of the width or height of the extent of input point or polyline features in the output spatial reference, divided by 250.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>radius</ows:Identifier><!-- 4 -->
+				<ows:Title>search radius</ows:Title>
+				<ows:Abstract>The search radius within which to calculate density. Units are based on the linear unit of the projection of the output spatial reference. The default is the shortest of the width or height of the extent of in_features in the output spatial reference, divided by 30.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:double"></ows:DataType>
+					<ows:AnyValue/>
+				</LiteralData>
+			</Input>
+			<Input minOccurs="0" maxOccurs="1">
+				<ows:Identifier>units</ows:Identifier><!-- 5 -->
+				<ows:Title>area units</ows:Title>
+				<ows:Abstract>The desired area units of the output density values. the value can be "SQUARE_MAP_UNITS", "SQUARE_MILES", "SQUARE_KILOMETERS","SQUARE_INCHES", "SQUARE_CENTIMETERS" or "SQUARE_MILLIMETERS". A default unit is selected based on the linear unit of the projection of the output spatial reference.</ows:Abstract>
+				<LiteralData>
+					<ows:DataType ows:reference="xs:string"></ows:DataType>
+					<ows:AllowedValues>
+						<ows:Value>SQUARE_MAP_UNITS</ows:Value>
+						<ows:Value>SQUARE_MILES</ows:Value>
+						<ows:Value>SQUARE_KILOMETERS</ows:Value>
+						<ows:Value>SQUARE_INCHES</ows:Value>
+						<ows:Value>SQUARE_CENTIMETERS</ows:Value>
+						<ows:Value>SQUARE_MILLIMETERS</ows:Value>
+					</ows:AllowedValues>	
+				</LiteralData>
+			</Input>
+		</DataInputs>
+		<ProcessOutputs>
+			<Output>
+				<ows:Identifier>result</ows:Identifier><!-- 2 -->
+				<ows:Title>raster values</ows:Title>	
+				<ows:Abstract>result raster</ows:Abstract>
+				<ComplexOutput>
+					<Default>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>
+					</Default>
+					<Supported>
+						<Format>
+							<MimeType>application/GeoTIFF</MimeType>
+							<Schema></Schema>
+						</Format>
+						<Format>
+							<MimeType>application/img</MimeType>
+							<Schema></Schema>
+						</Format>	
+					</Supported>
+				</ComplexOutput>
+			</Output>
+		</ProcessOutputs>
+	</ProcessDescription>
+</wps:ProcessDescriptions>
+									
+	

@@ -1,71 +1,34 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" 
-         version="2.4">
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
 	<display-name>${project.parent.name}, Git: ${buildNumber} @ ${timestamp}</display-name>
 	<description>a 52n prototype implementation of the WPS 1.0.0 spec.</description>
-	
-	<!-- security-constraint>
-		<web-resource-collection>
-			<web-resource-name>My JSP</web-resource-name>
-			<url-pattern>/webAdmin/index.jsp</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>wpsAdmin</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint-->
-	<!-- /security-constraint>
-	
-    <login-config>
-    	<auth-method>BASIC</auth-method>
-    	<realm-name>Basic Authentication</realm-name>
-  	</login-config>
-  
-  	<Security roles referenced by this web application -->
-  	<!-- >security-role>
-    	<description>The role that is required to log in to the Manager Application</description>
-    	<role-name>manager</role-name>
-  	</security-role-->
-  
- 	<!--filter>
-		<filter-name>CommunicationSizeLogFilter</filter-name>
-		<filter-class>org.n52.wps.server.CommunicationSizeLogFilter</filter-class>
-	</filter-->
-	<!--filter>
-		<filter-name>CompressingFilter</filter-name>
-		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:spring/spring-root-config.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>production</param-value>
+	</context-param>
+
+	<listener>
+		<listener-class>org.n52.wps.webapp.util.WebAppPropertiesListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>Dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<init-param>
-			<param-name>debug</param-name>
-			<param-value>false</param-value>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring-mvc-config.xml</param-value>
 		</init-param>
-		<init-param>
-			<param-name>statsEnabled</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	
-	<filter-mapping>
-		<filter-name>CompressingFilter</filter-name>
-		<url-pattern>/WebProcessingService</url-pattern>
-	</filter-mapping-->
-	<!-->filter-mapping>
-		<filter-name>CommunicationSizeLogFilter</filter-name>
-		<url-pattern>/WebProcessingService</url-pattern>
-	</filter-mapping-->
-    
-<!--    <filter>
-        <filter-name>ResponseURLFilter</filter-name>
-        <filter-class>org.n52.wps.server.ResponseURLFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ResponseURLFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>-->
-		
+		<load-on-startup>0</load-on-startup>
+	</servlet>
 	<servlet>
 		<servlet-name>wpsServlet</servlet-name>
 		<servlet-class>org.n52.wps.server.WebProcessingService</servlet-class>
@@ -73,18 +36,18 @@
 	</servlet>
 	<servlet>
 		<servlet-name>AxisServlet</servlet-name>
-		<!--display-name>Apache-Axis Servlet</display-name-->
+		<!--display-name>Apache-Axis Servlet</display-name -->
 		<servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
-		<!--<init-param>-->
-			<!--<param-name>axis2.xml.path</param-name>-->
-			<!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
-			<!--<param-name>axis2.xml.url</param-name>-->
-			<!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
-			<!--<param-name>axis2.repository.path</param-name>-->
-			<!--<param-value>/WEB-INF</param-value>-->
-			<!--<param-name>axis2.repository.url</param-name>-->
-			<!--<param-value>http://localhot/myrepo</param-value>-->
-		<!--</init-param>-->
+		<!--<init-param> -->
+		<!--<param-name>axis2.xml.path</param-name> -->
+		<!--<param-value>/WEB-INF/conf/axis2.xml</param-value> -->
+		<!--<param-name>axis2.xml.url</param-name> -->
+		<!--<param-value>http://localhot/myrepo/axis2.xml</param-value> -->
+		<!--<param-name>axis2.repository.path</param-name> -->
+		<!--<param-value>/WEB-INF</param-value> -->
+		<!--<param-name>axis2.repository.url</param-name> -->
+		<!--<param-value>http://localhot/myrepo</param-value> -->
+		<!--</init-param> -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
@@ -101,16 +64,16 @@
 		<servlet-name>retrieveResultServlet</servlet-name>
 		<servlet-class>org.n52.wps.server.RetrieveResultServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
-	</servlet>	
-	
+	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>wpsServlet</servlet-name>
 		<url-pattern>/WebProcessingService</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>wps-T Servlet</servlet-name>
 		<url-pattern>/WPS-T</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Feed Servlet</servlet-name>
 		<url-pattern>/feed</url-pattern>
@@ -123,36 +86,29 @@
 		<servlet-name>retrieveResultServlet</servlet-name>
 		<url-pattern>/RetrieveResultServlet</url-pattern>
 	</servlet-mapping>
-	
-	<welcome-file-list>
-		<welcome-file>/index.html</welcome-file>
-	</welcome-file-list>	
-	
-	<!-- 52n Security -->
-    <context-param>
-        <param-name>security.config.validation</param-name>
-        <param-value>false</param-value>
-        <!--description>
-           disables validation of the security-config.xml this is necessary
-           because the ${..} mechanism works only if the validation is disabled.
-       </description-->
-    </context-param>
+	<servlet-mapping>
+		<servlet-name>Dispatcher</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
 
-    <filter>
-        <filter-name>authn</filter-name>
-        <!-- display-name>Authentication Chain Filter</display-name-->
-        <!-- description>
-            Delegates calls to AuthenticationChainFilter that is defined in the security-config.
-        </description-->
-        <filter-class>org.n52.security.service.config.support.SecurityConfigDelegatingServletFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>authn</filter-name>
-        <url-pattern>/webAdmin/*</url-pattern>
-    </filter-mapping>
-
-    <listener>
-        <listener-class>org.n52.security.service.config.support.SecurityConfigContextListener</listener-class>
-    </listener>	
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/403</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error</location>
+	</error-page>
 </web-app>
