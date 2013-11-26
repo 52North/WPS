@@ -320,7 +320,6 @@ public class GenericFileData {
 						workspaceDir);
 			} catch (IOException e) {
 				LOGGER.error("Could not unzip the archive to " + workspaceDir);
-				e.printStackTrace();
 			}
 		} else {
 			try {
@@ -357,15 +356,13 @@ public class GenericFileData {
 			currentFile.createNewFile();
 			FileOutputStream fos = new FileOutputStream(currentFile);
 			
-			IOUtils.copy(is, fos);
-			
+			IOUtils.copy(zipInputStream, fos);
 
 			if (currentExtension.equalsIgnoreCase(extension)) {
 				returnFile = currentFile.getAbsolutePath();
 			}
 			
 			fos.close();
-			System.gc();
 		}
 		zipInputStream.close();
 		return returnFile;
