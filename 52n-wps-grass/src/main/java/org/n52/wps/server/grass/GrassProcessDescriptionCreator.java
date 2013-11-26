@@ -50,7 +50,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
-import org.n52.wps.server.grass.util.StreamGobbler;
+import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
 public class GrassProcessDescriptionCreator {
 	
@@ -117,14 +117,15 @@ public class GrassProcessDescriptionCreator {
 
 		PipedInputStream pipedInError = new PipedInputStream(pipedOutError);
 		
-		// any error message?
-		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(),
+		// attach error stream reader
+		JavaProcessStreamReader errorGobbler = new JavaProcessStreamReader(proc.getErrorStream(),
 				"ERROR", pipedOutError);
 
-		// any output?
-		StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(),
+		// attach output stream reader
+		JavaProcessStreamReader outputGobbler = new JavaProcessStreamReader(proc.getInputStream(),
 				"OUTPUT", pipedOut);
 
+		// start them
 		executor.execute(errorGobbler);
 		executor.execute(outputGobbler);
 
@@ -191,7 +192,8 @@ public class GrassProcessDescriptionCreator {
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
 				checkForBase64Encoding(inputDescriptionType);
-				checkForKMLMimeType(inputDescriptionType);					
+				checkForKMLMimeType(inputDescriptionType);	
+				addZippedSHPMimeType(inputDescriptionType);
 			}			
 			
 			SupportedComplexDataType outputType = result.getProcessOutputs()
@@ -222,6 +224,10 @@ public class GrassProcessDescriptionCreator {
 																		
 						xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 						xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
+
+						ComplexDataDescriptionType xZippedShapeTypeUTF8 = outputType.getSupported().addNewFormat();
+																		
+						xZippedShapeTypeUTF8.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 
 					}
 				}
@@ -292,7 +298,7 @@ public class GrassProcessDescriptionCreator {
 		
 		if(defaultMimeType != null && defaultEncoding == null){			
 			for (String mimeType : genericFileParserMimeTypes) {
-				if(mimeType.equals(defaultMimeType)){
+				if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(defaultMimeType)){
 					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
 				}
 			}			
@@ -307,7 +313,7 @@ public class GrassProcessDescriptionCreator {
 			
 			if(supportedMimeType != null && supportedEncoding == null){			
 				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(supportedMimeType)){
+					if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(supportedMimeType)){
 						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
 					}
 				}			
@@ -332,6 +338,24 @@ public class GrassProcessDescriptionCreator {
 		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
 			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
 				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+				return;
+			}
+		}
+		
+	}
+	
+	private void addZippedSHPMimeType(InputDescriptionType inputDescriptionType) {
+		
+		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+		
+		if(complexData == null){
+			return;
+		}
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/gml/2.1.2/feature.xsd")){
+				inputDescriptionType.getComplexData().getSupported().addNewFormat().setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 				return;
 			}
 		}

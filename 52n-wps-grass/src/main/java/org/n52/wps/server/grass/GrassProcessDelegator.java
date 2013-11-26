@@ -22,7 +22,7 @@ Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
  along with this program (see gnu-gpl v2.txt). If not, write to
  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+ Software Foundations web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.server.grass;
@@ -194,21 +194,21 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 		
 		String outputIdentifier = outputIdentifierCT.getStringValue();	
 		
-		HashMap<String, IData> firstInputMap = new HashMap<String, IData>();
+		HashMap<String, List<IData>> firstInputMap = new HashMap<String, List<IData>>();
 
 		for (String key : complexInputTypes.keySet()) {
 
 			if (inputData.containsKey(key)) {
-				firstInputMap.put(key, inputData.get(key).get(0));
+				firstInputMap.put(key, inputData.get(key));
 			}
 		}
 		
-		HashMap<String, IData> secondInputMap = new HashMap<String, IData>();
+		HashMap<String, List<IData>> secondInputMap = new HashMap<String, List<IData>>();
 		
 		for (String key : literalInputTypes.keySet()) {
 
 			if (inputData.containsKey(key)) {
-				secondInputMap.put(key, inputData.get(key).get(0));
+				secondInputMap.put(key, inputData.get(key));
 			}
 		}
 		
