@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wps:Execute service="WPS" version="1.0.0"
+	xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1"
+	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
+	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
+	<ows:Identifier>org.n52.wps.server.algorithm.SimpleBufferAlgorithm</ows:Identifier>
+	<wps:DataInputs>
+		<wps:Input>
+			<ows:Identifier>data</ows:Identifier>
+			<wps:Reference schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd"
+				xlink:href="http://geoprocessing.demo.52north.org:8080/geoserver/wfs">
+				<wps:Body>
+					<wfs:GetFeature service="WFS" version="1.0.0"
+						outputFormat="GML2" xmlns:topp="http://www.openplans.org/topp"
+						xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc"
+						xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+						xsi:schemaLocation="http://www.opengis.net/wfs
+                      http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd">
+						<wfs:Query typeName="topp:states">
+							<ogc:PropertyName>topp:STATE_NAME</ogc:PropertyName>
+							<ogc:PropertyName>topp:PERSONS</ogc:PropertyName>
+							<ogc:PropertyName>the_geom</ogc:PropertyName>
+							<ogc:Filter>
+								<ogc:BBOX>
+									<ogc:PropertyName>the_geom</ogc:PropertyName>
+									<gml:Box srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+										<gml:coordinates>-75.102613,40.212597 -72.361859,41.512517
+										</gml:coordinates>
+									</gml:Box>
+								</ogc:BBOX>
+							</ogc:Filter>
+						</wfs:Query>
+					</wfs:GetFeature>
+				</wps:Body>
+			</wps:Reference>
+		</wps:Input>
+		<wps:Input>
+			<ows:Identifier>width</ows:Identifier>
+			<wps:Data>
+				<wps:LiteralData>20</wps:LiteralData>
+			</wps:Data>
+		</wps:Input>
+	</wps:DataInputs>
+	<wps:ResponseForm>
+		<wps:ResponseDocument storeExecuteResponse="false">
+			<wps:Output asReference="false">
+				<ows:Identifier>result</ows:Identifier>
+			</wps:Output>
+		</wps:ResponseDocument>
+	</wps:ResponseForm>
+</wps:Execute>
