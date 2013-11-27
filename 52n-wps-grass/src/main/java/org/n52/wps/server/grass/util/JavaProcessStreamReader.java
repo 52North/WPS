@@ -34,8 +34,6 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * This class handles Java process streams. If this would not be done, the thread would not wait
  * for the process to be finished.

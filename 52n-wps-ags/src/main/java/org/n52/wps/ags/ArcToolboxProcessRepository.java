@@ -1,31 +1,27 @@
 /***************************************************************
-Copyright © 2010 52°North Initiative for Geospatial Open Source Software GmbH
+Copyright (C) 2010-2013
+by 52 North Initiative for Geospatial Open Source Software GmbH
 
- Author: Matthias Mueller, TU Dresden
- 
- Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
- Martin-Luther-King-Weg 24,
- 48155 Muenster, Germany, 
- info@52north.org
+Contact: Andreas Wytzisk
+52 North Initiative for Geospatial Open Source Software GmbH
+Martin-Luther-King-Weg 24
+48155 Muenster, Germany
+info@52north.org
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
+This program is free software; you can redistribute and/or modify it under 
+the terms of the GNU General Public License version 2 as published by the 
+Free Software Foundation.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; even without the implied WARRANTY OF
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
+This program is distributed WITHOUT ANY WARRANTY; even without the implied
+WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
 
- You should have received a copy of the GNU General Public License
- along with this program (see gnu-gpl v2.txt). If not, write to
- the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
+You should have received a copy of the GNU General Public License along with
+this program (see gnu-gpl v2.txt). If not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
+visit the Free Software Foundation web page, http://www.fsf.org.
 
  ***************************************************************/
-
 package org.n52.wps.ags;
 
 import java.io.File;
@@ -40,16 +36,19 @@ import java.util.UUID;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.feed.FeedRepository;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * @author Matthias Mueller, TU Dresden
+ *
+ */
 public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(ArcToolboxProcessRepository.class);

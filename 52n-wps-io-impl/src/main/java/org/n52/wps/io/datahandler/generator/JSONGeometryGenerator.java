@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * This generator generates JSON Geometries (points, polylines, polygons,
  * see this website: 
  * http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm)
- * @author Merret Buurman, 52°north / ifgi
+ * @author Merret Buurman, 52 North / ifgi
  * June 2012
  * 
  * So far, only one Geometry can be handled at a time (no collections).
