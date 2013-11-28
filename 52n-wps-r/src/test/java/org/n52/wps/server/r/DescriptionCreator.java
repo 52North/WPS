@@ -85,14 +85,14 @@ public class DescriptionCreator {
         for (RAnnotation anno : this.annotations) {
             if (anno.getType().equals(RAnnotationType.DESCRIPTION)) {
                 abstractString = anno.getStringValue(RAttribute.ABSTRACT);
-                identifierString = anno.getStringValue(RAttribute.IDENTIFIER);
+                identifierString = R_Config.WKN_PREFIX + anno.getStringValue(RAttribute.IDENTIFIER);
                 titleString = anno.getStringValue(RAttribute.TITLE);
             }
         }
 
         Assert.assertEquals(testType.getAbstract().getStringValue(), abstractString);
-        testType.getIdentifier().getStringValue().equals(identifierString);
-        testType.getTitle().getStringValue().equals(titleString);
+        Assert.assertEquals(testType.getIdentifier().getStringValue(), identifierString);
+        Assert.assertEquals(testType.getTitle().getStringValue(), titleString);
 
         // test full document > some namespace issues! FIXME
         // Document controlDocument = (Document) control.getDomNode();

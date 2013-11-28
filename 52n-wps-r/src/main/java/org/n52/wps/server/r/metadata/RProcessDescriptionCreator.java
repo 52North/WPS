@@ -211,7 +211,8 @@ public class RProcessDescriptionCreator {
     private static void addProcessDescription(ProcessDescriptionType pdt,
             RAnnotation annotation) throws RAnnotationException
     {
-        String id = R_Config.getInstance().WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
+        R_Config conf = R_Config.getInstance();
+        String id = conf.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);

@@ -46,19 +46,25 @@ public class R_Resource {
         this.resourceValue = resourceValue;
     }
 
-    public String getResourceValue()
-    {
+    public String getResourceValue() {
         return this.resourceValue;
     }
 
-    public URL getFullResourceURL()
-    {
-        String fullResourceURL = R_Config.getInstance().getResourceDirURL() + "/" + this.resourceValue;
+    public URL getFullResourceURL() {
+        R_Config config = R_Config.getInstance();
+        String dirUrl = config.getResourceDirURL();
+
+        String fullResourceURL = null;
+        if (dirUrl != null)
+            fullResourceURL = dirUrl + "/" + this.resourceValue;
+        else
+            fullResourceURL = "http://not_available/" + this.resourceValue;
 
         URL resourceURL;
         try {
             resourceURL = new URL(fullResourceURL);
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             LOGGER.error("Could not create URL from resource: " + fullResourceURL, e);
             return null;
         }
@@ -73,18 +79,19 @@ public class R_Resource {
         return resourceURL;
     }
 
-    public File getFullResourcePath()
-    {
+    public File getFullResourcePath() {
         String fullResourcePath = null;
         try {
-            fullResourcePath = R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR) + File.separatorChar + this.resourceValue;
-        } catch (ExceptionReport e) {
+            fullResourcePath = R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR)
+                    + File.separatorChar + this.resourceValue;
+        }
+        catch (ExceptionReport e) {
             LOGGER.error("Cannot locate resource File: " + this.resourceValue, e);
             e.printStackTrace();
         }
 
         File resourceFile = new File(fullResourcePath);
-        if (!resourceFile.exists()) {
+        if ( !resourceFile.exists()) {
             LOGGER.error("Cannot locate resource File: " + this.resourceValue + ", path: " + fullResourcePath);
             return null;
         }
@@ -100,8 +107,7 @@ public class R_Resource {
     }
 
     @SuppressWarnings("unused")
-    private static boolean urlResourceExists(URL url)
-    {
+    private static boolean urlResourceExists(URL url) {
         HttpURLConnection conn = null;
 
         try {
@@ -110,7 +116,8 @@ public class R_Resource {
                                            // conn.setRequestMethod("HEAD");
             conn.setConnectTimeout(3000);
             conn.setReadTimeout(3000);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOGGER.error("Could not open connection to URL " + url, e);
             return false;
         }
@@ -121,7 +128,8 @@ public class R_Resource {
 
         try {
             conn.connect();
-        } catch (IOException e1) {
+        }
+        catch (IOException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
@@ -130,7 +138,8 @@ public class R_Resource {
         int code;
         try {
             code = conn.getResponseCode();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOGGER.error("Could not get header from connection.", e);
             return false;
         }
@@ -141,8 +150,7 @@ public class R_Resource {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("R_Resource [resourceValue=");
         builder.append(this.resourceValue);
