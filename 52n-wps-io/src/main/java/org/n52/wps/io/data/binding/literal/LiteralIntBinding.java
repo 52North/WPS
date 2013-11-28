@@ -2,9 +2,11 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralIntBinding implements ILiteralData {
+public class LiteralIntBinding extends AbstractLiteralDataBinding {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2565311479077929283L;
 	private transient Integer payload;
 
 	public LiteralIntBinding(Integer payload) {
@@ -15,7 +17,7 @@ public class LiteralIntBinding implements ILiteralData {
 		return payload;
 	}
 
-	public Class<?> getSupportedClass() {
+	public Class<Integer> getSupportedClass() {
 		return Integer.class;
 	}
 	

@@ -215,9 +215,6 @@ public final class FlatFileDatabase implements IDatabase {
                 // should never get here due to checks above...
                 LOGGER.warn("Request not found for id {}", id);
             }
-            catch (IOException ex) {
-                LOGGER.warn("Error processing request for id {}", id);
-            }
         }
         LOGGER.warn("Response not found for id {}", id);
         return null;

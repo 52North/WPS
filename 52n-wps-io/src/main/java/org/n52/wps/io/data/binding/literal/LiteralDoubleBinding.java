@@ -2,9 +2,11 @@ package org.n52.wps.io.data.binding.literal;
 
 import java.io.IOException;
 
-import org.n52.wps.io.data.ILiteralData;
-
-public class LiteralDoubleBinding implements ILiteralData {	
+public class LiteralDoubleBinding extends AbstractLiteralDataBinding {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3355214481832627325L;
 	private transient Double payload;
 	
 	public LiteralDoubleBinding(Double payload){
@@ -15,7 +17,7 @@ public class LiteralDoubleBinding implements ILiteralData {
 		return payload;
 	}
 
-	public Class getSupportedClass() {
+	public Class<Double> getSupportedClass() {
 		return Double.class;
 	}
 	

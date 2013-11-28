@@ -151,15 +151,16 @@ public class RequestHandler {
 		}
 		else if (requestType.equalsIgnoreCase("Execute")) {
 			req = new ExecuteRequest(ciMap);
+			setResponseMimeType((ExecuteRequest)req);
 		} 
 		else if (requestType.equalsIgnoreCase("RetrieveResult")) {
 			req = new RetrieveResultRequest(ciMap);
 		} 
 		else {
 			throw new ExceptionReport(
-					"The requested Operation is for HTTP GET not supported or not applicable to the specification: "
+					"The requested Operation is not supported or not applicable to the specification: "
 							+ requestType,
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+					ExceptionReport.OPERATION_NOT_SUPPORTED, requestType);
 		}
 
 		this.req = req;
@@ -192,8 +193,6 @@ public class RequestHandler {
 
 			// parse the InputStream to create a Document
 			doc = fac.newDocumentBuilder().parse(is);
-		
-		
 			
 			// Get the first non-comment child.
 			Node child = doc.getFirstChild();
@@ -260,11 +259,7 @@ public class RequestHandler {
 		// get the request type
 		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
 			req = new ExecuteRequest(doc);
-			if(req instanceof ExecuteRequest){
-				setResponseMimeType((ExecuteRequest)req);
-			}else{
-				this.responseMimeType = "text/xml";
-			}
+			setResponseMimeType((ExecuteRequest)req);
 		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("GetCapabilities")){
 			req = new CapabilitiesRequest(doc);
 			this.responseMimeType = "text/xml";
@@ -273,8 +268,8 @@ public class RequestHandler {
 			this.responseMimeType = "text/xml";
 			
 		}  else if(!localName.equals("Execute")){
-			throw new ExceptionReport("specified operation is not supported: "
-					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);
+			throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
+					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
 		}
 		else if(nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
 			throw new ExceptionReport("specified namespace is not supported: "

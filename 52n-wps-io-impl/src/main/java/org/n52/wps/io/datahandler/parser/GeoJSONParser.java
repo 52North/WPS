@@ -60,6 +60,7 @@ public class GeoJSONParser extends AbstractParser {
 	public GeoJSONParser() {
 		super();
 		supportedIDataTypes.add(JTSGeometryBinding.class);
+		supportedIDataTypes.add(GTVectorDataBinding.class);
 	}
 
 	@Override
@@ -105,6 +106,8 @@ public class GeoJSONParser extends AbstractParser {
 
 				List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
 
+				featureList.add(feature);
+				
 				ListFeatureCollection featureCollection = new ListFeatureCollection(
 						feature.getFeatureType(), featureList);
 

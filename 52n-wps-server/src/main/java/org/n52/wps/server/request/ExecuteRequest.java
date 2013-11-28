@@ -40,14 +40,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.ExceptionType;
+import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DataInputsType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
@@ -65,9 +69,8 @@ import net.opengis.wps.x100.StatusType;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
@@ -84,7 +87,10 @@ import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.ExecuteResponseBuilder;
 import org.n52.wps.server.response.Response;
 import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * Handles an ExecuteRequest
@@ -146,6 +152,10 @@ public class ExecuteRequest extends Request implements IObserver {
 
         storeRequest(ciMap);
 	}
+	
+	public void getKVPDataInputs(){
+		
+	}
 
 	/**
 	 * @param ciMap
@@ -176,11 +186,12 @@ public class ExecuteRequest extends Request implements IObserver {
 				throw new ExceptionReport("No \"=\" supplied for attribute: "
 						+ inputString, ExceptionReport.MISSING_PARAMETER_VALUE);
 			}
+			//get name
 			String key = inputString.substring(0, position);
 			String value = null;
 			if (key.length() + 1 < inputString.length()) {
 				// BS int valueDelimiter = inputString.indexOf("@");
-				int valueDelimiter = inputString.indexOf("=@");
+				int valueDelimiter = inputString.indexOf("@");
 				if (valueDelimiter != -1 && position + 1 < valueDelimiter) {
 					value = inputString.substring(position + 1, valueDelimiter);
 				} else {
@@ -206,7 +217,9 @@ public class ExecuteRequest extends Request implements IObserver {
 			String mimeTypeAttribute = null;
 			String schemaAttribute = null;
 			String hrefAttribute = null;
-			String[] inputItemstemp = inputString.split("=@");
+			String uom = null;
+			String dataType = null;
+			String[] inputItemstemp = inputString.split("@");
 			String[] inputItems = null;
 			if (inputItemstemp.length == 2) {
 				inputItems = inputItemstemp[1].split("@");
@@ -224,6 +237,10 @@ public class ExecuteRequest extends Request implements IObserver {
 							attributePos);
 					String attributeValue = inputItems[i]
 							.substring(attributePos + 1);
+					//attribute is input name
+					if(attributeName.equals(key)){
+						continue;
+					}
 					try {
 						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
@@ -237,6 +254,10 @@ public class ExecuteRequest extends Request implements IObserver {
 						schemaAttribute = attributeValue;
 					} else if (attributeName.equalsIgnoreCase("href") | attributeName.equalsIgnoreCase("xlink:href")) {
 						hrefAttribute = attributeValue;
+					} else if (attributeName.equalsIgnoreCase("uom")) {
+						uom = attributeValue;
+					} else if (attributeName.equalsIgnoreCase("datatype")) {
+						dataType = attributeValue;
 					} else {
 						throw new ExceptionReport(
 								"Attribute is not supported: " + attributeName,
@@ -253,9 +274,6 @@ public class ExecuteRequest extends Request implements IObserver {
 						reference.setHref(hrefAttribute);
 						if (schemaAttribute != null) {
 							reference.setSchema(schemaAttribute);
-						} else {
-							reference.setSchema(inputDesc.getComplexData()
-									.getDefault().getFormat().getSchema());
 						}
 						if (mimeTypeAttribute != null) {
 							reference.setMimeType(mimeTypeAttribute);
@@ -267,7 +285,32 @@ public class ExecuteRequest extends Request implements IObserver {
 					}
 					// Handling ComplexData
 					else {
-						// TODO
+						ComplexDataType data = input.addNewData().addNewComplexData();
+						
+						InputStream stream = new ByteArrayInputStream(value.getBytes());
+						
+						try {
+							data.set(XmlObject.Factory.parse(stream));
+						} catch (Exception e) {
+							LOGGER.warn("Could not parse value: " + value + " as XMLObject. Trying to create text node.");
+							try {
+								Node textNode = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument().createTextNode(value);
+								data.set(XmlObject.Factory.parse(textNode));
+							} catch (Exception e1) {
+								throw new ExceptionReport("Exception while trying to parse value: " + value,
+										ExceptionReport.NO_APPLICABLE_CODE, e1);
+							}
+						}
+						
+						if (schemaAttribute != null) {
+							data.setSchema(schemaAttribute);
+						}
+						if (mimeTypeAttribute != null) {
+							data.setMimeType(mimeTypeAttribute);
+						}
+						if (encodingAttribute != null) {
+							data.setEncoding(encodingAttribute);
+						}
 					}
 				
 			} else if (inputDesc.isSetLiteralData()) {
@@ -278,6 +321,12 @@ public class ExecuteRequest extends Request implements IObserver {
 							ExceptionReport.MISSING_PARAMETER_VALUE);
 				}
 				data.setStringValue(value);
+				if(uom != null){
+					data.setUom(uom);
+				}
+				if(dataType != null){
+					data.setDataType(dataType);
+				}
 			} else if (inputDesc.isSetBoundingBoxData()) {
 				BoundingBoxType data = input.addNewData().addNewBoundingBoxData();
 				String[] values = value.split(",");
@@ -299,6 +348,10 @@ public class ExecuteRequest extends Request implements IObserver {
 				
 				if(values.length>4){
 					data.setCrs(values[4]);
+				}
+				
+				if(values.length>5){
+					data.setDimensions(BigInteger.valueOf(Long.valueOf(values[5])));
 				}
 			}
 
@@ -847,12 +900,19 @@ public class ExecuteRequest extends Request implements IObserver {
             w = new BufferedWriter(new OutputStreamWriter(os));
             for (Object key : map.keySet()) {
                 Object value = map.get(key);
-                w.append(key.toString()).append('=').append(value.toString());
+                String valueString = "";                
+                if(value instanceof String[]){
+                	valueString = ((String[])value)[0];
+                }else{
+                	valueString = value.toString();
+                }
+                w.append(key.toString()).append('=').append(valueString);
                 w.newLine();
             }
+            w.flush();
             is = new ByteArrayInputStream(os.toByteArray());
             DatabaseFactory.getDatabase().insertRequest(
-                    getUniqueId().toString(), is, true);
+                    getUniqueId().toString(), is, false);
         } catch (Exception e) {
             LOGGER.error("Exception storing ExecuteRequest", e);
         } finally {

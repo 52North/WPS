@@ -76,7 +76,7 @@ public class DatabaseFactory implements IDatabase
 					LOGGER.info("Database class name was not found in properties. FlatFileDatabase will be used.");
 					databaseClassName = "org.n52.wps.server.database.FlatFileDatabase";
 				}
-				Class cls = Class.forName(databaseClassName, true, DatabaseFactory.class.getClassLoader());
+				Class<?> cls = Class.forName(databaseClassName, true, DatabaseFactory.class.getClassLoader());
 				Method method = cls.getMethod("getInstance", new Class[0]);
 				IDatabase db = (IDatabase) method.invoke(cls, new Object[0]);
 				DatabaseFactory.database = db;

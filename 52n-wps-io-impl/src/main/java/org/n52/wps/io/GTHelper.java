@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.util.Collection;
 
 import javax.xml.namespace.QName;
@@ -439,6 +440,9 @@ public class GTHelper {
 			LOGGER.debug("GTHelper webapp " + webapp);
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+			
+			domain = URLDecoder.decode(domain, "UTF-8");
+			
 			int startIndex = domain.indexOf("WEB-INF");
 			if(startIndex<0){
 				//not running as webapp				

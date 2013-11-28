@@ -412,6 +412,13 @@ public class WPSConfig implements Serializable {
 
     public static String tryToGetPathLastResort() {
         String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
+        
+        try {
+			domain = URLDecoder.decode(domain, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.warn("Could not decode URL of WPSConfig class, continuing.");
+		}
+        
         /*
          * domain should always be 52n-wps-commons/target/classes so we just go three directories up
          */

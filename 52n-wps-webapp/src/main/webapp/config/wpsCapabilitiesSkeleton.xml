@@ -10,7 +10,6 @@
 		</ows:Keywords>
 		<ows:ServiceType>WPS</ows:ServiceType>
 		<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
-		<ows:ServiceTypeVersion>0.4.0</ows:ServiceTypeVersion>
 		<ows:Fees>NONE</ows:Fees>
 		<ows:AccessConstraints>NONE</ows:AccessConstraints>
 	</ows:ServiceIdentification>
@@ -41,6 +40,7 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS?"/>
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS"/>
 				</ows:HTTP>
 			</ows:DCP>
 		</ows:Operation>
@@ -48,7 +48,7 @@
 			<ows:DCP>
 				<ows:HTTP>
 					<ows:Get xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS?"/>
-					<!--ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/-->
+					<ows:Post xlink:href="http://dynamicallygeneratedURL/GeoPS/GeoPS"/>
 				</ows:HTTP>
 			</ows:DCP>
 		</ows:Operation>

@@ -38,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -50,7 +51,7 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.grass.GrassProcessRepository;
-import org.n52.wps.server.grass.util.StreamGobbler;
+import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
 public class GrassIOHandler {
 	
@@ -126,7 +127,7 @@ public class GrassIOHandler {
 	 * @param outputSchema the schema of the output
 	 * @return a GenericFileDataBinding containing the generated ouput
 	 */
-	public IData executeGrassProcess(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
+	public IData executeGrassProcess(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
 		
 		String outputFileName = "";
 		
@@ -317,7 +318,7 @@ public class GrassIOHandler {
 	 *            suggested mimetype of the result of the GRASS-process
 	 * @return true, if everything worked, otherwise false
 	 */
-	private boolean createInputTxt(String processID, Map<String, IData> complexInputData, Map<String, IData> literalInputData, String outputID, String outputFileName, String outputMimeType, String outputSchema){
+	private boolean createInputTxt(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputFileName, String outputMimeType, String outputSchema){
 	
 		try {
 			
@@ -345,7 +346,9 @@ public class GrassIOHandler {
 			
 			for (String key : complexInputData.keySet()) {
 				
-				IData data = complexInputData.get(key);
+				List<IData> dataList = complexInputData.get(key);
+				
+				for (IData data : dataList) {
 				
 				if(!(data instanceof GenericFileDataBinding)){
 					continue;
@@ -406,7 +409,7 @@ public class GrassIOHandler {
 					tmpBlock = tmpBlock.replace(ENCODING, "");
 					tmpBlock = tmpBlock.replace(SCHEMA, "");
 				}					
-				
+
 				String filename = ((GenericFileDataBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
 				
 				tmpBlock = tmpBlock.replace(INPUT_IDENTIFIER, key);
@@ -414,12 +417,15 @@ public class GrassIOHandler {
 				
 				inputTxtWriter.write(tmpBlock);
 				inputTxtWriter.write(lineSeparator);
+				}
 			}
 			
 			for (String key : literalInputData.keySet()) {
 				
-				IData data = literalInputData.get(key);
-							
+				List<IData> dataList = literalInputData.get(key);
+				
+				for (IData data : dataList) {
+				
 				tmpBlock = getLiteralInputDataBlock().replace(INPUT_IDENTIFIER, key);
 				
 				Class<?> supportedClass = data.getSupportedClass();
@@ -442,6 +448,8 @@ public class GrassIOHandler {
 				
 				inputTxtWriter.write(tmpBlock);
 				inputTxtWriter.write(lineSeparator);
+				
+				}
 			}
 			
 			tmpBlock = getOutputDataBlock().replace(OUTPUT_IDENTIFIER, outputID);
@@ -528,17 +536,17 @@ public class GrassIOHandler {
 	        
 	        PipedInputStream pipedIn = new PipedInputStream(pipedOut);  
 			
-			// any error message?
-			StreamGobbler errorGobbler = new StreamGobbler(proc
+			// attach error stream reader
+			JavaProcessStreamReader errorStreamReader = new JavaProcessStreamReader(proc
 					.getErrorStream(), "ERROR", pipedOut);
 
-			// any output?
-			StreamGobbler outputGobbler = new StreamGobbler(proc
+			// attach output stream reader
+			JavaProcessStreamReader outputStreamReader = new JavaProcessStreamReader(proc
 					.getInputStream(), "OUTPUT");
 			
-			// kick them off
-			errorGobbler.start();
-			outputGobbler.start();
+			// start them
+			errorStreamReader.start();
+			outputStreamReader.start();
 			
 			//fetch errors if there are any
 			BufferedReader errorReader = new BufferedReader(new InputStreamReader(pipedIn));
@@ -557,7 +565,7 @@ public class GrassIOHandler {
 			try {
 				proc.waitFor();
 			} catch (InterruptedException e1) {
-				e1.printStackTrace();
+				LOGGER.error("Java proces was interrupted.", e1);
 			}finally{
 				proc.destroy();
 			}

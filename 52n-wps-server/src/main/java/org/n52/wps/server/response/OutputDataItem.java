@@ -33,6 +33,7 @@ package org.n52.wps.server.response;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
@@ -183,7 +185,12 @@ public class OutputDataItem extends ResponseData {
 			literalData.setDataType(dataTypeReference);
 		}
 	    literalData.setStringValue(processValue);
-		
+		if(obj instanceof AbstractLiteralDataBinding){
+			String uom = ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
+			if(uom != null && !uom.equals("")){
+				literalData.setUom(uom);
+			}
+		}
 	}
 	
 	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
@@ -259,6 +266,9 @@ public class OutputDataItem extends ResponseData {
 		
 		bboxData.setLowerCorner(lowerCornerList);
 		bboxData.setUpperCorner(upperCornerList);
+		
+		bboxData.setDimensions(BigInteger.valueOf(bbox.getDimension()));
+		
 		
 	}
 }
