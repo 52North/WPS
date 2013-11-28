@@ -36,12 +36,14 @@ public enum RSeperator {
         this.key = key.toLowerCase();
     }
 
-    public String getKey() {
+    public String getKey()
+    {
         return this.key;
     }
-    
-    public String toString(){
-    	return getKey();
+
+    public String toString()
+    {
+        return getKey();
     }
-    
+
 }
