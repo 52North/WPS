@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public class R_Resource {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
 
     private String resourceValue;
 
@@ -51,7 +51,14 @@ public class R_Resource {
     }
 
     public URL getFullResourceURL() {
-        String fullResourceURL = R_Config.getInstance().getResourceDirURL() + "/" + this.resourceValue;
+        R_Config config = R_Config.getInstance();
+        String dirUrl = config.getResourceDirURL();
+
+        String fullResourceURL = null;
+        if (dirUrl != null)
+            fullResourceURL = dirUrl + "/" + this.resourceValue;
+        else
+            fullResourceURL = "http://not_available/" + this.resourceValue;
 
         URL resourceURL;
         try {
@@ -105,7 +112,8 @@ public class R_Resource {
 
         try {
             conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD"); // should be conn.setRequestMethod("HEAD");
+            conn.setRequestMethod("HEAD"); // should be
+                                           // conn.setRequestMethod("HEAD");
             conn.setConnectTimeout(3000);
             conn.setReadTimeout(3000);
         }
