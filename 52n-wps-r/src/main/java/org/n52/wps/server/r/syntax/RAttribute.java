@@ -27,57 +27,48 @@ package org.n52.wps.server.r.syntax;
  * attributes used in Annotations
  */
 public enum RAttribute {
-	INPUT_START("wps.in", null, true), 
-	OUTPUT_START("wps.out", null, true), 
-	DESCRIPTION_START("wps.des", null, true),
-	RESOURCE_START("wps.res",null,true),
-	IDENTIFIER("id", null, true), 
-	TYPE("type", null, true), 
-	TITLE("title", IDENTIFIER, false),
-	VERSION("version", null, false),
-	ABSTRACT("abstract", null, false), 
-	MIN_OCCURS("minOccurs", 1, true), 
-	MAX_OCCURS("maxOccurs", 1, true), 
-	DEFAULT_VALUE("value", null, false), 
-	METADATA("meta", null, false), 
-	MIMETYPE("mimetype", null, false), 
-	SCHEMA("schema", null, false), 
-	ENCODING("encoding", null, false), 
-	AUTHOR("author", null, false),
-	//A sequence of values:
-	NAMED_LIST("seq", null, true), 
-	//derives from a named list
-	NAMED_LIST_R_SYNTAX("rseq", null, true);
+    INPUT_START("wps.in", null, true), OUTPUT_START("wps.out", null, true), DESCRIPTION_START("wps.des", null, true), RESOURCE_START("wps.res", null, true), IDENTIFIER("id", null, true), TYPE("type",
+            null, true), TITLE("title", IDENTIFIER, false), VERSION("version", null, false), ABSTRACT("abstract", null, false), MIN_OCCURS("minOccurs", 1, true), MAX_OCCURS("maxOccurs", 1, true), DEFAULT_VALUE(
+            "value", null, false), METADATA("meta", null, false), MIMETYPE("mimetype", null, false), SCHEMA("schema", null, false), ENCODING("encoding", null, false), AUTHOR("author", null, false),
+    // A sequence of values:
+    NAMED_LIST("seq", null, true),
+    // derives from a named list
+    NAMED_LIST_R_SYNTAX("rseq", null, true);
 
-	private String key;
-	private Object defValue;
+    private String key;
 
-	private RAttribute(String key, Object defValue, boolean mandatory) {
-		this.key = key.toLowerCase();
-		this.defValue = defValue;
-		this.mandatory = mandatory;
-	}
+    private Object defValue;
 
-	public String getKey() {
-		return this.key;
-	}
+    private RAttribute(String key, Object defValue, boolean mandatory) {
+        this.key = key.toLowerCase();
+        this.defValue = defValue;
+        this.mandatory = mandatory;
+    }
 
-	public Object getDefValue() {
-		return this.defValue;
-	}
+    public String getKey()
+    {
+        return this.key;
+    }
 
-	/**
-	 * @return true if attribute has to occur in Process description, if so,
-	 *         there has to be a standard value or a value in R Annotion given
-	 */
-	public boolean isMandatory() {
-		return this.mandatory;
-	}
+    public Object getDefValue()
+    {
+        return this.defValue;
+    }
 
-	private boolean mandatory;
-	
-	@Override
-	public String toString() {
-		return getKey();
-	}
+    /**
+     * @return true if attribute has to occur in Process description, if so,
+     *         there has to be a standard value or a value in R Annotion given
+     */
+    public boolean isMandatory()
+    {
+        return this.mandatory;
+    }
+
+    private boolean mandatory;
+
+    @Override
+    public String toString()
+    {
+        return getKey();
+    }
 }

@@ -50,6 +50,8 @@ public class GenericFileDataBinding implements IComplexData {
     
     @Override
 	public void dispose(){
-		FileUtils.deleteQuietly(payload.getBaseFile(false));
+                //FIXME (MH) The command bellow is flawed because getBaseFile(...) *writes* files from an inputstream into the wps temp directory. 
+                   // If the given input stream is closed, the method throws *RuntimeExceptions* that let the process crash.
+		//FileUtils.deleteQuietly(payload.getBaseFile(false));
 	}
 }

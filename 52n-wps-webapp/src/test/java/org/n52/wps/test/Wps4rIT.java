@@ -24,6 +24,28 @@ import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * To run this integration tests there has to be RServe running on the localhost and the R repository must be enabled in the WPS config.
+ * 
+ * To start RServe:
+ * 
+ * <ul>
+ * <li>start <code>R</code></li>
+ * <li>in the R console, load the library Rserve: <code>library(Rserve)</code></li>
+ * <li>in the R console, start Rserve: <code>Rserve()</code></li>
+ * <li>you should see and output "... Ok, ready to answer queries."</li>
+ * </ul>
+ * 
+ * To enable the R process repository:
+ * 
+ * <ul>
+ * <li>open your WPSConfiguration file, normally located in /config/wps_config.xml</li>
+ * <li>Find the "LocalRAlgorithmRepository"</li>
+ * <li>set the attribute "active" to <code>true</code></li>
+ * <li>(restart your WPS server)</li>
+ * </ul>
+ */
 public class Wps4rIT {
 
     private static String wpsUrl;
@@ -118,7 +140,7 @@ public class Wps4rIT {
             ParserConfigurationException,
             SAXException,
             XmlException {
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestWarnings.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
@@ -128,14 +150,13 @@ public class Wps4rIT {
         assertThat(response, containsString("warnings"));
     }
 
-    // @Test
+    @Test
     public void responseContainsWarningsContent() throws IOException,
             ParserConfigurationException,
             SAXException,
             XmlException {
 
-        // FIXME This test fails
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestResources.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestWarnings.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();

@@ -25,25 +25,25 @@ package org.n52.wps.server.r.syntax;
 
 public class RAnnotationException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public RAnnotationException() {
-		// TODO Auto-generated constructor stub
-	}
+    public RAnnotationException() {
+        // TODO Auto-generated constructor stub
+    }
 
-	public RAnnotationException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
+    public RAnnotationException(String message) {
+        super(message);
+        // TODO Auto-generated constructor stub
+    }
 
-	public RAnnotationException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
+    public RAnnotationException(Throwable cause) {
+        super(cause);
+        // TODO Auto-generated constructor stub
+    }
 
-	public RAnnotationException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
+    public RAnnotationException(String message, Throwable cause) {
+        super(message, cause);
+        // TODO Auto-generated constructor stub
+    }
 
 }
