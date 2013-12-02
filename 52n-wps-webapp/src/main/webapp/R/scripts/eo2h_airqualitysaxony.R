@@ -22,7 +22,8 @@ myLog <- function(...) {
 
 ###################### manual testing ##########################################
 # wps.off;
-load("D:/Dokumente/52N-Geoprocessing-Community/R-in-EO2HEAVEN/AirQualityMapping.RData")
+# full data file from wiki (too large for repo):
+download.file(url = "https://wiki.52north.org/pub/Geostatistics/WPS4R/AirQualityMapping-full.RData", destfile = "AirQualityMapping.RData")
 in_sos_url <- "http://141.30.100.135:8080/eo2heavenSOS/sos"
 in_time <- "2012-02-02"
 in_offering_id <- "o3"
@@ -54,7 +55,7 @@ myLog(summary(list.weights))
 # minOccurs = 0, maxOccurs = 1;
 
 # wps.in: in_stations, type = string, title = a comma seperated list of stations,
-# minOccurs = 1, maxOccurs = 1;
+# minOccurs = 1, maxOccurs = 1;A
 
 # wps.in: in_time, type = string, title = time for TM_Equals filter,
 # minOccurs = 1, maxOccurs = 1;
@@ -103,6 +104,10 @@ getPollutantConcentrationAsGeoTiff <- function(.vector.stations,
 }
 
 ##################### calculate the coverage > output ##########################
+
+# FIXME use the function from the .RData file > extend this to a demo of how to
+# include funtions that are not part of the script nor a package on CRAN
+
 #function.getPollutantConentrationAsGeoTiff(vector.stations, vector.measurements,
 #		chr.pollutant, chr.file);
 output.file <- "saxony_output.tif";
