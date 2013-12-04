@@ -117,7 +117,7 @@ public class CapabilitiesConfiguration {
 							WebProcessingService.SERVLET_PATH;
 		for(Operation op : opMetadata.getOperationArray()) {
 			if (op.getDCPArray(0).getHTTP().getGetArray().length != 0) {
-				op.getDCPArray(0).getHTTP().getGetArray(0).setHref(ENDPOINT_URL);
+				op.getDCPArray(0).getHTTP().getGetArray(0).setHref(ENDPOINT_URL + "?");
 			}
 			if (op.getDCPArray(0).getHTTP().getPostArray().length != 0) {
 				op.getDCPArray(0).getHTTP().getPostArray(0).setHref(ENDPOINT_URL);
