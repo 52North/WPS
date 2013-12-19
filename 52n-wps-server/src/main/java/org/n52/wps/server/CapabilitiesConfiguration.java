@@ -236,11 +236,11 @@ public class CapabilitiesConfiguration {
      */
     private static void initSkeleton(CapabilitiesDocument skel)
             throws UnknownHostException {
-        CapabilitiesConfiguration.ENDPOINT_URL = getEndpointURL();
+        ENDPOINT_URL = getEndpointURL();
         if (skel.getCapabilities() == null) {
             skel.addNewCapabilities();
         }
-        initOperationsMetadata(skel);
+        initOperationsMetadata(skel, ENDPOINT_URL);
         initProcessOfferings(skel);
     }
 
@@ -273,18 +273,22 @@ public class CapabilitiesConfiguration {
      * operations meta data.
      *
      * @param skel the skeleton to enrich
+     * @param endpointUrl the endpoint URL of the service
      *
      */
-    private static void initOperationsMetadata(CapabilitiesDocument skel) {
+    private static void initOperationsMetadata(CapabilitiesDocument skel,
+                                               String endpointUrl) {
         if (skel.getCapabilities().getOperationsMetadata() != null) {
+            String endpointUrlGet = endpointUrl + "?";
             for (Operation op : skel.getCapabilities()
                     .getOperationsMetadata().getOperationArray()) {
                 for (DCP dcp : op.getDCPArray()) {
                     for (RequestMethodType get : dcp.getHTTP().getGetArray()) {
-                        get.setHref(ENDPOINT_URL);
+                        
+                        get.setHref(endpointUrlGet);
                     }
                     for (RequestMethodType post : dcp.getHTTP().getPostArray()) {
-                        post.setHref(ENDPOINT_URL);
+                        post.setHref(endpointUrl);
                     }
                 }
             }
@@ -512,5 +516,4 @@ public class CapabilitiesConfiguration {
          */
         CapabilitiesDocument loadSkeleton() throws XmlException, IOException;
     }
-
 }

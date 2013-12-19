@@ -132,6 +132,7 @@ public class DescribeProcessPostIT {
         }
 
         assertTrue(response.contains("ExceptionReport"));
+        assertTrue(response.contains("locator=\"version\""));
         assertTrue( !response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
     }
 
@@ -152,6 +153,7 @@ public class DescribeProcessPostIT {
         }
 
         assertTrue(response.contains("ExceptionReport"));
+        assertTrue(response.contains("locator=\"service\""));
         assertTrue( !response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
     }
 
@@ -171,6 +173,29 @@ public class DescribeProcessPostIT {
         }
 
         assertTrue(response.contains("ExceptionReport"));
+        assertTrue(response.contains("MissingParameterValue"));
+        assertTrue(response.contains("locator=\"identifier\""));
+        assertTrue( !response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
+    }
+    
+    @Test
+    public void testDescribeProcessMissingIdentifierValue() {
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:DescribeProcess xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_request.xsd\" service=\"WPS\" version=\"1.0.0\" language=\"en-US\">"
+                + "<ows:Identifier></ows:Identifier>" + "</wps:DescribeProcess>";
+
+        String response = "";
+        try {
+            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
+        }
+        catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        assertTrue(response.contains("ExceptionReport"));
+        assertTrue(response.contains("InvalidParameterValue"));
+        assertTrue(response.contains("locator=\"identifier\""));
         assertTrue( !response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
     }
 
@@ -190,7 +215,8 @@ public class DescribeProcessPostIT {
         }
 
         assertTrue(response.contains("ExceptionReport"));
-        assertTrue( !response.contains("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
+        assertTrue(response.contains("InvalidParameterValue"));
+        assertTrue(response.contains("locator=\"identifier\""));
     }
 
 }

@@ -201,7 +201,7 @@ public class ApacheBPELManager extends AbstractProcessManager {
             OperationClient operationClient = client.createClient(ServiceClient.ANON_OUT_IN_OP);
             //creating message context
             MessageContext outMsgCtx = new MessageContext();
-            //assigning message context’s option object into instance variable
+            //assigning message context's option object into instance variable
             Options opts = outMsgCtx.getOptions();
             //setting properties into option
 

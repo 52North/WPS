@@ -179,7 +179,7 @@ public class OutputDataItemTest {
 		String startText = "Testing " + literalDataBinding.getClass()
 				+ " and value ";
 
-		String endText = "ResonseDocument valid for "
+		String endText = "ResponseDocument valid for "
 				+ literalDataBinding.getClass() + " and value ";
 
 		if (literalDataBinding.getPayload() instanceof byte[]) {
