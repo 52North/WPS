@@ -8,8 +8,8 @@ public class LiteralBooleanBinding extends AbstractLiteralDataBinding {
 	 */
 	private static final long serialVersionUID = -8476435383089241416L;
 	private transient boolean payload;
-	
-	public LiteralBooleanBinding(boolean payload){
+		
+	public LiteralBooleanBinding(Boolean payload){
 		this.payload = payload;
 	}
 	

@@ -24,12 +24,6 @@
 
 package org.n52.wps.server.r.metadata;
 
-import org.n52.wps.server.r.R_Config;
-import org.n52.wps.server.r.syntax.RAttribute;
-import org.n52.wps.server.r.data.R_Resource;
-
-import it.geosolutions.imageio.plugins.arcgrid.AsciiGridsImageMetadata.RasterSpaceType;
-
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,12 +52,13 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3.x1999.xlink.TypeType;
 
 public class RProcessDescriptionCreator {
 
@@ -73,43 +68,47 @@ public class RProcessDescriptionCreator {
      * Usually called from GenericRProcess (extends AbstractObservableAlgorithm)
      * 
      * @param annotations
-     *        contain all process description information
+     *            contain all process description information
      * @param identifier
-     *        Process identifier
+     *            Process identifier
      * @param fileUrl
      * @return
      * @throws ExceptionReport
      * @throws RAnnotationException
      */
     public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations,
-                                                            String identifier,
-                                                            URL fileUrl,
-                                                            URL sessionInfoUrl) throws ExceptionReport,
-            RAnnotationException {
+            String identifier,
+            URL fileUrl,
+            URL sessionInfoUrl) throws ExceptionReport, RAnnotationException
+    {
         LOGGER.debug("Creating Process Description for " + identifier);
-        
+
         try {
             ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
             pdt.setStatusSupported(true);
             pdt.setStoreSupported(true);
 
             MetadataType mt = pdt.addNewMetadata();
-            // note that the "about" argument for ows:Metadata has type anyURI so it cannot
+            // note that the "about" argument for ows:Metadata has type anyURI
+            // so it cannot
             // be used for textual description of the ows:metadata element
-            
-            // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was not used for the resources
+
+            // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
+            // not used for the resources
             // because validation fails with the cause:
-            //    "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type' of element 'ows:Metadata' is not valid
-            //   	with respect to the corresponding attribute use. Attribute 'xlin:type' has a fixed value of 'simple'."
+            // "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type'
+            // of element 'ows:Metadata' is not valid
+            // with respect to the corresponding attribute use. Attribute
+            // 'xlin:type' has a fixed value of 'simple'."
             mt.setTitle("R Script");
             mt.setHref(fileUrl.toExternalForm());
 
-            // Add URL to resource folder > FIXME rathre add resources one by one, see below.
+            // Add URL to resource folder > FIXME rathre add resources one by
+            // one, see below.
             // mt = pdt.addNewMetadata();
             // mt.setTitle("Resource Directory URL");
             // url = R_Config.getInstance().getResourceDirURL();
             // mt.setHref(url);
-            
 
             mt = pdt.addNewMetadata();
             mt.setTitle("R Session Info");
@@ -133,82 +132,87 @@ public class RProcessDescriptionCreator {
                     addProcessDescription(pdt, annotation);
                     break;
                 case RESOURCE:
-                	addProcessResources(pdt, annotation);
+                    addProcessResources(pdt, annotation);
                     break;
                 default:
                     break;
                 }
             }
 
-     	// Add SessionInfo-Output
-        OutputDescriptionType outdes = outputs.addNewOutput();
-        outdes.addNewIdentifier().setStringValue("sessionInfo");
-        outdes.addNewTitle().setStringValue("Information about the R session which has been used");
-        outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
-        
-        SupportedComplexDataType scdt = outdes.addNewComplexOutput();
-        ComplexDataDescriptionType datatype = scdt.addNewDefault().addNewFormat();
-        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
-        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
-        datatype = scdt.addNewSupported().addNewFormat();
-        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
-        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+            // Add SessionInfo-Output
+            OutputDescriptionType outdes = outputs.addNewOutput();
+            outdes.addNewIdentifier().setStringValue("sessionInfo");
+            outdes.addNewTitle().setStringValue("Information about the R session which has been used");
+            outdes.addNewAbstract().setStringValue("Output of the sessionInfo()-method after R-script execution");
 
- 
-     	// Add Warnings-Output
-        outdes = outputs.addNewOutput();
-        outdes.addNewIdentifier().setStringValue("warnings");
-        outdes.addNewTitle().setStringValue("Warnings from R");
-        outdes.addNewAbstract().setStringValue("Output of the warnings()-method after R-script execution");
+            SupportedComplexDataType scdt = outdes.addNewComplexOutput();
+            ComplexDataDescriptionType datatype = scdt.addNewDefault().addNewFormat();
+            datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+            datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+            datatype = scdt.addNewSupported().addNewFormat();
+            datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+            datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
 
-        scdt = outdes.addNewComplexOutput();
-        datatype = scdt.addNewDefault().addNewFormat();
-        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
-        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
-        datatype = scdt.addNewSupported().addNewFormat();
-        datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
-        datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
-        
+            // Add Warnings-Output
+            outdes = outputs.addNewOutput();
+            outdes.addNewIdentifier().setStringValue("warnings");
+            outdes.addNewTitle().setStringValue("Warnings from R");
+            outdes.addNewAbstract().setStringValue("Output of the warnings()-method after R-script execution");
+
+            scdt = outdes.addNewComplexOutput();
+            datatype = scdt.addNewDefault().addNewFormat();
+            datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+            datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+            datatype = scdt.addNewSupported().addNewFormat();
+            datatype.setMimeType(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT);
+            datatype.setEncoding(IOHandler.DEFAULT_ENCODING);
+
             return pdt;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error creating process description.", e);
-            throw new ExceptionReport("Error creating process description.",
-                                      "NA",
-                                      RProcessDescriptionCreator.class.getName(),
-                                      e);
+            throw new ExceptionReport("Error creating process description.", "NA", RProcessDescriptionCreator.class.getName(), e);
         }
     }
 
     private void addProcessResources(ProcessDescriptionType pdt,
-			RAnnotation annotation) {
-        // Add URL to resource folder > FIXME rathre add resources one by one, see below.
-    	
-    	 try {
-    		Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
-    		if(obj instanceof List<?>){
-				List<R_Resource> namedList = (List<R_Resource>) obj;
-				for(R_Resource resource : namedList){
-					MetadataType mt = pdt.addNewMetadata();
-					mt.setTitle("Resource: "+resource.getResourceValue());
-		         
-					URL url = resource.getFullResourceURL();
-					mt.setHref(url.toExternalForm());
-				}
-			}
- 		} catch (RAnnotationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+            RAnnotation annotation)
+    {
+        // Add URL to resource folder > FIXME rather add resources one by one,
+        // see below.
 
-	/**
+        try {
+            Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
+            if (obj instanceof List<?>) {
+                List<?> namedList = (List<?>) obj;
+                for (Object object : namedList) {
+                    R_Resource resource = null;
+                    if (object instanceof R_Resource)
+                        resource = (R_Resource) object;
+                    else
+                        continue;
+                    MetadataType mt = pdt.addNewMetadata();
+                    mt.setTitle("Resource: " + resource.getResourceValue());
+
+                    URL url = resource.getFullResourceURL();
+                    mt.setHref(url.toExternalForm());
+                }
+            }
+        } catch (RAnnotationException e) {
+            e.printStackTrace();
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    /**
      * @param pdt
      * @param annotation
      * @throws RAnnotationException
      */
-    private static void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
-        String id = R_Config.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
+    private static void addProcessDescription(ProcessDescriptionType pdt,
+            RAnnotation annotation) throws RAnnotationException
+    {
+        R_Config conf = R_Config.getInstance();
+        String id = conf.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
@@ -220,7 +224,9 @@ public class RProcessDescriptionCreator {
         pdt.setProcessVersion(annotation.getStringValue(RAttribute.VERSION));
     }
 
-    private static void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
+    private static void addInput(DataInputs inputs,
+            RAnnotation annotation) throws RAnnotationException
+    {
         InputDescriptionType input = inputs.addNewInput();
 
         String identifier = annotation.getStringValue(RAttribute.IDENTIFIER);
@@ -246,8 +252,7 @@ public class RProcessDescriptionCreator {
 
         if (annotation.isComplex()) {
             addComplexInput(annotation, input);
-        }
-        else {
+        } else {
             addLiteralInput(annotation, input);
 
         }
@@ -258,7 +263,9 @@ public class RProcessDescriptionCreator {
      * @param input
      * @throws RAnnotationException
      */
-    private static void addLiteralInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addLiteralInput(RAnnotation annotation,
+            InputDescriptionType input) throws RAnnotationException
+    {
         LiteralInputType literalInput = input.addNewLiteralData();
         DomainMetadataType dataType = literalInput.addNewDataType();
         dataType.setReference(annotation.getProcessDescriptionType());
@@ -275,7 +282,9 @@ public class RProcessDescriptionCreator {
      * @param input
      * @throws RAnnotationException
      */
-    private static void addComplexInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
+    private static void addComplexInput(RAnnotation annotation,
+            InputDescriptionType input) throws RAnnotationException
+    {
         SupportedComplexDataType complexInput = input.addNewComplexData();
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
         cpldata.setMimeType(annotation.getProcessDescriptionType());
@@ -283,7 +292,7 @@ public class RProcessDescriptionCreator {
         if (encod != null && encod != "base64")
             cpldata.setEncoding(encod);
 
-        Class< ? extends IData> iClass = annotation.getDataClass();
+        Class<? extends IData> iClass = annotation.getDataClass();
         if (iClass.equals(GenericFileDataBinding.class)) {
             ComplexDataCombinationsType supported = complexInput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();
@@ -292,17 +301,19 @@ public class RProcessDescriptionCreator {
             if (encod != null)
                 format.setEncoding(encod);
             if (encod == "base64") {
-                // set a format entry such that not encoded data is supported as well
+                // set a format entry such that not encoded data is supported as
+                // well
                 ComplexDataDescriptionType format2 = supported.addNewFormat();
                 format2.setMimeType(annotation.getProcessDescriptionType());
             }
-        }
-        else {
+        } else {
             addSupportedInputFormats(complexInput, iClass);
         }
     }
 
-    private static void addOutput(ProcessOutputs outputs, RAnnotation out) throws RAnnotationException {
+    private static void addOutput(ProcessOutputs outputs,
+            RAnnotation out) throws RAnnotationException
+    {
         OutputDescriptionType output = outputs.addNewOutput();
 
         String identifier = out.getStringValue(RAttribute.IDENTIFIER);
@@ -320,8 +331,7 @@ public class RProcessDescriptionCreator {
 
         if (out.isComplex()) {
             addComplexOutput(out, output);
-        }
-        else {
+        } else {
             addLiteralOutput(out, output);
         }
     }
@@ -331,7 +341,9 @@ public class RProcessDescriptionCreator {
      * @param output
      * @throws RAnnotationException
      */
-    private static void addLiteralOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addLiteralOutput(RAnnotation out,
+            OutputDescriptionType output) throws RAnnotationException
+    {
         LiteralOutputType literalOutput = output.addNewLiteralOutput();
         DomainMetadataType dataType = literalOutput.addNewDataType();
         dataType.setReference(out.getProcessDescriptionType());
@@ -343,7 +355,9 @@ public class RProcessDescriptionCreator {
      * @param output
      * @throws RAnnotationException
      */
-    private static void addComplexOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
+    private static void addComplexOutput(RAnnotation out,
+            OutputDescriptionType output) throws RAnnotationException
+    {
         SupportedComplexDataType complexOutput = output.addNewComplexOutput();
         ComplexDataDescriptionType complexData = complexOutput.addNewDefault().addNewFormat();
         complexData.setMimeType(out.getProcessDescriptionType());
@@ -353,7 +367,7 @@ public class RProcessDescriptionCreator {
             // base64 shall not be default, but occur in the supported formats
             complexData.setEncoding(encod);
         }
-        Class< ? extends IData> iClass = out.getDataClass();
+        Class<? extends IData> iClass = out.getDataClass();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
 
@@ -365,34 +379,35 @@ public class RProcessDescriptionCreator {
             if (encod != null) {
                 format.setEncoding(encod);
                 if (encod == "base64") {
-                    // set a format entry such that not encoded data is supported as well
+                    // set a format entry such that not encoded data is
+                    // supported as well
                     ComplexDataDescriptionType format2 = supported.addNewFormat();
                     format2.setMimeType(out.getProcessDescriptionType());
                 }
             }
-        }
-        else {
+        } else {
             addSupportedOutputFormats(complexOutput, iClass);
         }
 
     }
 
     /**
-     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
-     * supported list of an output
+     * Searches all available datahandlers for supported encodings / schemas /
+     * mime-types and adds them to the supported list of an output
      * 
      * @param complex
-     *        IData class for which data handlers are searched
+     *            IData class for which data handlers are searched
      * @param supportedClass
      */
     private static void addSupportedOutputFormats(SupportedComplexDataType complex,
-                                                  Class< ? extends IData> supportedClass) {
+            Class<? extends IData> supportedClass)
+    {
         // retrieve a list of generators which support the supportedClass-input
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
-            Class< ? >[] supportedClasses = generator.getSupportedDataBindings();
-            for (Class< ? > clazz : supportedClasses) {
+            Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+            for (Class<?> clazz : supportedClasses) {
                 if (clazz.equals(supportedClass)) {
                     foundGenerators.add(generator);
                 }
@@ -423,21 +438,22 @@ public class RProcessDescriptionCreator {
     }
 
     /**
-     * Searches all available datahandlers for supported encodings / schemas / mime-types and adds them to the
-     * supported list of an output
+     * Searches all available datahandlers for supported encodings / schemas /
+     * mime-types and adds them to the supported list of an output
      * 
      * @param complex
-     *        IData class for which data handlers are searched
+     *            IData class for which data handlers are searched
      * @param supportedClass
      */
     private static void addSupportedInputFormats(SupportedComplexDataType complex,
-                                                 Class< ? extends IData> supportedClass) {
+            Class<? extends IData> supportedClass)
+    {
         // retrieve a list of parsers which support the supportedClass-input
         List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
         for (IParser parser : parsers) {
-            Class< ? >[] supportedClasses = parser.getSupportedDataBindings();
-            for (Class< ? > clazz : supportedClasses) {
+            Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+            for (Class<?> clazz : supportedClasses) {
                 if (clazz.equals(supportedClass)) {
                     foundParsers.add(parser);
                 }

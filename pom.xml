@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>52-North</artifactId>
 		<groupId>org.n52</groupId>
@@ -66,7 +67,7 @@
 			<id>OpenGEO</id>
 			<name>opengeo repository</name>
 			<url>http://repo.opengeo.org</url>
-		</repository>    
+		</repository>
 	</repositories>
 	<build>
 		<pluginManagement>
@@ -120,8 +121,21 @@
 					<revisionOnScmFailure>0</revisionOnScmFailure>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jasig.maven</groupId>
+				<artifactId>maven-notice-plugin</artifactId>
+				<version>1.0.5</version>
+				<configuration>
+					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
+					<licenseMapping>
+						<param>misc/licenses/license-mappings.xml</param>
+					</licenseMapping>
+					<generateChildNotices>false</generateChildNotices>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
 	<modules>
 		<module>52n-wps-commons</module>
 		<module>52n-wps-io</module>
@@ -146,7 +160,7 @@
 		<!--  module>52n-wps-ilwis</module -->
 	</modules>
 	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
 		<geotools.version>8.7</geotools.version>
@@ -179,7 +193,7 @@
 				<artifactId>logback-classic</artifactId>
 				<version>${logback.version}</version>
 			</dependency>
-            
+
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>jcl-over-slf4j</artifactId>
@@ -529,7 +543,7 @@
 				<groupId>stax</groupId>
 				<artifactId>stax-api</artifactId>
 				<version>1.0.1</version>
-			</dependency>	
+			</dependency>
 			<dependency>
 				<groupId>net.java.dev.stax-utils</groupId>
 				<artifactId>stax-utils</artifactId>
@@ -556,7 +570,7 @@
 						<groupId>log4j</groupId>
 					</exclusion>
 				</exclusions>
-			</dependency>		
+			</dependency>
 			<dependency>
 				<groupId>org.n52.mc</groupId>
 				<artifactId>mc-xml-processors</artifactId>
@@ -568,12 +582,12 @@
 				<scope>runtime</scope>
 				<version>1.6.4</version>
 			</dependency>
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>2.2</version>
-            </dependency>
-            <dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>2.2</version>
+			</dependency>
+			<dependency>
 				<groupId>edu.umn.gis</groupId>
 				<artifactId>mapscript</artifactId>
 				<version>6.0.3</version>
@@ -628,7 +642,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grid</artifactId>
 				<version>${project.version}</version>
-			</dependency>            
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-webapp</artifactId>
@@ -643,7 +657,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-sextante</artifactId>
 				<version>${project.version}</version>
-			</dependency> 
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>

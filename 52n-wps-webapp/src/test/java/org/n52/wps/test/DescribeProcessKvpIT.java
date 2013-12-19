@@ -68,6 +68,7 @@ public class DescribeProcessKvpIT {
      
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("locator=\"version\""));
         assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 
@@ -79,6 +80,7 @@ public class DescribeProcessKvpIT {
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("locator=\"service\""));
         assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 
@@ -86,10 +88,12 @@ public class DescribeProcessKvpIT {
     public void testDescribeProcessMissingIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingIdentifierParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0");
+        String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0");
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("MissingParameterValue"));
+        assertThat(response, response, containsString("locator=\"identifier\""));
         assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 
@@ -97,10 +101,25 @@ public class DescribeProcessKvpIT {
     public void testDescribeProcessWrongIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessWrongIdentifierParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0&Identifier=XXX");
+        String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=XXX");
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
+        assertThat(response, response, containsString("InvalidParameterValue"));
+        assertThat(response, response, containsString("locator=\"identifier\""));
         assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+    }
+    
+    @Test
+    public void testDescribeProcessMissingIdentifierValue() throws IOException, ParserConfigurationException, SAXException {
+    	System.out.println("\nRunning testDescribeProcessMissingIdentifierValue");
+    	
+    	String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=");
+    	
+    	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+    	assertThat(response, response, containsString("ExceptionReport"));
+    	assertThat(response, response, containsString("InvalidParameterValue"));
+    	assertThat(response, response, containsString("locator=\"identifier\""));
+    	assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
     }
 }

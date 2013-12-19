@@ -158,9 +158,9 @@ public class RequestHandler {
 		} 
 		else {
 			throw new ExceptionReport(
-					"The requested Operation is for HTTP GET not supported or not applicable to the specification: "
+					"The requested Operation is not supported or not applicable to the specification: "
 							+ requestType,
-					ExceptionReport.OPERATION_NOT_SUPPORTED);
+					ExceptionReport.OPERATION_NOT_SUPPORTED, requestType);
 		}
 
 		this.req = req;
@@ -268,8 +268,8 @@ public class RequestHandler {
 			this.responseMimeType = "text/xml";
 			
 		}  else if(!localName.equals("Execute")){
-			throw new ExceptionReport("specified operation is not supported: "
-					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED);
+			throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
+					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
 		}
 		else if(nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
 			throw new ExceptionReport("specified namespace is not supported: "
