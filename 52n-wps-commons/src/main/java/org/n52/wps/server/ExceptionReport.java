@@ -96,12 +96,12 @@ public class ExceptionReport extends Exception {
 		stackTrace.setExceptionCode("JAVA_StackTrace");
 		//	adding Rootcause
 		ExceptionType stackTraceRootException = exceptionReport.addNewException();
-		if(this.getCause() != null) {
-			stackTraceRootException.addExceptionText(this.getCause().getMessage());
-			stackTraceRootException.addExceptionText(encodeStackTrace(this.getCause()));
+		if (getCause() != null) {
+			stackTraceRootException.addExceptionText(getCause().getMessage());
+			stackTraceRootException.addExceptionText(encodeStackTrace(getCause()));
 		}
 		stackTraceRootException.setExceptionCode("JAVA_RootCause");
-		if(locator != null) {
+		if (locator != null) {
 			ex.setLocator(locator);
 		}
 		return report;
@@ -109,7 +109,9 @@ public class ExceptionReport extends Exception {
 
 	private String encodeStackTrace(Throwable t) {
         StringWriter w = new StringWriter();
-        t.printStackTrace(new PrintWriter(w));
+        PrintWriter p = new PrintWriter(w);
+        t.printStackTrace(p);
+        w.flush();
         w.flush();
         return w.toString();
 	}

@@ -45,7 +45,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
@@ -57,7 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
@@ -65,6 +63,7 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
+import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +137,7 @@ public class WebProcessingService extends HttpServlet {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Initialization failed! Please look at the properties file!");
+            LOGGER.error("Initialization failed! Please look at the properties file!", e);
             return;
         }
         LOGGER.info("Initialization of wps properties successful!");
@@ -351,16 +350,9 @@ public class WebProcessingService extends HttpServlet {
         res.setContentType(XML_CONTENT_TYPE);
         try {
             LOGGER.debug(exception.toString());
-            Map<String, String> ns = new HashMap<String, String>(2);
-            ns.put("http://www.opengis.net/wps/1.0.0", "wps");
-            ns.put("http://www.opengis.net/ows/1.1", "ows");
-            XmlOptions opt = new XmlOptions()
-                    .setSaveAggressiveNamespaces()
-                    .setSaveNamespacesFirst().setSavePrettyPrint()
-                    .setSaveSuggestedPrefixes(ns);
             // DO NOT MIX getWriter and getOuputStream!
-            exception.getExceptionDocument().save(
-                    res.getOutputStream(), opt);
+            exception.getExceptionDocument().save(res.getOutputStream(), 
+                                                  XMLBeansHelper.getXmlOptions());
 
             res.setStatus(HttpServletResponse.SC_OK);
         }

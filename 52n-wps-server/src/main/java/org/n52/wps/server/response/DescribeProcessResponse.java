@@ -36,13 +36,13 @@ Muenster, Germany
 package org.n52.wps.server.response;
 
 import java.io.InputStream;
-import java.util.HashMap;
 
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.DescribeProcessRequest;
+import org.n52.wps.util.XMLBeansHelper;
+
 
 public class DescribeProcessResponse extends Response{
 
@@ -53,15 +53,7 @@ public class DescribeProcessResponse extends Response{
     @Override
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			XmlOptions opts = new XmlOptions();
-            HashMap<String, String> ns = new HashMap<String, String>();
-            ns.put("http://www.opengis.net/wps/1.0.0", "wps");
-            ns.put("http://www.opengis.net/ows/1.1", "ows");
-            opts.setSaveNamespacesFirst().
-                setSaveSuggestedPrefixes(ns).
-                setSaveAggressiveNamespaces().
-                setSavePrettyPrint();
-			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(opts);
+			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
 		}
 		catch(Exception e) {
 			throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
