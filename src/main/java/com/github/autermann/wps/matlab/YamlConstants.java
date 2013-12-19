@@ -1,0 +1,48 @@
+package com.github.autermann.wps.matlab;
+
+public interface YamlConstants {
+    String KEY_FILE = "keyFile";
+    String TRUST_FILE = "trustFile";
+    String TRUST_STORE = "trustStore";
+    String PATH = "path";
+    String INPUTS = "inputs";
+    String SSL = "ssl";
+    String IDENTIFIER = "identifier";
+    String TIMEOUT = "timeout";
+    String CERT_FILE = "certFile";
+    String KEY_STORE = "keyStore";
+    String PORT = "port";
+    String CONNECTION = "connection";
+    String OUTPUTS = "outputs";
+    String ATTEMPTS = "attempts";
+    String FUNCTION = "function";
+    String TYPE = "type";
+    String HOST = "host";
+    String PASS = "pass";
+    String BOOLEAN_TYPE = "boolean";
+    String ABSTRACT = "abstract";
+    String TEXT_TYPE = "text";
+    String STRING_TYPE = "string";
+    String BOOL_TYPE = "bool";
+    String INTEGER_TYPE = "integer";
+    String BYTE_TYPE = "byte";
+    String LONG_TYPE = "long";
+    String DATETIME_TYPE = "datetime";
+    String DOUBLE_TYPE = "double";
+    String DATE_TYPE = "date";
+    String TIME_TYPE = "time";
+    String SHORT_TYPE = "short";
+    String INT_TYPE = "int";
+    String TITLE = "title";
+    String DATE_TIME_TYPE = "date-time";
+    String FLOAT_TYPE = "float";
+    String MIN_OCCURS = "minOccurs";
+    String MAX_OCCURS = "maxOccurs";
+    String URI = "uri";
+    String URL = "url";
+    String MIME_TYPE = "mimeType";
+    String SCHEMA = "schema";
+    String VERSION = "version";
+    String STORE_SUPPPORTED = "storeSuppported";
+    String STATUS_SUPPORTED = "statusSupported";
+}

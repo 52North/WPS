@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:Capabilities xmlns:xlink="http://www.w3.org/1999/xlink"
+                  xmlns:wps="http://www.opengis.net/wps/1.0.0"
+                  xmlns:ows="http://www.opengis.net/ows/1.1"
+                  xml:lang="en-US" updateSequence="1"
+                  service="WPS" version="1.0.0">
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href=""/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="DescribeProcess">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href=""/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="Execute">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href=""/>
+                    <ows:Post xlink:href=""/>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+    </ows:OperationsMetadata>
+	
+    <wps:Languages>
+        <wps:Default>
+            <ows:Language>en-US</ows:Language>
+        </wps:Default>
+        <wps:Supported>
+            <ows:Language>en-US</ows:Language>
+        </wps:Supported>
+    </wps:Languages>
+
+</wps:Capabilities>
