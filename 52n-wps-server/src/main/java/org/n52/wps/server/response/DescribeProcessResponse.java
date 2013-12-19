@@ -59,7 +59,8 @@ public class DescribeProcessResponse extends Response{
             ns.put("http://www.opengis.net/ows/1.1", "ows");
             opts.setSaveNamespacesFirst().
                 setSaveSuggestedPrefixes(ns).
-                setSaveAggressiveNamespaces();
+                setSaveAggressiveNamespaces().
+                setSavePrettyPrint();
 			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(opts);
 		}
 		catch(Exception e) {

@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
@@ -55,9 +56,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
@@ -65,6 +65,8 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
@@ -349,8 +351,17 @@ public class WebProcessingService extends HttpServlet {
         res.setContentType(XML_CONTENT_TYPE);
         try {
             LOGGER.debug(exception.toString());
-            exception.getExceptionDocument().save(res.getOutputStream()); // DO NOT MIX getWriter and
-                                                                          // getOuputStream!
+            Map<String, String> ns = new HashMap<String, String>(2);
+            ns.put("http://www.opengis.net/wps/1.0.0", "wps");
+            ns.put("http://www.opengis.net/ows/1.1", "ows");
+            XmlOptions opt = new XmlOptions()
+                    .setSaveAggressiveNamespaces()
+                    .setSaveNamespacesFirst().setSavePrettyPrint()
+                    .setSaveSuggestedPrefixes(ns);
+            // DO NOT MIX getWriter and getOuputStream!
+            exception.getExceptionDocument().save(
+                    res.getOutputStream(), opt);
+
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (IOException e) {

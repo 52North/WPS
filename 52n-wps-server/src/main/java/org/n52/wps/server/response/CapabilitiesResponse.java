@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.CapabilitiesRequest;
@@ -58,13 +59,13 @@ public class CapabilitiesResponse extends Response {
 	}
 	
 	/**
-	 * Save this Reponse to an OutputStream
+	 * Save this Response to an OutputStream
 	 * @param os The OutputStream to save this Response to
 	 * @throws ExceptionReport
 	 */
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			return CapabilitiesConfiguration.getInstance().newInputStream();
+			return CapabilitiesConfiguration.getInstance().newInputStream(new XmlOptions().setSavePrettyPrint());
 		} catch (IOException e) {
 			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {
