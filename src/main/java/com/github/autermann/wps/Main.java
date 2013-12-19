@@ -12,7 +12,7 @@ public class Main {
         SetMultimap<String, String> properties = HashMultimap.create();
         
         properties.put(MatlabAlgorithmRepository.CONFIG_PROPERTY,
-                       Main.class.getResource("/add.yaml").getFile());
+                       Main.class.getResource("/add.yml").getFile());
         wps.addAlgorithmRepository(MatlabAlgorithmRepository.class, properties);
         wps.addGenerator(MatlabFileHandler.class);
         wps.addParser(MatlabFileHandler.class);
