@@ -23,6 +23,9 @@
  */
 package org.n52.wps.server;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 
@@ -89,28 +92,27 @@ public class ExceptionReport extends Exception {
 		ex.addExceptionText(this.getMessage());
 		// Adding additional Java exception
 		ExceptionType stackTrace = exceptionReport.addNewException();
-		stackTrace.addExceptionText(encodeStackTrace(this.getStackTrace()));
+		stackTrace.addExceptionText(encodeStackTrace(this));
 		stackTrace.setExceptionCode("JAVA_StackTrace");
 		//	adding Rootcause
 		ExceptionType stackTraceRootException = exceptionReport.addNewException();
-		if(this.getCause() != null) {
-			stackTraceRootException.addExceptionText(this.getCause().getMessage());
-			stackTraceRootException.addExceptionText(encodeStackTrace(this.getCause().getStackTrace()));
+		if (getCause() != null) {
+			stackTraceRootException.addExceptionText(getCause().getMessage());
+			stackTraceRootException.addExceptionText(encodeStackTrace(getCause()));
 		}
 		stackTraceRootException.setExceptionCode("JAVA_RootCause");
-		if(locator != null) {
+		if (locator != null) {
 			ex.setLocator(locator);
 		}
 		return report;
 	}
-	private String encodeStackTrace(StackTraceElement[] elems) {
-		StringBuffer exceptionBuffer = new StringBuffer();
-		for(StackTraceElement stackTraceElem : elems) {
-			exceptionBuffer.append(stackTraceElem.getClassName() + "." + 
-									stackTraceElem.getMethodName() + ":" + 
-									stackTraceElem.getLineNumber());
-			exceptionBuffer.append("\n");
-		}
-		return exceptionBuffer.toString();
+
+	private String encodeStackTrace(Throwable t) {
+        StringWriter w = new StringWriter();
+        PrintWriter p = new PrintWriter(w);
+        t.printStackTrace(p);
+        w.flush();
+        w.flush();
+        return w.toString();
 	}
 }

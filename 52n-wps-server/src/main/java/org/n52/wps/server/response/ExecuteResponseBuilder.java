@@ -53,10 +53,7 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.StatusType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.CapabilitiesConfiguration;
@@ -67,6 +64,8 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WPS Execute operation response. By default, this XML document is delivered to the client in response to an Execute request. If "status" is "false" in the Execute operation request, this document is normally returned when process execution has been completed.
@@ -369,10 +368,7 @@ public class ExecuteResponseBuilder {
 			doc.getExecuteResponse().setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
 		}
 		try {
-			//Forces XMLBeans to write the namespaces in front of all other attributes. Otherwise the xml is not valid
-			XmlOptions opts = new XmlOptions();
-			opts.setSaveNamespacesFirst();
-			return doc.newInputStream(opts);
+			return doc.newInputStream(XMLBeansHelper.getXmlOptions());
 		}
 		catch(Exception e) {
 			throw new RuntimeException(e);

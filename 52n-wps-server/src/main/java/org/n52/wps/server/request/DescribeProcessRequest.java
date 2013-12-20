@@ -43,6 +43,7 @@ import javax.xml.namespace.QName;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
+
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.server.ExceptionReport;
@@ -106,7 +107,7 @@ public class DescribeProcessRequest extends Request {
 			if(n.getLocalName() != null && n.getLocalName().equalsIgnoreCase("identifier")){
 				identifierParameterExists = true;
 				String s = n.getTextContent();
-				if(s != null && !s.equals("")){
+				if(s != null && !s.isEmpty()){
 					identifierList = identifierList.concat(s + ",");
 				}
 			}
@@ -166,7 +167,7 @@ public class DescribeProcessRequest extends Request {
 //					"parameter: identifier");
 //		}else 
 		if(identifiers.length == 1){
-			if(identifiers[0] == null || identifiers[0].equals("")){
+			if(identifiers[0] == null || identifiers[0].isEmpty()){
 				throw new ExceptionReport("Process description request with empty identifier.", 
 						ExceptionReport.INVALID_PARAMETER_VALUE, 
 						"identifier");
