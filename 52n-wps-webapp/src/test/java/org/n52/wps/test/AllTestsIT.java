@@ -80,7 +80,7 @@ public class AllTestsIT {
         assertThat(response, response, containsString("Reference"));
 
         Document doc = AllTestsIT.parseXML(response);
-        NodeList executeResponse = doc.getElementsByTagName("ns:Reference");
+        NodeList executeResponse = doc.getElementsByTagName("wps:Reference");
 
         assertThat(executeResponse.getLength(), greaterThan(0));
 
@@ -103,7 +103,7 @@ public class AllTestsIT {
         assertThat(response, response, containsString("Reference"));
 
         Document doc = AllTestsIT.parseXML(response);
-        NodeList executeResponse = doc.getElementsByTagName("ns:Reference");
+        NodeList executeResponse = doc.getElementsByTagName("wps:Reference");
 
         assertThat(executeResponse.getLength(), greaterThan(0));
 
@@ -123,7 +123,7 @@ public class AllTestsIT {
         Document doc;
         doc = AllTestsIT.parseXML(response);
 
-        NodeList executeResponse = doc.getElementsByTagName("ns:ExecuteResponse");
+        NodeList executeResponse = doc.getElementsByTagName("wps:ExecuteResponse");
 
         assertThat(executeResponse.getLength(), greaterThan(0));
 
