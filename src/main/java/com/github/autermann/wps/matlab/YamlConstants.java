@@ -1,20 +1,12 @@
 package com.github.autermann.wps.matlab;
 
 public interface YamlConstants {
-    String KEY_FILE = "keyFile";
-    String TRUST_FILE = "trustFile";
-    String TRUST_STORE = "trustStore";
     String PATH = "path";
     String INPUTS = "inputs";
-    String SSL = "ssl";
     String IDENTIFIER = "identifier";
-    String TIMEOUT = "timeout";
-    String CERT_FILE = "certFile";
-    String KEY_STORE = "keyStore";
     String PORT = "port";
     String CONNECTION = "connection";
     String OUTPUTS = "outputs";
-    String ATTEMPTS = "attempts";
     String FUNCTION = "function";
     String TYPE = "type";
     String HOST = "host";

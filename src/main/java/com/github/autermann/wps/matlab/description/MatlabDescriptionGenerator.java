@@ -3,6 +3,8 @@ package com.github.autermann.wps.matlab.description;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URI;
 
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -25,17 +27,11 @@ import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.client.MatlabClientConfiguration;
 import com.github.autermann.matlab.value.MatlabType;
-import com.github.autermann.sockets.ssl.KeyStoreOptions;
-import com.github.autermann.sockets.ssl.KeyStoreSSLConfiguration;
-import com.github.autermann.sockets.ssl.PemFileSSLConfiguration;
-import com.github.autermann.sockets.ssl.SSLConfiguration;
 import com.github.autermann.wps.matlab.YamlConstants;
 import com.github.autermann.wps.matlab.transform.LiteralType;
 import com.github.autermann.yaml.YamlNode;
 
 public class MatlabDescriptionGenerator {
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 10000;
-    private static final int DEFAULT_CONNECTION_ATTEMPTS = 5;
     private static final Logger LOG = LoggerFactory
             .getLogger(MatlabDescriptionGenerator.class);
 
@@ -222,53 +218,30 @@ public class MatlabDescriptionGenerator {
         checkArgument(settings != null && settings.exists());
         MatlabClientConfiguration.Builder b = MatlabClientConfiguration
                 .builder();
-        b.withAddress(settings.path(YamlConstants.HOST).textValue(),
-                      settings.path(YamlConstants.PORT).intValue());
-        b.withAttempts(settings.path(YamlConstants.ATTEMPTS)
-                .asIntValue(DEFAULT_CONNECTION_ATTEMPTS));
-        b.withTimeout(settings.path(YamlConstants.TIMEOUT)
-                .asIntValue(DEFAULT_CONNECTION_TIMEOUT));
-        if (settings.hasNotNull(YamlConstants.SSL)) {
-            SSLConfiguration ssl = createSSLSettings(settings
-                    .path(YamlConstants.SSL));
-            if (ssl != null) {
-                b.withSSL(ssl);
+        if (settings.isMap()) {
+            b.withAddress(settings.path(YamlConstants.HOST).textValue(),
+                          settings.path(YamlConstants.PORT).intValue());
+        } else if (settings.isText()) {
+            String address = settings.textValue();
+            if (address.startsWith("ws://") ||
+                address.startsWith("wss://")) {
+                b.withAddress(URI.create(address));
+            } else if (address.startsWith("file://")) {
+                try {
+                    b.withDirectory(URI.create(address).toURL().getFile());
+                } catch (MalformedURLException ex) {
+                    throw new MatlabConfigurationException(ex);
+                }
+            } else if (!address.equalsIgnoreCase("local")) {
+                throw new MatlabConfigurationException("Unsupported connection setting");
             }
+        } else {
+            throw new MatlabConfigurationException("Missing or invalid connection setting");
         }
         return b.build();
     }
 
-    private SSLConfiguration createSSLSettings(YamlNode sslSettings) {
-        if (sslSettings.hasNotNull(YamlConstants.KEY_STORE) &&
-            sslSettings.hasNotNull(YamlConstants.TRUST_STORE)) {
-            KeyStoreOptions key
-                    = createKeyStoreOptions(sslSettings
-                            .path(YamlConstants.KEY_STORE));
-            KeyStoreOptions trust
-                    = createKeyStoreOptions(sslSettings
-                            .path(YamlConstants.TRUST_STORE));
-            return new KeyStoreSSLConfiguration(key, trust, true);
-        } else if (sslSettings.hasNotNull(YamlConstants.TRUST_FILE) &&
-                   sslSettings.hasNotNull(YamlConstants.KEY_FILE) &&
-                   sslSettings.hasNotNull(YamlConstants.CERT_FILE)) {
-            return new PemFileSSLConfiguration(
-                    sslSettings.path(YamlConstants.KEY_FILE).textValue(),
-                    sslSettings.path(YamlConstants.CERT_FILE).textValue(),
-                    sslSettings.path(YamlConstants.TRUST_FILE).textValue(), true);
-        } else {
-            LOG.warn("Ignoring incomplete SSL setup!");
-            return null;
-        }
-    }
-
-    private KeyStoreOptions createKeyStoreOptions(YamlNode settings) {
-        return new KeyStoreOptions(
-                settings.path(YamlConstants.PATH).textValue(),
-                settings.path(YamlConstants.PASS).textValue(),
-                settings.path(YamlConstants.TYPE).textValue());
-    }
-
-    private ProcessDescriptionType createXmlDescription(
+private ProcessDescriptionType createXmlDescription(
             MatlabProcessDescription desc) {
         ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
 		ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();

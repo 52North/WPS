@@ -68,8 +68,7 @@ public class MatlabAlgorithm implements IAlgorithm {
         try {
             MatlabRequest request = fromInputData(inputData);
             LOG.info("Executing Matlab request: {}", request);
-            MatlabClient client
-                    = new MatlabClient(description.getClientConfig());
+            MatlabClient client = MatlabClient.create(description.getClientConfig());
             MatlabResult result = client.exec(request);
             LOG.info("Matlab result: {}", result);
             return toOutputData(result);

@@ -41,7 +41,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <wps-version>3.3.0-SNAPSHOT</wps-version>
         <jetty-version>9.0.6.v20130930</jetty-version>
-        <matlab-version>2.0-SNAPSHOT</matlab-version>
         <slf4j-version>1.7.5</slf4j-version>
         <xml-version>1.1.0</xml-version>
     </properties>
@@ -53,13 +52,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.autermann</groupId>
-            <artifactId>matlab-connector-client</artifactId>
-            <version>${matlab-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.autermann</groupId>
-            <artifactId>matlab-connector-common</artifactId>
-            <version>${matlab-version}</version>
+            <artifactId>matlab-connector</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.github.autermann</groupId>
@@ -71,7 +65,6 @@
             <artifactId>yaml</artifactId>
             <version>1.0.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-server</artifactId>
