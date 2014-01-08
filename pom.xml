@@ -878,6 +878,7 @@
 									<version>1.5</version>
 									<configuration>
 											<useMissingFile>true</useMissingFile>
+											<!--<fileTemplate>misc/licenses/license-as-csv.ftl</fileTemplate>-->
 									</configuration>
 									<executions>
 									 <execution>
