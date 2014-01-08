@@ -13,7 +13,7 @@ myLog("Start script... ", Sys.time())
 
 # wps.off;
 
-# wps.des: id = PlotSOS, title = Plot SOS Time Series,
+# wps.des: id = PlotSOS_weatherSOS, title = Plot SOS Time Series,
 # abstract = Accesses a SOS with sos4R and creates a plot with a fitted
 # regression line;
 

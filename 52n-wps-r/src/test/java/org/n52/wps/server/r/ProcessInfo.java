@@ -29,9 +29,10 @@ import org.junit.Test;
 import org.n52.wps.server.r.info.RProcessInfo;
 
 public class ProcessInfo {
-    
+
     @Test
-    public void dummy() {
+    public void dummy()
+    {
         List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
         for (RProcessInfo rProcessInfo : rProcessInfoList) {
             rProcessInfo.getWkn();

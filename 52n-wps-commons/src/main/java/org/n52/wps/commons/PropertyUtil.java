@@ -24,14 +24,16 @@
 
 package org.n52.wps.commons;
 
-import com.google.common.base.Joiner;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.joda.time.Period;
 import org.n52.wps.PropertyDocument;
 import org.n52.wps.PropertyDocument.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /**
  *
@@ -232,7 +234,7 @@ public class PropertyUtil {
            LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
          
-        LOGGER.info("Using default database path of: {}", valueDefault);
+        LOGGER.info("Using default value for \"{}\": {}", valueKey, valueDefault);
         return valueDefault;
     }
     

@@ -38,10 +38,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines Syntax and Semantics for Annotations in R Skripts
  * 
- * Syntax in (raw) BNF: <RAnnotation> ::= <StartKey> <AttributeSequence> <EndKey> <StartKey> <Attributequence>
- * ::= <RAnnotationTypeInstance>.getStartKey() <RAnnotationTypeInstance>.getAttributeSequence() <EndKey> ::=
- * RSeparator.ANNOTATION_END.getKey() <AttributeSequence> ::= {<RAttributeInstance>.getKey()
- * ATRIBUTE_VALUE_SEPARATOR} <Attributevalue> {ATTRIBUTE_SEPARATOR <RAttributeSequence>}
+ * Syntax in (raw) BNF: <RAnnotation> ::= <StartKey> <AttributeSequence>
+ * <EndKey> <StartKey> <Attributequence> ::=
+ * <RAnnotationTypeInstance>.getStartKey()
+ * <RAnnotationTypeInstance>.getAttributeSequence() <EndKey> ::=
+ * RSeparator.ANNOTATION_END.getKey() <AttributeSequence> ::=
+ * {<RAttributeInstance>.getKey() ATRIBUTE_VALUE_SEPARATOR} <Attributevalue>
+ * {ATTRIBUTE_SEPARATOR <RAttributeSequence>}
  * 
  * @author Matthias Hinz
  */
@@ -58,11 +61,10 @@ public class RAnnotation {
      * @param type
      * @param attributeHash
      * @throws IOException
-     *         if AttributHash is not valid for any cause
+     *             if AttributHash is not valid for any cause
      * @throws RAnnotationException
      */
-    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash) throws IOException,
-            RAnnotationException {
+    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash) throws IOException, RAnnotationException {
         super();
         this.type = type;
         this.attributeHash.putAll(attributeHash);
@@ -70,7 +72,8 @@ public class RAnnotation {
         LOGGER.debug("NEW " + toString());
     }
 
-    public RAnnotationType getType() {
+    public RAnnotationType getType()
+    {
         return this.type;
     }
 
@@ -80,7 +83,8 @@ public class RAnnotation {
      * @return Returns Attribute value as Java Object in case it is more complex
      * @throws RAnnotationException
      */
-    public Object getObjectValue(RAttribute attr) throws RAnnotationException {
+    public Object getObjectValue(RAttribute attr) throws RAnnotationException
+    {
         Object out = this.attributeHash.get(attr);
 
         if (out == null && attr.getDefValue() != null)
@@ -95,10 +99,12 @@ public class RAnnotation {
     /**
      * 
      * @param attr
-     * @return Returns an attribute value as string. Suits for most literal data types
+     * @return Returns an attribute value as string. Suits for most literal data
+     *         types
      * @throws RAnnotationException
      */
-    public String getStringValue(RAttribute attr) throws RAnnotationException {
+    public String getStringValue(RAttribute attr) throws RAnnotationException
+    {
         Object value = getObjectValue(attr);
         if (value == null)
             return null;
@@ -107,9 +113,10 @@ public class RAnnotation {
     }
 
     public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations,
-                                                      RAnnotationType type,
-                                                      RAttribute attribute,
-                                                      String value) throws RAnnotationException {
+            RAnnotationType type,
+            RAttribute attribute,
+            String value) throws RAnnotationException
+    {
         LinkedList<RAnnotation> out = new LinkedList<RAnnotation>();
         for (RAnnotation annotation : annotations) {
             // type filter:
@@ -123,27 +130,34 @@ public class RAnnotation {
         return out;
     }
 
-    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAttribute attribute, String value) throws RAnnotationException {
+    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations,
+            RAttribute attribute,
+            String value) throws RAnnotationException
+    {
         return filterAnnotations(annotations, null, attribute, value);
     }
 
-    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations, RAnnotationType type) throws RAnnotationException {
+    public static List<RAnnotation> filterAnnotations(List<RAnnotation> annotations,
+            RAnnotationType type) throws RAnnotationException
+    {
         return filterAnnotations(annotations, type, null, null);
     }
 
     /**
      * 
      * @param rClass
-     *        - value referring to RAttribute.TYPE
+     *            - value referring to RAttribute.TYPE
      * @return null or supported IData class for rClass - string
      * @throws RAnnotationException
      */
-    public static Class< ? extends IData> getDataClass(String rClass) throws RAnnotationException {
+    public static Class<? extends IData> getDataClass(String rClass) throws RAnnotationException
+    {
         RTypeDefinition rType = RDataTypeRegistry.getInstance().getType(rClass);
         return rType.getIDataClass();
     }
 
-    public Class< ? extends IData> getDataClass() throws RAnnotationException {
+    public Class<? extends IData> getDataClass() throws RAnnotationException
+    {
         String rClass = getStringValue(RAttribute.TYPE);
         return getDataClass(rClass);
     }
@@ -154,20 +168,24 @@ public class RAnnotation {
      * @return
      * @throws RAnnotationException
      */
-    public static boolean isComplex(String rClass) throws RAnnotationException {
+    public static boolean isComplex(String rClass) throws RAnnotationException
+    {
         return RDataTypeRegistry.getInstance().getType(rClass).isComplex();
 
     }
 
-    public RTypeDefinition getRDataType() throws RAnnotationException {
+    public RTypeDefinition getRDataType() throws RAnnotationException
+    {
         return RDataTypeRegistry.getInstance().getType(getStringValue(RAttribute.TYPE));
     }
 
     /**
-     * @return true, if the type attribute of an Annotation refers to a complex data type
+     * @return true, if the type attribute of an Annotation refers to a complex
+     *         data type
      * @throws RAnnotationException
      */
-    public boolean isComplex() throws RAnnotationException {
+    public boolean isComplex() throws RAnnotationException
+    {
         return isComplex(this.getStringValue(RAttribute.TYPE));
     }
 
@@ -176,7 +194,8 @@ public class RAnnotation {
      * @return null or supported ProcessdescriptionType
      * @throws RAnnotationException
      */
-    public String getProcessDescriptionType() throws RAnnotationException {
+    public String getProcessDescriptionType() throws RAnnotationException
+    {
         String type = getStringValue(RAttribute.TYPE);
         RTypeDefinition rdt = RDataTypeRegistry.getInstance().getType(type);
         if (rdt != null)
@@ -186,7 +205,8 @@ public class RAnnotation {
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder builder = new StringBuilder();
         builder.append("RAnnotation [type=");
         builder.append(this.type);
@@ -196,11 +216,14 @@ public class RAnnotation {
         return builder.toString();
     }
 
-    public boolean containsKey(RAttribute key) {
+    public boolean containsKey(RAttribute key)
+    {
         return this.attributeHash.containsKey(key);
     }
 
-    public void setAttribute(RAttribute key, Object value) {
+    public void setAttribute(RAttribute key,
+            Object value)
+    {
         this.attributeHash.put(key, value);
     }
 }

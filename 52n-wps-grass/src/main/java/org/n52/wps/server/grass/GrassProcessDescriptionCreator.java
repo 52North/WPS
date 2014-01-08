@@ -1,28 +1,25 @@
 /***************************************************************
-Copyright © 2009 52∞North Initiative for Geospatial Open Source Software GmbH
+Copyright (C) 2009-2013
+by 52 North Initiative for Geospatial Open Source Software GmbH
 
- Author: Benjamin Proﬂ, 52∞North
+Contact: Andreas Wytzisk
+52 North Initiative for Geospatial Open Source Software GmbH
+Martin-Luther-King-Weg 24
+48155 Muenster, Germany
+info@52north.org
 
- Contact: Andreas Wytzisk, 
- 52∞North Initiative for Geospatial Open Source SoftwareGmbH, 
- Martin-Luther-King-Weg 24,
- 48155 Muenster, Germany, 
- info@52north.org
+This program is free software; you can redistribute and/or modify it under 
+the terms of the GNU General Public License version 2 as published by the 
+Free Software Foundation.
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
+This program is distributed WITHOUT ANY WARRANTY; even without the implied
+WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; even without the implied WARRANTY OF
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program (see gnu-gpl v2.txt). If not, write to
- the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA 02111-1307, USA or visit the Free
- Software Foundationís web page, http://www.fsf.org.
+You should have received a copy of the GNU General Public License along with
+this program (see gnu-gpl v2.txt). If not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
+visit the Free Software Foundation web page, http://www.fsf.org.
 
  ***************************************************************/
 package org.n52.wps.server.grass;
@@ -50,8 +47,12 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
-import org.n52.wps.server.grass.util.StreamGobbler;
+import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
+/**
+ * @author Benjamin Pross (bpross-52n)
+ *
+ */
 public class GrassProcessDescriptionCreator {
 	
 	private final String fileSeparator = System.getProperty("file.separator");
@@ -117,14 +118,15 @@ public class GrassProcessDescriptionCreator {
 
 		PipedInputStream pipedInError = new PipedInputStream(pipedOutError);
 		
-		// any error message?
-		StreamGobbler errorGobbler = new StreamGobbler(proc.getErrorStream(),
+		// attach error stream reader
+		JavaProcessStreamReader errorGobbler = new JavaProcessStreamReader(proc.getErrorStream(),
 				"ERROR", pipedOutError);
 
-		// any output?
-		StreamGobbler outputGobbler = new StreamGobbler(proc.getInputStream(),
+		// attach output stream reader
+		JavaProcessStreamReader outputGobbler = new JavaProcessStreamReader(proc.getInputStream(),
 				"OUTPUT", pipedOut);
 
+		// start them
 		executor.execute(errorGobbler);
 		executor.execute(outputGobbler);
 
@@ -191,7 +193,8 @@ public class GrassProcessDescriptionCreator {
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
 				checkForBase64Encoding(inputDescriptionType);
-				checkForKMLMimeType(inputDescriptionType);					
+				checkForKMLMimeType(inputDescriptionType);	
+				addZippedSHPMimeType(inputDescriptionType);
 			}			
 			
 			SupportedComplexDataType outputType = result.getProcessOutputs()
@@ -222,6 +225,10 @@ public class GrassProcessDescriptionCreator {
 																		
 						xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 						xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
+
+						ComplexDataDescriptionType xZippedShapeTypeUTF8 = outputType.getSupported().addNewFormat();
+																		
+						xZippedShapeTypeUTF8.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 
 					}
 				}
@@ -292,7 +299,7 @@ public class GrassProcessDescriptionCreator {
 		
 		if(defaultMimeType != null && defaultEncoding == null){			
 			for (String mimeType : genericFileParserMimeTypes) {
-				if(mimeType.equals(defaultMimeType)){
+				if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(defaultMimeType)){
 					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
 				}
 			}			
@@ -307,7 +314,7 @@ public class GrassProcessDescriptionCreator {
 			
 			if(supportedMimeType != null && supportedEncoding == null){			
 				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(supportedMimeType)){
+					if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(supportedMimeType)){
 						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
 					}
 				}			
@@ -332,6 +339,24 @@ public class GrassProcessDescriptionCreator {
 		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
 			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
 				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+				return;
+			}
+		}
+		
+	}
+	
+	private void addZippedSHPMimeType(InputDescriptionType inputDescriptionType) {
+		
+		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+		
+		if(complexData == null){
+			return;
+		}
+		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+		
+		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/gml/2.1.2/feature.xsd")){
+				inputDescriptionType.getComplexData().getSupported().addNewFormat().setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 				return;
 			}
 		}

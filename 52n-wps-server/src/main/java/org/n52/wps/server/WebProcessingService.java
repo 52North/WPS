@@ -55,8 +55,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -65,6 +63,9 @@ import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
+import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
@@ -136,7 +137,7 @@ public class WebProcessingService extends HttpServlet {
             }
         }
         catch (Exception e) {
-            LOGGER.error("Initialization failed! Please look at the properties file!");
+            LOGGER.error("Initialization failed! Please look at the properties file!", e);
             return;
         }
         LOGGER.info("Initialization of wps properties successful!");
@@ -349,8 +350,10 @@ public class WebProcessingService extends HttpServlet {
         res.setContentType(XML_CONTENT_TYPE);
         try {
             LOGGER.debug(exception.toString());
-            exception.getExceptionDocument().save(res.getOutputStream()); // DO NOT MIX getWriter and
-                                                                          // getOuputStream!
+            // DO NOT MIX getWriter and getOuputStream!
+            exception.getExceptionDocument().save(res.getOutputStream(), 
+                                                  XMLBeansHelper.getXmlOptions());
+
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (IOException e) {
