@@ -54,7 +54,7 @@
 		</developer>
 	</developers>
 
-	<build>
+<!--	<build>
 
 		<plugins>
 			<plugin>
@@ -74,43 +74,8 @@
 					</includes>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<!-- run "mvn license:check" to check -->
-				<!-- run "mvn license:format" to add to the files -->
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.9.0</version>
-				<configuration>
-					<header>src/main/resources/52N_license.txt</header>
-					<excludes>
-						<exclude>**/log4j*</exclude>
-						<exclude>**/test/resources/**</exclude>
-					</excludes>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.properties</include>
-						<include>**/*.jsp</include>
-						<include>**/*.js</include>
-						<include>**/*.xml</include>
-						<include>**/*.xsl</include>
-					</includes>
-					<strictCheck>true</strictCheck>
-					<properties>
-						<year>${project.inceptionYear}</year>
-					</properties>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
-	</build>
+	</build>-->
 
 	<profiles>
 		<!-- Here some profiles for specific environments Naming convention: env-[environmentname] 
