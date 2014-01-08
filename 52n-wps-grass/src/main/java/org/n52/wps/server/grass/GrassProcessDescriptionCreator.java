@@ -192,7 +192,7 @@ public class GrassProcessDescriptionCreator {
 			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
-				checkForBase64Encoding(inputDescriptionType);
+				checkForBase64Encoding(inputDescriptionType.getComplexData());
 				checkForKMLMimeType(inputDescriptionType);	
 				addZippedSHPMimeType(inputDescriptionType);
 			}			
@@ -234,7 +234,7 @@ public class GrassProcessDescriptionCreator {
 				}
 				
 				checkForBase64Encoding(result.getProcessOutputs()
-						.getOutputArray(0));
+						.getOutputArray(0).getComplexOutput());
 				checkForKMLMimeType(result.getProcessOutputs()
 						.getOutputArray(0));
 
@@ -246,26 +246,13 @@ public class GrassProcessDescriptionCreator {
 		return null;
 	}
 
-	private void checkForBase64Encoding(InputDescriptionType inputDescriptionType){
-		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+	private void checkForBase64Encoding(SupportedComplexDataType complexData){
 		
 		if(complexData == null){
 			return;
 		}
 		
 		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
-		
-		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
-		
-		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
-		
-		if(defaultMimeType != null && defaultEncoding == null){			
-			for (String mimeType : genericFileParserMimeTypes) {
-				if(mimeType.equals(defaultMimeType)){
-					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
-				}
-			}			
-		}
 		
 		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
 		
@@ -276,46 +263,13 @@ public class GrassProcessDescriptionCreator {
 			
 			if(supportedMimeType != null && supportedEncoding == null){			
 				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(supportedMimeType)){
-						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					if(mimeType.equals(IOHandler.MIME_TYPE_ZIPPED_SHP)){
+						continue;
 					}
-				}			
-			}
-		}
-	}
-	
-	private void checkForBase64Encoding(OutputDescriptionType outputDescriptionType){
-		SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
-		
-		if(complexData == null){
-			return;
-		}
-		
-		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
-		
-		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
-		
-		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
-		
-		if(defaultMimeType != null && defaultEncoding == null){			
-			for (String mimeType : genericFileParserMimeTypes) {
-				if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(defaultMimeType)){
-					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
-				}
-			}			
-		}
-		
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			String supportedMimeType = complexDataDescriptionType.getMimeType();
-			
-			String supportedEncoding = complexDataDescriptionType.getEncoding();
-			
-			if(supportedMimeType != null && supportedEncoding == null){			
-				for (String mimeType : genericFileParserMimeTypes) {
-					if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(supportedMimeType)){
-						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					if(mimeType.equals(supportedMimeType)){					
+						ComplexDataDescriptionType base64Format = complexData.getSupported().addNewFormat();						
+						base64Format.setMimeType(supportedMimeType);
+						base64Format.setEncoding(IOHandler.ENCODING_BASE64);
 					}
 				}			
 			}
@@ -384,34 +338,6 @@ public class GrassProcessDescriptionCreator {
 			}
 		}
 		
-	}
-	
-	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws XmlException
-	 */
-	public static void main(String[] args) throws IOException {
-
-		ProcessDescriptionType type;
-		try {
-			type = new GrassProcessDescriptionCreator()
-					.createDescribeProcessType("v.buffer", false);
-
-			for (int i = 0; i < type.getDataInputs().getInputArray().length; i++) {
-
-				InputDescriptionType inputDescType = type.getDataInputs()
-						.getInputArray()[i];
-
-				SupportedComplexDataInputType supCDataType = inputDescType
-						.getComplexData();
-
-				System.out.println(supCDataType);
-			}
-		} catch (XmlException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private String[] getEnvp() {
