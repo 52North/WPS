@@ -86,6 +86,11 @@
 					<artifactId>license-maven-plugin</artifactId>
 					<version>2.2</version>
 				</plugin>
+				<plugin>
+					<groupId>org.jasig.maven</groupId>
+					<artifactId>maven-notice-plugin</artifactId>
+					<version>1.0.5</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -154,7 +159,6 @@
 			<plugin>
 				<groupId>org.jasig.maven</groupId>
 				<artifactId>maven-notice-plugin</artifactId>
-				<version>1.0.5</version>
 				<configuration>
 					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
 					<licenseMapping>
@@ -164,6 +168,7 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>check-licenses</id>
 						<phase>initialize</phase>
 						<goals>
 							<goal>check</goal>
