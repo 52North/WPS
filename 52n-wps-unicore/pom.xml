@@ -17,6 +17,17 @@
 			<url>http://zam904.zam.kfa-juelich.de/maven</url>
 		</repository>
 	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

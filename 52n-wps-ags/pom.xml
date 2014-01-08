@@ -10,6 +10,17 @@
 	<name>52North WPS ArcGIS Server Processing Backend</name>
 	<packaging>jar</packaging>
 	<description>Implementation of a ProcessRepository for the ArcGIS server to expose ArcGIS processes in a WPS</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

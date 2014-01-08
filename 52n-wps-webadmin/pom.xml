@@ -10,7 +10,17 @@
     <packaging>jar</packaging>
     <name>52North Web Admin Interface</name>
     <description>Provides the Web admin UI for managing a WPS instance</description>
-    
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

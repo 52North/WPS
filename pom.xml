@@ -81,6 +81,11 @@
 						<encoding>${project.build.sourceEncoding}</encoding>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>com.mycila</groupId>
+					<artifactId>license-maven-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -122,28 +127,29 @@
 				</configuration>
 			</plugin>
 			<plugin>
-					<groupId>com.mycila</groupId>
-					<artifactId>license-maven-plugin</artifactId>
-					<version>2.2</version>
-					<configuration>
-							<header>misc/licenses/license_header.txt</header>
-							<properties>
-									<year>${project.inceptionYear}</year>
-							</properties>
-							<includes>
-									<include>src/**/*.java</include>
-							</includes>
-							<excludes>
-								<exclude>**/LargeBufferStream.java</exclude>
-							</excludes>
-					</configuration>
-					<executions>
-							<execution>
-									<goals>
-											<goal>check</goal>
-									</goals>
-							</execution>
-					</executions>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>misc/licenses/license_header.txt</header>
+					<aggregate>true</aggregate>
+					<properties>
+						<year>${project.inceptionYear}</year>
+					</properties>
+					<includes>
+						<include>src/**/*.java</include>
+					</includes>
+					<excludes>
+						<exclude>**/LargeBufferStream.java</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.jasig.maven</groupId>
