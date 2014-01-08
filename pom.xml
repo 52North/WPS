@@ -133,6 +133,9 @@
 							<includes>
 									<include>src/**/*.java</include>
 							</includes>
+							<excludes>
+								<exclude>**/LargeBufferStream.java</exclude>
+							</excludes>
 					</configuration>
 					<executions>
 							<execution>
