@@ -34,41 +34,25 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<!-- run "mvn license:check" to check -->
-				<!-- run "mvn license:format" to add to the files -->
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.9.0</version>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>src/main/resources/52N_license.txt</header>
-					<excludes>
-						<exclude>**/log4j*</exclude>
-						<exclude>**/test/resources/**</exclude>
-					</excludes>
-					<includes>
-						<include>**/*.java</include>
-						<include>**/*.properties</include>
-						<include>**/*.jsp</include>
-						<include>**/*.js</include>
-						<include>**/*.xml</include>
-						<include>**/*.xsl</include>
-					</includes>
-					<strictCheck>true</strictCheck>
-					<properties>
-						<year>${project.inceptionYear}</year>
-					</properties>
+					<header>../misc/licenses/license_header.txt</header>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jasig.maven</groupId>
+				<artifactId>maven-notice-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>test</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
+						<id>check-licenses</id>
+						<phase></phase>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

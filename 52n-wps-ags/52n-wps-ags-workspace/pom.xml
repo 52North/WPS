@@ -13,14 +13,6 @@
 	<version>10.0.3-SNAPSHOT</version>
 	<description>52 north 52n-wps-ags-workspace wrapper for ArcObjects 10.0</description>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 	<!-- here are the dependencies of the project -->
 	<dependencies>
 
