@@ -306,6 +306,14 @@
 		<version>1.0.0</version>
 		<license>UNKNOWN, XMLBeans???</license>
 	</artifact>
+
+	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->	
+    <artifact>
+        <groupId>org.n52.wps</groupId>
+        <artifactId>52n-wps-ags-workspace</artifactId>
+        <version>10.0.2</version>
+		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
+    </artifact>
 	
 	<!-- https://github.com/s-u/Rserve/blob/master/LICENSE -->
 	<artifact>

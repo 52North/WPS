@@ -10,6 +10,27 @@
     <artifactId>52n-wps-transactional</artifactId>
     <packaging>jar</packaging>
     <name>52North WPS Transactional Service</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jasig.maven</groupId>
+				<artifactId>maven-notice-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>check-licenses</id>
+						<phase></phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
     <description>Implementation of the transactional interface for processes</description>
 	<dependencies>
         <dependency>
