@@ -346,6 +346,7 @@
 				<Format mimetype="application/remap" encoding="base64" />
 				<Format mimetype="application/x-erdas-hfa" encoding="base64" />
 				<Format mimetype="application/x-netcdf" encoding="base64" />
+				<Format mimetype="application/netcdf" encoding="base64" />
 				<Format mimetype="application/dgn" encoding="base64" />
 				<Format mimetype="image/jpeg" encoding="base64" />
 				<Format mimetype="image/png" encoding="base64" />
@@ -371,6 +372,7 @@
 				<Format mimetype="application/remap" />
 				<Format mimetype="application/x-erdas-hfa" />
 				<Format mimetype="application/x-netcdf" />
+				<Format mimetype="application/netcdf" />
 				<Format mimetype="application/dgn" />
 				<Format mimetype="image/jpeg" />
 				<Format mimetype="image/png" />

@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- WPS4R has to be enabled. R-package "highlight" needs to be installed. Input script needs to be provided. --> 
+<!-- GRASS 7 backend has to be enabled. -->
 <wps:Execute service="WPS" version="1.0.0"
 	xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1"
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
-	<ows:Identifier>org.n52.wps.server.r.highlight</ows:Identifier>
+	<ows:Identifier>r.resample</ows:Identifier>
 	<wps:DataInputs>
 		<wps:Input>
-			<ows:Identifier>input</ows:Identifier>
-			<wps:Reference xlink:href="R SCRIPT URL" mimeType="text/plain" encoding="UTF-8">
-			</wps:Reference>
+			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">input</ows:Identifier>
+			<wps:Reference
+				xlink:href="http://geoprocessing.demo.52north.org:8080/xyz/elev_srtm_30m.tif"
+				mimeType="image/tiff" />
 		</wps:Input>
 	</wps:DataInputs>
 	<wps:ResponseForm>
-		<wps:RawDataOutput mimeType="text/plain" encoding="UTF-8">
+		<wps:ResponseDocument>
+			<wps:Output mimeType="image/tiff" encoding="base64">
 				<ows:Identifier>output</ows:Identifier>
-		</wps:RawDataOutput>
+			</wps:Output>
+		</wps:ResponseDocument>
 	</wps:ResponseForm>
 </wps:Execute>

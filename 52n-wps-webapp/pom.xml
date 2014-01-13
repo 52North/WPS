@@ -397,6 +397,7 @@
 								<configuration>
 									<excludes>
 										<exclude>**/Wps4rIT*</exclude>
+										<exclude>**/GrassIT*</exclude>
 									</excludes>
 
 									<argLine>-Xmx1024m</argLine>
