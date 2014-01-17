@@ -846,6 +846,78 @@ public class ExecutePostIT {
         assertThat(response, response, containsString("LinearRing"));
         assertThat(response, response, not(containsString("Execute")));
     }
+    
+    @Test
+    public void testExecutePOSTComplexBinaryASynchronousBinaryOutputBStoreStatusReferenceTrueHasCorrectSuffix() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTComplexXMLASynchronousXMLOutputBStoreStatusTrue");
+
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.raster.AddRasterValues</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>dataset1</ows:Identifier>"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "<wps:Input>"
+                + "<ows:Identifier>dataset2</ows:Identifier>"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "</wps:DataInputs>"
+                + "<wps:ResponseForm>"
+                + "<wps:ResponseDocument status=\"false\" storeExecuteResponse=\"true\">"
+                + "<wps:Output asReference=\"true\" mimeType=\"image/tiff\" encoding=\"base64\" >"
+                + "<ows:Identifier>result</ows:Identifier>"
+                + "</wps:Output>"
+                + "</wps:ResponseDocument>"
+                + "</wps:ResponseForm>"
+                + "</wps:Execute>";
+        String response = PostClient.sendRequest(url, payload);
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("statusLocation"));
+
+        AllTestsIT.checkContentDispositionOfRetrieveResultServlet(response, null, ".tiff");
+    }
+    
+    @Test
+    public void testExecutePOSTComplexBinaryASynchronousBinaryOutputBStoreStatusReferenceTrueHasCorrectFilename() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTComplexXMLASynchronousXMLOutputBStoreStatusTrue");
+
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.raster.AddRasterValues</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>dataset1</ows:Identifier>"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "<wps:Input>"
+                + "<ows:Identifier>dataset2</ows:Identifier>"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "</wps:DataInputs>"
+                + "<wps:ResponseForm>"
+                + "<wps:ResponseDocument status=\"false\" storeExecuteResponse=\"true\">"
+                + "<wps:Output asReference=\"true\" mimeType=\"image/tiff\" encoding=\"base64\" >"
+                + "<ows:Identifier>result</ows:Identifier>"
+                + "</wps:Output>"
+                + "</wps:ResponseDocument>"
+                + "</wps:ResponseForm>"
+                + "</wps:Execute>";
+        String response = PostClient.sendRequest(url, payload);
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("statusLocation"));
+
+        AllTestsIT.checkContentDispositionOfRetrieveResultServlet(response, "result", ".tiff");
+    }
 
     @Test
     public void testExecutePOSTValueComplexBinarySynchronousBinaryOutputBase64() throws ParserConfigurationException, IOException, SAXException {

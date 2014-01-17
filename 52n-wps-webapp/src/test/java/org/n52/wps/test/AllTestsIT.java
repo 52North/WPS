@@ -37,6 +37,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -47,6 +50,7 @@ import net.opengis.wps.x100.DataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse.ProcessOutputs;
 import net.opengis.wps.x100.OutputDataType;
+import net.opengis.wps.x100.OutputReferenceType;
 
 import org.apache.commons.codec.binary.Base64;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -178,6 +182,61 @@ public class AllTestsIT {
         }
         throw new IOException("Test did not complete in allotted time");
     }
+	
+	public static void checkContentDispositionOfRetrieveResultServlet(String response, String filename, String suffix)
+			throws IOException, ParserConfigurationException, SAXException {
+
+		String refResult = AllTestsIT.getAsyncDoc(response);
+		
+    	ExecuteResponseDocument document = null;
+    	
+    	try {    		
+    		document = ExecuteResponseDocument.Factory.parse(refResult);	    		
+		} catch (Exception e) {
+			System.err.println("Could not parse execute response document.");
+		}   	
+    	
+    	assertThat(document, not(nullValue()));    	
+    	
+    	ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
+    	
+    	assertThat(outputs, not(nullValue()));    	
+    	assertThat(outputs.sizeOfOutputArray(), not(0)); 
+    	
+    	OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+    	
+    	assertThat(outputDataType, not(nullValue()));       	
+    	
+    	OutputReferenceType data = outputDataType.getReference();  
+    	
+    	assertThat(data, not(nullValue()));
+    	
+    	String url = data.getHref();
+    	
+    	if(filename != null){
+    		//concat filename to URL
+    		url = url.concat("&filename=" + filename);
+    	}
+    	
+    	URLConnection urlConnection = new URL(url).openConnection();
+    	
+    	List<String> headerFields = urlConnection.getHeaderFields().get("Content-Disposition");
+    	
+    	boolean oneHeaderFieldContainsFilename = false;
+    	
+		for (String field : headerFields) {
+			if(field.contains("filename")){
+				oneHeaderFieldContainsFilename = true;
+				if(suffix != null && !suffix.equals("")){
+					assertTrue(field.endsWith(suffix + "\""));
+				}
+				if(filename != null && !filename.equals("")){
+					assertTrue(field.contains(filename));
+				}
+			}
+		}
+		assertTrue(oneHeaderFieldContainsFilename);
+	}
 
     public static void checkReferenceXMLResult(String response) throws ParserConfigurationException,
             SAXException,
