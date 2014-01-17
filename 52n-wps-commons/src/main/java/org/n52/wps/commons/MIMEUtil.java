@@ -35,9 +35,10 @@ public class MIMEUtil {
         String suffix = mimeTypeSplit[mimeTypeSplit.length - 1];
         if ("geotiff".equalsIgnoreCase(suffix) || "x-geotiff".equalsIgnoreCase(suffix)) {
             suffix = "tiff";
-        }
-        else if ("netcdf".equalsIgnoreCase(suffix) || "x-netcdf".equalsIgnoreCase(suffix)) {
+        } else if ("netcdf".equalsIgnoreCase(suffix) || "x-netcdf".equalsIgnoreCase(suffix)) {
             suffix = "nc";
+        } else if ("x-zipped-shp".equalsIgnoreCase(suffix)) {
+            suffix = "zip";
         }
         return suffix;
     }
