@@ -17,6 +17,7 @@ import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.client.MatlabClient;
+import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.wps.matlab.description.MatlabInputDescripton;
 import com.github.autermann.wps.matlab.description.MatlabOutputDescription;
 import com.github.autermann.wps.matlab.description.MatlabProcessDescription;
@@ -94,9 +95,11 @@ public class MatlabAlgorithm implements IAlgorithm {
         for (MatlabInputDescripton in : description.getInputs()) {
             if (inputs.containsKey(in.getId())) {
                 req.addParameter(t.transform(in, inputs.get(in.getId())));
-            } else {
+            } else if (in.getMinOccurs() > 0) {
                 throw new ExceptionReport("missing input " + in.getId(),
                                           ExceptionReport.MISSING_PARAMETER_VALUE);
+            } else {
+                req.addParameter(new MatlabScalar(Double.NaN));
             }
         }
 
