@@ -11,11 +11,8 @@ public class Main {
     public static void main(String[] args) throws Exception {
         WPS wps = new WPS("localhost", 12121);
         SetMultimap<String, String> properties = HashMultimap.create();
-        
         properties.put(MatlabAlgorithmRepository.CONFIG_PROPERTY,
-                       Main.class.getResource("/add.yml").getFile());
-        properties.put(MatlabAlgorithmRepository.CONFIG_PROPERTY,
-                       "/home/auti/Source/Lake-Analyzer/lakeAnalyzer.yaml");
+                       "/home/auti/Source/Lake-Analyzer/WPS/lakeAnalyzer.yaml");
         wps.addAlgorithmRepository(MatlabAlgorithmRepository.class, properties);
         wps.addGenerator(MatlabFileHandler.class);
         wps.addParser(MatlabFileHandler.class);

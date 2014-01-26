@@ -5,9 +5,10 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import com.github.autermann.matlab.client.MatlabClientConfiguration;
+import com.github.autermann.matlab.client.MatlabClient;
 import com.github.autermann.yaml.YamlNode;
 import com.google.common.base.Strings;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 /**
@@ -22,7 +23,7 @@ public class MatlabProcessDescription extends AbstractMatlabDescription {
     private String function;
     private final Map<String, MatlabInputDescripton> inputs;
     private final Map<String, MatlabOutputDescription> outputs;
-    private MatlabClientConfiguration clientConfiguration;
+    private Supplier<MatlabClient> clientProvider;
     private ProcessDescriptionType processDescription;
 
     public MatlabProcessDescription() {
@@ -46,13 +47,13 @@ public class MatlabProcessDescription extends AbstractMatlabDescription {
         return outputs.get(id);
     }
 
-    public MatlabClientConfiguration getClientConfig() {
-        return clientConfiguration;
+    public Supplier<MatlabClient> getClientProvider() {
+        return clientProvider;
     }
 
     public void setClientConfiguration(
-            MatlabClientConfiguration clientConfiguration) {
-        this.clientConfiguration = clientConfiguration;
+            Supplier<MatlabClient> clientProvider) {
+        this.clientProvider = clientProvider;
     }
 
     public void addInputDescription(MatlabInputDescripton desc) {

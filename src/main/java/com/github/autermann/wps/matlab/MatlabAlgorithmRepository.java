@@ -41,7 +41,7 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
 
     public static final String CONFIG_PROPERTY = "config";
 
-    private final Map<String, MatlabProcessDescription> descriptions = Maps.newHashMap();
+    private final Map<String, MatlabAlgorithm> descriptions = Maps.newHashMap();
 
     public MatlabAlgorithmRepository() {
         this(getProperties());
@@ -52,7 +52,7 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
             MatlabProcessDescription description
                     = MatlabProcessDescription.load(config);
             LOG.info("Loaded Matlab process:{}", description.getId());
-            descriptions.put(description.getId(), description);
+            descriptions.put(description.getId(), new MatlabAlgorithm(description));
         }
     }
 
@@ -113,7 +113,7 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
         if (!containsAlgorithm(name)) {
             return null;
         }
-        return new MatlabAlgorithm(descriptions.get(name));
+        return descriptions.get(name);
     }
 
     @Override

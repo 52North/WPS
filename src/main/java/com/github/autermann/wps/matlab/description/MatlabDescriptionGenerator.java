@@ -2,6 +2,8 @@ package com.github.autermann.wps.matlab.description;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -24,15 +26,22 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.SupportedUOMsType;
 
+import com.github.autermann.matlab.MatlabException;
+import com.github.autermann.matlab.client.MatlabClient;
 import com.github.autermann.matlab.client.MatlabClientConfiguration;
 import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
+import com.github.autermann.matlab.server.MatlabInstancePoolConfiguration;
 import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.wps.matlab.YamlConstants;
 import com.github.autermann.wps.matlab.transform.LiteralType;
 import com.github.autermann.yaml.YamlNode;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
 public class MatlabDescriptionGenerator {
+    //FIXME make this configurable
+    private static final int LOCAL_INSTANCES = 5;
 
     private MatlabComplexInputDescription createComplexInput(YamlNode definition) {
         int minOccurs = definition.path(YamlConstants.MIN_OCCURS).asIntValue(1);
@@ -224,42 +233,66 @@ public class MatlabDescriptionGenerator {
         if (desc.getOutputs().isEmpty()) {
             throw new MatlabConfigurationException("Missing output definitions for process %s", id);
         }
-        desc.setClientConfiguration(createClientConfig(definition
+        desc.setClientConfiguration(createClientProvider(definition
                 .path(YamlConstants.CONNECTION)));
         desc.setProcessDescription(createXmlDescription(desc));
         return desc;
     }
 
-    private MatlabClientConfiguration createClientConfig(YamlNode settings) {
+    private Supplier<MatlabClient> createClientProvider(YamlNode settings) {
         checkArgument(settings != null && settings.exists());
-        MatlabClientConfiguration.Builder b = MatlabClientConfiguration
-                .builder();
-        b.withInstanceConfiguration(MatlabInstanceConfiguration
-                        .builder()/*.hidden()*/.build());
-        if (settings.isMap()) {
-            b.withAddress(settings.path(YamlConstants.HOST).textValue(),
-                          settings.path(YamlConstants.PORT).intValue());
-        } else if (settings.isText()) {
-            String address = settings.textValue();
-            if (address.startsWith("ws://") ||
-                address.startsWith("wss://")) {
-                b.withAddress(URI.create(address));
-            } else if (address.startsWith("file://")) {
-                try {
-                    b.withDirectory(URI.create(address).toURL().getFile());
-                } catch (MalformedURLException ex) {
-                    throw new MatlabConfigurationException(ex);
+        try {
+            if (settings.isMap()) {
+                return new FactorySupplier(MatlabClientConfiguration.builder()
+                        .withAddress(settings.path(YamlConstants.HOST).asTextValue(),
+                             settings.path(YamlConstants.PORT).asIntValue())
+                        .build());
+                
+            } else if (settings.isText()) {
+                String address = settings.textValue();
+                if (address.startsWith("ws://") || address.startsWith("wss://")) {
+                    return new FactorySupplier(MatlabClientConfiguration.builder()
+                            .withAddress(URI.create(address))
+                            .build());
+                } else if (address.startsWith("file://")) {
+                    File directory = new File(URI.create(address).toURL()
+                            .getFile());
+                    return Suppliers.memoize(new FactorySupplier(MatlabClientConfiguration
+                            .builder()
+                            .withInstancePoolConfiguration(MatlabInstancePoolConfiguration
+                                    .builder()
+                                    .withMaximalNumInstances(LOCAL_INSTANCES)
+                                    .withInstanceConfig(MatlabInstanceConfiguration
+                                            .builder()
+                                            .hidden()
+                                            .withBaseDir(directory)
+                                            .build())
+                                    .build())
+                            .build()));
+                } else if (address.equalsIgnoreCase("local")) {
+                    return Suppliers.memoize(new FactorySupplier(MatlabClientConfiguration
+                            .builder()
+                            .withInstancePoolConfiguration(MatlabInstancePoolConfiguration
+                                    .builder()
+                                    .withMaximalNumInstances(LOCAL_INSTANCES)
+                                    .withInstanceConfig(MatlabInstanceConfiguration
+                                            .builder()
+                                            .hidden()
+                                            .build())
+                                    .build())
+                            .build()));
+                } else {
+                    throw new MatlabConfigurationException("Missing or invalid connection setting");
                 }
-            } else if (!address.equalsIgnoreCase("local")) {
-                throw new MatlabConfigurationException("Unsupported connection setting");
+            } else {
+                throw new MatlabConfigurationException("Missing or invalid connection setting");
             }
-        } else {
-            throw new MatlabConfigurationException("Missing or invalid connection setting");
+        } catch (MalformedURLException ex) {
+            throw new MatlabConfigurationException(ex);
         }
-        return b.build();
     }
 
-private ProcessDescriptionType createXmlDescription(
+    private ProcessDescriptionType createXmlDescription(
             MatlabProcessDescription desc) {
         ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
 		ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
@@ -406,5 +439,24 @@ private ProcessDescriptionType createXmlDescription(
         }
 
         return xbDescription;
+    }
+
+    private class FactorySupplier implements Supplier<MatlabClient> {
+        private final MatlabClientConfiguration config;
+
+        FactorySupplier(MatlabClientConfiguration config) {
+            this.config = config;
+        }
+
+        @Override
+        public MatlabClient get() {
+            try {
+                return MatlabClient.create(config);
+            } catch (MatlabException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

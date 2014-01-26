@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 public class MatlabAlgorithm implements IAlgorithm {
     private static final Logger LOG = LoggerFactory.getLogger(MatlabAlgorithm.class);
     private final MatlabProcessDescription description;
-
+    
     public MatlabAlgorithm(MatlabProcessDescription description) {
         this.description = Preconditions.checkNotNull(description);
     }
@@ -39,7 +39,7 @@ public class MatlabAlgorithm implements IAlgorithm {
     }
 
     @Override
-    public synchronized ProcessDescriptionType getDescription() {
+    public ProcessDescriptionType getDescription() {
         return description.getProcessDescription();
     }
 
@@ -69,7 +69,7 @@ public class MatlabAlgorithm implements IAlgorithm {
         try {
             MatlabRequest request = fromInputData(inputData);
             LOG.info("Executing Matlab request: {}", request);
-            MatlabClient client = MatlabClient.create(description.getClientConfig());
+            MatlabClient client = this.description.getClientProvider().get();
             MatlabResult result = client.exec(request);
             LOG.info("Matlab result: {}", result);
             return toOutputData(result);
