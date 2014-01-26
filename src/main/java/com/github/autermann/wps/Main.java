@@ -1,5 +1,6 @@
 package com.github.autermann.wps;
 
+import com.github.autermann.wps.commons.WPS;
 import com.github.autermann.wps.matlab.MatlabAlgorithmRepository;
 import com.github.autermann.wps.matlab.MatlabFileHandler;
 import com.google.common.collect.HashMultimap;
@@ -13,6 +14,8 @@ public class Main {
         
         properties.put(MatlabAlgorithmRepository.CONFIG_PROPERTY,
                        Main.class.getResource("/add.yml").getFile());
+        properties.put(MatlabAlgorithmRepository.CONFIG_PROPERTY,
+                       "/home/auti/Source/Lake-Analyzer/lakeAnalyzer.yaml");
         wps.addAlgorithmRepository(MatlabAlgorithmRepository.class, properties);
         wps.addGenerator(MatlabFileHandler.class);
         wps.addParser(MatlabFileHandler.class);
