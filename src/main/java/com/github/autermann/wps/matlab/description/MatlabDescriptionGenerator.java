@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.List;
 
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -23,18 +24,14 @@ import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.SupportedUOMsType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.autermann.matlab.client.MatlabClientConfiguration;
 import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.wps.matlab.YamlConstants;
 import com.github.autermann.wps.matlab.transform.LiteralType;
 import com.github.autermann.yaml.YamlNode;
+import com.google.common.collect.Lists;
 
 public class MatlabDescriptionGenerator {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(MatlabDescriptionGenerator.class);
 
     private MatlabComplexInputDescription createComplexInput(YamlNode definition) {
         int minOccurs = definition.path(YamlConstants.MIN_OCCURS).asIntValue(1);
@@ -132,6 +129,13 @@ public class MatlabDescriptionGenerator {
         desc.setType(type);
         desc.setUnit(unit);
         desc.setMatlabType(type.getMatlabType());
+        if (definition.path(YamlConstants.VALUES).isSequence()) {
+            List<String> allowedValues = Lists.newLinkedList();
+            for (YamlNode allowedValue : definition.path(YamlConstants.VALUES)) {
+                allowedValues.add(allowedValue.asTextValue());
+            }
+            desc.setAllowedValues(allowedValues);
+        }
         return desc;
     }
 
@@ -319,8 +323,12 @@ private ProcessDescriptionType createXmlDescription(
                             .addNewSupported();
                     ComplexDataDescriptionType xbSupportedFormat = xbSupported
                             .addNewFormat();
-                    xbSupportedFormat.setSchema(complexInput.getSchema());
-                    xbSupportedFormat.setEncoding(complexInput.getEncoding());
+                    if (complexInput.getSchema() != null) {
+                        xbSupportedFormat.setSchema(complexInput.getSchema());
+                    }
+                    if (complexInput.getEncoding() != null) {
+                        xbSupportedFormat.setEncoding(complexInput.getEncoding());
+                    }
                     xbSupportedFormat.setMimeType(complexInput.getMimeType());
                 }
             }
@@ -368,8 +376,12 @@ private ProcessDescriptionType createXmlDescription(
                             .addNewSupported();
                     ComplexDataDescriptionType xbSupportedFormat = xbSupported
                             .addNewFormat();
-                    xbSupportedFormat.setSchema(complexOutput.getSchema());
-                    xbSupportedFormat.setEncoding(complexOutput.getEncoding());
+                    if (complexOutput.getSchema() != null) {
+                        xbSupportedFormat.setSchema(complexOutput.getSchema());
+                    }
+                    if (complexOutput.getEncoding() != null) {
+                        xbSupportedFormat.setEncoding(complexOutput.getEncoding());
+                    }
                     xbSupportedFormat.setMimeType(complexOutput.getMimeType());
                 }
             }
