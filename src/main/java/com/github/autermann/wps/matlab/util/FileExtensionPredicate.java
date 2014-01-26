@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Set;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
@@ -29,4 +30,13 @@ public class FileExtensionPredicate implements Predicate<File> {
     public static Predicate<File> of(Iterable<? extends String> extensions) {
         return new FileExtensionPredicate(extensions);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("FileExtensionPredicate.of(" );
+        Joiner.on(", ").appendTo(sb, extensions);
+        return sb.append(")").toString();
+    }
+
 }

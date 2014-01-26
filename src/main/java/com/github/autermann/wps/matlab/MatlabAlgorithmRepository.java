@@ -1,13 +1,13 @@
 package com.github.autermann.wps.matlab;
 
-import com.github.autermann.wps.matlab.util.FileExtensionPredicate;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -19,15 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.autermann.wps.matlab.description.MatlabProcessDescription;
+import com.github.autermann.wps.matlab.util.FileExtensionPredicate;
 import com.github.autermann.yaml.Yaml;
 import com.github.autermann.yaml.YamlNode;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
 /**
@@ -51,13 +51,14 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
         for (YamlNode config : getConfigPaths(properties.get(CONFIG_PROPERTY))) {
             MatlabProcessDescription description
                     = MatlabProcessDescription.load(config);
+            LOG.info("Loaded Matlab process:{}", description.getId());
             descriptions.put(description.getId(), description);
         }
     }
 
-    private FluentIterable<YamlNode> getConfigPaths(List<String> properties) {
+    private Iterable<YamlNode> getConfigPaths(List<String> properties) {
         Predicate<File> p = FileExtensionPredicate.of("yaml", "yml");
-        List<File> paths = Lists.newLinkedList();
+        Set<File> paths = Sets.newHashSet();
         for (String configPath : properties) {
             File file = new File(configPath);
             if (!file.exists()) {
@@ -67,28 +68,39 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
                 for (File f : Files.fileTreeTraverser()
                         .breadthFirstTraversal(file)) {
                     if (f.isFile() && p.apply(f)) {
+                        LOG.info("Loading configuration from {}", f);
                         paths.add(f);
                     } else if (!f.isDirectory()) {
                         LOG.info("Ignoring {}.", f);
                     }
                 }
             } else if (file.isFile() && p.apply(file)) {
+                LOG.info("Loading configuration from {}", file);
                 paths.add(file);
             } else {
                 LOG.info("Ignoring {}.", file);
             }
         }
-        Iterable<YamlNode> nodes = Collections.<YamlNode>emptyList();
+        List<YamlNode> nodes = Lists.newLinkedList();
         Yaml yaml = new Yaml();
         for (File path : paths) {
+            FileInputStream in = null;
             try {
-                nodes = Iterables.concat(nodes, yaml
-                        .loadAll(new FileInputStream(path)));
+                in = new FileInputStream(path);
+                for (YamlNode node : yaml.loadAll(in)) {
+                    nodes.add(node);
+                }
             } catch (FileNotFoundException ex) {
                 LOG.warn("Could not load config at " + path, ex);
+            } finally {
+                if (in != null) {
+                    try {
+                        in.close();
+                    } catch (IOException e) {}
+                }
             }
         }
-        return FluentIterable.from(nodes);
+        return nodes;
     }
 
     @Override
