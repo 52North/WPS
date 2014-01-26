@@ -34,6 +34,7 @@ public interface YamlConstants {
     String URL = "url";
     String MIME_TYPE = "mimeType";
     String SCHEMA = "schema";
+    String ENCODING = "encoding";
     String VERSION = "version";
     String STORE_SUPPPORTED = "storeSuppported";
     String STATUS_SUPPORTED = "statusSupported";

@@ -53,6 +53,8 @@ public class MatlabDescriptionGenerator {
         }
         String schema = definition.path(YamlConstants.TYPE)
                 .path(YamlConstants.SCHEMA).asTextValue();
+        String encoding = definition.path(YamlConstants.TYPE)
+                .path(YamlConstants.ENCODING).asTextValue();
 
         if (maxOccurs < 1 || minOccurs < 0 || maxOccurs < minOccurs) {
             throw new IllegalArgumentException(String
@@ -67,6 +69,7 @@ public class MatlabDescriptionGenerator {
         desc.setMaxOccurs(maxOccurs);
         desc.setMatlabType(MatlabType.FILE);
         desc.setMimeType(mimeType);
+        desc.setEncoding(encoding);
         desc.setSchema(schema);
         return desc;
     }
@@ -87,6 +90,8 @@ public class MatlabDescriptionGenerator {
         }
         String schema = definition.path(YamlConstants.TYPE)
                 .path(YamlConstants.SCHEMA).asTextValue();
+        String encoding = definition.path(YamlConstants.TYPE)
+                .path(YamlConstants.ENCODING).asTextValue();
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
         MatlabComplexOutputDescription desc
@@ -97,6 +102,7 @@ public class MatlabDescriptionGenerator {
         desc.setMatlabType(MatlabType.FILE);
         desc.setMimeType(mimeType);
         desc.setSchema(schema);
+        desc.setEncoding(encoding);
         return desc;
     }
 
