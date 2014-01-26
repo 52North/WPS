@@ -9,7 +9,6 @@ import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.FileDataBinding;
 
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
@@ -64,7 +63,7 @@ public class MatlabFileHandler implements IParser, IGenerator {
 
     @Override
     public boolean isSupportedDataBinding(Class<?> clazz) {
-        return clazz.equals(FileDataBinding.class);
+        return clazz.equals(MatlabFileBinding.class);
     }
 
     @Override
@@ -89,7 +88,7 @@ public class MatlabFileHandler implements IParser, IGenerator {
 
     @Override
     public Class<?>[] getSupportedDataBindings() {
-        return new Class<?>[] { FileDataBinding.class };
+        return new Class<?>[] { MatlabFileBinding.class };
     }
 
 }
