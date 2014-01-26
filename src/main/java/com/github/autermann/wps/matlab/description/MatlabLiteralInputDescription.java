@@ -15,6 +15,7 @@ public class MatlabLiteralInputDescription extends MatlabInputDescripton {
     private LiteralType type;
     private String defaultValue;
     private List<String> allowedValues;
+    private String unit;
 
     public LiteralType getType() {
         return type;
@@ -51,5 +52,17 @@ public class MatlabLiteralInputDescription extends MatlabInputDescripton {
     @Override
     public Class<? extends IData> getBindingClass() {
         return getType().getBindingClass();
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public boolean hasUnit() {
+        return this.unit != null && !this.unit.isEmpty();
     }
 }

@@ -37,4 +37,5 @@ public interface YamlConstants {
     String VERSION = "version";
     String STORE_SUPPPORTED = "storeSuppported";
     String STATUS_SUPPORTED = "statusSupported";
+    String UNIT = "unit";
 }

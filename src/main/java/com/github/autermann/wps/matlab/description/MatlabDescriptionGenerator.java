@@ -21,6 +21,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
+import net.opengis.wps.x100.SupportedUOMsType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,7 @@ public class MatlabDescriptionGenerator {
         int maxOccurs = definition.path(YamlConstants.MAX_OCCURS).asIntValue(1);
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
+        String unit = definition.path(YamlConstants.UNIT).asTextValue();
 
         if (maxOccurs < 1 || minOccurs < 0 || maxOccurs < minOccurs) {
             throw new MatlabConfigurationException("Invalid min/max occurs: [%d,%d] for input %s",
@@ -128,6 +130,7 @@ public class MatlabDescriptionGenerator {
         desc.setMinOccurs(minOccurs);
         desc.setMaxOccurs(maxOccurs);
         desc.setType(type);
+        desc.setUnit(unit);
         desc.setMatlabType(type.getMatlabType());
         return desc;
     }
@@ -145,12 +148,14 @@ public class MatlabDescriptionGenerator {
         }
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
+        String unit = definition.path(YamlConstants.UNIT).asTextValue();
         MatlabLiteralOutputDescription desc
                 = new MatlabLiteralOutputDescription();
         desc.setId(id);
         desc.setTitle(title);
         desc.setAbstract(abstrakt);
         desc.setType(type);
+        desc.setUnit(unit);
         desc.setMatlabType(type.getMatlabType());
         return desc;
     }
@@ -272,23 +277,29 @@ private ProcessDescriptionType createXmlDescription(
                 if (input instanceof MatlabLiteralInputDescription) {
                     MatlabLiteralInputDescription literalInput
                             = (MatlabLiteralInputDescription) input;
-                    LiteralInputType xbLiteralOutput = xbInput
+                    LiteralInputType xbLiteralInput = xbInput
                             .addNewLiteralData();
-                    xbLiteralOutput.addNewDataType().setReference(literalInput
+                    xbLiteralInput.addNewDataType().setReference(literalInput
                             .getType().getXmlType());
                     if (literalInput.hasDefaultValue()) {
-                        xbLiteralOutput.setDefaultValue(literalInput
+                        xbLiteralInput.setDefaultValue(literalInput
                                 .getDefaultValue());
                     }
                     if (literalInput.hasAllowedValues()) {
-                        AllowedValues allowed = xbLiteralOutput
+                        AllowedValues allowed = xbLiteralInput
                                 .addNewAllowedValues();
                         for (String allowedValue : literalInput
                                 .getAllowedValues()) {
                             allowed.addNewValue().setStringValue(allowedValue);
                         }
                     } else {
-                        xbLiteralOutput.addNewAnyValue();
+                        xbLiteralInput.addNewAnyValue();
+                    }
+                    if (literalInput.hasUnit()) {
+                        SupportedUOMsType unit = SupportedUOMsType.Factory.newInstance();
+                        unit.addNewDefault().addNewUOM().setStringValue(literalInput.getUnit());
+                        unit.addNewSupported().addNewUOM().setStringValue(literalInput.getUnit());
+                        xbLiteralInput.setUOMs(unit);
                     }
                 } else if (input instanceof MatlabComplexInputDescription) {
                     MatlabComplexInputDescription complexInput
@@ -333,6 +344,12 @@ private ProcessDescriptionType createXmlDescription(
                             .addNewLiteralOutput();
                     xbLiteralOutput.addNewDataType().setReference(literalOutput
                             .getType().getXmlType());
+                    if (literalOutput.hasUnit()) {
+                        SupportedUOMsType unit = SupportedUOMsType.Factory.newInstance();
+                        unit.addNewDefault().addNewUOM().setStringValue(literalOutput.getUnit());
+                        unit.addNewSupported().addNewUOM().setStringValue(literalOutput.getUnit());
+                        xbLiteralOutput.setUOMs(unit);
+                    }
                 } else if (output instanceof MatlabComplexOutputDescription) {
                     MatlabComplexOutputDescription complexOutput
                             = (MatlabComplexOutputDescription) output;
