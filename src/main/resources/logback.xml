@@ -7,7 +7,7 @@
     </appender>
 	<logger name="org.n52.wps.server.request.InputHandler" level="ERROR" />
     <logger name="org.n52.wps" level="INFO" />
-    <logger name="com.github.autermann.wps" level="DEBUG" />
+    <logger name="com.github.autermann" level="DEBUG" />
     <root level="INFO">
         <appender-ref ref="console" />
     </root>
