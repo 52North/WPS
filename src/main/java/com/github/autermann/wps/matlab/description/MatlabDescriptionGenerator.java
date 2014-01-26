@@ -25,6 +25,7 @@ import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.SupportedUOMsType;
 
 import com.github.autermann.matlab.client.MatlabClientConfiguration;
+import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
 import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.wps.matlab.YamlConstants;
 import com.github.autermann.wps.matlab.transform.LiteralType;
@@ -227,6 +228,8 @@ public class MatlabDescriptionGenerator {
         checkArgument(settings != null && settings.exists());
         MatlabClientConfiguration.Builder b = MatlabClientConfiguration
                 .builder();
+        b.withInstanceConfiguration(MatlabInstanceConfiguration
+                        .builder()/*.hidden()*/.build());
         if (settings.isMap()) {
             b.withAddress(settings.path(YamlConstants.HOST).textValue(),
                           settings.path(YamlConstants.PORT).intValue());
@@ -315,8 +318,13 @@ private ProcessDescriptionType createXmlDescription(
                             .addNewDefault();
                     ComplexDataDescriptionType xbDefaultFormat = xbDefault
                             .addNewFormat();
-                    xbDefaultFormat.setSchema(complexInput.getSchema());
-                    xbDefaultFormat.setEncoding(complexInput.getEncoding());
+                    if (complexInput.getSchema() != null) {
+                        xbDefaultFormat.setSchema(complexInput.getSchema());
+                    }
+                    if (complexInput.getEncoding() != null) {
+                        xbDefaultFormat.setEncoding(complexInput.getEncoding());
+                    }
+
                     xbDefaultFormat.setMimeType(complexInput.getMimeType());
 
                     ComplexDataCombinationsType xbSupported = xbComplexInput
@@ -368,8 +376,12 @@ private ProcessDescriptionType createXmlDescription(
                             .addNewDefault();
                     ComplexDataDescriptionType xbDefaultFormat = xbDefault
                             .addNewFormat();
-                    xbDefaultFormat.setSchema(complexOutput.getSchema());
-                    xbDefaultFormat.setEncoding(complexOutput.getEncoding());
+                    if (complexOutput.getSchema() != null) {
+                        xbDefaultFormat.setSchema(complexOutput.getSchema());
+                    }
+                    if (complexOutput.getEncoding() != null) {
+                        xbDefaultFormat.setEncoding(complexOutput.getEncoding());
+                    }
                     xbDefaultFormat.setMimeType(complexOutput.getMimeType());
 
                     ComplexDataCombinationsType xbSupported = xbComplexOutput
