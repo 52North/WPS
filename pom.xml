@@ -138,7 +138,8 @@
 					<header>misc/licenses/license_header.txt</header>
 					<aggregate>true</aggregate>
 					<properties>
-						<year>${project.inceptionYear}</year>
+						<inceptionYear>${project.inceptionYear}</inceptionYear>
+						<latestYearOfContribution>${currentYear}</latestYearOfContribution>
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
@@ -188,8 +189,8 @@
 		<module>52n-wps-algorithm</module>
 		<module>52n-wps-algorithm-impl</module>
 		<module>52n-wps-database</module>
-		<!-- module>52n-wps-unicore</module-->
-		<!-- module>52n-wps-gridgain</module-->
+<!-- 		<module>52n-wps-unicore</module> -->
+<!-- 		<module>52n-wps-gridgain</module> -->
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
 		<module>52n-wps-sextante</module>
@@ -200,7 +201,6 @@
 		<module>52n-wps-python</module>
 		<module>52n-wps-r</module>
 		<module>52n-wps-mc</module>
-		<!--  module>52n-wps-ilwis</module -->
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -209,6 +209,9 @@
 		<geotools.version>8.7</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
+		<currentYear>2014</currentYear> <!-- manual setting -->
+        <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
+        <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
