@@ -247,7 +247,6 @@ public class MatlabDescriptionGenerator {
                         .withAddress(settings.path(YamlConstants.HOST).asTextValue(),
                              settings.path(YamlConstants.PORT).asIntValue())
                         .build());
-                
             } else if (settings.isText()) {
                 String address = settings.textValue();
                 if (address.startsWith("ws://") || address.startsWith("wss://")) {
