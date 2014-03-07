@@ -183,10 +183,12 @@
 		<module>52n-wps-commons</module>
 		<module>52n-wps-io</module>
 		<module>52n-wps-io-impl</module>
+		<module>52n-wps-io-geotools</module>
 		<module>52n-wps-server</module>
 		<module>52n-wps-server-soap</module>
 		<module>52n-wps-algorithm</module>
 		<module>52n-wps-algorithm-impl</module>
+		<module>52n-wps-algorithm-geotools</module>
 		<module>52n-wps-database</module>
 		<!-- module>52n-wps-unicore</module-->
 		<!-- module>52n-wps-gridgain</module-->
@@ -637,6 +639,16 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>52n-wps-io-geotools</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>52n-wps-algorithm-geotools</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -866,7 +878,7 @@
 			</plugin>
 		</plugins>
 	</reporting>
-	
+
 	<profiles>
 			<profile>
 					<id>create-license-list</id>

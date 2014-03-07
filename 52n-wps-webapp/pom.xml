@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration 
+	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration
 		$ -->
 	<parent>
 		<groupId>org.n52.wps</groupId>
@@ -27,7 +27,7 @@
 			<unsubscribe>http://list.52north.org/mailman/listinfo/geoprocessing-commits</unsubscribe>
 		</mailingList>
 	</mailingLists>
-	
+
 	<!-- here are the dependencies of the project -->
 	<dependencies>
 		<!-- Dependencies for Scope 'test' -->
@@ -75,6 +75,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-database</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-webadmin</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-sextante</artifactId>
@@ -91,10 +97,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-python</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-webadmin</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-transactional</artifactId>
@@ -146,15 +149,22 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-io-geotools</artifactId>
+			<scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into 
+			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into
 				slf4j -->
 			<scope>provided</scope>
 		</dependency>
@@ -301,18 +311,18 @@
 		<!-- </profile> -->
 		<profile>
 			<id>with-deploy</id>
-			<!-- server configuration for settings.xml ===================================== 
-				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username> 
-				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server> 
-				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings> 
-				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port> 
-				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties> 
-				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven 
-				(Run Configuration in Eclipse) ============================================= 
-				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging 
-				in Eclipse =========================== Add Java options to Tomcat: -Xdebug 
-				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote 
-				Java Application as debugging configuration and use the address above as 
+			<!-- server configuration for settings.xml =====================================
+				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username>
+				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server>
+				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
+				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
+				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
+				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
+				(Run Configuration in Eclipse) =============================================
+				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
+				in Eclipse =========================== Add Java options to Tomcat: -Xdebug
+				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote
+				Java Application as debugging configuration and use the address above as
 				the connection port. -->
 			<build>
 				<finalName>WPS</finalName>
@@ -378,10 +388,10 @@
 			<id>integration-test</id>
 			<build>
 				<plugins>
-					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
-						<version>1.7</version> <executions> <execution> <id>reserve-network-port</id> 
-						<goals> <goal>reserve-network-port</goal> </goals> <phase>initialize</phase> 
-						<configuration> <portNames> <portName>jetty.http.port</portName> <portName>jetty.http.stop.port</portName> 
+					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.7</version> <executions> <execution> <id>reserve-network-port</id>
+						<goals> <goal>reserve-network-port</goal> </goals> <phase>initialize</phase>
+						<configuration> <portNames> <portName>jetty.http.port</portName> <portName>jetty.http.stop.port</portName>
 						</portNames> </configuration> </execution> </executions> </plugin> -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -442,7 +452,7 @@
 								<contextPath>/wps</contextPath>
 							</webAppConfig>
 							<systemProperties>
-								<!-- This hack is to set catalina.base to the current jetty base 
+								<!-- This hack is to set catalina.base to the current jetty base
 									directory while the plugin runs so log4j will log somewhere and not complain -->
 								<systemProperty>
 									<name>catalina.base</name>

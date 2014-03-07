@@ -38,14 +38,18 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.collection.CollectionDataStore;
 import org.geotools.feature.FeatureCollection;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.FileDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -55,9 +59,6 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
@@ -157,9 +158,9 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 				 *
 				 * we probably have to refactor the input stuff and add some metadata to know what koind of input is fed in (for instance vector or raster etc)
 				 */
-				
+
 				boolean missingMandatoryParameter = false;
-				
+
 				if (parameter instanceof ParameterRasterLayer){
 					AdditionalInfoRasterLayer ai = (AdditionalInfoRasterLayer) parameter.getParameterAdditionalInfo();
 					if (ai.getIsMandatory() && (inputData.get(parameterName) == null) ){
@@ -179,11 +180,11 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 						missingMandatoryParameter = true;
 					}
 				}
-				
+
 				if(missingMandatoryParameter){
 					LOGGER.error("Missing parameter: " + parameterName);
 					throw new RuntimeException("Error while executing process " + processID + ". Missing parameter: " + parameterName);
-				}	
+				}
 				if(!(inputData.get(parameterName) == null)){
 					Object wrappedInput = wrapSextanteInputs(parameter, inputData.get(parameterName), parameterName, type);
 
@@ -226,7 +227,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 	 	         */
 
 	 		sextanteProcess.execute(null, outputFactory);
-	         
+
 	 		OutputObjectsSet outputs = sextanteProcess.getOutputObjects();
 
 	         int outputDataCount = outputs.getOutputDataObjectsCount();
@@ -453,7 +454,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		}
 		FeatureCollection<SimpleFeatureType, SimpleFeature> fc  = (FeatureCollection<SimpleFeatureType, SimpleFeature>) vectorLayer.getPayload();
 		DataStore datastore = new CollectionDataStore(fc);
-		FeatureSource<?, ?> fsource = datastore.getFeatureSource(datastore.getTypeNames()[0]);		
+		FeatureSource<?, ?> fsource = datastore.getFeatureSource(datastore.getTypeNames()[0]);
 		GTVectorLayer gtVectorLayer = new GTVectorLayer();
 //		NoPostprocessingGTVectorLayer gtVectorLayer = new NoPostprocessingGTVectorLayer();
 		gtVectorLayer.create(fsource);
@@ -499,7 +500,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		for(int i = 0; i <numberOfParameters; i++){
 			Parameter parameter = parameterSet.getParameter(i);
 			String parameterName = parameter.getParameterName();
-			
+
 			if(!parameterName.equals(id)){
 				continue;
 			}

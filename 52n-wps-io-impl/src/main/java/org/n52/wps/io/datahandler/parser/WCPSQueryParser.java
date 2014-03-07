@@ -32,6 +32,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import org.n52.wps.io.data.binding.complex.PlainStringBinding;
+import org.n52.wps.io.datahandler.parser.AbstractParser;
 
 /**
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden

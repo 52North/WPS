@@ -23,15 +23,17 @@ This project includes:
   52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52n-wps-ags-workspace under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   52n-WPS-Config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Moving Code Runtime under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Admin Interface under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS ArcGIS Server Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Client Library under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Commons under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -122,8 +124,8 @@ This project includes:
   Jackrabbit SPI Commons under The Apache Software License, Version 2.0
   Jackrabbit Text Extractors under The Apache Software License, Version 2.0
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
-  jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail 1.4 under The Apache Software License, Version 2.0

@@ -23,6 +23,12 @@
  */
 package org.n52.wps.io.data;
 
-public interface IBBOXData extends IData{
+public interface IBBOXData extends IData {
+    public String getCRS();
 
+    public int getDimension();
+
+    public double[] getLowerCorner();
+
+    public double[] getUpperCorner();
 }

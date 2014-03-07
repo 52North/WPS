@@ -45,6 +45,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
@@ -53,14 +56,12 @@ import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.util.XMLBeansHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
- * 
+ *
  * @author foerster
- * 
+ *
  */
 public class WebProcessingService extends HttpServlet {
 
@@ -76,9 +77,9 @@ public class WebProcessingService extends HttpServlet {
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
 
     /**
-     * 
+     *
      * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding
-     * 
+     *
      * @param hsRequest
      *        the HttpServletRequest
      * @param hsResponse
@@ -92,10 +93,11 @@ public class WebProcessingService extends HttpServlet {
          * Forbids clients to cache the response May solve problems with proxies and bad implementations
          */
         hsResponse.setHeader("Expires", "0");
-        if (hsRequest.getProtocol().equals("HTTP/1.1"))
+        if (hsRequest.getProtocol().equals("HTTP/1.1")) {
             hsResponse.setHeader("Cache-Control", "no-cache");
-        else if (hsRequest.getProtocol().equals("HTTP/1.0"))
+        } else if (hsRequest.getProtocol().equals("HTTP/1.0")) {
             hsResponse.setHeader("Pragma", "no-cache");
+        }
 
         // Enable/disable gzip compression
         if (hsRequest.getHeader("Accept-Encoding") != null
@@ -319,11 +321,13 @@ public class WebProcessingService extends HttpServlet {
             handleException(er, res);
         }
         finally {
-            if (res != null)
+            if (res != null) {
                 res.flushBuffer();
+            }
 
-            if (reader != null)
+            if (reader != null) {
                 reader.close();
+            }
         }
     }
 
@@ -340,7 +344,7 @@ public class WebProcessingService extends HttpServlet {
         try {
             LOGGER.debug(exception.toString());
             // DO NOT MIX getWriter and getOuputStream!
-            exception.getExceptionDocument().save(res.getOutputStream(), 
+            exception.getExceptionDocument().save(res.getOutputStream(),
                                                   XMLBeansHelper.getXmlOptions());
 
             res.setStatus(HttpServletResponse.SC_OK);

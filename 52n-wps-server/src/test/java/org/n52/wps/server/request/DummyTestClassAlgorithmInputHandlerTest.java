@@ -23,39 +23,50 @@
  */
 package org.n52.wps.server.request;
 
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
+
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputType;
+
 import org.apache.xmlbeans.XmlException;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.ExceptionReport;
+
+import com.google.common.primitives.Doubles;
 
 /**
  *
  * @author isuftin
  */
 public class DummyTestClassAlgorithmInputHandlerTest {
-        
+
     private static String sampleFileName = null;
     private static File sampleFile = null;
     private static ExecuteDocument execDoc = null;
     private static InputType[] inputArray = null;
     private static File projectRoot = null;
 
-    @BeforeClass 
+    @BeforeClass
     public static void setupClass() {
         sampleFileName = "src/test/resources/DummyTestClass.xml";
         sampleFile = new File(sampleFileName);
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
@@ -121,11 +132,12 @@ public class DummyTestClassAlgorithmInputHandlerTest {
         assertThat(instance.getParsedInputData().get("BBOXInputData"), is(notNullValue()));
         assertThat(instance.getParsedInputData().get("BBOXInputData").size(), equalTo(1));
         assertThat(instance.getParsedInputData().get("BBOXInputData").get(0), is(notNullValue()));
-        assertThat((ReferencedEnvelope)instance.getParsedInputData().get("BBOXInputData").get(0).getPayload(), is(notNullValue()));
-        
-        ReferencedEnvelope test = (ReferencedEnvelope)instance.getParsedInputData().get("BBOXInputData").get(0).getPayload();
-        assertThat(test.getArea(), equalTo(0.020000000000000212d));
-        assertThat(test.getLowerCorner().getDirectPosition().toString(), equalTo("DirectPosition2D[46.75, 13.05]"));
-        assertThat(test.getLowerCorner().getDimension(), equalTo(2));
+        assertThat((BoundingBoxData)instance.getParsedInputData().get("BBOXInputData").get(0).getPayload(), is(notNullValue()));
+
+        BoundingBoxData test = (BoundingBoxData)instance.getParsedInputData().get("BBOXInputData").get(0).getPayload();
+        assertThat(Doubles.asList(test.getLowerCorner()), contains(46.75, 13.05));
+        assertThat(Doubles.asList(test.getUpperCorner()), contains(46.85, 13.25));
+        assertThat(test.getCRS(), is(nullValue()));
+        assertThat(test.getDimension(), is(2));
     }
 }

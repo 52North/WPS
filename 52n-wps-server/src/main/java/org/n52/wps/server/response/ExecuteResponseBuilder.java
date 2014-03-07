@@ -42,7 +42,11 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.StatusType;
 
 import org.apache.xmlbeans.XmlCursor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
@@ -52,8 +56,6 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * WPS Execute operation response. By default, this XML document is delivered to the client in response to an Execute request. If "status" is "false" in the Execute operation request, this document is normally returned when process execution has been completed.
@@ -68,13 +70,13 @@ public class ExecuteResponseBuilder {
 	private String identifier;
 	private DataInputsType dataInputs;
 	//private DocumentOutputDefinitionType[] outputDefs;
-	private ExecuteRequest request;	
+	private ExecuteRequest request;
 	private ExecuteResponseDocument doc;
-	private RawData rawDataHandler = null; 
+	private RawData rawDataHandler = null;
 	private ProcessDescriptionType description;
 	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilder.class);
 	private Calendar creationTime;
-	
+
 	public ExecuteResponseBuilder(ExecuteRequest request) throws ExceptionReport{
 		this.request = request;
 		doc = ExecuteResponseDocument.Factory.newInstance();
@@ -94,16 +96,16 @@ public class ExecuteResponseBuilder {
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}
-		
+
 		responseElem.getProcess().setTitle(description.getTitle());
 		responseElem.getProcess().setProcessVersion(description.getProcessVersion());
 		creationTime = Calendar.getInstance();
 	}
-	
+
 	public void update() throws ExceptionReport {
 		// copying the request parameters to the response
 		ExecuteResponse responseElem = doc.getExecuteResponse();
-				
+
 		// if status succeeded, update reponse with result
 		if (responseElem.getStatus().isSetProcessSucceeded()) {
 			// the response only include dataInputs, if the property is set to true;
@@ -177,7 +179,7 @@ public class ExecuteResponseBuilder {
 			else {
 				LOGGER.info("OutputDefinitions are not stated explicitly in request");
 
-				// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.	
+				// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.
 
 				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
 				if(description==null){
@@ -203,9 +205,9 @@ public class ExecuteResponseBuilder {
 		}
 	}
 
-	
 
-	/** 
+
+	/**
 	 * Returns the schema according to the given output description and type.
 	 */
 	private static String getSchema(OutputDescriptionType desc, OutputDefinitionType def) {
@@ -213,9 +215,9 @@ public class ExecuteResponseBuilder {
 		if(def != null) {
 			schema = def.getSchema();
 		}
-		
+
 		return schema;
-	}	
+	}
 
 	private static String getEncoding(OutputDescriptionType desc, OutputDefinitionType def) {
 		String encoding = null;
@@ -224,13 +226,13 @@ public class ExecuteResponseBuilder {
 		}
 		return encoding;
 	}
-	
+
 	public String getMimeType() {
 		return getMimeType(null);
 	}
-	
+
 	public String getMimeType(OutputDefinitionType def) {
-		
+
 		String mimeType = "";
 		OutputDescriptionType[] outputDescs = description.getProcessOutputs()
 				.getOutputArray();
@@ -242,7 +244,7 @@ public class ExecuteResponseBuilder {
 		if(def != null){
 			inputID = def.getIdentifier().getStringValue();
 		}else if(isResponseForm){
-			
+
 			if (request.getExecute().getResponseForm().isSetRawDataOutput()) {
 				inputID = request.getExecute().getResponseForm().getRawDataOutput()
 						.getIdentifier().getStringValue();
@@ -324,7 +326,7 @@ public class ExecuteResponseBuilder {
 				handler.updateResponseForInlineComplexData(doc);
 			}
 		}
-		
+
 	}
 
 	private void generateLiteralDataOutput(String responseID, ExecuteResponseDocument res, boolean rawData, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
@@ -336,16 +338,16 @@ public class ExecuteResponseBuilder {
 			handler.updateResponseForLiteralData(res, dataTypeReference);
 		}
 	}
-	
+
 	private void generateBBOXOutput(String responseID, ExecuteResponseDocument res, boolean rawData, LanguageStringType title) throws ExceptionReport {
-		IData obj = request.getAttachedResult().get(responseID);
+        IBBOXData obj = (IBBOXData) request.getAttachedResult().get(responseID);
 		if(rawData) {
 			rawDataHandler = new RawData(obj, responseID, null, null, null, this.identifier, description);
 		}else{
 			OutputDataItem handler = new OutputDataItem(obj, responseID, null, null, null, title, this.identifier, description);
 			handler.updateResponseForBBOXData(res, obj);
 		}
-		
+
 	}
 
 	public InputStream getAsStream() throws ExceptionReport{
@@ -362,7 +364,7 @@ public class ExecuteResponseBuilder {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void setStatus(StatusType status) {
 		//workaround, should be generated either at the creation of the document or when the process has been finished.
 		status.setCreationTime(creationTime);
