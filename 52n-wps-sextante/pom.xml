@@ -12,6 +12,27 @@
     <name>52North WPS Sextante Processing Backend</name>
     <description>Exposing of the Sextante Libraries as WPS processes</description>
     <inceptionYear>2008</inceptionYear>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jasig.maven</groupId>
+				<artifactId>maven-notice-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>check-licenses</id>
+						<phase></phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

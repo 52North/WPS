@@ -1,27 +1,35 @@
 /**
- * ﻿Copyright (C) 2006
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2006 - 2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *       • Apache License, version 2.0
+ *       • Apache Software License, version 1.0
+ *       • GNU Lesser General Public License, version 3
+ *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       • Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  */
 package org.n52.wps.server;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
@@ -89,28 +97,27 @@ public class ExceptionReport extends Exception {
 		ex.addExceptionText(this.getMessage());
 		// Adding additional Java exception
 		ExceptionType stackTrace = exceptionReport.addNewException();
-		stackTrace.addExceptionText(encodeStackTrace(this.getStackTrace()));
+		stackTrace.addExceptionText(encodeStackTrace(this));
 		stackTrace.setExceptionCode("JAVA_StackTrace");
 		//	adding Rootcause
 		ExceptionType stackTraceRootException = exceptionReport.addNewException();
-		if(this.getCause() != null) {
-			stackTraceRootException.addExceptionText(this.getCause().getMessage());
-			stackTraceRootException.addExceptionText(encodeStackTrace(this.getCause().getStackTrace()));
+		if (getCause() != null) {
+			stackTraceRootException.addExceptionText(getCause().getMessage());
+			stackTraceRootException.addExceptionText(encodeStackTrace(getCause()));
 		}
 		stackTraceRootException.setExceptionCode("JAVA_RootCause");
-		if(locator != null) {
+		if (locator != null) {
 			ex.setLocator(locator);
 		}
 		return report;
 	}
-	private String encodeStackTrace(StackTraceElement[] elems) {
-		StringBuffer exceptionBuffer = new StringBuffer();
-		for(StackTraceElement stackTraceElem : elems) {
-			exceptionBuffer.append(stackTraceElem.getClassName() + "." + 
-									stackTraceElem.getMethodName() + ":" + 
-									stackTraceElem.getLineNumber());
-			exceptionBuffer.append("\n");
-		}
-		return exceptionBuffer.toString();
+
+	private String encodeStackTrace(Throwable t) {
+        StringWriter w = new StringWriter();
+        PrintWriter p = new PrintWriter(w);
+        t.printStackTrace(p);
+        w.flush();
+        w.flush();
+        return w.toString();
 	}
 }

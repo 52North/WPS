@@ -1,30 +1,31 @@
-/***************************************************************
-Copyright © 2009 52°North Initiative for Geospatial Open Source Software GmbH
-
- Author: Benjamin Proß, 52°North
-
- Contact: Andreas Wytzisk, 
- 52°North Initiative for Geospatial Open Source SoftwareGmbH, 
- Martin-Luther-King-Weg 24,
- 48155 Muenster, Germany, 
- info@52north.org
-
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; even without the implied WARRANTY OF
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program (see gnu-gpl v2.txt). If not, write to
- the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- Boston, MA 02111-1307, USA or visit the Free
- Software Foundation’s web page, http://www.fsf.org.
-
- ***************************************************************/
+/**
+ * ï»¿Copyright (C) 2007 - 2014 52Â°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *       â€¢ Apache License, version 2.0
+ *       â€¢ Apache Software License, version 1.0
+ *       â€¢ GNU Lesser General Public License, version 3
+ *       â€¢ Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       â€¢ Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 package org.n52.wps.server.grass;
 
 import java.io.BufferedReader;
@@ -52,6 +53,10 @@ import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 
+/**
+ * @author Benjamin Pross (bpross-52n)
+ *
+ */
 public class GrassProcessDescriptionCreator {
 	
 	private final String fileSeparator = System.getProperty("file.separator");
@@ -191,7 +196,7 @@ public class GrassProcessDescriptionCreator {
 			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
-				checkForBase64Encoding(inputDescriptionType);
+				checkForBase64Encoding(inputDescriptionType.getComplexData());
 				checkForKMLMimeType(inputDescriptionType);	
 				addZippedSHPMimeType(inputDescriptionType);
 			}			
@@ -233,7 +238,7 @@ public class GrassProcessDescriptionCreator {
 				}
 				
 				checkForBase64Encoding(result.getProcessOutputs()
-						.getOutputArray(0));
+						.getOutputArray(0).getComplexOutput());
 				checkForKMLMimeType(result.getProcessOutputs()
 						.getOutputArray(0));
 
@@ -245,26 +250,13 @@ public class GrassProcessDescriptionCreator {
 		return null;
 	}
 
-	private void checkForBase64Encoding(InputDescriptionType inputDescriptionType){
-		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+	private void checkForBase64Encoding(SupportedComplexDataType complexData){
 		
 		if(complexData == null){
 			return;
 		}
 		
 		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
-		
-		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
-		
-		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
-		
-		if(defaultMimeType != null && defaultEncoding == null){			
-			for (String mimeType : genericFileParserMimeTypes) {
-				if(mimeType.equals(defaultMimeType)){
-					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
-				}
-			}			
-		}
 		
 		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
 		
@@ -275,46 +267,13 @@ public class GrassProcessDescriptionCreator {
 			
 			if(supportedMimeType != null && supportedEncoding == null){			
 				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(supportedMimeType)){
-						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					if(mimeType.equals(IOHandler.MIME_TYPE_ZIPPED_SHP)){
+						continue;
 					}
-				}			
-			}
-		}
-	}
-	
-	private void checkForBase64Encoding(OutputDescriptionType outputDescriptionType){
-		SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
-		
-		if(complexData == null){
-			return;
-		}
-		
-		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
-		
-		String defaultMimeType = complexData.getDefault().getFormat().getMimeType();
-		
-		String defaultEncoding = complexData.getDefault().getFormat().getEncoding();
-		
-		if(defaultMimeType != null && defaultEncoding == null){			
-			for (String mimeType : genericFileParserMimeTypes) {
-				if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(defaultMimeType)){
-					complexData.getDefault().getFormat().setEncoding(IOHandler.ENCODING_BASE64);
-				}
-			}			
-		}
-		
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			String supportedMimeType = complexDataDescriptionType.getMimeType();
-			
-			String supportedEncoding = complexDataDescriptionType.getEncoding();
-			
-			if(supportedMimeType != null && supportedEncoding == null){			
-				for (String mimeType : genericFileParserMimeTypes) {
-					if(!mimeType.equalsIgnoreCase(IOHandler.MIME_TYPE_ZIPPED_SHP) && mimeType.equals(supportedMimeType)){
-						complexDataDescriptionType.setEncoding(IOHandler.ENCODING_BASE64);
+					if(mimeType.equals(supportedMimeType)){					
+						ComplexDataDescriptionType base64Format = complexData.getSupported().addNewFormat();						
+						base64Format.setMimeType(supportedMimeType);
+						base64Format.setEncoding(IOHandler.ENCODING_BASE64);
 					}
 				}			
 			}
@@ -383,34 +342,6 @@ public class GrassProcessDescriptionCreator {
 			}
 		}
 		
-	}
-	
-	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws XmlException
-	 */
-	public static void main(String[] args) throws IOException {
-
-		ProcessDescriptionType type;
-		try {
-			type = new GrassProcessDescriptionCreator()
-					.createDescribeProcessType("v.buffer", false);
-
-			for (int i = 0; i < type.getDataInputs().getInputArray().length; i++) {
-
-				InputDescriptionType inputDescType = type.getDataInputs()
-						.getInputArray()[i];
-
-				SupportedComplexDataInputType supCDataType = inputDescType
-						.getComplexData();
-
-				System.out.println(supCDataType);
-			}
-		} catch (XmlException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	private String[] getEnvp() {
