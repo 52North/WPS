@@ -34,7 +34,10 @@
 	</wps:DataInputs>
 	<wps:ResponseForm>
 		<wps:ResponseDocument>
-			<wps:Output asReference="true">
+			<wps:Output asReference="false">
+				<ows:Identifier>orig_traj_json</ows:Identifier>
+			</wps:Output>
+			<wps:Output asReference="false">
 				<ows:Identifier>matched_traj_json</ows:Identifier>
 			</wps:Output>
 <!-- 			<wps:Output asReference="true"> -->

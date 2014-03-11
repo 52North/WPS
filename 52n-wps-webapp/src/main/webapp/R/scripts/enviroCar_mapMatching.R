@@ -93,7 +93,7 @@ image_height = 500;
 
 # wps.on;
 
-myLog("input: ", paste(ls()), "")
+myLog("inputs: ", toString(paste(ls())), "")
 
 ################################################################################
 # process
@@ -135,6 +135,13 @@ myLog("Saved matched track data: ", getwd(), "/", matched_traj_data)
 #matched_traj_shp <- paste0("matched_traj_shp_", trackId)
 #writeOGR(matched_traj, getwd(), matched_traj_shp, driver="ESRI Shapefile")
 #myLog("Saved matched track shapefile: ", getwd(), "/", matched_traj_shp)
+
+# wps.out: orig_traj_json, type = text,
+# title = original trajectory as GeoJSON, 
+# abstract = the original trajectory in Javascript Object Notation (JSON);
+orig_traj_json <- paste0("orig_traj_", trackId, ".json")
+writeOGR(traj, orig_traj_json, "traj", driver='GeoJSON')
+myLog("Saved original track GeoJSON: ", getwd(), "/", orig_traj_json)
 
 # wps.out: matched_traj_json, type = text,
 # title = matched trajectory as GeoJSON, 
