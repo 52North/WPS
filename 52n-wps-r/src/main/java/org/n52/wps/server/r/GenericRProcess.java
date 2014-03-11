@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.io.BufferedReader;
@@ -220,9 +221,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
-        log.info("Running " + this.toString());
-        if (log.isDebugEnabled())
-            log.debug("inputData: " + Arrays.toString(inputData.entrySet().toArray()));
+        log.info("Running {}", this.toString());
+        log.debug("inputData: {}", Arrays.toString(inputData.entrySet().toArray()));
 
         R_Config config = R_Config.getInstance();
 
@@ -230,7 +230,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         // File file = new File(this.currentWPSWorkDir);
         // file.mkdirs();
-        log.debug("Temp folder for WPS4R: " + this.currentWPSWorkDir);
+        log.debug("Temp folder for WPS4R: {}", this.currentWPSWorkDir);
 
         // ------------------------------------
         // interaction with R follows here:
@@ -281,7 +281,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                         entry.getKey()).get(0);
                     inNotations.remove(current);
                 }
-                log.debug("Input: " + Arrays.toString(inNotations.toArray()));
+                log.debug("Input: {}", Arrays.toString(inNotations.toArray()));
 
                 // parses default values to R-compatible literals:
                 for (RAnnotation rAnnotation : inNotations) {
@@ -292,7 +292,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     // values:
                     inputValues.put(id, parseLiteralInput(iClass, value));
                 }
-                log.debug("Assigns: " + Arrays.toString(inputValues.entrySet().toArray()));
+                log.debug("Assigns: {}", Arrays.toString(inputValues.entrySet().toArray()));
 
                 // delete help variables and utility functions from workspace:
                 log.debug("[R] remove utility functions.");
@@ -313,7 +313,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                     Map.Entry<String, String> entry = inputValuesIterator.next();
                     // use eval, not assign (assign only parses strings)
                     String statement = entry.getKey() + " <- " + entry.getValue();
-                    log.debug("[R] running " + statement);
+                    log.debug("[R] running {}", statement);
                     rCon.eval(statement);
                 }
 
@@ -390,10 +390,17 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 for (RAnnotation rAnnotation : outNotations) {
                     String result_id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
                     REXP result = rCon.eval(result_id);
-                    // TODO: change ParseOutput
                     // TODO depending on the generated outputs,
                     // deleteWorkDirectory must be set!
-                    resulthash.put(result_id, parseOutput(result_id, result, rCon));
+                    try {
+                        IData output = parseOutput(result_id, result, rCon);
+                        resulthash.put(result_id, output);
+                        
+                        log.debug("Output for {} is {}", result_id, output);
+                    }
+                    catch (Exception e) {
+                        log.error("Could not create output for {}", result_id, e);
+                    }
                 }
 
                 String sessionInfo = RSessionInfo.getSessionInfo(rCon);
@@ -918,19 +925,32 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RserveException,
             RAnnotationException,
             ExceptionReport {
-        log.debug("parsing Output with id " + result_id + " from result " + result_id + " based on connection " + rCon);
+        log.debug("parsing Output with id " + result_id + " from result " + result + " based on connection " + rCon);
 
         Class< ? extends IData> iClass = getOutputDataType(result_id);
         log.debug("Output data type: " + iClass.toString());
+
+        // extract mimetype from annotations (TODO: might have to be
+        // simplified somewhen)
+        List<RAnnotation> list = RAnnotation.filterAnnotations(this.annotations,
+                                                               RAnnotationType.OUTPUT,
+                                                               RAttribute.IDENTIFIER,
+                                                               result_id);
+        if (list.size() > 1)
+            log.warn("Filtered for annotation by name but got more than one result! Just using the first one of : {}",
+                     Arrays.toString(list.toArray()));
+
+        RAnnotation currentAnnotation = list.get(0);
+        log.debug("Current annotation: {}", currentAnnotation);
+        // extract filename from R
+        String filename = new File(result.asString()).getName();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
             if (log.isDebugEnabled())
                 log.debug("Creating output with GenericFileDataBinding");
             String mimeType = "application/unknown";
 
-            // extract filename from R
-            String resultString = result.asString();
-            File resultFile = new File(resultString);
+            File resultFile = new File(filename);
 
             log.debug("Loading file " + resultFile.getAbsolutePath());
 
@@ -950,29 +970,16 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             if ( !outputFile.exists())
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
 
-            // extract mimetype from annotations (TODO: might have to be
-            // simplified somewhen)
-            List<RAnnotation> list = RAnnotation.filterAnnotations(this.annotations,
-                                                                   RAnnotationType.OUTPUT,
-                                                                   RAttribute.IDENTIFIER,
-                                                                   result_id);
-
-            RAnnotation anot = list.get(0);
-            String rType = anot.getStringValue(RAttribute.TYPE);
+            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
             GenericFileData out = new GenericFileData(outputFile, mimeType);
 
             return new GenericFileDataBinding(out);
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
-
             String mimeType = "application/unknown";
 
-            // extract filename from R
-            String filename = new File(result.asString()).getName();
-
-            RAnnotation out = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.OUTPUT).get(0);
-            RTypeDefinition dataType = out.getRDataType();
+            RTypeDefinition dataType = currentAnnotation.getRDataType();
             File outputFile;
 
             if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2) && !this.wpsWorkDirIsRWorkDir) {
@@ -1015,20 +1022,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                         // relative path names are alway relative to R work
                         // directory
                         outputFile = new File(rCon.eval("getwd()").asString(), outputFile.getName());
-
                 }
 
                 // outputFile = streamFromRserveToWPS(rCon, filename);
             }
-            // extract mimetype from annotations (TODO: might have to be
-            // simplified somewhen)
-            List<RAnnotation> list = RAnnotation.filterAnnotations(this.annotations,
-                                                                   RAnnotationType.OUTPUT,
-                                                                   RAttribute.IDENTIFIER,
-                                                                   result_id);
 
-            RAnnotation anot = list.get(0);
-            String rType = anot.getStringValue(RAttribute.TYPE);
+            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
             GenericFileData gfd = new GenericFileData(outputFile, mimeType);
@@ -1038,19 +1037,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         else if (iClass.equals(GTRasterDataBinding.class)) {
             String mimeType = "application/unknown";
 
-            // extract filename from R
-            String filename = new File(result.asString()).getName();
             File tempfile = streamFromRserveToWPS(rCon, filename);
 
-            // extract mimetype from annotations (TODO: might have to be
-            // simplified somewhen)
-            List<RAnnotation> list = RAnnotation.filterAnnotations(this.annotations,
-                                                                   RAnnotationType.OUTPUT,
-                                                                   RAttribute.IDENTIFIER,
-                                                                   result_id);
-
-            RAnnotation anot = list.get(0);
-            String rType = anot.getStringValue(RAttribute.TYPE);
+            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
             GeotiffParser tiffPar = new GeotiffParser();
