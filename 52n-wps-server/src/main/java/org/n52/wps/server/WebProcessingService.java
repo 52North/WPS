@@ -30,6 +30,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -111,6 +112,7 @@ public class WebProcessingService extends HttpServlet {
         // }
     }
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
@@ -157,8 +159,8 @@ public class WebProcessingService extends HttpServlet {
         LOGGER.info("webappPath is set to: " + customWebappPath);
 
         try {
-            CapabilitiesConfiguration.getInstance(BASE_DIR + System.getProperty("file.separator") + "config"
-                    + System.getProperty("file.separator") + "wpsCapabilitiesSkeleton.xml");
+            CapabilitiesConfiguration.getInstance(BASE_DIR + File.separator + "config"
+                    + File.separator + "wpsCapabilitiesSkeleton.xml");
         }
         catch (IOException e) {
             LOGGER.error("error while initializing capabilitiesConfiguration", e);
@@ -177,6 +179,7 @@ public class WebProcessingService extends HttpServlet {
         // it will listen to changes of the wpsCapabilities
         WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME,
                                                           new PropertyChangeListener() {
+                                                              @Override
                                                               public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
                                                                   LOGGER.info(this.getClass().getName()
                                                                           + ": Received Property Change Event: "
