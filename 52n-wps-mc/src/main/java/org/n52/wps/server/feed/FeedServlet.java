@@ -1,25 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *       • Apache License, version 2.0
+ *       • Apache Software License, version 1.0
+ *       • GNU Lesser General Public License, version 3
+ *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       • Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  */
 package org.n52.wps.server.feed;
 
@@ -54,7 +59,7 @@ public class FeedServlet extends HttpServlet {
 	private static transient Logger LOGGER = LoggerFactory.getLogger(FeedServlet.class);
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -6316984224210904216L;
 
@@ -63,20 +68,20 @@ public class FeedServlet extends HttpServlet {
 	private final String getParamLocalFeedMirror = "localfeedmirror";
 	private final String propertyFeed = "FEED";
 	private final String propertyLocalFeedMirror = "LOCAL_FEED_MIRROR";
-	
-	
+
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
 		/*
-		 * how can the new remote repository be posted?! 
+		 * how can the new remote repository be posted?!
 		 * 1. complete xml snippet
 		 * 2. what else?!
 		 */
 
 		RemoteRepository newRemoteRepo = null;
-		
+
 		OutputStream out = res.getOutputStream();
 		try {
 			InputStream is = req.getInputStream();
@@ -106,13 +111,13 @@ public class FeedServlet extends HttpServlet {
 			} else {
 				s = sw.toString();
 			}
-			
+
 			newRemoteRepo = RemoteRepositoryDocument.Factory.parse(s).getRemoteRepository();
-				
+
 			addNewRemoteRepository(newRemoteRepo);
-			
+
 			res.setStatus(HttpServletResponse.SC_OK);
-			
+
 		} catch (Exception e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"error occured");
@@ -121,61 +126,61 @@ public class FeedServlet extends HttpServlet {
 		out.close();
 
 	}
-	
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
 
 		RemoteRepository newRemoteRepo = null;
-		
+
 		OutputStream out = res.getOutputStream();
 		try {
 
 			Map<String, String[]> parameters = (Map<String, String[]>)req.getParameterMap();
 
 			CaseInsensitiveMap ciMap = new CaseInsensitiveMap(parameters);
-			
+
 			if(!ciMap.keySet().contains(getParamName)){
 				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-				"parameter '" + getParamName + "' not found");				
+				"parameter '" + getParamName + "' not found");
 			}else if(!ciMap.keySet().contains(getParamFeed)){
 				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 						"parameter '" + getParamFeed + "' not found");
 			}else if(!ciMap.keySet().contains(getParamLocalFeedMirror)){
 				res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 						"parameter '" + getParamLocalFeedMirror + "' not found");
-				
+
 			}
-			
+
 			newRemoteRepo = RemoteRepository.Factory.newInstance();
-			
+
 			newRemoteRepo.setName(((String[])ciMap.get(getParamName))[0]);
 			newRemoteRepo.setActive(true);
-			
+
 			Property feedProp = newRemoteRepo.addNewProperty();
-			
+
 			feedProp.setName(propertyFeed);
 			feedProp.setStringValue(((String[])ciMap.get(getParamFeed))[0]);
 			feedProp.setActive(true);
-			
+
 			Property localFeedMirrorProp = newRemoteRepo.addNewProperty();
-			
+
 			localFeedMirrorProp.setName(propertyLocalFeedMirror);
 			localFeedMirrorProp.setStringValue(((String[])ciMap.get(getParamLocalFeedMirror))[0]);
 			localFeedMirrorProp.setActive(true);
-			
+
 			addNewRemoteRepository(newRemoteRepo);
 			res.setStatus(HttpServletResponse.SC_OK);
-			
+
 		} catch (Exception e) {
 			res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"error occured");
 		}
 		out.flush();
 		out.close();
-		
+
 	}
-	
+
 	private void addNewRemoteRepository(RemoteRepository newRemoteRepository) throws Exception {
 
 		String configurationPath = WPSConfig.getConfigPath();
@@ -193,21 +198,21 @@ public class FeedServlet extends HttpServlet {
 		}
 
 		int newNumberOfRemoteRepos = remoteRepoList.sizeOfRemoteRepositoryArray() + 1;
-		
+
 		RemoteRepository[] remoteRepos = remoteRepoList.getRemoteRepositoryArray();
 		RemoteRepository[] newRemoteRepos = new RemoteRepository[newNumberOfRemoteRepos];
-		
+
 		for (int i = 0; i < remoteRepos.length; i++) {
 			newRemoteRepos[i] = remoteRepos[i];
 		}
-		
+
 		newRemoteRepos[newNumberOfRemoteRepos - 1] = newRemoteRepository;
-		
+
 		remoteRepoList.setRemoteRepositoryArray(newRemoteRepos);
 
 		wpsCon.save(XMLFile, new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
 
 	}
-	
+
 
 }

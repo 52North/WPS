@@ -389,11 +389,26 @@
 			<id>integration-test</id>
 			<build>
 				<plugins>
-					<!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.7</version> <executions> <execution> <id>reserve-network-port</id>
-						<goals> <goal>reserve-network-port</goal> </goals> <phase>initialize</phase>
-						<configuration> <portNames> <portName>jetty.http.port</portName> <portName>jetty.http.stop.port</portName>
-						</portNames> </configuration> </execution> </executions> </plugin> -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>reserve-network-port</id>
+								<goals>
+									<goal>reserve-network-port</goal>
+								</goals>
+								<phase>pre-integration-test</phase>
+								<configuration>
+									<portNames>
+										<portName>jetty.http.port</portName>
+										<portName>jetty.http.stop.port</portName>
+									</portNames>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -416,13 +431,13 @@
 									<systemPropertyVariables>
 										<com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>
 										<test.host>127.0.0.1</test.host>
-										<test.port>9090</test.port>
+<!-- 										<test.port>9090</test.port> -->
 										<!-- <test.rserve.host>127.0.0.1</test.rserve.host>
 											<test.rserve.port>6311</test.rserve.port>
 											<test.rserve.user></test.rserve.user>
 											<test.rserve.pwd></test.rserve.pwd> -->
 
-										<!--<test.port>${jetty.http.port}</test.port> -->
+										<test.port>${jetty.http.port}</test.port>
 										<test.context>/wps/WebProcessingService</test.context>
 										<!-- next 2 lines are for logging configuration -->
 										<catalina.home>${project.build.directory}</catalina.home>
@@ -440,14 +455,14 @@
 							<!-- This is a hack to get Jetty to run on a non-standard (8080) port -->
 							<connectors>
 								<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-									<port>9090</port>
-									<!--<port>${jetty.http.port}</port> -->
+<!-- 									<port>9090</port> -->
+									<port>${jetty.http.port}</port>
 									<maxIdleTime>60000</maxIdleTime>
 								</connector>
 							</connectors>
 							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<stopPort>9091</stopPort>
-							<!-- <stopPort>${jetty.http.stop.port}</stopPort> -->
+<!-- 							<stopPort>9091</stopPort> -->
+							<stopPort>${jetty.http.stop.port}</stopPort>
 							<stopKey>STOP</stopKey>
 							<webAppConfig>
 								<contextPath>/wps</contextPath>
@@ -465,7 +480,6 @@
 								</systemProperty>
 								<systemProperty>
 									<name>com.sun.media.jai.disableMediaLib</name>
-									;
 									<value>true</value>
 								</systemProperty>
 							</systemProperties>
@@ -511,8 +525,8 @@
 							<replacements>
 								<replacement>
 									<token>hostport="8080"</token>
-									<!--<value>hostport="${jetty.http.port}"</value> -->
-									<value>hostport="9090"</value>
+									<value>hostport="${jetty.http.port}"</value>
+<!-- 									<value>hostport="9090"</value> -->
 								</replacement>
 							</replacements>
 						</configuration>

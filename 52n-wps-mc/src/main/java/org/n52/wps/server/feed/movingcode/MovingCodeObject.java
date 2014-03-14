@@ -1,25 +1,30 @@
 /**
- * ﻿Copyright (C) 2012
- * by 52 North Initiative for Geospatial Open Source Software GmbH
+ * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
  *
- * Contact: Andreas Wytzisk
- * 52 North Initiative for Geospatial Open Source Software GmbH
- * Martin-Luther-King-Weg 24
- * 48155 Muenster, Germany
- * info@52north.org
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
  *
- * This program is free software; you can redistribute and/or modify it under
- * the terms of the GNU General Public License version 2 as published by the
- * Free Software Foundation.
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
  *
- * This program is distributed WITHOUT ANY WARRANTY; even without the implied
- * WARRANTY OF MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License for more details.
+ *       • Apache License, version 2.0
+ *       • Apache Software License, version 1.0
+ *       • GNU Lesser General Public License, version 3
+ *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       • Common Development and Distribution License (CDDL), version 1.0
  *
- * You should have received a copy of the GNU General Public License along with
- * this program (see gnu-gpl v2.txt). If not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA or
- * visit the Free Software Foundation web page, http://www.fsf.org.
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
  */
 package org.n52.wps.server.feed.movingcode;
 
@@ -59,29 +64,29 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
  */
 public class MovingCodeObject {
 	private final File algorithmWorkspace;
-	
+
 	private ProcessDescriptionType processDescription;
 	private AlgorithmDescription algorithmDescription;
-	
+
 	static Logger LOGGER = LoggerFactory.getLogger(MovingCodeObject.class);
-	
+
 	public MovingCodeObject (ProcessDescriptionType pd, AlgorithmDescription ad, File algorithmWorkspace){
-		
+
 		// create descriptions
 		algorithmDescription = ad;
 		processDescription = pd;
-		
+
 		// assign workspace
 		this.algorithmWorkspace = algorithmWorkspace;
 
 	}
-	
+
 	public MovingCodeObject (File processDescriptionXML, File workspaceTemplateRoot){
-		
+
 		// create descriptions
 		processDescription = createProcessDescription(processDescriptionXML);
 		algorithmDescription = createAlgorithmDescription(processDescriptionXML);
-		
+
 		// assemble template workspace
 		String wsDirString = workspaceTemplateRoot.getAbsolutePath() + File.separator + getWorkspacePathFragment();
 		try {
@@ -93,18 +98,18 @@ public class MovingCodeObject {
 		}
 		algorithmWorkspace = new File(wsDirString);
 	}
-	
+
 	public MovingCodeObject createChild (File destinationRoot) throws IOException{
 		FileUtils.copyDirectoryToDirectory(algorithmWorkspace, destinationRoot);
 		File wsDir = new File(destinationRoot.getAbsolutePath() + File.separator + getWorkspacePathFragment());
 		MovingCodeObject child = new MovingCodeObject(processDescription, algorithmDescription, wsDir);
 		return child;
 	}
-	
+
 	public String getProcessID(){
 		return processDescription.getIdentifier().getStringValue();
 	}
-	
+
 	public boolean isContainer(URI containerURN){
 		String str = containerURN.toString();
 		if (str.equalsIgnoreCase(algorithmDescription.getContainerType())){
@@ -113,7 +118,7 @@ public class MovingCodeObject {
 			return false;
 		}
 	}
-	
+
 	public boolean isContainer(URI[] containerURNs){
 		for(URI currentContainer : containerURNs){
 			if (isContainer(currentContainer)){
@@ -122,7 +127,7 @@ public class MovingCodeObject {
 		}
 		return false;
 	}
-	
+
 	public boolean isSufficientRuntimeEnvironment (URI[] runtimeURNs){
 		boolean doublecheck = true;
 		for (String myCurrentRuntime : algorithmDescription.getRequiredRuntimeComponent()){
@@ -134,54 +139,54 @@ public class MovingCodeObject {
 			}
 			doublecheck = check && doublecheck;
 		}
-		
+
 		return doublecheck;
 	}
-	
+
 	public ProcessDescriptionType getProcessDescription(){
 		return processDescription;
 	}
-	
+
 	public File getInstanceWorkspace(){
 		return algorithmWorkspace;
 	}
-	
+
 	public AlgorithmURL getAlgorithmURL(){
 		return new AlgorithmURL(algorithmDescription.getAlgorithmLocation());
 	}
-	
+
 	public  List<AlgorithmParameterType> getParameters(){
 		return algorithmDescription.getAlgorithmParameters().getParameter();
 	}
-	
+
 	public String getDefaultMimeType(String paramID){
 		String mimeType = null;
-		
+
 		// check inputs for a match
 		for (InputDescriptionType currentInput : processDescription.getDataInputs().getInputArray()){
 			if (currentInput.getIdentifier().getStringValue().equalsIgnoreCase(paramID)){
 				mimeType = currentInput.getComplexData().getDefault().getFormat().getMimeType();
 			}
 		}
-		
+
 		for (OutputDescriptionType currentOutput : processDescription.getProcessOutputs().getOutputArray()){
 			if (currentOutput.getIdentifier().getStringValue().equalsIgnoreCase(paramID)){
 				mimeType = currentOutput.getComplexOutput().getDefault().getFormat().getMimeType();
 			}
 		}
-		
+
 		return mimeType;
 	}
-	
+
 	private String getWorkspacePathFragment(){
 		return algorithmDescription.getWorkspaceLocation();
 	}
-	
+
 	private static AlgorithmDescription createAlgorithmDescription (File xmlFile) {
-		
+
 		// create the AlgorithmDescription document from DescribeProcess file
 		StringReader adReader = generateAlgorithmDescription(xmlFile);
-		
+
 		try {
 			JAXBContext jc = JAXBContext.newInstance(AlgorithmDescription.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
@@ -192,11 +197,11 @@ public class MovingCodeObject {
 			e.printStackTrace();
 			return null;
 		}
-	    
+
 	}
-	
+
 	private static ProcessDescriptionType createProcessDescription (File describeProcessFile){
-		
+
 		try {
 			InputStream xmlDesc = new FileInputStream(describeProcessFile);
 			XmlOptions option = new XmlOptions();
@@ -216,35 +221,35 @@ public class MovingCodeObject {
 		}
 		return null;
 	}
-	
-	
+
+
 	/**
      * Generates an XML file. Uses a ProcessDescription file and a XSLT file to generate an
      * AlgorithmDescription.
-     * 
+     *
      * @param xmlFile - the ProcessDescription in XML
      * @param xsltFile - the transformation rules in XSLT
      * @throws Exception - the exceptions
      */
     private static StringReader generateAlgorithmDescription(File xmlFile) {
-    	
+
     	Source xmlSource = new StreamSource(xmlFile);
     	TransformerFactory transFact = TransformerFactory.newInstance();
     	StringWriter sw = new StringWriter();
         StreamResult transformResult = new StreamResult(sw);
-    	
+
     	try {
     		Source xsltSource = transFact.getAssociatedStylesheet(xmlSource, null, null, null);
 			Transformer trans = transFact.newTransformer(xsltSource);
 			trans.transform(xmlSource, transformResult);
 			StringReader sr = new StringReader(sw.toString());
 			return sr;
-			
+
 		} catch (TransformerException e) {
 			LOGGER.error("Error evaluating ProcessDescription XML.");
 			e.printStackTrace();
 		}
 		return null;
     }
-    
+
 }
