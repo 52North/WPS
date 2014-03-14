@@ -65,7 +65,7 @@ public class WPSConfig implements Serializable {
     private static transient WPSConfig wpsConfig;
     private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 
-    private static transient Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
 
     // constants for the Property change event names
     public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
@@ -255,6 +255,10 @@ public class WPSConfig implements Serializable {
         if (path.isPresent()) {
             return path.get();
         }
+        path = checkPath(tryToGetPathFromRelativeInitParameter(config));
+        if (path.isPresent()) {
+            return path.get();
+        }
         path = checkPath(tryToGetPathFromServletConfig(config));
         if (path.isPresent()) {
             return path.get();
@@ -291,6 +295,17 @@ public class WPSConfig implements Serializable {
     private static String tryToGetPathFromInitParameter(ServletConfig config) {
         return config == null ? null : config
                 .getInitParameter(CONFIG_FILE_PROPERTY);
+    }
+
+    private static String tryToGetPathFromRelativeInitParameter(ServletConfig config) {
+        if (config != null) {
+            String path = config.getInitParameter(CONFIG_FILE_PROPERTY);
+            if (path != null) {
+                return config.getServletContext().getRealPath(path);
+            }
+        }
+        return null;
+
     }
 
     private static String tryToGetPathFromSystemProperty() {
