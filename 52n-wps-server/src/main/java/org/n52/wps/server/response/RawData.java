@@ -85,7 +85,7 @@ public class RawData extends ResponseData {
                 if (bbox.getCRS() != null) {
                     appendAttr(builder, "crs", escape(bbox.getCRS()));
                 }
-                appendAttr(builder, "dimension", bbox.getDimension());
+                appendAttr(builder, "dimensions", bbox.getDimension());
                 builder.append(">");
                 builder.append("\n\t");
                 builder.append("<ows:LowerCorner>");

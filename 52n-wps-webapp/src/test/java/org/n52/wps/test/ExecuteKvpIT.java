@@ -138,15 +138,16 @@ public class ExecuteKvpIT {
 
     	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.DummyTestClass&DataInputs=BBOXInputData=46,102,47,103,urn%3Aogc%3Adef%3Acrs%3AEPSG%3A6.6%3A4326,2&RawDataOutput=BBOXOutputData";
 
-    	String response = GetClient.sendRequest(getURL);
-
-    	String expectedResult = "<wps:BoundingBoxData xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" crs=\"EPSG:4326\" dimensions=\"2\">"
-				+ "\t <ows:LowerCorner>46.0 102.0</ows:LowerCorner>"
-				+ "\t <ows:UpperCorner>47.0 103.0</ows:UpperCorner>"
-				+ "</wps:BoundingBoxData>";
-
-    	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString(expectedResult));
+        String response = GetClient.sendRequest(getURL);
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("<wps:BoundingBoxData"));
+        assertThat(response, response, containsString("xmlns:ows=\"http://www.opengis.net/ows/1.1\""));
+        assertThat(response, response, containsString("xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""));
+        assertThat(response, response, containsString("crs=\"urn:ogc:def:crs:EPSG:6.6:4326\""));
+        assertThat(response, response, containsString("dimensions=\"2\""));
+        assertThat(response, response, containsString("<ows:LowerCorner>46.0 102.0</ows:LowerCorner>"));
+        assertThat(response, response, containsString("<ows:UpperCorner>47.0 103.0</ows:UpperCorner>"));
+        assertThat(response, response, containsString("</wps:BoundingBoxData>"));
     }
 
     @Test
