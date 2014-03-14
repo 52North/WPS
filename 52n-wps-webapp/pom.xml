@@ -82,51 +82,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-sextante</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-grass</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-ags</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-python</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-transactional</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>xmlParserAPIs</artifactId>
-					<groupId>xerces</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>stax-api</artifactId>
-					<groupId>stax</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-r</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-mc</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>xml-apis</artifactId>
-					<groupId>xml-apis</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>net.sourceforge.pjl-comp-filter</groupId>
 			<artifactId>pjl-comp-filter</artifactId>
 		</dependency>
@@ -146,26 +101,34 @@
 			<groupId>org.n52.security</groupId>
 			<artifactId>52n-security-authn-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-io-geotools</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io-geotools</artifactId>
 			<scope>test</scope>
-        </dependency>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-r</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Logging -->
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into
-				slf4j -->
+			slf4j -->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -313,18 +276,18 @@
 		<profile>
 			<id>with-deploy</id>
 			<!-- server configuration for settings.xml =====================================
-				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username>
-				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server>
-				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
-				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
-				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
-				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
-				(Run Configuration in Eclipse) =============================================
-				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
-				in Eclipse =========================== Add Java options to Tomcat: -Xdebug
-				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote
-				Java Application as debugging configuration and use the address above as
-				the connection port. -->
+			<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username>
+			<cargo.remote.password>admin</cargo.remote.password> </configuration> </server>
+			<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
+			<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
+			<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
+			</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
+			(Run Configuration in Eclipse) =============================================
+			- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
+			in Eclipse =========================== Add Java options to Tomcat: -Xdebug
+			-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote
+			Java Application as debugging configuration and use the address above as
+			the connection port. -->
 			<build>
 				<finalName>WPS</finalName>
 				<plugins>
@@ -410,6 +373,77 @@
 						</executions>
 					</plugin>
 					<plugin>
+						<groupId>com.google.code.maven-replacer-plugin</groupId>
+						<artifactId>replacer</artifactId>
+						<version>1.5.2</version>
+						<executions>
+							<execution>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>replace</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<file>${project.build.directory}/${project.build.finalName}/${wps.config.file}</file>
+							<regex>false</regex>
+							<replacements>
+								<replacement>
+									<token>hostport="8080"</token>
+									<value>hostport="${jetty.http.port}"</value>
+								</replacement>
+							</replacements>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-maven-plugin</artifactId>
+						<version>9.1.2.v20140210</version>
+						<configuration>
+							<httpConnector>
+								<port>${jetty.http.port}</port>
+								<idleTimeout>60000</idleTimeout>
+							</httpConnector>
+							<stopPort>${jetty.http.stop.port}</stopPort>
+							<stopKey>STOP</stopKey>
+							<stopWait>5</stopWait>
+							<webApp>
+								<contextPath>/wps</contextPath>
+							</webApp>
+							<systemProperties>
+								<systemProperty>
+									<name>catalina.base</name>
+									<value>${project.build.directory}</value>
+								</systemProperty>
+								<systemProperty>
+									<name>catalina.home</name>
+									<value>${project.build.directory}</value>
+								</systemProperty>
+							</systemProperties>
+						</configuration>
+						<executions>
+							<execution>
+								<id>start-jetty</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>deploy-war</goal>
+								</goals>
+								<configuration>
+									<war>${project.build.directory}/${project.build.finalName}</war>
+									<scanIntervalSeconds>0</scanIntervalSeconds>
+									<daemon>true</daemon>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop-jetty</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
 						<version>2.12.4</version>
@@ -431,15 +465,14 @@
 									<systemPropertyVariables>
 										<com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>
 										<test.host>127.0.0.1</test.host>
-<!-- 										<test.port>9090</test.port> -->
-										<!-- <test.rserve.host>127.0.0.1</test.rserve.host>
-											<test.rserve.port>6311</test.rserve.port>
-											<test.rserve.user></test.rserve.user>
-											<test.rserve.pwd></test.rserve.pwd> -->
-
+										<!--
+										<test.rserve.host>127.0.0.1</test.rserve.host>
+										<test.rserve.port>6311</test.rserve.port>
+										<test.rserve.user></test.rserve.user>
+										<test.rserve.pwd></test.rserve.pwd>
+										-->
 										<test.port>${jetty.http.port}</test.port>
 										<test.context>/wps/WebProcessingService</test.context>
-										<!-- next 2 lines are for logging configuration -->
 										<catalina.home>${project.build.directory}</catalina.home>
 										<catalina.base>${project.build.directory}</catalina.base>
 									</systemPropertyVariables>
@@ -447,92 +480,83 @@
 							</execution>
 						</executions>
 					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>geotools</id>
+			<activation>
+				<property>
+					<name>with-geotools</name>
+				</property>
+			</activation>
+			<properties>
+				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
+			</properties>
+			<build>
+				<plugins>
 					<plugin>
-						<groupId>org.mortbay.jetty</groupId>
-						<artifactId>jetty-maven-plugin</artifactId>
-						<version>8.1.11.v20130520</version>
+						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
-							<!-- This is a hack to get Jetty to run on a non-standard (8080) port -->
-							<connectors>
-								<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
-<!-- 									<port>9090</port> -->
-									<port>${jetty.http.port}</port>
-									<maxIdleTime>60000</maxIdleTime>
-								</connector>
-							</connectors>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-<!-- 							<stopPort>9091</stopPort> -->
-							<stopPort>${jetty.http.stop.port}</stopPort>
-							<stopKey>STOP</stopKey>
-							<webAppConfig>
-								<contextPath>/wps</contextPath>
-							</webAppConfig>
-							<systemProperties>
-								<!-- This hack is to set catalina.base to the current jetty base
-									directory while the plugin runs so log4j will log somewhere and not complain -->
-								<systemProperty>
-									<name>catalina.base</name>
-									<value>${project.build.directory}</value>
-								</systemProperty>
-								<systemProperty>
-									<name>catalina.home</name>
-									<value>${project.build.directory}</value>
-								</systemProperty>
-								<systemProperty>
-									<name>com.sun.media.jai.disableMediaLib</name>
-									<value>true</value>
-								</systemProperty>
-							</systemProperties>
-						</configuration>
-						<executions>
-							<execution>
-								<id>start-jetty</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<!-- Make sure jetty is stopped before re-launching it -->
-									<goal>stop</goal>
-									<goal>run-exploded</goal>
-								</goals>
-								<configuration>
-									<scanIntervalSeconds>0</scanIntervalSeconds>
-									<daemon>true</daemon>
-								</configuration>
-							</execution>
-							<execution>
-								<id>stop-jetty</id>
-								<phase>post-integration-test</phase>
-								<goals>
-									<goal>stop</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.google.code.maven-replacer-plugin</groupId>
-						<artifactId>replacer</artifactId>
-						<version>1.5.2</version>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>replace</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<file>${project.build.directory}/${project.build.finalName}/config/wps_config.xml</file>
-							<regex>false</regex>
-							<replacements>
-								<replacement>
-									<token>hostport="8080"</token>
-									<value>hostport="${jetty.http.port}"</value>
-<!-- 									<value>hostport="9090"</value> -->
-								</replacement>
-							</replacements>
+							<classifier>geotools</classifier>
 						</configuration>
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-ags</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-python</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-io-geotools</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-algorithm-geotools</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-r</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-grass</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-mc</artifactId>
+					<exclusions>
+						<exclusion>
+							<artifactId>xml-apis</artifactId>
+							<groupId>xml-apis</groupId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-sextante</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-transactional</artifactId>
+					<exclusions>
+						<exclusion>
+							<artifactId>xmlParserAPIs</artifactId>
+							<groupId>xerces</groupId>
+						</exclusion>
+						<exclusion>
+							<artifactId>stax-api</artifactId>
+							<groupId>stax</groupId>
+						</exclusion>
+					</exclusions>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<activation>
