@@ -505,9 +505,12 @@ public class GenericFileData {
 		return primaryFile;
 	}
 
+    @Override
 	protected void finalize(){
 		try{
-			primaryFile.delete();
+            if (primaryFile != null) {
+                primaryFile.delete();
+            }
 		}catch(Exception e){
 			LOGGER.error(e.getMessage(), e);
 		}
