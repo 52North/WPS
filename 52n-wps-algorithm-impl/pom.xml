@@ -61,7 +61,7 @@
 		</dependency>
 		<dependency>
 			<artifactId>axis-jaxrpc</artifactId>
-			<groupId>axis</groupId>
+			<groupId>org.apache.axis</groupId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

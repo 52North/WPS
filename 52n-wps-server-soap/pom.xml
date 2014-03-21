@@ -120,7 +120,7 @@
 			<artifactId>commons-collections</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>axis</groupId>
+			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
 		</dependency>
 		<dependency>

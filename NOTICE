@@ -55,8 +55,8 @@ This project includes:
   Activation 1.1 under The Apache Software License, Version 2.0
   ant-launcher under The Apache Software License, Version 2.0
   AOP alliance under Public Domain
+  Apache Axis 1.4 under The Apache Software License, Version 2.0
   Apache Axis JAXRPC 1.4 under The Apache Software License, Version 2.0
-  Apache Axis SAAJ 1.4 under The Apache Software License, Version 2.0
   Apache Axis2 - Kernel under The Apache Software License, Version 2.0
   Apache Axis2 - Root under The Apache Software License, Version 2.0
   Apache Axis2 - SAAJ under The Apache Software License, Version 2.0
@@ -69,8 +69,6 @@ This project includes:
   Axiom API under The Apache Software License, Version 2.0
   Axiom DOM under The Apache Software License, Version 2.0
   Axiom Impl under The Apache Software License, Version 2.0
-  Axis Web Services under The Apache Software License, Version 2.0
-  axis-wsdl4j under The Apache Software License, Version 2.0
   bcprov-jdk15 under Bouncycastle license, http://www.bouncycastle.org/licence.html (MIT-style license)
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   Collections under The Apache Software License, Version 2.0
@@ -89,7 +87,6 @@ This project includes:
   DataStore Support under Lesser General Public License (LGPL)
   decision under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Derby Engine under The Apache Software License, Version 2.0
-  Discovery under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
   ecore under Eclipse Public License (EPL)

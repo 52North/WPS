@@ -80,8 +80,8 @@
 			<groupId>org.geotools</groupId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.axis</groupId>
 			<artifactId>axis-jaxrpc</artifactId>
-			<groupId>axis</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>gt-opengis</artifactId>
