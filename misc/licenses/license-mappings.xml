@@ -41,7 +41,7 @@
 		<version>1.5.1</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://www.bouncycastle.org/licence.html -->
 	<artifact>
 		<groupId>bouncycastle</groupId>
@@ -49,7 +49,7 @@
 		<version>124</version>
 		<license>Bouncycastle license, http://www.bouncycastle.org/licence.html (MIT-style license)</license>
 	</artifact>
-	
+
 	<!-- http://commons.apache.org/proper/commons-beanutils/ -->
 	<artifact>
 		<groupId>commons-beanutils</groupId>
@@ -57,7 +57,7 @@
 		<version>1.7.0</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://commons.apache.org/proper/commons-discovery/ -->
 	<artifact>
 		<groupId>commons-discovery</groupId>
@@ -65,7 +65,7 @@
 		<version>0.2</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://projects.apache.org/projects/commons_httpclient.html -->
 	<artifact>
 		<groupId>commons-httpclient</groupId>
@@ -73,7 +73,7 @@
 		<version>3.1</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://dom4j.sourceforge.net/dom4j-1.6.1/license.html -->
 	<artifact>
 		<groupId>dom4j</groupId>
@@ -81,7 +81,7 @@
 		<version>1.6.1</version>
 		<license>DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)</license>
 	</artifact>
-	
+
 	<!-- http://mapserver.org/de/ogc/mapscript.html -->
 	<!-- http://en.wikipedia.org/wiki/MapServer -->
 	<artifact>
@@ -90,7 +90,7 @@
 		<version>6.0.3</version>
 		<license>MapServer License (MIT license)</license>
 	</artifact>
-	
+
 	<!-- http://www.sextantegis.com/ -->
 	<artifact>
 		<groupId>es.unex.sextante</groupId>
@@ -122,7 +122,7 @@
 		<version>1.0</version>
 		<license>GPL 2.0 license</license>
 	</artifact>
-	
+
 	<!-- https://java3d.java.net/#Licenses -->
 	<artifact>
 		<groupId>java3d</groupId>
@@ -130,7 +130,7 @@
 		<version>1.3.2</version>
 		<license>GNU General Public License (GPL), version 2, with the CLASSPATH exception</license>
 	</artifact>
-	
+
 	<!--  -->
 	<!-- http://en.wikipedia.org/wiki/Java_Media_Framework#Versions_and_licensing -->
 	<!-- https://www.hamm.de/ASWeb/help/lizenzen/jdl/jdl-jai.pdf -->
@@ -144,6 +144,7 @@
 		<groupId>javax.media</groupId>
 		<artifactId>jai_core</artifactId>
 		<version>1.1.3</version>
+		<name>Java Advanced Imaging</name>
 		<license>Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt</license>
 	</artifact>
 	<artifact>
@@ -152,7 +153,7 @@
 		<version>1.1</version>
 		<license>Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt</license>
 	</artifact>
-	
+
 	<!-- http://stackoverflow.com/questions/16343572/license-for-glassfish-javax-servlet-servlet-api-version-2-5 -->
 	<!-- https://glassfish.dev.java.net/public/CDDLv1.0.html -->
 	<artifact>
@@ -161,7 +162,7 @@
 		<version>2.5</version>
 		<license>Commons Development and Distribution License, Version 1.0</license>
 	</artifact>
-	
+
 	<!-- https://jsp.java.net/license.html -->
 	<artifact>
 		<groupId>javax.servlet.jsp</groupId>
@@ -170,7 +171,7 @@
 		<license>Commons Development and Distribution License, Version 1.0</license>
 		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
 	</artifact>
-	
+
 	<!-- https://issues.apache.org/jira/browse/AIRAVATA-257 -->
 	<artifact>
 		<groupId>javax.xml.bind</groupId>
@@ -178,7 +179,7 @@
 		<version>1.0</version>
 		<license>BEA license, http://svn.apache.org/repos/asf/beehive/trunk/LICENSE.jsr173-api</license>
 	</artifact>
-	
+
 	<!-- http://jaxen.codehaus.org/faq.html -->
 	<artifact>
 		<groupId>jaxen</groupId>
@@ -186,7 +187,7 @@
 		<version>1.1.1</version>
 		<license>jaxen license, http://jaxen.codehaus.org/license.html</license>
 	</artifact>
-	
+
 	<!-- http://www.jdom.org/docs/faq.html#a0030 -->
 	<artifact>
 		<groupId>jdom</groupId>
@@ -194,7 +195,7 @@
 		<version>1.0</version>
 		<license>JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt</license>
 	</artifact>
-	
+
 	<!-- http://www.singularsys.com/jep/download-trial.php -->
 	<!-- http://www.techrepublic.com/article/parse-mathematical-expressions-with-jep/ -->
 	<artifact>
@@ -204,7 +205,7 @@
 <!-- 		<license>UNKNOEN, could be GPL or JEP license, http://www.singularsys.com/jep/download-trial.php</license> -->
 		<license>GNU General Public License, version 2</license>
 	</artifact>
-	
+
 	<!-- http://sourceforge.net/projects/jgridshift/ -->
 	<artifact>
 		<groupId>jgridshift</groupId>
@@ -212,7 +213,7 @@
 		<version>1.0</version>
 		<license>GNU Lesser General Public License, version 2.0 (LGPLv2)</license>
 	</artifact>
-	
+
 	<!--  http://logging.apache.org/log4j/1.2/license.html -->
 	<artifact>
 		<groupId>log4j</groupId>
@@ -220,7 +221,7 @@
 		<version>1.2.12</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://ant.apache.org/license.html -->
 	<artifact>
 		<groupId>org.apache.ant</groupId>
@@ -268,7 +269,7 @@
 		<version>1.4.2</version>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	
+
 	<!-- http://wiki.eclipse.org/EMF/FAQ#If_using_EMF_in_a_non-Eclipse_environment_is_feasible_.28licensing_issues.29.2C_what_if_any.2C_advantages_does_using_EMF_have_over_using_JAXB.3F -->
 	<!-- http://www.eclipse.org/legal/ -->
 	<artifact>
@@ -298,7 +299,7 @@
 		<version>0.4</version>
 		<license>UNKNOWN, XMLBeans???</license>
 	</artifact>
-	
+
 	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
 	<artifact>
 		<groupId>org.n52.wps</groupId>
@@ -307,14 +308,14 @@
 		<license>UNKNOWN, XMLBeans???</license>
 	</artifact>
 
-	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->	
+	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
     <artifact>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-ags-workspace</artifactId>
         <version>10.0.2</version>
 		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
     </artifact>
-	
+
 	<!-- https://github.com/s-u/Rserve/blob/master/LICENSE -->
 	<artifact>
 		<groupId>org.rosuda</groupId>
@@ -328,7 +329,7 @@
 		<version>0.6-8</version>
 		<license>GNU General Public License, version 2</license>
 	</artifact>
-	
+
 	<!-- http://docs.codehaus.org/display/PICO/License -->
 	<artifact>
 		<groupId>picocontainer</groupId>
@@ -336,7 +337,7 @@
 		<version>1.2</version>
 		<license>BSD License</license>
 	</artifact>
-	
+
 	<!-- http://trove4j.sourceforge.net/html/license.html -->
 	<artifact>
 		<groupId>trove</groupId>
@@ -344,7 +345,7 @@
 		<version>1.0.2</version>
 		<license>GNU Lesser General Public License, version 2.1 or later (LGPL)</license>
 	</artifact>
-    
+
     <!-- http://xerces.apache.org/ -->
 	<artifact>
 		<groupId>xerces</groupId>
