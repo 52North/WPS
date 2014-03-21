@@ -400,4 +400,12 @@
 		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
 	</artifact>
 
+	<!-- different names in different repositories -->
+	<artifact>
+		<groupId>jgridshift</groupId>
+		<artifactId>jgridshift</artifactId>
+		<version>1.0</version>
+		<name>jGridShift</name>
+		<license>GNU Lesser General Public License, version 2.0 (LGPLv2)</license>
+	</artifact>
 </license-lookup>
