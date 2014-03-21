@@ -83,7 +83,7 @@
 			<artifactId>trove</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>kxml2</groupId>
+			<groupId>net.sf.kxml</groupId>
 			<artifactId>kxml2</artifactId>
 		</dependency>
 		<dependency>
