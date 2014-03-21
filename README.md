@@ -31,9 +31,19 @@ The 52°North WPS provides wrappers to well-established (geographical) computati
 
 Use git to clone the WPS repository:
 
-`git clone https://github.com/52North/WPS.git`
+```
+git clone https://github.com/52North/WPS.git
+```
 
 Then just run `mvn clean install` on the repositories root directory.
+
+### GeoTools
+
+Due to licensing issues all [GeoTools](http://www.geotools.org/) based input/output handlers and algorithms are not included by default. If you want to use them (or any backend relying on them), you have to explicitly enable them with the `with-geotools` profile:
+
+```
+$ mvn clean install -P with-geotools
+```
 
 ## Integration Testing
 
