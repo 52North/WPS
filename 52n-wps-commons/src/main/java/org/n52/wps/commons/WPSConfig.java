@@ -41,6 +41,9 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 
 import org.apache.xmlbeans.XmlException;
@@ -251,6 +254,10 @@ public class WPSConfig implements Serializable {
         if (path.isPresent()) {
             return path.get();
         }
+        path = checkPath(tryToGetPathFromJNDIContext());
+        if (path.isPresent()) {
+            return path.get();
+        }
         path = checkPath(tryToGetPathFromInitParameter(config));
         if (path.isPresent()) {
             return path.get();
@@ -310,6 +317,19 @@ public class WPSConfig implements Serializable {
 
     private static String tryToGetPathFromSystemProperty() {
         return System.getProperty(CONFIG_FILE_PROPERTY);
+    }
+
+    private static String tryToGetPathFromJNDIContext() {
+        try {
+            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+            if (ctx == null) {
+                return null;
+            }
+            return (String) ctx.lookup(CONFIG_FILE_PROPERTY);
+        } catch (NamingException ex) {
+            LOGGER.info("Can not get java:comp/env context", ex);
+            return null;
+        }
     }
 
     private static Optional<String> checkPath(String path) {
