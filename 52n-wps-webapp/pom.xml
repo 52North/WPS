@@ -484,12 +484,7 @@
 			</build>
 		</profile>
 		<profile>
-			<id>geotools</id>
-			<activation>
-				<property>
-					<name>with-geotools</name>
-				</property>
-			</activation>
+			<id>with-geotools</id>
 			<properties>
 				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
 			</properties>
