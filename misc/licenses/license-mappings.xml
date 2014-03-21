@@ -370,4 +370,31 @@
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
 
+	<!-- https://github.com/geosolutions-it/imageio-ext/blob/4e5592652e1f61a55055383e96b7fb8fc5fc0868/LICENSE.txt -->
+	<artifact>
+		<groupId>it.geosolutions.imageio-ext</groupId>
+		<artifactId>imageio-ext-argrid</artifactId>
+		<version>1.1.6</version>
+		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
+	</artifact>
+	<artifact>
+		<groupId>it.geosolutions.imageio-ext</groupId>
+		<artifactId>imageio-ext-streams</artifactId>
+		<version>1.1.6</version>
+		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
+	</artifact>
+	<artifact>
+		<groupId>it.geosolutions.imageio-ext</groupId>
+		<artifactId>imageio-ext-tiff</artifactId>
+		<version>1.1.6</version>
+		<license>BSD License</license>
+	</artifact>
+	<artifact>
+		<groupId>it.geosolutions.imageio-ext</groupId>
+		<artifactId>imageio-ext-utilities</artifactId>
+		<version>1.1.6</version>
+		<name>Image I/O-Extensions - Improved TIFF Plugin</name>
+		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
+	</artifact>
+
 </license-lookup>

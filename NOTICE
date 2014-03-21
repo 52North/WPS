@@ -117,9 +117,9 @@ This project includes:
   HttpClient under Apache License
   HttpCore under Apache License
   ibatis-sqlmap under The Apache Software License, Version 2.0
-  Image I/O-Extensions - Custom Streams under Lesser General Public License (LGPL)
-  Image I/O-Extensions - utilities classes and methods under Lesser General Public License (LGPL)
-  Improved TIFF Plugin under Lesser General Public License (LGPL)
+  Image I/O-Extensions - Custom Streams under GNU Lesser General Public License, version 3 or later (LGPL)
+  Image I/O-Extensions - Improved TIFF Plugin under GNU Lesser General Public License, version 3 or later (LGPL)
+  Improved TIFF Plugin under BSD License
   Jackrabbit API under The Apache Software License, Version 2.0
   Jackrabbit Core under The Apache Software License, Version 2.0
   Jackrabbit JCR Commons under The Apache Software License, Version 2.0
