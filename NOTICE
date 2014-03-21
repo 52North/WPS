@@ -118,8 +118,9 @@ This project includes:
   HttpCore under Apache License
   ibatis-sqlmap under The Apache Software License, Version 2.0
   Image I/O-Extensions - Custom Streams under GNU Lesser General Public License, version 3 or later (LGPL)
-  Image I/O-Extensions - Improved TIFF Plugin under GNU Lesser General Public License, version 3 or later (LGPL)
-  Improved TIFF Plugin under BSD License
+  Image I/O-Extensions - Improved TIFF Plugin under BSD License
+  Image I/O-Extensions - Pure java ArcGrid Plugin under GNU Lesser General Public License, version 3 or later (LGPL)
+  Image I/O-Extensions - utilities classes and methods under GNU Lesser General Public License, version 3 or later (LGPL)
   Jackrabbit API under The Apache Software License, Version 2.0
   Jackrabbit Core under The Apache Software License, Version 2.0
   Jackrabbit JCR Commons under The Apache Software License, Version 2.0
@@ -177,7 +178,6 @@ This project includes:
   PicoContainer Core under BSD License
   PJL Compressing Filter under Apache Software License V2.0
   precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  Pure java ArcGrid Plugin under Lesser General Public License (LGPL)
   Referencing services under Lesser General Public License (LGPL)
   REngine under GNU General Public License, version 2
   RserveEngine under GNU General Public License, version 2

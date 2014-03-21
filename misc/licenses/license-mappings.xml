@@ -373,27 +373,30 @@
 	<!-- https://github.com/geosolutions-it/imageio-ext/blob/4e5592652e1f61a55055383e96b7fb8fc5fc0868/LICENSE.txt -->
 	<artifact>
 		<groupId>it.geosolutions.imageio-ext</groupId>
-		<artifactId>imageio-ext-argrid</artifactId>
+		<artifactId>imageio-ext-arcgrid</artifactId>
 		<version>1.1.6</version>
+		<name>Image I/O-Extensions - Pure java ArcGrid Plugin</name>
 		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
 	</artifact>
 	<artifact>
 		<groupId>it.geosolutions.imageio-ext</groupId>
 		<artifactId>imageio-ext-streams</artifactId>
 		<version>1.1.6</version>
+		<name>Image I/O-Extensions - Custom Streams</name>
 		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
 	</artifact>
 	<artifact>
 		<groupId>it.geosolutions.imageio-ext</groupId>
 		<artifactId>imageio-ext-tiff</artifactId>
 		<version>1.1.6</version>
+		<name>Image I/O-Extensions - Improved TIFF Plugin</name>
 		<license>BSD License</license>
 	</artifact>
 	<artifact>
 		<groupId>it.geosolutions.imageio-ext</groupId>
 		<artifactId>imageio-ext-utilities</artifactId>
 		<version>1.1.6</version>
-		<name>Image I/O-Extensions - Improved TIFF Plugin</name>
+		<name>Image I/O-Extensions - utilities classes and methods</name>
 		<license>GNU Lesser General Public License, version 3 or later (LGPL)</license>
 	</artifact>
 
