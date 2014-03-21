@@ -37,15 +37,9 @@
 	</scm>
 	<repositories>
 		<repository>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>geotools</id>
-			<name>Geotools Repo</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
+			<id>Apache</id>
+			<name>Apache repository</name>
+			<url>http://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
 			<id>n52-releases</id>
@@ -59,9 +53,15 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>Apache</id>
-			<name>Apache repository</name>
-			<url>http://repo1.maven.org/maven2</url>
+			<id>geotools</id>
+			<name>Geotools Repo</name>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>OpenGEO</id>
