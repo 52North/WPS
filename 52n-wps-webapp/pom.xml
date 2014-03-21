@@ -494,14 +494,14 @@
 				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
 			</properties>
 			<build>
-				<plugins>
+				<!--<plugins>
 					<plugin>
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
 							<classifier>geotools</classifier>
 						</configuration>
 					</plugin>
-				</plugins>
+				</plugins>-->
 			</build>
 			<dependencies>
 				<dependency>
