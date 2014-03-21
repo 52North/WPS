@@ -340,7 +340,6 @@
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-epsg-hsql</artifactId>
 				<version>${geotools.version}</version>
-				<scope>runtime</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
