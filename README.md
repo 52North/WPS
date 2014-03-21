@@ -39,5 +39,5 @@ Then just run `mvn clean install` on the repositories root directory.
 
 The WPS comes with a variety of integration tests which are performed using Jetty.
 In order to execute integration tests in a maven build, activate the dedicated profile
-through `mvn clean install -Pintegration-test`.
+through `mvn clean install -Pwith-geotools,integration-test`.
 
