@@ -31,27 +31,195 @@ package org.n52.wps.test;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
+
+import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.ows.x11.impl.ExceptionReportDocumentImpl;
+import net.opengis.wps.x100.ComplexDataType;
+import net.opengis.wps.x100.DataType;
+import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.OutputDataType;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse.ProcessOutputs;
+
 import org.apache.xmlbeans.XmlException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.wps.client.ExecuteRequestBuilder;
+import org.n52.wps.client.WPSClientException;
+import org.n52.wps.client.WPSClientSession;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
+import org.n52.wps.server.ExceptionReport;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class ExecutePostIT {
 
     private final static String TIFF_MAGIC = "<![CDATA[MM";
     private static String url;
-
+    private ExecuteRequestBuilder echoProcessExecuteRequestBuilder;
+    private final String echoProcessIdentifier = "org.n52.wps.server.algorithm.test.EchoProcess";
+    private final String echoProcessInlineComplexXMLInput = "<TestData><this><is><xml><Data>Test</Data></xml></is></this></TestData>";
+    private final String testDataNodeName = "TestData";
+    
+    
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
         WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");
+        
     }
+    
+    @Before
+    public void before(){
+        
+		WPSClientSession wpsClient = WPSClientSession.getInstance();
 
+		ProcessDescriptionType echoProcessDescription;
+		try {
+			echoProcessDescription = wpsClient
+					.getProcessDescription(url, echoProcessIdentifier);
+			
+			echoProcessExecuteRequestBuilder = new ExecuteRequestBuilder(echoProcessDescription);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		assertThat(echoProcessExecuteRequestBuilder, is(not(nullValue())));
+    	
+    }
+    
+    /*Complex XML Input by value */
+    @Test
+    public void testExecutePOSTinlineComplexXMLSynchronousXMLOutputEcho() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTinlineComplexXMLSynchronousXMLOutputEcho");
+        
+    	String inputID = "complexInput";
+    	String inputMimeType = "text/xml";
+    	String outputID = "complexOutput";
+    	String outputMimeType = "text/xml";
+        
+        try {
+			echoProcessExecuteRequestBuilder.addComplexData(inputID, echoProcessInlineComplexXMLInput, null, null, inputMimeType);
+
+			echoProcessExecuteRequestBuilder.setResponseDocument(outputID, null, null, outputMimeType);
+			
+			Object responseObject =  WPSClientSession.getInstance().execute(url, echoProcessExecuteRequestBuilder.getExecute());
+			
+	        assertThat(responseObject, is(not(nullValue())));
+	        assertThat(responseObject, is(not(instanceOf(ExceptionReportDocument.class))));
+	        
+	        if (responseObject instanceof ExecuteResponseDocument) {
+				
+	        	ExecuteResponseDocument executeResponseDocument = (ExecuteResponseDocument)responseObject;	
+	        	
+	        	checkIdentifier(executeResponseDocument, outputID);
+	        	
+	        	checkIfResultContainsTestXMLData(executeResponseDocument);
+	        	
+//	        	ProcessOutputs outputs = executeResponseDocument.getExecuteResponse().getProcessOutputs();
+//	        	
+//	        	assertThat(outputs, not(nullValue()));    	
+//	        	assertThat(outputs.sizeOfOutputArray(), not(0)); 
+//	        	
+//	        	OutputDataType outputDataType = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+//	        	
+//	        	String identifier = outputDataType.getIdentifier().getStringValue();	        
+//	        	
+//	        	assertThat(identifier, is(equalTo(outputID)));
+//	        	
+//	        	assertThat(outputDataType, not(nullValue()));       	
+//	        	
+//	        	DataType data = outputDataType.getData();
+//	        	
+//	        	assertTrue(data.isSetComplexData());    	
+//	        	
+//	        	ComplexDataType complexData = outputDataType.getData().getComplexData();
+//	        	
+//	        	assertThat(complexData, not(nullValue())); 
+//	        	
+//	        	Node domNode = complexData.getDomNode();
+//	        	
+//	        	assertThat(domNode, not(nullValue()));       
+//	        	
+//	        	Node firstChild = domNode.getFirstChild();
+//	        	
+//	        	assertThat(firstChild, not(nullValue()));       
+//	        	
+//	        	String nodeValue = firstChild.getNodeValue();
+//	        	
+//	        	assertThat(nodeValue, not(nullValue()));   
+//	        	
+//	        	complexData.getDomNode().getChildNodes().item(1).getNodeName();
+	        	
+			}
+		} catch (WPSClientException e) {
+			e.printStackTrace();
+		}     
+
+        
+//        String response = PostClient.sendRequest(url, echoProcessExecuteRequestBuilder.getExecute().get);
+
+//        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+//        assertThat(response, response, not(containsString("ExceptionReport")));
+//        assertThat(response, response, containsString("LinearRing"));
+    }
+    
+    private OutputDataType getFirstOutputData(ExecuteResponseDocument executeResponseDocument){
+    	ProcessOutputs outputs = executeResponseDocument.getExecuteResponse().getProcessOutputs();
+    	
+    	assertThat(outputs, not(nullValue()));    	
+    	assertThat(outputs.sizeOfOutputArray(), not(0)); 
+    	
+    	OutputDataType outputDataType = executeResponseDocument.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+    	
+    	return outputDataType;
+    }
+    
+    private void checkIdentifier(ExecuteResponseDocument executeResponseDocument, String outputID){
+    	    	
+    	String identifier = getFirstOutputData(executeResponseDocument).getIdentifier().getStringValue();	        
+    	
+    	assertThat(identifier, is(equalTo(outputID)));    	
+    }
+    
+    private void checkIfResultContainsTestXMLData(ExecuteResponseDocument executeResponseDocument){
+    	
+    	OutputDataType outputDataType = getFirstOutputData(executeResponseDocument);
+    	
+    	assertThat(outputDataType, not(nullValue()));       	
+    	
+    	DataType data = outputDataType.getData();
+    	
+    	assertTrue(data.isSetComplexData());    	
+    	
+    	ComplexDataType complexData = outputDataType.getData().getComplexData();
+    	
+    	assertThat(complexData, not(nullValue())); 
+    	
+    	Node domNode = complexData.getDomNode();
+    	
+    	assertThat(domNode, not(nullValue()));       
+    	
+    	assertThat(domNode.getChildNodes(), not(nullValue())); 
+    	assertThat(domNode.getChildNodes().getLength(), greaterThan(1)); 
+    	
+    	Node secondChild = domNode.getChildNodes().item(1);
+ 
+    	assertThat(secondChild, not(nullValue()));       
+    	
+    	String nodeName = secondChild.getNodeName();
+    	
+    	assertThat(nodeName, is(equalTo(testDataNodeName)));   
+    	
+    }
+    
     /*Complex XML Input by value */
     @Test
     public void testExecutePOSTinlineComplexXMLSynchronousXMLOutput() throws IOException, ParserConfigurationException, SAXException {

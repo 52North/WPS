@@ -50,6 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
@@ -152,6 +153,57 @@ public class ExecuteRequestBuilder {
 			
 	}
 
+	/**
+	 * add an input element. sets the data in the xml request
+	 * 
+	 * @param parameterID the ID of the input (see process description)
+	 * @param value the actual value as String (for xml data xml for binary data is should be base64 encoded data)
+	 * @param schema schema if applicable otherwise null
+	 * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
+	 * @param mimeType mimetype of the data, has to be set
+	 * @throws WPSClientException
+	 */
+	public void addComplexData(String parameterID, String value, String schema, String encoding, String mimeType) throws WPSClientException {
+		InputDescriptionType inputDesc = getParameterDescription(parameterID);
+		if (inputDesc == null) {
+			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
+		}
+		if (inputDesc.getComplexData() == null) {
+			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
+		}	
+						
+		InputType input = execute.getExecute().getDataInputs().addNewInput();
+		input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
+		
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
+		try {
+			
+			ComplexDataType data = input.addNewData().addNewComplexData();
+			
+			XmlOptions xmlOptions = new XmlOptions();
+			
+			/*
+			 * TODO: set appropriate flags
+			 */
+			
+			data.set(XmlObject.Factory.parse(value, xmlOptions));
+			if (schema != null) {
+				data.setSchema(schema);
+			}
+			if (mimeType != null) {
+				data.setMimeType(mimeType);
+			}
+			if (encoding != null) {
+				data.setEncoding(encoding);
+			}
+		} catch (XmlException e) {
+			throw new IllegalArgumentException(
+					"error inserting node into execute request", e);
+		}
+			
+	}
+	
 	/**
 	 * Add literal data to the request
 	 * @param parameterID the ID of the input paramter according to the describe process
@@ -407,6 +459,35 @@ public class ExecuteRequestBuilder {
 		return null;
 	}
 
+	public boolean setResponseDocument(String outputIdentifier, String schema, String encoding, String mimeType){
+		
+		if (!execute.getExecute().isSetResponseForm()) {
+			execute.getExecute().addNewResponseForm();
+		}
+		if (!execute.getExecute().getResponseForm().isSetResponseDocument()) {
+			execute.getExecute().getResponseForm().addNewResponseDocument();
+		}
+		OutputDescriptionType outputDesc = getOutputDescription(outputIdentifier);
+		DocumentOutputDefinitionType outputDef = getOutputDefinition(outputIdentifier);
+		if (outputDef == null) {
+			outputDef = execute.getExecute().getResponseForm()
+					.getResponseDocument().addNewOutput();
+			outputDef.setIdentifier(outputDesc.getIdentifier());
+			
+			if(schema != null){
+				outputDef.setSchema(schema);
+			}
+			if(encoding != null){
+				outputDef.setEncoding(encoding);
+			}
+			if(mimeType != null){
+				outputDef.setMimeType(mimeType);
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Asks for data as raw data, i.e. without WPS XML wrapping
 	 * @param schema if applicable otherwise null
