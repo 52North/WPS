@@ -28,9 +28,16 @@
  */
 package org.n52.wps.io.data.binding.complex;
 
-import org.n52.wps.io.data.GenericXMLData;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.data.IComplexData;
 
+/**
+ * 
+ * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and - Generator.
+ * 
+ * @author bpross-52n
+ *
+ */
 public class GenericXMLDataBinding implements IComplexData {
 
 	/**
@@ -38,26 +45,23 @@ public class GenericXMLDataBinding implements IComplexData {
 	 */
 	private static final long serialVersionUID = -6875103125533078664L;
 
-	private GenericXMLData payload;
+	private XmlObject payload;
 	
-	public GenericXMLDataBinding(GenericXMLData payload){
+	public GenericXMLDataBinding(XmlObject payload){
 		this.payload = payload;
 	}
 	
 	@Override
-	public GenericXMLData getPayload() {
+	public XmlObject getPayload() {
 		return payload;
 	}
 
 	@Override
-	public Class<?> getSupportedClass() {
-		return payload.getClass();
+	public Class<XmlObject> getSupportedClass() {
+		return XmlObject.class;
 	}
 
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
+	public void dispose() {}
 
 }

@@ -33,25 +33,29 @@ import java.io.InputStream;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.wps.io.data.GenericXMLData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 
 public class GenericXMLDataGenerator extends AbstractGenerator {
 
+	public GenericXMLDataGenerator(){
+		super();
+		supportedIDataTypes.add(GenericXMLDataBinding.class);
+	}
+	
 	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema)
 			throws IOException {
 		
 		if(data instanceof GenericXMLDataBinding){
 			
-			GenericXMLData xmlData = ((GenericXMLDataBinding)data).getPayload();
+			XmlObject xmlData = ((GenericXMLDataBinding)data).getPayload();
 			
 			XmlOptions xmlOptions = new XmlOptions();
 			
 			xmlOptions.setSaveNoXmlDecl();
 			
-			return xmlData.getXmlObject().newInputStream(xmlOptions);
+			return xmlData.newInputStream(xmlOptions);
 			
 		}
 		

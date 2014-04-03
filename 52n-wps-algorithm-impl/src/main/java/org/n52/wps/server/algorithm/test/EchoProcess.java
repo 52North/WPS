@@ -54,7 +54,7 @@ public class EchoProcess extends AbstractAnnotatedAlgorithm {
 		
 	}
 	
-	@ComplexDataOutput(identifier="complexInput", binding=GenericXMLDataBinding.class)
+	@ComplexDataOutput(identifier="complexOutput", binding=GenericXMLDataBinding.class)
 	public XmlObject getComplexOutput() {
 		return complexOutput;
 	}
@@ -64,16 +64,14 @@ public class EchoProcess extends AbstractAnnotatedAlgorithm {
 		return literalOutput;
 	}
 	
-	@ComplexDataInput(binding=GenericXMLDataBinding.class, identifier = "complexInput")
+	@ComplexDataInput(binding=GenericXMLDataBinding.class, identifier = "complexInput", minOccurs=0)
 	public void setComplexInput(XmlObject complexInput) {
 		this.complexInput = complexInput;
 	}
 	
-	@LiteralDataInput(identifier="literalInput")
+	@LiteralDataInput(identifier="literalInput", minOccurs=0)
 	public void setLiteralInput(String literalInput) {
 		this.literalInput = literalInput;
 	}
-	
-	
  	
 }

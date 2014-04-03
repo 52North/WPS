@@ -33,7 +33,6 @@ import java.io.InputStream;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.wps.io.data.GenericXMLData;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,13 +41,18 @@ public class GenericXMLDataParser extends AbstractParser {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(GenericXMLDataParser.class);
 
+	public GenericXMLDataParser(){
+		super();
+		supportedIDataTypes.add(GenericXMLDataBinding.class);
+	}
+	
 	@Override
 	public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {	
 		
-		GenericXMLData xmlData = new GenericXMLData(XmlObject.Factory.newInstance());
+		XmlObject xmlData = XmlObject.Factory.newInstance();
 		
 		try {
-			xmlData.setXmlObject(XmlObject.Factory.parse(input));
+			xmlData = XmlObject.Factory.parse(input);
 		} catch (XmlException e) {
 			LOGGER.error("Could not parse inputstream as XMLObject.", e);
 		} catch (IOException e) {
