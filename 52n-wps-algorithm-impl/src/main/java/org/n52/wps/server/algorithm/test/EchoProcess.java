@@ -28,6 +28,8 @@
  */
 package org.n52.wps.server.algorithm.test;
 
+import java.util.List;
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
@@ -41,17 +43,21 @@ import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 @Algorithm(version = "1.0.0")
 public class EchoProcess extends AbstractAnnotatedAlgorithm {
 
-	private XmlObject complexInput;
-	private String literalInput;
+	private List<XmlObject> complexInput;
+	private List<String> literalInput;
 	
 	private XmlObject complexOutput;
 	private String literalOutput;
 	
 	@Execute
 	public void echo(){
-		complexOutput = complexInput;
-		literalOutput = literalInput;
+		if(complexInput != null && complexInput.size() > 0){
+			complexOutput = complexInput.get(0);
+		}
 		
+		if(literalInput != null && literalInput.size() > 0){
+			literalOutput = literalInput.get(0);
+		}		
 	}
 	
 	@ComplexDataOutput(identifier="complexOutput", binding=GenericXMLDataBinding.class)
@@ -64,13 +70,13 @@ public class EchoProcess extends AbstractAnnotatedAlgorithm {
 		return literalOutput;
 	}
 	
-	@ComplexDataInput(binding=GenericXMLDataBinding.class, identifier = "complexInput", minOccurs=0)
-	public void setComplexInput(XmlObject complexInput) {
+	@ComplexDataInput(binding=GenericXMLDataBinding.class, identifier = "complexInput", minOccurs=0, maxOccurs=2)
+	public void setComplexInput(List<XmlObject> complexInput) {
 		this.complexInput = complexInput;
 	}
 	
-	@LiteralDataInput(identifier="literalInput", minOccurs=0)
-	public void setLiteralInput(String literalInput) {
+	@LiteralDataInput(identifier="literalInput", minOccurs=0, maxOccurs=2)
+	public void setLiteralInput(List<String> literalInput) {
 		this.literalInput = literalInput;
 	}
  	
