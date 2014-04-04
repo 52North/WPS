@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.management.RuntimeErrorException;
+
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.io.IOUtils;
@@ -396,6 +398,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                         resulthash.put(result_id, output);
 
                         log.debug("Output for {} is {}", result_id, output);
+                    }
+                    catch (ExceptionReport e) {
+                    	throw e; // re-throw exception reports
                     }
                     catch (Exception e) {
                         log.error("Could not create output for {}", result_id, e);
@@ -920,6 +925,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RAnnotationException,
             ExceptionReport {
         log.debug("parsing Output with id {} from result {} based on connection {}", result_id, result, rCon);
+        
+        if(result == null) {
+        	log.error("Result for output parsing is NULL for id {}", result_id);
+        	throw new ExceptionReport("Result for output parsing is NULL for id " + result_id, result_id);
+        }
+        	
 
         Class< ? extends IData> iClass = getOutputDataType(result_id);
         log.debug("Output data type: {}", iClass.toString());
@@ -937,6 +948,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         RAnnotation currentAnnotation = list.get(0);
         log.debug("Current annotation: {}", currentAnnotation);
         // extract filename from R
+        
         String filename = new File(result.asString()).getName();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
