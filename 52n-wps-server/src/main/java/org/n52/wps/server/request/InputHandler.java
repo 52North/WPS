@@ -655,7 +655,7 @@ public class InputHandler {
 			parameterObj = BasicXMLTypeFactory.getBasicJavaObject(xmlDataType, parameter);
 		}
 		catch(RuntimeException e) {
-			throw new ExceptionReport("The passed parameterValue: " + parameter + ", but should be of type: " + xmlDataType, ExceptionReport.INVALID_PARAMETER_VALUE);
+			throw new ExceptionReport("The passed parameterValue: " + parameter + " for input " + inputID + " is not of type: " + xmlDataType, ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
 		
 		//validate allowed values.
