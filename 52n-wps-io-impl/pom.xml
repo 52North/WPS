@@ -129,5 +129,11 @@
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>
