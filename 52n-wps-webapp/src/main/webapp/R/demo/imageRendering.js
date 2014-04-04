@@ -4,14 +4,15 @@ $(document).ready(function(){
   //alert($("#link_processdescription").attr("href"));
 });
 
-var processIdentifier = 'org.n52.wps.server.r.timeseriesPlot';
-var outputIdentifier = 'output_image';
 var offering = 'WASSERSTAND_ROHDATEN';
-var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
-var imageWidth = '700';
-var imageHeight = '500';
+var stationname = 'Bake';
 
-var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan) {
+var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan, requestedStationname) {
+	var imageWidth = '700';
+	var imageHeight = '500';
+	var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
+	var processIdentifier = 'org.n52.wps.server.r.timeseriesPlot';
+	var outputIdentifier = 'timeseries_plot';
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
@@ -38,6 +39,15 @@ var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan) {
 			+ '<wps:Data>'
 			+ '<wps:LiteralData>'
 			+ requestedOffering
+			+ '</wps:LiteralData>'
+			+ '</wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input>'
+			+ '<ows:Identifier>offering_stationname</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ requestedStationname
 			+ '</wps:LiteralData>'
 			+ '</wps:Data>'
 			+ '</wps:Input>'
@@ -73,7 +83,9 @@ var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan) {
 			+ '<wps:ResponseDocument>'
 			+ '<wps:Output asReference="true">'
 			//+ '<wps:Output asReference="false">'
-			+ '<ows:Identifier>output_image</ows:Identifier>'
+			+ '<ows:Identifier>'
+			+ outputIdentifier
+			+ '</ows:Identifier>'
 			+ '</wps:Output>'
 			+ '</wps:ResponseDocument>'
 			+ '</wps:ResponseForm>'
@@ -147,7 +159,7 @@ $(function() {
 		
 		$("#resultLog").html("Hours: " + hours + " | Offering: " + offering + " | LOESS span: " + span);
 
-		requestPlot(hours, offering, span);
+		requestPlot(hours, offering, span, stationname);
 	});
 
 	$("#resultLog").ajaxError(
