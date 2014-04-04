@@ -45,6 +45,11 @@ offering_stationname <- "Bake"
 image_width = 800;
 image_height = 500;
 
+# wps.in: loess_span, type = double, title = local regression span parameter,
+# value = 0.75,
+# minOccurs = 0, maxOccurs = 1;
+loess_span <- 1
+
 # wps.on;
 
 ################################################################################
@@ -104,14 +109,15 @@ timeSeries <- xts(x = values, order.by = data[[timeField]])
 regressionValues <- data[[names(data)[[valuesIndex]]]]
 regressionTime <- as.numeric(data[[timeField]])
 regression = loess(regressionValues~regressionTime, na.omit(data),
-		enp.target=10)
+									 span = loess_span)
 
 # create plot ##################################################################
 ## wps.out: output_image, type = image/jpeg, title = The output image, 
 ## abstract = On-the-fly generated plot for the requested time series;
 output_image <- "output.jpg"
-jpeg(file = output_image,
-		width = image_width, height = image_height, units = "px")
+jpeg(file = output_image, width = image_width, height = image_height,
+		 units = "px", quality = 90, bg = "#f3f3f3")
+
 .title <- paste0("Dynamic Time Series Plot for ", toString(stationFilter))
 p <- plot(timeSeries, main = .title,
 		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
@@ -120,6 +126,7 @@ p <- plot(timeSeries, main = .title,
 				" [", attr(values, "unit of measurement"), "]"),
 		major.ticks = "days")
 lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
+
 graphics.off()
 
 myLog("Created image: ", output_image)
@@ -127,3 +134,16 @@ myLog("Working directory: ", getwd())
 
 # wps.out: output_image, type = jpeg, title = image plot, 
 # abstract = the output image in jpeg format;
+
+
+# test plot ####################################################################
+# wps.off;
+plot(timeSeries, main = "Test plot",
+		 sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
+		 xlab = attr(data[[timeField]], "name"),
+		 ylab = paste0(attr(values, "name"), 
+		 							" [", attr(values, "unit of measurement"), "]"),
+		 major.ticks = "days")
+lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
+
+# wps.on;

@@ -26,25 +26,34 @@
 	<div data-role="page" id="home" data-add-back-btn="true">
 
 		<div data-role="header">
-			<h1>Live WeatheR Plots</h1>
+			<h1>Live Time Series Plots</h1>
 		</div>
 
 		<div data-role="content">
-			<label for="slider-days">Select the number of hours to view:</label> <input
-				type="range" name="slider" id="slider-days" value="12" min="1"
-				max="72" />
+			<!-- http://www.w3.org/wiki/HTML/Elements/input/range -->
+			<p>
+				<label for="slider-days">Select the number of hours to view:</label>
+				<input type="range" name="slider_hrs" id="slider-hours" value="12"
+					min="1" max="72" />
+			</p>
+			<p>
+				<label for="slider-days">Set the <a
+					href="http://www.inside-r.org/r-doc/stats/loess">LOESS span</a>
+					parameter:
+				</label> <input type="range" name="slider_span" id="slider-loess-span"
+					value="0.75" min="0" max="3" step="0.05" />
+			</p>
 
 			<button name="submit" id="executeRequest" value="execute-request">Create
 				time series plot</button>
 
-			<p>
-				These plots are powered by the 52&deg;North WPS4R at <span
-					id="serviceUrl"></span>.
-			</p>
-
 			<div id="plot"></div>
-
 			<div id="resultLog"></div>
+
+			<p class="footer">
+				These plots are powered by the 52&deg;North using the WPS4R
+				processing backend at <span id="serviceUrl"></span>.
+			</p>
 		</div>
 
 		<div data-role="footer" data-position="fixed">
