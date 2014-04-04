@@ -46,11 +46,14 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.database.DatabaseFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.database.DatabaseFactory;
 
 /**
  *
@@ -60,40 +63,46 @@ public class ExecuteRequestTest {
 
     private DocumentBuilderFactory fac;
 
+    @BeforeClass
+    public static void setUpClass()
+            throws XmlException, IOException {
+        WPSConfig.forceInitialization("src/test/resources/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
+    }
+
 	@Before
     public void setUp(){
 		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-	
+
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
     }
-	
+
 	@Test
     public void testUpdateStatusError() throws ExceptionReport, XmlException, IOException, SAXException, ParserConfigurationException {
 
 		FileInputStream fis = new FileInputStream(new File("src/test/resources/LRDTCCorruptInputResponseDocStatusTrue.xml"));
-		
+
 		// parse the InputStream to create a Document
 		Document doc = fac.newDocumentBuilder().parse(fis);
-    	
+
     	ExecuteRequest request = new ExecuteRequest(doc);
-    	
+
     	String exceptionText = "TestError";
-    	
+
     	request.updateStatusError(exceptionText);
-    	
+
     	File response = DatabaseFactory.getDatabase().lookupResponseAsFile(request.getUniqueId().toString());
-    	
+
     	ExecuteResponseDocument responseDoc = ExecuteResponseDocument.Factory.parse(response);
-    	
+
     	StatusType statusType = responseDoc.getExecuteResponse().getStatus();
-    	
-    	assertTrue(validateExecuteResponse(responseDoc));    	
+
+    	assertTrue(validateExecuteResponse(responseDoc));
     	assertTrue(statusType.isSetProcessFailed());
     	assertTrue(statusType.getProcessFailed().getExceptionReport().getExceptionArray(0).getExceptionTextArray(0).equals(exceptionText));
-    		    	
+
     }
-    
+
     private boolean validateExecuteResponse(ExecuteResponseDocument responseDoc) {
         XmlOptions xmlOptions = new XmlOptions();
         List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();

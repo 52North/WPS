@@ -7,7 +7,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-algorithm-impl</artifactId>
-	<name>52North Algorithm Implementations</name>
+	<name>52North WPS Algorithm Implementations</name>
 	<description>Implementations of geospatial algorithms for raster andvector data.</description>
 	<build>
 		<resources>
@@ -40,28 +40,16 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.n52.wps</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-io</artifactId>
-		</dependency>
-		<dependency>
-			<artifactId>gt-referencing</artifactId>
-			<groupId>org.geotools</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>gt-main</artifactId>
-			<groupId>org.geotools</groupId>
+			<artifactId>52n-wps-io-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<artifactId>gt-coverage</artifactId>
-			<groupId>org.geotools</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>jai_core</artifactId>
@@ -72,16 +60,8 @@
 			<groupId>com.vividsolutions</groupId>
 		</dependency>
 		<dependency>
-			<artifactId>gt-api</artifactId>
-			<groupId>org.geotools</groupId>
-		</dependency>
-		<dependency>
 			<artifactId>axis-jaxrpc</artifactId>
-			<groupId>axis</groupId>
-		</dependency>
-		<dependency>
-			<artifactId>gt-opengis</artifactId>
-			<groupId>org.geotools</groupId>
+			<groupId>org.apache.axis</groupId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

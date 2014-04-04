@@ -34,6 +34,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.google.common.base.Joiner;
 
 public class GetClient {
 
@@ -58,16 +62,14 @@ public class GetClient {
         conn.setDoOutput(true);
 
         // Get the response
-        StringBuffer response = new StringBuffer();
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        List<String> lines= new LinkedList<String>();
         String line;
         while ( (line = rd.readLine()) != null) {
-            response = response.append(line + "\n");
+            lines.add(line);
         }
-
         rd.close();
-
-        return response.toString();
+        return Joiner.on('\n').join(lines);
     }
 
     public static InputStream sendRequestForInputStream(String targetURL, String payload) throws IOException {

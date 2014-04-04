@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>52n-wps-parent</artifactId>
-        <groupId>org.n52.wps</groupId>
-        <version>3.3.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>52n-wps-server</artifactId>
-    <name>52North WPS Server</name>
-    <description>Server frontend implementation (Servlet) of GET and POX binding for the 52 North WPS</description>
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
+	<parent>
+		<artifactId>52n-wps-parent</artifactId>
+		<groupId>org.n52.wps</groupId>
+		<version>3.3.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>52n-wps-server</artifactId>
+	<name>52North WPS Server</name>
+	<description>Server frontend implementation (Servlet) of GET and POX binding for the 52 North WPS</description>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>com.mycila</groupId>
@@ -37,16 +37,16 @@
 				</executions>
 			</plugin>
 		</plugins>
-    </build>
-    <dependencies>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-config</artifactId>
-        </dependency>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-config</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
@@ -58,6 +58,10 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io-impl</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -76,9 +80,9 @@
 			<artifactId>httpcore</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-	  	</dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>javax.media</groupId>
 			<artifactId>jai_core</artifactId>
@@ -108,27 +112,28 @@
 			<artifactId>xercesImpl</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-opengis</artifactId>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-	  	</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-algorithm-impl</artifactId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-algorithm-geotools</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io-geotools</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
+			<scope>test</scope>
 		</dependency>
-    </dependencies>
+	</dependencies>
 </project>
 

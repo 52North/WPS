@@ -47,6 +47,10 @@
 			<artifactId>52n-wps-algorithm</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-io-geotools</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>es.unex.sextante</groupId>
 			<artifactId>sextante</artifactId>
 		</dependency>
@@ -79,7 +83,7 @@
 			<artifactId>trove</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>kxml2</groupId>
+			<groupId>net.sf.kxml</groupId>
 			<artifactId>kxml2</artifactId>
 		</dependency>
 		<dependency>
