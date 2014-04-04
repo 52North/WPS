@@ -14,33 +14,33 @@ myLog("Start script... ", Sys.time())
 # wps.off;
 
 # wps.des: id = timeseriesPlot, title = Plot SOS Time Series,
-# abstract = Accesses a SOS with sos4R and creates a plot with a fitted
+# abstract = Accesses a SOS with sos4R and creates a plot with a fitted 
 # regression line;
 
 # wps.in: sos_url, string, title = SOS service URL,
 # abstract = SOS URL endpoint,
-##value = http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos,
 # minOccurs = 1, maxOccurs = 1;
 sos_url <- "http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos"
 
 # wps.in: offering_id, type = string, title = identifier for the used offering,
-# value = WASSERSTAND_ROHDATEN;
+# minOccurs = 1, maxOccurs = 1;
 offering_id <- "WASSERSTAND_ROHDATEN"
+
+# wps.in: offering_stationname, type = string, 
+# title = string contained in identifier for the used offering,
+# minOccurs = 1, maxOccurs = 1;
+offering_stationname <- "Bake"
 
 # wps.in: offering_hours, integer, temporal extent,
 # the number of hours the plot spans to the past,
-# value = 24,
-# minOccurs = 0, maxOccurs = 1;
+# value = 24, minOccurs = 0, maxOccurs = 1;
 offering_hours <- 24
 
-# wps.in: offering_stationname, type = string, title = string contained in identifier for the used offering,
-# value = Bake,
-# minOccurs = 0, maxOccurs = 1;
-offering_stationname <- "Bake"
-
-# wps.in: image_width, type = integer, title = width of the generated image in pixels,
+# wps.in: image_width, type = integer, 
+# title = width of the generated image in pixels,
 # value = 800, minOccurs = 0, maxOccurs = 1;
-# wps.in: image_height, type = integer, title = height of the generated image in pixels,
+# wps.in: image_height, type = integer, 
+# title = height of the generated image in pixels,
 # value = 500, minOccurs = 0, maxOccurs = 1;
 image_width = 800;
 image_height = 500;
@@ -55,8 +55,9 @@ loess_span <- 1
 ################################################################################
 # SOS and time series analysis
 
-converters <- SosDataFieldConvertingFunctions("WASSERSTAND_ROHDATEN" = sosConvertDouble,
-																							"LUFTTEMPERATUR" = sosConvertDouble)
+converters <- SosDataFieldConvertingFunctions(
+	"WASSERSTAND_ROHDATEN" = sosConvertDouble,
+	"LUFTTEMPERATUR" = sosConvertDouble)
 
 myLog("Creating SOS connection to ", sos_url)
 # establish a connection to a SOS instance with default settings
@@ -70,7 +71,8 @@ names(sosOfferings(sos))
 offering <- sosOfferings(sos)[[offering_id]]
 myLog("Requesting for offering:\n", toString(offering))
 
-offering_station_idxs <- grep(pattern = offering_stationname, sosProcedures(offering))
+offering_station_idxs <- grep(pattern = offering_stationname,
+															sosProcedures(offering))
 # select on station at random
 stationFilter <- sosProcedures(offering)[
 	offering_station_idxs[sample(1:length(offering_station_idxs), 1)]]
@@ -112,15 +114,14 @@ regression = loess(regressionValues~regressionTime, na.omit(data),
 									 span = loess_span)
 
 # create plot ##################################################################
-## wps.out: output_image, type = image/jpeg, title = The output image, 
-## abstract = On-the-fly generated plot for the requested time series;
-output_image <- "output.jpg"
-jpeg(file = output_image, width = image_width, height = image_height,
+timeseries_plot <- "output.jpg"
+jpeg(file = timeseries_plot, width = image_width, height = image_height,
 		 units = "px", quality = 90, bg = "#f3f3f3")
 
 .title <- paste0("Dynamic Time Series Plot for ", toString(stationFilter))
 p <- plot(timeSeries, main = .title,
-		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
+		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos), " @ ",
+								 toString(Sys.time())),
 		xlab = attr(data[[timeField]], "name"),
 		ylab = paste0(attr(values, "name"), 
 				" [", attr(values, "unit of measurement"), "]"),
@@ -129,11 +130,11 @@ lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
 
 graphics.off()
 
-myLog("Created image: ", output_image)
+myLog("Created image: ", timeseries_plot)
 myLog("Working directory: ", getwd())
 
-# wps.out: output_image, type = jpeg, title = image plot, 
-# abstract = the output image in jpeg format;
+# wps.out: timeseries_plot, type = jpeg, title = time series plot, 
+# abstract = the output image as a graphic in jpeg format;
 
 
 # test plot ####################################################################
