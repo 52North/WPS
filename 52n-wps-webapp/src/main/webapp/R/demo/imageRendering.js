@@ -8,8 +8,10 @@ var processIdentifier = 'org.n52.wps.server.r.timeseriesPlot';
 var outputIdentifier = 'output_image';
 var offering = 'WASSERSTAND_ROHDATEN';
 var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
+var imageWidth = '700';
+var imageHeight = '500';
 
-var requestPlot = function(requestedHours, requestedOffering) {
+var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan) {
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
@@ -40,24 +42,37 @@ var requestPlot = function(requestedHours, requestedOffering) {
 			+ '</wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
+			+ '<ows:Identifier>loess_span</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ paramLoessSpan
+			+ '</wps:LiteralData>'
+			+ '</wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input>'
 			+ '<ows:Identifier>image_width</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
+			+ '<wps:LiteralData>'
+			+ imageWidth
+			+ '</wps:LiteralData>'
 			+ '	</wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
 			+ '<ows:Identifier>image_height</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
+			+ '<wps:LiteralData>'
+			+ imageHeight
+			+ '</wps:LiteralData>'
 			+ '</wps:Data>'
 			+ '</wps:Input>'
 			+ '</wps:DataInputs>'
 			+ '<wps:ResponseForm>'
 			+ '<wps:ResponseDocument>'
-			//+ '<wps:Output asReference="true">'
-			+ '<wps:Output asReference="false">'
+			+ '<wps:Output asReference="true">'
+			//+ '<wps:Output asReference="false">'
 			+ '<ows:Identifier>output_image</ows:Identifier>'
 			+ '</wps:Output>'
 			+ '</wps:ResponseDocument>'
@@ -125,10 +140,14 @@ var showResponse = function(executeResponse) {
 $(function() {
 
 	$("#executeRequest").click(function() {
-		var days = $("#slider-days").val();
-		$("#resultLog").html("Days: " + days + " | Offering: " + offering);
+		$("#plot").html("<!-- no data -->");
+		
+		var hours = $("#slider-hours").val();
+		var span = $("#slider-loess-span").val();
+		
+		$("#resultLog").html("Hours: " + hours + " | Offering: " + offering + " | LOESS span: " + span);
 
-		requestPlot(days, offering);
+		requestPlot(hours, offering, span);
 	});
 
 	$("#resultLog").ajaxError(

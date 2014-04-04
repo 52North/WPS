@@ -12,7 +12,7 @@ var handleResponse = function(data) {
 	} else {
 		showResponse(data);
 	}
-}
+};
 
 var showError = function(error) {
 //	var xmlString = (new XMLSerializer()).serializeToString(error);
@@ -31,16 +31,16 @@ var showError = function(error) {
 			});
 
 	$("#resultLog").html("<div class=\"error\">" + messages + "</div>");
-}
+};
 
 var beginsWith = function(string, pattern) {
 	return (string.indexOf(pattern) === 0);
-}
+};
 
 var endsWith = function(string, pattern) {
 	var d = string.length - pattern.length;
 	return (d >= 0 && string.lastIndexOf(pattern) === d);
-}
+};
 
 $(document).ready(function() {
 	$("#serviceUrl").html("<em>" + serviceUrlString + "</em>");
