@@ -1,14 +1,13 @@
-
-
-var debug = false;
-
 var urlIndex = window.location.href.lastIndexOf("/R/");
 var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
 var serviceUrlString = urlBasisString + "WebProcessingService";
 
 var handleResponse = function(data) {
-	var isError = $(data).find("ns\\:ExceptionReport").length > 0;
+	console.log("Got response: " + data);
+	
+	var isError = $(data).find("ows\\:ExceptionReport").length > 0;
 	if (isError) {
+		console.log("ERROR response.");
 		showError(data);
 	} else {
 		showResponse(data);
@@ -20,10 +19,10 @@ var showError = function(error) {
 //	alert(xmlString);
 
 	var messages = "";
-	$(error).find("ns\\:Exception").each(
+	$(error).find("ows\\:Exception").each(
 			function() {
 
-				var text = $(this).find("ns\\:ExceptionText").text();
+				var text = $(this).find("ows\\:ExceptionText").text();
 				var locator = $(this).attr("locator");
 
 				var errorMessage = "<p>Error: " + text + "<br />Locator: "

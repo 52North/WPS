@@ -4,21 +4,30 @@ $(document).ready(function(){
   //alert($("#link_processdescription").attr("href"));
 });
 
-var processIdentifier = 'org.n52.wps.server.r.SosPlot';
+var processIdentifier = 'org.n52.wps.server.r.timeseriesPlot';
 var outputIdentifier = 'output_image';
-var offering = 'Luft';
+var offering = 'WASSERSTAND_ROHDATEN';
+var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
 
-var requestPlot = function(requestedDays, requestedOffering) {
+var requestPlot = function(requestedHours, requestedOffering) {
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
 			+ processIdentifier
 			+ '</ows:Identifier>'
-			+ '<wps:DataInputs><wps:Input><ows:Identifier>offering_days</ows:Identifier>'
+			+ '<wps:DataInputs>'
+			+ '<wps:Input><ows:Identifier>offering_hours</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
 			+ '<wps:LiteralData>'
-			+ requestedDays
+			+ requestedHours
+			+ '</wps:LiteralData></wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input><ows:Identifier>sos_url</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ sosUrl
 			+ '</wps:LiteralData></wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
@@ -47,7 +56,8 @@ var requestPlot = function(requestedDays, requestedOffering) {
 			+ '</wps:DataInputs>'
 			+ '<wps:ResponseForm>'
 			+ '<wps:ResponseDocument>'
-			+ '<wps:Output asReference="true">'
+			//+ '<wps:Output asReference="true">'
+			+ '<wps:Output asReference="false">'
 			+ '<ows:Identifier>output_image</ows:Identifier>'
 			+ '</wps:Output>'
 			+ '</wps:ResponseDocument>'
@@ -76,21 +86,21 @@ var requestPlot = function(requestedDays, requestedOffering) {
 };
 
 var showResponse = function(executeResponse) {
-	var status = $(executeResponse).find("ns\\:Status");
-	var statusText = $(status).find("ns\\:ProcessSucceeded").text();
+	var status = $(executeResponse).find("wps\\:Status");
+	var statusText = $(status).find("wps\\:ProcessSucceeded").text();
 	$("#resultLog").html("<div class=\"success\">" + statusText + "</div>");
 
 	$(executeResponse)
-			.find("ns\\:Output")
+			.find("wps\\:Output")
 			.each(
 					function() {
 						// check if the output is the desired image
-						if ($(this).find("ns1\\:Identifier").text() == outputIdentifier) {
+						if ($(this).find("ows\\:Identifier").text() == outputIdentifier) {
 							// alert("Found: " + outputIdentifier);
 
-							var title = $(this).find("ns1\\:Title").text();
+							var title = $(this).find("ows\\:Title").text();
 
-							$(this).find("ns\\:Reference").each(
+							$(this).find("wps\\:Reference").each(
 									function() {
 
 										var link = $(this).attr("href");
