@@ -43,10 +43,11 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.n52.wps.ags.workspace.AGSWorkspace;
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.feed.movingcode.AlgorithmParameterType;
@@ -59,19 +60,19 @@ import org.n52.wps.server.feed.movingcode.MovingCodeUtils;
  *
  */
 public class ArcToolboxProcessDelegator implements IAlgorithm{
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(ArcToolboxProcessDelegator.class);
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ArcToolboxProcessDelegator.class);
 	private AGSWorkspace agsWorkspace;
-	
+
 	private final File toolWorkspace;
 	private final File workspaceBase;
-	
+
 	private MovingCodeObject mco;
 	protected List<String> errors;
-	
+
 	private String[] toolParameters;
-	
-	
+
+
 	protected ArcToolboxProcessDelegator(MovingCodeObject templateMCO, File workspaceBase) throws IOException{
 		this.workspaceBase = workspaceBase;
 		errors = new ArrayList<String>();
@@ -79,33 +80,33 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 		toolParameters = new String[mco.getParameters().size()];
 		toolWorkspace = new File(mco.getInstanceWorkspace().getCanonicalPath());
 	}
-		
-	
+
+
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
-		
+
 		//initialize arcObjects
 		AGSProperties.getInstance().bootstrapArcobjectsJar();
-		
+
 		//create the workspace
 		agsWorkspace = new AGSWorkspace(toolWorkspace);
-		
+
 		//retrieve path to the toolbox
 		String toolbox = toolWorkspace.getAbsolutePath() + mco.getAlgorithmURL().getPublicPath();
 		//retrieve the tool
 		String tool = mco.getAlgorithmURL().getPrivatePath();
-		
+
 		List<AlgorithmParameterType> params = mco.getParameters();
 		HashMap<String, String> outputs = new HashMap<String,String>();
 		System.gc();
-		
+
 		// assign parameters
 		for (AlgorithmParameterType currentParam : params){
 			String wpsInputID = currentParam.getWpsInputID();
 			String wpsOutputID = currentParam.getWpsOutputID();
 			int positionID = currentParam.getPositionID().intValue();
-			
+
 			CommandLineParameter cmdParam = null;
-			
+
 			// input parameters
 			if(!wpsInputID.equalsIgnoreCase("")){
 				if(inputData.containsKey(wpsInputID)){
@@ -123,10 +124,10 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 			} else if (!wpsOutputID.equalsIgnoreCase("")){ // output only parameters !!ONLY SINGLE OUTPUT ITEMS SUPPORTED BY WPS!!
 				// create CommanLineParameter Object
 				cmdParam = new CommandLineParameter(currentParam.getPrefixString(), currentParam.getSuffixString(), currentParam.getSeparatorString());
-				
+
 				// retrieve the default mimeType
 				String mimeType = mco.getDefaultMimeType(wpsOutputID);
-				
+
 				// prepare output filename
 				String extension = GenericFileDataConstants.mimeTypeFileTypeLUT().get(mimeType);
 				String fileName = UUID.randomUUID().toString().substring(0,7) + "." + extension; // geoprocessor can't handle points, dashes etc in output file name
@@ -134,23 +135,23 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 				fileName = toolWorkspace.getAbsolutePath() + File.separator + fileName;
 				cmdParam.addValue(fileName);
 			}
-			
+
 			//prepare the output - files only
 			if (!wpsOutputID.equalsIgnoreCase("")){
 				String fileName = cmdParam.getAsPlainString();
 				outputs.put(wpsOutputID, fileName);
 			}
-			
-			
+
+
 			// create a new parameter in the tool's Parameter Array
 			if (cmdParam == null){
 				toolParameters[positionID] = "";
 			} else {
 				toolParameters[positionID] = cmdParam.getAsCommandString();
 			}
-			
+
 		}
-		
+
 		//execute
 		LOGGER.info("Executing ArcGIS tool " + toolbox + File.pathSeparator + tool + " . Parameter array contains " + toolParameters.length + " parameters.");
 		try {
@@ -160,7 +161,7 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 			errors.add(e1.getMessage());
 			throw new RuntimeException(e1.getMessage()); // otherwise WPS tries to zip and return non-existing files => null pointer
 		}
-		
+
 		//create the output - files only
 		HashMap<String, IData> result = new HashMap<String, IData>();
 		for (String wpsOutputID : outputs.keySet()){
@@ -180,10 +181,10 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 				e.printStackTrace();
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	public List<String> getErrors() {
 		return errors;
 	}
@@ -207,7 +208,7 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 	public Class<?> getOutputDataType(String id) {
 		return MovingCodeUtils.getOutputDataType(mco, id);
 	}
-	
+
 	//delete the current workspace
 	protected void finalize(){
 		try {
@@ -217,5 +218,5 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 			e.printStackTrace();
 		}
 	}
-	
+
 }

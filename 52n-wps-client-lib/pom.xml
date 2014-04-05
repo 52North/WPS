@@ -41,6 +41,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-io-impl</artifactId>
         </dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-io-geotools</artifactId>
+        </dependency>
         <dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>

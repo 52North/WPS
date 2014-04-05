@@ -42,6 +42,10 @@
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>
 		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-io-geotools</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
 		</dependency>
@@ -78,7 +82,7 @@
 			<artifactId>derby</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>axis</groupId>
+			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
 		</dependency>
 		<dependency>

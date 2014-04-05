@@ -41,9 +41,15 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 
 import org.apache.xmlbeans.XmlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -51,28 +57,28 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 public class WPSConfig implements Serializable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3198223084611936675L;
     private static transient WPSConfig wpsConfig;
     private static transient WPSConfigurationImpl wpsConfigXMLBeans;
 
-    private static transient Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WPSConfig.class);
 
-    // FvK: added Property Change support
-    protected final PropertyChangeSupport propertyChangeSupport;
     // constants for the Property change event names
     public static final String WPSCONFIG_PROPERTY_EVENT_NAME = "WPSConfigUpdate";
     public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
-
+    public static final String CONFIG_FILE_PROPERTY = "wps.config.file";
     public static final String CONFIG_FILE_NAME = "wps_config.xml";
     private static final String CONFIG_FILE_DIR = "config";
     private static final String URL_DECODE_ENCODING = "UTF-8";
+    // FvK: added Property Change support
+    protected final PropertyChangeSupport propertyChangeSupport;
 
     private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
         wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
@@ -90,7 +96,7 @@ public class WPSConfig implements Serializable {
 
     /**
      * Add an Listener to the wpsConfig
-     * 
+     *
      * @param propertyName
      * @param listener
      */
@@ -100,7 +106,7 @@ public class WPSConfig implements Serializable {
 
     /**
      * remove a listener from the wpsConfig
-     * 
+     *
      * @param propertyName
      * @param listener
      */
@@ -116,7 +122,7 @@ public class WPSConfig implements Serializable {
     public void firePropertyChange(String event) {
     	propertyChangeSupport.firePropertyChange(event, null, null);
     }
-    
+
     // private synchronized static void writeObject(java.io.ObjectOutputStream oos) throws IOException {
     // oos.writeObject(wpsConfigXMLBeans.xmlText());
     // }
@@ -138,9 +144,8 @@ public class WPSConfig implements Serializable {
 
     /**
      * WPSConfig is a singleton. If there is a need for reinitialization, use this path.
-     * 
-     * @param configPathp
-     *        path to the wps_config.xml
+     *
+     * @param configPath path to the wps_config.xml
      * @throws XmlException
      * @throws IOException
      */
@@ -165,7 +170,7 @@ public class WPSConfig implements Serializable {
 
     /**
      * WPSConfig is a singleton. If there is a need for reinitialization, use this path.
-     * 
+     *
      * @param stream
      *        stream containing the wps_config.xml
      * @throws XmlException
@@ -194,7 +199,7 @@ public class WPSConfig implements Serializable {
     /**
      * returns an instance of the WPSConfig class. WPSConfig is a single. If there is need for
      * reinstantitation, use forceInitialization().
-     * 
+     *
      * @return WPSConfig object representing the wps_config.xml from the classpath or webapps folder
      */
     public static WPSConfig getInstance() {
@@ -213,15 +218,13 @@ public class WPSConfig implements Serializable {
     /**
      * returns an instance of the WPSConfig class. WPSCofnig is a single. If there is need for
      * reinstantitation, use forceInitialization().
-     * 
+     *
      * @param path
      *        path to the wps_config.xml
      * @return WPSConfig object representing the wps_config.xml from the given path
      */
     public static WPSConfig getInstance(String path) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Getting WPSConfig instance... from path: " + path);
-
+        LOGGER.debug("Getting WPSConfig instance... from path: {}", path);
         if (wpsConfig == null) {
             try {
                 wpsConfig = new WPSConfig(path);
@@ -239,74 +242,122 @@ public class WPSConfig implements Serializable {
     }
 
     public static WPSConfig getInstance(ServletConfig config) {
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Getting WPSConfig instance... with ServletConfig: " + config.toString());
-
+        LOGGER.debug("Getting WPSConfig instance... with ServletConfig: {}", config.toString());
         String path = getConfigPath(config);
-
-        if (path == null)
-            path = getConfigPath();
-        else
-            LOGGER.debug("Found config file under " + path);
-
+        LOGGER.debug("Found config file under " + path);
         return getInstance(path);
     }
 
     public static String getConfigPath(ServletConfig config) {
-        return config.getServletContext().getRealPath(CONFIG_FILE_DIR + File.separator + CONFIG_FILE_NAME);
+        Optional<String> path;
+        path = checkPath(tryToGetPathFromSystemProperty());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromJNDIContext());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromInitParameter(config));
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromRelativeInitParameter(config));
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromServletConfig(config));
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromClassPath());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromWebAppTarget());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathFromWebAppSource());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathViaWebAppPath());
+        if (path.isPresent()) {
+            return path.get();
+        }
+        path = checkPath(tryToGetPathLastResort());
+        if (path.isPresent()) {
+            return path.get();
+        } else {
+            throw new RuntimeException("Could not find and load wps_config.xml");
+        }
+    }
+
+    private static String tryToGetPathFromServletConfig(ServletConfig config) {
+        return config == null ? null : config.getServletContext()
+                .getRealPath(CONFIG_FILE_DIR + File.separator + CONFIG_FILE_NAME);
+    }
+
+    private static String tryToGetPathFromInitParameter(ServletConfig config) {
+        return config == null ? null : config
+                .getInitParameter(CONFIG_FILE_PROPERTY);
+    }
+
+    private static String tryToGetPathFromRelativeInitParameter(ServletConfig config) {
+        if (config != null) {
+            String path = config.getInitParameter(CONFIG_FILE_PROPERTY);
+            if (path != null) {
+                return config.getServletContext().getRealPath(path);
+            }
+        }
+        return null;
+
+    }
+
+    private static String tryToGetPathFromSystemProperty() {
+        return System.getProperty(CONFIG_FILE_PROPERTY);
+    }
+
+    private static String tryToGetPathFromJNDIContext() {
+        try {
+            Context ctx = (Context) new InitialContext().lookup("java:comp/env");
+            if (ctx == null) {
+                return null;
+            }
+            return (String) ctx.lookup(CONFIG_FILE_PROPERTY);
+        } catch (NamingException ex) {
+            LOGGER.info("Can not get java:comp/env context", ex);
+            return null;
+        }
+    }
+
+    private static Optional<String> checkPath(String path) {
+        if (path != null && !path.isEmpty()) {
+            LOGGER.debug("Checking {} for WPS config", path);
+            File file = new File(path);
+            if (!file.exists()) {
+                LOGGER.debug("{} does not exist", path);
+            } else if (!file.isFile()) {
+                LOGGER.debug("{} is not a file", path);
+            } else if (!file.canRead()) {
+                LOGGER.debug("{} is not readable", path);
+            } else {
+                return Optional.of(path);
+            }
+        }
+        return Optional.absent();
     }
 
     /**
      * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is
      * only applicable for webapp applications. To customize this, please use directly
      * {@link WPSConfig#forceInitialization(String)} and then getInstance().
-     * 
+     *
      * @return
-     * @throws IOException
      */
     public static String getConfigPath() {
-        String configPath = tryToGetPathFromClassPath();
-        File file = null;
-        if (configPath != null) {
-            file = new File(configPath);
-            if (file.exists()) {
-                return configPath;
-            }
-        }
-
-        configPath = tryToGetPathFromWebAppTarget();
-        if (configPath != null) {
-            file = new File(configPath);
-            if (configPath != null && file.exists()) {
-                return configPath;
-            }
-        }
-
-        configPath = tryToGetPathFromWebAppSource();
-        if (configPath != null) {
-            file = new File(configPath);
-            if (configPath != null && file.exists()) {
-                return configPath;
-            }
-        }
-
-        configPath = tryToGetPathViaWebAppPath();
-        if (configPath != null) {
-            file = new File(configPath);
-            if (configPath != null && file.exists()) {
-                return configPath;
-            }
-        }
-
-        configPath = tryToGetPathLastResort();
-        if (configPath != null) {
-            file = new File(configPath);
-            if (configPath != null && file.exists()) {
-                return configPath;
-            }
-        }
-
-        throw new RuntimeException("Could not find and load wps_config.xml");
+       return getConfigPath(null);
     }
 
     public static String tryToGetPathFromClassPath() {
@@ -339,7 +390,7 @@ public class WPSConfig implements Serializable {
                 LOGGER.error("could not decode URL", e);
                 return null;
             }
-            
+
             path = path + File.separator + "52n-wps-webapp" + File.separator + "target";
             File f = new File(path);
             String[] dirs = f.getAbsoluteFile().list();
@@ -370,7 +421,7 @@ public class WPSConfig implements Serializable {
                 LOGGER.error("could not decode URL", e);
                 return null;
             }
-            
+
             path = path + File.separator + "52n-wps-webapp";
             File f = new File(path);
             String[] dirs = f.getAbsoluteFile().list();
@@ -416,13 +467,13 @@ public class WPSConfig implements Serializable {
 
     public static String tryToGetPathLastResort() {
         String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-        
+
         try {
 			domain = URLDecoder.decode(domain, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			LOGGER.warn("Could not decode URL of WPSConfig class, continuing.");
 		}
-        
+
         /*
          * domain should always be 52n-wps-commons/target/classes so we just go three directories up
          */
@@ -453,10 +504,10 @@ public class WPSConfig implements Serializable {
 
     public Parser[] getActiveRegisteredParser() {
         Parser[] parsers = getRegisteredParser();
-        ArrayList<Parser> activeParsers = new ArrayList<Parser>();
-        for (int i = 0; i < parsers.length; i++) {
-            if (parsers[i].getActive()) {
-                activeParsers.add(parsers[i]);
+        ArrayList<Parser> activeParsers = new ArrayList<Parser>(parsers.length);
+        for (Parser parser : parsers) {
+            if (parser.getActive()) {
+                activeParsers.add(parser);
             }
         }
         Parser[] parArr = {};
@@ -469,10 +520,10 @@ public class WPSConfig implements Serializable {
 
     public Generator[] getActiveRegisteredGenerator() {
         Generator[] generators = getRegisteredGenerator();
-        ArrayList<Generator> activeGenerators = new ArrayList<Generator>();
-        for (int i = 0; i < generators.length; i++) {
-            if (generators[i].getActive()) {
-                activeGenerators.add(generators[i]);
+        ArrayList<Generator> activeGenerators = new ArrayList<Generator>(generators.length);
+        for (Generator generator : generators) {
+            if (generator.getActive()) {
+                activeGenerators.add(generator);
             }
         }
         Generator[] genArr = {};
@@ -486,8 +537,7 @@ public class WPSConfig implements Serializable {
 
     public Property[] getPropertiesForGeneratorClass(String className) {
         Generator[] generators = wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
-        for (int i = 0; i < generators.length; i++) {
-            Generator generator = generators[i];
+        for (Generator generator : generators) {
             if (generator.getClassName().equals(className)) {
                 return generator.getPropertyArray();
             }
@@ -498,8 +548,7 @@ public class WPSConfig implements Serializable {
 
     public Format[] getFormatsForGeneratorClass(String className) {
         Generator[] generators = wpsConfigXMLBeans.getDatahandlers().getGeneratorList().getGeneratorArray();
-        for (int i = 0; i < generators.length; i++) {
-            Generator generator = generators[i];
+        for (Generator generator : generators) {
             if (generator.getClassName().equals(className)) {
                 return generator.getFormatArray();
             }
@@ -510,8 +559,7 @@ public class WPSConfig implements Serializable {
 
     public Property[] getPropertiesForParserClass(String className) {
         Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
-        for (int i = 0; i < parsers.length; i++) {
-            Parser parser = parsers[i];
+        for (Parser parser : parsers) {
             if (parser.getClassName().equals(className)) {
                 return parser.getPropertyArray();
             }
@@ -522,8 +570,7 @@ public class WPSConfig implements Serializable {
 
     public Format[] getFormatsForParserClass(String className) {
         Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();
-        for (int i = 0; i < parsers.length; i++) {
-            Parser parser = parsers[i];
+        for (Parser parser : parsers) {
             if (parser.getClassName().equals(className)) {
                 return parser.getFormatArray();
             }
@@ -534,8 +581,7 @@ public class WPSConfig implements Serializable {
 
     public boolean isParserActive(String className) {
         Parser[] activeParser = getActiveRegisteredParser();
-        for (int i = 0; i < activeParser.length; i++) {
-            Parser parser = activeParser[i];
+        for (Parser parser : activeParser) {
             if (parser.getClassName().equals(className)) {
                 return parser.getActive();
             }
@@ -545,8 +591,7 @@ public class WPSConfig implements Serializable {
 
     public boolean isGeneratorActive(String className) {
         Generator[] generators = getActiveRegisteredGenerator();
-        for (int i = 0; i < generators.length; i++) {
-            Generator generator = generators[i];
+        for (Generator generator : generators) {
             if (generator.getClassName().equals(className)) {
                 return generator.getActive();
             }
@@ -556,8 +601,7 @@ public class WPSConfig implements Serializable {
 
     public boolean isRepositoryActive(String className) {
         Repository[] repositories = getRegisterdAlgorithmRepositories();
-        for (int i = 0; i < repositories.length; i++) {
-            Repository repository = repositories[i];
+        for (Repository repository : repositories) {
             if (repository.getClassName().equals(className)) {
                 return repository.getActive();
             }
@@ -568,8 +612,7 @@ public class WPSConfig implements Serializable {
 
     public Property[] getPropertiesForRepositoryClass(String className) {
         Repository[] repositories = getRegisterdAlgorithmRepositories();
-        for (int i = 0; i < repositories.length; i++) {
-            Repository repository = repositories[i];
+        for (Repository repository : repositories) {
             if (repository.getClassName().equals(className)) {
                 return repository.getPropertyArray();
             }
@@ -588,10 +631,10 @@ public class WPSConfig implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return directory of the configuration folder
      */
-    public static final String getConfigDir() {
+    public static String getConfigDir() {
         String dir = getConfigPath();
         return dir.substring(0, dir.lastIndexOf(CONFIG_FILE_NAME));
     }
