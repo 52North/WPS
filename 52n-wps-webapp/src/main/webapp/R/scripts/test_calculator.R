@@ -1,7 +1,7 @@
 # wps.des: test_calculator, process for misusing R as a calculator;
 
-# wps.in: a, integer, value=1;
-# wps.in: b, integer, value=1;
+# wps.in: a, double, value=1;
+# wps.in: b, double, value=1;
 # wps.in: op, string, value=+;
 
 # wps.off;
