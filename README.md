@@ -45,6 +45,8 @@ Due to licensing issues all [GeoTools](http://www.geotools.org/) based input/out
 $ mvn clean install -P with-geotools
 ```
 
+To run your project in Eclipse with geotools support using the WTP plug-in (52n-wps-webapp -> Run As -> Run on Server) add the profile to the Active Maven profiles in the project properties of 52n-wps-webapp (right click on the project, select "Maven", add `with-geotools` to the text field). 
+
 ### Non-default configuration file
 There are several ways to supply a `wps_config.xml` file:
 
