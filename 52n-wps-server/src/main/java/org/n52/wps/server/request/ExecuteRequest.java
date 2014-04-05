@@ -738,7 +738,9 @@ public class ExecuteRequest extends Request implements IObserver {
                 }
             }
 		}
-        return new ExecuteResponse(this);
+		
+		ExecuteResponse response = new ExecuteResponse(this);
+        return response;
 	}
     
 
