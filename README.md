@@ -76,6 +76,8 @@ The supplied value will override every other configuration.
 $ java [...] -Dwps.config.file=/path/to/external/file/that/will/be/used
 ```
 
+This works well with a server configuration in Eclipse WTP. Open the server editor, click "Open launch configuration" and add the property to the VM arguments. 
+
 ##### Using JNDI:
 
 The supplied value will override every other configuration except a possible system property. See the [Apache Tomcat documentation](https://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Environment Entries):
