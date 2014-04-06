@@ -264,6 +264,7 @@ public class WPSConfig implements Serializable {
     private static List<WPSConfigFileStrategy> getWPSConfigFileStrategies() {
         return ImmutableList.of(new SystemPropertyStrategy(),
                                 new JNDIContextStrategy(),
+                                new HomeFolderStrategy(),
                                 new InitParameterStrategy(),
                                 new RelativeInitParameterStrategy(),
                                 new DefaultPathStrategy(),
@@ -651,6 +652,13 @@ public class WPSConfig implements Serializable {
             }
             LOGGER.info(path);
             return path;
+        }
+    }
+
+    private static class HomeFolderStrategy extends WPSConfigFileStrategy {
+        @Override
+        protected String getPath(Optional<ServletConfig> servletConfig) {
+            return System.getProperty("user.home") + File.separator + CONFIG_FILE_NAME;
         }
     }
 }
