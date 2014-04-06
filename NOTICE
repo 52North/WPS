@@ -148,7 +148,6 @@ This project includes:
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
-  jsr173_api under BEA license, http://svn.apache.org/repos/asf/beehive/trunk/LICENSE.jsr173-api
   JTA 1.1 under The Apache Software License, Version 2.0
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
