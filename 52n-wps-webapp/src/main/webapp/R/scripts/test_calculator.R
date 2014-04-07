@@ -1,4 +1,4 @@
-# wps.des: test_calculator, process for misusing R as a calculator;
+# wps.des: test.calculator, process for misusing R as a calculator;
 
 # wps.in: a, double, value=1;
 # wps.in: b, double, value=1;

@@ -4,7 +4,7 @@
 
 # Based on Sweave file from http://users.stat.umn.edu/~geyer/Sweave/#exam
 
-#wps.des: sweaveFoo, Creates a pdf report based on a simple Sweave file;
+#wps.des: test.sweaveFoo, Creates a pdf report based on a simple Sweave file;
 #wps.in: dummy, integer, value = 0;
 #wps.out: report, pdf, Sweave output file;
 #wps.out: report_source, string, Report source file;
