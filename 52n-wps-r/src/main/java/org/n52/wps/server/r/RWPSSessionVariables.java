@@ -26,8 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
+/**
+ * 
+ * names of the variables that are put into the R session prior to execution of a script.
+ * 
+ * TODO: create a complex object called "wps" with the slots processDescriptionLink, serverRuntime (52N WPS
+ * build version), serverName, resourceBaseUrl, scriptBaseUrl, ...
+ * 
+ * @author Daniel
+ * 
+ */
 public class RWPSSessionVariables {
 
     public static final String PROCESS_DESCRIPTION = "wpsProcessDescription";

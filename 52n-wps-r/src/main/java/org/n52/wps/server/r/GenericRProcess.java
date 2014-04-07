@@ -87,6 +87,7 @@ import org.n52.wps.server.r.util.RLogger;
 import org.n52.wps.server.r.util.RSessionInfo;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RFileInputStream;
 import org.rosuda.REngine.Rserve.RFileOutputStream;
@@ -463,10 +464,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             REXPMismatchException,
             ExceptionReport {
         log.debug("[R] preparing workspace...");
-
+        
         RLogger.logGenericRProcess(rCon,
                                    "Running algorithm with input "
                                            + Arrays.deepToString(inputData.entrySet().toArray()));
+        log.debug("[R] Rengine: {}", REngine.getLastEngine());
+        log.debug("[R] R server version: {}", rCon.getServerVersion());
 
         log.debug("[R] cleaning session.");
         // ensure that session is clean;
@@ -695,17 +698,29 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private void loadWPSSessionVariables(RConnection rCon) throws RserveException, RAnnotationException {
         R_Config config = R_Config.getInstance();
+        
+        // rCon.eval("test.env <- new.env()");
+        // rCon.eval("assign('var', 100, envir=test.env)");
+        // rCon.eval("cat('grp here\n')");
+        // rCon.eval("print(get('var', envir=test.env))");
+        // rCon.eval("lasttry <<- \"lalaaaa\"");
+         rCon.eval("assign(\"bar\", \"in baz\", envir = .GlobalEnv)");
+         rCon.eval("print(bar)");
+
+        RLogger.log(rCon, "Environments:");
+        rCon.eval("environment()");
 
         // assign link to resource folder to an R variable
         String cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- TRUE";
         rCon.eval(cmd);
         log.debug("[R] {}", cmd);
-
+        RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER_NAME);
+        
         rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
-        // should have the same result as rCon.eval(resourceUrl <- "lala");
-        log.debug("[R] assigned resource directory to variable '{}' --> {}",
+        log.debug("[R] assigned resource directory to variable '{}': {}",
                   RWPSSessionVariables.RESOURCE_URL_NAME,
                   config.getResourceDirURL());
+        RLogger.logVariable(rCon, RWPSSessionVariables.RESOURCE_URL_NAME);
 
         List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
         String wpsScriptResources = null;
@@ -713,24 +728,30 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // Assign and concatenate lists of resources given by the
         // resourse-Annotations
         wpsScriptResources = "list()";
-        rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " = " + wpsScriptResources);
+        rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " <- " + wpsScriptResources);
         for (RAnnotation annotation : resAnnotList) {
             wpsScriptResources = annotation.getStringValue(RAttribute.NAMED_LIST_R_SYNTAX);
-            rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " = " + "append("
+            rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " <- " + "append("
                     + RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + ", " + wpsScriptResources + ")");
         }
 
-        log.debug("[R] assigned recource urls to variable '{}' --> {}",
+        log.debug("[R] assigned recource urls to variable '{}': {}",
                   RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES,
                   wpsScriptResources);
+        RLogger.logVariable(rCon, RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES);
 
         String processDescription = R_Config.getInstance().getUrlPathUpToWebapp()
                 + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
 
         rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
-        log.debug("[R] assigned process description to variable '{}' --> {}",
+        RLogger.logVariable(rCon, RWPSSessionVariables.PROCESS_DESCRIPTION);
+        
+        log.debug("[R] assigned process description to variable '{}': {}",
                   RWPSSessionVariables.PROCESS_DESCRIPTION,
                   processDescription);
+        
+        RLogger.log(rCon, "workspace content after loading session variables:");
+        rCon.eval("ls()");
     }
 
     private void loadUtilityScripts(RConnection rCon) throws RserveException,
