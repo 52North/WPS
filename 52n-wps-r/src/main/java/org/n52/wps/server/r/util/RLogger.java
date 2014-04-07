@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.util;
 
 import java.text.DateFormat;
@@ -42,9 +43,7 @@ public class RLogger {
 
     private static DateFormat format = DateFormat.getDateTimeInstance();
 
-    public static void logGenericRProcess(RConnection rCon,
-            String message)
-    {
+    public static void logGenericRProcess(RConnection rCon, String message) {
         String msg = prepareMessage(message);
 
         StringBuilder evalString = new StringBuilder();
@@ -56,34 +55,63 @@ public class RLogger {
 
         try {
             rCon.eval(evalString.toString());
-        } catch (RserveException e) {
+        }
+        catch (RserveException e) {
             LOGGER.warn("Could not log message '" + msg + "'", e);
         }
     }
 
-    public static void log(RConnection rCon,
-            String message)
-    {
+    public static void log(RConnection rCon, String message) {
         String msg = prepareMessage(message);
 
         StringBuilder evalString = new StringBuilder();
-        evalString.append("cat(\"[WPS4R @ ");
-        evalString.append(format.format(new Date(System.currentTimeMillis())));
-        evalString.append("] ");
+        evalString.append("cat(");
+        appendPre(evalString);
+        evalString.append(" ");
         evalString.append(msg);
         evalString.append("\\n\")");
 
+        logIt(rCon, evalString);
+    }
+
+    private static void logIt(RConnection rCon, StringBuilder evalString) {
         try {
             rCon.eval(evalString.toString());
-        } catch (RserveException e) {
-            LOGGER.warn("Could not log message '" + msg + "'", e);
+        }
+        catch (RserveException e) {
+            LOGGER.warn("Could not log message '{}'", evalString.toString(), e);
         }
     }
 
-    private static String prepareMessage(String message)
-    {
+    private static void appendPre(StringBuilder evalString) {
+        evalString.append("\"[WPS4R @ ");
+        evalString.append(format.format(new Date(System.currentTimeMillis())));
+        evalString.append("]");
+    }
+
+    private static String prepareMessage(String message) {
         // return message.replace("\"", "\\\"");
         return new String(message);
+    }
+
+    public static void logVariable(RConnection rCon, String var) {
+        StringBuilder evalString = new StringBuilder();
+        evalString.append("cat(");
+        appendPre(evalString);
+        evalString.append("\"");
+        evalString.append(", ");
+        
+        evalString.append("\"");
+        evalString.append(var);
+        evalString.append(" =\", ");
+        
+        evalString.append("toString(");
+        evalString.append(var);
+        evalString.append(")");
+        
+        evalString.append(", \"");
+        evalString.append("\\n\")");
+        logIt(rCon, evalString);
     }
 
 }
