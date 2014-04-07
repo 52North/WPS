@@ -2,7 +2,8 @@
 # Author: Matthias Hinz
 ###############################################################################
 
-# wps.des: simpleExample, title = A Simple WPS Process, abstract = Example Calculation with R;
+# wps.des: demo.uniform.simple, title = A Simple WPS Process,
+# abstract = Example Calculation with R;
 # wps.in: input, integer;
 # wps.out: output, double;
 

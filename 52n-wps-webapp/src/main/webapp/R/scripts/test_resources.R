@@ -1,4 +1,4 @@
-# wps.des: test_resources, "Resources-Tester", abstract="A test script to demonstrate how resources are handled by wps4r", author = "Matthias Hinz";
+# wps.des: test.resources, "Resources-Tester", abstract="A test script to demonstrate how resources are handled by wps4r", author = "Matthias Hinz";
 # wps.in: inputDummy, string, "Input-Dummy", value="Dummy input value";
 #wps.resource: test/dummy1.txt, test/dummy2.png;
 
