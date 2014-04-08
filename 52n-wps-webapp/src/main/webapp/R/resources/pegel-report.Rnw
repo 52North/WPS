@@ -3,10 +3,14 @@
 % Author: Daniel Nuest (d.nuest@52north.org)
 \documentclass{article}
 
+% page margins: http://www.sharelatex.com/learn/Page_size_and_margins
+\usepackage[a4paper, margin=2cm]{geometry}
+
 \usepackage{graphicx, verbatim}
 \usepackage[utf8]{inputenc}
 \usepackage{hyperref}
 \usepackage{soul} % for \hl
+\usepackage{pbox} % for new line in table
 % \usepackage[section]{placeins}
 % \usepackage{placeins} % for \FloatBarrier
 
@@ -23,6 +27,7 @@
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
+% overall graphics size
 \setkeys{Gin}{width=.5\linewidth}
 
 % http://www.math.montana.edu/~jimrc/classes/Rseminar/SweaveIntro.html
@@ -40,6 +45,8 @@
 library("sos4R")
 library("latticeExtra")
 library("quantreg")
+library(maps); library(mapdata); library(maptools);
+library("sp"); library("rgdal")
 @
 
 
@@ -61,16 +68,42 @@ if(exists("offering_name")) {
 if(exists("procedure_filter")) {
 	cat("[pegel] Found param procedure_filter: ", procedure_filter, "\n")		
 } else {
+	# http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos?REQUEST=GetCapabilities&SERVICE=SOS
 	procedure_filter <- "*Wasserstand-Bake*"
+	#procedure_filter <- "*Papenburg*"
+}
+
+if(exists("process_description_url")) {
+	cat("[pegel] Found process description URL: ", process_description_url, "\n")		
+} else {
+	process_description_url <- "N/A"
 }
 			
 cat("[pegel] Input values:\n\tdays=", tPeriod_days, "\n\toffering=", offering_name, "\n\tprocedure filter=", procedure_filter, "\n")
 @
 
+<<label=helpers, echo=FALSE, results=HIDE>>=
+cleanName <- function(obj) {
+	.name <- toString(obj)
+	.cleaned <- gsub("_", " ", .name)
+	return(.cleaned)
+}
+# to check the output use cat(cleanName(sensors))
+@
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<label=metadata_service, echo=FALSE, results=hide>>=
-pegelsos <- SOS(url = "http://pegelonline.wsv.de/webservices/gis/gdi-sos")
+#pegelsos <- SOS(url = "http://pegelonline.wsv.de/webservices/gis/gdi-sos")
+
+converters <- SosDataFieldConvertingFunctions(
+	"WASSERSTAND_ROHDATEN" = sosConvertDouble,
+	"LUFTTEMPERATUR" = sosConvertDouble,
+	"Wasserstand" = sosConvertDouble,
+	"m+NN" = sosConvertDouble)
+
+pegelsos <- SOS(url = "http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos",
+								dataFieldConverters = converters)
 
 procs <- sosProcedures(pegelsos)[[offering_name]]
 
@@ -86,12 +119,15 @@ cat("[pegel] sensors: ", toString(sensors), "\n")
 offering <- sosOfferings(pegelsos)[[offering_name]]
 observed_property <- sosObservedProperties(offering)[1]
 
-sensors <- sensors[1]
-sensors.sml <- describeSensor(sos=pegelsos,procedure=sensors)
+# just use the first one
+sensor <- sensors[1]
+cat("[pegel] continuing with procedure: ", toString(sensor), "\n")
+sensor.sml <- describeSensor(sos = pegelsos, procedure = sensor)
 @
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Pegelanalyse für Messtation(en) \Sexpr{toString(sensors.string)}}
+\section{Pegelanalyse für Messtation(en) \Sexpr{cleanName(sensor)}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Metadaten}
@@ -105,13 +141,16 @@ sensors.sml <- describeSensor(sos=pegelsos,procedure=sensors)
 Service Title & \Sexpr{sosTitle(pegelsos)} \\
 Service Abstract & \Sexpr{sosAbstract(pegelsos)} \\
 Service Version & \Sexpr{sosVersion(pegelsos)} \\
-Service Capabilities & \Sexpr{sosUrl(pegelsos)} \\
+Service URL & \Sexpr{sosUrl(pegelsos)} \\
+Keywords & \Sexpr{cleanName(toString(pegelsos@capabilities@identification@keywords$Keywords.Keyword))} \\
+ & \href{\Sexpr{sosCapabilitiesUrl(pegelsos)}}{Capabilities} \\
 \hline
-Provider & \Sexpr{sosServiceProvider(pegelsos)@providerName} (\href{sosServiceProvider(pegelsos)@providerSite}{Website}) \\
+Provider Name & \Sexpr{sosServiceProvider(pegelsos)@providerName} \\
+Provider Site & \Sexpr{sosServiceProvider(pegelsos)@providerSite} \\
 \hline
-Offering ID & \Sexpr{sosId(offering)} \\ % gsub("_", " \\\_", sosId(offering))
+Offering ID & \Sexpr{cleanName(sosId(offering))} \\
 Offering Name & \Sexpr{sosName(offering)} \\
-Observed Property & \Sexpr{toString(observed_property)} \\
+Observed Property & \Sexpr{cleanName(observed_property)} \\
 \hline
 
 \end{tabular}
@@ -119,6 +158,64 @@ Observed Property & \Sexpr{toString(observed_property)} \\
 \label{tab:service_metadata}
 \end{table}
 % \FloatBarrier
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Messstation}
+
+Der Sensor \Sexpr{cleanName(sensor)} befindet sich an den Koordinaten $\Sexpr{sosCoordinates(sensor.sml)}$. Die rohe Sensorbeschreibung lautet wie folgt.
+
+%<<station,echo=TRUE,results=verbatim>>=
+%sensor.sml
+%@
+
+% http://en.wikibooks.org/wiki/LaTeX/Tables
+\begin{table}[H]
+\centering
+\begin{tabular}{l|l}
+
+\hline
+Station ID & \Sexpr{cleanName(sosId(sensor.sml))} \\
+Station Name & \Sexpr{cleanName(sosName(sensor.sml))} \\
+Station Description & \Sexpr{cleanName(sosAbstract(sensor.sml))} \\
+Observed Area & $ \Sexpr{toString(sosBoundedBy(sensor.sml))} $ (lon min, lat min, lon max, lat max)\footnote{Projektionsparameter: \Sexpr{cleanName(CRSargs(sosGetCRS(sensor.sml)))}} \\
+\hline
+
+\end{tabular}
+\caption{Messstation Metadaten}
+\label{tab:station_metadata}
+\end{table}
+% \FloatBarrier
+
+% TODO plot station location
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<<label=plotstation, echo=FALSE, results=hide, fig=TRUE>>=
+
+# CRS
+sensor.crs <- sosGetCRS(sensor.sml)
+worldHigh <- pruneMap(map(database = "worldHires", region = "Germany",
+plot = FALSE))
+worldHigh_Lines <- map2SpatialLines(worldHigh, proj4string = sensor.crs)
+plot(worldHigh_Lines, col = "grey50")
+proj4string(worldHigh_Lines)
+
+sensor.point <- SpatialPoints(coords = sosCoordinates(sensor.sml),
+																			 proj4string = sosGetCRS(sensor.sml))
+plot(sensor.point, cex=1, pch = 3, add = TRUE)
+
+# data(world.cities)
+# map.cities(label = TRUE, pch = 19, col = "black")
+
+map.axes()
+map.scale()
+title(main = paste0("Messstation ", sosName(sensor.sml)))
+
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Analyse}
+
+Im folgenden wird eine einfach Zeitreihenanalyse für die vorliegende Messstation durchgeführt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Analyserahmen}
@@ -134,8 +231,10 @@ tPeriod <- sosCreateEventTimeList(
 cat("[pegel] time period: ", toString(tPeriod[[1]]), "\n")
 @
 
-Die folgenden Analysen umfassen einen Zeitraum von \Sexpr{tPeriod_days} Tagen vor Erstellungszeit diese Dokumentes (\Sexpr{tPeriod.end}).
+Die Analysen umfassen einen Zeitraum von \Sexpr{tPeriod_days} Tagen vor Erstellungszeit diese Dokumentes (\Sexpr{tPeriod.end}).
 
+
+% do analysis here so that result metadata can be used
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 <<label=request, echo=FALSE, results=hide>>=
 pegelObs <- getObservation(sos = pegelsos,
@@ -155,11 +254,11 @@ range(r1clean$Wasserstand)
 \begin{tabular}{l|l}
 
 \hline
-Messgröße & \Sexpr{observed_property} \\
-Messeinheit & \Sexpr{toString(sosUOM(r1))} \\
-Zeitinterval & \Sexpr{range(r1clean$SamplingTime)} \\
-Werteintervall & \Sexpr{range(r1clean$Wasserstand)} \\
-Werteanzahl & \Sexpr{observed_property.numberOfValues} \\
+Messgröße & \Sexpr{cleanName(names(r1))} \\
+Messeinheit & \Sexpr{cleanName(sosUOM(r1))} \\
+Zeitinterval & $ \Sexpr{range(r1clean$SamplingTime)[1]} $ bis $ \Sexpr{range(r1clean$SamplingTime)[2]} $ \\
+Werteintervall & $ \Sexpr{range(r1clean$Wasserstand)} $ \\
+Werteanzahl & $ \Sexpr{cleanName(dim(r1clean)[1])} $ \\
 \hline
 
 \end{tabular}
@@ -170,34 +269,32 @@ Werteanzahl & \Sexpr{observed_property.numberOfValues} \\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Analyse}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-<<label=plot, echo=FALSE, results=hide>>=
+<<label=plotcode, echo=TRUE, results=hide>>=
 r1plot <- xyplot(r1clean$Wasserstand ~ r1clean$SamplingTime, r1clean, type = "l",
-								 col = "grey", xlab = "Time", ylab = "Wasserstand")
+	col = "grey", xlab = "Time", ylab = "Wasserstand")
 
 r1plot <- r1plot + layer(panel.quantile(x, y, tau = c(.95, .5, .05)))
-# show(r1plot)
 @
 
-Die folgende Analyse wurde durchgeführt: ...
+Die folgende Analyse wurde durchgeführt: Plot a quantile regression line with standard error bounds, using the quantreg package. This is based on the stat\_quantile function from ggplot2.
 
-% http://users.aims.ac.za/~davidw/David_Wakyiku_sweavecs.pdf
+% Sweave cheat sheet: http://users.aims.ac.za/~davidw/David_Wakyiku_sweavecs.pdf
 \begin{figure}[h!]
   \centering
 
-<<label=plot, echo=FALSE, fig=TRUE, eval=FALSE>>=
-show(r1plot)
+<<label=plot, echo=FALSE, fig=TRUE>>=
+r1plot
 @
 
 	% http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions
 % 	\includegraphics[width=0.9\textwidth]{pegel-plot.pdf}
 
-	\caption{\Sexpr{toString(sensors.string)} with quantile regression line and error bounds.}
+	\caption{Werte für \Sexpr{cleanName(sensor)} mit Quantile-basierter Regressionslinie und Fehlerintervall.}
 \label{fig:QuantileRegression}
 \end{figure}
+
+
+% TODO more analysis, e.g. outlier detection, check for missing values, ...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -214,7 +311,8 @@ toLatex(sessionInfo())
 
 \subsection{Code}
 
-Die original \href{http://de.wikipedia.org/wiki/Sweave}{Sweave}-Datei dieses Dokumentes kann \href{resource_url_rnw_file}{hier} heruntergeladen werden. Sie enthält den gesamten Code der Analyse. Download der Prozessbeschreibung \href{\Sexpr{process_description_url}}{hier}.
+Die originale \href{http://de.wikipedia.org/wiki/Sweave}{Sweave}-Datei dieses Dokumentes kann \href{resource_url_rnw_file}{hier} heruntergeladen werden. Sie enthält den gesamten Code der Analyse. Download der Prozessbeschreibung \href{\Sexpr{process_description_url}}{hier}.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Kontakt}
@@ -226,7 +324,7 @@ Daniel Nüst, \href{mailto:d.nuest@52north.org}{d.nuest@52north.org}.
 Dieses Dokument ist unter einer der Creative Commons Attribution-ShareAlike 3.0 Unported (CC-BY-SA 3.0) Lizenz veröffentlicht.
 
 \begin{center}
-\includegraphics[width=88]{cc-by-sa.png}
+\includegraphics[width=60px]{cc-by-sa.png}
 \end{center}
 
  
