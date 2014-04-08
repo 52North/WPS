@@ -1,18 +1,13 @@
 
-$(document).ready(function(){  
-  $("#link_processdescription").attr("href", "../../WebProcessingService?Request=DescribeSensor&Service=WPS&version=1.0.0&Identifier=" + processIdentifier);
-  //alert($("#link_processdescription").attr("href"));
-});
-
 var offering = 'WASSERSTAND_ROHDATEN';
 var stationname = 'Bake';
+var processIdentifier = 'org.n52.wps.server.r.demo.timeseriesPlot';
+var outputIdentifier = 'timeseries_plot';
 
 var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan, requestedStationname) {
 	var imageWidth = '700';
 	var imageHeight = '500';
 	var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
-	var processIdentifier = 'org.n52.wps.server.r.timeseriesPlot';
-	var outputIdentifier = 'timeseries_plot';
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
@@ -170,3 +165,8 @@ $(function() {
 								+ "<br />Exception: " + exception + "</div>");
 			});
 });
+
+$(document).ready(function(){  
+	  $("#link_processdescription").attr("href", "../../WebProcessingService?Request=DescribeSensor&Service=WPS&version=1.0.0&Identifier=" + processIdentifier);
+	  //alert($("#link_processdescription").attr("href"));
+	});
