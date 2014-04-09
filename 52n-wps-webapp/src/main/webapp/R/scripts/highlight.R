@@ -14,7 +14,12 @@ myLog("Start script... ")
 
 tmpfile <- "rcode.txt"
 
-download.file(url = rcodeurl, destfile = tempfile)
+#wps.off;
+rcodeurl <- "http://localhost:8080/wps/R/scripts/test_calculator.R"
+#wps.on;
+download.file(url = rcodeurl, destfile = tmpfile)
+
+myLog("Downloaded script file to ", tmpfile, " in ", getwd())
 
 # wps.off;
 rcode <- 'highlight(code = rcode, format = "html",
@@ -31,8 +36,7 @@ h <- highlight(file = tmpfile, output = html, format = "html",
 							 detective = simple_detective,
 							 renderer = renderer_html( document = TRUE ),
 							 parser.output = parser(input, encoding = "UTF-8"))
+myLog("Saved to file ", html, " in ", getwd())
 
-# wps.out: html, type = text,
-# abstract = "highlighted html code"; 
-
-myLog("Saved to file ", hcode, " in ", getwd())
+# wps.out: html, type = text/html,
+# abstract = "highlighted html code";
