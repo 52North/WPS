@@ -7,14 +7,9 @@
 #wps.des: test.sweaveFoo, Creates a pdf report based on a simple Sweave file;
 #wps.in: dummy, integer, value = 0;
 #wps.out: report, pdf, Sweave output file;
-#wps.out: report_source, string, Report source file;
 #wps.resource: sweave-foo.Rnw, Sweave.sty;
 
 rnw_file <- "sweave-foo.Rnw"
-resource_url_rnw_file <- paste0(wpsResourceURL, "/", rnw_file)
-
-# download file from resources - alternative TODO: server copies resources to workdir
-download.file(resource_url_rnw_file, rnw_file)
 
 # generate report
 Sweave(rnw_file)
@@ -22,4 +17,3 @@ Sweave(rnw_file)
 library(tools)
 texi2dvi("sweave-foo.tex", pdf = TRUE)
 report <- "sweave-foo.pdf"
-report_source <- resource_url_rnw_file

@@ -9,14 +9,6 @@
 <link rel="stylesheet"
 	href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
 
-<script type="text/javascript"
-	src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-<script type="text/javascript"
-	src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
-
-<script type="text/javascript" src="reporting.js"></script>
-<script type="text/javascript" src="wps-client-common.js"></script>
-
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
 </head>
@@ -41,11 +33,9 @@
 			<fieldset data-role="controlgroup" data-type="horizontal">
 				<p>
 					<input type="radio" name="radio-content" id="radio-pegel"
-						value="org.n52.wps.server.r.pegel-report" checked="checked" /> <label
-						for="radio-pegel">Pegel Report</label> <input type="radio"
-						name="radio-content" id="radio-foo"
-						value="org.n52.wps.server.r.sweave-foo" /> <label for="radio-foo">Sweave
-						Foo</label>
+						value="pegel" checked="checked" /> <label for="radio-pegel">Pegel
+						Report</label> <input type="radio" name="radio-content" id="radio-foo"
+						value="sweave" /> <label for="radio-foo">Sweave Foo</label>
 				</p>
 			</fieldset>
 
@@ -108,12 +98,12 @@
 
 			<h2>Test Requests</h2>
 			<ul>
-				<li><a id="link_processdescription_pegel" href="http://localhost"
-					title="Open process description" target="_blank">Process
-						Description Request "Pegel"</a></li>
-				<li><a id="link_processdescription_sweavefoo" href="http://localhost"
-					title="Open process description" target="_blank">Process
-						Description Request "Sweave-Foo"</a></li>
+				<li><a id="link_processdescription_pegel"
+					href="http://localhost" title="Open process description"
+					target="_blank">Process Description Request "Pegel"</a></li>
+				<li><a id="link_processdescription_sweavefoo"
+					href="http://localhost" title="Open process description"
+					target="_blank">Process Description Request "Sweave-Foo"</a></li>
 				<li><a
 					href="./WebProcessingService?Request=GetCapabilities&amp;Service=WPS">GetCapabilities
 						Request</a></li>
@@ -125,6 +115,16 @@
 		</div>
 	</div>
 	<!-- /about page -->
+
+	<script type="text/javascript"
+		src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript"
+		src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+
+	<script type="text/javascript" src="reporting.js"></script>
+	<script type="text/javascript" src="wps-client-common.js"></script>
+
+
 
 </body>
 </html>
