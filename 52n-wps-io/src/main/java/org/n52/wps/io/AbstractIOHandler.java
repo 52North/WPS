@@ -62,7 +62,8 @@ public abstract class AbstractIOHandler implements IOHandler {
 	 * Returns true if the given format is supported, else false.
 	 */ 
 	public boolean isSupportedFormat(String format) {
-		for(String f : getSupportedFormats()) {
+	    String[] sf = getSupportedFormats();
+		for(String f : sf) {
 			if (f.equalsIgnoreCase(format)) {
 				return true;
 			}
