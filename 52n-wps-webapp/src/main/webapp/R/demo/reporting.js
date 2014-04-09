@@ -1,16 +1,17 @@
 var outputIdentifier = "report";
 
-var processIdentifier_pegel = "org.n52.wps.server.r.pegel-report";
-var processIdentifier_sweavefoo = "org.n52.wps.server.r.sweave-foo";
+var id2process = {
+	"pegel": "org.n52.wps.server.r.demo.pegelReport",
+	"sweave": "org.n52.wps.server.r.test.sweaveFoo"
+};
 
 $(document).ready(function(){  
-	  $("#link_processdescription_pegel").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + processIdentifier_pegel);
-	  $("#link_processdescription_sweavefoo").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + processIdentifier_sweavefoo);
-	  //alert($("#link_processdescription").attr("href"));
+	  $("#link_processdescription_pegel").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + id2process["pegel"]);
+	  $("#link_processdescription_sweavefoo").attr("href", "../../WebProcessingService?Request=DescribeProcess&Service=WPS&version=1.0.0&Identifier=" + id2process["sweave"]);
 	});
 
 
-var sendRequest = function(processId, outputId, outputSourceId, outputFormat) {
+var sendRequest = function(processId, outputId, outputFormat) {
 
 	var beforeOutput = '<?xml version="1.0" encoding="UTF-8"?>'
 			+ '<wps:Execute service="WPS" version="1.0.0" '
@@ -25,8 +26,6 @@ var sendRequest = function(processId, outputId, outputSourceId, outputFormat) {
 	var linkOutput = '<wps:ResponseDocument>'
 			+ '<wps:Output asReference="true">' + '<ows:Identifier>' + outputId
 			+ '</ows:Identifier>' + '</wps:Output>'
-			+ '<wps:Output asReference="false">' + '<ows:Identifier>'
-			+ outputSourceId + '</ows:Identifier>' + '</wps:Output>'
 			+ '</wps:ResponseDocument>';
 
 	var afterOutput = '</wps:ResponseForm>' + '</wps:Execute>';
@@ -69,12 +68,14 @@ var sendRequest = function(processId, outputId, outputSourceId, outputFormat) {
 		return;
 	}
 
-}
+};
 
 // http://stackoverflow.com/questions/10627051/jquery-ajax-pdf-response
 // http://stackoverflow.com/questions/1149454/non-ajax-get-post-using-jquery-plugin
 download = function(url, data, method) {
 	// url and data options required
+	console.log("Download now " + url);
+	
 	if (url && data) {
 		var form = $('<form />', {
 			action : url,
@@ -94,22 +95,21 @@ download = function(url, data, method) {
 		form.appendTo('body');
 		form.submit();
 	}
-
-	throw new Error('$.download(url, data) - url or data invalid');
+	else throw new Error('$.download(url, data) - url or data invalid');
 };
 
 var showResponse = function(executeResponse) {
-	var status = $(executeResponse).find("ns\\:Status");
-	var statusText = $(status).find("ns\\:ProcessSucceeded").text();
+	var status = $(executeResponse).find("wps\\:Status");
+	var statusText = $(status).find("wps\\:ProcessSucceeded").text();
 	$("#resultLog").html("<div class=\"success\">" + statusText + "</div>");
 
 	var message = "";
 
-	$(executeResponse).find("ns\\:Output").each(
+	$(executeResponse).find("wps\\:Output").each(
 			function() {
-				var title = $(this).find("ns1\\:Title").text();
+				var title = $(this).find("ows\\:Title").text();
 
-				$(this).find("ns\\:Reference").each(
+				$(this).find("wps\\:Reference").each(
 						function() {
 
 							var link = $(this).attr("href");
@@ -124,7 +124,7 @@ var showResponse = function(executeResponse) {
 							}
 						});
 
-				$(this).find("ns\\:LiteralData").each(
+				$(this).find("wps\\:LiteralData").each(
 						function() {
 
 							var value = $(this).text();
@@ -144,7 +144,7 @@ var showResponse = function(executeResponse) {
 			});
 
 	$("#report").html("<div class=\"success\">" + message + "</div>");
-}
+};
 
 $(function() {
 
@@ -154,7 +154,7 @@ $(function() {
 
 		$("#resultLog").html("Process: " + process + " | Format: " + format);
 
-		sendRequest(process, outputIdentifier, "report_source", format);
+		sendRequest(id2process[process], outputIdentifier, format);
 	});
 
 	$("#resultLog").ajaxError(
