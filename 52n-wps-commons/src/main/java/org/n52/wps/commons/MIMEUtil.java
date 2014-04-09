@@ -47,8 +47,8 @@ public class MIMEUtil {
 			suffix = "zip";
 		} else if ("text/plain".equals(mimeType)) {
 			suffix = "txt";
-		} else if ("text/plain".equals(mimeType)) {
-			suffix = "txt";
+		} else if ("text/html".equals(mimeType)) {
+			suffix = "html";
 		}
 		return suffix;
 	}
