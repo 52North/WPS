@@ -698,11 +698,16 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         RLogger.log(rCon, "Environment:");
         rCon.eval("environment()");
 
-        // assign link to resource folder to an R variable
-        String cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- TRUE";
+        String cmd = RWPSSessionVariables.WPS_SERVER + " <- TRUE";
+        rCon.eval(cmd);
+        log.debug("[R] {}", cmd);
+        RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER);
+        
+        cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
         rCon.eval(cmd);
         log.debug("[R] {}", cmd);
         RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER_NAME);
+
 
         rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
         log.debug("[R] assigned resource directory to variable '{}': {}",
