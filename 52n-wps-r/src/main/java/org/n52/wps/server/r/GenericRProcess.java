@@ -237,8 +237,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
                 r_basedir = prepareWorkspace(inputData, rCon, workDir);
 
-                loadWPSSessionVariables(rCon);
                 loadUtilityScripts(rCon);
+                loadWPSSessionVariables(rCon);
                 loadInputValues(inputData, rCon);
                 loadResources(rCon);
 
@@ -412,10 +412,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
         log.debug("Assigns: {}", Arrays.toString(inputValues.entrySet().toArray()));
 
-        // delete help variables and utility functions from workspace:
-        log.debug("[R] remove utility functions.");
-        rCon.eval("rm(list = ls())");
-
         // assign values to the (clean) workspace:
         log.debug("[R] assign values.");
         Iterator<Map.Entry<String, String>> inputValuesIterator = inputValues.entrySet().iterator();
@@ -464,7 +460,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             REXPMismatchException,
             ExceptionReport {
         log.debug("[R] preparing workspace...");
-        
+
         RLogger.logGenericRProcess(rCon,
                                    "Running algorithm with input "
                                            + Arrays.deepToString(inputData.entrySet().toArray()));
@@ -698,14 +694,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private void loadWPSSessionVariables(RConnection rCon) throws RserveException, RAnnotationException {
         R_Config config = R_Config.getInstance();
-        
+
         // rCon.eval("test.env <- new.env()");
         // rCon.eval("assign('var', 100, envir=test.env)");
         // rCon.eval("cat('grp here\n')");
         // rCon.eval("print(get('var', envir=test.env))");
         // rCon.eval("lasttry <<- \"lalaaaa\"");
-         rCon.eval("assign(\"bar\", \"in baz\", envir = .GlobalEnv)");
-         rCon.eval("print(bar)");
+        rCon.eval("assign(\"bar\", \"in baz\", envir = .GlobalEnv)");
+        rCon.eval("print(bar)");
 
         RLogger.log(rCon, "Environments:");
         rCon.eval("environment()");
@@ -715,7 +711,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         rCon.eval(cmd);
         log.debug("[R] {}", cmd);
         RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER_NAME);
-        
+
         rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
         log.debug("[R] assigned resource directory to variable '{}': {}",
                   RWPSSessionVariables.RESOURCE_URL_NAME,
@@ -745,11 +741,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
         RLogger.logVariable(rCon, RWPSSessionVariables.PROCESS_DESCRIPTION);
-        
+
         log.debug("[R] assigned process description to variable '{}': {}",
                   RWPSSessionVariables.PROCESS_DESCRIPTION,
                   processDescription);
-        
+
         RLogger.log(rCon, "workspace content after loading session variables:");
         rCon.eval("ls()");
     }
