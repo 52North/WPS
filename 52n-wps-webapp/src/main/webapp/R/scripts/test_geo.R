@@ -37,10 +37,10 @@ myLog("Wrote shapefile meuse.shp")
 ###############################################################################
 # raster output
 data(meuse.grid)
-coordinates(meuse.grid) = ~x+y
+coordinates(meuse.grid) <- ~x+y
 proj4string(meuse.grid) <- CRS("+init=epsg:28992")
-gridded(meuse.grid) = TRUE
-spplot(meuse.grid)
+gridded(meuse.grid) <- TRUE
+#spplot(meuse.grid)
 
 raster_filename <- paste0(filename, "_raster.tif")
 meuse_raster <- writeGDAL(meuse.grid["dist"], fn = raster_filename, drivername = "GTiff")

@@ -702,12 +702,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         rCon.eval(cmd);
         log.debug("[R] {}", cmd);
         RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER);
-        
+
         cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
         rCon.eval(cmd);
         log.debug("[R] {}", cmd);
         RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER_NAME);
-
 
         rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
         log.debug("[R] assigned resource directory to variable '{}': {}",
@@ -979,25 +978,27 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         String filename = new File(result.asString()).getName();
 
         if (iClass.equals(GenericFileDataBinding.class)) {
-            log.debug("Creating output with GenericFileDataBinding");
+            log.debug("Creating output with GenericFileDataBinding for file {}", filename);
             String mimeType = "application/unknown";
 
             File resultFile = new File(filename);
-
             log.debug("Loading file " + resultFile.getAbsolutePath());
 
             if ( !resultFile.isAbsolute())
-                // relative path names are alway relative to R work directory
+                // relative path names are relative to R work directory
                 resultFile = new File(rCon.eval("getwd()").asString(), resultFile.getName());
+
+            if (resultFile.exists())
+                log.debug("Found file at {}", resultFile);
+            else
+                log.warn("Result file does not exists at {}", resultFile);
 
             // Transfer file from R workdir to WPS workdir
             File outputFile = null;
-            if ( !this.wpsWorkDirIsRWorkDir) {
+            if ( !this.wpsWorkDirIsRWorkDir)
                 outputFile = streamFromRserveToWPS(rCon, resultFile.getAbsolutePath(), workDir);
-            }
-            else {
+            else
                 outputFile = resultFile;
-            }
 
             if ( !outputFile.exists())
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
