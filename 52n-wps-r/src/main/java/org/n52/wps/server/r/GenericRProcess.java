@@ -695,15 +695,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private void loadWPSSessionVariables(RConnection rCon) throws RserveException, RAnnotationException {
         R_Config config = R_Config.getInstance();
 
-        // rCon.eval("test.env <- new.env()");
-        // rCon.eval("assign('var', 100, envir=test.env)");
-        // rCon.eval("cat('grp here\n')");
-        // rCon.eval("print(get('var', envir=test.env))");
-        // rCon.eval("lasttry <<- \"lalaaaa\"");
-        rCon.eval("assign(\"bar\", \"in baz\", envir = .GlobalEnv)");
-        rCon.eval("print(bar)");
-
-        RLogger.log(rCon, "Environments:");
+        RLogger.log(rCon, "Environment:");
         rCon.eval("environment()");
 
         // assign link to resource folder to an R variable
