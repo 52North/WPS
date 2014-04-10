@@ -43,7 +43,9 @@ public class RWPSSessionVariables {
 
     public static final String PROCESS_DESCRIPTION = "wpsProcessDescription";
 
-    public static final String WPS_SERVER_NAME = "wpsServer";
+    public static final String WPS_SERVER = "wpsServer";
+    
+    public static final String WPS_SERVER_NAME = "wpsServerName";
 
     public static String RESOURCE_URL_NAME = "wpsResourceURL";
 
