@@ -5,11 +5,18 @@ data(meuse)
 coordinates(meuse) <- ~x+y
 
 # wps.in: parameter, string, data variable, 
-# abstract = the data variable to plot, one of {copper, lead, zinc, elev},
+# abstract = the data variable to plot: one of {copper / lead / zinc / elev},
 # value = zinc;
 
-png(file = "output.png")
-spplot(meuse, parameter)
+#wps.off;
+parameter <- "zinc"
+setwd(tempdir())
+#wps.on;
+
+image <- "output.png"
+png(file = image)
+spplot(meuse, parameter, main = paste0("Meuse dataset, variable: ", parameter), sub = toString(Sys.time()))
 graphics.off()
+cat("Saved image ", image, " in ", getwd())
 
 # wps.out: image, png;

@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -53,7 +54,8 @@ import org.xml.sax.SAXException;
 
 /**
  * 
- * To run this integration tests there has to be RServe running on the localhost and the R repository must be enabled in the WPS config.
+ * To run this integration tests there has to be RServe running on the localhost and the R repository must be
+ * enabled in the WPS config.
  * 
  * To start RServe:
  * 
@@ -190,21 +192,19 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString("Test warning 4: This is a warning with some text."));
+        assertThat(response, containsString("This is the LAST warning."));
     }
 
     @Test
     public void decribeProcess() throws IOException, ParserConfigurationException, SAXException {
-        String identifier = "org.n52.wps.server.r.test_resources";
+        String identifier = "org.n52.wps.server.r.test.resources";
         String response = GetClient.sendRequest(wpsUrl, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier="
                 + identifier);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
         assertThat(response, containsString(identifier));
-
-        // TODO fix test: assertThat(response, containsString("<ows:Identifier>" + identifier +
-        // "</ows:Identifier>"));
+        assertThat(response, containsString("<ows:Identifier>" + identifier + "</ows:Identifier>"));
     }
 
     @Test
@@ -213,7 +213,9 @@ public class Wps4rIT {
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("org.n52.wps.server.r.test_resources"));
+        assertThat(response, containsString("org.n52.wps.server.r.test.resources"));
+        assertThat(response, containsString("org.n52.wps.server.r.test.calculator"));
+        assertThat(response, containsString("org.n52.wps.server.r.test.image"));
     }
 
     @Test
@@ -221,26 +223,11 @@ public class Wps4rIT {
         URL resource = Wps4rIT.class.getResource("/R/ExecuteTestImage.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
         String payload = xmlPayload.toString();
+        payload = payload.replace("@@@size@@@", "420");
 
         String response = PostClient.sendRequest(wpsUrl, payload);
         assertThat(response.split("\n", 1)[0], containsString("PNG"));
         assertThat(response, response, not(containsString("ExceptionReport")));
-    }
-
-    @Test
-    public void uniformIsExecuted() throws IOException, XmlException {
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestUniform.xml");
-        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
-        String payload = xmlPayload.toString();
-
-        String response = PostClient.sendRequest(wpsUrl, payload);
-        assertThat(response, response, containsString("Process successful"));
-        // output-specific:
-        assertThat(response, containsString("\"x\""));
-        assertThat(response, containsString("\"1\""));
-        assertThat(response, containsString("\"2\""));
-        assertThat(response, containsString("\"3\""));
-        assertThat(response, not(containsString("ExceptionReport")));
     }
 
     @Test
@@ -272,87 +259,9 @@ public class Wps4rIT {
         assertThat(response, containsString(Integer.toString(result)));
     }
 
-    // TODO add unit test for wps.off and wps.on annotations using a test script that contains various on/off
-    // statements.
+    @Test
+    public void wpsOffAnnotationWorks() {
 
-    // /*Complex XML Input by reference */
-    // @Test
-    // public void testExecutePOSTreferenceComplexXMLSynchronousXMLOutput()
-    // throws IOException, ParserConfigurationException, SAXException {
-    // System.out.println("\nRunning testExecutePOSTreferenceComplexXMLSynchronousXMLOutput");
-    // String payload =
-    // "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-    // +
-    // "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
-    // + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-    // +
-    // "<ows:Identifier>org.n52.wps.server.algorithm.SimpleBufferAlgorithm</ows:Identifier>"
-    // + "<wps:DataInputs>"
-    // + "<wps:Input>"
-    // + "<ows:Identifier>data</ows:Identifier>"
-    // +
-    // "<wps:Reference schema=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\" xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows?service=WFS&amp;version=1.0.0&amp;request=GetFeature&amp;typeName=topp:tasmania_roads\"/>"
-    // + "</wps:Input>"
-    // + "<wps:Input>"
-    // + "<ows:Identifier>width</ows:Identifier>"
-    // +
-    // "<ows:Title>Distance which people will walk to get to a playground.</ows:Title>"
-    // + "<wps:Data>"
-    // + "<wps:LiteralData>20</wps:LiteralData>"
-    // + "</wps:Data>"
-    // + "</wps:Input>"
-    // + "</wps:DataInputs>"
-    // + "<wps:ResponseForm>"
-    // + "<wps:ResponseDocument>"
-    // + "<wps:Output>"
-    // + "<ows:Identifier>result</ows:Identifier>"
-    // + "</wps:Output>"
-    // + "</wps:ResponseDocument>"
-    // + "</wps:ResponseForm>"
-    // + "</wps:Execute>";
-    // String response = PostClient.sendRequest(url, payload);
-    //
-    // assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-    // assertThat(response, response, not(containsString("ExceptionReport")));
-    // assertThat(response, response, containsString("LinearRing"));
-    // }
-    //
-    // /*Complex binary Input by value */
-    // // Disabled test due to heap size issues.
-    // @Test
-    // public void testExecutePOSTValueComplexBinarySynchronousBinaryOutput()
-    // throws IOException, ParserConfigurationException, SAXException {
-    // System.out.println("\nRunning testExecutePOSTValueComplexBinarySynchronousBinaryOutput");
-    // String payload =
-    // "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-    // +
-    // "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
-    // + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-    // +
-    // "<ows:Identifier>org.n52.wps.server.algorithm.raster.AddRasterValues</ows:Identifier>"
-    // + "<wps:DataInputs>"
-    // + "<wps:Input>"
-    // + "<ows:Identifier>dataset1</ows:Identifier>"
-    // +
-    // "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
-    // + "</wps:Reference>"
-    // + "</wps:Input>"
-    // + "<wps:Input>"
-    // + "<ows:Identifier>dataset2</ows:Identifier>"
-    // +
-    // "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m.tif\">"
-    // + "</wps:Reference>"
-    // + "</wps:Input>"
-    // + "</wps:DataInputs>"
-    // + "<wps:ResponseForm>"
-    // + "<wps:ResponseDocument status=\"true\" storeExecuteResponse=\"true\">"
-    // + "<wps:Output encoding=\"base64\" >"
-    // + "<ows:Identifier>result</ows:Identifier>"
-    // + "</wps:Output>"
-    // + "</wps:ResponseDocument>"
-    // + "</wps:ResponseForm>"
-    // + "</wps:Execute>";
-    // String response = PostClient.sendRequest(url, payload);
-    // AllTestsIT.validateBinaryBase64Async(response);
-    // }
+    }
+
 }
