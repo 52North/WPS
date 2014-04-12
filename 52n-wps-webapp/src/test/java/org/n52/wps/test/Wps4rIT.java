@@ -260,8 +260,29 @@ public class Wps4rIT {
     }
 
     @Test
-    public void wpsOffAnnotationWorks() {
+    public void wpsOffAnnotationWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestWpsOff.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+        String payload = xmlPayload.toString();
+        String response = PostClient.sendRequest(wpsUrl, payload);
 
+        String expected = "<wps:LiteralData dataType=\"xs:integer\">42</wps:LiteralData>";
+        assertThat("Returned value is sum of provided ones, not sum of values defined in deactivated code.",
+                   response,
+                   containsString(expected));
+    }
+    
+    @Test
+    public void defaultValuesAreLoaded() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestDefaults.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+        String payload = xmlPayload.toString();
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        String expected = "<wps:LiteralData dataType=\"xs:integer\">42</wps:LiteralData>";
+        assertThat("Returned value is sum of defaults, not sum of values defined in deactivated code.",
+                   response,
+                   containsString(expected));
     }
 
 }
