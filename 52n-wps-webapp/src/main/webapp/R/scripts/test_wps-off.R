@@ -1,14 +1,19 @@
 # wps.des: test.wpsOff, dummy process for testing wps.off annotations;
-# wps.resource: pegel-report.Rnw, sweave-foo.Rnw;
-# wps.off:
-a = 2
-b = 3
-c = 4
+
+# wps.off;
+a = 1
+b = 2
+c = 3
 # wps.on;
 
-# wps.in: a, integer, value = 2;
-# wps.in: b, integer, value = 3;
-# wps.in: c, integer, value = 1;
+# wps.in: id = a, type = integer, minOccurs = 1, maxOccurs = 1;
+# wps.in: id = b, type = integer, minOccurs = 1, maxOccurs = 1;
+# wps.in: id = c, type = integer, minOccurs = 1, maxOccurs = 1;
 
-out = a+b+c
-#wps.out: out, double, test result;
+out <- a + b + c
+
+#wps.off;
+out <- 42
+#wps.on;
+
+#wps.out: id = out, type = integer, title = sum of inputs;

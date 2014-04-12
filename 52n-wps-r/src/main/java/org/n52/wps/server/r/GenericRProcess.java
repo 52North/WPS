@@ -144,6 +144,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     private boolean debugScript = true;
 
     private boolean wpsWorkDirIsRWorkDir = true;
+    
+    @SuppressWarnings("unchecked")
+    private static List<Class< ? extends AbstractLiteralDataBinding>> easyLiterals = Arrays.asList(LiteralByteBinding.class,
+                                                                                    LiteralDoubleBinding.class,
+                                                                                    LiteralFloatBinding.class,
+                                                                                    LiteralIntBinding.class,
+                                                                                    LiteralLongBinding.class,
+                                                                                    LiteralShortBinding.class);
 
     public List<String> getErrors() {
         return this.errors;
@@ -406,9 +414,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
             String value = rAnnotation.getStringValue(RAttribute.DEFAULT_VALUE);
             Class< ? extends IData> iClass = getInputDataType(id);
-            // solution should be suitable for most literal input
-            // values:
-            inputValues.put(id, parseLiteralInput(iClass, value));
+            String inputValue = parseLiteralInput(iClass, value);
+            log.debug("Loaded input value '{}' for {}", inputValue, rAnnotation);
+            inputValues.put(id, inputValue);
         }
         log.debug("Assigns: {}", Arrays.toString(inputValues.entrySet().toArray()));
 
@@ -424,6 +432,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             log.debug("[R] running {}", statement);
             rCon.eval(statement);
         }
+        
+        RLogger.log(rCon, "workspace content after loading input values:");
+        rCon.eval("cat(capture.output(ls()), \"\n\")");
     }
 
     private void loadResources(RConnection rCon) throws RAnnotationException, ExceptionReport, IOException {
@@ -452,8 +463,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 log.debug("Loading resource " + resourceAnnotation);
                 streamFromWPSToRserve(rCon, resourceFile);
             }
-
         }
+        
+        
     }
 
     private String prepareWorkspace(Map<String, List<IData>> inputData, RConnection rCon, String workDir) throws RserveException,
@@ -743,7 +755,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                   processDescription);
 
         RLogger.log(rCon, "workspace content after loading session variables:");
-        rCon.eval("ls()");
+        rCon.eval("cat(capture.output(ls()), \"\n\")");
     }
 
     private void loadUtilityScripts(RConnection rCon) throws RserveException,
@@ -757,6 +769,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         for (File file : utils) {
             executeScript(new FileInputStream(file), rCon);
         }
+        
+        RLogger.log(rCon, "workspace content after loading utility scripts:");
+        rCon.eval("cat(capture.output(ls()), \"\n\")");
     }
 
     /**
@@ -913,33 +928,31 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         is.close();
     }
 
-    private String parseLiteralInput(Class< ? extends IData> iClass, Object value) {
-        String result = null;
-
-        List<Class< ? extends AbstractLiteralDataBinding>> easyLiterals = Arrays.asList(LiteralByteBinding.class,
-                                                                                        LiteralDoubleBinding.class,
-                                                                                        LiteralFloatBinding.class,
-                                                                                        LiteralIntBinding.class,
-                                                                                        LiteralLongBinding.class,
-                                                                                        LiteralShortBinding.class);
+    private String parseLiteralInput(Class< ? extends IData> iClass, Object defaultValue) {
+        String result;
+        if (defaultValue == null) {
+            log.warn("Default value for is null for {} - setting it to 'NA' in R.", iClass);
+            return "NA";
+        }
+        else
+            result = "\"" + defaultValue.toString() + "\"";
 
         if (easyLiterals.contains(iClass)) {
-            result = value.toString();
+            result = defaultValue.toString();
         }
         else if (iClass.equals(LiteralBooleanBinding.class)) {
-            if ((Boolean) value)
+            boolean b = Boolean.parseBoolean(defaultValue.toString());
+            if (b)
                 result = "TRUE";
             else
                 result = "FALSE";
         }
-        else {
-            if ( !iClass.equals(LiteralStringBinding.class)) {
-                String message = "An unsuported IData class occured for input: " + iClass
-                        + "it will be interpreted as character value within R";
-                log.warn(message);
-            }
-
-            result = "\"" + value + "\"";
+        else if (iClass.equals(LiteralStringBinding.class)) {
+            result = "\"" + defaultValue.toString() + "\"";
+        } else {
+            String message = "An unsuported IData class occured for input: " + iClass
+                    + "it will be interpreted as character value within R";
+            log.warn(message);
         }
 
         return result;
