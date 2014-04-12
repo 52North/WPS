@@ -17,3 +17,6 @@ Sweave(rnw_file)
 library(tools)
 texi2dvi("sweave-foo.tex", pdf = TRUE)
 report <- "sweave-foo.pdf"
+
+# directly run the process with
+# http://localhost:8080/wps/WebProcessingService?Request=Execute&Service=WPS&version=1.0.0&identifier=org.n52.wps.server.r.test.sweaveFoo&DataInputs=dummy%3D42
