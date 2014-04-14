@@ -6,70 +6,86 @@ library("sos4R")
 library("xts")
 
 myLog <- function(...) {
-	cat(paste0("[SosPlot] ", ..., "\n"))
+	cat(paste0("[timeseriesPlot] ", ..., "\n"))
 }
 
 myLog("Start script... ", Sys.time())
 
 # wps.off;
 
-# wps.des: id = PlotSOS, title = Plot SOS Time Series,
-# abstract = Accesses a SOS with sos4R and creates a plot with a fitted
+# wps.des: id = demo.timeseriesPlot, title = Plot SOS Time Series,
+# abstract = Accesses a SOS with sos4R and creates a plot with a fitted 
 # regression line;
 
 # wps.in: sos_url, string, title = SOS service URL,
 # abstract = SOS URL endpoint,
-# value = http://fluggs.wupperverband.de/sos/sos,
-# minOccurs = 0, maxOccurs = 1;
-sos_url <- "http://fluggs.wupperverband.de/sos/sos"
+# minOccurs = 1, maxOccurs = 1;
+sos_url <- "http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos"
 
 # wps.in: offering_id, type = string, title = identifier for the used offering,
-# value = Luft;
-offering_id <- "Luft"
+# minOccurs = 1, maxOccurs = 1;
+offering_id <- "WASSERSTAND_ROHDATEN"
 
-## wps.in: offering_id, type = string, title = identifier for the used offering,
-## value = Luft;
-##offering_property <- "Lufttemperatur"
+# wps.in: offering_stationname, type = string, 
+# title = string contained in identifier for the used offering,
+# minOccurs = 1, maxOccurs = 1;
+offering_stationname <- "Bake"
 
-# wps.in: offering_days, integer, temporal extent,
-# the number of days the plot spans to the past,
-# value = 10,
-# minOccurs = 0, maxOccurs = 1;
-offering_days <- 7
+# wps.in: offering_hours, integer, temporal extent,
+# the number of hours the plot spans to the past,
+# value = 24, minOccurs = 0, maxOccurs = 1;
+offering_hours <- 24
 
-# wps.in: offering_station, type = integer, title = identifier for the used offering,
-# value = 38,
-# minOccurs = 0, maxOccurs = 1;
-offering_station <- c(42,46) #round(runif(n = 1, min = 30, max = 40))
-
-# wps.in: image_width, type = integer, title = width of the generated image in pixels,
+# wps.in: image_width, type = integer, 
+# title = width of the generated image in pixels,
 # value = 800, minOccurs = 0, maxOccurs = 1;
-# wps.in: image_height, type = integer, title = height of the generated image in pixels,
+# wps.in: image_height, type = integer, 
+# title = height of the generated image in pixels,
 # value = 500, minOccurs = 0, maxOccurs = 1;
 image_width = 800;
 image_height = 500;
+
+# wps.in: loess_span, type = double, title = local regression span parameter,
+# value = 0.75,
+# minOccurs = 0, maxOccurs = 1;
+loess_span <- 1
 
 # wps.on;
 
 ################################################################################
 # SOS and time series analysis
 
-converters <- SosDataFieldConvertingFunctions("Lufttemperatur" = sosConvertDouble,
-																							"Luftfeuchte" = sosConvertDouble)
+converters <- SosDataFieldConvertingFunctions(
+	"WASSERSTAND_ROHDATEN" = sosConvertDouble,
+	"LUFTTEMPERATUR" = sosConvertDouble)
 
+myLog("Creating SOS connection to ", sos_url)
 # establish a connection to a SOS instance with default settings
 sos <- SOS(url = sos_url, dataFieldConverters = converters)
 
+# wps.off;
+names(sosOfferings(sos))
+# wps.on;
+
 # set up request parameters
 offering <- sosOfferings(sos)[[offering_id]]
-myLog(toString(offering))
+myLog("Requesting for offering:\n", toString(offering))
 
-stationFilter <- sosProcedures(offering)[offering_station]
+offering_station_idxs <- grep(pattern = offering_stationname,
+															sosProcedures(offering))
+# select on station at random
+stationFilter <- sosProcedures(offering)[
+	offering_station_idxs[sample(1:length(offering_station_idxs), 1)]]
+myLog("Requesting data for station ", stationFilter)
+
 observedPropertyFilter <- sosObservedProperties(offering)[1]
+myLog("Requesting data for observed property ", observedPropertyFilter)
 timeFilter <- sosCreateEventTimeList(sosCreateTimePeriod(sos = sos,
-		begin = (Sys.time() - 3600 * 24 * offering_days), end = Sys.time()))
+		begin = (Sys.time() - 3600 * offering_hours), end = Sys.time()))
+myLog("Requesting data for time ", toString(timeFilter))
 
 # make the request
+myLog("Send request...")
 observation <- getObservation(sos = sos,# verbose = TRUE,
 		#inspect = TRUE,	
 		observedProperty = observedPropertyFilter,
@@ -80,7 +96,7 @@ data <- sosResult(observation)
 # summary(data)
 # str(data)
 
-myLog(toString(str(data)))
+myLog("Request finished!"); myLog(toString(str(data)))
 
 # create time series ###########################################################
 timeField <- "SamplingTime"
@@ -95,25 +111,40 @@ timeSeries <- xts(x = values, order.by = data[[timeField]])
 regressionValues <- data[[names(data)[[valuesIndex]]]]
 regressionTime <- as.numeric(data[[timeField]])
 regression = loess(regressionValues~regressionTime, na.omit(data),
-		enp.target=10)
+									 span = loess_span)
 
 # create plot ##################################################################
-## wps.out: output_image, type = image/jpeg, title = The output image, 
-## abstract = On-the-fly generated plot for the requested time series;
-output_image <- "output.jpg"
-jpeg(file = output_image,
-		width = image_width, height = image_height, units = "px")
-p <- plot(timeSeries, main = "Dynamic Time Series Plot",
-		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
+timeseries_plot <- "output.jpg"
+jpeg(file = timeseries_plot, width = image_width, height = image_height,
+		 units = "px", quality = 90, bg = "#f3f3f3")
+
+.title <- paste0("Dynamic Time Series Plot for ", toString(stationFilter))
+p <- plot(timeSeries, main = .title,
+		sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos), " @ ",
+								 toString(Sys.time())),
 		xlab = attr(data[[timeField]], "name"),
 		ylab = paste0(attr(values, "name"), 
 				" [", attr(values, "unit of measurement"), "]"),
 		major.ticks = "days")
 lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
+
 graphics.off()
 
-myLog("Created image: ", output_image)
+myLog("Created image: ", timeseries_plot)
 myLog("Working directory: ", getwd())
 
-# wps.out: output_image, type = jpeg, title = image plot, 
-# abstract = the output image in jpeg format;
+# wps.out: timeseries_plot, type = jpeg, title = time series plot, 
+# abstract = the output image as a graphic in jpeg format;
+
+
+# test plot ####################################################################
+# wps.off;
+plot(timeSeries, main = "Test plot",
+		 sub = paste0(toString(unique(data[["feature"]])), "\n", sosUrl(sos)),
+		 xlab = attr(data[[timeField]], "name"),
+		 ylab = paste0(attr(values, "name"), 
+		 							" [", attr(values, "unit of measurement"), "]"),
+		 major.ticks = "days")
+lines(data[[timeField]], regression$fitted, col = 'red', lwd = 3)
+
+# wps.on;

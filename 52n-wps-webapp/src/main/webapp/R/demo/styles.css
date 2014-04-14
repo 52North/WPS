@@ -41,3 +41,8 @@
 .reporting-content .ui-slider-switch {
 	width: 15em;
 }
+
+.footer {
+	color: #aaaaaa;
+	font-size: 0.75em;
+}

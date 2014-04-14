@@ -1,7 +1,8 @@
 library(sp); library(maptools)
-# wps.des: id=Sum, title = Sum of attributes for Polygons, abstract = Calculates the sum of a numeric
-# attribute variable for given Polygon files
+# wps.des: id = geo.poly.attribute-sum, title = Sum of attributes for Polygons, 
+# abstract = Calculates the sum of a numeric attribute variable for given Polygon files
 # given by execute request: variables with identifiers "data" and "attributename";
+
 # wps.in: data, application/x-zipped-shp;
 # wps.in: attributename, string;
 input=readShapePoly(data)

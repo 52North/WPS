@@ -341,12 +341,10 @@ public abstract class ResponseData {
 	protected void prepareGenerator() throws ExceptionReport {
 		Class<?> algorithmOutput = RepositoryManager.getInstance().getOutputDataTypeForAlgorithm(this.algorithmIdentifier, id);
 		
-		LOGGER.debug("Looking for matching Generator ..." + 
-				" schema: " + schema +
-				" mimeType: " + mimeType +
-				" encoding: " + encoding);
+		LOGGER.debug("Looking for matching Generator: schema: {}, mimeType {}, encoding: {}", schema, mimeType, encoding);
 		
-		this.generator =  GeneratorFactory.getInstance().getGenerator(this.schema, this.mimeType, this.encoding, algorithmOutput);
+		GeneratorFactory factory = GeneratorFactory.getInstance();
+		this.generator =  factory.getGenerator(this.schema, this.mimeType, this.encoding, algorithmOutput);
 		
 		if(this.generator != null){ 
 			LOGGER.info("Using generator " + generator.getClass().getName() + " for Schema: " + schema);

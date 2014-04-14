@@ -1,24 +1,31 @@
 
-$(document).ready(function(){  
-  $("#link_processdescription").attr("href", "../../WebProcessingService?Request=DescribeSensor&Service=WPS&version=1.0.0&Identifier=" + processIdentifier);
-  //alert($("#link_processdescription").attr("href"));
-});
+var offering = 'WASSERSTAND_ROHDATEN';
+var stationname = 'Bake';
+var processIdentifier = 'org.n52.wps.server.r.demo.timeseriesPlot';
+var outputIdentifier = 'timeseries_plot';
 
-var processIdentifier = 'org.n52.wps.server.r.SosPlot';
-var outputIdentifier = 'output_image';
-var offering = 'Luft';
-
-var requestPlot = function(requestedDays, requestedOffering) {
+var requestPlot = function(requestedHours, requestedOffering, paramLoessSpan, requestedStationname) {
+	var imageWidth = '700';
+	var imageHeight = '500';
+	var sosUrl = 'http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos';
 
 	var requestString = '<?xml version="1.0" encoding="UTF-8"?><wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">'
 			+ '<ows:Identifier>'
 			+ processIdentifier
 			+ '</ows:Identifier>'
-			+ '<wps:DataInputs><wps:Input><ows:Identifier>offering_days</ows:Identifier>'
+			+ '<wps:DataInputs>'
+			+ '<wps:Input><ows:Identifier>offering_hours</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
 			+ '<wps:LiteralData>'
-			+ requestedDays
+			+ requestedHours
+			+ '</wps:LiteralData></wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input><ows:Identifier>sos_url</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ sosUrl
 			+ '</wps:LiteralData></wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
@@ -31,24 +38,49 @@ var requestPlot = function(requestedDays, requestedOffering) {
 			+ '</wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
+			+ '<ows:Identifier>offering_stationname</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ requestedStationname
+			+ '</wps:LiteralData>'
+			+ '</wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input>'
+			+ '<ows:Identifier>loess_span</ows:Identifier>'
+			+ '<ows:Title></ows:Title>'
+			+ '<wps:Data>'
+			+ '<wps:LiteralData>'
+			+ paramLoessSpan
+			+ '</wps:LiteralData>'
+			+ '</wps:Data>'
+			+ '</wps:Input>'
+			+ '<wps:Input>'
 			+ '<ows:Identifier>image_width</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
+			+ '<wps:LiteralData>'
+			+ imageWidth
+			+ '</wps:LiteralData>'
 			+ '	</wps:Data>'
 			+ '</wps:Input>'
 			+ '<wps:Input>'
 			+ '<ows:Identifier>image_height</ows:Identifier>'
 			+ '<ows:Title></ows:Title>'
 			+ '<wps:Data>'
-			+ '<wps:LiteralData>500</wps:LiteralData>'
+			+ '<wps:LiteralData>'
+			+ imageHeight
+			+ '</wps:LiteralData>'
 			+ '</wps:Data>'
 			+ '</wps:Input>'
 			+ '</wps:DataInputs>'
 			+ '<wps:ResponseForm>'
 			+ '<wps:ResponseDocument>'
 			+ '<wps:Output asReference="true">'
-			+ '<ows:Identifier>output_image</ows:Identifier>'
+			//+ '<wps:Output asReference="false">'
+			+ '<ows:Identifier>'
+			+ outputIdentifier
+			+ '</ows:Identifier>'
 			+ '</wps:Output>'
 			+ '</wps:ResponseDocument>'
 			+ '</wps:ResponseForm>'
@@ -76,21 +108,21 @@ var requestPlot = function(requestedDays, requestedOffering) {
 };
 
 var showResponse = function(executeResponse) {
-	var status = $(executeResponse).find("ns\\:Status");
-	var statusText = $(status).find("ns\\:ProcessSucceeded").text();
+	var status = $(executeResponse).find("wps\\:Status");
+	var statusText = $(status).find("wps\\:ProcessSucceeded").text();
 	$("#resultLog").html("<div class=\"success\">" + statusText + "</div>");
 
 	$(executeResponse)
-			.find("ns\\:Output")
+			.find("wps\\:Output")
 			.each(
 					function() {
 						// check if the output is the desired image
-						if ($(this).find("ns1\\:Identifier").text() == outputIdentifier) {
+						if ($(this).find("ows\\:Identifier").text() == outputIdentifier) {
 							// alert("Found: " + outputIdentifier);
 
-							var title = $(this).find("ns1\\:Title").text();
+							var title = $(this).find("ows\\:Title").text();
 
-							$(this).find("ns\\:Reference").each(
+							$(this).find("wps\\:Reference").each(
 									function() {
 
 										var link = $(this).attr("href");
@@ -115,10 +147,14 @@ var showResponse = function(executeResponse) {
 $(function() {
 
 	$("#executeRequest").click(function() {
-		var days = $("#slider-days").val();
-		$("#resultLog").html("Days: " + days + " | Offering: " + offering);
+		$("#plot").html("<!-- no data -->");
+		
+		var hours = $("#slider-hours").val();
+		var span = $("#slider-loess-span").val();
+		
+		$("#resultLog").html("Hours: " + hours + " | Offering: " + offering + " | LOESS span: " + span);
 
-		requestPlot(days, offering);
+		requestPlot(hours, offering, span, stationname);
 	});
 
 	$("#resultLog").ajaxError(
@@ -129,3 +165,8 @@ $(function() {
 								+ "<br />Exception: " + exception + "</div>");
 			});
 });
+
+$(document).ready(function(){  
+	  $("#link_processdescription").attr("href", "../../WebProcessingService?Request=DescribeSensor&Service=WPS&version=1.0.0&Identifier=" + processIdentifier);
+	  //alert($("#link_processdescription").attr("href"));
+	});

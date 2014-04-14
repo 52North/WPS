@@ -359,7 +359,9 @@ public class ExecuteResponseBuilder {
 			return rawDataHandler.getAsStream();
 		}
 		if(request.isStoreResponse()) {
-			doc.getExecuteResponse().setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
+			String id = request.getUniqueId().toString();
+			String statusLocation = DatabaseFactory.getDatabase().generateRetrieveResultURL(id);
+			doc.getExecuteResponse().setStatusLocation(statusLocation);
 		}
 		try {
 			return doc.newInputStream(XMLBeansHelper.getXmlOptions());
