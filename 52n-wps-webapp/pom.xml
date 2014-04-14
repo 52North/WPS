@@ -37,6 +37,10 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-client-lib</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
 		</dependency>
 		<dependency>
