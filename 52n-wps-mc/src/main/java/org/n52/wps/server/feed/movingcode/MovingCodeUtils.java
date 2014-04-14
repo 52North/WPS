@@ -33,9 +33,9 @@ import java.io.File;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -80,7 +80,7 @@ public class MovingCodeUtils {
 
 				//Complex Output
 				if(input.isSetComplexData()){
-					return GenericFileDataBinding.class;
+					return GenericFileDataWithGTBinding.class;
 				}
 			}
 		}
@@ -120,7 +120,7 @@ public class MovingCodeUtils {
 
 				//Complex Output
 				if(output.isSetComplexOutput()){
-					return GenericFileDataBinding.class;
+					return GenericFileDataWithGTBinding.class;
 				}
 			}
 		}
@@ -134,8 +134,8 @@ public class MovingCodeUtils {
 		String fileName = null;
 
 		//File
-		if (payload instanceof GenericFileData){
-			GenericFileData gfd = (GenericFileData)payload;
+		if (payload instanceof GenericFileDataWithGT){
+			GenericFileDataWithGT gfd = (GenericFileDataWithGT)payload;
 			fileName = gfd.writeData(workspaceDir);
 		}
 

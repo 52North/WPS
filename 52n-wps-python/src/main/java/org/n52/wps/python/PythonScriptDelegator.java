@@ -43,10 +43,10 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.feed.movingcode.AlgorithmParameterType;
 import org.n52.wps.server.feed.movingcode.CommandLineParameter;
@@ -152,12 +152,12 @@ public class PythonScriptDelegator implements IAlgorithm{
 		for (String wpsOutputID : outputs.keySet()){
 			// create File object
 			File currentFile = new File (outputs.get(wpsOutputID));
-			GenericFileData outputFileData;
+			GenericFileDataWithGT outputFileData;
 			try {
 				// create the GenericFileData object
-				outputFileData = new GenericFileData(currentFile, mco.getDefaultMimeType(wpsOutputID));
+				outputFileData = new GenericFileDataWithGT(currentFile, mco.getDefaultMimeType(wpsOutputID));
 				// put result on output map
-				result.put(wpsOutputID, new GenericFileDataBinding(outputFileData));
+				result.put(wpsOutputID, new GenericFileDataWithGTBinding(outputFileData));
 			} catch (FileNotFoundException e) {
 				LOGGER.error("Could not read output file: " + outputs.get(wpsOutputID));
 				e.printStackTrace();

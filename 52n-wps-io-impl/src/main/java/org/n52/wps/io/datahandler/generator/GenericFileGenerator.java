@@ -26,36 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.parser;
+package org.n52.wps.io.datahandler.generator;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
-
 
 /**
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class GenericFileParser extends AbstractParser{
+public class GenericFileGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
-	
-	public GenericFileParser() {
+	public GenericFileGenerator (){
 		super();
 		supportedIDataTypes.add(GenericFileDataBinding.class);
 	}
 	
-	@Override
-	public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
+	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-		GenericFileData theData = new GenericFileData(input, mimeType);
-		LOGGER.info("Found File Input " + mimeType);
-		
-		return new GenericFileDataBinding(theData);
+		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
+		return theStream;
 	}
-
+	
 }

@@ -26,42 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.io.data.binding.complex;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.IComplexData;
 
 /**
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class GenericFileGenerator extends AbstractGenerator {
-	
-	public GenericFileGenerator (){
-		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
-	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
-		return theStream;
-	}
-	
+public class GenericFileDataBinding implements IComplexData {
 	/**
-	 * conversion method to support translation of output formats
-	 * TODO: implement logic
 	 * 
-	 * @param inputFile
-	 * @return  
 	 */
-	private GenericFileData convertFile (GenericFileData inputFile){
-		//not implemented
-		return null;
+	private static final long serialVersionUID = 625383192227478620L;
+	protected GenericFileData payload; 
+	
+	public GenericFileDataBinding(GenericFileData fileData){
+		this.payload = fileData;
 	}
 	
+	public GenericFileData getPayload() {
+		return payload;
+	}
+
+	public Class<GenericFileData> getSupportedClass() {
+		return GenericFileData.class;
+	}
+    
+    @Override
+	public void dispose(){
+                //FIXME (MH) The command bellow is flawed because getBaseFile(...) *writes* files from an inputstream into the wps temp directory. 
+                   // If the given input stream is closed, the method throws *RuntimeExceptions* that let the process crash.
+		//FileUtils.deleteQuietly(payload.getBaseFile(false));
+	}
 }

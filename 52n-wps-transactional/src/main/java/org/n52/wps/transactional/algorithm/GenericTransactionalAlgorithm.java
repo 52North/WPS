@@ -59,11 +59,11 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.xpath.XPathAPI;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
@@ -122,7 +122,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(tempFile2);
             
-			GenericFileData data = new GenericFileData(tempFile, "text/xml");
+			GenericFileDataWithGT data = new GenericFileDataWithGT(tempFile, "text/xml");
 			
 			Node gml = XPathAPI.selectSingleNode(d, "//Output/Data/ComplexData/FeatureCollection");
 			
@@ -130,7 +130,7 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 			
 			writeXmlFile(gml, tempFile);
 			
-			GenericFileDataBinding binding = new GenericFileDataBinding(data);
+			GenericFileDataWithGTBinding binding = new GenericFileDataWithGTBinding(data);
 			
 			resultHash.put(identifier, binding);
 			
@@ -376,9 +376,9 @@ public class GenericTransactionalAlgorithm extends AbstractTransactionalAlgorith
 			if(output.isSetComplexOutput()){
 				String mimeType = output.getComplexOutput().getDefault().getFormat().getMimeType();
 				if(mimeType.contains("xml") || (mimeType.contains("XML"))){
-					return GenericFileDataBinding.class;
+					return GenericFileDataWithGTBinding.class;
 				}else{
-					return GenericFileDataBinding.class;
+					return GenericFileDataWithGTBinding.class;
 				}
 			}
 		}

@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.ComplexDataOutput;
@@ -41,8 +39,10 @@ import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Algorithm(version = "1.1.0", title="for testing multiple inputs by reference")
+@Algorithm(version = "1.1.0", title="for testing multiple binary inputs by reference")
 public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorithm {
 
     private static Logger LOGGER = LoggerFactory.getLogger(MultiReferenceBinaryInputAlgorithm.class);
@@ -65,7 +65,7 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
     }
 
     @Execute
-    public void runBuffer() {
+    public void runProcess() {
     	
     	GenericFileData gfd = data.get(0);
     	

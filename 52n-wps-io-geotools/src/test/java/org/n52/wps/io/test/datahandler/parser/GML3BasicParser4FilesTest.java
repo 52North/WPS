@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser4Files;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
@@ -71,7 +71,7 @@ public class GML3BasicParser4FilesTest extends AbstractTestCase<GML3BasicParser4
 			fail(e.getMessage());
 		}
 
-		GenericFileDataBinding theBinding = dataHandler.parse(input,
+		GenericFileDataWithGTBinding theBinding = dataHandler.parse(input,
 				"text/xml; subtype=gml/3.1.1",
 				"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
 

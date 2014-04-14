@@ -85,16 +85,16 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  * @author Matthias Mueller, TU Dresden; Bastian Schaeffer, IFGI
  *
  */
-public class GenericFileData {
+public class GenericFileDataWithGT {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileData.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileDataWithGT.class);
 
 	protected final InputStream dataStream;
 	protected String fileExtension;
 	protected final String mimeType;
 	protected File primaryFile;
 
-	public GenericFileData(InputStream stream, String mimeType) {
+	public GenericFileDataWithGT(InputStream stream, String mimeType) {
 		this.dataStream = stream;
 		this.mimeType = mimeType;
 		this.fileExtension = GenericFileDataConstants.mimeTypeFileTypeLUT()
@@ -104,12 +104,12 @@ public class GenericFileData {
 		}
 	}
 
-	public GenericFileData(FeatureCollection<?, ?> featureCollection)
+	public GenericFileDataWithGT(FeatureCollection<?, ?> featureCollection)
 			throws IOException {
 		this(getShpFile(featureCollection), IOHandler.MIME_TYPE_ZIPPED_SHP);
 	}
 
-	public GenericFileData(File primaryTempFile, String mimeType)
+	public GenericFileDataWithGT(File primaryTempFile, String mimeType)
 			throws IOException {
 		primaryFile = primaryTempFile;
 		this.mimeType = mimeType;
@@ -164,7 +164,7 @@ public class GenericFileData {
 	}
 
 
-	public GenericFileData(GridCoverage2D payload, String mimeType) {
+	public GenericFileDataWithGT(GridCoverage2D payload, String mimeType) {
 
 		dataStream = null;
 		fileExtension = "tiff";

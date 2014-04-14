@@ -54,7 +54,7 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.R_Resource;
@@ -297,7 +297,7 @@ public class RProcessDescriptionCreator {
             cpldata.setEncoding(encod);
 
         Class<? extends IData> iClass = annotation.getDataClass();
-        if (iClass.equals(GenericFileDataBinding.class)) {
+        if (iClass.equals(GenericFileDataWithGTBinding.class)) {
             ComplexDataCombinationsType supported = complexInput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();
             format.setMimeType(annotation.getProcessDescriptionType());
@@ -373,7 +373,7 @@ public class RProcessDescriptionCreator {
         }
         Class<? extends IData> iClass = out.getDataClass();
 
-        if (iClass.equals(GenericFileDataBinding.class)) {
+        if (iClass.equals(GenericFileDataWithGTBinding.class)) {
 
             ComplexDataCombinationsType supported = complexOutput.addNewSupported();
             ComplexDataDescriptionType format = supported.addNewFormat();

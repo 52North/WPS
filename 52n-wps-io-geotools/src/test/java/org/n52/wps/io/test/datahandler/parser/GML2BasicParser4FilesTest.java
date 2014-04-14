@@ -31,7 +31,7 @@ package org.n52.wps.io.test.datahandler.parser;
 import java.io.InputStream;
 
 import org.n52.wps.FormatDocument.Format;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser4Files;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
@@ -60,7 +60,7 @@ public class GML2BasicParser4FilesTest extends
 
         InputStream input = getClass().getResourceAsStream("/tasmania_roads_gml2.xml");
 
-		GenericFileDataBinding theBinding = dataHandler.parse(input, mimeType,
+		GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
 				schema);
 
 		assertNotNull(theBinding.getPayload());

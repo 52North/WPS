@@ -26,59 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.test.datahandler.parser;
+package org.n52.wps.io.data.binding.complex;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
-import org.n52.wps.io.datahandler.parser.GenericFileParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
-
-public class GenericFileParserTest extends AbstractTestCase<GenericFileParser> {
+import org.apache.commons.io.FileUtils;
+import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.IComplexData;
 
 
-	public void testParser(){
-
-		if(!isDataHandlerActive()){
-			return;
-		}
-
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/testfile";
-
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
-		}
-
-		String[] mimetypes = dataHandler.getSupportedFormats();
-
-		InputStream input = null;
-
-		for (String mimetype : mimetypes) {
-
-			try {
-				input = new FileInputStream(new File(testFilePath));
-			} catch (FileNotFoundException e) {
-				fail(e.getMessage());
-			}
-
-			GenericFileDataBinding theBinding = dataHandler.parse(input, mimetype, "");
-
-			assertTrue(theBinding.getPayload().getBaseFile(true).exists());
-
-		}
-
+/**
+ * @author Matthias Mueller, TU Dresden
+ *
+ */
+public class GenericFileDataWithGTBinding implements IComplexData {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 625383192227478620L;
+	protected GenericFileDataWithGT payload; 
+	
+	public GenericFileDataWithGTBinding(GenericFileDataWithGT fileData){
+		this.payload = fileData;
+	}
+	
+	public GenericFileDataWithGT getPayload() {
+		return payload;
 	}
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GenericFileParser();
+	public Class getSupportedClass() {
+		return GenericFileDataWithGT.class;
 	}
-
+    
+    @Override
+	public void dispose(){
+                //FIXME (MH) The command bellow is flawed because getBaseFile(...) *writes* files from an inputstream into the wps temp directory. 
+                   // If the given input stream is closed, the method throws *RuntimeExceptions* that let the process crash.
+		//FileUtils.deleteQuietly(payload.getBaseFile(false));
+	}
 }
