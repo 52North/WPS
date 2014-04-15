@@ -44,6 +44,12 @@ public class GenericXMLDataGenerator extends AbstractGenerator {
 	}
 	
 	@Override
+	public boolean isSupportedSchema(String schema) {
+		//no schema checks
+		return true;
+	}
+	
+	@Override
 	public InputStream generateStream(IData data, String mimeType, String schema)
 			throws IOException {
 		

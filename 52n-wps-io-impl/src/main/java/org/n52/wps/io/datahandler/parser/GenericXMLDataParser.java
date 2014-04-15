@@ -47,6 +47,12 @@ public class GenericXMLDataParser extends AbstractParser {
 	}
 	
 	@Override
+	public boolean isSupportedSchema(String schema) {
+		//no schema checks
+		return true;
+	}
+	
+	@Override
 	public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {	
 		
 		XmlObject xmlData = XmlObject.Factory.newInstance();

@@ -67,9 +67,20 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
     @Execute
     public void runProcess() {
     	
-    	GenericFileData gfd = data.get(0);
+    	GenericFileData gfd = null;
     	
-    	File f = gfd.getBaseFile(false);
+    	File f = null;
+    	
+    	for (GenericFileData genericFileData : data) {
+        	
+    		gfd = genericFileData;
+    		
+        	f = gfd.getBaseFile(false);
+        	
+        	if(!f.exists()){
+        		throw new RuntimeException("Input file does not exist for identifier data.");
+        	}
+		}
     	
     	try {
 			result = new GenericFileData(f, gfd.getMimeType());

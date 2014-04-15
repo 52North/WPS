@@ -279,6 +279,13 @@
 				active="true">
 				<Format mimetype="application/wkt"/>
 			</Parser>
+			<Parser name="GenericXMLDataParser"
+				className="org.n52.wps.io.datahandler.parser.GenericXMLDataParser"
+				active="true">
+				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
+			</Parser>
 		</ParserList>
 		<GeneratorList>
 			
@@ -568,6 +575,13 @@
 				active="false">
 				<Format mimetype="application/octet-stream" />
 			</Generator>
+			<Generator name="GenericXMLDataGenerator"
+				className="org.n52.wps.io.datahandler.generator.GenericXMLDataGenerator"
+				active="true">
+				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
+			</Generator>
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
@@ -599,6 +613,7 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.EchoProcess</Property>
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">

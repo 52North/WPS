@@ -28,8 +28,11 @@
  */
 package org.n52.wps.test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
@@ -67,10 +70,12 @@ public class ExecutePostIT {
     private final String echoProcessIdentifier = "org.n52.wps.server.algorithm.test.EchoProcess";
     private final String echoProcessInlineComplexXMLInput = "<TestData><this><is><xml><Data>Test</Data></xml></is></this></TestData>";
     private final String echoProcessReferenceComplexXMLInput = "http://52north.org/files/geoprocessing/Testdata/test-data.xml";
+    private final String echoProcessReferenceComplexBinaryInput = "http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif";
     private final String testDataNodeName = "TestData";    
     private final String echoProcessComplexInputID = "complexInput";
     private final String echoProcessComplexMimeTypeTextXML = "text/xml";
     private final String echoProcessComplexOutputID = "complexOutput";
+    private String tiffImageBinaryInputAsBase64String;
     
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
@@ -95,6 +100,27 @@ public class ExecutePostIT {
 		}
 		
 		assertThat(echoProcessExecuteRequestBuilder, is(not(nullValue())));
+		
+		InputStream tiffImageInputStream = getClass().getResourceAsStream("/Execute/image.tiff.base64");
+		
+		BufferedReader tiffImageInputStreamReader = new BufferedReader(new InputStreamReader(tiffImageInputStream));
+		
+		StringBuilder tiffImageInputStringBuilder = new StringBuilder();
+		
+		String line = "";
+		
+		try {
+			while ((line = tiffImageInputStreamReader.readLine()) != null) {
+				tiffImageInputStringBuilder.append(line);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		tiffImageBinaryInputAsBase64String = tiffImageInputStringBuilder.toString();
+		
+		assertThat(tiffImageBinaryInputAsBase64String, is(not(nullValue())));
+		assertThat(tiffImageBinaryInputAsBase64String, is(not(equalTo(""))));		
     	
     }
     
@@ -315,13 +341,14 @@ public class ExecutePostIT {
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();
-		}    
+		}
     }
     
     /*Multiple complex XML Input by reference */
     @Test
     public void testExecutePOSTMultipleReferenceComplexBinarySynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
     	System.out.println("\nRunning testExecutePOSTMultipleReferenceComplexBinarySynchronousBinaryOutput");
+
     	String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
     			+ "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
     			+ "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -355,13 +382,14 @@ public class ExecutePostIT {
     @Test
     public void testExecutePOSTreferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testExecutePOSTreferenceComplexXMLSynchronousXMLOutput");
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
-                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-                + "<ows:Identifier>org.n52.wps.server.algorithm.SimpleBufferAlgorithm</ows:Identifier>"
-                + "<wps:DataInputs>"
-                + "<wps:Input>"
-                + "<ows:Identifier>data</ows:Identifier>"
+        
+    	String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+    			+"<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+    			+"	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+    			+"	<ows:Identifier>org.n52.wps.server.algorithm.test.EchoProcess</ows:Identifier>"
+    			+"	<wps:DataInputs>"
+    			+"		<wps:Input>"
+    			+"			<ows:Identifier>complexInput</ows:Identifier>"
                 + "<wps:Reference xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows\">"
                 + "<wps:Body>"
                 + "<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" outputFormat=\"GML2\" version=\"1.0.0\" service=\"WFS\">"
@@ -369,54 +397,52 @@ public class ExecutePostIT {
                 + "</wfs:GetFeature>"
                 + "</wps:Body>"
                 + "</wps:Reference>"
+    			+"		</wps:Input>"
+    			+"	</wps:DataInputs>"
+    			+"	<wps:ResponseForm>"
+    			+"	<wps:ResponseDocument storeExecuteResponse=\"false\">"
+    			+"		<wps:Output asReference=\"false\">"
+    			+"			<ows:Identifier>complexOutput</ows:Identifier>"
+    			+"		</wps:Output>"
+    			+"	</wps:ResponseDocument>"
+    			+"	</wps:ResponseForm>"
+    			+"</wps:Execute>";
+    	String response = PostClient.sendRequest(url, payload);
+    	
+    	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, containsString("MultiLineString"));
+    }
+
+    /*Complex binary Input by value */
+    @Test
+    public void testExecutePOSTInlineComplexBinaryASynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTInlineComplexBinaryASynchronousBinaryOutput");
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Data>"
+                + "<wps:ComplexData mimeType=\"image/tiff\" encoding=\"base64\">"
+                + tiffImageBinaryInputAsBase64String
+                + "</wps:ComplexData>"
+                + "</wps:Data>"
                 + "</wps:Input>"
                 + "<wps:Input>"
-                + "<ows:Identifier>width</ows:Identifier>"
-                + "<ows:Title>Distance which people will walk to get to a playground.</ows:Title>"
+                + "<ows:Identifier>data</ows:Identifier>"
                 + "<wps:Data>"
-                + "<wps:LiteralData>20</wps:LiteralData>"
+                + "<wps:ComplexData mimeType=\"image/tiff\" encoding=\"base64\">"
+                + tiffImageBinaryInputAsBase64String
+                + "</wps:ComplexData>"
                 + "</wps:Data>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
                 + "<wps:ResponseForm>"
-                + "<wps:ResponseDocument>"
-                + "<wps:Output>"
-                + "<ows:Identifier>result</ows:Identifier>"
-                + "</wps:Output>"
-                + "</wps:ResponseDocument>"
-                + "</wps:ResponseForm>"
-                + "</wps:Execute>";
-        String response = PostClient.sendRequest(url, payload);
-
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("LinearRing"));
-    }
-
-    /*Complex binary Input by value */
-    // Disabled test due to heap size issues. 
-    @Test
-    public void testExecutePOSTValueComplexBinaryASynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
-        System.out.println("\nRunning testExecutePOSTValueComplexBinaryASynchronousBinaryOutput");
-        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
-                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
-                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-                + "<ows:Identifier>org.n52.wps.server.algorithm.raster.AddRasterValues</ows:Identifier>"
-                + "<wps:DataInputs>"
-                + "<wps:Input>"
-                + "<ows:Identifier>dataset1</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
-                + "</wps:Reference>"
-                + "</wps:Input>"
-                + "<wps:Input>"
-                + "<ows:Identifier>dataset2</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
-                + "</wps:Reference>"
-                + "</wps:Input>"
-                + "</wps:DataInputs>"
-                + "<wps:ResponseForm>"
                 + "<wps:ResponseDocument status=\"true\" storeExecuteResponse=\"true\">"
-                + "<wps:Output encoding=\"base64\" >"
+                + "<wps:Output encoding=\"base64\" mimeType=\"image/tiff\">"
                 + "<ows:Identifier>result</ows:Identifier>"
                 + "</wps:Output>"
                 + "</wps:ResponseDocument>"
@@ -426,6 +452,42 @@ public class ExecutePostIT {
         AllTestsIT.validateBinaryBase64Async(response);
     }
 
+    /*Complex binary Input by value */
+    // Disabled test due to heap size issues. TODO this does the same as the test below right now
+    @Test
+    public void testExecutePOSTInlineAndReferenceComplexBinaryASynchronousBinaryOutput() throws IOException, ParserConfigurationException, SAXException {
+        System.out.println("\nRunning testExecutePOSTInlineAndReferenceComplexBinaryASynchronousBinaryOutput");
+        String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
+                + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
+                + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</ows:Identifier>"
+                + "<wps:DataInputs>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Data>"
+                + "<wps:ComplexData mimeType=\"image/tiff\" encoding=\"base64\">"
+                + tiffImageBinaryInputAsBase64String
+                + "</wps:ComplexData>"
+                + "</wps:Data>"
+                + "</wps:Input>"
+                + "<wps:Input>"
+                + "<ows:Identifier>data</ows:Identifier>"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "</wps:Reference>"
+                + "</wps:Input>"
+                + "</wps:DataInputs>"
+                + "<wps:ResponseForm>"
+                + "<wps:ResponseDocument status=\"true\" storeExecuteResponse=\"true\">"
+                + "<wps:Output encoding=\"base64\" mimeType=\"image/tiff\">"
+                + "<ows:Identifier>result</ows:Identifier>"
+                + "</wps:Output>"
+                + "</wps:ResponseDocument>"
+                + "</wps:ResponseForm>"
+                + "</wps:Execute>";
+        String response = PostClient.sendRequest(url, payload);
+        AllTestsIT.validateBinaryBase64Async(response);
+    }
+    
     /*Complex binary Input by reference */
     // Disabled test due to heap size issues. 
     @Test
@@ -434,15 +496,15 @@ public class ExecutePostIT {
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
                 + "<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
                 + "http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
-                + "<ows:Identifier>org.n52.wps.server.algorithm.raster.AddRasterValues</ows:Identifier>"
+                + "<ows:Identifier>org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</ows:Identifier>"
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
-                + "<ows:Identifier>dataset1</ows:Identifier>"
+                + "<ows:Identifier>data</ows:Identifier>"
                 + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
-                + "<ows:Identifier>dataset2</ows:Identifier>"
+                + "<ows:Identifier>data</ows:Identifier>"
                 + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
