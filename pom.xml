@@ -664,6 +664,12 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io</artifactId>
 				<version>${project.version}</version>
+			</dependency>			
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>52n-wps-io</artifactId>
+				<classifier>tests</classifier>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
