@@ -44,8 +44,18 @@ public class MatlabDescriptionGenerator {
     private static final int LOCAL_INSTANCES = 5;
 
     private MatlabComplexInputDescription createComplexInput(YamlNode definition) {
+        final int maxOccurs;
+        if (definition.path(YamlConstants.MAX_OCCURS).isText()) {
+            if (definition.path(YamlConstants.MAX_OCCURS).asTextValue().equals("unbounded")) {
+                maxOccurs = Integer.MAX_VALUE;
+            } else {
+                maxOccurs = 1;
+            }
+        } else {
+            maxOccurs = definition.path(YamlConstants.MAX_OCCURS).asIntValue(1);
+        }
         int minOccurs = definition.path(YamlConstants.MIN_OCCURS).asIntValue(1);
-        int maxOccurs = definition.path(YamlConstants.MAX_OCCURS).asIntValue(1);
+
         String id = definition.path(YamlConstants.IDENTIFIER).textValue();
         if (id == null || id.isEmpty()) {
             throw new MatlabConfigurationException("Missing input identifier");
