@@ -30,7 +30,9 @@ package org.n52.wps.client;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -45,6 +47,8 @@ import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ExecuteDocument.Execute;
+import net.opengis.wps.x100.ResponseDocumentType;
+import net.opengis.wps.x100.ResponseFormType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,6 +209,91 @@ public class ExecuteRequestBuilder {
 	}
 	
 	/**
+	 * add an input element. sets the data in the xml request
+	 * 
+	 * @param parameterID the ID of the input (see process description)
+	 * @param value the actual value as String (for xml data xml for binary data is should be base64 encoded data)
+	 * @param schema schema if applicable otherwise null
+	 * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
+	 * @param mimeType mimetype of the data, has to be set
+	 * @throws WPSClientException
+	 */
+	public void addComplexData(String parameterID, String value, String schema, String encoding, String mimeType, boolean asReference) throws WPSClientException {
+		InputDescriptionType inputDesc = getParameterDescription(parameterID);
+		if (inputDesc == null) {
+			throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
+		}
+		if (inputDesc.getComplexData() == null) {
+			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
+		}
+						
+		InputType input = execute.getExecute().getDataInputs().addNewInput();
+		input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
+		
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
+		try {
+			
+			ComplexDataType data = input.addNewData().addNewComplexData();
+			
+			XmlOptions xmlOptions = new XmlOptions();
+			
+			/*
+			 * TODO: set appropriate flags
+			 */
+			
+			data.set(XmlObject.Factory.parse(value, xmlOptions));
+			if (schema != null) {
+				data.setSchema(schema);
+			}
+			if (mimeType != null) {
+				data.setMimeType(mimeType);
+			}
+			if (encoding != null) {
+				data.setEncoding(encoding);
+			}
+		} catch (XmlException e) {
+			throw new IllegalArgumentException(
+					"error inserting node into execute request", e);
+		}
+			
+	}
+	
+	/**
+	 * add an input element. sets the data in the xml request
+	 * 
+	 * @param inputType
+	 * @throws WPSClientException
+	 */
+	public void addComplexData(InputType inputType) {
+		
+		String parameterID = inputType.getIdentifier().getStringValue();
+		
+		InputDescriptionType inputDesc = getParameterDescription(parameterID);
+		if (inputDesc == null) {
+			throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
+		}
+		if (inputDesc.getComplexData() == null) {
+			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
+		}	
+		
+		InputType[] newInputTypeArray;
+		
+		InputType[] currentInputTypeArray = execute.getExecute().getDataInputs().getInputArray();
+		
+		if(currentInputTypeArray != null){
+			newInputTypeArray = Arrays.copyOf(currentInputTypeArray, currentInputTypeArray.length + 1);
+		}else{
+			newInputTypeArray = new InputType[1];
+		}
+		
+		newInputTypeArray[newInputTypeArray.length - 1] = inputType;
+		
+		execute.getExecute().getDataInputs().setInputArray(newInputTypeArray);
+			
+	}
+	
+	/**
 	 * Add literal data to the request
 	 * @param parameterID the ID of the input paramter according to the describe process
 	 * @param value the value. other types than strings have to be converted to string. The datatype is automatically determined and set accordingly to the process description
@@ -212,7 +301,7 @@ public class ExecuteRequestBuilder {
 	public void addLiteralData(String parameterID, String value) {
 		InputDescriptionType inputDesc = this.getParameterDescription(parameterID);
 		if (inputDesc == null) {
-			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
+			throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
 		}
 		if (inputDesc.getLiteralData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type literalData: " + parameterID);			
@@ -238,7 +327,7 @@ public class ExecuteRequestBuilder {
 	public void addComplexDataReference(String parameterID, String value, String schema, String encoding, String mimetype) {
 		InputDescriptionType inputDesc = getParameterDescription(parameterID);
 		if (inputDesc == null) {
-			throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
+			throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
 		}
 		if (inputDesc.getComplexData() == null) {
 			throw new IllegalArgumentException("inputDescription is not of type complexData: " + parameterID);
@@ -272,7 +361,42 @@ public class ExecuteRequestBuilder {
 	 * @param parentInput
 	 * @return
 	 */
-	public boolean setStoreSupport(String outputName) {
+	public boolean setStoreSupport(String outputName, boolean storeSupport) {
+//		DocumentOutputDefinitionType outputDef = null;		
+		
+		if (!execute.getExecute().isSetResponseForm()) {
+			execute.getExecute().addNewResponseForm();
+		}
+		
+		ResponseFormType responseForm = execute.getExecute().getResponseForm();
+		
+		if (!responseForm.isSetResponseDocument()) {
+			responseForm.addNewResponseDocument();
+		}
+		
+		ResponseDocumentType responseDocument = responseForm.getResponseDocument();
+		
+		responseDocument.setStoreExecuteResponse(storeSupport);
+		
+//		for(DocumentOutputDefinitionType outputDefTemp: responseDocument.getOutputArray()) {
+//			if(outputDefTemp.getIdentifier().getStringValue().equals(outputName)) {
+//				outputDef = outputDefTemp;
+//				break;
+//			}
+//		}
+//		if (outputDef == null) {
+//			outputDef = responseDocument.addNewOutput();
+//		}
+		
+		return true;
+	}
+	
+	/**
+	 * this sets store for the specific output.
+	 * @param parentInput
+	 * @return
+	 */
+	public boolean setAsReference(String outputName, boolean asReference) {
 		DocumentOutputDefinitionType outputDef = null;
 		if (!execute.getExecute().isSetResponseForm()) {
 			execute.getExecute().addNewResponseForm();
@@ -292,23 +416,35 @@ public class ExecuteRequestBuilder {
 		}
 		for (OutputDescriptionType outputDesc : processDesc.getProcessOutputs().getOutputArray()) {
 			if (outputDesc.getIdentifier().getStringValue().equals(outputName)) {
-				outputDef.setIdentifier(outputDesc.getIdentifier());
-				ComplexDataDescriptionType format = outputDesc.getComplexOutput().getDefault().getFormat();
-				if (format.getMimeType() != null) {
-					outputDef.setMimeType(format.getMimeType());
-				}
-				if (format.getEncoding() != null) {
-					outputDef.setEncoding(format.getEncoding());
-				}
-				if (format.getSchema() != null) {
-					outputDef.setSchema(format.getSchema());
-				}
-				outputDef.setAsReference(true);
+				outputDef.setAsReference(asReference);
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * this sets store for the specific output.
+	 * @param parentInput
+	 * @return
+	 */
+	public boolean setStatus(String outputName, boolean status) {
+		if (!execute.getExecute().isSetResponseForm()) {
+			execute.getExecute().addNewResponseForm();
+		}
+		
+		ResponseFormType responseForm = execute.getExecute().getResponseForm();
+		
+		if (!responseForm.isSetResponseDocument()) {
+			responseForm.addNewResponseDocument();
+		}
+		
+		ResponseDocumentType responseDocument = responseForm.getResponseDocument();
+		
+		responseDocument.setStatus(status);
+		
+		return true;
+	}
+	
 	/**
 	 * Set this if you want the data to a schema offered in the process description
 	 * @param schema
@@ -394,7 +530,7 @@ public class ExecuteRequestBuilder {
 	}
 
 	/**
-	 * sets the encoding. neccessary if data should not be retrieved in the default encoding (i.e. binary data in XML respones not raw data responses)
+	 * sets the encoding. necessary if data should not be retrieved in the default encoding (i.e. binary data in XML responses not raw data responses)
 	 * @param encoding use base64
 	 * @param outputName ID of the output
 	 * @return
@@ -495,13 +631,10 @@ public class ExecuteRequestBuilder {
 	 * @param mimeType requested mimetype of the output according to the process description. if not set, default mime type is used.
 	 * @return
 	 */
-	public boolean setRawData(String schema, String encoding, String mimeType) {
-		if (processDesc.getProcessOutputs().getOutputArray().length != 1) {
-			return false;
-		}
+	public boolean setRawData(String outputIdentifier, String schema, String encoding, String mimeType) {
+		
 		OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
-		ComplexDataDescriptionType complexDesc = processDesc.getProcessOutputs().getOutputArray(0).getComplexOutput().getDefault().getFormat();
-		output.setIdentifier(processDesc.getProcessOutputs().getOutputArray(0).getIdentifier());
+		output.addNewIdentifier().setStringValue(outputIdentifier);
 		
 		if (schema != null) {
 			output.setSchema(schema);
@@ -526,8 +659,9 @@ public class ExecuteRequestBuilder {
 	/**
 	 * return a KVP representation for the created execute document.
 	 * @return KVP request string
+	 * @throws UnsupportedEncodingException if the URL encoding using UTF-8 fails
 	 */
-	public String getExecuteAsGETString() {
+	public String getExecuteAsGETString() throws UnsupportedEncodingException {
 		String request = "?service=wps&request=execute&version=1.0.0&identifier=";
 		request = request + processDesc.getIdentifier().getStringValue();
 		request = request + "&DataInputs=";
@@ -540,7 +674,7 @@ public class ExecuteRequestBuilder {
 			if(input.isSetReference()){
 				//reference
 				InputReferenceType reference = input.getReference();
-				request = request + "="+"@xlink:href="+ URLEncoder.encode(reference.getHref());
+				request = request + "="+"@xlink:href="+ URLEncoder.encode(reference.getHref(), "UTF-8");
 				if(reference.isSetEncoding()){
 					request = request + "@encoding="+reference.getEncoding();
 				}
@@ -555,7 +689,7 @@ public class ExecuteRequestBuilder {
 				if(input.getData().isSetComplexData()){
 					//complex
 					ComplexDataType complexData = input.getData().getComplexData();
-					request = request + "=" + URLEncoder.encode(input.getData().getComplexData().xmlText());
+					request = request + "=" + URLEncoder.encode(input.getData().getComplexData().xmlText(), "UTF-8");
 					if(complexData.isSetEncoding()){
 						request = request + "@encoding="+complexData.getEncoding();
 					}
@@ -586,7 +720,7 @@ public class ExecuteRequestBuilder {
 			
 		}
 		if(execute.getExecute().getResponseForm().getResponseDocument()==null){
-			throw new RuntimeException("Responresponsedocument=se Form missing");
+			throw new RuntimeException("ResponseDocument missing");
 		}
 		DocumentOutputDefinitionType[] outputs = execute.getExecute().getResponseForm().getResponseDocument().getOutputArray();
 		int outputCounter = 0;

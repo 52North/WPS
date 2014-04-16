@@ -2,7 +2,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
-	<display-name>${project.parent.name}, Git: ${buildNumber} @ ${timestamp}</display-name>
+	<display-name>52North Web Processing Service, Git: 7f34d1de @ 2014-04-16 13:58:09</display-name>
 	<description>a 52n prototype implementation of the WPS 1.0.0 spec.</description>
 
 	<!-- security-constraint>
@@ -72,34 +72,8 @@
 		<load-on-startup>0</load-on-startup>
 		<init-param>
 			<param-name>wps.config.file</param-name>
-			<param-value>${wps.config.file}</param-value>
+			<param-value>config/wps_config.xml</param-value>
 		</init-param>
-	</servlet>
-	<servlet>
-		<servlet-name>AxisServlet</servlet-name>
-		<!--display-name>Apache-Axis Servlet</display-name-->
-		<servlet-class>org.apache.axis2.transport.http.AxisServlet</servlet-class>
-		<!--<init-param>-->
-			<!--<param-name>axis2.xml.path</param-name>-->
-			<!--<param-value>/WEB-INF/conf/axis2.xml</param-value>-->
-			<!--<param-name>axis2.xml.url</param-name>-->
-			<!--<param-value>http://localhot/myrepo/axis2.xml</param-value>-->
-			<!--<param-name>axis2.repository.path</param-name>-->
-			<!--<param-value>/WEB-INF</param-value>-->
-			<!--<param-name>axis2.repository.url</param-name>-->
-			<!--<param-value>http://localhot/myrepo</param-value>-->
-		<!--</init-param>-->
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet>
-		<servlet-name>wps-T Servlet</servlet-name>
-		<servlet-class>org.n52.wps.transactional.service.TransactionalWebProcessingService</servlet-class>
-		<load-on-startup>0</load-on-startup>
-	</servlet>
-	<servlet>
-		<servlet-name>Feed Servlet</servlet-name>
-		<servlet-class>org.n52.wps.server.feed.FeedServlet</servlet-class>
-		<load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>retrieveResultServlet</servlet-name>
@@ -110,18 +84,6 @@
 	<servlet-mapping>
 		<servlet-name>wpsServlet</servlet-name>
 		<url-pattern>/WebProcessingService</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>wps-T Servlet</servlet-name>
-		<url-pattern>/WPS-T</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Feed Servlet</servlet-name>
-		<url-pattern>/feed</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>retrieveResultServlet</servlet-name>
@@ -138,7 +100,7 @@
         <param-value>false</param-value>
         <!--description>
            disables validation of the security-config.xml this is necessary
-           because the ${..} mechanism works only if the validation is disabled.
+           because the MavenProject: org.n52.wps:52n-wps-webapp:3.3.0-SNAPSHOT @ D:\dev\GitHub4w\WPS\52n-wps-webapp\pom.xml mechanism works only if the validation is disabled.
        </description-->
     </context-param>
 

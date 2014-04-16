@@ -242,12 +242,12 @@ public class AllTestsIT {
 		assertTrue(oneHeaderFieldContainsFilename);
 	}
 
-    public static void checkReferenceXMLResult(String response) throws ParserConfigurationException,
+    public static void checkReferenceXMLResult(String response, String stringThatShouldBeContained) throws ParserConfigurationException,
             SAXException,
             IOException {
         String referencedDocument = getRefAsString(response);
         assertThat(referencedDocument, referencedDocument, not(containsString("ExceptionReport")));
-        assertThat(referencedDocument, referencedDocument, containsString("LinearRing"));
+        assertThat(referencedDocument, referencedDocument, containsString(stringThatShouldBeContained));
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     }
 

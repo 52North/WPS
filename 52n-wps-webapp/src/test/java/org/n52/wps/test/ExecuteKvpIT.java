@@ -156,24 +156,27 @@ public class ExecuteKvpIT {
     @Test
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDoc() throws IOException {
     	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDoc");
-
-    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm&DataInputs=data=@href=http%3A%2F%2Fgeoprocessing.demo.52north.org%3A8080%2Fgeoserver%2Fows%3Fservice%3DWFS%26version%3D1.0.0%26request%3DGetFeature%26typeName%3Dtopp%3Atasmania_roads%26maxFeatures%3D50@mimeType=text/xml@schema=http%3A%2F%2Fschemas.opengis.net%2Fgml%2F2.1.2%2Ffeature.xsd;width=0.05&ResponseDocument=result";
+    	
+    	String inputID = "complexInput";
+    	String inputMimeType = "text/xml";
+    	String outputID = "complexOutput";
+    	
+    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=http%3A%2F%2F52north.org%2Ffiles%2Fgeoprocessing%2FTestdata%2Ftest-data.xml@mimeType=" + inputMimeType + "&ResponseDocument=" + outputID;
 
     	String response = GetClient.sendRequest(getURL);
 
     	String expectedResult = "ProcessSucceeded";
-    	String expectedResult2 = "result";
-    	String expectedResult3 = "FeatureCollection";
+    	String expectedResult3 = "TestData";
 
     	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString(expectedResult));
-    	assertThat(response, response, containsString(expectedResult2));
+    	assertThat(response, response, containsString(outputID));
     	assertThat(response, response, containsString(expectedResult3));
     }
 
     @Test
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDocSchemaMimeType() throws IOException {
-    	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDoc");
+    	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDocSchemaMimeType");
 
     	String inputID = "complexInput";
     	String inputMimeType = "text/xml";
@@ -185,12 +188,11 @@ public class ExecuteKvpIT {
     	String response = GetClient.sendRequest(getURL);
 
     	String expectedResult = processSucceeded;
-    	String expectedResult2 = outputID;
     	String expectedResult5 = "mimeType=\"" + outputMimeType + "\"";
 
     	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString(expectedResult));
-    	assertThat(response, response, containsString(expectedResult2));
+    	assertThat(response, response, containsString(outputID));
     	assertThat(response, response, containsString(expectedResult5));
     }
 
