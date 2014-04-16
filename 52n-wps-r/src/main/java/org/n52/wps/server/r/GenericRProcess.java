@@ -175,7 +175,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             log.debug("Loading file for {}", wkn);
             R_Config config = R_Config.getInstance();
 
-            this.scriptFile = config.wknToFile(wkn);
+            this.scriptFile = config.getScriptFileForWKN(wkn);
             log.debug("File loaded: {}", this.scriptFile.getAbsolutePath());
 
             if (this.scriptFile == null) {
@@ -372,7 +372,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         InputStream rScriptStream = null;
         File rScriptFile = null;
         try {
-            rScriptFile = config.wknToFile(getWellKnownName());
+            rScriptFile = config.getScriptFileForWKN(getWellKnownName());
             rScriptStream = new FileInputStream(rScriptFile);
         }
         catch (IOException e) {

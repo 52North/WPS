@@ -56,8 +56,6 @@ import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//import java.nio.file.Files;
-
 public class R_Config {
 
     private final int TEMPDIR_NAME_LENGTH = 8;
@@ -76,49 +74,16 @@ public class R_Config {
     // http://www.jguru.com/faq/view.jsp?EID=10646
     private final String R_BASE_DIR = "R";
 
-    // private final String WORK_DIR = "workdir";
-    // public static String SCRIPT_DIR = null;
-
     private final String UTILS_DIR = "utils";
 
-    private final String DEFAULT_RSERVE_HOST = "localhost";
+    private static final String DEFAULT_RSERVE_HOST = "localhost";
 
-    private final int DEFAULT_RSERVE_PORT = 6311;
+    private static final int DEFAULT_RSERVE_PORT = 6311;
 
-    private final boolean DEFAULT_ENABLEBATCHSTART = false;
-
-    /**
-     * Base directory for WPS4R resources
-     */
-    private String baseDirFull;
-
-    /**
-     * Work directory, e.g. for streaming files from Rserve to WPS. Not to confuse with the Rserve work
-     * directory
-     */
-    // public String WORK_DIR_FULL = new File(BASE_DIR_FULL,
-    // WORK_DIR).getAbsolutePath();
+    private static final boolean DEFAULT_ENABLEBATCHSTART = false;
 
     /** R scripts with utility functions to pre-load */
     public String utilsDirFull;
-
-    /**
-     * Location of all R process scripts, cannot be in WEB-INF so that they can easily be downloaded
-     **/
-    // private static String SCRIPT_DIR_FULL = BASE_DIR_FULL + "/" + SCRIPT_DIR;
-    // public static String SCRIPT_DIR_URL = "wps/rscripts";
-
-    // public String rServeHost = DEFAULT_RSERVE_HOST;
-
-    // public int rServePort = DEFAULT_RSERVE_PORT;
-
-    // public String rServeUser;
-
-    // public String rServePassword;
-
-    // /** Starts R serve via batch file **/
-
-    // public String resourceDirectory;
 
     private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
@@ -138,27 +103,12 @@ public class R_Config {
     private HashMap<String, ExceptionReport> wknConflicts = new HashMap<String, ExceptionReport>();
 
     private R_Config() {
-        // singleton pattern > private constructor
-
-        // TODO: obsolete code, script dir is retrieved by
-        // RPropertychangemangager; delete if no errors occur
-        // WPSConfig wpsConfig = WPSConfig.getInstance();
-        // Property[] rConfig =
-        // wpsConfig.getPropertiesForRepositoryClass(LocalRAlgorithmRepository.class.getName());
-        // for (Property property : rConfig) {
-        // if
-        // (property.getName().equalsIgnoreCase(RWPSConfigVariables.SCRIPT_DIR.toString()))
-        // {
-        // R_Config.SCRIPT_DIR = property.getStringValue();
-        // }
-        // }
-
         try {
             String wpsBasedir = WebProcessingService.BASE_DIR;
             if (wpsBasedir != null) {
                 File f = new File(wpsBasedir, R_BASE_DIR);
-                this.baseDirFull = f.getAbsolutePath();
-                f = new File(this.baseDirFull, UTILS_DIR);
+                String baseDirFull = f.getAbsolutePath();
+                f = new File(baseDirFull, UTILS_DIR);
                 this.utilsDirFull = f.getAbsolutePath();
             }
             else
@@ -180,12 +130,6 @@ public class R_Config {
         this.configVariables.put(key, value);
     }
 
-    /**
-     * Retrieves configuration parameters as they were assigned to the WPS config
-     * 
-     * @param key
-     * @return
-     */
     public String getConfigVariable(RWPSConfigVariables key) {
         return this.configVariables.get(key);
     }
@@ -227,7 +171,7 @@ public class R_Config {
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
         String fname = null;
         try {
-            fname = wknToFile(wkn).getName();
+            fname = getScriptFileForWKN(wkn).getName();
         }
         catch (IOException e) {
             LOGGER.error("Could not open session.", e);
@@ -264,16 +208,13 @@ public class R_Config {
         return new URL(urlString);
     }
 
-    /**
-     * Filters R scripts as files with suffix ".R"
-     */
     public static class RFileExtensionFilter implements FileFilter {
 
         @Override
         public boolean accept(File f) {
             if (f.isFile() && f.canRead()) {
                 String name = f.getName();
-                if (name.endsWith(R_Config.getInstance().SCRIPT_FILE_SUFFIX))
+                if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX))
                     return true;
             }
             return false;
@@ -289,7 +230,7 @@ public class R_Config {
             String wkn = WKN_PREFIX + process_id;
 
             if (fileToWknMap.containsValue(wkn)) {
-                File conflictFile = wknToFile(wkn);
+                File conflictFile = getScriptFileForWKN(wkn);
                 if ( !conflictFile.exists()) {
                     LOGGER.info("Cached mapping from " + wkn + " to file " + conflictFile.getName()
                             + " replaced by file " + file.getName());
@@ -310,37 +251,14 @@ public class R_Config {
         }
     }
 
-    /**
-     * @param file
-     *        points to an R scripts
-     * @return wellknownName is the corresponding process identifier
-     * @throws RAnnotationException
-     * @throws IOException
-     * @throws ExceptionReport
-     */
-    public String FileToWkn(File file) throws RAnnotationException, IOException, ExceptionReport {
+    public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
         if ( !file.exists())
             throw new FileNotFoundException("File not found: " + file.getName());
 
         return fileToWknMap.get(file);
-
-        // String fileName = file.getName();
-        //
-        // // remove suffix, usually file ending ".R":
-        // int index = fileName.lastIndexOf('.');
-        // if (index > 0)
-        // fileName = fileName.substring(0, index);
-        // return R_Config.WKN_PREFIX + fileName;
     }
 
-    /**
-     * @param wkn
-     *        Process identifier
-     * @return File points to corresponding R process script
-     * @throws IOException
-     * @throws ExceptionReport
-     */
-    public File wknToFile(String wkn) throws IOException, ExceptionReport {
+    public File getScriptFileForWKN(String wkn) throws IOException, ExceptionReport {
         // check for existing identifier conflicts
         if (wknConflicts.containsKey(wkn))
             throw wknConflicts.get(wkn);
@@ -363,33 +281,18 @@ public class R_Config {
 
     public String createTemporaryWPSWorkDir() {
         File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-wps-workdir-tmp-"
-                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // +
-                                                                                   // ".tmp");
+                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH));
         tempdir.mkdir();
         return tempdir.getAbsolutePath();
     }
-
-    // public String createTemporaryRWorkDir() throws IOException {
-    // File tempdir = new File(System.getProperty("java.io.tmpdir"),
-    // "wps4r-r-workdir-"
-    // + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH)); // +
-    // ".tmp");
-    // tempdir.mkdir();
-    // return tempdir.getAbsolutePath();
-    // }
 
     public String getScriptDirFullPath() {
         return new File(WebProcessingService.BASE_DIR, getConfigVariable(RWPSConfigVariables.SCRIPT_DIR)).getAbsolutePath();
     }
 
-    /**
-     * 
-     * @param identifier
-     * @return
-     */
     public boolean isScriptAvailable(String identifier) {
         try {
-            File f = wknToFile(identifier);
+            File f = getScriptFileForWKN(identifier);
             boolean out = f.exists();
             return out;
         }
@@ -399,17 +302,11 @@ public class R_Config {
         }
     }
 
-    /**
-     * Tests if a script associated with a process is valid Any errors will be logged
-     * 
-     * @param wkn
-     * @return
-     */
     public boolean isScriptValid(String wkn) {
         FileInputStream fis = null;
 
         try {
-            File file = wknToFile(wkn);
+            File file = getScriptFileForWKN(wkn);
             // RAnnotationParser parser = new RAnnotationParser();
             fis = new FileInputStream(file);
             boolean valid = annotationParser.validateScript(fis, wkn);
@@ -463,7 +360,7 @@ public class R_Config {
     }
 
     public int getRServePort() {
-        int port_number = this.DEFAULT_RSERVE_PORT;
+        int port_number = DEFAULT_RSERVE_PORT;
 
         String port = getConfigVariable(RWPSConfigVariables.RSERVE_PORT);
         // try to retrieve config variable
@@ -482,13 +379,13 @@ public class R_Config {
     public String getRServeHost() {
         String host = getConfigVariable(RWPSConfigVariables.RSERVE_HOST);
         if (host == null || host.equals("")) {
-            host = this.DEFAULT_RSERVE_HOST;
+            host = DEFAULT_RSERVE_HOST;
         }
         return host;
     }
 
     public boolean getEnableBatchStart() {
-        boolean isBatch = this.DEFAULT_ENABLEBATCHSTART;
+        boolean isBatch = DEFAULT_ENABLEBATCHSTART;
         // try to retrieve config variable
         String batch_c = getConfigVariable(RWPSConfigVariables.ENABLE_BATCH_START);
         if (batch_c != null && !batch_c.equals("")) {

@@ -59,7 +59,7 @@ public class RProcessInfo {
         File scriptfile;
         FileInputStream fis = null;
         try {
-            scriptfile = R_Config.getInstance().wknToFile(wkn);
+            scriptfile = R_Config.getInstance().getScriptFileForWKN(wkn);
             RAnnotationParser parser = new RAnnotationParser();
             fis = new FileInputStream(scriptfile);
             this.isValid = parser.validateScript(fis, wkn);

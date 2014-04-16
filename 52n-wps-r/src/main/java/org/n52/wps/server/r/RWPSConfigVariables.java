@@ -26,14 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 public enum RWPSConfigVariables {
 
     SCRIPT_DIR, RESOURCE_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG, R_WORK_DIR;
 
-    public String toString()
-    {
+    public String toString() {
         switch (this) {
         case R_WORK_DIR:
             return "R_Work_Dir"; // values: default, auto or path
@@ -60,18 +60,4 @@ public enum RWPSConfigVariables {
         }
 
     };
-
-    // public static void validate(RWPSConfigVariables parameter, String value)
-    // throws ExceptionReport{
-    //
-    // throw new
-    // ExceptionReport("[WPS4R] Invalid configuration for parameter "+parameter+", value is "+value,
-    // ExceptionReport.INVALID_PARAMETER_VALUE);
-    // }
-
-    public static void main(String[] args)
-    {
-        System.out.println(RWPSConfigVariables.valueOf("Rserve_Port"));
-    }
-
 }

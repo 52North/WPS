@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.beans.PropertyChangeEvent;
@@ -56,10 +57,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     private static RPropertyChangeManager instance;
 
     private RPropertyChangeManager() {
+        //
     }
 
-    public static RPropertyChangeManager getInstance()
-    {
+    public static RPropertyChangeManager getInstance() {
         if (instance == null) {
             instance = new RPropertyChangeManager();
             WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, instance);
@@ -67,16 +68,14 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         return instance;
     }
 
-    public static RPropertyChangeManager reInitialize()
-    {
+    public static RPropertyChangeManager reInitialize() {
         WPSConfig.getInstance().removePropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, instance);
         instance = new RPropertyChangeManager();
         return instance;
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt)
-    {
+    public void propertyChange(PropertyChangeEvent evt) {
         // String repName = LocalRAlgorithmRepository.class.getCanonicalName();
         // RepositoryManager manager = RepositoryManager.getInstance();
         // LocalRAlgorithmRepository repository = (LocalRAlgorithmRepository)
@@ -92,9 +91,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
     private class PropertyComparator implements Comparator<Property> {
         @Override
-        public int compare(Property o1,
-                Property o2)
-        {
+        public int compare(Property o1, Property o2) {
             int com1 = o1.getName().compareToIgnoreCase(o2.getName());
             if (com1 != 0)
                 return com1;
@@ -103,15 +100,15 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     }
 
     /**
-     * Reads the current repository properties from the wps config and matches them with
-     * registered R scripts. It will add algorithms and default parameters is necessary
+     * Reads the current repository properties from the wps config and matches them with registered R scripts.
+     * It will add algorithms and default parameters is necessary
+     * 
      * @throws ExceptionReport
      * @throws IOException
      * @throws RAnnotationException
      * 
      */
-    public void updateRepositoryConfiguration()
-    {
+    public void updateRepositoryConfiguration() {
         // Retrieve repository document and properties:
         String localRAlgorithmRepository_className = LocalRAlgorithmRepository.class.getCanonicalName();
         Repository[] repositoryDocuments = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
@@ -154,18 +151,20 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
                 // put id into a dictionary to check and add later:
                 algorithmPropertyHash.put(property.getStringValue(), property);
-            } else {
+            }
+            else {
                 LOGGER.debug("NOT-algorithm property: " + property);
 
                 if (configVariableNames.contains(pname)) {
                     boolean success = handleConfigVariable(property);
-                    if (!success)
+                    if ( !success)
                         LOGGER.warn("Invalid config variable was omitted and deleted: " + property);
 
                     // config variable should occur only once, doubling will be
                     // omitted:
                     configVariableNames.remove(pname);
-                } else {
+                }
+                else {
                     // valid properties which are not algorithms will be just
                     // passed to the new list
                     LOGGER.debug("Unprocessed property: " + property);
@@ -175,14 +174,17 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             }
         }
 
-        propertyChanged = checkMandatoryParameters(repositoryDocument, propertyChanged, newPropertyList, configVariableNames);
+        propertyChanged = checkMandatoryParameters(repositoryDocument,
+                                                   propertyChanged,
+                                                   newPropertyList,
+                                                   configVariableNames);
 
         propertyChanged = registerRScripts(repositoryDocument, algorithmPropertyHash, propertyChanged, newPropertyList);
 
         // there might be registered algorithms, which don't got a script file
         // any more,
         // those will be deleted here:
-        if (!algorithmPropertyHash.isEmpty())
+        if ( !algorithmPropertyHash.isEmpty())
             propertyChanged = true;
 
         propertyChanged = checkPropertyOrder(oldPropertyArray, propertyChanged);
@@ -205,25 +207,26 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             try {
                 String configurationPath = WPSConfig.getConfigPath();
                 File XMLFile = new File(configurationPath);
-                wpsConfigurationDocument.save(XMLFile, new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
+                wpsConfigurationDocument.save(XMLFile,
+                                              new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
                 WPSConfig.forceInitialization(configurationPath);
                 LOGGER.info("WPS Config was changed.");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 LOGGER.error("Could not write configuration to file: " + e.getMessage());
-            } catch (org.apache.xmlbeans.XmlException e) {
+            }
+            catch (org.apache.xmlbeans.XmlException e) {
                 LOGGER.error("Could not generate XML File from Data: " + e.getMessage());
             }
         }
 
     }
 
-    private boolean checkPropertyOrder(Property[] oldPropertyArray,
-            boolean propertyChanged)
-    {
+    private boolean checkPropertyOrder(Property[] oldPropertyArray, boolean propertyChanged) {
         boolean pChange = propertyChanged;
 
         // check if properties need to be re-ordered:
-        if (!propertyChanged) {
+        if ( !propertyChanged) {
             PropertyComparator comp = new PropertyComparator();
             for (int i = 0; i < oldPropertyArray.length - 1; i++) {
                 int order = comp.compare(oldPropertyArray[i], oldPropertyArray[i + 1]);
@@ -239,16 +242,18 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     /**
      * 
      * @param repositoryDocument
-     * @param algorithmPropertyHash A hashmap wkn -> algorithm property for all algorithms of the wps config
-     * @param propertyChanged indicates, if a property has been changed previously. If so, the output will be true as well
-     * @param newPropertyList The property list that possibly replaces the old property list from the wps config
+     * @param algorithmPropertyHash
+     *        A hashmap wkn -> algorithm property for all algorithms of the wps config
+     * @param propertyChanged
+     *        indicates, if a property has been changed previously. If so, the output will be true as well
+     * @param newPropertyList
+     *        The property list that possibly replaces the old property list from the wps config
      * @return true, if any properties were changed or added to the property array
      */
     private boolean registerRScripts(Repository repositoryDocument,
-            HashMap<String, Property> algorithmPropertyHash,
-            boolean propertyChanged,
-            ArrayList<Property> newPropertyList)
-    {
+                                     HashMap<String, Property> algorithmPropertyHash,
+                                     boolean propertyChanged,
+                                     ArrayList<Property> newPropertyList) {
         boolean pChanged = propertyChanged;
 
         // check script dir for R process files
@@ -262,7 +267,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             for (File scriptf : scripts) {
                 try {
                     R_Config.getInstance().registerScript(scriptf);
-                    String wkn = R_Config.getInstance().FileToWkn(scriptf);
+                    String wkn = R_Config.getInstance().getWKNForScriptFile(scriptf);
                     Property prop = algorithmPropertyHash.get(wkn);
                     // case: property is missing in wps config
                     if (prop == null) {
@@ -276,25 +281,28 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         LOGGER.debug("Added new algorithm property to repo document: " + prop);
 
                         pChanged = true;
-                    } else {
+                    }
+                    else {
                         LOGGER.debug("Algorithm property already repo document: " + prop);
                         newPropertyList.add(algorithmPropertyHash.remove(wkn));
                     }
 
-                } catch (RAnnotationException e) {
+                }
+                catch (RAnnotationException e) {
                     LOGGER.error(e.getMessage());
                     e.printStackTrace();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     LOGGER.error(e.getMessage());
                     e.printStackTrace();
-                } catch (ExceptionReport e) {
+                }
+                catch (ExceptionReport e) {
                     LOGGER.error(e.getMessage());
                     e.printStackTrace();
                 }
 
                 /*
-                 * if(prop.getActive() && addAlgorithm){
-                 * repository.addAlgorithm(wkn); }
+                 * if(prop.getActive() && addAlgorithm){ repository.addAlgorithm(wkn); }
                  */
             }
         }
@@ -302,22 +310,23 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     }
 
     /**
-     * This method will insert any config variables (with default values) that should always occur in the wps config
+     * This method will insert any config variables (with default values) that should always occur in the wps
+     * config
+     * 
      * @param repositoryDocument
      * @param propertyChanged
      * @param newPropertyList
-     * @param unusedConfigVariables Names of all config variables that do NOT occur in the property array
+     * @param unusedConfigVariables
+     *        Names of all config variables that do NOT occur in the property array
      * @return
      */
     private boolean checkMandatoryParameters(Repository repositoryDocument,
-            boolean propertyChanged,
-            ArrayList<Property> newPropertyList,
-            HashSet<String> unusedConfigVariables)
-    {
+                                             boolean propertyChanged,
+                                             ArrayList<Property> newPropertyList,
+                                             HashSet<String> unusedConfigVariables) {
 
         /*
-         * mandatory parameters, the ones from param that have not been covered
-         * yet.
+         * mandatory parameters, the ones from param that have not been covered yet.
          */
         // If there was no required parameters given by WPSconfig, host and port
         // defaults will be added
@@ -348,8 +357,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
      * @param property
      * @return true
      */
-    private boolean handleConfigVariable(Property property)
-    {
+    private boolean handleConfigVariable(Property property) {
         String pname = property.getName();
         // RWPSConfigVariables.v
         boolean success = false;
@@ -367,21 +375,25 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     }
 
     /**
-     * Deletes *.R file from repository TODO give this method a purpose i.e.
-     * implement functionality to delete process during runtime
+     * Deletes *.R file from repository TODO give this method a purpose i.e. implement functionality to delete
+     * process during runtime
      */
-    private boolean deleteScript(String processName)
-    {
+    private boolean deleteScript(String processName) {
         boolean deleted = false;
         try {
-            File processFile = R_Config.getInstance().wknToFile(processName);
+            File processFile = R_Config.getInstance().getScriptFileForWKN(processName);
             deleted = processFile.delete();
-            if (!deleted) {
-                LOGGER.error("Process file " + processFile.getName() + " could not be deleted, " + "Process just removed temporarly");
-            } else
-                LOGGER.info("Process " + processName + " and process file " + processFile.getName() + " successfully deleted!");
-        } catch (Exception e) {
-            LOGGER.error("Process file refering to " + processName + "could not be deleted, this" + "error was not expected:\n" + e.getLocalizedMessage());
+            if ( !deleted) {
+                LOGGER.error("Process file " + processFile.getName() + " could not be deleted, "
+                        + "Process just removed temporarly");
+            }
+            else
+                LOGGER.info("Process " + processName + " and process file " + processFile.getName()
+                        + " successfully deleted!");
+        }
+        catch (Exception e) {
+            LOGGER.error("Process file refering to " + processName + "could not be deleted, this"
+                    + "error was not expected:\n" + e.getLocalizedMessage());
         }
         return deleted;
 
