@@ -62,7 +62,7 @@ public class SimpleBufferAlgorithmTest {
     @BeforeClass
     public static void setUpClass() {
         try {
-            WPSConfig.forceInitialization("../52n-wps-io-geotools/src/test/resources/org/n52/wps/io/test/datahandler/generator/wps_config.xml");
+            WPSConfig.forceInitialization("../52n-wps-io/src/test/resources/org/n52/wps/io/test/datahandler/generator/wps_config.xml");
         } catch (XmlException ex) {
             LoggerFactory.getLogger(SimpleBufferAlgorithmTest.class.getName()).error(ex.getMessage());
         } catch (IOException ex) {

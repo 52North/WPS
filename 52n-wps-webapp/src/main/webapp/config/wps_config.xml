@@ -15,12 +15,18 @@
 				<Format mimetype="application/wkt"/>
 			</Parser>
 		</ParserList>
-		<GeneratorList>
+		<GeneratorList>			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
 			<!--<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.SimpleBufferAlgorithm</Property>-->
 		</Repository>
 		<Repository name="UploadedAlgorithmRepository"
