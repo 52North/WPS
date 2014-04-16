@@ -49,7 +49,9 @@ public class MIMEUtil {
 			suffix = "txt";
 		} else if ("text/html".equals(mimeType)) {
 			suffix = "html";
-		}
+		} else if ("application/json".equals(mimeType)) {
+            suffix = "json";
+        }
 		return suffix;
 	}
 }
