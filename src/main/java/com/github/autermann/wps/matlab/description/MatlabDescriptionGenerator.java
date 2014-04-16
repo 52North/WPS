@@ -136,7 +136,16 @@ public class MatlabDescriptionGenerator {
             throw new MatlabConfigurationException("Missing type for input %s", id);
         }
         int minOccurs = definition.path(YamlConstants.MIN_OCCURS).asIntValue(1);
-        int maxOccurs = definition.path(YamlConstants.MAX_OCCURS).asIntValue(1);
+        final int maxOccurs;
+        if (definition.path(YamlConstants.MAX_OCCURS).isText()) {
+            if (definition.path(YamlConstants.MAX_OCCURS).asTextValue().equals("unbounded")) {
+                maxOccurs = Integer.MAX_VALUE;
+            } else {
+                maxOccurs = 1;
+            }
+        } else {
+            maxOccurs = definition.path(YamlConstants.MAX_OCCURS).asIntValue(1);
+        }
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
         String unit = definition.path(YamlConstants.UNIT).asTextValue();
