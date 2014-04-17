@@ -256,7 +256,8 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString(Integer.toString(result)));
+        String expected = "dataType=\"xs:double\">" + Integer.toString(result) + ".0";
+        assertThat(response, containsString(expected));
     }
 
     @Test
@@ -271,7 +272,7 @@ public class Wps4rIT {
                    response,
                    containsString(expected));
     }
-    
+
     @Test
     public void defaultValuesAreLoaded() throws XmlException, IOException {
         URL resource = Wps4rIT.class.getResource("/R/ExecuteTestDefaults.xml");
@@ -283,6 +284,30 @@ public class Wps4rIT {
         assertThat("Returned value is sum of defaults, not sum of values defined in deactivated code.",
                    response,
                    containsString(expected));
+    }
+
+    @Test
+    public void exceptionsOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {"unlink(getwd())",
+                                                 "\"\";quit(\"no\");",
+                                                 "q();",
+                                                 "quit()",
+                                                 "system('format hardisk')"};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@cmd@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            String expected = "Illegal command";
+            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+            assertThat("Response containts the keyphrase '" + expected + "'", response, containsString(expected));
+            assertThat("Response contains the illegal input", response, containsString(cmd));
+        }
     }
 
 }

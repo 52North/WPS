@@ -13,7 +13,7 @@ c = 3
 out <- a + b + c
 
 #wps.off;
-out <- 42
+out <- 17
 #wps.on;
 
 #wps.out: id = out, type = integer, title = sum of inputs;
