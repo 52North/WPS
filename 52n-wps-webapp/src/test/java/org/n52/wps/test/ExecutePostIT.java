@@ -78,7 +78,7 @@ public class ExecutePostIT {
     private ExecuteRequestBuilder echoProcessExecuteRequestBuilder;
     private final String echoProcessIdentifier = "org.n52.wps.server.algorithm.test.EchoProcess";
     private final String echoProcessInlineComplexXMLInput = "<TestData><this><is><xml><Data>Test</Data></xml></is></this></TestData>";
-    private final String echoProcessReferenceComplexXMLInput = "http://52north.org/files/geoprocessing/Testdata/test-data.xml";
+    private final String echoProcessReferenceComplexXMLInput = AllTestsIT.getURL() + "/../testData/test-data.xml";
     private final String testDataNodeName = "TestData";    
     private final String echoProcessLiteralInputID = "literalInput";
     private final String echoProcessLiteralInputString = "testData";
@@ -89,7 +89,7 @@ public class ExecutePostIT {
 
     private ExecuteRequestBuilder multiReferenceBinaryInputAlgorithmExecuteRequestBuilder;
     private final String multiReferenceBinaryInputAlgorithmIdentifier = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-    private final String multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput = "http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif";
+    private final String multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput = AllTestsIT.getURL() + "/../testData/elev_srtm_30m21.tif";
     private final String multiReferenceBinaryInputAlgorithmComplexInputID = "data";
     private final String multiReferenceBinaryInputAlgorithmComplexOutputID = "result";
     private final String multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff= "image/tiff";
@@ -218,6 +218,11 @@ public class ExecutePostIT {
     @Test
     public void testExecutePOSTreferencePOSTComplexXMLSynchronousXMLOutput() throws IOException, ParserConfigurationException, SAXException {
     	System.out.println("\nRunning testExecutePOSTreferencePOSTComplexXMLSynchronousXMLOutput");
+    	
+    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+
+		echoProcessExecuteRequestBuilder.setRawData(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
+		    	
     	String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
     			+"<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
     			+"	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -225,31 +230,9 @@ public class ExecutePostIT {
     			+"	<wps:DataInputs>"
     			+"		<wps:Input>"
     			+"			<ows:Identifier>complexInput</ows:Identifier>"
-    			+"			<wps:Reference mimeType=\"text/xml\" xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/wfs\">"
+    			+"			<wps:Reference mimeType=\"text/xml\" xlink:href=\"" + AllTestsIT.getURL() + "\">"
     			+"			<wps:Body>"
-    			+"<wfs:GetFeature service=\"WFS\" version=\"1.0.0\""
-    			+"  outputFormat=\"GML2\""
-    			+"  xmlns:topp=\"http://www.openplans.org/topp\""
-    			+"  xmlns:wfs=\"http://www.opengis.net/wfs\""
-    			+"  xmlns:ogc=\"http://www.opengis.net/ogc\""
-    			+"  xmlns:gml=\"http://www.opengis.net/gml\""
-    			+"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-    			+"  xsi:schemaLocation=\"http://www.opengis.net/wfs"
-    			+"                      http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd\">"
-    			+"  <wfs:Query typeName=\"topp:states\">"
-    			+"    <ogc:PropertyName>topp:STATE_NAME</ogc:PropertyName>"
-    			+"    <ogc:PropertyName>topp:PERSONS</ogc:PropertyName>"
-    			+"    <ogc:PropertyName>the_geom</ogc:PropertyName>"
-    			+"    <ogc:Filter>"
-    			+"      <ogc:BBOX>"
-    			+"        <ogc:PropertyName>the_geom</ogc:PropertyName>"
-    			+"        <gml:Box srsName=\"http://www.opengis.net/gml/srs/epsg.xml#4326\">"
-    			+"           <gml:coordinates>-75.102613,40.212597 -72.361859,41.512517</gml:coordinates>"
-    			+"        </gml:Box>"
-    			+"      </ogc:BBOX>"
-    			+"   </ogc:Filter>"
-    			+"  </wfs:Query>"
-    			+"</wfs:GetFeature>"			
+    			+ echoProcessExecuteRequestBuilder.getExecute().toString()
     			+"			</wps:Body>"
     			+"			</wps:Reference>"
     			+"		</wps:Input>"
@@ -266,7 +249,7 @@ public class ExecutePostIT {
     	
     	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString("LinearRing"));
+    	assertThat(response, response, containsString(testDataNodeName));
     }
     
     /*Multiple complex XML Input by reference */
@@ -374,6 +357,10 @@ public class ExecutePostIT {
     public void testExecutePOSTReferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testExecutePOSTReferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType");
         
+    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+
+		echoProcessExecuteRequestBuilder.setRawData(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
+        
     	String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
     			+"<wps:Execute service=\"WPS\" version=\"1.0.0\" xmlns:wps=\"http://www.opengis.net/wps/1.0.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wps/1.0.0"
     			+"	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd\">"
@@ -381,13 +368,11 @@ public class ExecutePostIT {
     			+"	<wps:DataInputs>"
     			+"		<wps:Input>"
     			+"			<ows:Identifier>complexInput</ows:Identifier>"
-                + "<wps:Reference xlink:href=\"http://geoprocessing.demo.52north.org:8080/geoserver/ows\">"
-                + "<wps:Body>"
-                + "<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" outputFormat=\"GML2\" version=\"1.0.0\" service=\"WFS\">"
-                + "<wfs:Query typeName=\"topp:tasmania_roads\" />"
-                + "</wfs:GetFeature>"
-                + "</wps:Body>"
-                + "</wps:Reference>"
+    			+"			<wps:Reference xlink:href=\"" + AllTestsIT.getURL() + "\">"
+    			+"			<wps:Body>"
+    			+ echoProcessExecuteRequestBuilder.getExecute().toString()
+    			+"			</wps:Body>"
+    			+"			</wps:Reference>"
     			+"		</wps:Input>"
     			+"	</wps:DataInputs>"
     			+"	<wps:ResponseForm>"
@@ -402,7 +387,7 @@ public class ExecutePostIT {
     	
     	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString("MultiLineString"));
+    	assertThat(response, response, containsString(testDataNodeName));
     }
 
     /*Complex binary Input by value */
@@ -462,7 +447,7 @@ public class ExecutePostIT {
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -489,12 +474,12 @@ public class ExecutePostIT {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"http://52north.org/files/geoprocessing/Testdata/elev_srtm_30m21.tif\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
