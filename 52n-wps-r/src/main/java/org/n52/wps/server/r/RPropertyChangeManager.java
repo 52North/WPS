@@ -47,6 +47,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -262,7 +263,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         R_Config.getInstance().resetWknFileMapping();
         File algorithmDir = new File(scriptDir);
         if (algorithmDir.isDirectory()) {
-            File[] scripts = algorithmDir.listFiles(new R_Config.RFileExtensionFilter());
+            File[] scripts = algorithmDir.listFiles(new RFileExtensionFilter());
             LOGGER.debug("Loading script files from " + algorithmDir + ": " + Arrays.toString(scripts));
             for (File scriptf : scripts) {
                 try {

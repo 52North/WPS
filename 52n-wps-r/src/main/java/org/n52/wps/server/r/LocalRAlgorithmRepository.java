@@ -60,15 +60,18 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     private static Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
 
-    // registered Processes
+    // registered processes
     private Map<String, String> algorithmMap;
 
     // local cache for algorithm descriptions
     private Map<String, GenericRProcess> algorithmDescriptionMap = new HashMap<String, GenericRProcess>();
 
+    private R_Config rConfig;
+
     public LocalRAlgorithmRepository() {
         LOGGER.info("Initializing LocalRAlgorithmRepository");
         this.algorithmMap = new HashMap<String, String>();
+        this.rConfig = R_Config.getInstance();
 
         // Check WPS Config properties:
         RPropertyChangeManager changeManager = RPropertyChangeManager.getInstance();
@@ -99,7 +102,6 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         // Try to build up a connection to Rserve
         // If it is refused, a new instance of Rserve will be opened
         LOGGER.debug("[Rserve] Trying to connect to Rserve.");
-        R_Config rConfig = R_Config.getInstance();
         try {
             RConnection testcon = rConfig.openRConnection();
             LOGGER.info("[Rserve] WPS successfully connected to Rserve.");
@@ -125,7 +127,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             String algorithm_wkn = property.getStringValue();
 
             if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString())) {
-                processInfo = new RProcessInfo(algorithm_wkn);
+                processInfo = new RProcessInfo(algorithm_wkn, this.rConfig);
                 processInfoList.add(processInfo);
             }
             else
@@ -135,7 +137,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                 if ( !processInfo.isAvailable()) {
                     // property.setActive(false);
                     // propertyChanged=true;
-                    LOGGER.error("[WPS4R] Missing R script for process " + algorithm_wkn
+                    LOGGER.error("Missing R script for process " + algorithm_wkn
                             + ". Process ignored. Check WPS configuration.");
                     continue;
                 }
@@ -143,7 +145,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                 if ( !processInfo.isValid()) {
                     // property.setActive(false);
                     // propertyChanged=true;
-                    LOGGER.error("[WPS4R] Invalid R script for process "
+                    LOGGER.error("Invalid R script for process "
                             + algorithm_wkn
                             // + ". Process ignored. Check previous logs.");
                             + ". You may enable/disable it manually from the Web Admin console. Check previous logs for details.");

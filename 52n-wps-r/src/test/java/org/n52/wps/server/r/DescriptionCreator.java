@@ -38,9 +38,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.apache.xmlbeans.XmlException;
-import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
@@ -49,11 +49,16 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
-import org.w3c.dom.Document;
 
 public class DescriptionCreator {
 
+    private static R_Config config;
     private List<RAnnotation> annotations;
+
+    @BeforeClass
+    public static void initConfig() {
+        config = R_Config.getInstance();
+    }
 
     @Before
     public void loadAnnotations() throws IOException, RAnnotationException
@@ -62,7 +67,7 @@ public class DescriptionCreator {
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
-        RAnnotationParser parser = new RAnnotationParser();
+        RAnnotationParser parser = new RAnnotationParser(config);
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
     }
@@ -74,7 +79,7 @@ public class DescriptionCreator {
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(descriptionFile);
-        RProcessDescriptionCreator creator = new RProcessDescriptionCreator();
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator(config);
         ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom", new URL("http://my.url/myScript.R"), new URL("http://my.url/sessioninfo.jsp"));
         ProcessDescriptionsDocument testDoc = ProcessDescriptionsDocument.Factory.newInstance();
         testDoc.addNewProcessDescriptions().addNewProcessDescription().set(testType);

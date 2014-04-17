@@ -26,10 +26,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,7 +37,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
@@ -57,8 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class R_Config {
-
-    private final int TEMPDIR_NAME_LENGTH = 8;
 
     private static Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
 
@@ -91,7 +88,7 @@ public class R_Config {
 
     private RConnector connector = new RConnector();
 
-    private RAnnotationParser annotationParser = new RAnnotationParser();
+    private RAnnotationParser annotationParser;
 
     /** Maps current R-script files to identifiers **/
     private HashMap<File, String> fileToWknMap = new HashMap<File, String>();
@@ -117,6 +114,8 @@ public class R_Config {
         catch (Exception e) {
             LOGGER.error("Error getting full path of baseDir and configDir.", e);
         }
+
+        this.annotationParser = new RAnnotationParser(this);
     }
 
     public static R_Config getInstance() {
@@ -185,7 +184,7 @@ public class R_Config {
         return url;
     }
 
-    public String getUrlPathUpToWebapp() {
+    private String getUrlPathUpToWebapp() {
         Server server = WPSConfig.getInstance().getWPSConfig().getServer();
         String host = server.getHostname();
         String port = server.getHostport();
@@ -206,19 +205,6 @@ public class R_Config {
         String urlString = getUrlPathUpToWebapp() + "/" + path;
 
         return new URL(urlString);
-    }
-
-    public static class RFileExtensionFilter implements FileFilter {
-
-        @Override
-        public boolean accept(File f) {
-            if (f.isFile() && f.canRead()) {
-                String name = f.getName();
-                if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX))
-                    return true;
-            }
-            return false;
-        }
     }
 
     void registerScript(File file) throws FileNotFoundException, RAnnotationException, IOException, ExceptionReport {
@@ -277,13 +263,6 @@ public class R_Config {
         this.wknToFileMap.clear();
         this.fileToWknMap.clear();
         this.wknConflicts.clear();
-    }
-
-    public String createTemporaryWPSWorkDir() {
-        File tempdir = new File(System.getProperty("java.io.tmpdir"), "wps4r-wps-workdir-tmp-"
-                + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH));
-        tempdir.mkdir();
-        return tempdir.getAbsolutePath();
     }
 
     public String getScriptDirFullPath() {
@@ -406,5 +385,16 @@ public class R_Config {
         String info = RSessionInfo.getSessionInfo(rCon);
         rCon.close();
         return info;
+    }
+
+    public URL getProcessDescriptionURL(String processWKN) {
+        String s = getUrlPathUpToWebapp() + "/WebProcessingService?Request=DescribeProcess&identifier=" + processWKN;
+        try {
+            return new URL(s);
+        }
+        catch (MalformedURLException e) {
+            LOGGER.error("Could not create URL for process {}", processWKN, e);
+            return null;
+        }
     }
 }

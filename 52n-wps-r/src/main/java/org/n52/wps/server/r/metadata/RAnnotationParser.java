@@ -43,6 +43,7 @@ import java.util.StringTokenizer;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -61,7 +62,10 @@ public class RAnnotationParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
-    public RAnnotationParser() {
+    private R_Config config;
+
+    public RAnnotationParser(R_Config config) {
+        this.config = config;
         LOGGER.info("New " + this);
     }
 
@@ -81,7 +85,7 @@ public class RAnnotationParser {
         // try to parse annotations:
         List<RAnnotation> annotations = parseAnnotationsfromScript(script);
         // try to create process description:
-        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator();
+        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(this.config);
 
         // TODO: WPS.des and WPS.res should only occur once or not at all
         try {
@@ -266,7 +270,9 @@ public class RAnnotationParser {
 
         // add empty hasmap for now
         HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
-        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash, resources);
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash,
+                                                                       resources,
+                                                                       config.getResourceDirURL());
 
         return resourceAnnotation;
     }

@@ -66,7 +66,15 @@ import org.slf4j.LoggerFactory;
 
 public class RProcessDescriptionCreator {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
+    private static Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
+
+    private R_Config config;
+
+    public RProcessDescriptionCreator(R_Config config) {
+        this.config = config;
+
+        log.debug("NEW {}", this);
+    }
 
     /**
      * Usually called from GenericRProcess (extends AbstractObservableAlgorithm)
@@ -85,7 +93,7 @@ public class RProcessDescriptionCreator {
             URL fileUrl,
             URL sessionInfoUrl) throws ExceptionReport, RAnnotationException
     {
-        LOGGER.debug("Creating Process Description for " + identifier);
+        log.debug("Creating Process Description for " + identifier);
 
         try {
             ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
@@ -173,7 +181,7 @@ public class RProcessDescriptionCreator {
 
             return pdt;
         } catch (Exception e) {
-            LOGGER.error("Error creating process description.", e);
+            log.error("Error creating process description.", e);
             throw new ExceptionReport("Error creating process description.", "NA", RProcessDescriptionCreator.class.getName(), e);
         }
     }
@@ -197,13 +205,13 @@ public class RProcessDescriptionCreator {
                     MetadataType mt = pdt.addNewMetadata();
                     mt.setTitle("Resource: " + resource.getResourceValue());
 
-                    URL url = resource.getFullResourceURL();
+                    URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
                     mt.setHref(url.toExternalForm());
                 }
             }
         } catch (RAnnotationException e) {
             e.printStackTrace();
-            LOGGER.error(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 
@@ -215,8 +223,7 @@ public class RProcessDescriptionCreator {
     private static void addProcessDescription(ProcessDescriptionType pdt,
             RAnnotation annotation) throws RAnnotationException
     {
-        R_Config conf = R_Config.getInstance();
-        String id = conf.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
+        String id = R_Config.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);

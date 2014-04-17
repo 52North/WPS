@@ -1,0 +1,169 @@
+/**
+ * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *       • Apache License, version 2.0
+ *       • Apache Software License, version 1.0
+ *       • GNU Lesser General Public License, version 3
+ *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       • Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+
+package org.n52.wps.server.r.util;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.n52.wps.server.r.syntax.RegExp;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class RExecutor {
+
+    private static Logger log = LoggerFactory.getLogger(RExecutor.class);
+
+    private boolean debugScript = true; // TODO make configurable property
+
+    private InputStream openScriptStream(File rScriptFile) throws ExceptionReport, RserveException {
+        InputStream rScriptStream = null;
+
+        try {
+            rScriptStream = new FileInputStream(rScriptFile);
+        }
+        catch (IOException e) {
+            log.error("Error reading script file.", e);
+            throw new ExceptionReport("Could not read script file " + rScriptFile, "Input/Output", e);
+        }
+
+        return rScriptStream;
+    }
+
+    /**
+     * 
+     * @param script
+     *        R input script
+     * @param rCon
+     *        Connection - should be open usually / otherwise it will be opened and closed separately
+     * @return true if read was successful
+     */
+    public boolean executeScript(File script, RConnection rCon) throws RserveException,
+            IOException,
+            RAnnotationException,
+            ExceptionReport {
+        log.debug("Executing script...");
+
+        InputStream rScriptStream = openScriptStream(script);
+
+        boolean success = true;
+
+        BufferedReader fr = new BufferedReader(new InputStreamReader(rScriptStream));
+        if ( !fr.ready())
+            return false;
+
+        // reading script:
+        StringBuilder text = new StringBuilder();
+
+        text.append("wps_warn=c()\n"); // stores warnings
+
+        // surrounds R script with try / catch block in R
+        text.append("error = try({" + '\n');
+        // wrapper to retrieve warnings (workaround, because warnings() reliable
+        // for Rserve and often returns NULL)
+        text.append("withCallingHandlers({\n\n\n");
+
+        // is set true when wps.off-annotations occur
+        // this indicates that parts of the script shall not pass to Rserve
+        boolean wpsoff_state = false;
+
+        while (fr.ready()) {
+            String line = fr.readLine();
+
+            if (line.contains("setwd(")) {
+                log.warn("The running R script contains a call to \"setwd(...)\". "
+                        + "This may cause runtime-errors and unexpected behaviour of WPS4R. "
+                        + "It is strongly advise to not use this function in process scripts.");
+            }
+
+            if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
+                // TODO: check in validation
+                throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
+
+            if (line.contains(RegExp.WPS_OFF)) {
+                wpsoff_state = true;
+            }
+            else if (line.contains(RegExp.WPS_ON)) {
+                wpsoff_state = false;
+            }
+            else if (wpsoff_state)
+                line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
+
+            text.append(line + "\n");
+        }
+        // apply handler to retrieve warnings:
+        text.append("\n\n\n},warning=function(w) {\n" + "  wps_warn = get(\"wps_warn\", envir=.GlobalEnv)\n"
+                + "  wps_warn = append(wps_warn, w$message)\n" + "  assign(\"wps_warn\", wps_warn, envir=.GlobalEnv)\n"
+                + "}" + ")");
+        text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
+                + "if(hasError) error_message = as.character(error)" + '\n');
+
+        if (this.debugScript && log.isDebugEnabled())
+            log.debug(text.toString());
+
+        // call the actual script here
+        rCon.eval(text.toString());
+
+        try {
+            // handling internal R errors:
+            if (rCon.eval("hasError").asInteger() == 1) {
+                String message = "An R-error occured while executing R-script: \n"
+                        + rCon.eval("error_message").asString();
+                log.error(message);
+                success = false;
+                throw new ExceptionReport(message, ExceptionReport.REMOTE_COMPUTATION_ERROR);
+            }
+
+            // retrieving error from Rserve
+        }
+        catch (REXPMismatchException e) {
+            log.error("Error handling during R-script execution failed: " + e.getMessage());
+            success = false;
+        }
+
+        try {
+            rScriptStream.close();
+        }
+        catch (IOException e) {
+            log.error("Connection to R script cannot be closed for process file {}", script);
+        }
+
+        return success;
+    }
+
+}

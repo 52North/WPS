@@ -41,9 +41,15 @@ public class ResourceAnnotation extends RAnnotation {
 
     private List<R_Resource> resources = new ArrayList<R_Resource>();
 
-    public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash, List<R_Resource> resources) throws IOException, RAnnotationException {
+    private String resourceDirUrl;
+
+    public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash,
+                              List<R_Resource> resources,
+                              String resourceDirUrl) throws IOException,
+            RAnnotationException {
         super(RAnnotationType.RESOURCE, attributeHash);
         this.resources.addAll(resources);
+        this.resourceDirUrl = resourceDirUrl;
     }
 
     @Override
@@ -63,7 +69,7 @@ public class ResourceAnnotation extends RAnnotation {
                 } else {
                     namedList.append(", ");
                 }
-                String fullResourceURL = resource.getFullResourceURL().toExternalForm();
+                String fullResourceURL = resource.getFullResourceURL(this.resourceDirUrl).toExternalForm();
 
                 String resourceName = resource.getResourceValue();
 
