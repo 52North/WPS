@@ -1,3 +1,31 @@
+/**
+ * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *       • Apache License, version 2.0
+ *       • Apache Software License, version 1.0
+ *       • GNU Lesser General Public License, version 3
+ *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *       • Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
 
 package org.n52.wps.server.r.workspace;
 
@@ -51,12 +79,23 @@ import org.slf4j.LoggerFactory;
 
 public class RIOHandler {
 
+    /**
+     * these data bindings do not need any pre-procesing or wrapping when loaded into an R session
+     */
     @SuppressWarnings("unchecked")
-    protected static List<Class< ? extends AbstractLiteralDataBinding>> easyLiterals = Arrays.asList(LiteralByteBinding.class,
+    protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleInputLiterals = Arrays.asList(LiteralByteBinding.class,
                                                                                                      LiteralDoubleBinding.class,
                                                                                                      LiteralFloatBinding.class,
                                                                                                      LiteralIntBinding.class,
                                                                                                      LiteralLongBinding.class,
+                                                                                                            LiteralShortBinding.class);
+
+    @SuppressWarnings("unchecked")
+    protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleOutputLiterals = Arrays.asList(LiteralByteBinding.class,
+                                                                                                             LiteralDoubleBinding.class,
+                                                                                                             LiteralFloatBinding.class,
+                                                                                                             LiteralIntBinding.class,
+                                                                                                             LiteralLongBinding.class,
                                                                                                      LiteralShortBinding.class,
                                                                                                      LiteralStringBinding.class);
 
@@ -161,6 +200,8 @@ public class RIOHandler {
         }
 
         IData ivalue = input.get(0);
+        log.debug("Handling input value {} with payload {}", ivalue, ivalue.getPayload());
+
         Class< ? extends IData> iclass = ivalue.getClass();
         if (ivalue instanceof ILiteralData)
             return parseLiteralInput(iclass, ivalue.getPayload());
@@ -222,7 +263,7 @@ public class RIOHandler {
         else
             result = "\"" + defaultValue.toString() + "\"";
 
-        if (easyLiterals.contains(iClass)) {
+        if (simpleInputLiterals.contains(iClass)) {
             result = defaultValue.toString();
         }
         else if (iClass.equals(LiteralBooleanBinding.class)) {
@@ -248,13 +289,15 @@ public class RIOHandler {
                              String result_id,
                              REXP result,
                              Collection<RAnnotation> annotations,
-                             boolean wpsWorkDirIsRWorkDir,
-                             String wpsWorkDir) throws IOException,
+                             RWorkspace workspace) throws IOException,
             REXPMismatchException,
             RserveException,
             RAnnotationException,
             ExceptionReport {
         log.debug("parsing Output with id {} from result {}", result_id, result);
+
+        boolean wpsWorkDirIsRWorkDir = workspace.isWpsWorkDirIsRWorkDir();
+        String wpsWorkDir = workspace.getPath();
 
         if (result == null) {
             log.error("Result for output parsing is NULL for id {}", result_id);
@@ -394,8 +437,7 @@ public class RIOHandler {
             }
         }
 
-        // TODO: Might be a risky solution in terms of unknown constructors:
-        for (Class< ? > literal : easyLiterals) {
+        for (Class< ? > literal : simpleOutputLiterals) {
             if (iClass.equals(literal)) {
                 Constructor<IData> cons = null;
                 try {
@@ -404,10 +446,10 @@ public class RIOHandler {
                     if (literal.equals(LiteralIntBinding.class)) {
                         // try to force conversion from R-datatype to integer
                         // (important for the R-data type "numeric"):
-                        return cons.newInstance(param.newInstance("" + result.asInteger()));
+                        String intString = Integer.toString(result.asInteger());
+                        return cons.newInstance(param.newInstance(intString));
                     }
                     return cons.newInstance(param.newInstance(result.asString()));
-
                 }
                 catch (Exception e) {
                     String message = "Error for parsing String to IData for " + result_id + " and class " + iClass

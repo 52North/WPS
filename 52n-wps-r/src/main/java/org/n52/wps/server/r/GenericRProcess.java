@@ -54,7 +54,6 @@ import org.n52.wps.server.r.util.RLogger;
 import org.n52.wps.server.r.workspace.RIOHandler;
 import org.n52.wps.server.r.workspace.RWorkspaceManager;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,17 +66,17 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     // constructor
     private List<RAnnotation> annotations;
 
-    private RAnnotationParser parser;
-
-    private RExecutor executor = new RExecutor();
+    private R_Config config;
 
     private List<String> errors = new ArrayList<String>();
 
-    private File scriptFile = null;
+    private RExecutor executor = new RExecutor();
 
     private RIOHandler iohandler = new RIOHandler();
 
-    private R_Config config;
+    private RAnnotationParser parser;
+
+    private File scriptFile = null;
 
     public GenericRProcess(String wellKnownName) {
         super(wellKnownName);
@@ -130,7 +129,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             rScriptStream = new FileInputStream(this.scriptFile);
             if (this.parser == null)
                 this.parser = new RAnnotationParser(this.config); // prevents
-                                                       // NullpointerException
+            // NullpointerException
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // submits annotation with process informations to
@@ -141,7 +140,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                            config.getScriptURL(wkn),
                                                                            config.getSessionInfoURL());
 
-            log.debug("Created process description for {}:\n", wkn, doc.xmlText());
+            log.debug("Created process description for {}:\n{}", wkn, doc.xmlText());
             return doc;
         }
         catch (RAnnotationException rae) {
@@ -171,78 +170,76 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         log.info("Running {}", this.toString());
         log.debug("inputData: {}", Arrays.toString(inputData.entrySet().toArray()));
 
-        RConnection rCon = null;
+        FilteredRConnection rCon = null;
         try {
-            try {
-                rCon = config.openRConnection();
-                RLogger.logGenericRProcess(rCon,
-                                           "Running algorithm with input "
-                                                   + Arrays.deepToString(inputData.entrySet().toArray()));
+            rCon = config.openRConnection();
+            RLogger.logGenericRProcess(rCon,
+                                       "Running algorithm with input "
+                                               + Arrays.deepToString(inputData.entrySet().toArray()));
 
-                RWorkspaceManager manager = new RWorkspaceManager(rCon, this.iohandler, config);
-                String originalWorkDir = manager.prepareWorkspace(inputData, getWellKnownName());
+            RWorkspaceManager manager = new RWorkspaceManager(rCon, this.iohandler, config);
+            String originalWorkDir = manager.prepareWorkspace(inputData, getWellKnownName());
 
-                List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations,
-                                                                               RAnnotationType.RESOURCE);
-                manager.loadResources(resAnnotList);
+            List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
+            manager.loadResources(resAnnotList);
 
-                List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
-                manager.loadInputValues(inputData, inAnnotations);
+            List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
+            manager.loadInputValues(inputData, inAnnotations);
 
-                if (log.isDebugEnabled())
-                    manager.saveImage("preExecution");
+            if (log.isDebugEnabled())
+                manager.saveImage("preExecution");
 
-                File scriptFile = config.getScriptFileForWKN(getWellKnownName());
+            File scriptFile = config.getScriptFileForWKN(getWellKnownName());
 
-                HashMap<String, IData> result = null;
-                boolean success = executor.executeScript(scriptFile, rCon);
-                if (success) {
-                    List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
-                                                                                     RAnnotationType.OUTPUT);
-                   result = manager.saveOutputValues(outAnnotations);
-                }
-                else {
-                    String msg = "Failure while executing R script. See logs for details";
-                    log.error(msg);
-                    throw new ExceptionReport(msg, getClass().getName());
-                }
-
-                if (log.isDebugEnabled())
-                    manager.saveImage("afterExecution");
-                log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
-
-                manager.cleanUpWorkdir();
-                manager.cleanUpSession(originalWorkDir);
-
-                return result;
+            HashMap<String, IData> result = null;
+            boolean success = executor.executeScript(scriptFile, rCon);
+            if (success) {
+                List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
+                                                                                 RAnnotationType.OUTPUT);
+                result = manager.saveOutputValues(outAnnotations);
             }
-            catch (IOException e) {
-                String message = "Attempt to run R script file failed:\n" + e.getClass() + " - "
-                        + e.getLocalizedMessage() + "\n" + e.getCause();
-                log.error(message, e);
-                throw new ExceptionReport(message, e.getClass().getName(), e);
+            else {
+                String msg = "Failure while executing R script. See logs for details";
+                log.error(msg);
+                throw new ExceptionReport(msg, getClass().getName());
             }
-            catch (RAnnotationException e) {
-                String message = "R script cannot be executed due to invalid annotations.";
-                log.error(message, e);
-                throw new ExceptionReport(message, e.getClass().getName(), e);
-            }
-            catch (RserveException e) {
-                log.error("Rserve problem executing script: " + e.getMessage(), e);
-                throw e;
-            }
+
+            if (log.isDebugEnabled())
+                manager.saveImage("afterExecution");
+            log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
+
+            manager.cleanUpWithWPS();
+            manager.cleanUpInR(originalWorkDir);
+
+            return result;
+        }
+        catch (IOException e) {
+            String message = "Attempt to run R script file failed:\n" + e.getClass() + " - " + e.getLocalizedMessage()
+                    + "\n" + e.getCause();
+            log.error(message, e);
+            throw new ExceptionReport(message, e.getClass().getName(), e);
+        }
+        catch (RAnnotationException e) {
+            String message = "R script cannot be executed due to invalid annotations.";
+            log.error(message, e);
+            throw new ExceptionReport(message, e.getClass().getName(), e);
         }
         catch (RserveException e) {
-            String message = "An R Connection Error occured:\n" + e.getClass() + " - " + e.getLocalizedMessage() + "\n"
-                    + e.getCause();
-            log.error(message, e);
-            throw new ExceptionReport("Error with the R connection", "R", "R_Connection", e);
+            log.error("Rserve problem executing script: " + e.getMessage(), e);
+            throw new ExceptionReport("Rserve problem executing script: " + e.getMessage(),
+                                      "R",
+                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
+                                      e);
         }
         catch (REXPMismatchException e) {
             String message = "An R Parsing Error occoured:\n" + e.getMessage() + e.getClass() + " - "
                     + e.getLocalizedMessage() + "\n" + e.getCause();
             log.error(message, e);
             throw new ExceptionReport(message, "R", "R_Connection", e);
+        }
+        finally {
+            if (rCon != null)
+                rCon.close();
         }
     }
 

@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RegExp;
 import org.rosuda.REngine.REXPMismatchException;
@@ -47,9 +48,15 @@ import org.slf4j.LoggerFactory;
 
 public class RExecutor {
 
+    private static final String COMMENT_CHARACTER = "#";
+
     private static Logger log = LoggerFactory.getLogger(RExecutor.class);
 
     private boolean debugScript = true; // TODO make configurable property
+
+    private boolean appendSwitchedOffCommandsAsComments = false; // TODO make configurable property
+
+    private boolean appendComments = false; // TODO make configurable property
 
     private InputStream openScriptStream(File rScriptFile) throws ExceptionReport, RserveException {
         InputStream rScriptStream = null;
@@ -59,7 +66,9 @@ public class RExecutor {
         }
         catch (IOException e) {
             log.error("Error reading script file.", e);
-            throw new ExceptionReport("Could not read script file " + rScriptFile, "Input/Output", e);
+            throw new ExceptionReport("Could not read script file " + rScriptFile,
+                                      ExceptionReport.NO_APPLICABLE_CODE,
+                                      e);
         }
 
         return rScriptStream;
@@ -88,15 +97,13 @@ public class RExecutor {
             return false;
 
         // reading script:
-        StringBuilder text = new StringBuilder();
-
-        text.append("wps_warn=c()\n"); // stores warnings
+        StringBuilder scriptExecutionString = new StringBuilder();
 
         // surrounds R script with try / catch block in R
-        text.append("error = try({" + '\n');
+        scriptExecutionString.append("error = try({ \n");
         // wrapper to retrieve warnings (workaround, because warnings() reliable
         // for Rserve and often returns NULL)
-        text.append("withCallingHandlers({\n\n\n");
+        scriptExecutionString.append("withCallingHandlers({\n\n");
 
         // is set true when wps.off-annotations occur
         // this indicates that parts of the script shall not pass to Rserve
@@ -104,55 +111,83 @@ public class RExecutor {
 
         while (fr.ready()) {
             String line = fr.readLine();
+            if (line.isEmpty())
+                continue;
 
-            if (line.contains("setwd(")) {
+            if (line.contains("setwd("))
                 log.warn("The running R script contains a call to \"setwd(...)\". "
                         + "This may cause runtime-errors and unexpected behaviour of WPS4R. "
-                        + "It is strongly advise to not use this function in process scripts.");
-            }
+                        + "It is strongly advised to not use this function in process scripts.");
 
             if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
-                // TODO: check in validation
                 throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
 
-            if (line.contains(RegExp.WPS_OFF)) {
+            if (line.contains(RegExp.WPS_OFF))
                 wpsoff_state = true;
-            }
-            else if (line.contains(RegExp.WPS_ON)) {
+            else if (line.contains(RegExp.WPS_ON))
                 wpsoff_state = false;
+            else if (wpsoff_state) {
+                if (appendSwitchedOffCommandsAsComments)
+                    line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
             }
-            else if (wpsoff_state)
-                line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
-
-            text.append(line + "\n");
+            else {
+                // not switched off:
+                if (line.trim().startsWith(COMMENT_CHARACTER)) {
+                    if (appendComments)
+                        scriptExecutionString.append(line);
+                }
+                else {
+                    scriptExecutionString.append(line);
+                    scriptExecutionString.append("\n");
+                }
+            }
         }
+
         // apply handler to retrieve warnings:
-        text.append("\n\n\n},warning=function(w) {\n" + "  wps_warn = get(\"wps_warn\", envir=.GlobalEnv)\n"
-                + "  wps_warn = append(wps_warn, w$message)\n" + "  assign(\"wps_warn\", wps_warn, envir=.GlobalEnv)\n"
-                + "}" + ")");
-        text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
-                + "if(hasError) error_message = as.character(error)" + '\n');
+        scriptExecutionString.append("\n}, warning = function(w) {\n  ");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append(" = get(\"");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append("\", envir = .GlobalEnv);");
+        scriptExecutionString.append("\n  ");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append(" = append(");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append(", w$message);");
+        scriptExecutionString.append("\n");
+        scriptExecutionString.append("  assign(\"");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append("\", ");
+        scriptExecutionString.append(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
+        scriptExecutionString.append(", envir = .GlobalEnv);");
+        scriptExecutionString.append("\n");
+        scriptExecutionString.append("})\n"); // for "withCallingHandlers"
+        scriptExecutionString.append("});\n\n"); // for "try{..."
+        scriptExecutionString.append("hasError <- class(error) == \"try-error\" ");
+        scriptExecutionString.append("\n");
+        scriptExecutionString.append("if(hasError) ");
+        scriptExecutionString.append(RWPSSessionVariables.ERROR_MESSAGE);
+        scriptExecutionString.append(" <- as.character(error)");
+        scriptExecutionString.append("\n");
 
         if (this.debugScript && log.isDebugEnabled())
-            log.debug(text.toString());
+            log.debug(scriptExecutionString.toString());
 
         // call the actual script here
-        rCon.eval(text.toString());
+        rCon.eval(scriptExecutionString.toString());
 
         try {
             // handling internal R errors:
             if (rCon.eval("hasError").asInteger() == 1) {
-                String message = "An R-error occured while executing R-script: \n"
-                        + rCon.eval("error_message").asString();
+                String message = "An R error occured while executing R script: \n"
+                        + rCon.eval(RWPSSessionVariables.ERROR_MESSAGE).asString();
                 log.error(message);
                 success = false;
                 throw new ExceptionReport(message, ExceptionReport.REMOTE_COMPUTATION_ERROR);
             }
-
-            // retrieving error from Rserve
         }
         catch (REXPMismatchException e) {
-            log.error("Error handling during R-script execution failed: " + e.getMessage());
+            log.error("Error handling during R script execution failed.", e);
             success = false;
         }
 

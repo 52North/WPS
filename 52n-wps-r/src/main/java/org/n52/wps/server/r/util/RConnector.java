@@ -26,14 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.util;
 
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.n52.wps.server.r.FilteredRConnection;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,42 +47,42 @@ public class RConnector {
 
     private static Logger log = LoggerFactory.getLogger(RConnector.class);
 
-    public RConnection getNewConnection(boolean enableBatchStart,
-            String host,
-            int port,
-            String user,
-            String password) throws RserveException
-    {
-        RConnection con = null;
+    public FilteredRConnection getNewConnection(boolean enableBatchStart,
+                                                String host,
+                                                int port,
+                                                String user,
+                                                String password) throws RserveException {
+        FilteredRConnection con = null;
         log.debug("Creating new RConnection");
         con = getNewConnection(enableBatchStart, host, port);
 
         // Login MUSST be the next request after connection
         // otherwise the connection is broken even if login is requested later
-        if (con != null && con.needLogin())
+        if (con != null && con.needLogin()) {
+            log.debug("Connection requires login... logging in with user {}", user);
             con.login(user, password);
+        }
 
         RLogger.log(con, "New connection from WPS4R");
         REXP info = con.eval("capture.output(sessionInfo())");
         try {
-            log.debug("NEW CONNECTION >>> sessionInfo:\n" + Arrays.deepToString(info.asStrings()));
-        } catch (REXPMismatchException e) {
+            log.debug("NEW CONNECTION >>> sessionInfo:\n{}", Arrays.deepToString(info.asStrings()));
+        }
+        catch (REXPMismatchException e) {
             log.warn("Error creating session info.", e);
         }
 
         return con;
     }
 
-    private RConnection getNewConnection(boolean enableBatchStart,
-            String host,
-            int port) throws RserveException
-    {
-        log.debug("New connection using batch " + enableBatchStart + " at host:port" + host + ":" + port);
+    private FilteredRConnection getNewConnection(boolean enableBatchStart, String host, int port) throws RserveException {
+        log.debug("New connection using batch = {} at {}:{}", enableBatchStart, host, port);
 
-        RConnection con = null;
+        FilteredRConnection con = null;
         try {
-            con = new RConnection(host, port);
-        } catch (RserveException rse) {
+            con = new FilteredRConnection(host, port);
+        }
+        catch (RserveException rse) {
             log.error("Could not connect to RServe.", rse);
 
             if (rse.getMessage().startsWith("Cannot connect") && enableBatchStart) {
@@ -89,36 +90,40 @@ public class RConnector {
 
                 try {
                     con = attemptStarts(host, port);
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     log.error("Attempted to start Rserve and establish a connection failed", e);
 
                     // Throwable#addSuppressed() only supported by Java 1.7+
                     // rse.addSuppressed(e);
                 }
-            } else
+            }
+            else
                 throw rse;
         }
-        // prevent from occasional NullPointerExceptions
+
         if (con == null)
-            throw new RserveException(null, "Cannot connect with Rserve, connection is null");
+            throw new RserveException(null,
+                                      "Cannot connect with Rserve, connection is null. Is Rserve configured for remote connections? It is not by default. See http://www.rforge.net/Rserve/doc.html");
 
         return con;
     }
 
-    private RConnection attemptStarts(String host,
-            int port) throws InterruptedException, IOException, RserveException
-    {
+    private FilteredRConnection attemptStarts(String host, int port) throws InterruptedException,
+            IOException,
+            RserveException {
         startRserve();
 
         int attempt = 1;
-        RConnection con = null;
+        FilteredRConnection con = null;
         while (attempt <= START_ATTEMP_COUNT) {
             try {
                 Thread.sleep(START_ATTEMPT_SLEEP); // wait for R to startup,
                                                    // then establish connection
-                con = new RConnection(host, port);
+                con = new FilteredRConnection(host, port);
                 break;
-            } catch (RserveException rse) {
+            }
+            catch (RserveException rse) {
                 if (attempt >= 5) {
                     throw rse;
                 }
@@ -129,25 +134,23 @@ public class RConnector {
         return con;
     }
 
-    private static void startRServeOnLinux() throws InterruptedException, IOException
-    {
+    private static void startRServeOnLinux() throws InterruptedException, IOException {
         String rserveStartCMD = "R CMD Rserve --vanilla --slave";
         Runtime.getRuntime().exec(rserveStartCMD).waitFor();
     }
 
-    private static void startRServeOnWindows() throws IOException
-    {
+    private static void startRServeOnWindows() throws IOException {
         String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
         Runtime.getRuntime().exec(rserveStartCMD);
     }
 
-    public void startRserve() throws InterruptedException, IOException
-    {
+    public void startRserve() throws InterruptedException, IOException {
         log.debug("Starting Rserve locally...");
 
         if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
             startRServeOnLinux();
-        } else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+        }
+        else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
             startRServeOnWindows();
         }
 

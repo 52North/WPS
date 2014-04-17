@@ -126,7 +126,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             RProcessInfo processInfo = null;
             String algorithm_wkn = property.getStringValue();
 
-            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString())) {
+            if (property.getName().equalsIgnoreCase(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString())) {
                 processInfo = new RProcessInfo(algorithm_wkn, this.rConfig);
                 processInfoList.add(processInfo);
             }

@@ -488,15 +488,17 @@
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">R/scripts</Property>
-			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
-			<Property name="Resource_Dir" active="true">R/resources</Property>
-			<Property name="R_Work_Dir" active="true">default</Property>
-			<Property name="Enable_Batch_Start" active="true">true</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
+			<Property name="R_enableBatchStart" active="true">true</Property>
+			<Property name="R_datatypeConfig" active="true">R/R_Datatype.conf</Property>
+			<Property name="R_wdStrategy" active="true">default</Property>
+			<Property name="R_wdName" active="false">myName</Property>
+			<Property name="R_resourceDirectory" active="true">R/resources</Property>
+			<Property name="R_RserveHost" active="true">localhost</Property>
+			<Property name="R_RservePort" active="true">6311</Property>
+			<Property name="R_RserveUser" active="false">NA</Property>
+			<Property name="R_RservePassword" active="false">NA</Property>
+			<Property name="R_scriptDirectory" active="true">R/scripts</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">

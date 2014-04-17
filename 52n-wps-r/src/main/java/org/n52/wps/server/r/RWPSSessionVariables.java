@@ -47,8 +47,12 @@ public class RWPSSessionVariables {
     
     public static final String WPS_SERVER_NAME = "wpsServerName";
 
+    public static final String ERROR_MESSAGE = "wpsErrorMessage";
+
     public static String RESOURCE_URL_NAME = "wpsResourceURL";
 
-    public static String R_SESSION_SCRIPT_RESOURCES = "wpsScriptResources";
+    public static String SCRIPT_RESOURCES = "wpsScriptResources";
+
+    public static String WARNING_OUTPUT_STORAGE = "wpsWarningStorage";
 
 }

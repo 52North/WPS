@@ -147,7 +147,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             String pname = property.getName().toLowerCase();
 
             // check the name and active state
-            if (pname.equalsIgnoreCase(RWPSConfigVariables.ALGORITHM.toString())) {
+            if (pname.equalsIgnoreCase(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString())) {
                 LOGGER.debug("Algorithm property: " + property);
 
                 // put id into a dictionary to check and add later:
@@ -276,7 +276,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         // description:
                         prop = repositoryDocument.addNewProperty();
                         prop.setActive(true);
-                        prop.setName(RWPSConfigVariables.ALGORITHM.toString());
+                        prop.setName(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString());
                         prop.setStringValue(wkn);
                         newPropertyList.add(prop);
                         LOGGER.debug("Added new algorithm property to repo document: " + prop);

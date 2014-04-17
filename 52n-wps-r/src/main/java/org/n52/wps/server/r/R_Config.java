@@ -322,7 +322,7 @@ public class R_Config {
         }
     }
 
-    public RConnection openRConnection() throws RserveException {
+    public FilteredRConnection openRConnection() throws RserveException {
         return this.connector.getNewConnection(this.getEnableBatchStart(),
                                                this.getRServeHost(),
                                                this.getRServePort(),

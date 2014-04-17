@@ -137,6 +137,12 @@ public class RAnnotation {
         return filterAnnotations(annotations, type, null, null);
     }
 
+    public static RAnnotation filterFirstMatchingAnnotation(List<RAnnotation> annotations,
+                                                            RAttribute attribute,
+                                                            String value) throws RAnnotationException {
+        return filterAnnotations(annotations, null, attribute, value).iterator().next();
+    }
+
     /**
      * 
      * @param rClass
