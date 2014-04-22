@@ -288,11 +288,11 @@ public class Wps4rIT {
 
     @Test
     public void exceptionsOnIllegalInputs() throws XmlException, IOException {
-        String[] illegalCommands = new String[] {"unlink(getwd())",
-                                                 "\"\";quit(\"no\");",
-                                                 "q();",
-                                                 "quit()",
-                                                 "system('format hardisk')"};
+        String[] illegalCommands = new String[] {
+        // "\\x0022;", // FIXME Rserve can be crashed with this
+        // "\u0071\u0075\u0069\u0074\u0028\u0029",
+        // "<-", "a<-q", // result in WPS parsing error
+        "="};
 
         URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
@@ -303,10 +303,49 @@ public class Wps4rIT {
 
             String response = PostClient.sendRequest(wpsUrl, payload);
 
-            String expected = "Illegal command";
+            String expected = "illegal input";
             assertThat("Response is an exception", response, containsString("ExceptionReport"));
-            assertThat("Response containts the keyphrase '" + expected + "'", response, containsString(expected));
+            assertThat("Response contains the keyphrase '" + expected + "'", response, containsString(expected));
             assertThat("Response contains the illegal input", response, containsString(cmd));
+        }
+    }
+
+    @Test
+    public void syntaxErrorOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {"\"\";quit(\"no\");", "setwd('/root/')", "setwd(\"c:/\")"};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@cmd@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+            String expected = "eval failed";
+            assertThat("Response contains '" + expected + "'", response, containsString(expected));
+        }
+    }
+
+    @Test
+    public void replacementsOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {"unlink(getwd())", "q();", "quit()", "%lt;-",
+                                                 // "system('format hardisk')",
+                                                 "quit(\\\"no\\\");inputVariable;"};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@cmd@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+            // assertThat("Response contains an echo of '" + cmd + "'", response, containsString(cmd));
         }
     }
 

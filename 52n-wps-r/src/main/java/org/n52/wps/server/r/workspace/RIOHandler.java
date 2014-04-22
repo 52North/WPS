@@ -84,10 +84,10 @@ public class RIOHandler {
      */
     @SuppressWarnings("unchecked")
     protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleInputLiterals = Arrays.asList(LiteralByteBinding.class,
-                                                                                                     LiteralDoubleBinding.class,
-                                                                                                     LiteralFloatBinding.class,
-                                                                                                     LiteralIntBinding.class,
-                                                                                                     LiteralLongBinding.class,
+                                                                                                            LiteralDoubleBinding.class,
+                                                                                                            LiteralFloatBinding.class,
+                                                                                                            LiteralIntBinding.class,
+                                                                                                            LiteralLongBinding.class,
                                                                                                             LiteralShortBinding.class);
 
     @SuppressWarnings("unchecked")
@@ -96,13 +96,34 @@ public class RIOHandler {
                                                                                                              LiteralFloatBinding.class,
                                                                                                              LiteralIntBinding.class,
                                                                                                              LiteralLongBinding.class,
-                                                                                                     LiteralShortBinding.class,
-                                                                                                     LiteralStringBinding.class);
+                                                                                                             LiteralShortBinding.class,
+                                                                                                             LiteralStringBinding.class);
+
+    public static interface RInputFilter {
+
+        public abstract String filter(String input) throws ExceptionReport;
+
+    }
+
+    public class StringInputFilter implements RInputFilter {
+
+        public String filter(String input) throws ExceptionReport {
+            if (input.contains("=") || input.contains("<-"))
+                throw new ExceptionReport("Assignment operators found, not allowed, illegal input '" + input + "'",
+                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+
+            return input;
+        }
+    }
 
     private static Logger log = LoggerFactory.getLogger(RIOHandler.class);
 
+    private RInputFilter filter;
+
     public RIOHandler() {
         log.debug("NEW {}", this);
+
+        this.filter = new StringInputFilter();
     }
 
     public Class< ? extends IData> getInputDataType(String id, Collection<RAnnotation> annotations) {
@@ -177,15 +198,20 @@ public class RIOHandler {
      * @throws IOException
      * @throws RserveException
      * @throws REXPMismatchException
+     * @throws ExceptionReport
      */
     public String parseInput(List<IData> input, RConnection connection) throws IOException,
             RserveException,
-            REXPMismatchException {
+            REXPMismatchException,
+            RAnnotationException,
+            ExceptionReport {
 
         String result = null;
         // building an R - vector of input entries containing more than one
         // value:
         if (input.size() > 1) {
+            log.debug("Parsing input vector of length {}", input.size());
+
             result = "c(";
             // parsing elements 1..n-1 to vector:
             for (int i = 0; i < input.size() - 1; i++) {
@@ -254,32 +280,36 @@ public class RIOHandler {
         throw new RuntimeException(message);
     }
 
-    public String parseLiteralInput(Class< ? extends IData> iClass, Object defaultValue) {
-        String result;
-        if (defaultValue == null) {
-            log.warn("Default value for is null for {} - setting it to 'NA' in R.", iClass);
-            return "NA";
-        }
-        else
-            result = "\"" + defaultValue.toString() + "\"";
+    public String parseLiteralInput(Class< ? extends IData> iClass, Object value) throws ExceptionReport {
+        String result = null;
 
-        if (simpleInputLiterals.contains(iClass)) {
-            result = defaultValue.toString();
-        }
-        else if (iClass.equals(LiteralBooleanBinding.class)) {
-            boolean b = Boolean.parseBoolean(defaultValue.toString());
-            if (b)
-                result = "TRUE";
-            else
-                result = "FALSE";
-        }
-        else if (iClass.equals(LiteralStringBinding.class)) {
-            result = "\"" + defaultValue.toString() + "\"";
+        if (value == null) {
+            log.warn("Value for is null for {} - setting it to 'NA' in R.", iClass);
+            result = "NA";
         }
         else {
-            String message = "An unsuported IData class occured for input: " + iClass
-                    + "it will be interpreted as character value within R";
-            log.warn(message);
+            String valueString = value.toString();
+            valueString = this.filter.filter(valueString);
+
+            if (simpleInputLiterals.contains(iClass)) {
+                result = valueString;
+            }
+            else if (iClass.equals(LiteralBooleanBinding.class)) {
+                boolean b = Boolean.parseBoolean(valueString);
+                if (b)
+                    result = "TRUE";
+                else
+                    result = "FALSE";
+            }
+            else if (iClass.equals(LiteralStringBinding.class)) {
+                result = "\"" + valueString + "\"";
+            }
+            else {
+                log.warn("An unsuported IData class occured for input {} with value {}. It will be interpreted as character value within R",
+                         iClass,
+                         valueString);
+                result = "\"" + valueString + "\"";
+            }
         }
 
         return result;

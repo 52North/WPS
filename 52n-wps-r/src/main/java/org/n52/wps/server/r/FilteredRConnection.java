@@ -29,7 +29,14 @@
 
 package org.n52.wps.server.r;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.util.RLogger;
@@ -50,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FilteredRConnection extends RConnection {
 
-    public static interface RInjectionFilter {
+    public static interface RCommandFilter {
 
         public abstract String filter(String command) throws ExceptionReport;
 
@@ -61,11 +68,11 @@ public class FilteredRConnection extends RConnection {
      * 
      * "";quit("no"); does not start with quit, so check with contains.
      */
-    public class StringContainsInjectionFilter implements RInjectionFilter {
+    private class BlacklistFilter implements RCommandFilter {
 
         private HashSet<String> illegalCommands = new HashSet<String>();
 
-        public StringContainsInjectionFilter() {
+        public BlacklistFilter() {
             illegalCommands.add("eval");
             illegalCommands.add("system");
             illegalCommands.add("unlink");
@@ -87,26 +94,87 @@ public class FilteredRConnection extends RConnection {
 
     }
 
+    /**
+     * replace potentially harmful commands like system, unlink, quit with different strings so that these
+     * functions cannot be called. It also escapes quotations marks.
+     * 
+     * In the case that somebody named variables in a script using the character sequences "eval", "quit" and
+     * so forth, this should still work.
+     */
+    private class SilentReplacingFilter implements RCommandFilter {
+
+        private Map<String, String> replacements = new HashMap<String, String>();
+
+        public SilentReplacingFilter() {
+            replacements.put("eval", "e_eval");
+            replacements.put("quit", "q_quit");
+            replacements.put("q", "q_q");
+            replacements.put("system", "s_system");
+            replacements.put("setwd", "s_setwd");
+            replacements.put("unlink", "u_unlink");
+            replacements.put("'", "\"");
+            replacements.put("\"", "\\\"");
+        }
+
+        @Override
+        public String filter(String command) throws ExceptionReport {
+            String cmd = command;
+            for (Entry<String, String> r : this.replacements.entrySet()) {
+                cmd = cmd.replaceAll(r.getKey(), r.getValue());
+            }
+
+            if (log.isDebugEnabled() && !cmd.equalsIgnoreCase(command))
+                log.debug("Filter changed string from '{}' to '{}'.", command, cmd);
+
+            return cmd;
+        }
+
+    }
+
+    /**
+     * do not allow hex-encoded inputs or non-ascii characters
+     */
+    private class HexEncodingFilter implements RCommandFilter {
+
+        private Pattern nonAsciiPattern = Pattern.compile("[^\\p{ASCII}]+");
+
+        private Pattern hexPattern = Pattern.compile("0[xX][0-9a-f]+/i");
+
+        @Override
+        public String filter(String command) throws ExceptionReport {
+            if (hexPattern.matcher(command).matches())
+                throw new ExceptionReport("Unicode encoded character found, not allowed, illegal command: " + command,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+
+            if (nonAsciiPattern.matcher(command).matches())
+                throw new ExceptionReport("Only ASCII characters are allowed as input, illegal command: " + command,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE);
+
+            return command;
+        }
+    }
+
     private static final String EMPTY_RESULT = "NA";
 
     private static Logger log = LoggerFactory.getLogger(FilteredRConnection.class);
 
     private boolean failOnFilter = true;
 
-    private RInjectionFilter filter;
+    private Collection<RCommandFilter> filters = new ArrayList<FilteredRConnection.RCommandFilter>();;
 
     private boolean forceFilter;
 
     private boolean logAllEval = true;
 
-    public FilteredRConnection(RInjectionFilter filter, String host, int port) throws RserveException {
+    public FilteredRConnection(RCommandFilter filter, String host, int port) throws RserveException {
         super(host, port);
-        this.filter = filter;
+        this.filters.add(filter);
     }
 
     public FilteredRConnection(String host, int port) throws RserveException {
         super(host, port);
-        this.filter = new StringContainsInjectionFilter();
+        this.filters.add(new SilentReplacingFilter());
+        this.filters.add(new HexEncodingFilter());
     }
 
     @Override
@@ -119,7 +187,7 @@ public class FilteredRConnection extends RConnection {
 
     @Override
     public REXP eval(REXP arg0, REXP arg1, boolean arg2) throws REngineException {
-        log.warn("Unfiltered command (filtering for this function not implemented.");
+        log.warn("Unfiltered command (filtering for this function not implemented).");
         return super.eval(arg0, arg1, arg2);
     }
 
@@ -140,7 +208,10 @@ public class FilteredRConnection extends RConnection {
      */
     public REXP filteredEval(String arg0) throws RserveException {
         try {
-            String command = this.filter.filter(arg0);
+            String command = arg0;
+            for (RCommandFilter f : this.filters) {
+                command = f.filter(command);
+            }
 
             return internalEval(command);
         }
@@ -178,16 +249,18 @@ public class FilteredRConnection extends RConnection {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("FilteredRConnection [");
-        if (filter != null) {
-            builder.append("filter=");
-            builder.append(filter);
+        builder.append("FilteredRConnection [failOnFilter=");
+        builder.append(failOnFilter);
+        builder.append(", ");
+        if (filters != null) {
+            builder.append("filters=");
+            builder.append(Arrays.toString(filters.toArray()));
             builder.append(", ");
         }
-        builder.append(", rsrvVersion=");
-        builder.append(rsrvVersion);
-        builder.append(", super=");
-        builder.append(super.toString());
+        builder.append("forceFilter=");
+        builder.append(forceFilter);
+        builder.append(", logAllEval=");
+        builder.append(logAllEval);
         builder.append("]");
         return builder.toString();
     }

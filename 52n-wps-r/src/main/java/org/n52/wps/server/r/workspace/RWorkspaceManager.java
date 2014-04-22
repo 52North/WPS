@@ -246,8 +246,8 @@ public class RWorkspaceManager {
                 connection.filteredEval(statement);
             }
             catch (RserveException e) {
-                log.error("Error executing statement {}", statement, e);
-                throw new ExceptionReport("Error executing statement: " + statement,
+                log.error("Error executing statement '{}'", statement, e);
+                throw new ExceptionReport("Error executing statement: " + statement + ": " + e.getMessage(),
                                           ExceptionReport.INVALID_PARAMETER_VALUE,
                                           e);
             }
