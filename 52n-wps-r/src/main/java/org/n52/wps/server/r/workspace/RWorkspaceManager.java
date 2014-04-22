@@ -111,7 +111,7 @@ public class RWorkspaceManager {
         this.config = config;
     }
 
-    public void cleanUpInR(String originalWorkDir) throws RserveException, REXPMismatchException {
+    public void cleanUpInR(String originalWorkDir) {
         // R_Config config = R_Config.getInstance();
         // RConnection connection = rCon;
         // if (rCon == null || !rCon.isConnected()) {
@@ -120,7 +120,12 @@ public class RWorkspaceManager {
         // }
 
         log.debug("Cleaning up workspace.");
-        this.connection.eval("rm(list = ls())");
+        try {
+            this.connection.eval("rm(list = ls())");
+        }
+        catch (RserveException e) {
+            log.error("Could not remove items from workspace", e);
+        }
 
         this.workspace.delete(this.connection, originalWorkDir);
     }
@@ -170,9 +175,7 @@ public class RWorkspaceManager {
     }
 
     public void loadInputValues(Map<String, List<IData>> inputData, List<RAnnotation> inAnnotations) throws RAnnotationException,
-            IOException,
-            RserveException,
-            REXPMismatchException {
+            ExceptionReport {
         log.debug("Loading input values...");
 
         // Searching for missing inputs to apply standard values:
@@ -186,14 +189,34 @@ public class RWorkspaceManager {
 
         for (Entry<String, List<IData>> entry : inputData.entrySet()) {
             // parses input values to R-compatible literals and streams input files to workspace
-            String entryRValue = this.iohandler.parseInput(entry.getValue(), connection);
-            log.debug("Parsed input for '{}' to '{}' based on value '{}'",
-                      entry.getKey(),
-                      entryRValue,
-                      entry.getValue());
-            inputValues.put(entry.getKey(), entryRValue);
+            try {
+                String entryRValue = this.iohandler.parseInput(entry.getValue(), connection);
+                log.debug("Parsed input for '{}' to '{}' based on value '{}'",
+                          entry.getKey(),
+                          entryRValue,
+                          entry.getValue());
+                inputValues.put(entry.getKey(), entryRValue);
 
-            inputValuesWithValues.add(entry.getKey());
+                inputValuesWithValues.add(entry.getKey());
+            }
+            catch (RserveException e) {
+                log.error("Error parsing input value {}", entry, e);
+                throw new ExceptionReport("Error parsing input value: " + entry,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE,
+                                          e);
+            }
+            catch (REXPMismatchException e) {
+                log.error("Error parsing input value {}", entry, e);
+                throw new ExceptionReport("Error parsing input value: " + entry,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE,
+                                          e);
+            }
+            catch (IOException e) {
+                log.error("Error parsing input value {}", entry, e);
+                throw new ExceptionReport("Error parsing input value: " + entry,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE,
+                                          e);
+            }
         }
         log.debug("Input: {}", Arrays.toString(inAnnotations.toArray()));
 
@@ -219,18 +242,34 @@ public class RWorkspaceManager {
             String statement = entry.getKey() + " <- " + entry.getValue();
             log.debug("Running statement '{}'", statement);
 
-            connection.filteredEval(statement);
+            try {
+                connection.filteredEval(statement);
+            }
+            catch (RserveException e) {
+                log.error("Error executing statement {}", statement, e);
+                throw new ExceptionReport("Error executing statement: " + statement,
+                                          ExceptionReport.INVALID_PARAMETER_VALUE,
+                                          e);
+            }
         }
 
         RLogger.log(connection, "Workspace content after loading input values:");
-        connection.eval("cat(capture.output(ls()), \"\\n\")");
+        try {
+            connection.filteredEval("cat(capture.output(ls()), \"\\n\")");
+        }
+        catch (RserveException e) {
+            log.error("Error capturing ls() output.", e);
+        }
     }
 
-    public void loadResources(List<RAnnotation> resources) throws RserveException,
-            RAnnotationException,
-            ExceptionReport,
-            IOException {
-        loadResourcesListInSession(resources);
+    public void loadResources(List<RAnnotation> resources) throws RAnnotationException, ExceptionReport, IOException {
+        try {
+            loadResourcesListInSession(resources);
+        }
+        catch (RserveException e) {
+            log.error("Problem loading resources list to session, list: {}", resources, e);
+        }
+
         loadResourcesToWorkspace(resources);
     }
 
@@ -301,41 +340,49 @@ public class RWorkspaceManager {
         connection.filteredEval("cat(capture.output(ls()), \"\n\")");
     }
 
-    public void loadWPSSessionVariables(String processWKN) throws RserveException, RAnnotationException {
+    public void loadWPSSessionVariables(String processWKN) throws ExceptionReport {
         log.debug("Loading session variables.");
 
-        RLogger.log(connection, "Environment:");
-        connection.eval("cat(capture.output(environment()), \"\n\")");
+        try {
+            RLogger.log(connection, "Environment:");
+            connection.eval("cat(capture.output(environment()), \"\n\")");
 
-        String cmd = RWPSSessionVariables.WPS_SERVER + " <- TRUE";
-        connection.eval(cmd);
-        RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER);
+            String cmd = RWPSSessionVariables.WPS_SERVER + " <- TRUE";
+            connection.eval(cmd);
+            RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER);
 
-        cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
-        connection.eval(cmd);
-        RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
+            cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
+            connection.eval(cmd);
+            RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
 
-        connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
-        log.debug("Assigned resource directory to variable '{}': {}",
-                  RWPSSessionVariables.RESOURCE_URL_NAME,
-                  config.getResourceDirURL());
-        RLogger.logVariable(connection, RWPSSessionVariables.RESOURCE_URL_NAME);
+            connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
+            log.debug("Assigned resource directory to variable '{}': {}",
+                      RWPSSessionVariables.RESOURCE_URL_NAME,
+                      config.getResourceDirURL());
+            RLogger.logVariable(connection, RWPSSessionVariables.RESOURCE_URL_NAME);
 
-        URL processDescription = config.getProcessDescriptionURL(processWKN);
+            URL processDescription = config.getProcessDescriptionURL(processWKN);
 
-        connection.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription.toString());
-        RLogger.logVariable(connection, RWPSSessionVariables.PROCESS_DESCRIPTION);
+            connection.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription.toString());
+            RLogger.logVariable(connection, RWPSSessionVariables.PROCESS_DESCRIPTION);
 
-        log.debug("Assigned process description to variable '{}': {}",
-                  RWPSSessionVariables.PROCESS_DESCRIPTION,
-                  processDescription);
+            log.debug("Assigned process description to variable '{}': {}",
+                      RWPSSessionVariables.PROCESS_DESCRIPTION,
+                      processDescription);
 
-        // create session variable for warning storage
-        cmd = RWPSSessionVariables.WARNING_OUTPUT_STORAGE + "=c()\n";
-        connection.eval(cmd);
+            // create session variable for warning storage
+            cmd = RWPSSessionVariables.WARNING_OUTPUT_STORAGE + "=c()\n";
+            connection.eval(cmd);
 
-        RLogger.log(connection, "workspace content after loading session variables:");
-        connection.eval("cat(capture.output(ls()), \"\n\")");
+            RLogger.log(connection, "workspace content after loading session variables:");
+            connection.eval("cat(capture.output(ls()), \"\n\")");
+        }
+        catch (RserveException e) {
+            log.error("Error loading WPS session variables for process {}", processWKN);
+            throw new ExceptionReport("Could not load session variables for " + processWKN,
+                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
+                                      e);
+        }
     }
 
     /**
@@ -388,7 +435,18 @@ public class RWorkspaceManager {
         // Set R working directory according to configuration
         String strategy = this.config.getConfigVariable(RWPSConfigVariables.R_WORK_DIR_STRATEGY);
         boolean isRserveOnLocalhost = this.config.getRServeHost().equalsIgnoreCase("localhost");
-        String workDirNameSetting = this.config.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR_NAME);
+        String workDirNameSetting = null;
+
+        try {
+            workDirNameSetting = this.config.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR_NAME);
+        }
+        catch (ExceptionReport e) {
+            log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
+                      RWPSConfigVariables.R_WORK_DIR_NAME,
+                      strategy,
+                      e);
+        }
+
         this.workspace.setWorkingDirectory(this.connection,
                                            originalWD,
                                            strategy,
@@ -404,10 +462,17 @@ public class RWorkspaceManager {
     /**
      * saves an image to the working directory that may help debugging R scripts
      */
-    public void saveImage(String name) throws RserveException {
+    public boolean saveImage(String name) {
         String filename = name + "." + RDATA_FILE_EXTENSION;
-        REXP result = connection.eval("save.image(file=\"" + filename + "\")");
-        log.debug("Saved image to {} with result {}", filename, result);
+        try {
+            REXP result = connection.eval("save.image(file=\"" + filename + "\")");
+            log.debug("Saved image to {} with result {}", filename, result);
+            return true;
+        }
+        catch (RserveException e) {
+            log.error("Could not save image to {}", filename, e);
+            return false;
+        }
     }
 
     /**
@@ -415,13 +480,25 @@ public class RWorkspaceManager {
      * @throws REXPMismatchException
      */
     public HashMap<String, IData> saveOutputValues(Collection<RAnnotation> outAnnotations) throws RAnnotationException,
-            RserveException,
             ExceptionReport {
         HashMap<String, IData> result = new HashMap<String, IData>();
 
         for (RAnnotation rAnnotation : outAnnotations) {
             String resultId = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
-            REXP evalResult = connection.eval(resultId);
+            REXP evalResult;
+            try {
+                evalResult = connection.eval(resultId);
+            }
+            catch (RserveException e) {
+                log.error("Could not find value for annotation {} in the current session, result id: {}",
+                          rAnnotation,
+                          resultId,
+                          e);
+                throw new ExceptionReport("Error saving output value " + resultId,
+                                          ExceptionReport.REMOTE_COMPUTATION_ERROR,
+                                          e);
+            }
+
             // TODO depending on the generated outputs deleteWorkDirectory must be set!
             try {
                 IData output = this.iohandler.parseOutput(connection,
@@ -434,9 +511,15 @@ public class RWorkspaceManager {
                 log.debug("Output for {} is {} with payload {}", resultId, output, output.getPayload());
             }
             catch (ExceptionReport e) {
-                throw e; // re-throw exception reports
+                throw e;
             }
-            catch (Exception e) {
+            catch (RserveException e) {
+                log.error("Could not create output for {}", resultId, e);
+            }
+            catch (IOException e) {
+                log.error("Could not create output for {}", resultId, e);
+            }
+            catch (REXPMismatchException e) {
                 log.error("Could not create output for {}", resultId, e);
             }
         }
@@ -463,6 +546,9 @@ public class RWorkspaceManager {
             log.error("Could not save session info and warnings.", e);
         }
         catch (REXPMismatchException e) {
+            log.error("Could not save session info and warnings.", e);
+        }
+        catch (RserveException e) {
             log.error("Could not save session info and warnings.", e);
         }
 
