@@ -4,13 +4,18 @@ import java.io.IOException;
 import java.util.List;
 
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.ExceptionReport;
 
 import com.github.autermann.matlab.value.MatlabArray;
 import com.github.autermann.matlab.value.MatlabCell;
 import com.github.autermann.matlab.value.MatlabFile;
+import com.github.autermann.matlab.value.MatlabMatrix;
+import com.github.autermann.matlab.value.MatlabString;
+import com.github.autermann.matlab.value.MatlabStruct;
 import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.wps.matlab.MatlabFileBinding;
+import com.github.autermann.wps.matlab.description.MatlabBoundingBoxOutputDescription;
 import com.github.autermann.wps.matlab.description.MatlabComplexOutputDescription;
 import com.github.autermann.wps.matlab.description.MatlabInputDescripton;
 import com.github.autermann.wps.matlab.description.MatlabLiteralInputDescription;
@@ -81,6 +86,15 @@ public class MatlabValueTransformer {
                         .format("Can not convert %s for input %s", data, definition
                                 .getId()), ExceptionReport.INVALID_PARAMETER_VALUE, e);
             }
+        } else if (data instanceof BoundingBoxData) {
+            BoundingBoxData boundingBoxData = (BoundingBoxData) data;
+            MatlabStruct val = new MatlabStruct();
+            val.set("crs", new MatlabString(boundingBoxData.getCRS()));
+            val.set("bbox", new MatlabMatrix(new double[][] {
+                boundingBoxData.getLowerCorner(),
+                boundingBoxData.getUpperCorner()
+            }));
+            return val;
         } else if (data instanceof MatlabFileBinding) {
             return new MatlabFile(((MatlabFileBinding) data).getPayload());
         } else {
@@ -106,6 +120,8 @@ public class MatlabValueTransformer {
 
         if (definition instanceof MatlabComplexOutputDescription) {
             return transformComplexOutput(definition, value);
+        } else if (definition instanceof MatlabBoundingBoxOutputDescription) {
+            return transformBoundingBoxOutput(definition, value);
         } else {
             return transformLiteralOutput(definition, value);
         }
@@ -124,6 +140,20 @@ public class MatlabValueTransformer {
             throw new ExceptionReport(String
                     .format("Can not convert %s for output %s", value, definition
                             .getId()), ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+    }
+
+    private IData transformBoundingBoxOutput(MatlabOutputDescription definition,
+                                             MatlabValue value)
+            throws ExceptionReport {
+        if (value.isMatrix()) {
+            String crs = value.asStruct().get("crs").asString().value();
+            double[][] bbox = value.asStruct().get("bbox").asMatrix().value();
+            return new BoundingBoxData(bbox[0], bbox[1], crs);
+        } else {
+            throw new ExceptionReport(String
+                    .format("Can not convert %s for output %s", value, definition
+                            .getId()), ExceptionReport.NO_APPLICABLE_CODE);
         }
     }
 

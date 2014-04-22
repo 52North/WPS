@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
+import net.opengis.wps.x100.CRSsType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -22,6 +24,7 @@ import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
+import net.opengis.wps.x100.SupportedCRSsType;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 import net.opengis.wps.x100.SupportedUOMsType;
@@ -43,7 +46,7 @@ public class MatlabDescriptionGenerator {
     //FIXME make this configurable
     private static final int LOCAL_INSTANCES = 5;
 
-    private MatlabComplexInputDescription createComplexInput(YamlNode definition) {
+    private MatlabInputDescripton createComplexInput(YamlNode definition) {
         final int maxOccurs;
         if (definition.path(YamlConstants.MAX_OCCURS).isText()) {
             if (definition.path(YamlConstants.MAX_OCCURS).asTextValue().equals("unbounded")) {
@@ -62,66 +65,103 @@ public class MatlabDescriptionGenerator {
         }
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
-        if (!definition.path(YamlConstants.TYPE).isMap()) {
+        YamlNode type = definition.path(YamlConstants.TYPE);
+        if (!type.isMap()) {
             throw new MatlabConfigurationException("Missing type for output %s", id);
         }
-        String mimeType = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.MIME_TYPE).asTextValue();
-        if (mimeType == null || mimeType.isEmpty()) {
-            throw new MatlabConfigurationException("Missing mimeType for input %s", id);
-        }
-        String schema = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.SCHEMA).asTextValue();
-        String encoding = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.ENCODING).asTextValue();
-
         if (maxOccurs < 1 || minOccurs < 0 || maxOccurs < minOccurs) {
             throw new IllegalArgumentException(String
                     .format("Invalid min/max occurs: [%d,%d]", minOccurs, maxOccurs));
         }
 
-        MatlabComplexInputDescription desc = new MatlabComplexInputDescription();
+        String mimeType = type.path(YamlConstants.MIME_TYPE).asTextValue();
+        String schema = type.path(YamlConstants.SCHEMA).asTextValue();
+        String encoding = type.path(YamlConstants.ENCODING).asTextValue();
+
+        MatlabInputDescripton desc;
+
+        if (mimeType != null && !mimeType.isEmpty()) {
+            MatlabComplexInputDescription d
+                    = new MatlabComplexInputDescription();
+            d.setMimeType(mimeType);
+            d.setEncoding(encoding);
+            d.setSchema(schema);
+            d.setMatlabType(MatlabType.FILE);
+            desc = d;
+        } else if (type.path(YamlConstants.CRS).exists()) {
+            LinkedHashSet<String> crss = new LinkedHashSet<String>();
+            if (type.path(YamlConstants.CRS).isSequence()) {
+                for (YamlNode crs : type.path(YamlConstants.CRS)) {
+                    crss.add(crs.asTextValue());
+                }
+            } else {
+                crss.add(type.path(YamlConstants.CRS).asTextValue());
+            }
+            MatlabBoundingBoxInputDescription d
+                    = new MatlabBoundingBoxInputDescription();
+            d.setCRS(crss);
+            d.setMatlabType(MatlabType.MATRIX);
+            desc = d;
+        } else {
+            throw new MatlabConfigurationException("Missing mimeType or crs for input %s", id);
+        }
+
         desc.setId(id);
         desc.setTitle(title);
         desc.setAbstract(abstrakt);
         desc.setMinOccurs(minOccurs);
         desc.setMaxOccurs(maxOccurs);
-        desc.setMatlabType(MatlabType.FILE);
-        desc.setMimeType(mimeType);
-        desc.setEncoding(encoding);
-        desc.setSchema(schema);
+
         return desc;
     }
 
-    private MatlabComplexOutputDescription createComplexOutput(
+    private MatlabOutputDescription createComplexOutput(
             YamlNode definition) {
         String id = definition.path(YamlConstants.IDENTIFIER).textValue();
         if (id == null || id.isEmpty()) {
             throw new MatlabConfigurationException("Missing output identifier");
         }
-        if (!definition.path(YamlConstants.TYPE).isMap()) {
+        YamlNode type = definition.path(YamlConstants.TYPE);
+        if (!type.isMap()) {
             throw new MatlabConfigurationException("Missing type for output %s", id);
         }
-        String mimeType = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.MIME_TYPE).asTextValue();
-        if (mimeType == null || mimeType.isEmpty()) {
-            throw new MatlabConfigurationException("Missing mimeType for output %s", id);
+
+
+        String mimeType = type.path(YamlConstants.MIME_TYPE).asTextValue();
+        String schema = type.path(YamlConstants.SCHEMA).asTextValue();
+        String encoding = type.path(YamlConstants.ENCODING).asTextValue();
+
+        MatlabOutputDescription desc;
+        if (mimeType != null && !mimeType.isEmpty()) {
+            MatlabComplexOutputDescription d
+                    = new MatlabComplexOutputDescription();
+            d.setMimeType(mimeType);
+            d.setSchema(schema);
+            d.setEncoding(encoding);
+            desc = d;
+        } else if (type.path(YamlConstants.CRS).exists()) {
+            MatlabBoundingBoxOutputDescription d
+                    = new MatlabBoundingBoxOutputDescription();
+            LinkedHashSet<String> crss = new LinkedHashSet<String>();
+            if (type.path(YamlConstants.CRS).isSequence()) {
+                for (YamlNode crs : type.path(YamlConstants.CRS)) {
+                    crss.add(crs.asTextValue());
+                }
+            } else {
+                crss.add(type.path(YamlConstants.CRS).asTextValue());
+            }
+            d.setCRS(crss);
+            desc = d;
+        } else {
+            throw new MatlabConfigurationException("Missing mimeType or crs for output %s", id);
         }
-        String schema = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.SCHEMA).asTextValue();
-        String encoding = definition.path(YamlConstants.TYPE)
-                .path(YamlConstants.ENCODING).asTextValue();
+
         String abstrakt = definition.path(YamlConstants.ABSTRACT).asTextValue();
         String title = definition.path(YamlConstants.TITLE).asTextValue();
-        MatlabComplexOutputDescription desc
-                = new MatlabComplexOutputDescription();
         desc.setId(id);
         desc.setTitle(title);
         desc.setAbstract(abstrakt);
         desc.setMatlabType(MatlabType.FILE);
-        desc.setMimeType(mimeType);
-        desc.setSchema(schema);
-        desc.setEncoding(encoding);
         return desc;
     }
 
@@ -360,7 +400,7 @@ public class MatlabDescriptionGenerator {
                         xbLiteralInput.addNewAnyValue();
                     }
                     if (literalInput.hasUnit()) {
-                        SupportedUOMsType unit = SupportedUOMsType.Factory.newInstance();
+                        SupportedUOMsType unit = xbLiteralInput.addNewUOMs();
                         unit.addNewDefault().addNewUOM().setStringValue(literalInput.getUnit());
                         unit.addNewSupported().addNewUOM().setStringValue(literalInput.getUnit());
                         xbLiteralInput.setUOMs(unit);
@@ -395,6 +435,19 @@ public class MatlabDescriptionGenerator {
                         xbSupportedFormat.setEncoding(complexInput.getEncoding());
                     }
                     xbSupportedFormat.setMimeType(complexInput.getMimeType());
+                } else if (input instanceof MatlabBoundingBoxInputDescription) {
+                    MatlabBoundingBoxInputDescription boundingBoxInput
+                            = (MatlabBoundingBoxInputDescription) input;
+                    SupportedCRSsType xbBoundingBoxInput
+                            = xbInput.addNewBoundingBoxData();
+                    if (boundingBoxInput.hasCRS()) {
+                        xbBoundingBoxInput.addNewDefault().setCRS(boundingBoxInput.getCRS().iterator().next());
+                        CRSsType supported = xbBoundingBoxInput.addNewSupported();
+                        for (String crs : boundingBoxInput.getCRS()) {
+                            supported.addCRS(crs);
+                        }
+                    }
+
                 }
             }
         }
@@ -452,6 +505,18 @@ public class MatlabDescriptionGenerator {
                         xbSupportedFormat.setEncoding(complexOutput.getEncoding());
                     }
                     xbSupportedFormat.setMimeType(complexOutput.getMimeType());
+                } else if (output instanceof MatlabBoundingBoxOutputDescription) {
+                    MatlabBoundingBoxOutputDescription boundingBoxOutput
+                            = (MatlabBoundingBoxOutputDescription) output;
+                    SupportedCRSsType xbBoundingBoxOutput
+                            = xbOutput.addNewBoundingBoxOutput();
+                    if (boundingBoxOutput.hasCRS()) {
+                        xbBoundingBoxOutput.addNewDefault().setCRS(boundingBoxOutput.getCRS().iterator().next());
+                        CRSsType supported = xbBoundingBoxOutput.addNewSupported();
+                        for (String crs : boundingBoxOutput.getCRS()) {
+                            supported.addCRS(crs);
+                        }
+                    }
                 }
             }
         }
