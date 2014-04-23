@@ -172,17 +172,11 @@ public class R_Config {
     }
 
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
-        String fname = null;
-        try {
-            fname = getScriptFileForWKN(wkn).getName();
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not open session.", e);
-            throw new ExceptionReport("Could not open script file.", "Input/Output", e);
-        }
+        String fname = getScriptFileForWKN(wkn).getName();
 
         if (fname == null)
             return null;
+
         String script_dir = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
         URL url = new URL(getUrlPathUpToWebapp() + "/" + script_dir.replace("\\", "/") + "/" + fname);
         return url;
@@ -211,37 +205,75 @@ public class R_Config {
         return new URL(urlString);
     }
 
-    protected void registerScript(File file) throws FileNotFoundException,
-            RAnnotationException,
-            IOException,
-            ExceptionReport {
-        if ( !fileToWknMap.containsKey(file.getAbsoluteFile())) {
-            FileInputStream fis = new FileInputStream(file);
-            List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
-            RAnnotation description = RAnnotation.filterAnnotations(annotations, RAnnotationType.DESCRIPTION).get(0);
-            String process_id = description.getStringValue(RAttribute.IDENTIFIER);
-            String wkn = WKN_PREFIX + process_id;
+    protected boolean registerScript(File file) throws RAnnotationException, ExceptionReport {
+        boolean registered = false;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        }
+        catch (FileNotFoundException e) {
+            LOGGER.error("Could not create input stream for file {}", file);
+        }
 
-            if (fileToWknMap.containsValue(wkn)) {
-                File conflictFile = getScriptFileForWKN(wkn);
-                if ( !conflictFile.exists()) {
-                    LOGGER.info("Cached mapping from " + wkn + " to file " + conflictFile.getName()
-                            + " replaced by file " + file.getName());
+        if (fileToWknMap.containsKey(file.getAbsoluteFile()))
+            LOGGER.debug("File already registered, not doint it again: {}", file);
+        else {
+
+            LOGGER.info("Registering script file {} from input {}", file, fis);
+
+            List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
+            if (annotations.size() < 1) {
+                LOGGER.warn("Could not parse any annotations from file '{}'. Did not load the script.", file);
+                registered = false;
+            }
+            else {
+                RAnnotation descriptionAnnotation = RAnnotation.filterFirstMatchingAnnotation(annotations,
+                                                                                              RAnnotationType.DESCRIPTION);
+                if (descriptionAnnotation == null) {
+                    LOGGER.error("No description annotation for script '{}' - cannot be registered!", file);
+                    registered = false;
                 }
-                else if ( !file.equals(conflictFile)) {
-                    String e_message = "Conflicting identifier '" + wkn + "' detected " + "for R scripts '"
-                            + file.getName() + "' and '" + conflictFile.getName() + "'";
-                    ExceptionReport e = new ExceptionReport(e_message, ExceptionReport.NO_APPLICABLE_CODE);
-                    LOGGER.error(e_message);
-                    wknConflicts.put(wkn, e);
-                    throw e;
+                else {
+                    String process_id = descriptionAnnotation.getStringValue(RAttribute.IDENTIFIER);
+                    String wkn = WKN_PREFIX + process_id;
+
+                    if (fileToWknMap.containsValue(wkn)) {
+                        File conflictFile = getScriptFileForWKN(wkn);
+                        if ( !conflictFile.exists()) {
+                            LOGGER.info("Cached mapping for process '{}' with file '{}' replaced by file '{}'",
+                                        wkn,
+                                        conflictFile.getName(),
+                                        file.getName());
+                        }
+                        else if ( !file.equals(conflictFile)) {
+                            String message = String.format("Conflicting identifier '{}' detected for R scripts '{}' and '{}'",
+                                                           wkn,
+                                                           file.getName(),
+                                                           conflictFile.getName());
+                            ExceptionReport e = new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
+                            LOGGER.error(message);
+                            wknConflicts.put(wkn, e);
+                            throw e;
+                        }
+                    }
+
+                    fileToWknMap.put(file.getAbsoluteFile(), wkn);
+                    wknToFileMap.put(wkn, file.getAbsoluteFile());
+
+                    registered = true;
                 }
             }
-
-            fileToWknMap.put(file.getAbsoluteFile(), wkn);
-            wknToFileMap.put(wkn, file.getAbsoluteFile());
-            fis.close();
         }
+
+        if (fis != null)
+            try {
+                fis.close();
+            }
+            catch (IOException e) {
+                LOGGER.error("Could not close input stream for file {}", file);
+            }
+
+        return registered;
     }
 
     public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
@@ -251,7 +283,7 @@ public class R_Config {
         return fileToWknMap.get(file);
     }
 
-    public File getScriptFileForWKN(String wkn) throws IOException, ExceptionReport {
+    public File getScriptFileForWKN(String wkn) throws ExceptionReport {
         // check for existing identifier conflicts
         if (wknConflicts.containsKey(wkn))
             throw wknConflicts.get(wkn);
@@ -262,7 +294,8 @@ public class R_Config {
         }
         else {
             String fname = out == null ? "(unknown)" : out.getName();
-            throw new IOException("Error in Process: " + wkn + ", File " + fname + " not found or broken.");
+            throw new ExceptionReport("Error in Process: " + wkn + ", File " + fname + " not found or broken.",
+                                      ExceptionReport.NO_APPLICABLE_CODE);
         }
     }
 

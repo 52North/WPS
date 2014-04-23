@@ -32,6 +32,7 @@ package org.n52.wps.server.r.syntax;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -140,7 +141,19 @@ public class RAnnotation {
     public static RAnnotation filterFirstMatchingAnnotation(List<RAnnotation> annotations,
                                                             RAttribute attribute,
                                                             String value) throws RAnnotationException {
-        return filterAnnotations(annotations, null, attribute, value).iterator().next();
+        Iterator<RAnnotation> iterator = filterAnnotations(annotations, null, attribute, value).iterator();
+        if (iterator.hasNext())
+            return iterator.next();
+
+        return null;
+    }
+
+    public static RAnnotation filterFirstMatchingAnnotation(List<RAnnotation> annotations, RAnnotationType type) throws RAnnotationException {
+        Iterator<RAnnotation> iterator = filterAnnotations(annotations, type, null, null).iterator();
+        if (iterator.hasNext())
+            return iterator.next();
+
+        return null;
     }
 
     /**

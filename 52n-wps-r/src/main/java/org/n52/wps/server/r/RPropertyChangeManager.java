@@ -217,6 +217,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             }
         }
 
+        LOGGER.info("Updated repository configuration. Batch start R if not running: {}", config.getEnableBatchStart());
     }
 
     private boolean checkPropertyOrder(Property[] oldPropertyArray, boolean propertyChanged) {
@@ -284,7 +285,13 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
         for (File scriptf : scripts) {
             try {
-                config.registerScript(scriptf);
+                boolean registered = config.registerScript(scriptf);
+
+                if ( !registered) {
+                    LOGGER.debug("Could not register script based on file {}", scriptf);
+                    continue;
+                }
+
                 String wkn = config.getWKNForScriptFile(scriptf);
                 Property prop = algorithmPropertyHash.get(wkn);
                 // case: property is missing in wps config
@@ -383,10 +390,8 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                 break;
             }
         }
-        LOGGER.info("Trying batch start if R is not running: {}", config.getEnableBatchStart());
 
         return success;
-
     }
 
     /**
