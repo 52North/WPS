@@ -300,7 +300,7 @@ public class Wps4rIT {
 
         for (String cmd : illegalCommands) {
             String payload = xmlPayload.toString();
-            payload = payload.replace("@@@cmd@@@", cmd);
+            payload = payload.replace("@@@data@@@", cmd);
 
             String response = PostClient.sendRequest(wpsUrl, payload);
 
@@ -320,7 +320,7 @@ public class Wps4rIT {
 
         for (String cmd : illegalCommands) {
             String payload = xmlPayload.toString();
-            payload = payload.replace("@@@cmd@@@", cmd);
+            payload = payload.replace("@@@data@@@", cmd);
 
             String response = PostClient.sendRequest(wpsUrl, payload);
 
