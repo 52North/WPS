@@ -100,31 +100,7 @@ public class RProcessDescriptionCreator {
             pdt.setStatusSupported(true);
             pdt.setStoreSupported(true);
 
-            MetadataType mt = pdt.addNewMetadata();
-            // note that the "about" argument for ows:Metadata has type anyURI
-            // so it cannot
-            // be used for textual description of the ows:metadata element
-
-            // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
-            // not used for the resources
-            // because validation fails with the cause:
-            // "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type'
-            // of element 'ows:Metadata' is not valid
-            // with respect to the corresponding attribute use. Attribute
-            // 'xlin:type' has a fixed value of 'simple'."
-            mt.setTitle("R Script");
-            mt.setHref(fileUrl.toExternalForm());
-
-            // Add URL to resource folder > FIXME rathre add resources one by
-            // one, see below.
-            // mt = pdt.addNewMetadata();
-            // mt.setTitle("Resource Directory URL");
-            // url = R_Config.getInstance().getResourceDirURL();
-            // mt.setHref(url);
-
-            mt = pdt.addNewMetadata();
-            mt.setTitle("R Session Info");
-            mt.setHref(sessionInfoUrl.toExternalForm());
+            addMetadataLinks(fileUrl, sessionInfoUrl, pdt);
 
             ProcessOutputs outputs = pdt.addNewProcessOutputs();
             DataInputs inputs = pdt.addNewDataInputs();
@@ -184,6 +160,34 @@ public class RProcessDescriptionCreator {
             log.error("Error creating process description.", e);
             throw new ExceptionReport("Error creating process description.", "NA", RProcessDescriptionCreator.class.getName(), e);
         }
+    }
+
+    private void addMetadataLinks(URL fileUrl, URL sessionInfoUrl, ProcessDescriptionType pdt) {
+        MetadataType mt = pdt.addNewMetadata();
+        // note that the "about" argument for ows:Metadata has type anyURI
+        // so it cannot
+        // be used for textual description of the ows:metadata element
+
+        // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
+        // not used for the resources
+        // because validation fails with the cause:
+        // "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type'
+        // of element 'ows:Metadata' is not valid
+        // with respect to the corresponding attribute use. Attribute
+        // 'xlin:type' has a fixed value of 'simple'."
+        mt.setTitle("R Script");
+        mt.setHref(fileUrl.toExternalForm());
+
+        // Add URL to resource folder > FIXME rathre add resources one by
+        // one, see below.
+        // mt = pdt.addNewMetadata();
+        // mt.setTitle("Resource Directory URL");
+        // url = R_Config.getInstance().getResourceDirURL();
+        // mt.setHref(url);
+
+        mt = pdt.addNewMetadata();
+        mt.setTitle("R Session Info");
+        mt.setHref(sessionInfoUrl.toExternalForm());
     }
 
     private void addProcessResources(ProcessDescriptionType pdt,

@@ -177,9 +177,23 @@ public class R_Config {
         if (fname == null)
             return null;
 
-        String script_dir = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
-        URL url = new URL(getUrlPathUpToWebapp() + "/" + script_dir.replace("\\", "/") + "/" + fname);
-        return url;
+        Collection<File> scriptDirFullPath = getScriptDir();
+        // find in which script dir the file is
+
+        for (File dir : scriptDirFullPath) {
+            File f = new File(dir, fname);
+            if (f.isAbsolute()) {
+                // FIXME can only access scripts that are in the webapp folder
+                LOGGER.debug("Cannot create URL for script file {} at location {} of process {}", fname, dir, wkn);
+                return null;
+            }
+            else {
+                URL url = new URL(getUrlPathUpToWebapp() + "/" + f.toString().replace("\\", "/"));
+                return url;
+            }
+        }
+
+        return null;
     }
 
     private String getUrlPathUpToWebapp() {
@@ -318,7 +332,20 @@ public class R_Config {
                 dir = new File(WebProcessingService.BASE_DIR, s);
 
             scriptDirectories.add(dir);
-            LOGGER.debug("Added script directory to load path: {}", dir);
+            LOGGER.debug("Found script directory: {}", dir);
+        }
+
+        return scriptDirectories;
+    }
+
+    public Collection<File> getScriptDir() {
+        String scriptDirConfigParam = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
+        Collection<File> scriptDirectories = new ArrayList<File>();
+
+        String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
+        for (String s : scriptDirs) {
+            File dir = new File(s);
+            scriptDirectories.add(dir);
         }
 
         return scriptDirectories;
