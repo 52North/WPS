@@ -35,6 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -78,6 +80,8 @@ public class R_Config {
     private static final int DEFAULT_RSERVE_PORT = 6311;
 
     private static final boolean DEFAULT_ENABLEBATCHSTART = false;
+
+    private static final String DIR_DELIMITER = ";";
 
     /** R scripts with utility functions to pre-load */
     public String utilsDirFull;
@@ -207,7 +211,10 @@ public class R_Config {
         return new URL(urlString);
     }
 
-    void registerScript(File file) throws FileNotFoundException, RAnnotationException, IOException, ExceptionReport {
+    protected void registerScript(File file) throws FileNotFoundException,
+            RAnnotationException,
+            IOException,
+            ExceptionReport {
         if ( !fileToWknMap.containsKey(file.getAbsoluteFile())) {
             FileInputStream fis = new FileInputStream(file);
             List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
@@ -260,13 +267,28 @@ public class R_Config {
     }
 
     public void resetWknFileMapping() {
+        LOGGER.info("Resetting wkn mappings.");
+
         this.wknToFileMap.clear();
         this.fileToWknMap.clear();
         this.wknConflicts.clear();
     }
 
-    public String getScriptDirFullPath() {
-        return new File(WebProcessingService.BASE_DIR, getConfigVariable(RWPSConfigVariables.SCRIPT_DIR)).getAbsolutePath();
+    public Collection<File> getScriptDirFullPath() {
+        String scriptDirConfigParam = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
+        Collection<File> scriptDirectories = new ArrayList<File>();
+
+        String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
+        for (String s : scriptDirs) {
+            File dir = new File(s);
+            if ( !dir.isAbsolute())
+                dir = new File(WebProcessingService.BASE_DIR, s);
+
+            scriptDirectories.add(dir);
+            LOGGER.debug("Added script directory to load path: {}", dir);
+        }
+
+        return scriptDirectories;
     }
 
     public boolean isScriptAvailable(String identifier) {

@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -252,54 +253,74 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                                      ArrayList<Property> newPropertyList) {
         boolean pChanged = propertyChanged;
 
-        // check script dir for R process files, adjusts WPS config
-        String scriptDir = config.getScriptDirFullPath();
+        // check script dir for R process files
+        Collection<File> scriptDirs = config.getScriptDirFullPath();
         config.resetWknFileMapping();
 
-        File algorithmDir = new File(scriptDir);
-        if (algorithmDir.isDirectory()) {
-            File[] scripts = algorithmDir.listFiles(new RFileExtensionFilter());
-            LOGGER.debug("Loading script files from {}: {}", algorithmDir, Arrays.toString(scripts));
-
-            for (File scriptf : scripts) {
-                try {
-                    config.registerScript(scriptf);
-                    String wkn = config.getWKNForScriptFile(scriptf);
-                    Property prop = algorithmPropertyHash.get(wkn);
-                    // case: property is missing in wps config
-                    if (prop == null) {
-                        // Change Property if Algorithm is not inside process
-                        // description:
-                        prop = repositoryDocument.addNewProperty();
-                        prop.setActive(true);
-                        prop.setName(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString());
-                        prop.setStringValue(wkn);
-                        newPropertyList.add(prop);
-                        LOGGER.debug("Added new algorithm property to repo document: {}", prop);
-
-                        pChanged = true;
-                    }
-                    else {
-                        LOGGER.debug("Algorithm property already repo document: {}", prop);
-                        newPropertyList.add(algorithmPropertyHash.remove(wkn));
-                    }
-
-                }
-                catch (RAnnotationException e) {
-                    LOGGER.error(e.getMessage());
-                }
-                catch (IOException e) {
-                    LOGGER.error(e.getMessage());
-                }
-                catch (ExceptionReport e) {
-                    LOGGER.error(e.getMessage());
-                }
-
-                /*
-                 * if(prop.getActive() && addAlgorithm){ repository.addAlgorithm(wkn); }
-                 */
-            }
+        for (File file : scriptDirs) {
+            boolean b = registerRScriptsFromDirectory(file,
+                                                      repositoryDocument,
+                                                      algorithmPropertyHash,
+                                                      newPropertyList,
+                                                      pChanged);
+            if (b)
+                pChanged = b;
         }
+
+        return pChanged;
+    }
+
+    private boolean registerRScriptsFromDirectory(File directory,
+                                                  Repository repositoryDocument,
+                                                  HashMap<String, Property> algorithmPropertyHash,
+                                                  ArrayList<Property> newPropertyList,
+                                                  boolean pChanged) {
+        if ( !directory.isDirectory()) {
+            LOGGER.error("Provided file is not a directory, cannot load scripts: {}", directory);
+            return false;
+        }
+        File[] scripts = directory.listFiles(new RFileExtensionFilter());
+        LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
+
+        for (File scriptf : scripts) {
+            try {
+                config.registerScript(scriptf);
+                String wkn = config.getWKNForScriptFile(scriptf);
+                Property prop = algorithmPropertyHash.get(wkn);
+                // case: property is missing in wps config
+                if (prop == null) {
+                    // Change Property if Algorithm is not inside process
+                    // description:
+                    prop = repositoryDocument.addNewProperty();
+                    prop.setActive(true);
+                    prop.setName(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString());
+                    prop.setStringValue(wkn);
+                    newPropertyList.add(prop);
+                    LOGGER.debug("Added new algorithm property to repo document: {}", prop);
+
+                    pChanged = true;
+                }
+                else {
+                    LOGGER.debug("Algorithm property already repo document: {}", prop);
+                    newPropertyList.add(algorithmPropertyHash.remove(wkn));
+                }
+
+            }
+            catch (RAnnotationException e) {
+                LOGGER.error(e.getMessage());
+            }
+            catch (IOException e) {
+                LOGGER.error(e.getMessage());
+            }
+            catch (ExceptionReport e) {
+                LOGGER.error(e.getMessage());
+            }
+
+            /*
+             * if(prop.getActive() && addAlgorithm){ repository.addAlgorithm(wkn); }
+             */
+        }
+
         return pChanged;
     }
 
