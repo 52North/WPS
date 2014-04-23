@@ -57,8 +57,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
     private static RPropertyChangeManager instance;
 
+    private static R_Config config;
+
     private RPropertyChangeManager() {
-        //
+        config = R_Config.getInstance();
     }
 
     public static RPropertyChangeManager getInstance() {
@@ -132,10 +134,6 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         boolean propertyChanged = false;
         ArrayList<Property> newPropertyList = new ArrayList<Property>();
 
-        // test if host and port of rserve are available in config properties,
-        // if not, values from R_Config
-        // will be used
-
         // retrieve set of string representations for all config variables:
         HashSet<String> configVariableNames = new HashSet<String>();
 
@@ -161,13 +159,11 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     if ( !success)
                         LOGGER.warn("Invalid config variable was omitted and deleted: " + property);
 
-                    // config variable should occur only once, doubling will be
-                    // omitted:
+                    // config variable should occur only once, doubles are omitted:
                     configVariableNames.remove(pname);
                 }
                 else {
-                    // valid properties which are not algorithms will be just
-                    // passed to the new list
+                    // valid properties which are not algorithms will be just passed to the new list
                     LOGGER.debug("Unprocessed property: " + property);
                 }
 
@@ -182,9 +178,8 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
         propertyChanged = registerRScripts(repositoryDocument, algorithmPropertyHash, propertyChanged, newPropertyList);
 
-        // there might be registered algorithms, which don't got a script file
-        // any more,
-        // those will be deleted here:
+        // there might be registered algorithms, which don't got a script file any more, those will be deleted
+        // here:
         if ( !algorithmPropertyHash.isEmpty())
             propertyChanged = true;
 
@@ -214,10 +209,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                 LOGGER.info("WPS Config was changed.");
             }
             catch (IOException e) {
-                LOGGER.error("Could not write configuration to file: " + e.getMessage());
+                LOGGER.error("Could not write configuration to file", e);
             }
             catch (org.apache.xmlbeans.XmlException e) {
-                LOGGER.error("Could not generate XML File from Data: " + e.getMessage());
+                LOGGER.error("Could not generate XML File from Data", e);
             }
         }
 
@@ -257,18 +252,19 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                                      ArrayList<Property> newPropertyList) {
         boolean pChanged = propertyChanged;
 
-        // check script dir for R process files
-        // adjusts WPS config
-        String scriptDir = R_Config.getInstance().getScriptDirFullPath();
-        R_Config.getInstance().resetWknFileMapping();
+        // check script dir for R process files, adjusts WPS config
+        String scriptDir = config.getScriptDirFullPath();
+        config.resetWknFileMapping();
+
         File algorithmDir = new File(scriptDir);
         if (algorithmDir.isDirectory()) {
             File[] scripts = algorithmDir.listFiles(new RFileExtensionFilter());
-            LOGGER.debug("Loading script files from " + algorithmDir + ": " + Arrays.toString(scripts));
+            LOGGER.debug("Loading script files from {}: {}", algorithmDir, Arrays.toString(scripts));
+
             for (File scriptf : scripts) {
                 try {
-                    R_Config.getInstance().registerScript(scriptf);
-                    String wkn = R_Config.getInstance().getWKNForScriptFile(scriptf);
+                    config.registerScript(scriptf);
+                    String wkn = config.getWKNForScriptFile(scriptf);
                     Property prop = algorithmPropertyHash.get(wkn);
                     // case: property is missing in wps config
                     if (prop == null) {
@@ -279,27 +275,24 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                         prop.setName(RWPSConfigVariables.ALGORITHM_PROPERTY_NAME.toString());
                         prop.setStringValue(wkn);
                         newPropertyList.add(prop);
-                        LOGGER.debug("Added new algorithm property to repo document: " + prop);
+                        LOGGER.debug("Added new algorithm property to repo document: {}", prop);
 
                         pChanged = true;
                     }
                     else {
-                        LOGGER.debug("Algorithm property already repo document: " + prop);
+                        LOGGER.debug("Algorithm property already repo document: {}", prop);
                         newPropertyList.add(algorithmPropertyHash.remove(wkn));
                     }
 
                 }
                 catch (RAnnotationException e) {
                     LOGGER.error(e.getMessage());
-                    e.printStackTrace();
                 }
                 catch (IOException e) {
                     LOGGER.error(e.getMessage());
-                    e.printStackTrace();
                 }
                 catch (ExceptionReport e) {
                     LOGGER.error(e.getMessage());
-                    e.printStackTrace();
                 }
 
                 /*
@@ -336,7 +329,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             Property host = repositoryDocument.addNewProperty();
             host.setActive(true);
             host.setName(RWPSConfigVariables.RSERVE_HOST.toString());
-            host.setStringValue(R_Config.getInstance().getRServeHost());
+            host.setStringValue(config.getRServeHost());
             newPropertyList.add(host);
             propertyChanged = true;
         }
@@ -345,7 +338,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             Property port = repositoryDocument.addNewProperty();
             port.setActive(true);
             port.setName(RWPSConfigVariables.RSERVE_PORT.toString());
-            port.setStringValue(Integer.toString(R_Config.getInstance().getRServePort()));
+            port.setStringValue(Integer.toString(config.getRServePort()));
             newPropertyList.add(port);
             propertyChanged = true;
         }
@@ -364,12 +357,12 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         boolean success = false;
         for (RWPSConfigVariables configvariable : RWPSConfigVariables.values()) {
             if (pname.equalsIgnoreCase(configvariable.toString())) {
-                R_Config.getInstance().setConfigVariable(configvariable, property.getStringValue());
+                config.setConfigVariable(configvariable, property.getStringValue());
                 success = true;
                 break;
             }
         }
-        LOGGER.info("Trying batch start if R is not running: " + R_Config.getInstance().getEnableBatchStart());
+        LOGGER.info("Trying batch start if R is not running: {}", config.getEnableBatchStart());
 
         return success;
 
@@ -382,19 +375,16 @@ public class RPropertyChangeManager implements PropertyChangeListener {
     private boolean deleteScript(String processName) {
         boolean deleted = false;
         try {
-            File processFile = R_Config.getInstance().getScriptFileForWKN(processName);
+            File processFile = config.getScriptFileForWKN(processName);
             deleted = processFile.delete();
-            if ( !deleted) {
-                LOGGER.error("Process file " + processFile.getName() + " could not be deleted, "
-                        + "Process just removed temporarly");
-            }
+            if ( !deleted)
+                LOGGER.error("Process file {} could not be deleted, process just removed temporarly",
+                             processFile.getName());
             else
-                LOGGER.info("Process " + processName + " and process file " + processFile.getName()
-                        + " successfully deleted!");
+                LOGGER.info("Process {} and process file {} successfully deleted!", processName, processFile.getName());
         }
         catch (Exception e) {
-            LOGGER.error("Process file refering to " + processName + "could not be deleted, this"
-                    + "error was not expected:\n" + e.getLocalizedMessage());
+            LOGGER.error("Process file refering to {} could not be deleted", processName, e);
         }
         return deleted;
 
