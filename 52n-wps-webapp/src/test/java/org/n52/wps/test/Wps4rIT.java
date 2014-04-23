@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -294,7 +295,7 @@ public class Wps4rIT {
         // "<-", "a<-q", // result in WPS parsing error
         "="};
 
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         for (String cmd : illegalCommands) {
@@ -314,7 +315,7 @@ public class Wps4rIT {
     public void syntaxErrorOnIllegalInputs() throws XmlException, IOException {
         String[] illegalCommands = new String[] {"\"\";quit(\"no\");", "setwd('/root/')", "setwd(\"c:/\")"};
 
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         for (String cmd : illegalCommands) {
@@ -335,18 +336,33 @@ public class Wps4rIT {
                                                  // "system('format hardisk')",
                                                  "quit(\\\"no\\\");inputVariable;"};
 
-        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestInjection.xml");
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         for (String cmd : illegalCommands) {
             String payload = xmlPayload.toString();
-            payload = payload.replace("@@@cmd@@@", cmd);
+            payload = payload.replace("@@@data@@@", cmd);
 
             String response = PostClient.sendRequest(wpsUrl, payload);
 
             assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
             // assertThat("Response contains an echo of '" + cmd + "'", response, containsString(cmd));
         }
+    }
+
+    @Test
+    public void renamingDoesNotAffectScript() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String data = UUID.randomUUID().toString();
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@data@@@", data);
+
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains an echo of '" + data + "'", response, containsString(data));
     }
 
 }

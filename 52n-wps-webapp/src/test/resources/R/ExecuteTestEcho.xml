@@ -9,7 +9,7 @@
 		<wps:Input>
 			<ows:Identifier>inputVariable</ows:Identifier>
 			<wps:Data>
-				<wps:LiteralData>@@@cmd@@@</wps:LiteralData>
+				<wps:LiteralData>@@@data@@@</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 	</wps:DataInputs>
