@@ -1042,6 +1042,8 @@
 			<Property name="wipe.period" active="true">PT1H</Property>
 			<!-- deletes files older than 7 days -->
 			<Property name="wipe.threshold" active="true">P7D</Property>
+			<!-- save complex values gzipped -->
+			<Property name="complex.gzip" active="true">true</Property>
 		</Database>
         
         <!-- 

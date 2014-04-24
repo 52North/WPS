@@ -28,7 +28,6 @@
  */
 package org.n52.wps.server.database;
 
-import com.google.common.base.Joiner;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,15 +45,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.ServerDocument.Server;
-import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.MIMEUtil;
+import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /*
  * @author tkunicki (Thomas Kunicki, USGS)
@@ -69,15 +71,17 @@ public final class FlatFileDatabase implements IDatabase {
     private final static String KEY_DATABASE_WIPE_ENABLED = "wipe.enabled";
     private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
     private final static String KEY_DATABASE_WIPE_THRESHOLD = "wipe.threshold";
+    private final static String KEY_DATABASE_COMPLEX_GZIP = "complex.gzip";
     
     private final static String DEFAULT_DATABASE_PATH = 
             Joiner.on(File.separator).join(
                 System.getProperty("java.io.tmpdir", "."),
                 "Database",
                 "Results");
-    private final static boolean DEFAULT_DATABASE_WIPE_ENABLED = true;  // P1H
+    private final static boolean DEFAULT_DATABASE_WIPE_ENABLED = true;
     private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60;  // P1H
     private final static long DEFAULT_DATABASE_WIPE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // P7D
+    private final static boolean DEFAULT_DATABASE_COMPLEX_GZIP = true; // P7D
     
     private final static String SUFFIX_MIMETYPE = "mime-type";
     private final static String SUFFIX_CONTENT_LENGTH = "content-length";
@@ -110,7 +114,7 @@ public final class FlatFileDatabase implements IDatabase {
 
     protected final String baseResultURL;
 
-    protected final boolean gzipComplexValues = true;
+    protected final boolean gzipComplexValues;
 
     protected final Object storeResponseSerialNumberLock;
 
@@ -149,6 +153,8 @@ public final class FlatFileDatabase implements IDatabase {
         } else {
             wipeTimer = null;
         }
+
+        gzipComplexValues = propertyUtil.extractBoolean(KEY_DATABASE_COMPLEX_GZIP, DEFAULT_DATABASE_COMPLEX_GZIP);
 
         storeResponseSerialNumberLock = new Object();
     }
