@@ -394,8 +394,7 @@ public class RProcessDescriptionCreator {
             if (encod != null) {
                 format.setEncoding(encod);
                 if (encod == "base64") {
-                    // set a format entry such that not encoded data is
-                    // supported as well
+                    // set a format entry such that not encoded data is supported as well
                     ComplexDataDescriptionType format2 = supported.addNewFormat();
                     format2.setMimeType(out.getProcessDescriptionType());
                 }

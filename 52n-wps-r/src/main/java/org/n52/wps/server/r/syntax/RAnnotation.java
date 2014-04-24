@@ -110,7 +110,7 @@ public class RAnnotation {
         if (value == null)
             return null;
 
-        return getObjectValue(attr).toString();
+        return value.toString();
     }
 
     public static List<RAnnotation> filterAnnotations(Collection<RAnnotation> annotations,
