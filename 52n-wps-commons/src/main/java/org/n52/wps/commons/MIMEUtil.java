@@ -52,6 +52,9 @@ public class MIMEUtil {
 		} else if ("application/json".equals(mimeType)) {
             suffix = "json";
         }
+        else if (mimeType.contains("rData")) {
+            suffix = "rData";
+        }
 		return suffix;
 	}
 }
