@@ -5,10 +5,14 @@
 
 # wps.off;
 filename <- "meuse"
+setwd(tempdir())
+cat("wd: ", getwd(), "\n")
 # wps.on;
 
 library(sp)
 data(meuse)
+data(meuse.grid)
+data(meuse.riv)
 
 summary(meuse)
 summary(meuse.grid)

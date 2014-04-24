@@ -479,4 +479,9 @@ public class R_Config {
             return null;
         }
     }
+
+    public boolean getCacheDescriptions() {
+        String s = getConfigVariable(RWPSConfigVariables.R_CACHE_DESCRIPTIONS);
+        return Boolean.valueOf(s);
+    }
 }

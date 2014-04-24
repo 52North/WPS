@@ -498,6 +498,7 @@
 			<Property name="R_RserveUser" active="false">NA</Property>
 			<Property name="R_RservePassword" active="false">NA</Property>
 			<Property name="R_scriptDirectory" active="true">R/scripts</Property>
+			<Property name="R_cacheDescriptions" active="true">true</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"

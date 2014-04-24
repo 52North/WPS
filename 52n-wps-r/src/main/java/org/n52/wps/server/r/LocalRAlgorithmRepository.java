@@ -280,6 +280,13 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Override
     public ProcessDescriptionType getProcessDescription(String processID) {
+        if ( !this.rConfig.getCacheDescriptions()) {
+            LOGGER.debug("Process description cache disabled, creating new process and returning its description for id {}",
+                         processID);
+            GenericRProcess process = new GenericRProcess(processID);
+            return process.getDescription();
+        }
+
         if ( !this.algorithmDescriptionMap.containsKey(processID)) {
             LOGGER.debug("Creating new process to get the description for " + processID);
             GenericRProcess process = new GenericRProcess(processID);
