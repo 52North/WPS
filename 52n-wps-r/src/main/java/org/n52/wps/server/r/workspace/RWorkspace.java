@@ -30,6 +30,8 @@
 package org.n52.wps.server.r.workspace;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import org.n52.wps.server.ExceptionReport;
@@ -60,8 +62,14 @@ public class RWorkspace {
 
     private static final String WORKSPACE_PREFIX = "wps4r-workspace-";
 
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYYMd-HmsS");
+
     private static String createNewWorkspaceDirectoryName() {
-        return WORKSPACE_PREFIX + UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH);
+        StringBuilder wd = new StringBuilder();
+        wd.append(WORKSPACE_PREFIX);
+        wd.append(dateFormat.format(new Date()));
+        wd.append(UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH));
+        return wd.toString();
     }
 
     /**
