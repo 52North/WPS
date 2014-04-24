@@ -98,14 +98,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         return this.iohandler.getOutputDataType(id, this.annotations);
     }
 
-    /**
-     * This method should be overwritten, in case you want to have a way of initializing.
-     * 
-     * In detail it looks for a xml descfile, which is located in the same directory as the implementing class
-     * and has the same name as the class, but with the extension XML.
-     * 
-     * @return
-     */
+    @Override
     protected ProcessDescriptionType initializeDescription() {
         log.info("Initializing description for {}", this.toString());
 
@@ -145,15 +138,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
         catch (RAnnotationException rae) {
             log.error(rae.getMessage());
-            throw new RuntimeException("Annotation error while parsing process description: " + rae.getMessage());
+            throw new RuntimeException("Annotation error while parsing process description: " + rae.getMessage(), rae);
         }
         catch (IOException ioe) {
             log.error("I/O error while parsing process description: " + ioe.getMessage());
-            throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage());
+            throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage(), ioe);
         }
         catch (ExceptionReport e) {
             log.error(e.getMessage(), e);
-            throw new RuntimeException("Error creating process descriptionn.", e);
+            throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
         }
         finally {
             try {
