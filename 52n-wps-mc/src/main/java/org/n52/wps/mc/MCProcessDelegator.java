@@ -45,9 +45,9 @@ import org.n52.movingcode.runtime.iodata.IODataType;
 import org.n52.movingcode.runtime.iodata.MediaData;
 import org.n52.movingcode.runtime.processors.AbstractProcessor;
 import org.n52.movingcode.runtime.processors.ProcessorFactory;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -109,7 +109,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 							// media data
 						case MEDIA:
-							GenericFileData gfd = (GenericFileData) iData.getPayload();
+							GenericFileDataWithGT gfd = (GenericFileDataWithGT) iData.getPayload();
 							processor.addData(inputID, new MediaData(gfd.getDataStream(), gfd.getMimeType()));
 							break;
 						default:
@@ -230,8 +230,8 @@ public class MCProcessDelegator implements IAlgorithm {
 					case MEDIA:
 
 						MediaData md = (MediaData) param.get(0);
-						GenericFileData gfd = new GenericFileData(md.getMediaStream(), md.getMimeType());
-						result.put(param.getMessageOutputIdentifier(), new GenericFileDataBinding(gfd));
+						GenericFileDataWithGT gfd = new GenericFileDataWithGT(md.getMediaStream(), md.getMimeType());
+						result.put(param.getMessageOutputIdentifier(), new GenericFileDataWithGTBinding(gfd));
 						break;
 				}
 			}
@@ -300,7 +300,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 			// Complex Output
 			if (input.isSetComplexData()) {
-				return GenericFileDataBinding.class;
+				return GenericFileDataWithGTBinding.class;
 			}
 		}
 
@@ -338,7 +338,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 			// Complex Output
 			if (output.isSetComplexOutput()) {
-				return GenericFileDataBinding.class;
+				return GenericFileDataWithGTBinding.class;
 			}
 		}
 		return null;
@@ -367,7 +367,7 @@ public class MCProcessDelegator implements IAlgorithm {
 			return IODataType.STRING;
 		}
 
-		if (clazz == GenericFileData.class) {
+		if (clazz == GenericFileDataWithGT.class) {
 			return IODataType.MEDIA;
 		}
 

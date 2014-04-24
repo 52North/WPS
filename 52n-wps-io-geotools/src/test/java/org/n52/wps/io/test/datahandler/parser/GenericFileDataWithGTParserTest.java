@@ -26,42 +26,59 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.io.test.datahandler.parser;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.n52.wps.io.datahandler.parser.GenericFileDataWithGTParser;
+import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
-/**
- * @author Benjamin Pross(bpross-52n)
- *
- */
-public class GRASSXMLGenerator extends AbstractGenerator {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-//		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
-		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
-//		"http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
-		};
-	
-	public GRASSXMLGenerator(){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+public class GenericFileDataWithGTParserTest extends AbstractTestCase<GenericFileDataWithGTParser> {
+
+
+	public void testParser(){
+
+		if(!isDataHandlerActive()){
+			return;
+		}
+
+		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/testfile";
+
+		try {
+			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			fail(e1.getMessage());
+		}
+
+		String[] mimetypes = dataHandler.getSupportedFormats();
+
+		InputStream input = null;
+
+		for (String mimetype : mimetypes) {
+
+			try {
+				input = new FileInputStream(new File(testFilePath));
+			} catch (FileNotFoundException e) {
+				fail(e.getMessage());
+			}
+
+			GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimetype, "");
+
+			assertTrue(theBinding.getPayload().getBaseFile(true).exists());
+
+		}
+
 	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
-		
-		return theStream;
+
+	@Override
+	protected void initializeDataHandler() {
+		dataHandler = new GenericFileDataWithGTParser();
 	}
-	
+
 }

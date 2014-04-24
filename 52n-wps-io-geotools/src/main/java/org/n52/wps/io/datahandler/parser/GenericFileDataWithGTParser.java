@@ -26,42 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.io.datahandler.parser;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
+
 /**
- * @author Benjamin Pross(bpross-52n)
+ * @author Matthias Mueller, TU Dresden
  *
  */
-public class GRASSXMLGenerator extends AbstractGenerator {
+public class GenericFileDataWithGTParser extends AbstractParser{
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-//		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
-		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
-//		"http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
-		};
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileDataWithGTParser.class);
 	
-	public GRASSXMLGenerator(){
+	public GenericFileDataWithGTParser() {
 		super();
 		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
 	}
 	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+	@Override
+	public GenericFileDataWithGTBinding parse(InputStream input, String mimeType, String schema) {
 		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
+		GenericFileDataWithGT theData = new GenericFileDataWithGT(input, mimeType);
+		LOGGER.info("Found File Input " + mimeType);
 		
-		return theStream;
+		return new GenericFileDataWithGTBinding(theData);
 	}
-	
+
 }

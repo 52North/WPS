@@ -36,7 +36,7 @@ import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -46,7 +46,7 @@ public class ProxyGMLGenerator4Files extends AbstractGenerator{
 	
 	public ProxyGMLGenerator4Files(){
 		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
+		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
 	}
 	
 	//TODO: provides some logic for generic conversion trough piped generators
@@ -58,7 +58,7 @@ public class ProxyGMLGenerator4Files extends AbstractGenerator{
 //			throw new IOException("I don't support the incoming datatype");
 //		}
 		
-		GTVectorDataBinding vectorBindingData = ((GenericFileDataBinding)data).getPayload().getAsGTVectorDataBinding();
+		GTVectorDataBinding vectorBindingData = ((GenericFileDataWithGTBinding)data).getPayload().getAsGTVectorDataBinding();
 		IGenerator assistanceGen = GeneratorFactory.getInstance().getGenerator(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
 		
 		return assistanceGen.generateStream(vectorBindingData, mimeType, schema);

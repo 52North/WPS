@@ -26,42 +26,36 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.client.test;
 
-import java.io.IOException;
-import java.io.InputStream;
+import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.junit.Test;
+import org.n52.wps.client.ExecuteRequestBuilder;
+import org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm;
 
-/**
- * @author Matthias Mueller, TU Dresden
- *
- */
-public class GenericFileGenerator extends AbstractGenerator {
-	
-	public GenericFileGenerator (){
-		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
-	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+public class ExecuteRequestBuilderTest {
+
+	@Test
+	public void testAddComplexDataInputType(){
 		
-		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
-		return theStream;
-	}
-	
-	/**
-	 * conversion method to support translation of output formats
-	 * TODO: implement logic
-	 * 
-	 * @param inputFile
-	 * @return  
-	 */
-	private GenericFileData convertFile (GenericFileData inputFile){
-		//not implemented
-		return null;
+		new MultiReferenceBinaryInputAlgorithm().getDescription();
+		
+		ProcessDescriptionType processDescriptionType = new MultiReferenceBinaryInputAlgorithm().getDescription();
+		
+		ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
+		
+		InputType inputType = InputType.Factory.newInstance();
+		
+		inputType.addNewIdentifier().setStringValue("data");
+		
+		inputType.addNewReference().setHref("http://xyz.test.data");
+		
+		executeRequestBuilder.addComplexData(inputType);
+		
+		System.out.println(executeRequestBuilder.getExecute().toString());
+		
 	}
 	
 }

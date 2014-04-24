@@ -29,7 +29,7 @@
 package org.n52.wps.server.r.data;
 
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 public class CustomDataType implements RTypeDefinition {
 
@@ -102,7 +102,7 @@ public class CustomDataType implements RTypeDefinition {
     public Class<? extends IData> getIDataClass()
     {
 
-        return GenericFileDataBinding.class;
+        return GenericFileDataWithGTBinding.class;
     }
 
     public String toString()

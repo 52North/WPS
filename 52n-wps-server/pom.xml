@@ -126,6 +126,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-algorithm-impl</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io-geotools</artifactId>
 			<scope>test</scope>
 		</dependency>

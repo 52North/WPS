@@ -49,5 +49,10 @@
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-algorithm-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

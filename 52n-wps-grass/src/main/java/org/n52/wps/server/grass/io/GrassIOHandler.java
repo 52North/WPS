@@ -46,10 +46,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.grass.GrassProcessRepository;
 import org.n52.wps.server.grass.util.JavaProcessStreamReader;
@@ -160,9 +160,9 @@ public class GrassIOHandler {
 		//give back genericfiledatabinding with the outputfile created by grass
 		try {
 			
-			GenericFileData outputFileData = new GenericFileData(outputFile, outputMimeType);
+			GenericFileDataWithGT outputFileData = new GenericFileDataWithGT(outputFile, outputMimeType);
 			
-			GenericFileDataBinding outputData = new GenericFileDataBinding(outputFileData);	
+			GenericFileDataWithGTBinding outputData = new GenericFileDataWithGTBinding(outputFileData);	
 			
 			return outputData;
 			
@@ -355,11 +355,11 @@ public class GrassIOHandler {
 				
 				for (IData data : dataList) {
 				
-				if(!(data instanceof GenericFileDataBinding)){
+				if(!(data instanceof GenericFileDataWithGTBinding)){
 					continue;
 				}
 				
-				String mimetype = ((GenericFileDataBinding)data).getPayload().getMimeType();
+				String mimetype = ((GenericFileDataWithGTBinding)data).getPayload().getMimeType();
 				
 				if(mimetype.equals(GenericFileDataConstants.MIME_TYPE_TIFF)){					
 					tmpBlock = getComplexInputDataBlock().replace(MIMETYPE, mimetype);
@@ -415,7 +415,7 @@ public class GrassIOHandler {
 					tmpBlock = tmpBlock.replace(SCHEMA, "");
 				}					
 
-				String filename = ((GenericFileDataBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
+				String filename = ((GenericFileDataWithGTBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
 				
 				tmpBlock = tmpBlock.replace(INPUT_IDENTIFIER, key);
 				tmpBlock = tmpBlock.replace(INPUT_PATH, filename);

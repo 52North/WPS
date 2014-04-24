@@ -26,42 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.io.data.binding.complex;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.wps.io.data.IComplexData;
 
 /**
- * @author Benjamin Pross(bpross-52n)
+ * 
+ * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and - Generator.
+ * 
+ * @author bpross-52n
  *
  */
-public class GRASSXMLGenerator extends AbstractGenerator {
+public class GenericXMLDataBinding implements IComplexData {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6875103125533078664L;
+
+	private XmlObject payload;
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-//		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
-		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
-//		"http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
-		};
-	
-	public GRASSXMLGenerator(){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+	public GenericXMLDataBinding(XmlObject payload){
+		this.payload = payload;
 	}
 	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
-		
-		return theStream;
+	@Override
+	public XmlObject getPayload() {
+		return payload;
 	}
-	
+
+	@Override
+	public Class<XmlObject> getSupportedClass() {
+		return XmlObject.class;
+	}
+
+	@Override
+	public void dispose() {}
+
 }

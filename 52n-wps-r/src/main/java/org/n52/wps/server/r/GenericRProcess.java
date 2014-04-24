@@ -52,13 +52,13 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.io.IOUtils;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
@@ -354,7 +354,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         String warnings = parseWarnings(rCon);
         InputStream byteArrayInputStream = new ByteArrayInputStream(warnings.getBytes("UTF-8"));
         resulthash.put("warnings",
-                       new GenericFileDataBinding(new GenericFileData(byteArrayInputStream,
+                       new GenericFileDataWithGTBinding(new GenericFileDataWithGT(byteArrayInputStream,
                                                                       GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
     }
 
@@ -364,7 +364,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         String sessionInfo = RSessionInfo.getSessionInfo(rCon);
         InputStream byteArrayInputStream = new ByteArrayInputStream(sessionInfo.getBytes("UTF-8"));
         resulthash.put("sessionInfo",
-                       new GenericFileDataBinding(new GenericFileData(byteArrayInputStream,
+                       new GenericFileDataWithGTBinding(new GenericFileDataWithGT(byteArrayInputStream,
                                                                       GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
     }
 
@@ -813,8 +813,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         if (ivalue instanceof ILiteralData)
             return parseLiteralInput(iclass, ivalue.getPayload());
 
-        if (ivalue instanceof GenericFileDataBinding) {
-            GenericFileData value = (GenericFileData) ivalue.getPayload();
+        if (ivalue instanceof GenericFileDataWithGTBinding) {
+            GenericFileDataWithGT value = (GenericFileDataWithGT) ivalue.getPayload();
 
             InputStream is = value.getDataStream();
             String ext = value.getFileExtension();
@@ -990,7 +990,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
         String filename = new File(result.asString()).getName();
 
-        if (iClass.equals(GenericFileDataBinding.class)) {
+        if (iClass.equals(GenericFileDataWithGTBinding.class)) {
             log.debug("Creating output with GenericFileDataBinding for file {}", filename);
             String mimeType = "application/unknown";
 
@@ -1018,9 +1018,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-            GenericFileData out = new GenericFileData(outputFile, mimeType);
+            GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
 
-            return new GenericFileDataBinding(out);
+            return new GenericFileDataWithGTBinding(out);
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
             String mimeType = "application/unknown";
@@ -1076,7 +1076,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
-            GenericFileData gfd = new GenericFileData(outputFile, mimeType);
+            GenericFileDataWithGT gfd = new GenericFileDataWithGT(outputFile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
         }
@@ -1358,7 +1358,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     public Class< ? extends IData> getOutputDataType(String id) {
         if (id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings"))
-            return GenericFileDataBinding.class;
+            return GenericFileDataWithGTBinding.class;
 
         try {
             return getIODataType(RAnnotationType.OUTPUT, id);

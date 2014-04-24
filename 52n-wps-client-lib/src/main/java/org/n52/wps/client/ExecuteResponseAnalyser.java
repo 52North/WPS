@@ -37,16 +37,12 @@ import net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse.ProcessOutputs;
-import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 /*
  * 

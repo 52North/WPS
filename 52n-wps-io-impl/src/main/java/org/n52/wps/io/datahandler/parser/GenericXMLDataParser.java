@@ -26,42 +26,48 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.generator;
+package org.n52.wps.io.datahandler.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
-/**
- * @author Benjamin Pross(bpross-52n)
- *
- */
-public class GRASSXMLGenerator extends AbstractGenerator {
+public class GenericXMLDataParser extends AbstractParser {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-//		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
-		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
-//		"http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
-		};
-	
-	public GRASSXMLGenerator(){
+	private static Logger LOGGER = LoggerFactory.getLogger(GenericXMLDataParser.class);
+
+	public GenericXMLDataParser(){
 		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+		supportedIDataTypes.add(GenericXMLDataBinding.class);
 	}
 	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
-		
-		return theStream;
+	@Override
+	public boolean isSupportedSchema(String schema) {
+		//no schema checks
+		return true;
 	}
 	
+	@Override
+	public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {	
+		
+		XmlObject xmlData = XmlObject.Factory.newInstance();
+		
+		try {
+			xmlData = XmlObject.Factory.parse(input);
+		} catch (XmlException e) {
+			LOGGER.error("Could not parse inputstream as XMLObject.", e);
+		} catch (IOException e) {
+			LOGGER.error("Could not parse inputstream as XMLObject.", e);
+		}	
+		
+		GenericXMLDataBinding xmlDataBinding = new GenericXMLDataBinding(xmlData);
+		
+		return xmlDataBinding;
+	}
+
 }

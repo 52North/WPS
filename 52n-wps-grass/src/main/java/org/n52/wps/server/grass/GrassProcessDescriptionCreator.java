@@ -44,14 +44,14 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
-import org.n52.wps.io.datahandler.parser.GenericFileParser;
+import org.n52.wps.io.datahandler.parser.GenericFileDataWithGTParser;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 import org.n52.wps.server.grass.util.JavaProcessStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Benjamin Pross (bpross-52n)
@@ -256,7 +256,7 @@ public class GrassProcessDescriptionCreator {
 			return;
 		}
 		
-		String[] genericFileParserMimeTypes = new GenericFileParser().getSupportedFormats();
+		String[] genericFileParserMimeTypes = new GenericFileDataWithGTParser().getSupportedFormats();
 		
 		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
 		
