@@ -179,10 +179,15 @@ public class FilteredRConnection extends RConnection {
 
     @Override
     public boolean close() {
-        log.debug("[R] closing connection.");
-        RLogger.log(this, "Closing connection.");
+        if (super.isConnected()) {
+            log.debug("[R] closing connection.");
+            RLogger.log(this, "Closing connection.");
 
-        return super.close();
+            return super.close();
+        }
+
+        log.debug("[R] NOT connected, cannot close...");
+        return true;
     }
 
     @Override
