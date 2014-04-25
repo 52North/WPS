@@ -72,7 +72,7 @@
 		<load-on-startup>0</load-on-startup>
 		<init-param>
 			<param-name>wps.config.file</param-name>
-			<param-value>config/wps_config.xml</param-value>
+			<param-value>${wps.config.file}</param-value>
 		</init-param>
 	</servlet>
 	<servlet>
