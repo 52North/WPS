@@ -36,6 +36,8 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
@@ -43,6 +45,7 @@ import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.AfterClass;
@@ -363,6 +366,51 @@ public class Wps4rIT {
 
         assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
         assertThat("Response contains an echo of '" + data + "'", response, containsString(data));
+    }
+
+    @Test
+    public void csvResponseInlineWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSV.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@ref@@@", Boolean.toString(false));
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        assertThat("Response contains test data names",
+                   response,
+                   containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
+    }
+
+    @Test
+    public void csvResponseReferenceWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSV.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@ref@@@", Boolean.toString(true));
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        String urlString = response.substring(response.indexOf("http", response.indexOf("text/csv")));
+        urlString = urlString.substring(0, urlString.indexOf("\""));
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+        String contentType = connection.getContentType();
+        assertThat("Response content type is correct", contentType, is("text/csv"));
+
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(connection.getInputStream(), writer);
+        String csv = writer.toString();
+
+        assertThat("CSV file contains test data names", csv,
+                   containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
     }
 
 }

@@ -68,6 +68,7 @@ public class RWorkspace {
         StringBuilder wd = new StringBuilder();
         wd.append(WORKSPACE_PREFIX);
         wd.append(dateFormat.format(new Date()));
+        wd.append("_");
         wd.append(UUID.randomUUID().toString().substring(0, TEMPDIR_NAME_LENGTH));
         return wd.toString();
     }
