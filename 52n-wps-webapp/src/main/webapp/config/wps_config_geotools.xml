@@ -109,6 +109,7 @@
 				<Format mimetype="application/rData+SpatialPolygons" />
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -384,6 +385,7 @@
 				<Format mimetype="application/zip" />
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
