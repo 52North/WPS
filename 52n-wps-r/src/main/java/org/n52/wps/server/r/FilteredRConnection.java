@@ -169,6 +169,12 @@ public class FilteredRConnection extends RConnection {
     public FilteredRConnection(RCommandFilter filter, String host, int port) throws RserveException {
         super(host, port);
         this.filters.add(filter);
+
+        configure();
+    }
+
+    private void configure() throws RserveException {
+        setStringEncoding("utf8");
     }
 
     public FilteredRConnection(String host, int port) throws RserveException {
