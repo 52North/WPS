@@ -78,6 +78,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private File scriptFile = null;
 
+    private boolean shutdownRServerAfterRun = false;
+
     public GenericRProcess(String wellKnownName) {
         super(wellKnownName);
 
@@ -225,14 +227,28 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                       e);
         }
         catch (REXPMismatchException e) {
-            String message = "An R Parsing Error occoured:\n" + e.getMessage() + e.getClass() + " - "
+            String message = "An R Parsing Error occoured:\n" + e.getMessage() + " - " + e.getClass() + " - "
                     + e.getLocalizedMessage() + "\n" + e.getCause();
             log.error(message, e);
             throw new ExceptionReport(message, "R", "R_Connection", e);
         }
         finally {
-            if (rCon != null)
-                rCon.close();
+            if (rCon != null) {
+                if (shutdownRServerAfterRun) {
+                    log.debug("Shutting down R completely...");
+                    try {
+                        rCon.serverShutdown();
+                    }
+                    catch (RserveException e) {
+                        String message = "Error during R server shutdown:\n" + e.getMessage() + " - " + e.getClass()
+                                + " - " + e.getLocalizedMessage() + "\n" + e.getCause();
+                        log.error(message, e);
+                        throw new ExceptionReport(message, "R", "R_Connection", e);
+                    }
+                }
+                else
+                    rCon.close();
+            }
         }
     }
 

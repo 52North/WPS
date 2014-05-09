@@ -112,7 +112,7 @@ public class RConnector {
     private FilteredRConnection attemptStarts(String host, int port) throws InterruptedException,
             IOException,
             RserveException {
-        startRserve();
+        startR();
 
         int attempt = 1;
         FilteredRConnection con = null;
@@ -144,8 +144,8 @@ public class RConnector {
         Runtime.getRuntime().exec(rserveStartCMD);
     }
 
-    public void startRserve() throws InterruptedException, IOException {
-        log.debug("Starting Rserve locally...");
+    public void startR() throws InterruptedException, IOException {
+        log.debug("Starting R locally...");
 
         if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
             startRServeOnLinux();
@@ -154,7 +154,7 @@ public class RConnector {
             startRServeOnWindows();
         }
 
-        log.debug("Started RServe.");
+        log.info("Started R.");
     }
 
 }
