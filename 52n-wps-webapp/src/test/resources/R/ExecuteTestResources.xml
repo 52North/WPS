@@ -8,10 +8,13 @@
 	<wps:ResponseForm>
 		<wps:ResponseDocument storeExecuteResponse="false">
 			<wps:Output asReference="false">
-				<ows:Identifier>dummyOutput1</ows:Identifier>
+				<ows:Identifier>textResourceContent</ows:Identifier>
 			</wps:Output>
 			<wps:Output asReference="false">
-				<ows:Identifier>dummyOutput2</ows:Identifier>
+				<ows:Identifier>imageResourceWidth</ows:Identifier>
+			</wps:Output>
+			<wps:Output asReference="false">
+				<ows:Identifier>directoryResourceContentSize</ows:Identifier>
 			</wps:Output>
 			<wps:Output>
 				<ows:Identifier>sessionInfo</ows:Identifier>

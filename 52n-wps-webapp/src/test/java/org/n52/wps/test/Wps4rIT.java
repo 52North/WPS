@@ -147,9 +147,10 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("This is a dummy txt-file"));
-        assertThat(response, containsString("480"));
+        assertThat("response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("text resource content could be read", response, containsString("This is a dummy txt-file"));
+        assertThat("image resource is loaded", response, containsString("480"));
+        assertThat("directory resources are loaded", response, containsString("xs:integer\">3</wps:LiteralData>"));
     }
 
     @Test

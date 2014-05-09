@@ -88,6 +88,8 @@ public class RWorkspaceManager {
 
     private static final String SESSION_INFO_OUTPUT_NAME = "sessionInfo";
 
+    private static final int COPY_BUFFER_SIZE = 2048;
+
     private R_Config config;
 
     private FilteredRConnection connection;
@@ -271,6 +273,8 @@ public class RWorkspaceManager {
         }
 
         loadResourcesToWorkspace(resources);
+
+        log.debug("Workspace contents after resource loading: {}", this.workspace.listFiles());
     }
 
     private void loadResourcesListInSession(Collection<RAnnotation> resources) throws RserveException,
@@ -296,7 +300,7 @@ public class RWorkspaceManager {
     private void loadResourcesToWorkspace(Collection<RAnnotation> resources) throws RAnnotationException,
             ExceptionReport,
             IOException {
-        log.debug("Loading resources into session: {}", resources);
+        log.debug("Loading resources into workspace: {}", resources);
 
         for (RAnnotation resourceAnnotation : resources) {
             Object resObject = resourceAnnotation.getObjectValue(RAttribute.NAMED_LIST);
@@ -304,25 +308,34 @@ public class RWorkspaceManager {
 
             if (resObject instanceof Collection< ? >)
                 resourceCollection = (Collection< ? >) resObject;
-            else
+            else {
+                log.warn("Unsupported resource object: {}", resObject);
                 continue;
+            }
 
             for (Object element : resourceCollection) {
                 R_Resource resource;
                 if (element instanceof R_Resource)
                     resource = (R_Resource) element;
-                else
+                else {
+                    log.warn("Unsupported resource element: {}", element);
                     continue;
+                }
 
                 File resourceFile = resource.getFullResourcePath(this.config);
                 if (resourceFile == null || !resourceFile.exists()) {
-                    throw new ExceptionReport("Resource cannot be loaded: " + resourceAnnotation,
+                    throw new ExceptionReport("Resource does not exist: " + resourceAnnotation,
                                               ExceptionReport.NO_APPLICABLE_CODE);
                 }
-                log.debug("Loading resource " + resourceAnnotation);
+                log.debug("Loading resource {} from file {} (directory: {})",
+                          resourceAnnotation,
+                          resourceFile,
+                          resourceFile.isDirectory());
                 streamFromWPSToRserve(resourceFile);
             }
         }
+
+        log.debug("Loaded resources, workspace files: {}", this.workspace.listFiles());
     }
 
     private void loadUtilityScripts() throws RserveException,
@@ -556,20 +569,38 @@ public class RWorkspaceManager {
     }
 
     private void streamFromWPSToRserve(File source) throws IOException {
-        RFileOutputStream rfos = connection.createFile(source.getName());
+        String fileName = source.getName();
+        log.debug("Copying file {} to R workspace as file {}", source, fileName);
 
-        byte[] buffer = new byte[2048];
-        FileInputStream is = new FileInputStream(source);
-        int stop = is.read(buffer);
+        if ( !source.isDirectory()) {
+            // use RFileOutputStream so that remote RServe is supported
+            RFileOutputStream rfos = connection.createFile(fileName);
 
-        while (stop != -1) {
-            rfos.write(buffer, 0, stop);
-            stop = is.read(buffer);
+            byte[] buffer = new byte[2048];
+            FileInputStream is = new FileInputStream(source);
+            int stop = is.read(buffer);
+
+            while (stop != -1) {
+                rfos.write(buffer, 0, stop);
+                stop = is.read(buffer);
+            }
+
+            rfos.flush();
+            rfos.close();
+            is.close();
+
+            log.debug("File copied with R from {} to {}", source, rfos);
         }
+        else { // if it is a directory create the directory and stream all of them
 
-        rfos.flush();
-        rfos.close();
-        is.close();
+            String[] sourceContents = source.list();
+            log.debug("Copying directory and its contents: {}", Arrays.toString(sourceContents));
+
+            for (String file : sourceContents) {
+                File sourceFile = new File(source, file);
+                streamFromWPSToRserve(sourceFile);
+            }
+        }
     }
 
 }

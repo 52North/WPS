@@ -31,6 +31,9 @@ package org.n52.wps.server.r.workspace;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -332,6 +335,12 @@ public class RWorkspace {
         String workDirPath = newWorkdir.asString();
         this.path = workDirPath;
         return getPath();
+    }
+
+    public Collection<File> listFiles() {
+        File f = new File(this.path);
+        ArrayList<File> files = new ArrayList<File>(Arrays.asList(f.listFiles()));
+        return files;
     }
 
 }
