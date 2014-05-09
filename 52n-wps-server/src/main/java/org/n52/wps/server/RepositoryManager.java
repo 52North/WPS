@@ -37,12 +37,11 @@ import java.util.List;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Bastian Schaeffer, University of Muenster
@@ -69,7 +68,8 @@ public class RepositoryManager {
         WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
             public void propertyChange(
                     final PropertyChangeEvent propertyChangeEvent) {
-                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                                                                  LOGGER.info("Received Property Change Event: {}",
+                                                                              propertyChangeEvent.getPropertyName());
                 loadAllRepositories();
             }
         });
@@ -77,7 +77,7 @@ public class RepositoryManager {
         Double updateHours = WPSConfig.getInstance().getWPSConfig().getServer().getRepoReloadInterval();
         
         if (updateHours != 0){
-        	LOGGER.info("Setting repository update period to " + updateHours + " hours.");
+            LOGGER.info("Setting repository update period to {} hours.", updateHours);
         	updateHours = updateHours * 3600 * 1000; // make milliseconds
             long updateInterval = updateHours.longValue();
             this.updateThread = new UpdateThread(updateInterval);
@@ -89,6 +89,8 @@ public class RepositoryManager {
 
     private void loadAllRepositories(){
         repositories = new ArrayList<IAlgorithmRepository>();
+        LOGGER.debug("Loading all repositories: {} (doing a gc beforehand...)", repositories);
+
         System.gc();
 
 		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
@@ -114,11 +116,10 @@ public class RepositoryManager {
 					}
 				}
 				
-				
 				repositories.add(algorithmRepository);
-				LOGGER.info("Algorithm Repository "+ repositoryClassName + " initialized");
+                LOGGER.info("Algorithm Repository {} initialized", repositoryClassName);
 			} catch (InstantiationException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
 //				try {
@@ -138,18 +139,28 @@ public class RepositoryManager {
 //				} catch (ClassNotFoundException e1) {
 //					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
 //				}
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
 
 			} catch (ClassNotFoundException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Reason " + e.getMessage());
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
+                            repositoryClassName,
+                            e.getMessage());
 			} catch (IllegalArgumentException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName +  ". Reason " + e.getMessage());
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
+                            repositoryClassName,
+                            e.getMessage());
 			} catch (SecurityException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Reason " + e.getMessage());
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
+                            repositoryClassName,
+                            e.getMessage());
 			} catch (InvocationTargetException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Reason " + e.getMessage());
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
+                            repositoryClassName,
+                            e.getMessage());
 			} catch (NoSuchMethodException e) {
-				LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName + ". Reason " + e.getMessage());
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
+                            repositoryClassName,
+                            e.getMessage());
 			}
 		}
     }
@@ -301,7 +312,8 @@ public class RepositoryManager {
         				LOGGER.info("Reloading repositories - this might take a while ...");
             			long timestamp = System.currentTimeMillis();
             			RepositoryManager.getInstance().reloadRepositories();
-            			LOGGER.info("Repositories reloaded - going to sleep. Took " + (System.currentTimeMillis()-timestamp) / 1000 + " seconds.");
+                        LOGGER.info("Repositories reloaded - going to sleep. Took {} seconds.",
+                                    (System.currentTimeMillis() - timestamp) / 1000);
         			} else {
         				firstrun = false;
         			}
@@ -324,6 +336,7 @@ public class RepositoryManager {
     }
 
 	public void shutdown() {
+        LOGGER.debug("Shutting down all repositories..");
 		for (IAlgorithmRepository repo : repositories) {
 			repo.shutdown();
 		}
