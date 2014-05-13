@@ -190,12 +190,15 @@ public class RExecutor {
             log.error("Error handling during R script execution failed.", e);
             success = false;
         }
-
-        try {
-            rScriptStream.close();
-        }
-        catch (IOException e) {
-            log.error("Connection to R script cannot be closed for process file {}", script);
+        finally {
+            if (rScriptStream != null) {
+                try {
+                    rScriptStream.close();
+                }
+                catch (IOException e) {
+                    log.error("Connection to R script cannot be closed for process file {}", script);
+                }
+            }
         }
 
         return success;
