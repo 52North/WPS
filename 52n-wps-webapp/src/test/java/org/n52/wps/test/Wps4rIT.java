@@ -148,9 +148,16 @@ public class Wps4rIT {
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat("response is not an exception", response, not(containsString("ExceptionReport")));
-        assertThat("text resource content could be read", response, containsString("This is a dummy txt-file"));
+        assertThat("text resource content could be read",
+                   response,
+                   containsString("dataType=\"xs:string\">This is a dummy txt-file"));
         assertThat("image resource is loaded", response, containsString("480"));
-        assertThat("directory resources are loaded", response, containsString("xs:integer\">3</wps:LiteralData>"));
+        assertThat("directories are created", response, containsString("xs:integer\">1</wps:LiteralData>"));
+        assertThat("subdirectory resources can be read", response, containsString("xs:double\">42.0</wps:LiteralData>"));
+        assertThat("subsubdirectory resources can be read",
+                   response,
+                   containsString("xs:integer\">17</wps:LiteralData>"));
+        assertThat("recursive folders all exist", response, containsString("xs:integer\">3</wps:LiteralData>"));
     }
 
     @Test

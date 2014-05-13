@@ -31,7 +31,6 @@ package org.n52.wps.server.r.workspace;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +65,6 @@ import org.n52.wps.server.r.util.RSessionInfo;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
-import org.rosuda.REngine.Rserve.RFileOutputStream;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,8 +85,6 @@ public class RWorkspaceManager {
     private static final String NO_WARNINGS_MESSAGE = "The process proceeded without any warnings from R.";
 
     private static final String SESSION_INFO_OUTPUT_NAME = "sessionInfo";
-
-    private static final int COPY_BUFFER_SIZE = 2048;
 
     private R_Config config;
 
@@ -328,7 +324,7 @@ public class RWorkspaceManager {
                                               ExceptionReport.NO_APPLICABLE_CODE);
                 }
                 log.debug("Loading resource {} from file {} (directory: {})",
-                          resourceAnnotation,
+                          resource,
                           resourceFile,
                           resourceFile.isDirectory());
                 streamFromWPSToRserve(resourceFile);
@@ -569,38 +565,75 @@ public class RWorkspaceManager {
     }
 
     private void streamFromWPSToRserve(File source) throws IOException {
-        String fileName = source.getName();
-        log.debug("Copying file {} to R workspace as file {}", source, fileName);
+        streamFromWPSToRserve(source, RWorkspace.ROOT);
+    }
+
+    private void streamFromWPSToRserve(File source, String path) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        sb.append(path);
+        sb.append("/");
+        sb.append(source.getName());
+        String name = sb.toString();
+
+        log.debug("Copying {} (directory: {}, path: '{}') to as '{}' to {} ",
+                  source,
+                  source.isDirectory(),
+                  path,
+                  name,
+                  this.workspace);
 
         if ( !source.isDirectory()) {
-            // use RFileOutputStream so that remote RServe is supported
-            RFileOutputStream rfos = connection.createFile(fileName);
-
-            byte[] buffer = new byte[2048];
-            FileInputStream is = new FileInputStream(source);
-            int stop = is.read(buffer);
-
-            while (stop != -1) {
-                rfos.write(buffer, 0, stop);
-                stop = is.read(buffer);
-            }
-
-            rfos.flush();
-            rfos.close();
-            is.close();
-
-            log.debug("File copied with R from {} to {}", source, rfos);
+            
+            this.workspace.copyFile(source, name, connection);
         }
-        else { // if it is a directory create the directory and stream all of them
+        else {
+            // create directory and append path for recursive calls
+            try {
+                // create subdir in R
+                this.workspace.createDirectory(name, this.connection);
 
-            String[] sourceContents = source.list();
-            log.debug("Copying directory and its contents: {}", Arrays.toString(sourceContents));
-
-            for (String file : sourceContents) {
-                File sourceFile = new File(source, file);
-                streamFromWPSToRserve(sourceFile);
+                String[] files = source.list();
+                for (String file : files) {
+                    File sourceFile = new File(source, file);
+                    streamFromWPSToRserve(sourceFile, name);
+                }
             }
+            catch (RserveException e) {
+                log.error("Error creating directory in workdir", e);
+                throw new IOException(e);
+            }
+            
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RWorkspaceManager [");
+        if (connection != null) {
+            builder.append("connection=");
+            builder.append(connection);
+            builder.append(", ");
+        }
+        builder.append("deleteWPSWorkDirectory=");
+        builder.append(deleteWPSWorkDirectory);
+        builder.append(", ");
+        if (executor != null) {
+            builder.append("executor=");
+            builder.append(executor);
+            builder.append(", ");
+        }
+        if (iohandler != null) {
+            builder.append("iohandler=");
+            builder.append(iohandler);
+            builder.append(", ");
+        }
+        if (workspace != null) {
+            builder.append("workspace=");
+            builder.append(workspace);
+        }
+        builder.append("]");
+        return builder.toString();
     }
 
 }

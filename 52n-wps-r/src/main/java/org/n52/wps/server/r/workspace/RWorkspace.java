@@ -30,6 +30,8 @@
 package org.n52.wps.server.r.workspace;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,11 +40,13 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.util.RLogger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RFileOutputStream;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +69,9 @@ public class RWorkspace {
 
     private static final String WORKSPACE_PREFIX = "wps4r-workspace-";
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYYMd-HmsS");
+    public static final String ROOT = ".";
+
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("YYYYMd-HHmmss");
 
     private static String createNewWorkspaceDirectoryName() {
         StringBuilder wd = new StringBuilder();
@@ -341,6 +347,110 @@ public class RWorkspace {
         File f = new File(this.path);
         ArrayList<File> files = new ArrayList<File>(Arrays.asList(f.listFiles()));
         return files;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RWorkspace [");
+        if (path != null) {
+            builder.append("path=");
+            builder.append(path);
+            builder.append(", ");
+        }
+        builder.append("deleteRWorkDirectory=");
+        builder.append(deleteRWorkDirectory);
+        builder.append(", temporarilyPreventingRWorkingDirectoryFromDelete=");
+        builder.append(temporarilyPreventingRWorkingDirectoryFromDelete);
+        builder.append(", wpsWorkDirIsRWorkDir=");
+        builder.append(wpsWorkDirIsRWorkDir);
+        builder.append("]");
+        return builder.toString();
+    }
+
+    public synchronized void createDirectory(String name, RConnection connection) throws RserveException {
+        if (name.equals(ROOT))
+            return;
+
+        log.debug("Creating directory {} in workspace {}", name, this);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("dir.create(\"");
+        sb.append(name);
+        sb.append("\")");
+        REXP result = connection.eval(sb.toString());
+        log.debug("Output of creating directory in workdir: {}", result.toDebugString());
+    }
+
+    public REXP copyFile(String dirName, String file, RConnection connection) throws RserveException {
+        log.debug("Copying file {} to dir '{}' in workspace {}", file, dirName, this);
+        StringBuilder sb = new StringBuilder();
+        sb.append("file.copy(from = \"");
+        sb.append(file);
+        sb.append("\", to = \"");
+        sb.append(dirName);
+        sb.append("/");
+        sb.append(file);
+        sb.append("\")");
+        REXP result = connection.eval(sb.toString());
+        return result;
+    }
+
+    public synchronized void copyFilesToDirectoryInWorkDir(String dirName, String[] files, RConnection connection) throws RserveException {
+        for (String file : files) {
+            REXP result = copyFile(dirName, file, connection);
+            log.debug("Output of copying file to dir: {}", result.toDebugString());
+        }
+    }
+
+    public void deleteFile(String file, RConnection connection) throws RserveException {
+        log.debug("Removing file from workdir: {}", file);
+        connection.removeFile(file);
+    }
+
+    public synchronized void deleteFilesInWorkDir(String[] files, RConnection connection) throws RserveException {
+        for (String file : files) {
+            deleteFile(file, connection);
+        }
+    }
+
+    public void moveFile(String dirName, String file, RConnection connection) throws RserveException {
+        log.debug("Moving file '{}' to '{}'", file, dirName);
+        copyFile(dirName, file, connection);
+        deleteFile(file, connection);
+    }
+
+    public synchronized void moveFilesToDirectoryInWorkDir(String dirName, String[] files, RConnection connection) throws RserveException {
+        copyFilesToDirectoryInWorkDir(dirName, files, connection);
+        deleteFilesInWorkDir(files, connection);
+    }
+
+    /**
+     * 
+     * @param source
+     * @param name
+     *        can be a path (starting with '.'), but all intermediate folders must exist
+     * @param connection
+     * @throws IOException
+     */
+    public void copyFile(File source, String name, FilteredRConnection connection) throws IOException {
+        // use RFileOutputStream so that remote RServe is supported
+        RFileOutputStream rfos = connection.createFile(name);
+
+        byte[] buffer = new byte[2048];
+        FileInputStream is = new FileInputStream(source);
+        int stop = is.read(buffer);
+
+        while (stop != -1) {
+            rfos.write(buffer, 0, stop);
+            stop = is.read(buffer);
+        }
+
+        rfos.flush();
+        rfos.close();
+        is.close();
+
+        log.debug("File copied with R from {} as '{}' to {}", source, name, rfos);
     }
 
 }
