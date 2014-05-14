@@ -156,7 +156,8 @@ public class R_Config {
     }
 
     public URL getSessionInfoURL() throws MalformedURLException {
-        return new URL(getUrlPathUpToWebapp() + "/R/sessioninfo.jsp");
+        // FIXME implement service endpoint to retrieve r session information
+        return new URL(getUrlPathUpToWebapp() + "/not_supported");
     }
 
     // FIXME this should use generic WPS methods to get the URL

@@ -80,7 +80,10 @@ public class DescriptionCreator {
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(descriptionFile);
         RProcessDescriptionCreator creator = new RProcessDescriptionCreator(config);
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom", new URL("http://my.url/myScript.R"), new URL("http://my.url/sessioninfo.jsp"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
         ProcessDescriptionsDocument testDoc = ProcessDescriptionsDocument.Factory.newInstance();
         testDoc.addNewProcessDescriptions().addNewProcessDescription().set(testType);
         // System.out.println(testDoc.xmlText());

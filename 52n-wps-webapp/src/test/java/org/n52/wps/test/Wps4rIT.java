@@ -118,10 +118,13 @@ public class Wps4rIT {
         return con;
     }
 
-    @Test
+    /*
+     * DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
+     */
+    // @Test
     public void sessionInfoRetrievedFromWPSWebsite() throws MalformedURLException {
         String temp = wpsUrl.substring(0, wpsUrl.lastIndexOf("/"));
-        URL urlSessionInfo = new URL(temp + "/R/sessioninfo.jsp");
+        URL urlSessionInfo = new URL(temp + "/rsessioninfoendpoint");
         try {
             String response = GetClient.sendRequest(urlSessionInfo.toExternalForm());
             assertThat(response, containsString("R ")); // "R version" fails if using unstable R!
@@ -417,8 +420,7 @@ public class Wps4rIT {
         IOUtils.copy(connection.getInputStream(), writer);
         String csv = writer.toString();
 
-        assertThat("CSV file contains test data names", csv,
-                   containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
+        assertThat("CSV file contains test data names", csv, containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
     }
 
 }
