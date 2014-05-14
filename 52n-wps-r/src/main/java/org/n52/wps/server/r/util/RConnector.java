@@ -47,6 +47,12 @@ public class RConnector {
 
     private static Logger log = LoggerFactory.getLogger(RConnector.class);
 
+    private RStarter starter;
+
+    public RConnector(RStarter starter) {
+        this.starter = starter;
+    }
+
     public FilteredRConnection getNewConnection(boolean enableBatchStart,
                                                 String host,
                                                 int port,
@@ -112,7 +118,7 @@ public class RConnector {
     private FilteredRConnection attemptStarts(String host, int port) throws InterruptedException,
             IOException,
             RserveException {
-        startR();
+        this.starter.startR();
 
         int attempt = 1;
         FilteredRConnection con = null;
@@ -132,29 +138,6 @@ public class RConnector {
             }
         }
         return con;
-    }
-
-    private static void startRServeOnLinux() throws InterruptedException, IOException {
-        String rserveStartCMD = "R CMD Rserve --vanilla --slave";
-        Runtime.getRuntime().exec(rserveStartCMD).waitFor();
-    }
-
-    private static void startRServeOnWindows() throws IOException {
-        String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
-        Runtime.getRuntime().exec(rserveStartCMD);
-    }
-
-    public void startR() throws InterruptedException, IOException {
-        log.debug("Starting R locally...");
-
-        if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
-            startRServeOnLinux();
-        }
-        else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
-            startRServeOnWindows();
-        }
-
-        log.info("Started R.");
     }
 
 }

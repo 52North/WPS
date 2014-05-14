@@ -50,9 +50,7 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RConnector;
-import org.n52.wps.server.r.util.RSessionInfo;
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
+import org.n52.wps.server.r.util.RStarter;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +88,7 @@ public class R_Config {
 
     private static R_Config instance = null;
 
-    private RConnector connector = new RConnector();
+    private RConnector connector;
 
     private RAnnotationParser annotationParser;
 
@@ -103,7 +101,12 @@ public class R_Config {
     /** caches conflicts for the wkn-Rscript mapping until resetWknFileMapping is invoked **/
     private HashMap<String, ExceptionReport> wknConflicts = new HashMap<String, ExceptionReport>();
 
+    private RStarter starter;
+
     private R_Config() {
+        this.starter = new RStarter();
+        this.connector = new RConnector(starter);
+
         try {
             String wpsBasedir = WebProcessingService.BASE_DIR;
             if (wpsBasedir != null) {
@@ -460,13 +463,6 @@ public class R_Config {
         }
 
         return isBatch;
-    }
-
-    public String getCurrentSessionInfo() throws RserveException, REXPMismatchException {
-        RConnection rCon = openRConnection();
-        String info = RSessionInfo.getSessionInfo(rCon);
-        rCon.close();
-        return info;
     }
 
     public URL getProcessDescriptionURL(String processWKN) {

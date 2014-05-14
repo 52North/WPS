@@ -137,7 +137,7 @@ public class RWorkspace {
     /**
      * @return true if the unlink call was made successfully
      */
-    public boolean delete(RConnection connection, String originalWorkDir) {
+    public boolean deleteCurrentAndSetWorkdir(RConnection connection, String originalWorkDir) {
         if (this.wpsWorkDirIsRWorkDir && !connection.isConnected()) {
             // R won't delete the folder if it is the same as the wps work directory
             log.warn("Cannot delete directory, connection is not connected or workdir is WPS workdir ({}).",
@@ -153,6 +153,8 @@ public class RWorkspace {
         // delete R work directory
         if (this.path != null) {
             try {
+                RLogger.log(connection, "Deleting workspace.");
+
                 String wdToDelete = connection.eval("getwd()").asString();
                 REXP oldwd = setwd(connection, originalWorkDir);
                 log.debug("Set wd to {} (was: {})", oldwd.toDebugString(), wdToDelete);

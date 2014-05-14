@@ -52,6 +52,7 @@ import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
 import org.n52.wps.server.r.workspace.RIOHandler;
+import org.n52.wps.server.r.workspace.RSessionManager;
 import org.n52.wps.server.r.workspace.RWorkspaceManager;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -123,8 +124,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             rScriptStream = new FileInputStream(this.scriptFile);
             if (this.parser == null)
-                this.parser = new RAnnotationParser(this.config); // prevents
-            // NullpointerException
+                this.parser = new RAnnotationParser(this.config); // prevent NullpointerException
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // submits annotation with process informations to
@@ -172,17 +172,20 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                        "Running algorithm with input "
                                                + Arrays.deepToString(inputData.entrySet().toArray()));
 
-            RWorkspaceManager manager = new RWorkspaceManager(rCon, this.iohandler, config);
-            String originalWorkDir = manager.prepareWorkspace(inputData, getWellKnownName());
+            RSessionManager session = new RSessionManager(rCon, config);
+            session.configureSession(getWellKnownName(), executor);
+
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, this.iohandler, config);
+            String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
             List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
-            manager.loadResources(resAnnotList);
+            workspace.loadResources(resAnnotList);
 
             List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
-            manager.loadInputValues(inputData, inAnnotations);
+            workspace.loadInputValues(inputData, inAnnotations);
 
             if (log.isDebugEnabled())
-                manager.saveImage("preExecution");
+                workspace.saveImage("preExecution");
 
             File scriptFile = config.getScriptFileForWKN(getWellKnownName());
 
@@ -191,7 +194,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             if (success) {
                 List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
                                                                                  RAnnotationType.OUTPUT);
-                result = manager.saveOutputValues(outAnnotations);
+                result = workspace.saveOutputValues(outAnnotations);
+                result = session.saveInfos(result);
             }
             else {
                 String msg = "Failure while executing R script. See logs for details";
@@ -200,11 +204,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             }
 
             if (log.isDebugEnabled())
-                manager.saveImage("afterExecution");
+                workspace.saveImage("afterExecution");
             log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
 
-            manager.cleanUpWithWPS();
-            manager.cleanUpInR(originalWorkDir);
+            session.cleanUp();
+            workspace.cleanUpInR(originalWorkDir);
+            workspace.cleanUpWithWPS();
 
             return result;
         }

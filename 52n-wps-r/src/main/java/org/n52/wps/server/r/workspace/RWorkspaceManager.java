@@ -29,13 +29,9 @@
 
 package org.n52.wps.server.r.workspace;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,10 +41,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RWPSConfigVariables;
@@ -59,9 +52,7 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RExecutor;
-import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.n52.wps.server.r.util.RLogger;
-import org.n52.wps.server.r.util.RSessionInfo;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngine;
@@ -79,12 +70,6 @@ public class RWorkspaceManager {
     private static Logger log = LoggerFactory.getLogger(RWorkspaceManager.class);
 
     private static final String RDATA_FILE_EXTENSION = "RData";
-
-    private static final String WARNING_OUTPUT_NAME = "warnings";
-
-    private static final String NO_WARNINGS_MESSAGE = "The process proceeded without any warnings from R.";
-
-    private static final String SESSION_INFO_OUTPUT_NAME = "sessionInfo";
 
     private R_Config config;
 
@@ -107,9 +92,17 @@ public class RWorkspaceManager {
         this.executor = new RExecutor();
         this.iohandler = iohandler;
         this.config = config;
+
+        log.debug("NEW {}", this);
     }
 
+    /**
+     * 
+     * @param originalWorkDir
+     *        the working directory of R after the clean up is finished
+     */
     public void cleanUpInR(String originalWorkDir) {
+        log.debug("Cleaning up workspace from R ...");
         // R_Config config = R_Config.getInstance();
         // RConnection connection = rCon;
         // if (rCon == null || !rCon.isConnected()) {
@@ -117,18 +110,16 @@ public class RWorkspaceManager {
         // connection = config.openRConnection();
         // }
 
-        log.debug("Cleaning up workspace.");
-        try {
-            this.connection.eval("rm(list = ls())");
-        }
-        catch (RserveException e) {
-            log.error("Could not remove items from workspace", e);
-        }
+        RLogger.log(connection, "Workspace after process run:");
+        RLogger.logWorkspaceContent(this.connection);
 
-        this.workspace.delete(this.connection, originalWorkDir);
+        log.debug("Deleting work directory {}", originalWorkDir);
+        this.workspace.deleteCurrentAndSetWorkdir(this.connection, originalWorkDir);
     }
 
     public void cleanUpWithWPS() {
+        log.debug("Cleaning up workspace from Java ...");
+
         try {
             if (this.deleteWPSWorkDirectory) {
                 // try to delete current local workdir - folder
@@ -251,13 +242,8 @@ public class RWorkspaceManager {
             }
         }
 
-        RLogger.log(connection, "Workspace content after loading input values:");
-        try {
-            connection.filteredEval("cat(capture.output(ls()), \"\\n\")");
-        }
-        catch (RserveException e) {
-            log.error("Error capturing ls() output.", e);
-        }
+        RLogger.log(connection, "Session after loading input values:");
+        RLogger.logSessionContent(connection);
     }
 
     public void loadResources(List<RAnnotation> resources) throws RAnnotationException, ExceptionReport, IOException {
@@ -271,6 +257,12 @@ public class RWorkspaceManager {
         loadResourcesToWorkspace(resources);
 
         log.debug("Workspace contents after resource loading: {}", this.workspace.listFiles());
+
+        RLogger.log(connection, "Session after resource loading:");
+        RLogger.logSessionContent(connection);
+
+        RLogger.log(connection, "Workspace after resource loading:");
+        RLogger.logWorkspaceContent(connection);
     }
 
     private void loadResourcesListInSession(Collection<RAnnotation> resources) throws RserveException,
@@ -334,93 +326,6 @@ public class RWorkspaceManager {
         log.debug("Loaded resources, workspace files: {}", this.workspace.listFiles());
     }
 
-    private void loadUtilityScripts() throws RserveException,
-            IOException,
-            FileNotFoundException,
-            RAnnotationException,
-            ExceptionReport {
-        log.debug("Loading utility scripts.");
-        File[] utils = new File(config.utilsDirFull).listFiles(new RFileExtensionFilter());
-        for (File file : utils) {
-            this.executor.executeScript(file, this.connection);
-        }
-
-        RLogger.log(connection, "workspace content after loading utility scripts:");
-        connection.filteredEval("cat(capture.output(ls()), \"\n\")");
-    }
-
-    public void loadWPSSessionVariables(String processWKN) throws ExceptionReport {
-        log.debug("Loading session variables.");
-
-        try {
-            RLogger.log(connection, "Environment:");
-            connection.eval("cat(capture.output(environment()), \"\n\")");
-
-            String cmd = RWPSSessionVariables.WPS_SERVER + " <- TRUE";
-            connection.eval(cmd);
-            RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER);
-
-            cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
-            connection.eval(cmd);
-            RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
-
-            connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
-            log.debug("Assigned resource directory to variable '{}': {}",
-                      RWPSSessionVariables.RESOURCE_URL_NAME,
-                      config.getResourceDirURL());
-            RLogger.logVariable(connection, RWPSSessionVariables.RESOURCE_URL_NAME);
-
-            URL processDescription = config.getProcessDescriptionURL(processWKN);
-
-            connection.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription.toString());
-            RLogger.logVariable(connection, RWPSSessionVariables.PROCESS_DESCRIPTION);
-
-            log.debug("Assigned process description to variable '{}': {}",
-                      RWPSSessionVariables.PROCESS_DESCRIPTION,
-                      processDescription);
-
-            // create session variable for warning storage
-            cmd = RWPSSessionVariables.WARNING_OUTPUT_STORAGE + "=c()\n";
-            connection.eval(cmd);
-
-            RLogger.log(connection, "workspace content after loading session variables:");
-            connection.eval("cat(capture.output(ls()), \"\n\")");
-        }
-        catch (RserveException e) {
-            log.error("Error loading WPS session variables for process {}", processWKN);
-            throw new ExceptionReport("Could not load session variables for " + processWKN,
-                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
-                                      e);
-        }
-    }
-
-    /**
-     * Retrieves warnings that occured during the last execution of a script
-     * 
-     * Note that the warnings()-method is not reliable for Rserve because it does not return warnings in most
-     * cases. Therefore a specific warnings function is used to retrieve the warnings.
-     */
-    private String parseWarnings() throws RserveException, REXPMismatchException {
-        StringBuilder warnings = new StringBuilder();
-        REXP result = connection.eval(RWPSSessionVariables.WARNING_OUTPUT_STORAGE);
-        if ( !result.isNull()) {
-            String[] warningsArray = result.asStrings();
-            for (int i = 0; i < warningsArray.length; i++) {
-                String currentWarning = warningsArray[i];
-
-                warnings.append("warning ");
-                warnings.append( (i));
-                warnings.append(": '");
-                warnings.append(currentWarning);
-                warnings.append("'\n");
-            }
-        }
-
-        if (warnings.length() < 1)
-            return NO_WARNINGS_MESSAGE;
-        return warnings.toString();
-    }
-
     /**
      * @return the original work directory or the R session
      */
@@ -433,9 +338,6 @@ public class RWorkspaceManager {
         log.debug("Preparing workspace...");
 
         log.debug("Rengine: {} | R server version: {}", REngine.getLastEngine(), connection.getServerVersion());
-
-        log.debug("Cleaning session.");
-        connection.eval("rm(list = ls())");
 
         // Retrieve the preset R working directory (R will be reset to
         // this directory after the process run)
@@ -461,9 +363,6 @@ public class RWorkspaceManager {
                                            strategy,
                                            isRserveOnLocalhost,
                                            workDirNameSetting);
-
-        loadUtilityScripts();
-        loadWPSSessionVariables(processWKN);
 
         return originalWD;
     }
@@ -533,34 +432,6 @@ public class RWorkspaceManager {
             }
         }
 
-        try {
-            String sessionInfo = RSessionInfo.getSessionInfo(connection);
-            InputStream sessionInfoStream = new ByteArrayInputStream(sessionInfo.getBytes("UTF-8"));
-            result.put(SESSION_INFO_OUTPUT_NAME,
-                       new GenericFileDataBinding(new GenericFileData(sessionInfoStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
-            sessionInfoStream.close();
-
-            String warnings = parseWarnings();
-            InputStream warningsStream = new ByteArrayInputStream(warnings.getBytes("UTF-8"));
-            result.put(WARNING_OUTPUT_NAME,
-                       new GenericFileDataBinding(new GenericFileData(warningsStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
-            warningsStream.close();
-        }
-        catch (UnsupportedEncodingException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (IOException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (REXPMismatchException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (RserveException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-
         return result;
     }
 
@@ -583,7 +454,7 @@ public class RWorkspaceManager {
                   this.workspace);
 
         if ( !source.isDirectory()) {
-            
+
             this.workspace.copyFile(source, name, connection);
         }
         else {
@@ -602,7 +473,7 @@ public class RWorkspaceManager {
                 log.error("Error creating directory in workdir", e);
                 throw new IOException(e);
             }
-            
+
         }
     }
 

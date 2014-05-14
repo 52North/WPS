@@ -16,7 +16,10 @@ systemo <- qevalq
 setwdsetwdsetwd <- systemo
 
 outputVariable <- setwdsetwdsetwd
- 
+
+if(inputVariable == "Hallo Echo!")
+	outputVariable <- "Hallo Otto!"
+
 #wps.out: id = outputVariable, type = string, title = returning input variable;
 
 # wps.off;
