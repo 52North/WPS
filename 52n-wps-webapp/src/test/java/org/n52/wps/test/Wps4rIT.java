@@ -164,7 +164,7 @@ public class Wps4rIT {
     }
 
     @Test
-    public void responseContainsVersionSection() throws IOException,
+    public void responseContainsSessionInfo() throws IOException,
             ParserConfigurationException,
             SAXException,
             XmlException {
@@ -176,7 +176,11 @@ public class Wps4rIT {
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("R version "));
+        assertThat(response, containsString("attached base packages:"));
+        assertThat(response, containsString("locale:"));
+        assertThat(response, containsString("<wps:ComplexData encoding=\"UTF-8\" mimeType=\"text/plain\">"));
+        assertThat(response, containsString("methods"));
+        assertThat(response, containsString("base"));
     }
 
     @Test
@@ -191,7 +195,10 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString("warnings"));
+        assertThat(response, containsString("<ows:Identifier>warnings</ows:Identifier>"));
+        assertThat(response, containsString("mimeType=\"text/plain\">warning"));
+        assertThat(response, containsString("Test warning 1"));
+        assertThat(response, containsString("Test warning 4: This is the LAST warning"));
     }
 
     @Test
