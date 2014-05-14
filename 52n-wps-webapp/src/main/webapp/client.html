@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<link rel="shortcut icon" href="favicon.ico" />
+<link href="http://52north.org/templates/52n-2012/favicon.ico"
+	rel="shortcut icon" type="image/vnd.microsoft.icon" />
 
-<title>52&deg;North WPS</title>
+<title>52&deg;North wps-js client</title>
+
+<script src="js/jquery/jquery.1.8.3.min.js"></script>
+<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
+<script src="js/openlayers/OpenLayers-closure.js"></script>
+<script src="js/wps-js/wps-js.1.0.0-SNAPSHOT.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wps-js.css">
+<link rel="shortcut icon" href="favicon.ico" />
 
 <!-- for the ribbon -->
 <style type="text/css">
@@ -86,68 +94,80 @@
 	-o-transform: rotate(45deg);
 	transform: rotate(45deg);
 }
-
 </style>
 </head>
 <body>
 	<div class="github-fork-ribbon-wrapper right">
 		<div class="github-fork-ribbon">
-			<a href="https://github.com/52North/WPS">Fork me on GitHub</a>
+			<a href="https://github.com/52North/wps-js">Fork me on GitHub</a>
 		</div>
 	</div>
 
 	<div id="main">
 
-		<h1>52&deg;North WPS</h1>
-		<p>This is the welcome site for the 52&deg;North Web Processing
-			Service 1.0.0 implementation.</p>
+		<h1>52&deg;North wps-js client for WPS</h1>
 
-		<h2>Usage</h2>
+		<div id="wrapper">
+			<div>
+				<select id="wps">
+					<option>Select WPS</option>
+					<option>http://localhost:8080/wps/WebProcessingService</option>
+				</select>
+			</div>
+			<div>
+				<h3>
+					Capabilities <a href="#" id="wpscaller">Show Capabilities</a>
+				</h3>
+				<div class="wps-container">
+					<div id="capabilitiesByClick"></div>
+				</div>
+			</div>
+			<div>
+				<h3>Execute Process</h3>
+				<div class="wps-container">
+					<select id="processes"><option>Select a process</option></select> <span
+						id="processDescriptionLink"></span>
+					<div class="wps-execute-container" id="wps-execute-container"></div>
+				</div>
+				<p></p>
+				<div class="wps-container">
+					<div id="executeProcess"></div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var capabilities, // the capabilities, read by Format.WPSCapabilities::read
+			process; // the process description from Format.WPSDescribeProcess::read
 
-		<h3>Requests</h3>
-		<ul>
-			<li><a target="_blank"
-				href="./WebProcessingService?Request=GetCapabilities&amp;Service=WPS">GetCapabilities
-					request using HTTP GET</a></li>
-		</ul>
+			$('#wpscaller').click(function() {
+				var sel = document.getElementById("wps");
 
-		<h3>Clients</h3>
+				$('#capabilitiesByClick').wpsCall({
+					url : sel.options[sel.selectedIndex].text,
+					requestType : GET_CAPABILITIES_TYPE
+				});
+			});
+			$(document).ready(function() {
+				$.wpsSetup({
+					proxy : {
+						url : "/wps_proxy/wps_proxy?url=",
+						type : "parameter"
+					}
+				});
+			});
 
-		<ul>
-			<li><strong><a href="./client.html">52&deg;North
-						wps-js</a></strong> &mdash; a Javascript client with dynamic form generation
-				based on standardized process descriptions.</li>
-			<li><strong><a href="./test.html">52&deg;North WPS
-						form client</a></strong> &mdash; can be used to submit XML-based requests this
-				WPS instance manually.</li>
-			<li><strong><a href="./R/demo/ImageRendering.html"
-					title="Image Rendering with WPS4R">R Image Rendering</a></strong>
-				demonstrates a simple client for mobile devices using an R process
-				to render images.</li>
-		</ul>
+			// add behavior to html elements
+			document.getElementById("processes").onchange = function() {
+				var sel = document.getElementById("processes");
 
-		<h2>Documentation</h2>
-		<ul>
-			<li>To learn more about the specification visit the <a
-				href="http://opengeospatial.org/standards/wps">OGC website</a>.
-			</li>
-			<li>To learn more about this implementation visit the <a
-				href="http://www.52north.org/wps">52&deg;North Geoprocessing
-					Community website</a>.
-			</li>
-			<li>This is an <a href="https://github.com/52North/WPS">open
-					source project on GitHub</a></li>
-			<li>Find <a
-				href="https://wiki.52north.org/bin/view/Geoprocessing/52nWebProcessingService">developer
-					documentation</a> in the 52&deg;North Wiki
-			</li>
-		</ul>
+				describeProcess(sel.options[sel.selectedIndex].text);
+			};
+			document.getElementById("wps").onchange = function() {
+				var sel = document.getElementById("wps");
 
-		<h2>Administration</h2>
-		<p>
-			<a href="./webAdmin/index.jsp">52&deg;North WPS webAdmin console</a>
-		</p>
-
+				getCapabilities(sel.options[sel.selectedIndex].text);
+			};
+		</script>
 	</div>
 </body>
 </html>
