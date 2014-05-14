@@ -33,8 +33,11 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import org.apache.xmlbeans.XmlException;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,12 +47,29 @@ public class ExecuteKvpIT {
 
     private static String url;
 
+    private final String processSucceeded = "ProcessSucceeded";
+    private final String exceptionReport = "ExceptionReport";
+    private final String referenceComplexBinaryInputURL = AllTestsIT.getURL() + "/../testData/elev_srtm_30m21.tif";
+    private final String referenceComplexXMLInputURL = AllTestsIT.getURL() + "/../testData/test-data.xml";
+    private String referenceComplexBinaryInputURLEncoded;
+    private String referenceComplexXMLInputURLEncoded;
+    
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
         WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");
     }
-
+    
+    @Before
+    public void before(){    	
+    	try {
+			referenceComplexBinaryInputURLEncoded = URLEncoder.encode(referenceComplexBinaryInputURL, "UTF-8");
+			referenceComplexXMLInputURLEncoded = URLEncoder.encode(referenceComplexXMLInputURL, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}    	
+    }
+    
     @Test
     public void testExecuteKVPSynchronousLiteralDataReponseDoc() throws IOException {
         System.out.println("\nRunning testExecuteKVPSynchronousLiteralDataReponseDoc");
@@ -58,7 +78,7 @@ public class ExecuteKvpIT {
 
         String response = GetClient.sendRequest(getURL);
 
-        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString("seventy"));
     	assertThat(response, response, containsString("uom=\"meter\""));
     }
@@ -71,7 +91,7 @@ public class ExecuteKvpIT {
 
     	String response = GetClient.sendRequest(getURL);
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString("seventy"));
     }
 
@@ -83,7 +103,7 @@ public class ExecuteKvpIT {
 
     	String response = GetClient.sendRequest(getURL);
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString("POLYGON"));
     }
 
@@ -95,7 +115,7 @@ public class ExecuteKvpIT {
 
     	String response = GetClient.sendRequest(getURL);
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString("POLYGON"));
     }
 
@@ -107,7 +127,7 @@ public class ExecuteKvpIT {
 
     	String response = GetClient.sendRequest(getURL);
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
 
     	String expectedResult = "BoundingBoxData";
 
@@ -139,7 +159,7 @@ public class ExecuteKvpIT {
     	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.DummyTestClass&DataInputs=BBOXInputData=46,102,47,103,urn%3Aogc%3Adef%3Acrs%3AEPSG%3A6.6%3A4326,2&RawDataOutput=BBOXOutputData";
 
         String response = GetClient.sendRequest(getURL);
-        assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
         assertThat(response, response, containsString("<wps:BoundingBoxData"));
         assertThat(response, response, containsString("xmlns:ows=\"http://www.opengis.net/ows/1.1\""));
         assertThat(response, response, containsString("xmlns:wps=\"http://www.opengis.net/wps/1.0.0\""));
@@ -153,40 +173,43 @@ public class ExecuteKvpIT {
     @Test
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDoc() throws IOException {
     	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDoc");
-
-    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm&DataInputs=data=@href=http%3A%2F%2Fgeoprocessing.demo.52north.org%3A8080%2Fgeoserver%2Fows%3Fservice%3DWFS%26version%3D1.0.0%26request%3DGetFeature%26typeName%3Dtopp%3Atasmania_roads%26maxFeatures%3D50@mimeType=text/xml@schema=http%3A%2F%2Fschemas.opengis.net%2Fgml%2F2.1.2%2Ffeature.xsd;width=0.05&ResponseDocument=result";
+    	
+    	String inputID = "complexInput";
+    	String inputMimeType = "text/xml";
+    	String outputID = "complexOutput";
+    	
+    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&ResponseDocument=" + outputID;
 
     	String response = GetClient.sendRequest(getURL);
 
     	String expectedResult = "ProcessSucceeded";
-    	String expectedResult2 = "result";
-    	String expectedResult3 = "FeatureCollection";
+    	String expectedResult3 = "TestData";
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString(expectedResult));
-    	assertThat(response, response, containsString(expectedResult2));
+    	assertThat(response, response, containsString(outputID));
     	assertThat(response, response, containsString(expectedResult3));
     }
 
     @Test
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDocSchemaMimeType() throws IOException {
-    	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDoc");
+    	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDocSchemaMimeType");
 
-    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm&DataInputs=data=@href=http%3A%2F%2Fgeoprocessing.demo.52north.org%3A8080%2Fgeoserver%2Fows%3Fservice%3DWFS%26version%3D1.0.0%26request%3DGetFeature%26typeName%3Dtopp%3Atasmania_roads%26maxFeatures%3D50@mimeType=text/xml@schema=http%3A%2F%2Fschemas.opengis.net%2Fgml%2F2.1.2%2Ffeature.xsd;width=0.05&ResponseDocument=result@mimeType=text/xml@schema=http%3A%2F%2Fschemas.opengis.net%2Fgml%2F2.1.2%2Ffeature.xsd";
+    	String inputID = "complexInput";
+    	String inputMimeType = "text/xml";
+    	String outputID = "complexOutput";
+    	String outputMimeType = "text/xml";
+    	
+    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&ResponseDocument=" + outputID + "@mimeType=" + outputMimeType + "";
 
     	String response = GetClient.sendRequest(getURL);
 
-    	String expectedResult = "ProcessSucceeded";
-    	String expectedResult2 = "result";
-    	String expectedResult3 = "FeatureCollection";
-    	String expectedResult4 = "schema=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\"";
-    	String expectedResult5 = "mimeType=\"text/xml\"";
+    	String expectedResult = processSucceeded;
+    	String expectedResult5 = "mimeType=\"" + outputMimeType + "\"";
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, not(containsString(exceptionReport)));
     	assertThat(response, response, containsString(expectedResult));
-    	assertThat(response, response, containsString(expectedResult2));
-    	assertThat(response, response, containsString(expectedResult3));
-    	assertThat(response, response, containsString(expectedResult4));
+    	assertThat(response, response, containsString(outputID));
     	assertThat(response, response, containsString(expectedResult5));
     }
 
@@ -194,17 +217,16 @@ public class ExecuteKvpIT {
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDocMimeTypeEncodingBase64() throws IOException {
     	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDocMimeTypeEncodingBase64");
 
-    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm&DataInputs=data=@href=http%3A%2F%2F52north.org%2Ffiles%2Fgeoprocessing%2FTestdata%2Felev_srtm_30m21.tif@mimeType=image/tiff;data=@href=http%3A%2F%2F52north.org%2Ffiles%2Fgeoprocessing%2FTestdata%2Felev_srtm_30m21.tif@mimeType=image/tiff&ResponseDocument=result@mimeType=image/tiff@encoding=base64";
+    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm&DataInputs=data=@href=" + referenceComplexBinaryInputURLEncoded + "@mimeType=image/tiff;data=@href=" + referenceComplexBinaryInputURLEncoded + "@mimeType=image/tiff&ResponseDocument=result@mimeType=image/tiff@encoding=base64";
 
     	String response = GetClient.sendRequest(getURL);
 
-    	String expectedResult = "ProcessSucceeded";
     	String expectedResult2 = "result";
     	String expectedResult3 = "encoding=\"base64\"";
     	String expectedResult4 = " mimeType=\"image/tiff\"";
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString(expectedResult));
+    	assertThat(response, response, not(containsString(exceptionReport)));
+    	assertThat(response, response, containsString(processSucceeded));       
     	assertThat(response, response, containsString(expectedResult2));
     	assertThat(response, response, containsString(expectedResult3));
     	assertThat(response, response, containsString(expectedResult4));
@@ -215,13 +237,19 @@ public class ExecuteKvpIT {
     public void testExecuteKVPSynchronousComplexDataReferenceRawData() throws IOException {
     	System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceRawData");
 
-    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm&DataInputs=data=@href=http%3A%2F%2Fgeoprocessing.demo.52north.org%3A8080%2Fgeoserver%2Fows%3Fservice%3DWFS%26version%3D1.0.0%26request%3DGetFeature%26typeName%3Dtopp%3Atasmania_roads%26maxFeatures%3D50@mimeType=text/xml@schema=http%3A%2F%2Fschemas.opengis.net%2Fgml%2F2.1.2%2Ffeature.xsd;width=0.05&RawDataOutput=result";
+    	String inputID = "complexInput";
+    	String inputMimeType = "text/xml";
+    	String outputID = "complexOutput";
+    	String outputMimeType = "text/xml";
+    	
+    	String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&RawDataOutput=" + outputID + "@mimeType=" + outputMimeType + "";
 
     	String response = GetClient.sendRequest(getURL);
 
-    	String expectedResult = "FeatureCollection";
+    	String expectedResult = "<TestData>";
 
-    	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString(expectedResult));
+    	assertThat(response, response, not(containsString(exceptionReport)));
+    	assertThat(response, response, containsString(expectedResult));  
+    	
     }
 }

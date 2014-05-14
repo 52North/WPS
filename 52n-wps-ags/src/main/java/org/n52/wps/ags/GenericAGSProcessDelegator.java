@@ -44,10 +44,10 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.n52.wps.ags.workspace.AGSWorkspace;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -126,7 +126,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			
 			//Complex Output
 			else if(input.isSetComplexData()){
-				return GenericFileDataBinding.class;
+				return GenericFileDataWithGTBinding.class;
 			}
 		}
 		
@@ -163,7 +163,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 			
 			//Complex Output
 			else if(output.isSetComplexOutput()){
-				return GenericFileDataBinding.class;
+				return GenericFileDataWithGTBinding.class;
 			}
 		}
 		return null;
@@ -266,16 +266,16 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 					//GenericFileData outputFileData = new GenericFileData(this.workspace.getFileAsStream(fileName), currentParam.mimeType);
 					
 					File currentFile = new File (fileName);
-					GenericFileData outputFileData;
+					GenericFileDataWithGT outputFileData;
 					try {
 						if(currentParam.schema != null && currentParam.schema.length()>0){
 							//we have vector data. So use a shp file.
 							
-							outputFileData = new GenericFileData(currentFile, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
+							outputFileData = new GenericFileDataWithGT(currentFile, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
 						}else{
-							outputFileData = new GenericFileData(currentFile, currentParam.mimeType);
+							outputFileData = new GenericFileDataWithGT(currentFile, currentParam.mimeType);
 						}
-						result.put(currentParam.wpsOutputID, new GenericFileDataBinding(outputFileData));
+						result.put(currentParam.wpsOutputID, new GenericFileDataWithGTBinding(outputFileData));
 					} catch (FileNotFoundException e) {
 						LOGGER.error("Could not read output file: " + fileName);
 						errors.add("Could not read output file: " + fileName);
@@ -315,8 +315,8 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 		String value = null;
 		
 		//File
-		if (payload instanceof GenericFileData){
-			GenericFileData gfd = (GenericFileData)payload;
+		if (payload instanceof GenericFileDataWithGT){
+			GenericFileDataWithGT gfd = (GenericFileDataWithGT)payload;
 			value = gfd.writeData(this.workspace.getWorkspace());	
 		}
 		

@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -43,12 +43,12 @@ public class GenericRasterFileGenerator extends AbstractGenerator {
 	
 	public GenericRasterFileGenerator (){
 		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
+		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
 	}
 	
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
+		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
 		return theStream;
 	}
 	
@@ -59,7 +59,7 @@ public class GenericRasterFileGenerator extends AbstractGenerator {
 	 * @param inputFile
 	 * @return  
 	 */
-	private GenericFileData convertFile (GenericFileData inputFile){
+	private GenericFileDataWithGT convertFile (GenericFileDataWithGT inputFile){
 		//not implemented
 		return null;
 	}

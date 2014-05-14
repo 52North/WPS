@@ -30,8 +30,8 @@ package org.n52.wps.io.datahandler.parser;
 
 import java.io.InputStream;
 
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 /**
  * @author Benjamin Pross, 52 North; Matthias Mueller, TU Dresden
@@ -41,13 +41,13 @@ public class GRASSKMLParser extends AbstractParser {
 
 	public GRASSKMLParser(){
 		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);		
+		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);		
 	}
 
 	@Override
-	public GenericFileDataBinding parse(InputStream stream, String mimeType, String schema) {
-		GenericFileDataBinding data = new GenericFileDataBinding(
-				new GenericFileData(stream, "text/xml"));
+	public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
+		GenericFileDataWithGTBinding data = new GenericFileDataWithGTBinding(
+				new GenericFileDataWithGT(stream, "text/xml"));
 		return data;
 	}
 

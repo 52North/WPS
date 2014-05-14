@@ -30,40 +30,54 @@ package org.n52.wps.server.algorithm.test;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.geotools.feature.FeatureCollection;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.ComplexDataOutput;
 import org.n52.wps.algorithm.annotation.Execute;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.algorithm.annotation.LiteralDataInput;
+import org.n52.wps.algorithm.annotation.LiteralDataOutput;
+import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 
-@Algorithm(version = "1.1.0", title="for testing multiple inputs by reference")
-public class MultiReferenceInputAlgorithm extends AbstractAnnotatedAlgorithm {
+@Algorithm(version = "1.0.0")
+public class EchoProcess extends AbstractAnnotatedAlgorithm {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(MultiReferenceInputAlgorithm.class);
-
-    public MultiReferenceInputAlgorithm() {
-        super();
-    }
-    
-    private FeatureCollection result;
-    private List<FeatureCollection> data;
-    
-    @ComplexDataOutput(identifier = "result", binding = GTVectorDataBinding.class)
-    public FeatureCollection getResult() {
-        return result;
-    }
-
-    @ComplexDataInput(identifier = "data", binding = GTVectorDataBinding.class, minOccurs=1, maxOccurs=2)
-    public void setData(List<FeatureCollection> data) {
-        this.data = data;
-    }
-
-    @Execute
-    public void runBuffer() {
-    	result = data.get(0);
-    }
+	private List<XmlObject> complexInput;
+	private List<String> literalInput;
+	
+	private XmlObject complexOutput;
+	private String literalOutput;
+	
+	@Execute
+	public void echo(){
+		if(complexInput != null && complexInput.size() > 0){
+			complexOutput = complexInput.get(0);
+		}
+		
+		if(literalInput != null && literalInput.size() > 0){
+			literalOutput = literalInput.get(0);
+		}		
+	}
+	
+	@ComplexDataOutput(identifier="complexOutput", binding=GenericXMLDataBinding.class)
+	public XmlObject getComplexOutput() {
+		return complexOutput;
+	}
+	
+	@LiteralDataOutput(identifier="literalOutput")
+	public String getLiteralOutput() {
+		return literalOutput;
+	}
+	
+	@ComplexDataInput(binding=GenericXMLDataBinding.class, identifier = "complexInput", minOccurs=0, maxOccurs=2)
+	public void setComplexInput(List<XmlObject> complexInput) {
+		this.complexInput = complexInput;
+	}
+	
+	@LiteralDataInput(identifier="literalInput", minOccurs=0, maxOccurs=2)
+	public void setLiteralInput(List<String> literalInput) {
+		this.literalInput = literalInput;
+	}
+ 	
 }

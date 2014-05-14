@@ -28,10 +28,8 @@
  */
 package org.n52.wps.io.data.binding.complex;
 
-import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IComplexData;
-
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -52,7 +50,7 @@ public class GenericFileDataBinding implements IComplexData {
 		return payload;
 	}
 
-	public Class getSupportedClass() {
+	public Class<GenericFileData> getSupportedClass() {
 		return GenericFileData.class;
 	}
     

@@ -44,11 +44,13 @@ import java.util.UUID;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.GenericFileDataConstants;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
@@ -232,7 +234,7 @@ public class RIOHandler {
         if (ivalue instanceof ILiteralData)
             return parseLiteralInput(iclass, ivalue.getPayload());
 
-        if (ivalue instanceof GenericFileDataBinding) {
+        if (ivalue instanceof GenericFileDataWithGTBinding) {
             GenericFileData value = (GenericFileData) ivalue.getPayload();
 
             InputStream is = value.getDataStream();
@@ -434,7 +436,7 @@ public class RIOHandler {
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
 
-            GenericFileData gfd = new GenericFileData(outputFile, mimeType);
+            GenericFileDataWithGT gfd = new GenericFileDataWithGT(outputFile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
         }

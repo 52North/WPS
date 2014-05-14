@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -107,7 +107,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 			if (complexData != null) {
 
 				complexInputTypes.put(identifierString,
-						GenericFileDataBinding.class);
+						GenericFileDataWithGTBinding.class);
 
 			} else if (input.getLiteralData() != null) {
 				
@@ -169,7 +169,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
 	@Override
 	public Class<?> getOutputDataType(String id) {		
-		return GenericFileDataBinding.class;
+		return GenericFileDataWithGTBinding.class;
 	}
 
 	@Override

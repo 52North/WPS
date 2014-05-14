@@ -26,59 +26,46 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.test.datahandler.parser;
+package org.n52.wps.io.datahandler.generator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
-import org.n52.wps.io.datahandler.parser.GenericFileParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 
-public class GenericFileParserTest extends AbstractTestCase<GenericFileParser> {
+public class GenericXMLDataGenerator extends AbstractGenerator {
 
-
-	public void testParser(){
-
-		if(!isDataHandlerActive()){
-			return;
-		}
-
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/testfile";
-
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
-		}
-
-		String[] mimetypes = dataHandler.getSupportedFormats();
-
-		InputStream input = null;
-
-		for (String mimetype : mimetypes) {
-
-			try {
-				input = new FileInputStream(new File(testFilePath));
-			} catch (FileNotFoundException e) {
-				fail(e.getMessage());
-			}
-
-			GenericFileDataBinding theBinding = dataHandler.parse(input, mimetype, "");
-
-			assertTrue(theBinding.getPayload().getBaseFile(true).exists());
-
-		}
-
+	public GenericXMLDataGenerator(){
+		super();
+		supportedIDataTypes.add(GenericXMLDataBinding.class);
 	}
-
+	
 	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GenericFileParser();
+	public boolean isSupportedSchema(String schema) {
+		//no schema checks
+		return true;
+	}
+	
+	@Override
+	public InputStream generateStream(IData data, String mimeType, String schema)
+			throws IOException {
+		
+		if(data instanceof GenericXMLDataBinding){
+			
+			XmlObject xmlData = ((GenericXMLDataBinding)data).getPayload();
+			
+			XmlOptions xmlOptions = new XmlOptions();
+			
+			xmlOptions.setSaveNoXmlDecl();
+			
+			return xmlData.newInputStream(xmlOptions);
+			
+		}
+		
+		return XmlObject.Factory.newInstance().newInputStream();
 	}
 
 }

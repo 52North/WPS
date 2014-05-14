@@ -36,10 +36,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.opengis.feature.simple.SimpleFeature;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -95,7 +95,7 @@ public class JSONGeometryGenerator extends AbstractGenerator {
 	public JSONGeometryGenerator(){
 		super();
 		//supportedIDataTypes.add(GTVectorDataBinding.class);
-		supportedIDataTypes.add(GenericFileDataBinding.class);
+		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
 	}
 
 	@Override
@@ -106,10 +106,10 @@ public class JSONGeometryGenerator extends AbstractGenerator {
 		
 		// Extract input data (as feature collection)
 		GTVectorDataBinding gvdb = null;
-		if (data instanceof GenericFileDataBinding){
+		if (data instanceof GenericFileDataWithGTBinding){
 			LOGGER.debug("The data passed from the algorithm to the generator is GenericFileDataBinding");
 			try {
-				gvdb = ((GenericFileData) data.getPayload()).getAsGTVectorDataBinding();
+				gvdb = ((GenericFileDataWithGT) data.getPayload()).getAsGTVectorDataBinding();
 				isShapefile = true;
 			} catch (Exception e){
 				throw new IOException("The data passed from the algorithm to the generator is a file, but no shapefile");

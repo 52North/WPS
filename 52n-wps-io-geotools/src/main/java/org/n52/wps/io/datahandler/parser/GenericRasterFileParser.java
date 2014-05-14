@@ -32,8 +32,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -49,12 +49,12 @@ public class GenericRasterFileParser extends AbstractParser{
 	}
 	
 	@Override
-	public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
+	public GenericFileDataWithGTBinding parse(InputStream input, String mimeType, String schema) {
 		
-		GenericFileData theData = new GenericFileData(input, mimeType);
+		GenericFileDataWithGT theData = new GenericFileDataWithGT(input, mimeType);
 		LOGGER.info("Found File Input " + mimeType);
 		
-		return new GenericFileDataBinding(theData);
+		return new GenericFileDataWithGTBinding(theData);
 	}
 
 }

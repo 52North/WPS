@@ -111,3 +111,6 @@ The WPS comes with a variety of integration tests which are performed using Jett
 In order to execute integration tests in a maven build, activate the dedicated profile
 through `mvn clean install -Pwith-geotools,integration-test`.
 
+## Contributing
+
+You can find information about how to contribute to this project in the [Geoprocessing Wiki](https://wiki.52north.org/bin/view/Geoprocessing/StructuresAndProcedures#Git_Procedures).

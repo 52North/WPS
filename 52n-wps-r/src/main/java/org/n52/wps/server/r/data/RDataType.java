@@ -31,9 +31,9 @@ package org.n52.wps.server.r.data;
 
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
@@ -54,23 +54,24 @@ public enum RDataType implements RTypeDefinition {
             "xs:double", LiteralDoubleBinding.class), BOOLEAN("boolean", "xs:boolean", LiteralBooleanBinding.class),
 
     // geodata:
-    DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataBinding.class, true, null, "base64"), DGN(
-            "dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataBinding.class, true, null, "base64"), GEOTIFF(
-            "geotiff", GenericFileDataConstants.MIME_TYPE_GEOTIFF, GenericFileDataBinding.class, true, null, "base64"), GEOTIFF2(
-            "geotiff_image", GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF, GTRasterDataBinding.class, true, null,
-            "base64"), GEOTIFF_X("geotiff_x", GenericFileDataConstants.MIME_TYPE_X_GEOTIFF,
-            GenericFileDataBinding.class, true, null, "base64"), IMG("img", GenericFileDataConstants.MIME_TYPE_HDF,
-            GenericFileDataBinding.class, true, null, "base64"), IMG2("img_x",
-            GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA, GenericFileDataBinding.class, true, null, "base64"), NETCDF(
-            "netcdf", GenericFileDataConstants.MIME_TYPE_NETCDF, GenericFileDataBinding.class, true, null, "base64"), NETCDF_X(
-            "netcdf_x", GenericFileDataConstants.MIME_TYPE_X_NETCDF, GenericFileDataBinding.class, true, null, "base64"), REMAP(
-            "remap", GenericFileDataConstants.MIME_TYPE_REMAPFILE, GenericFileDataBinding.class, true, null, "base64"), SHAPE(
-            "shp", GenericFileDataConstants.MIME_TYPE_SHP, GTVectorDataBinding.class, true, null, "base64"),
+    DBASE("dbf", GenericFileDataConstants.MIME_TYPE_DBASE, GenericFileDataWithGTBinding.class, true, null, "base64"), DGN(
+            "dgn", GenericFileDataConstants.MIME_TYPE_DGN, GenericFileDataWithGTBinding.class, true, null, "base64"), GEOTIFF(
+            "geotiff", GenericFileDataConstants.MIME_TYPE_GEOTIFF, GenericFileDataWithGTBinding.class, true, null,
+            "base64"), GEOTIFF2("geotiff_image", GenericFileDataConstants.MIME_TYPE_IMAGE_GEOTIFF,
+            GenericFileDataWithGTBinding.class, true, null, "base64"), GEOTIFF_X("geotiff_x",
+            GenericFileDataConstants.MIME_TYPE_X_GEOTIFF, GenericFileDataWithGTBinding.class, true, null, "base64"), IMG(
+            "img", GenericFileDataConstants.MIME_TYPE_HDF, GenericFileDataWithGTBinding.class, true, null, "base64"), IMG2(
+            "img_x", GenericFileDataConstants.MIME_TYPE_X_ERDAS_HFA, GenericFileDataWithGTBinding.class, true, null,
+            "base64"), NETCDF("netcdf", GenericFileDataConstants.MIME_TYPE_NETCDF, GenericFileDataWithGTBinding.class,
+            true, null, "base64"), NETCDF_X("netcdf_x", GenericFileDataConstants.MIME_TYPE_X_NETCDF,
+            GenericFileDataWithGTBinding.class, true, null, "base64"), REMAP("remap",
+            GenericFileDataConstants.MIME_TYPE_REMAPFILE, GenericFileDataWithGTBinding.class, true, null, "base64"), SHAPE(
+            "shp", GenericFileDataConstants.MIME_TYPE_SHP, GenericFileDataWithGTBinding.class, true, null, "base64"),
     // SHAPE_ZIP("shp_zip",GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP,
     // GenericFileDataBinding.class,
     // true),
     SHAPE_ZIP2("shp_x", GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, GTVectorDataBinding.class, true, null, "base64"), KML(
-            "kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataBinding.class, true, null, "UTF-8"),
+            "kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataWithGTBinding.class, true, null, "UTF-8"),
 
     // graphical data
     GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, null),
@@ -148,7 +149,7 @@ public enum RDataType implements RTypeDefinition {
             reg.register(this);
         else
             LoggerFactory.getLogger(RDataType.class).warn("Doubled definition of data type-key for notation '{}'. Only the first definition will be used for this key.",
-                     key);
+                                                          key);
 
     }
 

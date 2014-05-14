@@ -173,7 +173,7 @@ public class AllTestsIT {
             if ( !referencedDocument.contains("ProcessSucceeded") && !referencedDocument.contains("ProcessFailed")) {
                 try {
                     System.out.println("WPS process still processing. Waiting...");
-                    Thread.sleep(1000 * 10);
+                    Thread.sleep(1000 * 3);
                     referencedDocument = GetClient.sendRequest(splittedURL[0] + "RetrieveResultServlet", splittedURL[1]);
                 }
                 catch (InterruptedException ignore) {
@@ -242,12 +242,12 @@ public class AllTestsIT {
 		assertTrue(oneHeaderFieldContainsFilename);
 	}
 
-    public static void checkReferenceXMLResult(String response) throws ParserConfigurationException,
+    public static void checkReferenceXMLResult(String response, String stringThatShouldBeContained) throws ParserConfigurationException,
             SAXException,
             IOException {
         String referencedDocument = getRefAsString(response);
         assertThat(referencedDocument, referencedDocument, not(containsString("ExceptionReport")));
-        assertThat(referencedDocument, referencedDocument, containsString("LinearRing"));
+        assertThat(referencedDocument, referencedDocument, containsString(stringThatShouldBeContained));
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     }
 

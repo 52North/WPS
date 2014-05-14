@@ -44,6 +44,9 @@ import org.xml.sax.SAXException;
 
 public class DescribeProcessKvpIT {
 
+	private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
+	private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
+	
     private static String url;
 
     @BeforeClass
@@ -55,23 +58,23 @@ public class DescribeProcessKvpIT {
     public void testDescribeProcessCompleteSingle() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessCompleteSingle");
 
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm");
+        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID);
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
+        assertThat(response, response, containsString(testProcessID));
     }
 
     @Test
     public void testDescribeProcessCompleteMultiple() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessCompleteMultiple");
 
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm,org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm");
+        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID + "," + testProcessID2);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm"));
+        assertThat(response, response, containsString(testProcessID));
+        assertThat(response, response, containsString(testProcessID2));
 
     }
 
@@ -83,8 +86,8 @@ public class DescribeProcessKvpIT {
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm"));
-        assertThat(response, response, containsString("org.n52.wps.server.algorithm.simplify.DouglasPeuckerAlgorithm"));
+        assertThat(response, response, containsString(testProcessID));
+        assertThat(response, response, containsString(testProcessID2));
 
     }
 
@@ -92,24 +95,24 @@ public class DescribeProcessKvpIT {
     public void testDescribeProcessMissingVersionParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingVersionParameter");
         
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm");
+        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Identifier=" + testProcessID);
      
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
         assertThat(response, response, containsString("locator=\"version\""));
-        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+        assertThat(response, response, not(containsString(testProcessID)));
     }
 
     @Test
     public void testDescribeProcessMissingServiceParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingServiceParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.SimpleBufferAlgorithm");
+        String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID);
         
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, containsString("ExceptionReport"));
         assertThat(response, response, containsString("locator=\"service\""));
-        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+        assertThat(response, response, not(containsString(testProcessID)));
     }
 
     @Test
@@ -122,7 +125,7 @@ public class DescribeProcessKvpIT {
         assertThat(response, response, containsString("ExceptionReport"));
         assertThat(response, response, containsString("MissingParameterValue"));
         assertThat(response, response, containsString("locator=\"identifier\""));
-        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+        assertThat(response, response, not(containsString(testProcessID)));
     }
 
     @Test
@@ -135,7 +138,7 @@ public class DescribeProcessKvpIT {
         assertThat(response, response, containsString("ExceptionReport"));
         assertThat(response, response, containsString("InvalidParameterValue"));
         assertThat(response, response, containsString("locator=\"identifier\""));
-        assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+        assertThat(response, response, not(containsString(testProcessID)));
     }
     
     @Test
@@ -148,6 +151,6 @@ public class DescribeProcessKvpIT {
     	assertThat(response, response, containsString("ExceptionReport"));
     	assertThat(response, response, containsString("InvalidParameterValue"));
     	assertThat(response, response, containsString("locator=\"identifier\""));
-    	assertThat(response, response, not(containsString("org.n52.wps.server.algorithm.SimpleBufferAlgorithm")));
+    	assertThat(response, response, not(containsString(testProcessID)));
     }
 }

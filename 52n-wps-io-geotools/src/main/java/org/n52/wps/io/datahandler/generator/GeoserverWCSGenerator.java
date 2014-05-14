@@ -42,7 +42,7 @@ import org.apache.commons.httpclient.HttpException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GeotiffBinding;
@@ -122,7 +122,7 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 		
 		if(coll instanceof GTRasterDataBinding){
 			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
-			GenericFileData fileData = new GenericFileData(gtData.getPayload(), null);
+			GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload(), null);
 			file = fileData.getBaseFile(true);			
 		}
 		if(coll instanceof GeotiffBinding){

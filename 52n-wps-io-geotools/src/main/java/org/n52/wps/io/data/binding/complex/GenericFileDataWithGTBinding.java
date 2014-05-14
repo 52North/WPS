@@ -26,36 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.parser;
+package org.n52.wps.io.data.binding.complex;
 
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.io.data.GenericFileData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
+import org.apache.commons.io.FileUtils;
+import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.IComplexData;
 
 
 /**
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class GenericFileParser extends AbstractParser{
+public class GenericFileDataWithGTBinding implements IComplexData {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 625383192227478620L;
+	protected GenericFileDataWithGT payload; 
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
-	
-	public GenericFileParser() {
-		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
+	public GenericFileDataWithGTBinding(GenericFileDataWithGT fileData){
+		this.payload = fileData;
 	}
 	
-	@Override
-	public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
-		
-		GenericFileData theData = new GenericFileData(input, mimeType);
-		LOGGER.info("Found File Input " + mimeType);
-		
-		return new GenericFileDataBinding(theData);
+	public GenericFileDataWithGT getPayload() {
+		return payload;
 	}
 
+	public Class getSupportedClass() {
+		return GenericFileDataWithGT.class;
+	}
+    
+    @Override
+	public void dispose(){
+                //FIXME (MH) The command bellow is flawed because getBaseFile(...) *writes* files from an inputstream into the wps temp directory. 
+                   // If the given input stream is closed, the method throws *RuntimeExceptions* that let the process crash.
+		//FileUtils.deleteQuietly(payload.getBaseFile(false));
+	}
 }

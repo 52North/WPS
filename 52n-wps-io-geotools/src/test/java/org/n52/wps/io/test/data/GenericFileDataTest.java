@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import org.n52.wps.io.data.GenericFileData;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 
 import junit.framework.TestCase;
@@ -69,7 +69,7 @@ public class GenericFileDataTest extends TestCase{
 		}
 
 
-		GenericFileData genericFileData = new GenericFileData(input, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
+		GenericFileDataWithGT genericFileData = new GenericFileDataWithGT(input, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
 
 		String unzippedFilePath = genericFileData.writeData(new File(System.getProperty("java.io.tmpdir")));
 
