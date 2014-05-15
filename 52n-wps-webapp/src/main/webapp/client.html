@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
 <link href="http://52north.org/templates/52n-2012/favicon.ico"
 	rel="shortcut icon" type="image/vnd.microsoft.icon" />
 
@@ -12,89 +12,9 @@
 <script src="js/openlayers/OpenLayers-closure.js"></script>
 <script src="js/wps-js/wps-js.1.0.0-SNAPSHOT.js"></script>
 <link type="text/css" rel="stylesheet" href="css/wps-js.css">
+<link type="text/css" rel="stylesheet" href="css/wps.css">
 <link rel="shortcut icon" href="favicon.ico" />
 
-<!-- for the ribbon -->
-<style type="text/css">
-/* Left will inherit from right (so we don't need to duplicate code) */
-.github-fork-ribbon {
-	/* The right and left classes determine the side we attach our banner to */
-	position: absolute;
-	/* Add a bit of padding to give some substance outside the "stitching" */
-	padding: 2px 0;
-	/* Set the base colour */
-	background-color: #66C5E4;
-	/* Set a gradient: transparent black at the top to almost-transparent black at the bottom */
-	background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)),
-		to(rgba(0, 0, 0, 0.15)));
-	background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.15));
-	background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.15));
-	background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.15));
-	background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.15));
-	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0),
-		rgba(0, 0, 0, 0.15));
-	/* Add a drop shadow */
-	-webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
-	-moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
-	box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
-	z-index: 9999;
-	pointer-events: auto;
-}
-
-.github-fork-ribbon a,.github-fork-ribbon a:hover {
-	/* Set the font */
-	font: 700 13px "Helvetica Neue", Helvetica, Arial, sans-serif;
-	color: #fff;
-	/* Set the text properties */
-	text-decoration: none;
-	text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
-	text-align: center;
-	/* Set the geometry. If you fiddle with these you'll also need
-     to tweak the top and right values in .github-fork-ribbon. */
-	width: 200px;
-	line-height: 20px;
-	/* Set the layout properties */
-	display: inline-block;
-	padding: 2px 0;
-	/* Add "stitching" effect */
-	border-width: 1px 0;
-	border-style: dotted;
-	border-color: #fff;
-	border-color: rgba(255, 255, 255, 0.7);
-}
-
-.github-fork-ribbon-wrapper {
-	width: 150px;
-	height: 150px;
-	position: absolute;
-	overflow: hidden;
-	top: 0;
-	z-index: 9999;
-	pointer-events: none;
-}
-
-.github-fork-ribbon-wrapper.fixed {
-	position: fixed;
-}
-
-.github-fork-ribbon-wrapper.right {
-	right: 0;
-}
-
-.github-fork-ribbon-wrapper.right .github-fork-ribbon {
-	top: 42px;
-	right: -43px;
-	-webkit-transform: rotate(45deg);
-	-moz-transform: rotate(45deg);
-	-ms-transform: rotate(45deg);
-	-o-transform: rotate(45deg);
-	transform: rotate(45deg);
-}
-</style>
 </head>
 <body>
 	<div class="github-fork-ribbon-wrapper right">
@@ -109,15 +29,13 @@
 
 		<div id="wrapper">
 			<div>
-				<select id="wps">
-					<option>Select WPS</option>
+				<span>Service endpoint:</span> <select id="wps">
 					<option>http://localhost:8080/wps/WebProcessingService</option>
 				</select>
 			</div>
 			<div>
-				<h3>
-					Capabilities <a href="#" id="wpscaller">Show Capabilities</a>
-				</h3>
+				<h3>Capabilities&nbsp;&nbsp;<input type="button" id="wpscaller" value="Show Capabilities" /></h3>
+				<div></div>
 				<div class="wps-container">
 					<div id="capabilitiesByClick"></div>
 				</div>
@@ -135,6 +53,7 @@
 				</div>
 			</div>
 		</div>
+
 		<script type="text/javascript">
 			var capabilities, // the capabilities, read by Format.WPSCapabilities::read
 			process; // the process description from Format.WPSDescribeProcess::read
@@ -147,13 +66,12 @@
 					requestType : GET_CAPABILITIES_TYPE
 				});
 			});
+
 			$(document).ready(function() {
-				$.wpsSetup({
-					proxy : {
-						url : "/wps_proxy/wps_proxy?url=",
-						type : "parameter"
-					}
-				});
+				$.wpsSetup({});
+
+				var sel = document.getElementById("wps");
+				getCapabilities(sel.options[sel.selectedIndex].text);
 			});
 
 			// add behavior to html elements
