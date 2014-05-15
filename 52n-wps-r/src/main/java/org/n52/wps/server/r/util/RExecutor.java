@@ -114,11 +114,6 @@ public class RExecutor {
             if (line.isEmpty())
                 continue;
 
-            if (line.contains("setwd("))
-                log.warn("The running R script contains a call to \"setwd(...)\". "
-                        + "This may cause runtime-errors and unexpected behaviour of WPS4R. "
-                        + "It is strongly advised to not use this function in process scripts.");
-
             if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
                 throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
 
@@ -137,6 +132,12 @@ public class RExecutor {
                         scriptExecutionString.append(line);
                 }
                 else {
+                    // actually append the line
+                    if (line.contains("setwd("))
+                        log.warn("The running R script contains a call to \"setwd(...)\". "
+                                + "This may cause runtime-errors and unexpected behaviour of WPS4R. "
+                                + "It is strongly advised to not use this function in process scripts.");
+                    
                     scriptExecutionString.append(line);
                     scriptExecutionString.append("\n");
                 }

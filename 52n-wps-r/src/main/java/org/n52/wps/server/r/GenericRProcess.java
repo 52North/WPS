@@ -84,7 +84,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     public GenericRProcess(String wellKnownName) {
         super(wellKnownName);
 
-        log.info("NEW {}", this);
+        log.debug("NEW {}", this);
     }
 
     public List<String> getErrors() {
@@ -162,8 +162,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
-        log.info("Running {}", this.toString());
-        log.debug("inputData: {}", Arrays.toString(inputData.entrySet().toArray()));
+        log.info("Running {} \n\tInput data: {}", this.toString(), Arrays.toString(inputData.entrySet().toArray()));
 
         FilteredRConnection rCon = null;
         try {

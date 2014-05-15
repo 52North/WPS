@@ -104,7 +104,7 @@ public class RSessionManager {
             FileNotFoundException,
             IOException,
             RAnnotationException {
-        log.info("Configuring R session...");
+        log.debug("Configuring R session...");
 
         if (cleanOnStartup) {
             cleanSession();
@@ -177,10 +177,11 @@ public class RSessionManager {
             connection.eval(cmd);
             RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
 
-            connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
+            String resourceUrl = config.getResourceDirURL();
+            connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, resourceUrl);
             log.debug("Assigned resource directory to variable '{}': {}",
                       RWPSSessionVariables.RESOURCE_URL_NAME,
-                      config.getResourceDirURL());
+                      resourceUrl);
             RLogger.logVariable(connection, RWPSSessionVariables.RESOURCE_URL_NAME);
 
             URL processDescription = config.getProcessDescriptionURL(processWKN);

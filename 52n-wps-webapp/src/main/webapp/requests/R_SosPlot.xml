@@ -3,13 +3,13 @@
 	xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1"
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
-	<ows:Identifier>org.n52.wps.server.r.SosPlot</ows:Identifier>
+	<ows:Identifier>org.n52.wps.server.r.demo.timeseriesPlot</ows:Identifier>
 	<wps:DataInputs>
 		<wps:Input>
-			<ows:Identifier>offering_days</ows:Identifier>
+			<ows:Identifier>offering_hours</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>10</wps:LiteralData>
+				<wps:LiteralData>24</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 		<wps:Input>
@@ -23,14 +23,14 @@
 			<ows:Identifier>image_width</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>500</wps:LiteralData>
+				<wps:LiteralData>800</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 		<wps:Input>
 			<ows:Identifier>image_height</ows:Identifier>
 			<ows:Title></ows:Title>
 			<wps:Data>
-				<wps:LiteralData>500</wps:LiteralData>
+				<wps:LiteralData>600</wps:LiteralData>
 			</wps:Data>
 		</wps:Input>
 	</wps:DataInputs>

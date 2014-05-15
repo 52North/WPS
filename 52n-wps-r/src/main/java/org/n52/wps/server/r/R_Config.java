@@ -164,8 +164,10 @@ public class R_Config {
     public String getResourceDirURL() {
         String webapp = getUrlPathUpToWebapp();
         String resourceDirectory = getResourceDirectory();
+
+        // important: this url should be appendable with a resource name, i.e. either end in "/" or "id="
         if (webapp != null & resourceDirectory != null)
-            return webapp + "/" + resourceDirectory.replace("\\", "/");
+            return webapp + "/" + resourceDirectory.replace("\\", "/") + "/";
 
         LOGGER.warn("Cannot create resource dir URL");
         return null;

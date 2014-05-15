@@ -67,7 +67,7 @@ public class RAnnotationParser {
 
     public RAnnotationParser(R_Config config) {
         this.config = config;
-        LOGGER.info("New " + this);
+        LOGGER.debug("New {}", this);
     }
 
     /**
@@ -286,7 +286,7 @@ public class RAnnotationParser {
             R_Resource r_resource = new R_Resource(resourceValue);
             resources.add(r_resource);
 
-            LOGGER.debug("Found new resource in annotation: " + r_resource);
+            LOGGER.debug("Found new resource in annotation: {}", r_resource);
         }
 
         // add empty hasmap for now
