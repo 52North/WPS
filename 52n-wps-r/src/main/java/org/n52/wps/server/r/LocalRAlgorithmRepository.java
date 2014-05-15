@@ -32,10 +32,8 @@ package org.n52.wps.server.r;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
@@ -63,16 +61,13 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     private static Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
 
     // registered processes
-    private Set<String> algorithms;
-
-    // local cache for algorithm descriptions
-    private Map<String, GenericRProcess> algorithmDescriptionMap = new HashMap<String, GenericRProcess>();
+    private Map<String, IAlgorithm> algorithms;
 
     private R_Config rConfig;
 
     public LocalRAlgorithmRepository() {
         LOGGER.info("Initializing LocalRAlgorithmRepository");
-        this.algorithms = new HashSet<String>();
+        this.algorithms = new HashMap<String, IAlgorithm>();
         this.rConfig = R_Config.getInstance();
 
         // Check WPS Config properties:
@@ -101,19 +96,17 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return false;
         }
 
-        // Try to build up a connection to Rserve
-        // If it is refused, a new instance of Rserve will be opened
-        LOGGER.debug("[Rserve] Trying to connect to Rserve.");
+        // Try to build up a connection to Rserve. If it is refused, a new instance of Rserve will be opened
+        LOGGER.debug("Trying to connect to Rserve.");
         try {
             RConnection testcon = rConfig.openRConnection();
-            LOGGER.info("[Rserve] WPS successfully connected to Rserve.");
+            LOGGER.info("WPS successfully connected to Rserve.");
             testcon.close();
         }
         catch (RserveException e) {
             // try to start Rserve via batchfile if enabled
             LOGGER.error("[Rserve] Could not connect to Rserve. Rserve may not be available or may not be ready at the current time.",
                          e);
-            e.printStackTrace();
             return false;
         }
         return true;
@@ -190,33 +183,33 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Override
     public IAlgorithm getAlgorithm(String algorithmName) {
-        if ( !this.algorithms.contains(algorithmName))
-            throw new RuntimeException("This repository does not contain an algorithm '" + algorithmName + "'");
+        if ( !this.rConfig.getCacheProcesses()) {
+            LOGGER.debug("Process cache disabled, creating new process for id '{}'", algorithmName);
+            boolean b = addAlgorithm(algorithmName);
+            if ( !b)
+                LOGGER.warn("Problem adding algorithm for deactivated cache.");
+        }
 
-        try {
-            IAlgorithm a = loadAlgorithm(algorithmName);
-            return a;
-        }
-        catch (Exception e) {
-            String message = "Could not load algorithm for class name '" + algorithmName + "'";
-            LOGGER.error(message, e);
-            throw new RuntimeException(message + ": " + e.getMessage(), e);
-        }
+        if ( !this.algorithms.containsKey(algorithmName))
+            throw new RuntimeException("This repository does not contain an algorithm '" + algorithmName + "'");
+        else
+            return this.algorithms.get(algorithmName);
     }
 
     public Collection<String> getAlgorithmNames() {
-        return new ArrayList<String>(this.algorithms);
+        return new ArrayList<String>(this.algorithms.keySet());
     }
 
     @Override
     public boolean containsAlgorithm(String className) {
-        return this.algorithms.contains(className);
+        return this.algorithms.containsKey(className);
     }
 
-    private static IAlgorithm loadAlgorithm(String wellKnownName) throws Exception {
+    private IAlgorithm loadAlgorithmAndValidate(String wellKnownName) throws Exception {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
 
         IAlgorithm algorithm = new GenericRProcess(wellKnownName);
+
         if ( !algorithm.processDescriptionIsValid()) {
             // collect the errors
             ProcessDescriptionType description = algorithm.getDescription();
@@ -244,20 +237,30 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             throw new Exception("Could not load algorithm " + wellKnownName + ". ProcessDescription not valid: "
                     + validationMessages.toString());
         }
+
         return algorithm;
     }
 
     @Override
     public boolean addAlgorithm(Object processID) {
-        if ( ! (processID instanceof String)) {
-            return false;
+        if (processID instanceof String) {
+            String algorithmName = (String) processID;
+
+            try {
+                IAlgorithm a = loadAlgorithmAndValidate(algorithmName);
+                this.algorithms.put(algorithmName, a);
+                LOGGER.info("Algorithm under name '{}' added: {}", algorithmName, a);
+
+                return true;
+            }
+            catch (Exception e) {
+                String message = "Could not load algorithm for class name '" + algorithmName + "'";
+                LOGGER.error(message, e);
+                throw new RuntimeException(message + ": " + e.getMessage(), e);
+            }
         }
-
-        String algorithmName = (String) processID;
-        this.algorithms.add(algorithmName);
-        LOGGER.info("Algorithm registered: {}", algorithmName);
-
-        return true;
+        else
+            return false;
     }
 
     @Override
@@ -268,11 +271,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         }
 
         String id = (String) processID;
-        if (this.algorithms.contains(id))
+        if (this.algorithms.containsKey(id))
             this.algorithms.remove(id);
-
-        if (this.algorithmDescriptionMap.containsKey(id))
-            this.algorithmDescriptionMap.remove(id);
 
         LOGGER.info("Removed algorithm: {}", id);
         return true;
@@ -280,27 +280,12 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Override
     public ProcessDescriptionType getProcessDescription(String processID) {
-        if ( !this.rConfig.getCacheDescriptions()) {
-            LOGGER.debug("Process description cache disabled, creating new process and returning its description for id {}",
-                         processID);
-            GenericRProcess process = new GenericRProcess(processID);
-            return process.getDescription();
-        }
-
-        if ( !this.algorithmDescriptionMap.containsKey(processID)) {
-            LOGGER.debug("Creating new process to get the description for " + processID);
-            GenericRProcess process = new GenericRProcess(processID);
-            this.algorithmDescriptionMap.put(processID, process);
-        }
-
-        LOGGER.debug("Returning  process description from cache: " + processID);
-        return this.algorithmDescriptionMap.get(processID).getDescription();
+        return getAlgorithm(processID).getDescription();
     }
 
     @Override
     public void shutdown() {
         LOGGER.info("Shutting down ...");
-        this.algorithmDescriptionMap.clear();
         this.algorithms.clear();
     }
 

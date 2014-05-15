@@ -479,8 +479,8 @@ public class R_Config {
         }
     }
 
-    public boolean getCacheDescriptions() {
-        String s = getConfigVariable(RWPSConfigVariables.R_CACHE_DESCRIPTIONS);
+    public boolean getCacheProcesses() {
+        String s = getConfigVariable(RWPSConfigVariables.R_CACHE_PROCESSES);
         return Boolean.valueOf(s);
     }
 }

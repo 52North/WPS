@@ -103,9 +103,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     @Override
     protected ProcessDescriptionType initializeDescription() {
-        log.info("Initializing description for {}", this.toString());
-
-        this.config = R_Config.getInstance();
+        this.config = R_Config.getInstance(); // call here because method is invoked by super constructor
 
         // Reading process information from script annotations:
         InputStream rScriptStream = null;
@@ -115,6 +113,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             this.scriptFile = config.getScriptFileForWKN(wkn);
             log.debug("File loaded: {}", this.scriptFile.getAbsolutePath());
+
+            log.info("Initializing description for {}", this.toString());
 
             if (this.scriptFile == null) {
                 log.warn("Loaded script file is {}", this.scriptFile);
