@@ -55,10 +55,6 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
@@ -80,6 +76,9 @@ import org.n52.wps.server.handler.DataInputInterceptors.DataInputInterceptorImpl
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.server.request.strategy.ReferenceInputStream;
 import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 import com.google.common.primitives.Doubles;
 
@@ -179,20 +178,9 @@ public class InputHandler {
 		Class<?> clazz;
 
 		try {
-			//(by Matthias) This method causes exceptions for each R process because they are represented as
-			//instances from GenericRProcess. Hence classes do not match algorithm-names in WPS4R.
-			//The following is a quick workaround, please review:
-			//------------------------------------
-//			if(algorithmClassName.startsWith("org.n52.wps.server.r."))
-//				return result;
-			//------------------------------------
-			//TODO (by Matthes) check if sufficient. Good point, the followin should work as well. If an exception is thrown
-			//go on with the default way. This has the benefit that its not hardcoded and should work for
-			//every algorithm which is created at runtime.
-
 			clazz = Class.forName(algorithmClassName, false, getClass().getClassLoader());
 		} catch (ClassNotFoundException e) {
-			LOGGER.warn("Could not find class "+ algorithmClassName, e);
+            LOGGER.warn("Could not find class {}", algorithmClassName);
 			return result;
 		}
 
