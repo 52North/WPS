@@ -114,7 +114,9 @@ public class RWorkspaceManager {
         RLogger.logWorkspaceContent(this.connection);
 
         log.debug("Deleting work directory {}", originalWorkDir);
-        this.workspace.deleteCurrentAndSetWorkdir(this.connection, originalWorkDir);
+        boolean b = this.workspace.deleteCurrentAndSetWorkdir(this.connection, originalWorkDir);
+        if ( !b)
+            log.debug("Could not delete workdir (completely) with R, remaining files: {}", this.workspace.listFiles());
     }
 
     public void cleanUpWithWPS() {
@@ -124,9 +126,15 @@ public class RWorkspaceManager {
             if (this.deleteWPSWorkDirectory) {
                 // try to delete current local workdir - folder
                 File workdir = new File(workspace.getPath());
+
+                if ( !workdir.exists())
+                    return;
+
                 boolean deleted = deleteRecursive(workdir);
                 if ( !deleted)
-                    log.warn("Failed to delete temporary WPS Workdirectory: " + workdir.getAbsolutePath());
+                    log.warn("Failed to delete temporary WPS Workdirectory '{}', remaining files: {}",
+                             workdir.getAbsolutePath(),
+                             this.workspace.listFiles());
             }
         }
         catch (Exception e) {
