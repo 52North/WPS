@@ -69,6 +69,7 @@ This project includes:
   Axiom API under The Apache Software License, Version 2.0
   Axiom DOM under The Apache Software License, Version 2.0
   Axiom Impl under The Apache Software License, Version 2.0
+  axis-wsdl4j under The Apache Software License, Version 2.0
   bcprov-jdk15 under Bouncycastle license, http://www.bouncycastle.org/licence.html (MIT-style license)
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   Collections under The Apache Software License, Version 2.0
