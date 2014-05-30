@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration
-	$ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration 
+		$ -->
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
@@ -131,8 +132,8 @@
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
-			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into
-			slf4j -->
+			<!-- provided since we want to use jcl-over-slf4j to shim jcl loggin into 
+				slf4j -->
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -160,6 +161,8 @@
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
 		<wps.config.file>config/wps_config.xml</wps.config.file>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 	</properties>
 
 	<build>
@@ -202,15 +205,20 @@
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
 					<webResources>
+						<!-- <resource> -->
+						<!-- <directory>src/main/webapp/WEB-INF</directory> -->
+						<!-- <filtering>true</filtering> -->
+						<!-- <targetPath>WEB-INF</targetPath> -->
+						<!-- </resource> -->
+						<!-- <resource> -->
+						<!-- <directory>src/main/webapp/config</directory> -->
+						<!-- <filtering>true</filtering> -->
+						<!-- <targetPath>config</targetPath> -->
+						<!-- </resource> -->
 						<resource>
-							<directory>src/main/webapp/WEB-INF</directory>
+							<directory>src/main/webapp/</directory>
 							<filtering>true</filtering>
-							<targetPath>WEB-INF</targetPath>
-						</resource>
-						<resource>
-							<directory>src/main/webapp/config</directory>
-							<filtering>true</filtering>
-							<targetPath>config</targetPath>
+							<targetPath>/</targetPath>
 						</resource>
 					</webResources>
 				</configuration>
@@ -234,6 +242,24 @@
 						</property>
 					</systemProperties>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>ru.concerteza.buildnumber</groupId>
+				<artifactId>maven-jgit-buildnumber-plugin</artifactId>
+				<version>1.2.7</version>
+				<executions>
+					<execution>
+						<id>git-buildnumber</id>
+						<goals>
+							<goal>extract-buildnumber</goal>
+						</goals>
+						<phase>prepare-package</phase>
+						<configuration>
+							<runOnlyAtExecutionRoot>false</runOnlyAtExecutionRoot>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -279,19 +305,20 @@
 		<!-- </profile> -->
 		<profile>
 			<id>with-deploy</id>
-			<!-- server configuration for settings.xml =====================================
-			<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username>
-			<cargo.remote.password>admin</cargo.remote.password> </configuration> </server>
-			<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
-			<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
-			<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
-			</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
-			(Run Configuration in Eclipse) =============================================
-			- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
-			in Eclipse =========================== Add Java options to Tomcat: -Xdebug
-			-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote
-			Java Application as debugging configuration and use the address above as
-			the connection port. -->
+			<!-- server configuration for settings.xml ===================================== 
+				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username> 
+				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server> 
+				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings> 
+				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port> 
+				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties> 
+				</profile> tomcat-users.xml ================ <user name="admin" password="admin" 
+				roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven 
+				(Run Configuration in Eclipse) ============================================= 
+				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging 
+				in Eclipse =========================== Add Java options to Tomcat: -Xdebug 
+				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote 
+				Java Application as debugging configuration and use the address above as 
+				the connection port. -->
 			<build>
 				<finalName>WPS</finalName>
 				<plugins>
@@ -469,12 +496,8 @@
 									<systemPropertyVariables>
 										<com.sun.media.jai.disableMediaLib>true</com.sun.media.jai.disableMediaLib>
 										<test.host>127.0.0.1</test.host>
-										<!--
-										<test.rserve.host>127.0.0.1</test.rserve.host>
-										<test.rserve.port>6311</test.rserve.port>
-										<test.rserve.user></test.rserve.user>
-										<test.rserve.pwd></test.rserve.pwd>
-										-->
+										<!-- <test.rserve.host>127.0.0.1</test.rserve.host> <test.rserve.port>6311</test.rserve.port> 
+											<test.rserve.user></test.rserve.user> <test.rserve.pwd></test.rserve.pwd> -->
 										<test.port>${jetty.http.port}</test.port>
 										<test.context>/wps/WebProcessingService</test.context>
 										<catalina.home>${project.build.directory}</catalina.home>
@@ -493,14 +516,8 @@
 				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
 			</properties>
 			<build>
-				<!--<plugins>
-					<plugin>
-						<artifactId>maven-war-plugin</artifactId>
-						<configuration>
-							<classifier>geotools</classifier>
-						</configuration>
-					</plugin>
-				</plugins>-->
+				<!--<plugins> <plugin> <artifactId>maven-war-plugin</artifactId> <configuration> 
+					<classifier>geotools</classifier> </configuration> </plugin> </plugins> -->
 			</build>
 			<dependencies>
 				<dependency>
@@ -577,7 +594,7 @@
 								<id>copy-external-wps-config</id>
 								<configuration>
 									<copy overwrite="true" file="${include.wps.config.file}"
-										  tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml"/>
+										tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml" />
 								</configuration>
 								<goals>
 									<goal>run</goal>

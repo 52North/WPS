@@ -2,8 +2,8 @@
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
-	<display-name>52North Web Processing Service, Git: 7f34d1de @ 2014-04-16 13:58:09</display-name>
-	<description>a 52n prototype implementation of the WPS 1.0.0 spec.</description>
+	<display-name>52°North Web Processing Service, Git: ${git.revision} @ ${timestamp}</display-name>
+	<description>A web processing framework supporting the OGC WPS 1.0.0 specification</description>
 
 	<!-- security-constraint>
 		<web-resource-collection>
