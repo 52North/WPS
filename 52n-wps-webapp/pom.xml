@@ -205,18 +205,21 @@
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
 					<webResources>
-						<!-- <resource> -->
-						<!-- <directory>src/main/webapp/WEB-INF</directory> -->
-						<!-- <filtering>true</filtering> -->
-						<!-- <targetPath>WEB-INF</targetPath> -->
-						<!-- </resource> -->
-						<!-- <resource> -->
-						<!-- <directory>src/main/webapp/config</directory> -->
-						<!-- <filtering>true</filtering> -->
-						<!-- <targetPath>config</targetPath> -->
-						<!-- </resource> -->
+						<resource>
+							<directory>src/main/webapp/WEB-INF</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF</targetPath>
+						</resource>
+						<resource>
+							<directory>src/main/webapp/config</directory>
+							<filtering>true</filtering>
+							<targetPath>config</targetPath>
+						</resource>
 						<resource>
 							<directory>src/main/webapp/</directory>
+							<includes>
+								<include>index.html</include>
+							</includes>
 							<filtering>true</filtering>
 							<targetPath>/</targetPath>
 						</resource>
