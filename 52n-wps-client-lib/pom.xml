@@ -57,7 +57,7 @@
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
-			<scrope>test</scrope>
+			<scope>test</scope>
 		</dependency>
     </dependencies>
 </project>
