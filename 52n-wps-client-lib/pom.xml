@@ -54,5 +54,10 @@
             <artifactId>52n-wps-algorithm-impl</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scrope>test</scrope>
+		</dependency>
     </dependencies>
 </project>
