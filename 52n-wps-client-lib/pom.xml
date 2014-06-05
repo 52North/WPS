@@ -11,6 +11,9 @@
     <packaging>jar</packaging>
     <name>52North WPS Client Library</name>
     <description>This module contains some convenient classes to interact with WPS</description>
+    
+    <url>https://wiki.52north.org/bin/view/Geoprocessing/ClientAPI</url>
+    
 	<build>
 		<plugins>
 			<plugin>
