@@ -54,13 +54,11 @@ public class R_Resource {
         return this.resourceValue;
     }
 
-    public URL getFullResourceURL() {
-        R_Config config = R_Config.getInstance();
-        String dirUrl = config.getResourceDirURL();
+    public URL getFullResourceURL(String resourceDirUrl) {
 
         String fullResourceURL = null;
-        if (dirUrl != null)
-            fullResourceURL = dirUrl + "/" + this.resourceValue;
+        if (resourceDirUrl != null)
+            fullResourceURL = resourceDirUrl + "/" + this.resourceValue;
         else
             fullResourceURL = "http://not_available/" + this.resourceValue;
 
@@ -83,10 +81,10 @@ public class R_Resource {
         return resourceURL;
     }
 
-    public File getFullResourcePath() {
+    public File getFullResourcePath(R_Config config) {
         String fullResourcePath = null;
         try {
-            fullResourcePath = R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR)
+            fullResourcePath = config.getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR)
                     + File.separatorChar + this.resourceValue;
         }
         catch (ExceptionReport e) {

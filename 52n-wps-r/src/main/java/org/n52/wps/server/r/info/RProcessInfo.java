@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.info;
 
 import java.io.File;
@@ -51,79 +52,80 @@ public class RProcessInfo {
 
     private boolean isValid;
 
+    private R_Config config;
+
     static List<RProcessInfo> rProcessInfoList;
 
-    public RProcessInfo(String wkn) {
+    public RProcessInfo(String wkn, R_Config config) {
         this.wkn = wkn;
+        this.config = config;
 
         File scriptfile;
         FileInputStream fis = null;
         try {
-            scriptfile = R_Config.getInstance().wknToFile(wkn);
-            RAnnotationParser parser = new RAnnotationParser();
+            scriptfile = config.getScriptFileForWKN(wkn);
+            RAnnotationParser parser = new RAnnotationParser(this.config);
             fis = new FileInputStream(scriptfile);
             this.isValid = parser.validateScript(fis, wkn);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
             this.lastException = e;
             this.isValid = false;
-        } finally {
+        }
+        finally {
             if (fis != null)
                 try {
                     fis.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     LOGGER.error("Could not close file input stream of script file.", e);
                 }
         }
     }
 
-    public String getWkn()
-    {
+    public String getWkn() {
         return this.wkn;
     }
 
-    public String getScriptURL()
-    {
+    public String getScriptURL() {
         try {
-            return R_Config.getInstance().getScriptURL(this.wkn).getPath();
-        } catch (ExceptionReport e) {
+            return config.getScriptURL(this.wkn).getPath();
+        }
+        catch (ExceptionReport e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
+        }
+        catch (MalformedURLException e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public boolean isAvailable()
-    {
-        return R_Config.getInstance().isScriptAvailable(this.wkn);
+    public boolean isAvailable() {
+        return config.isScriptAvailable(this.wkn);
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
 
         return this.isValid;
     }
 
-    public Exception getLastException()
-    {
+    public Exception getLastException() {
         return this.lastException;
     }
 
     /**
      * @return The last Error message or null
      */
-    public String getLastErrormessage()
-    {
+    public String getLastErrormessage() {
         if (getLastException() == null)
             return null;
         else
             return getLastException().getMessage();
     }
 
-    public static List<RProcessInfo> getRProcessInfoList()
-    {
+    public static List<RProcessInfo> getRProcessInfoList() {
         if (rProcessInfoList == null) {
             rProcessInfoList = new ArrayList<RProcessInfo>();
         }
@@ -135,8 +137,7 @@ public class RProcessInfo {
      * 
      * @param rProcessInfoList
      */
-    public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList)
-    {
+    public static void setRProcessInfoList(List<RProcessInfo> rProcessInfoList) {
         RProcessInfo.rProcessInfoList = rProcessInfoList;
     }
 

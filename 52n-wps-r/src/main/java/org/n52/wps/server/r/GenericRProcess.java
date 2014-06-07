@@ -29,68 +29,32 @@
 
 package org.n52.wps.server.r;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.n52.wps.io.IOUtils;
-import org.n52.wps.io.data.GenericFileDataWithGT;
-import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
-import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
-import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
-import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
-import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
-import org.n52.wps.io.data.binding.literal.LiteralByteBinding;
-import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
-import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
-import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
-import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
-import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
-import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
-import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.data.RDataType;
-import org.n52.wps.server.r.data.RDataTypeRegistry;
-import org.n52.wps.server.r.data.RTypeDefinition;
-import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.metadata.RProcessDescriptionCreator;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
-import org.n52.wps.server.r.syntax.RAttribute;
-import org.n52.wps.server.r.syntax.RegExp;
+import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
-import org.n52.wps.server.r.util.RSessionInfo;
-import org.rosuda.REngine.REXP;
+import org.n52.wps.server.r.workspace.RIOHandler;
+import org.n52.wps.server.r.workspace.RSessionManager;
+import org.n52.wps.server.r.workspace.RWorkspaceManager;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REngine;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RFileInputStream;
-import org.rosuda.REngine.Rserve.RFileOutputStream;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,80 +67,54 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     // constructor
     private List<RAnnotation> annotations;
 
-    /**
-     * Indicates if the WPS working directory should be deleted after process execution
-     */
-    private boolean deleteWPSWorkDirectory = true;
-
-    /**
-     * Indicates if the R working directory should be deleted after process execution If wpsWorkDirIsRWorkDir
-     * is set true, deletion of the directory shall be determined by deleteWPSWorDirectory
-     * 
-     */
-    private boolean deleteRWorkDirectory = true;
-
-    /**
-     * In case of errors, this variable may be changed to false during runtime to prevent the system from
-     * deleting the wrong files
-     */
-    private boolean temporaryPreventRWorkingDirectoryFromDelete = false;
-
-    private RAnnotationParser parser = new RAnnotationParser();
-
-    public GenericRProcess(String wellKnownName) {
-        // note that superconstructor calls method initializeDescription()
-        super(wellKnownName);
-
-        log.info("NEW {}", this);
-    }
-
-    public GenericRProcess() {
-        // note that superconstructor calls method initializeDescription()
-        super();
-
-        log.info("NEW {}", this);
-    }
+    private R_Config config;
 
     private List<String> errors = new ArrayList<String>();
 
+    private RExecutor executor = new RExecutor();
+
+    private RIOHandler iohandler = new RIOHandler();
+
+    private RAnnotationParser parser;
+
     private File scriptFile = null;
 
-    private boolean debugScript = true;
+    private boolean shutdownRServerAfterRun = false;
 
-    private boolean wpsWorkDirIsRWorkDir = true;
-    
-    @SuppressWarnings("unchecked")
-    private static List<Class< ? extends AbstractLiteralDataBinding>> easyLiterals = Arrays.asList(LiteralByteBinding.class,
-                                                                                    LiteralDoubleBinding.class,
-                                                                                    LiteralFloatBinding.class,
-                                                                                    LiteralIntBinding.class,
-                                                                                    LiteralLongBinding.class,
-                                                                                    LiteralShortBinding.class);
+    public GenericRProcess(String wellKnownName) {
+        super(wellKnownName);
+
+        log.debug("NEW {}", this);
+    }
 
     public List<String> getErrors() {
         return this.errors;
     }
 
-    /**
-     * This method should be overwritten, in case you want to have a way of initializing.
-     * 
-     * In detail it looks for a xml descfile, which is located in the same directory as the implementing class
-     * and has the same name as the class, but with the extension XML.
-     * 
-     * @return
-     */
+    @Override
+    public Class< ? extends IData> getInputDataType(String id) {
+        return this.iohandler.getInputDataType(id, this.annotations);
+    }
+
+    @Override
+    public Class< ? > getOutputDataType(String id) {
+        return this.iohandler.getOutputDataType(id, this.annotations);
+    }
+
+    @Override
     protected ProcessDescriptionType initializeDescription() {
-        log.info("Initializing description for {}", this.toString());
+        this.config = R_Config.getInstance(); // call here because method is invoked by super constructor
 
         // Reading process information from script annotations:
         InputStream rScriptStream = null;
         try {
             String wkn = getWellKnownName();
             log.debug("Loading file for {}", wkn);
-            R_Config config = R_Config.getInstance();
 
-            this.scriptFile = config.wknToFile(wkn);
+            this.scriptFile = config.getScriptFileForWKN(wkn);
             log.debug("File loaded: {}", this.scriptFile.getAbsolutePath());
+
+            log.info("Initializing description for {}", this.toString());
 
             if (this.scriptFile == null) {
                 log.warn("Loaded script file is {}", this.scriptFile);
@@ -186,32 +124,31 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             rScriptStream = new FileInputStream(this.scriptFile);
             if (this.parser == null)
-                this.parser = new RAnnotationParser(); // prevents
-                                                       // NullpointerException
+                this.parser = new RAnnotationParser(this.config); // prevent NullpointerException
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // submits annotation with process informations to
             // ProcessdescriptionCreator:
-            RProcessDescriptionCreator creator = new RProcessDescriptionCreator();
+            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(this.config);
             ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
                                                                            wkn,
                                                                            config.getScriptURL(wkn),
                                                                            config.getSessionInfoURL());
 
-            log.debug("Created process description for {}:\n", wkn, doc.xmlText());
+            log.debug("Created process description for {}:\n{}", wkn, doc.xmlText());
             return doc;
         }
         catch (RAnnotationException rae) {
             log.error(rae.getMessage());
-            throw new RuntimeException("Annotation error while parsing process description: " + rae.getMessage());
+            throw new RuntimeException("Annotation error while parsing process description: " + rae.getMessage(), rae);
         }
         catch (IOException ioe) {
             log.error("I/O error while parsing process description: " + ioe.getMessage());
-            throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage());
+            throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage(), ioe);
         }
         catch (ExceptionReport e) {
             log.error(e.getMessage(), e);
-            throw new RuntimeException("Error creating process descriptionn.", e);
+            throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
         }
         finally {
             try {
@@ -225,1150 +162,99 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
-        log.info("Running {}", this.toString());
-        log.debug("inputData: {}", Arrays.toString(inputData.entrySet().toArray()));
+        log.info("Running {} \n\tInput data: {}", this.toString(), Arrays.toString(inputData.entrySet().toArray()));
 
-        R_Config config = R_Config.getInstance();
-
-        String workDir = config.createTemporaryWPSWorkDir();
-
-        log.debug("Temp folder for WPS4R: {}", workDir);
-
-        RConnection rCon = null;
-        HashMap<String, IData> resulthash = new HashMap<String, IData>();
+        FilteredRConnection rCon = null;
         try {
-            String r_basedir = null;
+            rCon = config.openRConnection();
+            RLogger.logGenericRProcess(rCon,
+                                       "Running algorithm with input "
+                                               + Arrays.deepToString(inputData.entrySet().toArray()));
 
-            try {
-                // initialises connection and pre-settings
-                rCon = config.openRConnection();
+            RSessionManager session = new RSessionManager(rCon, config);
+            session.configureSession(getWellKnownName(), executor);
 
-                r_basedir = prepareWorkspace(inputData, rCon, workDir);
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, this.iohandler, config);
+            String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
-                loadUtilityScripts(rCon);
-                loadWPSSessionVariables(rCon);
-                loadInputValues(inputData, rCon);
-                loadResources(rCon);
+            List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
+            workspace.loadResources(resAnnotList);
 
-                // save an image that may help debugging R scripts
-                if (log.isDebugEnabled()) {
-                    rCon.eval("save.image(file=\"preExecution.RData\")");
-                    log.debug("Saved image to preExecution.RData");
-                }
+            List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
+            workspace.loadInputValues(inputData, inAnnotations);
 
-                InputStream rScriptStream = loadScript(config);
-                boolean success = executeScript(rScriptStream, rCon);
-                if ( !success)
-                    log.error("Failure while executing R script. See logs for details");
+            if (log.isDebugEnabled())
+                workspace.saveImage("preExecution");
 
-                try {
-                    // BufferedReader rScriptStream;
-                    rScriptStream.close();
-                }
-                catch (IOException e) {
-                    log.warn("Connection to R script cannot be closed for process {}", getWellKnownName());
-                }
+            File scriptFile = config.getScriptFileForWKN(getWellKnownName());
 
-                saveOutputValues(workDir, rCon, resulthash);
-                saveSessionInfo(rCon, resulthash);
-                saveWarnings(rCon, resulthash);
-
-                // save an image that may help debugging R scripts
-                if (log.isDebugEnabled()) {
-                    rCon.eval("save.image(file=\"afterExecution.RData\")");
-                    log.debug("Saved image to afterExecution.RData");
-                }
+            HashMap<String, IData> result = null;
+            boolean success = executor.executeScript(scriptFile, rCon);
+            if (success) {
+                List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
+                                                                                 RAnnotationType.OUTPUT);
+                result = workspace.saveOutputValues(outAnnotations);
+                result = session.saveInfos(result);
             }
-            catch (IOException e) {
-                String message = "Attempt to run R script file failed:\n" + e.getClass() + " - "
-                        + e.getLocalizedMessage() + "\n" + e.getCause();
-                log.error(message, e);
-                throw new ExceptionReport(message, e.getClass().getName(), e);
+            else {
+                String msg = "Failure while executing R script. See logs for details";
+                log.error(msg);
+                throw new ExceptionReport(msg, getClass().getName());
             }
-            catch (RAnnotationException e) {
-                String message = "R script cannot be executed due to invalid annotations.";
-                log.error(message, e);
-                throw new ExceptionReport(message, e.getClass().getName(), e);
-            }
-            catch (RserveException e) {
-                log.error("Rserve problem executing script: " + e.getMessage(), e);
-                throw e;
-            }
-            finally {
-                cleanUpRSession(rCon, r_basedir);
-            }
+
+            if (log.isDebugEnabled())
+                workspace.saveImage("afterExecution");
+            log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
+
+            session.cleanUp();
+            workspace.cleanUpInR(originalWorkDir);
+            workspace.cleanUpWithWPS();
+
+            return result;
+        }
+        catch (IOException e) {
+            String message = "Attempt to run R script file failed:\n" + e.getClass() + " - " + e.getLocalizedMessage()
+                    + "\n" + e.getCause();
+            log.error(message, e);
+            throw new ExceptionReport(message, e.getClass().getName(), e);
+        }
+        catch (RAnnotationException e) {
+            String message = "R script cannot be executed due to invalid annotations.";
+            log.error(message, e);
+            throw new ExceptionReport(message, e.getClass().getName(), e);
         }
         catch (RserveException e) {
-            String message = "An R Connection Error occured:\n" + e.getClass() + " - " + e.getLocalizedMessage() + "\n"
-                    + e.getCause();
-            log.error(message, e);
-            throw new ExceptionReport("Error with the R connection", "R", "R_Connection", e);
+            log.error("Rserve problem executing script: " + e.getMessage(), e);
+            throw new ExceptionReport("Rserve problem executing script: " + e.getMessage(),
+                                      "R",
+                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
+                                      e);
         }
         catch (REXPMismatchException e) {
-            String message = "An R Parsing Error occoured:\n" + e.getMessage() + e.getClass() + " - "
+            String message = "An R Parsing Error occoured:\n" + e.getMessage() + " - " + e.getClass() + " - "
                     + e.getLocalizedMessage() + "\n" + e.getCause();
             log.error(message, e);
             throw new ExceptionReport(message, "R", "R_Connection", e);
         }
-
-        // try to delete current local workdir - folder
-        if (this.deleteWPSWorkDirectory) {
-            File workdir = new File(workDir);
-            boolean deleted = deleteRecursive(workdir);
-            if ( !deleted)
-                log.warn("Failed to delete temporary WPS Workdirectory: " + workdir.getAbsolutePath());
-        }
-
-        log.debug("RESULT: " + Arrays.toString(resulthash.entrySet().toArray()));
-        return resulthash;
-    }
-
-    private void saveOutputValues(String workDir, RConnection rCon, HashMap<String, IData> resulthash) throws RAnnotationException,
-            RserveException,
-            ExceptionReport {
-        // retrieving result (REXP - Regular Expression Datatype)
-        List<RAnnotation> outNotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.OUTPUT);
-        for (RAnnotation rAnnotation : outNotations) {
-            String result_id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
-            REXP result = rCon.eval(result_id);
-            // TODO depending on the generated outputs,
-            // deleteWorkDirectory must be set!
-            try {
-                IData output = parseOutput(result_id, result, rCon, workDir);
-                resulthash.put(result_id, output);
-
-                log.debug("Output for {} is {}", result_id, output);
-            }
-            catch (ExceptionReport e) {
-                throw e; // re-throw exception reports
-            }
-            catch (Exception e) {
-                log.error("Could not create output for {}", result_id, e);
-            }
-        }
-    }
-
-    private void saveWarnings(RConnection rCon, HashMap<String, IData> resulthash) throws RserveException,
-            REXPMismatchException,
-            UnsupportedEncodingException {
-        String warnings = parseWarnings(rCon);
-        InputStream byteArrayInputStream = new ByteArrayInputStream(warnings.getBytes("UTF-8"));
-        resulthash.put("warnings",
-                       new GenericFileDataWithGTBinding(new GenericFileDataWithGT(byteArrayInputStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
-    }
-
-    private void saveSessionInfo(RConnection rCon, HashMap<String, IData> resulthash) throws RserveException,
-            REXPMismatchException,
-            UnsupportedEncodingException {
-        String sessionInfo = RSessionInfo.getSessionInfo(rCon);
-        InputStream byteArrayInputStream = new ByteArrayInputStream(sessionInfo.getBytes("UTF-8"));
-        resulthash.put("sessionInfo",
-                       new GenericFileDataWithGTBinding(new GenericFileDataWithGT(byteArrayInputStream,
-                                                                      GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
-    }
-
-    private InputStream loadScript(R_Config config) throws ExceptionReport, RserveException {
-        InputStream rScriptStream = null;
-        File rScriptFile = null;
-        try {
-            rScriptFile = config.wknToFile(getWellKnownName());
-            rScriptStream = new FileInputStream(rScriptFile);
-        }
-        catch (IOException e) {
-            log.error("Error reading script file.", e);
-            throw new ExceptionReport("Could not read script file " + rScriptFile + " for algorithm "
-                    + getWellKnownName(), "Input/Output", e);
-        }
-
-        return rScriptStream;
-    }
-
-    private void loadInputValues(Map<String, List<IData>> inputData, RConnection rCon) throws RAnnotationException,
-            IOException,
-            RserveException,
-            REXPMismatchException {
-        // Searching for missing inputs to apply standard values:
-        List<RAnnotation> inNotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
-        log.debug("inNonations: " + Arrays.toString(inNotations.toArray()));
-
-        // -------------------------------
-        // Input value initialization:
-        // -------------------------------
-        HashMap<String, String> inputValues = new HashMap<String, String>();
-        Iterator<Map.Entry<String, List<IData>>> iterator = inputData.entrySet().iterator();
-
-        // parses input values to R-compatible literals and streams
-        // input files to workspace
-        log.debug("Parsing input values.");
-        while (iterator.hasNext()) {
-            Map.Entry<String, List<IData>> entry = iterator.next();
-            inputValues.put(entry.getKey(), parseInput(entry.getValue(), rCon));
-            RAnnotation current = RAnnotation.filterAnnotations(inNotations, RAttribute.IDENTIFIER, entry.getKey()).get(0);
-            inNotations.remove(current);
-        }
-        log.debug("Input: {}", Arrays.toString(inNotations.toArray()));
-
-        // parses default values to R-compatible literals:
-        for (RAnnotation rAnnotation : inNotations) {
-            String id = rAnnotation.getStringValue(RAttribute.IDENTIFIER);
-            String value = rAnnotation.getStringValue(RAttribute.DEFAULT_VALUE);
-            Class< ? extends IData> iClass = getInputDataType(id);
-            String inputValue = parseLiteralInput(iClass, value);
-            log.debug("Loaded input value '{}' for {}", inputValue, rAnnotation);
-            inputValues.put(id, inputValue);
-        }
-        log.debug("Assigns: {}", Arrays.toString(inputValues.entrySet().toArray()));
-
-        // assign values to the (clean) workspace:
-        log.debug("[R] assign values.");
-        Iterator<Map.Entry<String, String>> inputValuesIterator = inputValues.entrySet().iterator();
-
-        // load input variables
-        while (inputValuesIterator.hasNext()) {
-            Map.Entry<String, String> entry = inputValuesIterator.next();
-            // use eval, not assign (assign only parses strings)
-            String statement = entry.getKey() + " <- " + entry.getValue();
-            log.debug("[R] running {}", statement);
-            rCon.eval(statement);
-        }
-        
-        RLogger.log(rCon, "workspace content after loading input values:");
-        rCon.eval("cat(capture.output(ls()), \"\n\")");
-    }
-
-    private void loadResources(RConnection rCon) throws RAnnotationException, ExceptionReport, IOException {
-        List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
-        for (RAnnotation resourceAnnotation : resAnnotList) {
-            Object resObject = resourceAnnotation.getObjectValue(RAttribute.NAMED_LIST);
-            Collection< ? > resourceCollection;
-
-            if (resObject instanceof Collection< ? >)
-                resourceCollection = (Collection< ? >) resObject;
-            else
-                continue;
-
-            for (Object element : resourceCollection) {
-                R_Resource resource;
-                if (element instanceof R_Resource)
-                    resource = (R_Resource) element;
-                else
-                    continue;
-
-                File resourceFile = resource.getFullResourcePath();
-                if (resourceFile == null || !resourceFile.exists()) {
-                    throw new ExceptionReport("Resource cannot be loaded: " + resourceAnnotation,
-                                              ExceptionReport.NO_APPLICABLE_CODE);
-                }
-                log.debug("Loading resource " + resourceAnnotation);
-                streamFromWPSToRserve(rCon, resourceFile);
-            }
-        }
-        
-        
-    }
-
-    private String prepareWorkspace(Map<String, List<IData>> inputData, RConnection rCon, String workDir) throws RserveException,
-            REXPMismatchException,
-            ExceptionReport {
-        log.debug("[R] preparing workspace...");
-
-        RLogger.logGenericRProcess(rCon,
-                                   "Running algorithm with input "
-                                           + Arrays.deepToString(inputData.entrySet().toArray()));
-        log.debug("[R] Rengine: {}", REngine.getLastEngine());
-        log.debug("[R] R server version: {}", rCon.getServerVersion());
-
-        log.debug("[R] cleaning session.");
-        // ensure that session is clean;
-        rCon.eval("rm(list = ls())");
-
-        // Retrieve the preset R working directory (R will be reset to
-        // this directory after the
-        // process run)
-        String r_basedir = rCon.eval("getwd()").asString();
-        // Set R working directory according to configuration
-        setRWorkingDirectoryBeforeProcessing(rCon, workDir);
-        return r_basedir;
-    }
-
-    /**
-     * Retrieves warnings that occured during the last execution of a script
-     * 
-     * Note that the warnings()-method is not reliable for Rserve because it does not return warnings in most
-     * cases, a workaround to retrieve the warnings is applied
-     */
-    private String parseWarnings(RConnection rCon) throws RserveException, REXPMismatchException {
-        String warnings = "";
-        REXP result = rCon.eval("wps_warn");
-        if ( !result.isNull()) {
-            String[] warningsArray = result.asStrings();
-            for (int i = 0; i < warningsArray.length; i++) {
-                String warn = warningsArray[i];
-                warnings += "warning " + (i + 1) + ": '" + warn + "'\n";
-            }
-        }
-
-        if (warnings.isEmpty())
-            warnings = "The process proceeded without any warnings from R.";
-        return warnings;
-    }
-
-    /**
-     * Sets the R working directory according to the "R_Work_Dir" configuration parameter. 4 cases are
-     * supported: default, preset, temporary and custom.
-     * 
-     * Do not confuse the R working directory with the temporary WPS working directory (this.currentworkdir)!
-     * R and WPS use the same directory under default configuration, with Rserve on localhost, but running R
-     * on a remote machine requires separate working directories for WPS and R.
-     * 
-     * @param rCon
-     *        The (open) R connection to be used. This method inherently does not call open- or
-     *        close-operations.
-     * @param currentWPSWorkDir
-     * @throws REXPMismatchException
-     * @throws RserveException
-     * @throws ExceptionReport
-     */
-    private void setRWorkingDirectoryBeforeProcessing(RConnection rCon, String currentWPSWorkDir) throws REXPMismatchException,
-            RserveException,
-            ExceptionReport {
-        R_Config rconf = R_Config.getInstance();
-
-        log.debug("[WPS4R] Original getwd(): {}", rCon.eval("getwd()").asString());
-        String config_RWorkDir = rconf.getConfigVariable(RWPSConfigVariables.R_WORK_DIR);
-        log.debug("Try to set R work directory according to {} | {}", RWPSConfigVariables.R_WORK_DIR, config_RWorkDir);
-        REXP result = null;
-        boolean isLocalhost = rconf.getRServeHost().equalsIgnoreCase("localhost");
-
-        if (config_RWorkDir == null || config_RWorkDir.equals("") || config_RWorkDir.trim().equalsIgnoreCase("default")) {
-            // Default behaviour: R work directory is the same as temporary WPS work directory if R runs
-            // locally otherwise, for remote connections, it is dependent on the configuration of R and Rserve
-            if (isLocalhost) {
-                this.wpsWorkDirIsRWorkDir = true;
-                result = rCon.eval("setwd(\"" + currentWPSWorkDir.replace("\\", "/") + "\")");
-            }
-            else {
-                // setting the R working directory relative to default R
-                // directory
-                // R starts from a work directory dependent on the behaviour and
-                // configuration of the R/Rserve
-                // installation
-                this.wpsWorkDirIsRWorkDir = false;
-                String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
-                rCon.eval("dir.create(\"" + randomFolderName + "\")"); // quotation
-                                                                       // marks!
-                result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // don't
-                                                                           // forget
-                                                                           // the
-                                                                           // escaped
-                                                                           // quotation
-                                                                           // marks
-            }
-
-        }
-        else if (config_RWorkDir.trim().equalsIgnoreCase("preset")) {
-            // setting the R working directory relative to default R directory
-            this.wpsWorkDirIsRWorkDir = false;
-            String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
-            rCon.eval("dir.create(\"" + randomFolderName + "\")"); // quotation
-                                                                   // marks!
-            result = rCon.eval("setwd(\"" + randomFolderName + "\")"); // quotation
-        } // marks!
-          // setting the R working directory in a temporal folder
-        else if (config_RWorkDir.trim().equalsIgnoreCase("temporary")) {
-            if (isLocalhost) {
-                this.wpsWorkDirIsRWorkDir = true;
-                result = rCon.eval("setwd(\"" + currentWPSWorkDir.replace("\\", "/") + "\")");
-            }
-            else {
-                this.wpsWorkDirIsRWorkDir = false;
-                try {
-                    result = rCon.eval("setwd(\"tempdir()\")");
-                }
-                catch (RserveException e) {
-                    this.temporaryPreventRWorkingDirectoryFromDelete = true;
-                    throw new ExceptionReport("Invalid configuration of WPS4R, failed to create temporal working directory",
-                                              ExceptionReport.REMOTE_COMPUTATION_ERROR,
-                                              e);
-                }
-
-            }
-        }
-        else if (config_RWorkDir.trim().equalsIgnoreCase("manual")) {
-
-            String path = null;
-            boolean isInvalidPath = false;
-            if (isLocalhost) {
-                try {
-                    path = rconf.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR);
-                    String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
-                    if (new File(path).isDirectory()) {
-                        path = (path + "/" + randomFolderName).replace("\\", "/");
-                        new File(path).mkdir();
-                        result = rCon.eval("setwd(\"" + path + "\")");
+        finally {
+            if (rCon != null) {
+                if (shutdownRServerAfterRun) {
+                    log.debug("Shutting down R completely...");
+                    try {
+                        rCon.serverShutdown();
                     }
-                    else {
-                        isInvalidPath = true;
+                    catch (RserveException e) {
+                        String message = "Error during R server shutdown:\n" + e.getMessage() + " - " + e.getClass()
+                                + " - " + e.getLocalizedMessage() + "\n" + e.getCause();
+                        log.error(message, e);
+                        throw new ExceptionReport(message, "R", "R_Connection", e);
                     }
-                }
-                catch (ExceptionReport e) {
-                    isInvalidPath = true;
-                }
-            }
-            else {
-                this.wpsWorkDirIsRWorkDir = false;
-                boolean isExistingDir = rCon.eval("isTRUE(file.info(\"" + config_RWorkDir + "\")$isdir)").asInteger() == 1;
-                if (isExistingDir) {
-                    String randomFolderName = "wps4r-r-workdir-" + UUID.randomUUID().toString().substring(0, 8);
-                    path = (path + "/" + randomFolderName).replace("\\", "/");
-                    result = rCon.eval("setwd(\"" + path + "\")");
-                }
-                else {
-                    isInvalidPath = true;
-                }
-            }
-
-            if (isInvalidPath) {
-                log.warn("[WPS4R] Invalid configurarion for variable '{}' | . Variable is switched temporarily to default.",
-                         RWPSConfigVariables.R_WORK_DIR,
-                         config_RWorkDir);
-                rconf.setConfigVariable(RWPSConfigVariables.R_WORK_DIR, "default");
-                setRWorkingDirectoryBeforeProcessing(rCon, currentWPSWorkDir);
-            }
-        }
-
-        if (rCon.eval("length(dir()) == 0").asInteger() != 1) {
-            this.temporaryPreventRWorkingDirectoryFromDelete = true;
-            throw new ExceptionReport("Non-empty R working directory on process startup. The process will not be executed to prevent the system from damage."
-                                              + "Please reconsider the configuration of WPS4R",
-                                      ExceptionReport.REMOTE_COMPUTATION_ERROR);
-        }
-
-        log.debug("[R] Old wd: {} | New wd: {}", result.asString(), rCon.eval("getwd()").asString());
-        RLogger.logGenericRProcess(rCon, "working directory: " + rCon.eval("getwd()").asString());
-    }
-
-    /**
-     * @param config
-     * @param rCon
-     * @param r_basedir
-     * @throws RserveException
-     * @throws REXPMismatchException
-     */
-    private void cleanUpRSession(RConnection rCon, String r_basedir) throws RserveException, REXPMismatchException {
-        R_Config config = R_Config.getInstance();
-        RConnection connection = rCon;
-        if (rCon == null || !rCon.isConnected()) {
-            log.debug("[R] opening new connection for cleanup...");
-            connection = config.openRConnection();
-        }
-
-        log.debug("[R] cleaning up workspace.");
-        connection.eval("rm(list = ls())");
-
-        if (this.wpsWorkDirIsRWorkDir) { // <- R won't delete the folder if it
-                                         // is the same as the wps work
-                                         // directory
-            log.debug("[R] closing stream.");
-            // connection.
-            connection.close();
-            return;
-        }
-
-        // deletes R work directory:
-        if (r_basedir != null) {
-            String currentwd = connection.eval("getwd()").asString();
-
-            log.debug("[R] setwd to {} (was: {})", r_basedir, currentwd);
-
-            // the next lines throws and exception, because r_basedir might not
-            // succesfully have been
-            // set, so check first
-            connection.eval("setwd(\"" + r_basedir + "\")");
-            // should be true usually, if not, workdirectory has been
-            // changed unexpectedly (prob. inside script)
-            if (currentwd != r_basedir && this.deleteRWorkDirectory) {
-                if ( !this.temporaryPreventRWorkingDirectoryFromDelete) {
-                    log.debug("[R] unlinking (recursive) {}", currentwd);
-                    connection.eval("unlink(\"" + currentwd + "\", recursive=TRUE)");
                 }
                 else
-                    this.temporaryPreventRWorkingDirectoryFromDelete = false;
-            }
-            else
-                log.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes");
-        }
-
-        log.debug("[R] closing stream.");
-        connection.close();
-    }
-
-    private void loadWPSSessionVariables(RConnection rCon) throws RserveException, RAnnotationException {
-        R_Config config = R_Config.getInstance();
-
-        RLogger.log(rCon, "Environment:");
-        rCon.eval("environment()");
-
-        String cmd = RWPSSessionVariables.WPS_SERVER + " <- TRUE";
-        rCon.eval(cmd);
-        log.debug("[R] {}", cmd);
-        RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER);
-
-        cmd = RWPSSessionVariables.WPS_SERVER_NAME + " <- \"52N-WPS\"";
-        rCon.eval(cmd);
-        log.debug("[R] {}", cmd);
-        RLogger.logVariable(rCon, RWPSSessionVariables.WPS_SERVER_NAME);
-
-        rCon.assign(RWPSSessionVariables.RESOURCE_URL_NAME, config.getResourceDirURL());
-        log.debug("[R] assigned resource directory to variable '{}': {}",
-                  RWPSSessionVariables.RESOURCE_URL_NAME,
-                  config.getResourceDirURL());
-        RLogger.logVariable(rCon, RWPSSessionVariables.RESOURCE_URL_NAME);
-
-        List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
-        String wpsScriptResources = null;
-
-        // Assign and concatenate lists of resources given by the
-        // resourse-Annotations
-        wpsScriptResources = "list()";
-        rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " <- " + wpsScriptResources);
-        for (RAnnotation annotation : resAnnotList) {
-            wpsScriptResources = annotation.getStringValue(RAttribute.NAMED_LIST_R_SYNTAX);
-            rCon.eval(RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + " <- " + "append("
-                    + RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES + ", " + wpsScriptResources + ")");
-        }
-
-        log.debug("[R] assigned recource urls to variable '{}': {}",
-                  RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES,
-                  wpsScriptResources);
-        RLogger.logVariable(rCon, RWPSSessionVariables.R_SESSION_SCRIPT_RESOURCES);
-
-        String processDescription = R_Config.getInstance().getUrlPathUpToWebapp()
-                + "/WebProcessingService?Request=DescribeProcess&identifier=" + this.getWellKnownName();
-
-        rCon.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription);
-        RLogger.logVariable(rCon, RWPSSessionVariables.PROCESS_DESCRIPTION);
-
-        log.debug("[R] assigned process description to variable '{}': {}",
-                  RWPSSessionVariables.PROCESS_DESCRIPTION,
-                  processDescription);
-
-        RLogger.log(rCon, "workspace content after loading session variables:");
-        rCon.eval("cat(capture.output(ls()), \"\n\")");
-    }
-
-    private void loadUtilityScripts(RConnection rCon) throws RserveException,
-            IOException,
-            FileNotFoundException,
-            RAnnotationException,
-            ExceptionReport {
-        log.debug("[R] loading utility scripts.");
-        R_Config config = R_Config.getInstance();
-        File[] utils = new File(config.utilsDirFull).listFiles(new R_Config.RFileExtensionFilter());
-        for (File file : utils) {
-            executeScript(new FileInputStream(file), rCon);
-        }
-        
-        RLogger.log(rCon, "workspace content after loading utility scripts:");
-        rCon.eval("cat(capture.output(ls()), \"\n\")");
-    }
-
-    /**
-     * parses iData values to string representations which can be evaluated by Rserve, complex data will be
-     * preprocessed and handled here, uses parseLiteralInput for parsing literal Data
-     * 
-     * @param input
-     *        input value as databinding
-     * @param Rconnection
-     *        (open)
-     * @return String which could be evaluated by RConnection.eval(String)
-     * @throws IOException
-     * @throws RserveException
-     * @throws REXPMismatchException
-     */
-    private String parseInput(List<IData> input, RConnection rCon) throws IOException,
-            RserveException,
-            REXPMismatchException {
-
-        String result = null;
-        // building an R - vector of input entries containing more than one
-        // value:
-        if (input.size() > 1) {
-            result = "c(";
-            // parsing elements 1..n-1 to vector:
-            for (int i = 0; i < input.size() - 1; i++) {
-                if (input.get(i).equals(null))
-                    continue;
-                result += parseInput(input.subList(i, i + 1), rCon);
-                result += ", ";
-            }
-            // parsing last element separately to vecor:
-            result += parseInput(input.subList(input.size() - 1, input.size()), rCon);
-            result += ")";
-        }
-
-        IData ivalue = input.get(0);
-        Class< ? extends IData> iclass = ivalue.getClass();
-        if (ivalue instanceof ILiteralData)
-            return parseLiteralInput(iclass, ivalue.getPayload());
-
-        if (ivalue instanceof GenericFileDataWithGTBinding) {
-            GenericFileDataWithGT value = (GenericFileDataWithGT) ivalue.getPayload();
-
-            InputStream is = value.getDataStream();
-            String ext = value.getFileExtension();
-            result = streamFromWPSToRserve(rCon, is, ext);
-            is.close();
-
-            return result;
-        }
-
-        if (ivalue instanceof GTRasterDataBinding) {
-            GeotiffGenerator tiffGen = new GeotiffGenerator();
-            InputStream is = tiffGen.generateStream(ivalue, GenericFileDataConstants.MIME_TYPE_GEOTIFF, "base64");
-            // String ext = value.getFileExtension();
-            result = streamFromWPSToRserve(rCon, is, "tiff");
-            is.close();
-
-            return result;
-        }
-
-        if (ivalue instanceof GTVectorDataBinding) {
-            GTVectorDataBinding value = (GTVectorDataBinding) ivalue;
-            File shp = value.getPayloadAsShpFile();
-
-            String path = shp.getAbsolutePath();
-            String baseName = path.substring(0, path.length() - ".shp".length());
-            File shx = new File(baseName + ".shx");
-            File dbf = new File(baseName + ".dbf");
-            File prj = new File(baseName + ".prj");
-
-            File shpZip = IOUtils.zip(shp, shx, dbf, prj);
-
-            InputStream is = new FileInputStream(shpZip);
-            String ext = "shp";
-            result = streamFromWPSToRserve(rCon, is, ext);
-
-            is.close();
-
-            return result;
-        }
-
-        // if nothing was supported:
-        String message = "An unsuported IData Class occured for input: " + input.get(0).getClass();
-        log.error(message);
-        throw new RuntimeException(message);
-    }
-
-    /**
-     * Streams a file from WPS to Rserve workdirectory
-     * 
-     * @param rCon
-     *        active RConnecion
-     * @param is
-     *        inputstream of the inputfile
-     * @param ext
-     *        basefile extension
-     * @return
-     * @throws IOException
-     * @throws REXPMismatchException
-     * @throws RserveException
-     */
-    private String streamFromWPSToRserve(RConnection rCon, InputStream is, String ext) throws IOException,
-            REXPMismatchException,
-            RserveException {
-        String result;
-        String randomname = UUID.randomUUID().toString();
-        String inputFileName = randomname;
-
-        // List<Class< ? extends AbstractLiteralDataBinding>> easyLiterals =
-        // Arrays.asList(LiteralByteBinding.class,
-        // LiteralDoubleBinding.class,
-        // LiteralFloatBinding.class,
-        // LiteralIntBinding.class,
-        // LiteralLongBinding.class,
-        // LiteralShortBinding.class);
-
-        RFileOutputStream rfos = rCon.createFile(inputFileName);
-
-        byte[] buffer = new byte[2048];
-        int stop = is.read(buffer);
-
-        while (stop != -1) {
-            rfos.write(buffer, 0, stop);
-            stop = is.read(buffer);
-        }
-        rfos.flush();
-        rfos.close();
-        is.close();
-        // R unzips archive files and renames files with unique
-        // random names
-        // TODO: check whether input is a zip archive or not
-        result = rCon.eval("unzipRename(" + "\"" + inputFileName + "\", " + "\"" + randomname + "\", " + "\"" + ext
-                + "\")").asString();
-        result = "\"" + result + "\"";
-        return result;
-    }
-
-    private void streamFromWPSToRserve(RConnection rCon, File source) throws IOException {
-        RFileOutputStream rfos = rCon.createFile(source.getName());
-
-        byte[] buffer = new byte[2048];
-        FileInputStream is = new FileInputStream(source);
-        int stop = is.read(buffer);
-
-        while (stop != -1) {
-            rfos.write(buffer, 0, stop);
-            stop = is.read(buffer);
-        }
-
-        rfos.flush();
-        rfos.close();
-        is.close();
-    }
-
-    private String parseLiteralInput(Class< ? extends IData> iClass, Object defaultValue) {
-        String result;
-        if (defaultValue == null) {
-            log.warn("Default value for is null for {} - setting it to 'NA' in R.", iClass);
-            return "NA";
-        }
-        else
-            result = "\"" + defaultValue.toString() + "\"";
-
-        if (easyLiterals.contains(iClass)) {
-            result = defaultValue.toString();
-        }
-        else if (iClass.equals(LiteralBooleanBinding.class)) {
-            boolean b = Boolean.parseBoolean(defaultValue.toString());
-            if (b)
-                result = "TRUE";
-            else
-                result = "FALSE";
-        }
-        else if (iClass.equals(LiteralStringBinding.class)) {
-            result = "\"" + defaultValue.toString() + "\"";
-        } else {
-            String message = "An unsuported IData class occured for input: " + iClass
-                    + "it will be interpreted as character value within R";
-            log.warn(message);
-        }
-
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private IData parseOutput(String result_id, REXP result, RConnection rCon, String workDir) throws IOException,
-            REXPMismatchException,
-            RserveException,
-            RAnnotationException,
-            ExceptionReport {
-        log.debug("parsing Output with id {} from result {} based on connection {}", result_id, result, rCon);
-
-        if (result == null) {
-            log.error("Result for output parsing is NULL for id {}", result_id);
-            throw new ExceptionReport("Result for output parsing is NULL for id " + result_id, result_id);
-        }
-
-        Class< ? extends IData> iClass = getOutputDataType(result_id);
-        log.debug("Output data type: {}", iClass.toString());
-
-        // extract mimetype from annotations (TODO: might have to be
-        // simplified somewhen)
-        List<RAnnotation> list = RAnnotation.filterAnnotations(this.annotations,
-                                                               RAnnotationType.OUTPUT,
-                                                               RAttribute.IDENTIFIER,
-                                                               result_id);
-        if (list.size() > 1)
-            log.warn("Filtered for annotation by name but got more than one result! Just using the first one of : {}",
-                     Arrays.toString(list.toArray()));
-
-        RAnnotation currentAnnotation = list.get(0);
-        log.debug("Current annotation: {}", currentAnnotation);
-        // extract filename from R
-
-        String filename = new File(result.asString()).getName();
-
-        if (iClass.equals(GenericFileDataWithGTBinding.class)) {
-            log.debug("Creating output with GenericFileDataBinding for file {}", filename);
-            String mimeType = "application/unknown";
-
-            File resultFile = new File(filename);
-            log.debug("Loading file " + resultFile.getAbsolutePath());
-
-            if ( !resultFile.isAbsolute())
-                // relative path names are relative to R work directory
-                resultFile = new File(rCon.eval("getwd()").asString(), resultFile.getName());
-
-            if (resultFile.exists())
-                log.debug("Found file at {}", resultFile);
-            else
-                log.warn("Result file does not exists at {}", resultFile);
-
-            // Transfer file from R workdir to WPS workdir
-            File outputFile = null;
-            if ( !this.wpsWorkDirIsRWorkDir)
-                outputFile = streamFromRserveToWPS(rCon, resultFile.getAbsolutePath(), workDir);
-            else
-                outputFile = resultFile;
-
-            if ( !outputFile.exists())
-                throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
-
-            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-            GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
-
-            return new GenericFileDataWithGTBinding(out);
-        }
-        else if (iClass.equals(GTVectorDataBinding.class)) {
-            String mimeType = "application/unknown";
-
-            RTypeDefinition dataType = currentAnnotation.getRDataType();
-            File outputFile;
-
-            if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2) && !this.wpsWorkDirIsRWorkDir) {
-                loadUtilityScripts(rCon);
-                String zip = "";
-                REXP ev = rCon.eval("zipShp(\"" + filename + "\")");
-
-                // filname = baseName (+ suffix)
-                String baseName = null;
-
-                if (filename.endsWith(".shp"))
-                    baseName = filename.substring(0, filename.length() - ".shp".length());
-                else
-                    baseName = filename;
-
-                // zip all -- stream --> unzip all or stream each file?
-                if ( !ev.isNull()) {
-                    zip = ev.asString();
-                    File zipfile = streamFromRserveToWPS(rCon, zip, workDir);
-                    outputFile = IOUtils.unzip(zipfile, "shp").get(0);
-                }
-                else {
-                    log.info("R call to zip() does not work, streaming of shapefile without zipping");
-                    String[] dir = rCon.eval("dir()").asStrings();
-                    for (String f : dir) {
-                        if (f.startsWith(baseName) && !f.equals(filename))
-                            streamFromRserveToWPS(rCon, f, workDir);
-                    }
-
-                    outputFile = streamFromRserveToWPS(rCon, filename, workDir);
-                }
-            }
-            else {
-                if ( !this.wpsWorkDirIsRWorkDir) {
-                    outputFile = streamFromRserveToWPS(rCon, filename, workDir);
-                }
-                else {
-                    outputFile = new File(filename);
-                    if ( !outputFile.isAbsolute())
-                        // relative path names are alway relative to R work
-                        // directory
-                        outputFile = new File(rCon.eval("getwd()").asString(), outputFile.getName());
-                }
-
-                // outputFile = streamFromRserveToWPS(rCon, filename);
-            }
-
-            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-
-            GenericFileDataWithGT gfd = new GenericFileDataWithGT(outputFile, mimeType);
-            GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
-            return gtvec;
-        }
-        else if (iClass.equals(GTRasterDataBinding.class)) {
-            String mimeType = "application/unknown";
-
-            File tempfile = streamFromRserveToWPS(rCon, filename, workDir);
-
-            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-
-            GeotiffParser tiffPar = new GeotiffParser();
-            FileInputStream fis = new FileInputStream(tempfile);
-            GTRasterDataBinding output = tiffPar.parse(fis, mimeType, "base64");
-            fis.close();
-
-            return output;
-        }
-        else if (iClass.equals(LiteralBooleanBinding.class)) {
-            log.debug("Creating output with LiteralBooleanBinding");
-
-            int tresult = result.asInteger();
-            switch (tresult) {
-            case 1:
-                return new LiteralBooleanBinding(true);
-            case 0:
-                return new LiteralBooleanBinding(false);
-            default:
-                break;
+                    rCon.close();
             }
         }
-
-        Class< ? >[] easyLiterals = new Class[] {LiteralByteBinding.class,
-                                                 LiteralDoubleBinding.class,
-                                                 LiteralFloatBinding.class,
-                                                 LiteralIntBinding.class,
-                                                 LiteralLongBinding.class,
-                                                 LiteralShortBinding.class,
-                                                 LiteralStringBinding.class};
-
-        // TODO: Might be a risky solution in terms of unknown constructors:
-        for (Class< ? > literal : easyLiterals) {
-            if (iClass.equals(literal)) {
-                Constructor<IData> cons = null;
-                try {
-                    cons = (Constructor<IData>) iClass.getConstructors()[0];
-                    Constructor< ? > param = cons.getParameterTypes()[0].getConstructor(String.class);
-                    if (literal.equals(LiteralIntBinding.class)) {
-                        // try to force conversion from R-datatype to integer
-                        // (important for the R-data type "numeric"):
-                        return cons.newInstance(param.newInstance("" + result.asInteger()));
-                    }
-                    return cons.newInstance(param.newInstance(result.asString()));
-
-                }
-                catch (Exception e) {
-                    String message = "Error for parsing String to IData for " + result_id + " and class " + iClass
-                            + "\n" + e.getMessage();
-                    log.error(message, e);
-                    throw new RuntimeException(message);
-                }
-            }
-        }
-
-        String message = "R_Proccess: Unsuported Output Data Class declared for id " + result_id + ":" + iClass;
-        log.error(message);
-
-        throw new RuntimeException(message);
     }
-
-    /**
-     * Streams a File from R workdirectory to a temporal file in the WPS4R workdirectory
-     * (R.Config.WORK_DIR/random folder)
-     * 
-     * @param rCon
-     *        an open R connection
-     * @param filename
-     *        name or path of the file located in the R workdirectory
-     * @param workDir
-     * @return Location of a file which has been streamed
-     * @throws IOException
-     * @throws FileNotFoundException
-     */
-    private File streamFromRserveToWPS(RConnection rCon, String filename, String workDir) throws IOException,
-            FileNotFoundException {
-        File tempfile = new File(filename);
-        File destination = new File(workDir);
-        if ( !destination.exists())
-            destination.mkdirs();
-        tempfile = new File(destination, tempfile.getName());
-
-        // Do streaming Rserve --> WPS tempfile
-        RFileInputStream fis = rCon.openFile(filename);
-        FileOutputStream fos = new FileOutputStream(tempfile);
-        byte[] buffer = new byte[2048];
-        int stop = fis.read(buffer);
-        while (stop != -1) {
-            fos.write(buffer, 0, stop);
-            stop = fis.read(buffer);
-        }
-        fis.close();
-        fos.close();
-        // tempfile.deleteOnExit();
-        return tempfile;
-    }
-
-    /**
-     * 
-     * @param script
-     *        R input script
-     * @param rCon
-     *        Connection - should be open usually / otherwise it will be opened and closed separately
-     * @return true if read was successful
-     * @throws RserveException
-     * @throws IOException
-     * @throws RAnnotationException
-     * @throws ExceptionReport
-     * @throws RuntimeException
-     *         if R reports an error
-     */
-    private boolean executeScript(InputStream script, RConnection rCon) throws RserveException,
-            IOException,
-            RAnnotationException,
-            ExceptionReport {
-        log.debug("Executing script...");
-
-        boolean success = true;
-
-        BufferedReader fr = new BufferedReader(new InputStreamReader(script));
-        if ( !fr.ready())
-            return false;
-
-        // reading script:
-        StringBuilder text = new StringBuilder();
-
-        text.append("wps_warn=c()\n"); // stores warnings
-
-        // surrounds R script with try / catch block in R
-        text.append("error = try({" + '\n');
-        // wrapper to retrieve warnings (workaround, because warnings() reliable
-        // for Rserve and often returns NULL)
-        text.append("withCallingHandlers({\n\n\n");
-
-        // is set true when wps.off-annotations occur
-        // this indicates that parts of the script shall not pass to Rserve
-        boolean wpsoff_state = false;
-
-        while (fr.ready()) {
-            String line = fr.readLine();
-
-            if (line.contains("setwd(")) {
-                log.warn("The running R script contains a call to \"setwd(...)\". "
-                        + "This may cause runtime-errors and unexpected behaviour of WPS4R. "
-                        + "It is strongly advise to not use this function in process scripts.");
-            }
-
-            if (line.contains(RegExp.WPS_OFF) && line.contains(RegExp.WPS_ON))
-                // TODO: check in validation
-                throw new RAnnotationException("Invalid R-script: Only one wps.on; / wps.off; expression per line!");
-
-            if (line.contains(RegExp.WPS_OFF)) {
-                wpsoff_state = true;
-            }
-            else if (line.contains(RegExp.WPS_ON)) {
-                wpsoff_state = false;
-            }
-            else if (wpsoff_state)
-                line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
-
-            text.append(line + "\n");
-        }
-        // apply handler to retrieve warnings:
-        text.append("\n\n\n},warning=function(w) {\n" + "  wps_warn = get(\"wps_warn\", envir=.GlobalEnv)\n"
-                + "  wps_warn = append(wps_warn, w$message)\n" + "  assign(\"wps_warn\", wps_warn, envir=.GlobalEnv)\n"
-                + "}" + ")");
-        text.append("})" + '\n' + "hasError = class(error) == \"try-error\" " + '\n'
-                + "if(hasError) error_message = as.character(error)" + '\n');
-
-        if (this.debugScript && log.isDebugEnabled())
-            log.debug(text.toString());
-
-        // call the actual script here
-        rCon.eval(text.toString());
-
-        try {
-            // handling internal R errors:
-            if (rCon.eval("hasError").asInteger() == 1) {
-                String message = "An R-error occured while executing R-script: \n"
-                        + rCon.eval("error_message").asString();
-                log.error(message);
-                success = false;
-                throw new ExceptionReport(message, ExceptionReport.REMOTE_COMPUTATION_ERROR);
-            }
-
-            // retrieving error from Rserve
-        }
-        catch (REXPMismatchException e) {
-            log.warn("Error handling during R-script execution failed: " + e.getMessage());
-            success = false;
-        }
-
-        return success;
-    }
-
-    /**
-     * Deletes File or Directory completely with its content
-     * 
-     * @param in
-     *        File or directory
-     * @return true if all content could be deleted
-     */
-    private boolean deleteRecursive(File in) {
-        boolean success = true;
-        if ( !in.exists()) {
-            return false;
-        }
-        if (in.isDirectory()) {
-            File[] files = in.listFiles();
-            for (File file : files) {
-                if (file.isFile()) {
-                    success = success && file.delete();
-                }
-                if (file.isDirectory()) {
-                    success = success && deleteRecursive(file);
-                }
-            }
-        }
-        if (success) {
-            success = success && in.delete();
-        }
-        return success;
-    }
-
-    /**
-     * Searches annotations (class attribute) for Inputs / Outputs with a specific referring id
-     * 
-     * @param ioType
-     * @param id
-     * @return
-     * @throws RAnnotationException
-     */
-    private Class< ? extends IData> getIODataType(RAnnotationType ioType, String id) throws RAnnotationException {
-        Class< ? extends IData> dataType = null;
-        List<RAnnotation> ioNotations = RAnnotation.filterAnnotations(this.annotations,
-                                                                      ioType,
-                                                                      RAttribute.IDENTIFIER,
-                                                                      id);
-        if (ioNotations.isEmpty()) {
-            log.error("Missing R-script-annotation of type " + ioType.toString().toLowerCase() + " for id \"" + id
-                    + "\" ,datatype - class not found");
-            return null;
-        }
-        if (ioNotations.size() > 1) {
-            log.warn("R-script contains more than one annotation of type " + ioType.toString().toLowerCase()
-                    + " for id \"" + id + "\n" + " WPS selects the first one.");
-        }
-
-        RAnnotation annotation = ioNotations.get(0);
-        String rClass = annotation.getStringValue(RAttribute.TYPE);
-        dataType = RAnnotation.getDataClass(rClass);
-
-        if (dataType == null) {
-            log.error("R-script-annotation for " + ioType.toString().toLowerCase() + " id \"" + id
-                    + "\" contains unsuported data format identifier \"" + rClass + "\"");
-        }
-        return dataType;
-    }
-
-    public Class< ? extends IData> getInputDataType(String id) {
-        try {
-            return getIODataType(RAnnotationType.INPUT, id);
-        }
-        catch (RAnnotationException e) {
-            String message = "Data type for id " + id + " could not be retrieved, return null";
-            log.error(message, e);
-        }
-        return null;
-    };
-
-    public Class< ? extends IData> getOutputDataType(String id) {
-        if (id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings"))
-            return GenericFileDataWithGTBinding.class;
-
-        try {
-            return getIODataType(RAnnotationType.OUTPUT, id);
-        }
-        catch (RAnnotationException e) {
-            String message = "Data type for id " + id + " could not be retrieved, return null";
-            log.error(message, e);
-        }
-        return null;
-    };
 
     @Override
     public String toString() {

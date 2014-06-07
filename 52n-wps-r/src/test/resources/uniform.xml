@@ -14,7 +14,7 @@
 		<ows:Metadata xlin:title="Resource Directory URL"
 			xlin:href="http://localhost:8080/wps/R/resources" />
 		<ows:Metadata xlin:title="R Session Info"
-			xlin:href="http://my.url/sessioninfo.jsp" />
+			xlin:href="http://my.url/to_the_session_info" />
 		<DataInputs>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>min</ows:Identifier>

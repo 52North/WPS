@@ -28,25 +28,46 @@
  */
 package org.n52.wps.server.r.util;
 
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.Rserve.RConnection;
-import org.rosuda.REngine.Rserve.RserveException;
+import java.io.IOException;
 
-public class RSessionInfo {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    public static String getVersion(RConnection rCon) throws RserveException, REXPMismatchException
-    {
-        return getConsoleOutput(rCon, "R.version[\"version.string\"]");
+/**
+ * Starting RServe via command line on different OS.
+ * 
+ * For documentation see http://www.rforge.net/Rserve/doc.html
+ * 
+ * For information about RServe on Windows see http://rforge.net/Rserve/rserve-win.html
+ * 
+ * @author Daniel
+ * 
+ */
+public class RStarter {
+
+    private static Logger log = LoggerFactory.getLogger(RStarter.class);
+
+    private static void startRServeOnLinux() throws InterruptedException, IOException {
+        String rserveStartCMD = "R CMD Rserve --vanilla --slave";
+        Runtime.getRuntime().exec(rserveStartCMD).waitFor();
     }
 
-    public static String getSessionInfo(RConnection rCon) throws RserveException, REXPMismatchException
-    {
-        return getConsoleOutput(rCon, "sessionInfo()");
+    private static void startRServeOnWindows() throws IOException {
+        String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
+        Runtime.getRuntime().exec(rserveStartCMD);
     }
 
-    public static String getConsoleOutput(RConnection rCon,
-            String cmd) throws RserveException, REXPMismatchException
-    {
-        return rCon.eval("paste(capture.output(print(" + cmd + ")),collapse='\\n')").asString();
+    public void startR() throws InterruptedException, IOException {
+        log.debug("Starting R locally...");
+
+        if (System.getProperty("os.name").toLowerCase().indexOf("linux") > -1) {
+            startRServeOnLinux();
+        }
+        else if (System.getProperty("os.name").toLowerCase().indexOf("windows") > -1) {
+            startRServeOnWindows();
+        }
+
+        log.info("Started R.");
     }
+
 }

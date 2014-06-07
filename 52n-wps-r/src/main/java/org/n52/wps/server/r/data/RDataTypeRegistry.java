@@ -177,7 +177,7 @@ public class RDataTypeRegistry {
     public void register(CustomDataType type)
     {
         this.customDataTypes.put(type.getKey(), type);
-
+        LOGGER.debug("New custom data type registered: {}", type);
     }
 
     /**

@@ -106,16 +106,17 @@ public class CustomDataTypeManager {
             String mimetype,
             String hint)
     {
+        LOGGER.debug("Adding new data type with key '{}', mimetype '{}', and hint '{}'", key, mimetype, hint);
+
         CustomDataType type = new CustomDataType();
         type.setKey(key);
         type.setProcessKey(mimetype);
         if (hint.equalsIgnoreCase(HINT_FILE)) {
-            type.setEncoding("base64");
+            // type.setEncoding("base64");
             type.setComplex(true);
         }
 
         RDataTypeRegistry.getInstance().register(type);
-
     }
 
     public File getConfigFile()
@@ -129,7 +130,5 @@ public class CustomDataTypeManager {
             instance = new CustomDataTypeManager();
         return instance;
     }
-
-    // TODO update methode
 
 }

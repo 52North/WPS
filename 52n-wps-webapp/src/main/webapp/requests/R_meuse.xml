@@ -8,24 +8,16 @@
 	<wps:ResponseForm>
 		<wps:ResponseDocument>
 			<wps:Output asReference="true">
-				<ows:Identifier>
-				workspace
-				</ows:Identifier>
+				<ows:Identifier>workspace</ows:Identifier>
 			</wps:Output>
 			<wps:Output asReference="true">
-				<ows:Identifier>
-				meuse.rdata
-				</ows:Identifier>
+				<ows:Identifier>meuse.rdata</ows:Identifier>
 			</wps:Output>
 			<wps:Output asReference="true">
-				<ows:Identifier>
-				meuse.grid.rdata
-				</ows:Identifier>
+				<ows:Identifier>meuse.grid.rdata</ows:Identifier>
 			</wps:Output>
 			<wps:Output asReference="true">
-				<ows:Identifier>
-				meuse.riv.rdata
-				</ows:Identifier>
+				<ows:Identifier>meuse.riv.rdata</ows:Identifier>
 			</wps:Output>
 		</wps:ResponseDocument>
 	</wps:ResponseForm>

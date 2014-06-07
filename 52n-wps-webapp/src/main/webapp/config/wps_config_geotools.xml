@@ -108,6 +108,8 @@
 				<Format mimetype="application/rData+SpatialPoints" />
 				<Format mimetype="application/rData+SpatialPolygons" />
 				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -149,6 +151,9 @@
 				<Format mimetype="application/rData+Spatial" />
 				<Format mimetype="application/rData+SpatialPoints" />
 				<Format mimetype="application/rData+SpatialPolygons" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -430,6 +435,8 @@
 				<Format mimetype="application/pdf" />
 				<Format mimetype="application/zip" />
 				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 			</Generator>			
 			<Generator name="GenericFileDataWithGTGenerator"
 				className="org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator"
@@ -476,6 +483,9 @@
 				<Format mimetype="text/plain" />
 				<Format mimetype="application/pdf" />
 				<Format mimetype="application/zip" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
@@ -587,15 +597,19 @@
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">R/scripts</Property>
-			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
-			<Property name="Resource_Dir" active="true">R/resources</Property>
-			<Property name="R_Work_Dir" active="true">default</Property>
-			<Property name="Enable_Batch_Start" active="true">true</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
+			<Property name="R_enableBatchStart" active="true">true</Property>
+			<Property name="R_datatypeConfig" active="true">R/R_Datatype.conf</Property>
+			<Property name="R_wdStrategy" active="true">default</Property>
+			<Property name="R_wdName" active="false">myName</Property>
+			<Property name="R_resourceDirectory" active="true">R/resources</Property>
+			<Property name="R_RserveHost" active="true">localhost</Property>
+			<Property name="R_RservePort" active="true">6311</Property>
+			<Property name="R_RserveUser" active="false">NA</Property>
+			<Property name="R_RservePassword" active="false">NA</Property>
+			<Property name="R_scriptDirectory" active="true">R/scripts</Property>
+			<Property name="R_cacheProcesses" active="true">true</Property>
+			<Property name="R_session_memoryLimit" active="true">1000</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
@@ -1140,6 +1154,8 @@
 			<Property name="wipe.period" active="true">PT1H</Property>
 			<!-- deletes files older than 7 days -->
 			<Property name="wipe.threshold" active="true">P7D</Property>
+			<!-- save complex values gzipped -->
+			<Property name="complex.gzip" active="true">true</Property>
 		</Database>
         
         <!-- 

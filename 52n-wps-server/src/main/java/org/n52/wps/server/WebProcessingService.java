@@ -49,9 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
@@ -60,6 +57,8 @@ import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
@@ -240,8 +239,16 @@ public class WebProcessingService extends HttpServlet {
         catch (ExceptionReport e) {
             handleException(e, res);
         }
+        catch (Exception e) {
+            ExceptionReport er = new ExceptionReport("Error handing request: " + e.getMessage(),
+                                                     ExceptionReport.NO_APPLICABLE_CODE,
+                                                     e);
+            handleException(er, res);
+        }
         finally {
-            res.flushBuffer();
+            if (res != null) {
+                res.flushBuffer();
+            }
             // out.flush();
             // out.close();
         }

@@ -74,13 +74,17 @@ public class RLogger {
         logIt(rCon, evalString);
     }
 
-    private static void logIt(RConnection rCon, StringBuilder evalString) {
+    private static void logIt(RConnection rCon, String evalString) {
         try {
-            rCon.eval(evalString.toString());
+            rCon.eval(evalString);
         }
         catch (RserveException e) {
             LOGGER.warn("Could not log message '{}'", evalString.toString(), e);
         }
+    }
+
+    private static void logIt(RConnection rCon, StringBuilder evalString) {
+        logIt(rCon, evalString.toString());
     }
 
     private static void appendPre(StringBuilder evalString) {
@@ -112,6 +116,14 @@ public class RLogger {
         evalString.append(", \"");
         evalString.append("\\n\")");
         logIt(rCon, evalString);
+    }
+
+    public static void logSessionContent(RConnection rCon) {
+        logIt(rCon, "cat(paste(capture.output(ls()), collapse = \"\\n\"), \"\n\")");
+    }
+
+    public static void logWorkspaceContent(RConnection rCon) {
+        logIt(rCon, "cat(paste(capture.output(list.files(getwd())), collapse = \"\\n\"), \"\n\")");
     }
 
 }
