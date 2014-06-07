@@ -896,7 +896,7 @@
 
 	<div id="RSessionInfoBox" style="display:none;">
 		<span id="boxtitle"></span>
-		<iframe width="600px" height="400px" src="../R/sessioninfo.jsp"></iframe><br><br>
+		<iframe width="600px" height="400px" src="../not_available"></iframe><br><br>
 		<input type="button" name="OK" value="OK" onclick="closebox('RSessionInfoBox')">
 	</div>
 

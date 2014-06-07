@@ -26,52 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 public enum RWPSConfigVariables {
 
-    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG, R_WORK_DIR;
+    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM_PROPERTY_NAME, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG, R_WORK_DIR_STRATEGY, R_WORK_DIR_NAME, R_CACHE_PROCESSES, R_SESSION_MEMORY_LIMIT;
 
-    public String toString()
-    {
+    public String toString() {
         switch (this) {
-        case R_WORK_DIR:
-            return "R_Work_Dir"; // values: default, auto or path
+        case R_WORK_DIR_STRATEGY:
+            return "R_wdStrategy";
+        case R_WORK_DIR_NAME:
+            return "R_wdName";
         case SCRIPT_DIR:
-            return "Script_Dir";
+            return "R_scriptDirectory";
         case RESOURCE_DIR:
-            return "Resource_Dir";
-        case ALGORITHM:
+            return "R_resourceDirectory";
+        case ALGORITHM_PROPERTY_NAME:
             return "Algorithm";
         case ENABLE_BATCH_START:
-            return "Enable_Batch_Start";
+            return "R_enableBatchStart";
         case RSERVE_HOST:
-            return "Rserve_Host";
+            return "R_RserveHost";
         case RSERVE_PORT:
-            return "Rserve_Port";
+            return "R_RservePort";
         case RSERVE_USER:
-            return "Rserve_User";
+            return "R_RserveUser";
         case RSERVE_PASSWORD:
-            return "Rserve_Password";
+            return "R_RservePassword";
         case R_DATATYPE_CONFIG:
-            return "R_Datatype_Config";
+            return "R_datatypeConfig";
+        case R_CACHE_PROCESSES:
+            return "R_cacheDescriptions";
+        case R_SESSION_MEMORY_LIMIT:
+            return "R_session_memoryLimit";
         default:
             return "NO STRING REPRESENTATION DEFINED FOR ENUM CONSTANT!";
         }
 
     };
-
-    // public static void validate(RWPSConfigVariables parameter, String value)
-    // throws ExceptionReport{
-    //
-    // throw new
-    // ExceptionReport("[WPS4R] Invalid configuration for parameter "+parameter+", value is "+value,
-    // ExceptionReport.INVALID_PARAMETER_VALUE);
-    // }
-
-    public static void main(String[] args)
-    {
-        System.out.println(RWPSConfigVariables.valueOf("Rserve_Port"));
-    }
-
 }

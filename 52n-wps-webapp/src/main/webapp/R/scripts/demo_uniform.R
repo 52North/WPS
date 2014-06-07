@@ -9,5 +9,3 @@
 
 # calculate something... variable "input" don't have to be initialized
 output = runif(1)*input
-
-

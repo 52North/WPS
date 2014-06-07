@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotation;
@@ -45,7 +46,14 @@ import org.n52.wps.server.r.syntax.ResourceAnnotation;
 
 public class AnnotationParser {
 
+    private static R_Config config;
+
     private List<RAnnotation> annotations;
+
+    @BeforeClass
+    public static void initConfig() {
+        config = R_Config.getInstance();
+    }
 
     @Before
     public void loadAnnotations() throws IOException, RAnnotationException {
@@ -53,7 +61,7 @@ public class AnnotationParser {
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
-        RAnnotationParser parser = new RAnnotationParser();
+        RAnnotationParser parser = new RAnnotationParser(config);
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
     }

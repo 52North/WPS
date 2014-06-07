@@ -36,12 +36,16 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.AfterClass;
@@ -114,10 +118,13 @@ public class Wps4rIT {
         return con;
     }
 
-    @Test
+    /*
+     * DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
+     */
+    // @Test
     public void sessionInfoRetrievedFromWPSWebsite() throws MalformedURLException {
         String temp = wpsUrl.substring(0, wpsUrl.lastIndexOf("/"));
-        URL urlSessionInfo = new URL(temp + "/R/sessioninfo.jsp");
+        URL urlSessionInfo = new URL(temp + "/rsessioninfoendpoint");
         try {
             String response = GetClient.sendRequest(urlSessionInfo.toExternalForm());
             assertThat(response, containsString("R ")); // "R version" fails if using unstable R!
@@ -143,13 +150,21 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("This is a dummy txt-file"));
-        assertThat(response, containsString("480"));
+        assertThat("response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("text resource content could be read",
+                   response,
+                   containsString("dataType=\"xs:string\">This is a dummy txt-file"));
+        assertThat("image resource is loaded", response, containsString("480"));
+        assertThat("directories are created", response, containsString("xs:integer\">1</wps:LiteralData>"));
+        assertThat("subdirectory resources can be read", response, containsString("xs:double\">42.0</wps:LiteralData>"));
+        assertThat("subsubdirectory resources can be read",
+                   response,
+                   containsString("xs:integer\">17</wps:LiteralData>"));
+        assertThat("recursive folders all exist", response, containsString("xs:integer\">3</wps:LiteralData>"));
     }
 
     @Test
-    public void responseContainsVersionSection() throws IOException,
+    public void responseContainsSessionInfo() throws IOException,
             ParserConfigurationException,
             SAXException,
             XmlException {
@@ -161,7 +176,11 @@ public class Wps4rIT {
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, not(containsString("ExceptionReport")));
-        assertThat(response, containsString("R version "));
+        assertThat(response, containsString("attached base packages:"));
+        assertThat(response, containsString("locale:"));
+        assertThat(response, containsString("<wps:ComplexData encoding=\"UTF-8\" mimeType=\"text/plain\">"));
+        assertThat(response, containsString("methods"));
+        assertThat(response, containsString("base"));
     }
 
     @Test
@@ -176,7 +195,10 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString("warnings"));
+        assertThat(response, containsString("<ows:Identifier>warnings</ows:Identifier>"));
+        assertThat(response, containsString("mimeType=\"text/plain\">warning"));
+        assertThat(response, containsString("Test warning 1"));
+        assertThat(response, containsString("Test warning 4: This is the LAST warning"));
     }
 
     @Test
@@ -256,7 +278,8 @@ public class Wps4rIT {
         String response = PostClient.sendRequest(wpsUrl, payload);
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, containsString(Integer.toString(result)));
+        String expected = "dataType=\"xs:double\">" + Integer.toString(result) + ".0";
+        assertThat(response, containsString(expected));
     }
 
     @Test
@@ -271,7 +294,7 @@ public class Wps4rIT {
                    response,
                    containsString(expected));
     }
-    
+
     @Test
     public void defaultValuesAreLoaded() throws XmlException, IOException {
         URL resource = Wps4rIT.class.getResource("/R/ExecuteTestDefaults.xml");
@@ -283,6 +306,128 @@ public class Wps4rIT {
         assertThat("Returned value is sum of defaults, not sum of values defined in deactivated code.",
                    response,
                    containsString(expected));
+    }
+
+    @Test
+    public void exceptionsOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {
+        // "\\x0022;", // FIXME Rserve can be crashed with this
+        // "\u0071\u0075\u0069\u0074\u0028\u0029",
+        // "<-", "a<-q", // result in WPS parsing error
+        "="};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@data@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            String expected = "illegal input";
+            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+            assertThat("Response contains the keyphrase '" + expected + "'", response, containsString(expected));
+            assertThat("Response contains the illegal input", response, containsString(cmd));
+        }
+    }
+
+    @Test
+    public void syntaxErrorOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {"\"\";quit(\"no\");", "setwd('/root/')", "setwd(\"c:/\")"};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@data@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+            String expected = "eval failed";
+            assertThat("Response contains '" + expected + "'", response, containsString(expected));
+        }
+    }
+
+    @Test
+    public void replacementsOnIllegalInputs() throws XmlException, IOException {
+        String[] illegalCommands = new String[] {"unlink(getwd())", "q();", "quit()", "%lt;-",
+                                                 // "system('format hardisk')",
+                                                 "quit(\\\"no\\\");inputVariable;"};
+
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        for (String cmd : illegalCommands) {
+            String payload = xmlPayload.toString();
+            payload = payload.replace("@@@data@@@", cmd);
+
+            String response = PostClient.sendRequest(wpsUrl, payload);
+
+            assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+            // assertThat("Response contains an echo of '" + cmd + "'", response, containsString(cmd));
+        }
+    }
+
+    @Test
+    public void renamingDoesNotAffectScript() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestEcho.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String data = UUID.randomUUID().toString();
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@data@@@", data);
+
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains an echo of '" + data + "'", response, containsString(data));
+    }
+
+    @Test
+    public void csvResponseInlineWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSV.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@ref@@@", Boolean.toString(false));
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        assertThat("Response contains test data names",
+                   response,
+                   containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
+    }
+
+    @Test
+    public void csvResponseReferenceWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSV.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        payload = payload.replace("@@@ref@@@", Boolean.toString(true));
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        String urlString = response.substring(response.indexOf("http", response.indexOf("text/csv")));
+        urlString = urlString.substring(0, urlString.indexOf("\""));
+        URL url = new URL(urlString);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+        String contentType = connection.getContentType();
+        assertThat("Response content type is correct", contentType, is("text/csv"));
+
+        StringWriter writer = new StringWriter();
+        IOUtils.copy(connection.getInputStream(), writer);
+        String csv = writer.toString();
+
+        assertThat("CSV file contains test data names", csv, containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
     }
 
 }

@@ -80,7 +80,8 @@ public enum RAnnotationType {
         if (this.attributeLut.containsKey(k))
             return this.attributeLut.get(k);
 
-        throw new RAnnotationException("Annotation for " + this + " (" + this.startKey + " ...) contains no key named: " + key + ".");
+        throw new RAnnotationException("Annotation " + this + " (" + this.startKey
+                + " ...) cannot contain a parameter named '" + key + "'.");
     }
 
     public Iterable<RAttribute> getAttributeSequence()

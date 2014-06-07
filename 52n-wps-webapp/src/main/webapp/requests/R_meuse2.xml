@@ -4,10 +4,10 @@
 	xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
-	<ows:Identifier>org.n52.wps.server.r.meuse_rdata2</ows:Identifier>
+	<ows:Identifier>org.n52.wps.server.r.demo.meuse.rdata</ows:Identifier>
 	<wps:ResponseForm>
-	<wps:RawDataOutput>
-	<ows:Identifier>workspace</ows:Identifier>
-	</wps:RawDataOutput>
+		<wps:RawDataOutput>
+			<ows:Identifier>workspace</ows:Identifier>
+		</wps:RawDataOutput>
 	</wps:ResponseForm>
 </wps:Execute>
