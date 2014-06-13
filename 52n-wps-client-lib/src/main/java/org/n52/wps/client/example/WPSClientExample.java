@@ -58,11 +58,11 @@ public class WPSClientExample {
 					wpsURL, processID);
 			System.out.println(describeProcessDocument);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-			CapabilitiesDocument capabilitiesDocument = requestGetCapabilities(wpsURL);
+            requestGetCapabilities(wpsURL);
+
 			ProcessDescriptionType describeProcessDocument = requestDescribeProcess(
 					wpsURL, processID);
 			// define inputs
@@ -77,7 +77,7 @@ public class WPSClientExample {
 					describeProcessDocument, inputs);
 
 			if (data instanceof GTVectorDataBinding) {
-				FeatureCollection featureCollection = ((GTVectorDataBinding) data)
+                FeatureCollection< ? , ? > featureCollection = ((GTVectorDataBinding) data)
 						.getPayload();
 				System.out.println(featureCollection.size());
 			}
@@ -102,6 +102,7 @@ public class WPSClientExample {
 		ProcessBriefType[] processList = capabilities.getCapabilities()
 				.getProcessOfferings().getProcessArray();
 
+        System.out.println("Processes in capabilities:");
 		for (ProcessBriefType process : processList) {
 			System.out.println(process.getIdentifier().getStringValue());
 		}
@@ -144,7 +145,7 @@ public class WPSClientExample {
 				// Complexdata by value
 				if (inputValue instanceof FeatureCollection) {
 					IData data = new GTVectorDataBinding(
-							(FeatureCollection) inputValue);
+(FeatureCollection< ? , ? >) inputValue);
 					executeBuilder
 							.addComplexData(
 									inputName,
