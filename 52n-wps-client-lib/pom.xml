@@ -11,6 +11,9 @@
     <packaging>jar</packaging>
     <name>52North WPS Client Library</name>
     <description>This module contains some convenient classes to interact with WPS</description>
+    
+    <url>https://wiki.52north.org/bin/view/Geoprocessing/ClientAPI</url>
+    
 	<build>
 		<plugins>
 			<plugin>
@@ -54,5 +57,10 @@
             <artifactId>52n-wps-algorithm-impl</artifactId>
             <scope>test</scope>
         </dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 </project>

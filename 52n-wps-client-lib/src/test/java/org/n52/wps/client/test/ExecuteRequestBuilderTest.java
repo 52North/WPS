@@ -26,36 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.client.test;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.is;
+import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm;
 
 public class ExecuteRequestBuilderTest {
 
-	@Test
-	public void testAddComplexDataInputType(){
-		
-		new MultiReferenceBinaryInputAlgorithm().getDescription();
-		
-		ProcessDescriptionType processDescriptionType = new MultiReferenceBinaryInputAlgorithm().getDescription();
-		
-		ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
-		
-		InputType inputType = InputType.Factory.newInstance();
-		
-		inputType.addNewIdentifier().setStringValue("data");
-		
-		inputType.addNewReference().setHref("http://xyz.test.data");
-		
-		executeRequestBuilder.addComplexData(inputType);
-		
-		System.out.println(executeRequestBuilder.getExecute().toString());
-		
-	}
-	
+    @Test
+    public void addComplexDataInputType() {
+        ProcessDescriptionType processDescriptionType = new MultiReferenceBinaryInputAlgorithm().getDescription();
+
+        ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
+
+        InputType inputType = InputType.Factory.newInstance();
+
+        String id = "data";
+        inputType.addNewIdentifier().setStringValue(id);
+        String url = "http://xyz.test.data";
+        inputType.addNewReference().setHref(url);
+
+        executeRequestBuilder.addComplexData(inputType);
+
+        ExecuteDocument request = executeRequestBuilder.getExecute();
+
+        Assert.assertThat("generated doc contains input id", request.toString(), containsString(id));
+        Assert.assertThat("generated doc contains input url", request.toString(), containsString(url));
+        Assert.assertThat("document is valid", request.validate(), is(true));
+    }
+
 }
