@@ -2322,6 +2322,7 @@ var FormBuilder = Class.extend({
 	    		
 	    		formatDropBoxDiv.append(formatDropBox);
 	    		    		
+	    		// FIXME this looses the selection again!
 	    		templateProperties.formats = formatDropBoxDiv.html();
 	    		
 	    		template = TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP;
