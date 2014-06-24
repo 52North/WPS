@@ -29,7 +29,6 @@
 		<div id="wrapper">
 			<div>
 				<span>Service endpoint:</span> <select id="wps">
-					<option>http://localhost:8080/wps/WebProcessingService</option>
 				</select>
 			</div>
 			<div>
@@ -54,6 +53,14 @@
 		</div>
 
 		<script type="text/javascript">
+			// derive service url from current location
+			var urlIndex = window.location.href.lastIndexOf("/client.html");
+			var urlBasisString = window.location.href.substring(0, (urlIndex + 1));
+			var serviceUrlString = urlBasisString + "WebProcessingService";
+			
+			var o = new Option(serviceUrlString, serviceUrlString);
+			$('#wps').append(o);
+		
 			var capabilities, // the capabilities, read by Format.WPSCapabilities::read
 			process; // the process description from Format.WPSDescribeProcess::read
 
