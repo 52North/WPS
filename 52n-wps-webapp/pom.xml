@@ -189,6 +189,7 @@
 		<wps.config.file>config/wps_config.xml</wps.config.file>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+		<index.jsp.file>webAdmin/index.jsp</index.jsp.file>
 	</properties>
 
 	<build>
@@ -543,6 +544,7 @@
 			<id>with-geotools</id>
 			<properties>
 				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
+				<index.jsp.file>webAdmin/index-r.jsp</index.jsp.file>
 			</properties>
 			<build>
 				<!--<plugins> <plugin> <artifactId>maven-war-plugin</artifactId> <configuration> 
