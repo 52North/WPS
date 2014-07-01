@@ -250,6 +250,14 @@
 							<filtering>true</filtering>
 							<targetPath>/</targetPath>
 						</resource>
+						<resource>
+							<directory>src/main/webapp/webAdmin</directory>
+							<filtering>true</filtering>
+							<targetPath>webAdmin</targetPath>
+							<includes>
+                				<include>**/*.jsp</include>
+              				</includes>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>

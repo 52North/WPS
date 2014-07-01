@@ -1,7 +1,6 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="org.n52.wps.webadmin.ConfigUploadBean"%>
 <%@ page import="org.n52.wps.webadmin.ChangeConfigurationBean"%>
-<%@ page import="org.n52.wps.server.r.info.RProcessInfo"%>
 <%@ page import="java.util.List"%>
 
 <!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -30,7 +29,7 @@
             var itemListTypes = new Array("Generator","Parser","Repository","RemoteRepository");
             var itemListTypeNr = {"Generator":0,"Parser":1,"Repository":2,"RemoteRepository":3};
             var relativeConfigPath = "../config/";
-            var configurationFileName = "wps_config.xml";
+            var configurationFileName = "../${wps.config.file}";
             
             // upload req
             var uploadId = "";
@@ -77,10 +76,6 @@
 
 				$("#manage_rem_repos").click(function(){
                     openbox('Manage Remote Repositories', 1, 'box')             
-                });
-               	
-                $("#upload_r_script").click(function(){
-                    openbox('Upload an R script', 1, 'box2')             
                 });
 
                 $("#loadConfBtn").click(function(){
@@ -172,14 +167,7 @@
 								active = false;
                             }
                                       
-                            var itemID;
-                            
-                            if (nameEntry == "LocalRAlgorithmRepository"){
-                            	itemID = addListItemForWPS4R(listType);
-                            	setWPS4RId(itemID);
-                            }else{
-                                itemID = addListItem(listType);
-                            }
+                            var itemID = addListItem(listType);                            
 
                             if (nameEntry == "UploadedAlgorithmRepository"){setUploadId(itemID);}
 
@@ -233,8 +221,6 @@
                             
                         });
                     }
-                    
-                    setWPS4RValidityFlags();
                 });
             }
 
@@ -552,10 +538,6 @@
             function setUploadId(itemID){
              	uploadId = itemID;
             }
-            
-            function setWPS4RId(itemID){
-             	WPS4RId = itemID;
-            }
                       
 			function appendProcessToList() {                            			
 				 itemType= "Repository-" + uploadId + "_Property";
@@ -630,97 +612,7 @@
 	            // append the save button
 	           	$("div#editSave img#editImg").remove();
 	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"editServerSettings(); return false;\" src=\"images/edit.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 								
-            }
-			
-            function addListItemForWPS4R(itemType){
-                var id = document.getElementById("id").value;
-                 $("#"+itemType+"_List").append
-                    (
-    	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
-    						"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
-    						"<table class=\"nameClass\">"+
-    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
-    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
-    							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
-    							"<tr><td style=\"font-weight:bold; padding-right:15px\">R</td><td>"+
-        						"<input class=\"formButtons\" name=\"showRConfig\" type=\"button\"\r\n" + 
-        						" value=\"Show sessionInfo\" style=\"border:1px solid black;background:white; width:100pt\" onclick=\"openbox('R session information', 1, 'RSessionInfoBox') ;\">"+    							
-    							"</td></tr>"+	
-    						"</table>"+
-
-    		                "<br><br>" +
-
-    		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
-    						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
-    			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
-    				                "<div class=\"propListHeader\">" +
-    					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-    					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
-    				                "</div>" +
-    			                "</div>" +
-    			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
-    			            "</div>"+
-    	                "</p>"
-                    );
-          
-                var newId = (id - 1) + 2;
-                document.getElementById("id").value = newId;
-                return id;
-            }
-            
-			function rProcessInfo(){
-				this.algorithmName;
-				this.isValid;
-				this.isAvailable;
-				this.exception;
-				this.scriptURL;
-			}
-			
-
-			function setWPS4RValidityFlags(){
-				var rProcessInfos = new Array();
-<%List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
-				int i = 0;
-				for (RProcessInfo rProcessInfo : rProcessInfoList) {
-					//TODO: use constructor, i.e. new ProcessInfo(algorithmname, isValid, isAvailable, ...) to shorten text
-					out.println("\t\t\t\trProcessInfos["+i+"] = new rProcessInfo();");
-					out.println("\t\t\t\trProcessInfos["+i+"].algorithmName = \""+ rProcessInfo.getWkn() +"\";");
-					out.println("\t\t\t\trProcessInfos["+i+"].isAvailable = "+   rProcessInfo.isAvailable() +";");
-					out.println("\t\t\t\trProcessInfos["+i+"].isValid = "+		 rProcessInfo.isValid()+";");
-					out.println("\t\t\t\trProcessInfos["+i+"].scriptURL = \""+	 rProcessInfo.getScriptURL()+"\";");
-					out.println("\t\t\t\trProcessInfos["+i+"].exception = \""+	 rProcessInfo.getLastErrormessage()+"\";");
-					i++;
-				}%>
-				
-				for(var i = 0; i<rProcessInfos.length; i++){					
-					var flagId = rProcessInfos[i].algorithmName.replace(/\./g,"_")+"_flag";
-					if(rProcessInfos[i].isValid){
-						$("#"+flagId).append(
-								"<img class=\"flagIcon\" src=\"images/script_valid.png\" alt=\"Script is valid\" title=\"Script is valid\" style=\"background-color:transparent\"></img>"		
-							);
-					}else
-						if(!rProcessInfos[i].isAvailable){
-							var message = rProcessInfos[i].exception;
-							WPS4RErrors[i] = message;
-							$("#"+flagId).append(
-									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>"		
-								);
-						}
-					else{
-						var message = rProcessInfos[i].exception;
-						WPS4RErrors[i] = message;
- 						text = 	"<img class=\"flagIcon\" src=\"images/script_invalid.png\" alt=\"Script not valid\" "
- 							+ "title=\"Script is not valid, click here to see the last errormessage\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>";
- 						$("#"+flagId).append(text);
-						
-						}
-					
-				}
-				//TODO: insert exceptions
-
-			}
-
-			
+            }			
         -->
     </script>
 </head>
@@ -744,7 +636,6 @@
 						<td><input class="formButtons" type="reset" value="Reset" name="Reset" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" id="upload_process" type="button" value="Upload Process" name="UploadProcess" style="border:1px solid black;background:white;" /></td>
 						<!--td><input class="formButtons" id="manage_rem_repos" type="button" value="Update Remote Repositories" name="ManageRemoteRepositories" style="border:1px solid black;background:white;" /></td-->
-						<td><input class="formButtons" id="upload_r_script" type="button" value="Upload R Script" name="UploadRScript" style="border:1px solid black;background:white;" /></td>
 					</tr>
 				</table>
 				<div id="sections">
@@ -857,47 +748,6 @@
 				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box')">
 			</p>
 		</form>
-	</div>
-
-	<div id="box2">
-		<span id="boxtitle"></span>
-		<form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadRFiles()">
-			<input type="hidden" name="uploadRscript" />
-			<p>
-				Please enter the process name:<br>
-				(only if process name should be unlike filename)<br><br>
-				<input type="text" name="rProcessName" size="30" id="rProcessNameId">
-			</p>
-			<p>
-				Please enter the location of an annotated R script<br>
-				<br>
-				<input type="file" name="rProcessFile" id="rProcessFile" size="40">
-			</p>
-		
-			<!--processDescriptionFile currently has no meaning, so it's just hidden-->
-			<input type="hidden" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
-			<!--<p>
-				Please specify the associated ProcessDescription .xml file
-				(optional, not yet implemented):<br>
-				<br>
-				<input type="file" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
-
-			</p>-->
-			<p>
-				<input type="submit" name="submit"> 
-				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box2')">
-				<br>
-				<br>
-				<I>Process id will be org.n52.wps.server.r.[filename]
-					or org.n52.wps.server.r.[process name]</I>
-			</p>
-		</form>
-	</div>
-
-	<div id="RSessionInfoBox" style="display:none;">
-		<span id="boxtitle"></span>
-		<iframe width="600px" height="400px" src="../not_available"></iframe><br><br>
-		<input type="button" name="OK" value="OK" onclick="closebox('RSessionInfoBox')">
 	</div>
 
 </body>
