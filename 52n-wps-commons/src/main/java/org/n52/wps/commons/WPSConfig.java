@@ -82,7 +82,10 @@ public class WPSConfig implements Serializable {
     // FvK: added Property Change support
     protected final PropertyChangeSupport propertyChangeSupport;
 
+    private static String configPath;
+    
     private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
+    	configPath = wpsConfigPath;    	
         wpsConfigXMLBeans = (WPSConfigurationImpl) WPSConfigurationDocument.Factory.parse(new File(wpsConfigPath)).getWPSConfiguration();
 
         // FvK: added Property Change support
@@ -230,6 +233,7 @@ public class WPSConfig implements Serializable {
         if (wpsConfig == null) {
             try {
                 wpsConfig = new WPSConfig(path);
+                configPath = path;
             }
             catch (XmlException e) {
                 LOGGER.error("Failed to initialize WPS. Reason: " + e.getMessage());
@@ -282,9 +286,12 @@ public class WPSConfig implements Serializable {
      *
      * @return
      */
-    public static String getConfigPath() {
-       return getConfigPath(null);
-    }
+	public static String getConfigPath() {
+		if (configPath == null) {
+			return getConfigPath(null);
+		}
+		return configPath;
+	}
 
     public WPSConfigurationImpl getWPSConfig() {
         return wpsConfigXMLBeans;
