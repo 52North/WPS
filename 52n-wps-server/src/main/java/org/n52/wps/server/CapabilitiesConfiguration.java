@@ -249,17 +249,23 @@ public class CapabilitiesConfiguration {
                 .addNewProcessOfferings();
         for (String algorithmName : RepositoryManager.getInstance()
                 .getAlgorithms()) {
-            ProcessDescriptionType description = RepositoryManager
-                    .getInstance().getProcessDescription(algorithmName);
-            if (description != null) {
-                ProcessBriefType process = processes.addNewProcess();
-                CodeType ct = process.addNewIdentifier();
-                ct.setStringValue(algorithmName);
-                LanguageStringType title = description.getTitle();
-                String processVersion = description.getProcessVersion();
-                process.setProcessVersion(processVersion);
-                process.setTitle(title);
-            }
+        	try {
+        		ProcessDescriptionType description = RepositoryManager
+                        .getInstance().getProcessDescription(algorithmName);
+                if (description != null) {
+                    ProcessBriefType process = processes.addNewProcess();
+                    CodeType ct = process.addNewIdentifier();
+                    ct.setStringValue(algorithmName);
+                    LanguageStringType title = description.getTitle();
+                    String processVersion = description.getProcessVersion();
+                    process.setProcessVersion(processVersion);
+                    process.setTitle(title);
+                }	
+        	}
+        	catch (RuntimeException e) {
+        		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
+        	}
+            
         }
     }
 
