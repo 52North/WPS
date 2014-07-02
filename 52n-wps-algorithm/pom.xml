@@ -79,8 +79,8 @@
 			<groupId>org.n52.wps</groupId>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-config</artifactId>
-			<groupId>org.n52.wps</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>xmlbeans</artifactId>
@@ -98,6 +98,11 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
             <scope>test</scope>
 		</dependency>
 	</dependencies>
