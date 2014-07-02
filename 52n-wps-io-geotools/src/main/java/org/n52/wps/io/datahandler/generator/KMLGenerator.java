@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - ${currentYear} 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -22,23 +22,23 @@
  * License version 2 and the aforementioned licenses.
  *
  * As an exception to the terms of the GPL, you may copy, modify,
- * propagate, and distribute a work formed by combining 52n-wps-io-geotools
- * with the Eclipse Libraries, or a work derivative of such a combination,
- * even if such copying, modification, propagation, or distribution would
- * otherwise violate the terms of the GPL. Nothing in this exception exempts
- * you from complying with the GPL in all respects for all of the code used
- * other than the Eclipse Libraries. You may include this exception and its
- * grant of permissions when you distribute 52n-wps-io-geotools. Inclusion
- * of this notice with such a distribution constitutes a grant of such
- * permissions. If you do not wish to grant these permissions, remove this
- * paragraph from your distribution. "52n-wps-io-geotools" means the
- * 52°North WPS module using GeoTools functionality - software licensed
- * under version 2 or any later version of the GPL, or a work based on such
- * software and licensed under the GPL. "Eclipse Libraries" means Eclipse
- * Modeling Framework Project and XML Schema Definition software
- * distributed by the Eclipse Foundation and licensed under the Eclipse
- * Public License Version 1.0 ("EPL"), or a work based on such software and
- * licensed under the EPL.
+ * propagate, and distribute a work formed by combining 52°North WPS
+ * GeoTools Modules with the Eclipse Libraries, or a work derivative of
+ * such a combination, even if such copying, modification, propagation, or
+ * distribution would otherwise violate the terms of the GPL. Nothing in
+ * this exception exempts you from complying with the GPL in all respects
+ * for all of the code used other than the Eclipse Libraries. You may
+ * include this exception and its grant of permissions when you distribute
+ * 52°North WPS GeoTools Modules. Inclusion of this notice with such a
+ * distribution constitutes a grant of such permissions. If you do not wish
+ * to grant these permissions, remove this paragraph from your
+ * distribution. "52°North WPS GeoTools Modules" means the 52°North WPS
+ * modules using GeoTools functionality - software licensed under version 2
+ * or any later version of the GPL, or a work based on such software and
+ * licensed under the GPL. "Eclipse Libraries" means Eclipse Modeling
+ * Framework Project and XML Schema Definition software distributed by the
+ * Eclipse Foundation and licensed under the Eclipse Public License Version
+ * 1.0 ("EPL"), or a work based on such software and licensed under the EPL.
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
