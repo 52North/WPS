@@ -28,6 +28,7 @@
  */
 package org.n52.wps.server.request;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
@@ -132,8 +133,7 @@ public class SimpleBufferAlgorithmInputHandlerTest {
         assertThat(instance.getParsedInputData().isEmpty(), is(false));
         assertThat(instance.getParsedInputData().size(), equalTo(2));
         assertThat(instance.getParsedInputData().keySet().size(), equalTo(2));
-        assertThat(instance.getParsedInputData().keySet().toArray()[0].toString(), is(equalToIgnoringCase("width")));
-        assertThat(instance.getParsedInputData().keySet().toArray()[1].toString(), is(equalToIgnoringCase("data")));
+        assertThat(instance.getParsedInputData().keySet(), containsInAnyOrder("width", "data"));
         assertThat(instance.getParsedInputData().get("data").size(), equalTo(1));
         assertThat(instance.getParsedInputData().get("width").size(), equalTo(1));
 
