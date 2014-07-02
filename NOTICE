@@ -85,6 +85,7 @@ This project includes:
   config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Content Repository for Java Technology API under Day Specification License or Day Specification License addendum
   core under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  CORS Filter under The Apache Software License, Version 2.0
   DataStore Support under Lesser General Public License (LGPL)
   decision under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Derby Engine under The Apache Software License, Version 2.0
@@ -131,6 +132,7 @@ This project includes:
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java Property Utility under The Apache Software License, Version 2.0
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail 1.4 under The Apache Software License, Version 2.0

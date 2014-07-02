@@ -669,7 +669,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io</artifactId>
 				<version>${project.version}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io</artifactId>
@@ -873,8 +873,13 @@
 				<version>0.6-8</version>
 			</dependency>
 			<!-- END R dependencies -->
-		</dependencies>
-	</dependencyManagement>
+            <dependency>
+                <groupId>com.thetransactioncompany</groupId>
+                <artifactId>cors-filter</artifactId>
+                <version>1.9.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 	<reporting>
 		<plugins>
 			<plugin>
