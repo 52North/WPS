@@ -37,8 +37,8 @@ This project includes:
   52North WPS Client Library under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Commons under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
+  52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991

@@ -41,7 +41,6 @@ import java.net.URLDecoder;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-import javax.media.jai.JAI;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -117,8 +116,7 @@ public class WebProcessingService extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-
-        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256 * 1024 * 1024L);
+        
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
         System.setProperty("org.geotools.referencing.forceXY", "true");

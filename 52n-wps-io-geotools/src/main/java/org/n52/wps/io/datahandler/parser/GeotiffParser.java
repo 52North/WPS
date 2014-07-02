@@ -21,6 +21,25 @@
  * if the distribution is compliant with both the GNU General Public
  * License version 2 and the aforementioned licenses.
  *
+ * As an exception to the terms of the GPL, you may copy, modify,
+ * propagate, and distribute a work formed by combining 52°North WPS
+ * GeoTools Modules with the Eclipse Libraries, or a work derivative of
+ * such a combination, even if such copying, modification, propagation, or
+ * distribution would otherwise violate the terms of the GPL. Nothing in
+ * this exception exempts you from complying with the GPL in all respects
+ * for all of the code used other than the Eclipse Libraries. You may
+ * include this exception and its grant of permissions when you distribute
+ * 52°North WPS GeoTools Modules. Inclusion of this notice with such a
+ * distribution constitutes a grant of such permissions. If you do not wish
+ * to grant these permissions, remove this paragraph from your
+ * distribution. "52°North WPS GeoTools Modules" means the 52°North WPS
+ * modules using GeoTools functionality - software licensed under version 2
+ * or any later version of the GPL, or a work based on such software and
+ * licensed under the GPL. "Eclipse Libraries" means Eclipse Modeling
+ * Framework Project and XML Schema Definition software distributed by the
+ * Eclipse Foundation and licensed under the Eclipse Public License Version
+ * 1.0 ("EPL"), or a work based on such software and licensed under the EPL.
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
@@ -34,6 +53,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
+
+import javax.media.jai.JAI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +105,8 @@ public class GeotiffParser extends AbstractParser {
 	}
 	
 	private GTRasterDataBinding parseTiff(File file){
+		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
+		
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
 		GeoTiffReader reader;

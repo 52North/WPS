@@ -21,6 +21,25 @@
  * if the distribution is compliant with both the GNU General Public
  * License version 2 and the aforementioned licenses.
  *
+ * As an exception to the terms of the GPL, you may copy, modify,
+ * propagate, and distribute a work formed by combining 52°North WPS
+ * GeoTools Modules with the Eclipse Libraries, or a work derivative of
+ * such a combination, even if such copying, modification, propagation, or
+ * distribution would otherwise violate the terms of the GPL. Nothing in
+ * this exception exempts you from complying with the GPL in all respects
+ * for all of the code used other than the Eclipse Libraries. You may
+ * include this exception and its grant of permissions when you distribute
+ * 52°North WPS GeoTools Modules. Inclusion of this notice with such a
+ * distribution constitutes a grant of such permissions. If you do not wish
+ * to grant these permissions, remove this paragraph from your
+ * distribution. "52°North WPS GeoTools Modules" means the 52°North WPS
+ * modules using GeoTools functionality - software licensed under version 2
+ * or any later version of the GPL, or a work based on such software and
+ * licensed under the GPL. "Eclipse Libraries" means Eclipse Modeling
+ * Framework Project and XML Schema Definition software distributed by the
+ * Eclipse Foundation and licensed under the Eclipse Public License Version
+ * 1.0 ("EPL"), or a work based on such software and licensed under the EPL.
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
@@ -63,11 +82,6 @@ public class GeotiffGenerator  extends AbstractGenerator {
 	
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		InputStream stream = null;
 		
 		if((data instanceof GTRasterDataBinding)){
@@ -106,8 +120,7 @@ public class GeotiffGenerator  extends AbstractGenerator {
 		GeoTiffFormat format = new GeoTiffFormat();
 		
 		GeoTiffWriteParams wp = new GeoTiffWriteParams();
-
-	
+		
 		wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
 		wp.setCompressionType("LZW"); 
 		wp.setTilingMode(GeoToolsWriteParams.MODE_EXPLICIT);
@@ -120,7 +133,6 @@ public class GeotiffGenerator  extends AbstractGenerator {
 		ParameterValueGroup paramWrite = format.getWriteParameters();
 		paramWrite.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
-		
 		
 		try {
 			geoTiffWriter.write(coverage, (GeneralParameterValue[])paramWrite.values().toArray(new
