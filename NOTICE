@@ -189,12 +189,7 @@ This project includes:
   Web Feature Service Model under Lesser General Public License (LGPL)
   WFS XML Support under Lesser General Public License (LGPL)
   Woodstox under The Apache Software License, Version 2.0
-<<<<<<< HEAD
   WPS-Config under The Apache Software License, Version 2.0
-  WSDL4J under CPL
-  WSS4J under The Apache Software License, Version 2.0
-=======
->>>>>>> master
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
