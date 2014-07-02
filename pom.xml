@@ -669,7 +669,7 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io</artifactId>
 				<version>${project.version}</version>
-			</dependency>			
+			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-io</artifactId>
@@ -873,6 +873,11 @@
 				<version>0.6-8</version>
 			</dependency>
 			<!-- END R dependencies -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>1.2</version>
+            </dependency>
 		</dependencies>
 	</dependencyManagement>
 	<reporting>
