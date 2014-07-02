@@ -28,7 +28,6 @@ Public License for more details.
 This project includes:
   52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52n-wps-ags-workspace under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
-  52n-WPS-Config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Moving Code Runtime under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Admin Interface under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -211,6 +210,7 @@ This project includes:
   Woden - API under The Apache Software License, Version 2.0
   Woden - DOM under The Apache Software License, Version 2.0
   Woodstox under The Apache Software License, Version 2.0
+  WPS-Config under The Apache Software License, Version 2.0
   WSDL4J under CPL
   WSS4J under The Apache Software License, Version 2.0
   Xalan Java under The Apache Software License, Version 2.0
