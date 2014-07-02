@@ -237,7 +237,7 @@ public class WebProcessingService extends HttpServlet {
         catch (ExceptionReport e) {
             handleException(e, res);
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             ExceptionReport er = new ExceptionReport("Error handing request: " + e.getMessage(),
                                                      ExceptionReport.NO_APPLICABLE_CODE,
                                                      e);

@@ -186,18 +186,16 @@
 		<module>52n-wps-io-impl</module>
 		<module>52n-wps-io-geotools</module>
 		<module>52n-wps-server</module>
-		<module>52n-wps-server-soap</module>
+<!-- 		<module>52n-wps-server-soap</module> -->
 		<module>52n-wps-algorithm</module>
 		<module>52n-wps-algorithm-impl</module>
 		<module>52n-wps-algorithm-geotools</module>
 		<module>52n-wps-database</module>
-<!-- 		<module>52n-wps-unicore</module> -->
-<!-- 		<module>52n-wps-gridgain</module> -->
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
 		<module>52n-wps-sextante</module>
 		<module>52n-wps-grass</module>
-		<module>52n-wps-transactional</module>
+<!-- 		<module>52n-wps-transactional</module> -->
 		<module>52n-wps-webadmin</module>
 		<module>52n-wps-ags</module>
 		<module>52n-wps-python</module>
@@ -435,26 +433,6 @@
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.axis</groupId>
-				<artifactId>axis</artifactId>
-				<version>1.4</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.axis</groupId>
-				<artifactId>axis-jaxrpc</artifactId>
-				<version>1.4</version>
-			</dependency>
-			<dependency>
-				<groupId>axis</groupId>
-				<artifactId>axis-wsdl4j</artifactId>
-				<version>1.5.1</version>
-			</dependency>
-			<dependency>
-				<groupId>wsdl4j</groupId>
-				<artifactId>wsdl4j</artifactId>
-				<version>1.6.2</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.abdera</groupId>
 				<artifactId>abdera-bundle</artifactId>
 				<version>1.1.2</version>
@@ -470,26 +448,6 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.axis2</groupId>
-				<artifactId>axis2</artifactId>
-				<version>${apache.axis2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.axis2</groupId>
-				<artifactId>axis2-transport-local</artifactId>
-				<version>${apache.axis2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.axis2</groupId>
-				<artifactId>axis2-transport-http</artifactId>
-				<version>${apache.axis2.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.axis2</groupId>
-				<artifactId>axis2-saaj</artifactId>
-				<version>${apache.axis2.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
 				<version>1.1</version>
@@ -503,21 +461,6 @@
 				<groupId>org.apache.woden</groupId>
 				<artifactId>woden-api</artifactId>
 				<version>1.0M8</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ws.commons.axiom</groupId>
-				<artifactId>axiom-impl</artifactId>
-				<version>1.2.10</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ws.commons.axiom</groupId>
-				<artifactId>axiom-dom</artifactId>
-				<version>1.2.10</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.ws.commons.axiom</groupId>
-				<artifactId>axiom-api</artifactId>
-				<version>1.2.10</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.ws.security</groupId>
@@ -688,11 +631,6 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>52n-wps-server-soap</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-algorithm</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -734,11 +672,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-webadmin</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>52n-wps-transactional</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

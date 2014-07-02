@@ -44,13 +44,6 @@
 		<name>Apache Axis SAAJ 1.4</name>
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
-	<artifact>
-		<groupId>org.apache.axis</groupId>
-		<artifactId>axis-wsdl4j</artifactId>
-		<version>1.5.1</version>
-		<name>Apache Axis WSDL4J 1.4</name>
-		<license>The Apache Software License, Version 2.0</license>
-	</artifact>
 
 	<!-- http://www.bouncycastle.org/licence.html -->
 	<artifact>
@@ -418,11 +411,4 @@
 		<name>jGridShift</name>
 		<license>GNU Lesser General Public License, version 2.0 (LGPLv2)</license>
 	</artifact>
-
-	<artifact>
-        <groupId>axis</groupId>
-        <artifactId>axis-wsdl4j</artifactId>
-        <version>1.5.1</version>
-		<license>The Apache Software License, Version 2.0</license>
-    </artifact>
 </license-lookup>
