@@ -52,10 +52,6 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>jai_core</artifactId>
-			<groupId>javax.media</groupId>
-		</dependency>
-		<dependency>
 			<artifactId>jts</artifactId>
 			<groupId>com.vividsolutions</groupId>
 		</dependency>

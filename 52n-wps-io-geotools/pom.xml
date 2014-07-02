@@ -11,6 +11,14 @@
 	<packaging>jar</packaging>
 	<name>52North WPS Geotools Input/Ouput Implementation</name>
 	<description>Geotools Implementation of the input/output API for WPS service</description>
+
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)</name>
+			<url>https://github.com/52North/WPS/tree/WPS-3.3.0/52n-wps-io-geotools/src/main/resources/LICENSE</url>
+		</license>
+	</licenses>
+
 	<repositories>
 		<repository>
 			<id>osgeo</id>
@@ -27,12 +35,22 @@
 		</repository>
 	</repositories>
 	<build>
+		<resources>
+			<resource>
+				<directory>.</directory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>../misc/licenses/license_header.txt</header>
+					<header>../misc/licenses/license_header_for_geotools_modules.txt</header>
 				</configuration>
 			</plugin>
 			<plugin>

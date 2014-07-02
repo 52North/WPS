@@ -96,10 +96,6 @@
 		    <artifactId>httpclient</artifactId>
 	  	</dependency>
 		<dependency>
-			<groupId>javax.media</groupId>
-			<artifactId>jai_core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>

@@ -32,11 +32,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.UUID;
+
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.n52.wps.server.database.DatabaseFactory;
@@ -54,6 +57,8 @@ public class RetrieveResultServlet extends HttpServlet {
     public final static String SERVLET_PATH = "RetrieveResultServlet";
     // in future parameterize
     private final boolean indentXML = false;
+    
+    private final int uuid_length = 36;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -81,10 +86,14 @@ public class RetrieveResultServlet extends HttpServlet {
             errorResponse("id parameter missing", response);
         } else {
 
+        	if(!isIDValid(id)){
+        		errorResponse("id parameter not valid", response);
+        	}
+        	
             IDatabase db = DatabaseFactory.getDatabase();
             String mimeType = db.getMimeTypeForStoreResponse(id);
             long contentLength = db.getContentLengthForStoreResponse(id);
-
+            
             InputStream inputStream = null;
             OutputStream outputStream = null;
             try {
@@ -207,4 +216,45 @@ public class RetrieveResultServlet extends HttpServlet {
     public static Throwable getRootCause(Throwable t) {
         return t.getCause() == null ? t : getRootCause(t.getCause());
     }
+    
+    public boolean isIDValid(String id){    
+    	
+    	if(id.length() <= uuid_length){
+    		
+            try {
+                UUID checkUUID = UUID.fromString(id);
+                
+                if(checkUUID.toString().equals(id)){
+                	return true;
+                }else{
+                	return false;
+                }
+			} catch (Exception e) {
+            	return false;
+			}
+    		
+    	}else {
+    		
+    		String uuidPartOne = id.substring(0, uuid_length);
+    		String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());
+    		
+    		return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);    		
+    	}
+    }
+    
+	public boolean isUUIDValid(String uuid) {
+
+		// the following can be used to check whether the id is a valid UUID
+		try {
+			UUID checkUUID = UUID.fromString(uuid);
+
+			if (checkUUID.toString().equals(uuid)) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+	}
 }
