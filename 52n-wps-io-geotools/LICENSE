@@ -1,4 +1,17 @@
-﻿Copyright (C) ${inceptionYear} - ${currentYear} 52°North Initiative for Geospatial Open Source
+52n-wps-io-geotools is build using a number of eclipse libraries including emf and xsd made available under the Eclipse Public License.
+
+The notice for EPL license is included below:
+
+ Copyright (c) 2002-2006 IBM Corporation and others.
+ All rights reserved.   This program and the accompanying materials
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+ 
+ 
+ 
+Project License:
+Copyright (C) ${inceptionYear} - ${currentYear} 52°North Initiative for Geospatial Open Source
 Software GmbH
 
 This program is free software; you can redistribute it and/or modify it

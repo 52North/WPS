@@ -26,7 +26,11 @@
 				</includes>
 			</resource>
 			<resource>
-				<directory>src/main/resources</directory>
+				<directory>.</directory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
+				</includes>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
