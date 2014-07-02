@@ -310,7 +310,7 @@
 		<groupId>org.n52.wps</groupId>
 		<artifactId>gmlpacket-2.0</artifactId>
 		<version>0.4</version>
-		<license>UNKNOWN, XMLBeans???</license>
+		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
 	</artifact>
 
 	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
@@ -318,7 +318,7 @@
 		<groupId>org.n52.wps</groupId>
 		<artifactId>ogckml2.2</artifactId>
 		<version>1.0.0</version>
-		<license>UNKNOWN, XMLBeans???</license>
+		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
 	</artifact>
 
 	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
