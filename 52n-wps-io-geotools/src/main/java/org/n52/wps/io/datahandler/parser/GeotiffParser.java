@@ -35,6 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import javax.media.jai.JAI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -84,6 +86,8 @@ public class GeotiffParser extends AbstractParser {
 	}
 	
 	private GTRasterDataBinding parseTiff(File file){
+		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
+		
 		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
 				Boolean.TRUE);
 		GeoTiffReader reader;

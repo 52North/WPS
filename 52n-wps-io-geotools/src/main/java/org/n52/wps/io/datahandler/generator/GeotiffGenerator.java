@@ -63,11 +63,6 @@ public class GeotiffGenerator  extends AbstractGenerator {
 	
 	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
 		InputStream stream = null;
 		
 		if((data instanceof GTRasterDataBinding)){
@@ -106,8 +101,7 @@ public class GeotiffGenerator  extends AbstractGenerator {
 		GeoTiffFormat format = new GeoTiffFormat();
 		
 		GeoTiffWriteParams wp = new GeoTiffWriteParams();
-
-	
+		
 		wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
 		wp.setCompressionType("LZW"); 
 		wp.setTilingMode(GeoToolsWriteParams.MODE_EXPLICIT);
@@ -120,7 +114,6 @@ public class GeotiffGenerator  extends AbstractGenerator {
 		ParameterValueGroup paramWrite = format.getWriteParameters();
 		paramWrite.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
 		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
-		
 		
 		try {
 			geoTiffWriter.write(coverage, (GeneralParameterValue[])paramWrite.values().toArray(new
