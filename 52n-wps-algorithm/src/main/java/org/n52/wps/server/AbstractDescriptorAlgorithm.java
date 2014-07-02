@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
@@ -34,7 +35,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
-import org.apache.commons.lang.StringUtils;
+
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
 import org.n52.wps.FormatDocument.Format;
@@ -55,6 +56,8 @@ import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubject {
 
@@ -288,19 +291,17 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 format.getSchema());
     }
     
-    private void describeComplexDataFormat(
-            ComplexDataDescriptionType description,
-            String format,
-            String encoding,
-            String schema)
-    {
-        if (StringUtils.isNotBlank(format)) {
+    private void describeComplexDataFormat(ComplexDataDescriptionType description,
+                                           String format,
+                                           String encoding,
+                                           String schema) {
+        if ( !Strings.isNullOrEmpty(format)) {
             description.setMimeType(format);
         }
-        if (StringUtils.isNotBlank(encoding)) {
+        if ( !Strings.isNullOrEmpty(encoding)) {
             description.setEncoding(encoding);
         }
-        if (StringUtils.isNotBlank(schema)) {
+        if ( !Strings.isNullOrEmpty(schema)) {
             description.setSchema(schema);
         }
     }
