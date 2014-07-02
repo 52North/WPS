@@ -60,10 +60,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-server-soap</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
 			<exclusions>
 				<exclusion>
@@ -156,32 +152,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-		<dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-transport-local</artifactId>
-            <exclusions>
-            	<exclusion>
-            		<artifactId>wsdl4j</artifactId>
-            		<groupId>wsdl4j</groupId>
-            	</exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.axis2</groupId>
-            <artifactId>axis2-transport-http</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.apache.axis2</groupId>
-			<artifactId>axis2-saaj</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>axis</groupId>
-            <artifactId>axis-wsdl4j</artifactId>
-        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
@@ -603,20 +573,6 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-transactional</artifactId>
-					<exclusions>
-						<exclusion>
-							<artifactId>xmlParserAPIs</artifactId>
-							<groupId>xerces</groupId>
-						</exclusion>
-						<exclusion>
-							<artifactId>stax-api</artifactId>
-							<groupId>stax</groupId>
-						</exclusion>
-					</exclusions>
 				</dependency>
 			</dependencies>
 		</profile>

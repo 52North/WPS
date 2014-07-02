@@ -56,10 +56,6 @@
 			<groupId>com.vividsolutions</groupId>
 		</dependency>
 		<dependency>
-			<artifactId>axis-jaxrpc</artifactId>
-			<groupId>org.apache.axis</groupId>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
