@@ -81,12 +81,12 @@ public class EchoProcess extends AbstractAnnotatedAlgorithm {
         return literalOutput;
     }
 
-    @ComplexDataInput(binding = GenericXMLDataBinding.class, identifier = "complexInput", minOccurs = 0, maxOccurs = 2)
+    @ComplexDataInput(binding = GenericXMLDataBinding.class, identifier = "complexInput", minOccurs = 0, maxOccurs = 1)
     public void setComplexInput(List<XmlObject> complexInput) {
         this.complexInput = complexInput;
     }
 
-    @LiteralDataInput(identifier = "literalInput", minOccurs = 0, maxOccurs = 2)
+    @LiteralDataInput(identifier = "literalInput", minOccurs = 0, maxOccurs = 1)
     public void setLiteralInput(List<String> literalInput) {
         this.literalInput = literalInput;
     }

@@ -38,8 +38,8 @@ This project includes:
   52North WPS Client Library under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Commons under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
+  52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -151,6 +151,7 @@ This project includes:
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
+  jstl under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   JTA 1.1 under The Apache Software License, Version 2.0
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License

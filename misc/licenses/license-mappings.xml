@@ -182,6 +182,16 @@
 		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
 	</artifact>
 
+	<!-- https://jstl.java.net/license.html -->
+    <artifact>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+        <license>Commons Development and Distribution License, Version 1.0</license>
+		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
+    </artifact>
+
+
 	<!-- https://issues.apache.org/jira/browse/AIRAVATA-257 -->
 	<artifact>
 		<groupId>javax.xml.bind</groupId>
@@ -408,7 +418,7 @@
 		<name>jGridShift</name>
 		<license>GNU Lesser General Public License, version 2.0 (LGPLv2)</license>
 	</artifact>
-	
+
 	<artifact>
         <groupId>axis</groupId>
         <artifactId>axis-wsdl4j</artifactId>

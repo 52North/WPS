@@ -104,6 +104,10 @@ You can edit the `web.xml` after creation and substitute another path:
     </init-param>
 </servlet>
   ```
+  
+##### Using the user home directory
+
+Create a file named `wps_config.xml` in the home directory of the user that executes the servlet container.
 
 ## Integration Testing
 
