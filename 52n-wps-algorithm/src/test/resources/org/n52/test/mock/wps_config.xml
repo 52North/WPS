@@ -27,6 +27,8 @@
             <Property name="Algorithm" active="true">org.n52.wps.server.SelfDescribingAlgorithmUsingDeprecatedAPI</Property>
             <Property name="Algorithm" active="true">org.n52.wps.server.SelfDescribingAlgorithmUsingDescriptor</Property>
 		</Repository>
+		<Repository name="ServiceLoaderAlgorithmRepository" className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
+		</Repository>
 
 	</AlgorithmRepositoryList>
 

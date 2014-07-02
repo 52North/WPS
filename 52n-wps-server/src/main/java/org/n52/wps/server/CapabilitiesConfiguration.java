@@ -254,18 +254,26 @@ public class CapabilitiesConfiguration {
      *        the skeleton to enrich
      */
     private static void initProcessOfferings(CapabilitiesDocument skel) {
-        ProcessOfferings processes = skel.getCapabilities().addNewProcessOfferings();
-        for (String algorithmName : RepositoryManager.getInstance().getAlgorithms()) {
-            ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
-            if (description != null) {
-                ProcessBriefType process = processes.addNewProcess();
-                CodeType ct = process.addNewIdentifier();
-                ct.setStringValue(algorithmName);
-                LanguageStringType title = description.getTitle();
-                String processVersion = description.getProcessVersion();
-                process.setProcessVersion(processVersion);
-                process.setTitle(title);
-            }
+        ProcessOfferings processes = skel.getCapabilities()
+                .addNewProcessOfferings();
+        for (String algorithmName : RepositoryManager.getInstance()
+                .getAlgorithms()) {
+        	try {
+        		ProcessDescriptionType description = RepositoryManager
+                        .getInstance().getProcessDescription(algorithmName);
+                if (description != null) {
+                    ProcessBriefType process = processes.addNewProcess();
+                    CodeType ct = process.addNewIdentifier();
+                    ct.setStringValue(algorithmName);
+                    LanguageStringType title = description.getTitle();
+                    String processVersion = description.getProcessVersion();
+                    process.setProcessVersion(processVersion);
+                    process.setTitle(title);
+                }	
+        	}
+        	catch (RuntimeException e) {
+        		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
+        	}
         }
     }
 
