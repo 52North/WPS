@@ -118,3 +118,32 @@ through `mvn clean install -Pwith-geotools,integration-test`.
 ## Contributing
 
 You can find information about how to contribute to this project in the [Geoprocessing Wiki](https://wiki.52north.org/bin/view/Geoprocessing/StructuresAndProcedures#Git_Procedures).
+
+## License
+
+This project consists of modules which are published under different licenses.
+
+* **API**: The internal API is published under The Apache Software License, Version 2.0. If you want to build your own algorithms you can depend on these modules alone and release it under any compatible open source license. The API consists of the following modules:
+  * 52n-wps-algorithm
+  * 52n-wps-commons
+  * 52n-wps-io
+* **Web service**: The implementation of the internal API allows to publish algorithms online as a web service. The web service implementation is published under the GNU General Public License Version 2. The following modules make up the web service implementation:
+  * 52n-wps-ags
+  * 52n-wps-algorithm-geotools (with exceptions to EPL libraries)
+  * 52n-wps-algorithm-impl
+  * 52n-wps-client-lib
+  * 52n-wps-database
+  * 52n-wps-grass
+  * 52n-wps-io-geotools (with exceptions to EPL libraries)
+  * 52n-wps-io-impl
+  * 52n-wps-mc
+  * 52n-wps-python
+  * 52n-wps-r
+  * 52n-wps-server
+  * 52n-wps-server-soap
+  * 52n-wps-sextante
+  * 52n-wps-transactional
+  * 52n-wps-webadmin
+  * 52n-wps-webapp
+  
+For details see the LICENSE and NOTICE files. Be aware that some modules contain their own LICENSE and NOTICE files.
