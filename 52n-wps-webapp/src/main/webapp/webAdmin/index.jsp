@@ -1,8 +1,9 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="wps" uri="http://52north.org/communities/geoprocessing/wps/tags" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="org.n52.wps.webadmin.ConfigUploadBean"%>
 <%@ page import="org.n52.wps.webadmin.ChangeConfigurationBean"%>
-<%@ page import="org.n52.wps.server.r.info.RProcessInfo"%>
-<%@ page import="java.util.List"%>
 
 <!DOCTYPE PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -19,19 +20,19 @@
 
 	<link type="text/css" rel="stylesheet" href="css/ui.all.css" media="screen">
 	<link type="text/css" rel="stylesheet" href="css/lightbox-form.css">
-	
+
 	<script type="text/javascript"	src="resources/lightbox-form.js"></script>
 	<script type="text/javascript"	src="resources/jquery.js"></script>
 	<script type="text/javascript"	src="resources/jquery-ui.js"></script>
 	<script type="text/javascript" 	src="resources/jquery.ajax_upload.js"></script>
-	
+
 	<script type="text/javascript"><!--
             // constants
             var itemListTypes = new Array("Generator","Parser","Repository","RemoteRepository");
             var itemListTypeNr = {"Generator":0,"Parser":1,"Repository":2,"RemoteRepository":3};
             var relativeConfigPath = "../config/";
-            var configurationFileName = "wps_config.xml";
-            
+            var configurationFileName = "../${wps.config.file}";
+
             // upload req
             var uploadId = "";
             var WPS4RId = "";
@@ -39,7 +40,7 @@
 
             // at page load
             $(document).ready(function(){
-                
+
                 $("#Tabs > ul").tabs();
                 $("#sections").accordion({
                     header: "div.accHeader",
@@ -69,39 +70,54 @@
                       loadConfiguration(relativeConfigPath + "<%=fileUpload.getFilenamePrefix()%>" + file);
                   }
                 });
-                
-               	
+
+
                 $("#upload_process").click(function(){
-                    openbox('Upload a WPS process', 1, 'box')             
+                    openbox('Upload a WPS process', 1, 'box');
                 });
 
 				$("#manage_rem_repos").click(function(){
-                    openbox('Manage Remote Repositories', 1, 'box')             
-                });
-               	
-                $("#upload_r_script").click(function(){
-                    openbox('Upload an R script', 1, 'box2')             
+                    openbox('Manage Remote Repositories', 1, 'box');
                 });
 
+                <c:if test="${wps:hasR()}">
+                $("#upload_r_script").click(function(){
+                    openbox('Upload an R script', 1, 'box2');
+                });
+                </c:if>
+
                 $("#loadConfBtn").click(function(){
-                    loadConfiguration(relativeConfigPath + configurationFileName);
+                      <c:choose>
+                          <c:when test="${wps:hasR()}">
+                                loadConfiguration(configurationFileName);
+                          </c:when>
+                          <c:otherwise>
+                                loadConfiguration(relativeConfigPath + configurationFileName);
+                          </c:otherwise>
+                      </c:choose>
                 });
 
                 $("#saveConfBtn").click(function(){
 					// check if there are "unsaved" properties, because they can contain empty data
                 	if($("img#saveEditImg").length > 0){
                 		alert("There are unsaved properties, please save or delete them.");
-					} else {						
+					} else {
 	                    if (confirm("Save and Activate Configuration?")) {
 	                        $("input[name='serializedWPSConfiguraton']:first").val($("#form1").serialize());
 	                        $("#saveConfogurationForm").submit();
 	                    }
 				    }
                 });
-                setTimeout
-                loadConfiguration(relativeConfigPath + configurationFileName);
-            });          
-            
+                <c:choose>
+                    <c:when test="${wps:hasR()}">
+                          loadConfiguration(configurationFileName);
+                    </c:when>
+                    <c:otherwise>
+                          loadConfiguration(relativeConfigPath + configurationFileName);
+                    </c:otherwise>
+                </c:choose>
+            });
+
             function uploadFiles() {
 	          	var uploadCheck = new Boolean(false);
 	            var extA = document.getElementById("processFile").value;
@@ -110,13 +126,13 @@
 		  			extA = extA.toLowerCase();
 		  			extB = extB.substring(extB.length-3,extB.length);
 		  			extB = extB.toLowerCase();
-	 			
-				if(extA != 'ava' & extA != 'zip' | extB != 'xml' & extB != '')
+
+				if(extA !== 'ava' & extA !== 'zip' | extB !== 'xml' & extB !== '')
 	  			{
-		  			if (extA != 'ava' & extA != 'zip')
+		  			if (extA !== 'ava' & extA !== 'zip')
 	  				{
 		  				alert('You selected a .'+extA+ ' file containing the process; please select a .java or .zip file instead!');
-	  				if (extB != 'xml' & extB != '') alert('You also selected a .'+extB+ ' file containing the process description; please select a .xml file instead!');
+	  				if (extB !== 'xml' & extB !== '') alert('You also selected a .'+extB+ ' file containing the process description; please select a .xml file instead!');
 	  				}
 	  				else{
 		  				alert('You selected a .'+extB+ ' file containing the process description; please select a .xml file instead!');}
@@ -125,7 +141,7 @@
 	  			else {
 	  				uploadCheck=true;
 	  			}
-				
+
 	  			if (uploadCheck)
 	  			{
 		  			appendProcessToList();
@@ -135,7 +151,7 @@
 	            }
 		  		return false;
            	}
-            
+
 
             function loadConfiguration(configFile){
                 // ensure not getting cached version
@@ -149,7 +165,7 @@
                     var cacheCapabilites = $("Server:first",xml).attr("cacheCapabilites");
                     var webappPath = $("Server:first",xml).attr("webappPath");
                     var repoReloadInterval = $("Server:first",xml).attr("repoReloadInterval");
-                    
+
                     $("#Server_Settings input[name='Server-hostname']:first").val(hostname);
                     $("#Server_Settings input[name='Server-hostport']:first").val(hostport);
                     $("#Server_Settings input[name='Server-includeDataInputsInResponse']:first").val(includeDataInputsInResponse);
@@ -160,68 +176,74 @@
 
                     // display all algorithm repositories, parsers and generators
                     for (itemType in itemListTypes ){					// "Generator" / "Parser" / "Repository"
-                        var listType = itemListTypes[itemType]
+                        var listType = itemListTypes[itemType];
                         $("#"+listType+"_List").empty();				// clear the old entries
                         $(listType,xml).each(function(i) {
                             nameEntry = $(this).attr("name");
                             className = $(this).attr("className");
                             activeString = $(this).attr("active");
-                            
+
                             var active = true;
-                            if(activeString == "false"){
+                            if(activeString === "false"){
 								active = false;
                             }
-                                      
-                            var itemID;
-                            
-                            if (nameEntry == "LocalRAlgorithmRepository"){
-                            	itemID = addListItemForWPS4R(listType);
-                            	setWPS4RId(itemID);
-                            }else{
-                                itemID = addListItem(listType);
-                            }
 
-                            if (nameEntry == "UploadedAlgorithmRepository"){setUploadId(itemID);}
+                            var itemID;
+                            <c:choose>
+                                <c:when test="${wps:hasR()}">
+                                       if (nameEntry === "LocalRAlgorithmRepository"){
+                                            itemID = addListItemForWPS4R(listType);
+                                            setWPS4RId(itemID);
+                                        }else{
+                                            itemID = addListItem(listType);
+                                        }
+                                </c:when>
+                                <c:otherwise>
+                                      itemID = addListItem(listType);
+                                </c:otherwise>
+                            </c:choose>
+
+                            if (nameEntry === "UploadedAlgorithmRepository"){setUploadId(itemID);}
 
 
                             // now that the list item exists, add name, class and active to the elements
-                            $("#" + listType + "-" + itemID + "_NameEntry").val(nameEntry);					// set the name entry 
+                            $("#" + listType + "-" + itemID + "_NameEntry").val(nameEntry);					// set the name entry
                             $("#" + listType + "-" + itemID + "_ClassEntry").val(className);				// set the class entry
                             $("#" + listType + "-" + itemID + "_Activator").attr('checked', active);		// set the active state
-                            
+
                             $('Property',this).each(function(j) {
                                 propertyName = $(this).attr("name");
                                 propertyValue = $(this).text();
                                 propActiveString = $(this).attr("active");
 
                                 var propActive = true;
-                                if(propActiveString == "false"){
+                                if(propActiveString === "false"){
                                 	propActive = false;
-                                }   
-                                
+                                }
+
                                 var propID = addPropItem(listType + "-" + itemID + '_Property');
 
                                 // now that the property items exist, add name, value and active state
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Name").val(propertyName);
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Value").val(propertyValue);
                                 $("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_Activator").attr('checked', propActive);
-                                
-                                if(propertyName=="Algorithm" && itemID==WPS4RId){
+
+                                if(propertyName==="Algorithm" && itemID===WPS4RId){
                                 	var flagID = propertyValue.replace(/\./g,"_")+"_flag";
 									$("#" + listType + "-" + itemID + "_Property" + "-" + propID + "_flag").attr('id',flagID);
                                 }
                             });
-                            
+
                              $('Format',this).each(function(j) {
                                 formatMime = $(this).attr("mimetype");
                                 formatEnc = $(this).attr("encoding");
-                                
+
                                 if(!formatEnc){
                                 	formatEnc = "default";
                                 }
-                                
+
                                 formatSchem = $(this).attr("schema");
-                                
+
                                 var formatID = addFormatItem(listType + "-" + itemID + '_Format');
 
                                 // now that the property items exist, add name, value and active state
@@ -229,42 +251,42 @@
                                 $("#" + listType + "-" + itemID + "_Format" + "-" + formatID + "_Enc").val(formatEnc);
                                 $("#" + listType + "-" + itemID + "_Format" + "-" + formatID + "_Schem").val(formatSchem);
                             });
-                            
-                            
+
+                            <c:if test="${wps:hasR()}">
+                                setWPS4RValidityFlags();
+                            </c:if>
                         });
                     }
-                    
-                    setWPS4RValidityFlags();
                 });
             }
 
-            function addListItem(itemType) {         
+            function addListItem(itemType) {
                 var id = document.getElementById("id").value;
-                if(itemType == itemListTypes[itemListTypeNr.RemoteRepository]){
+                if(itemType === itemListTypes[itemListTypeNr.RemoteRepository]){
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
 						"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
 	                "</p>"
                 );
-                }else if((itemType == itemListTypes[itemListTypeNr.Parser]) || (itemType == itemListTypes[itemListTypeNr.Generator])){
+                }else if((itemType === itemListTypes[itemListTypeNr.Parser]) || (itemType === itemListTypes[itemListTypeNr.Generator])){
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
@@ -272,34 +294,34 @@
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Format" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Format_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"formatMimeTypeLabel\" style=\"font-weight:bold;color:black;\">MimeType</label>" +
-					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +					                
-					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +					                
+					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +
+					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewFormatItem('" + itemType + "-" + id + "_Format'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
-			            
-			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+
+			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
-			            
+
 	                "</p>"
                 );
                 }else{
@@ -310,17 +332,17 @@
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
@@ -333,34 +355,34 @@
                 return id;
             }
 
-            
-            function addNewListItem(itemType) {         
+
+            function addNewListItem(itemType) {
                 var id = document.getElementById("id").value;
-                if(itemType == itemListTypes[itemListTypeNr.RemoteRepository]){
+                if(itemType === itemListTypes[itemListTypeNr.RemoteRepository]){
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
 	                	"<img src=\"images/del.png\" onClick=\"removeList('"+ itemType + "-" + id + "')\" />"+
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
 	                "</p>"
                 );
-                }else if((itemType == itemListTypes[itemListTypeNr.Parser]) || (itemType == itemListTypes[itemListTypeNr.Generator])){
+                }else if((itemType === itemListTypes[itemListTypeNr.Parser]) || (itemType === itemListTypes[itemListTypeNr.Generator])){
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
@@ -368,37 +390,37 @@
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+		                "Formats <img id=\"minMax-"+ itemType + "-" + id + "_Format" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Format'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Format" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Format_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"formatMimeTypeLabel\" style=\"font-weight:bold;color:black;\">MimeType</label>" +
-					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +					                
-					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +					                
+					                "<label class=\"formatEncodingLabel\" style=\"font-weight:bold;color:black;\">Encoding</label>" +
+					                "<label class=\"formatSchemaLabel\" style=\"font-weight:bold;color:black;\">Schema</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewFormatItem('" + itemType + "-" + id + "_Format'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
-			            
-			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+
+			            "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
 			            "</div>"+
-			            
+
 	                "</p>"
                 );
-                }else{                
+                }else{
                 $("#"+itemType+"_List").append
                 (
 	                "<p class=\"listItem\" id=\"" + itemType + "-" + id + "\">" +
@@ -406,17 +428,17 @@
 						"<table class=\"nameClass\">"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
 							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" style=\"border:1px solid black;background-color:#F5F8F9;\" /></td></tr>"+
-							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+							
+							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" checked style=\"width:0\" /></td></tr>"+
 						"</table>"+
-	         
+
 		                "<br>" +
 
-		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+ 
+		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;cursor:pointer;\" />"+
 						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
 			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
 				                "<div class=\"propListHeader\">" +
 					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
 				                "</div>" +
 			                "</div>" +
 			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
@@ -433,32 +455,32 @@
             	$("p#" + id).remove();
             	$("div#maximizer-" + id).remove();
             }
-            
+
             function maximize_minimize(id){
 				var div = $("div#maximizer-" + id);
-				if(div.css("display") == "none"){
+				if(div.css("display") === "none"){
 					div.show("fast");
 					$("img#minMax-"+ id).attr("src","images/minimize.gif");
 				} else {
 					div.hide("fast");
 					$("img#minMax-"+ id).attr("src","images/maximize.gif");
-				}				
+				}
             }
 
             function addPropItem(itemType) {
                 var id = document.getElementById("id").value;
-                
+
                 //Assigns a special behaviour to WPS4R properties (esp. for scripts):
-                if(itemType == "Repository-"+WPS4RId+"_Property"){
+                if(itemType === "Repository-"+WPS4RId+"_Property"){
                 $("#" + itemType + "_List").append
                 (
                 "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
                     "<input type=\"text\" class=\"propertyName\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" readonly />"+
                     "<input type=\"text\" class=\"propertyValue\" size=\"20\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" readonly />"+
-					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +            
+					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +
                     "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" width=\"16\" height=\"16\" alt=\"Remove\" style=\"cursor:pointer\" />"+
                     "<img id=\"editImg\" onClick=\"edit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"+
-                    "<div class=\"validity_flag\" id=\""+ itemType + "-" + id +"_flag\"></div>"+                   
+                    "<div class=\"validity_flag\" id=\""+ itemType + "-" + id +"_flag\"></div>"+
                 "</div>"
                 );
                 }else{
@@ -467,11 +489,11 @@
                     "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
                         "<input type=\"text\" class=\"propertyName\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" readonly />"+
                         "<input type=\"text\" class=\"propertyValue\" size=\"20\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" readonly />"+
-    					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +            
+    					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" />" +
                         "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" width=\"16\" height=\"16\" alt=\"Remove\" style=\"cursor:pointer\" />"+
                         "<img id=\"editImg\" onClick=\"edit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"+
                     "</div>"
-                    );	
+                    );
                 }
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
@@ -485,7 +507,7 @@
                 "<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
                     "<input type=\"text\" class=\"propertyName\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" style=\"border:1px solid black;background-color:#F5F8F9;\" />"+
                     "<input type=\"text\" class=\"propertyValue\" size=\"20\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" style=\"border:1px solid black;background-color:#F5F8F9;\" />"+
-					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" checked />" +            
+					"<input type=\"checkbox\" name=\"" + itemType + "-" + id +"_Activator\" id=\"" + itemType + "-" + id +"_Activator\" checked />" +
                     "<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/del.png\" alt=\"Remove\" style=\"cursor:pointer\" />"+
                     "<img id=\"saveEditImg\" onClick=\"saveEdit('#"+ itemType + "-" + id + "'); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"+
                 "</div>"
@@ -493,8 +515,8 @@
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
                 return id;
-            }      
-            
+            }
+
             function addFormatItem(itemType) {
                 var id = document.getElementById("id").value;
                 $("#" + itemType + "_List").append
@@ -527,7 +549,7 @@
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
                 return id;
-            }         
+            }
 
             function removeItemList(listType,id) {
                 $("#" + listType + "-" + id).remove();
@@ -548,29 +570,31 @@
                     return false;
                 }
             }
-                
+
             function setUploadId(itemID){
              	uploadId = itemID;
             }
-            
-            function setWPS4RId(itemID){
-             	WPS4RId = itemID;
-            }
-                      
-			function appendProcessToList() {                            			
+
+            <c:if test="${wps:hasR()}">
+                function setWPS4RId(itemID){
+                    WPS4RId = itemID;
+                }
+            </c:if>
+
+			function appendProcessToList() {
 				 itemType= "Repository-" + uploadId + "_Property";
 				 listName= "Repository-" + uploadId + "_Property_List";
 				 var id = document.getElementById("id").value;
 				 processNameId = document.getElementById("processNameId").value;
 				 algorithmName = "Algorithm";
-	             
+
 	             $("#"+listName).append("<div class=\"propItem\" id=\"" + itemType + "-" + id + "\">"+
 	                    	"<input class=\"propertyName\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Name\" id=\"" + itemType + "-" + id + "_Name\" value=\"" + algorithmName +"\" />"+
 	                    	"<input class=\"propertyValue\" type=\"text\" size=\"15\" name=\""+ itemType + "-" + id +"_Value\" id=\""+ itemType + "-" + id + "_Value\" value=\"" + processNameId + "\" />"+
 	                   	 	"<img onClick=\"removeItem('#"+ itemType + "-" + id + "'); return false;\" src=\"images/min_icon.png\" width=\"14\" height=\"18\" alt=\"Remove\"/>"+
 	                		"</div>");
-	
-	                
+
+
 	            var newId = (id - 1) + 2;
 	            document.getElementById("id").value = newId;
 	            return id;
@@ -578,24 +602,24 @@
 
             function edit(id){
                  // change the css
-            	 $(id+"> input").css({	"border":"0.1em solid #4297D7", 
+            	 $(id+"> input").css({	"border":"0.1em solid #4297D7",
                 	 					"background-color":"#F5F8F9"
                  });
 				 // remove the readonly attribute
-				 $(id+"> input").removeAttr("readonly"); 
-                 
+				 $(id+"> input").removeAttr("readonly");
+
                  // append the save button
             	 $(id+" > img#editImg").remove();
-            	 $(id).append($("<img id=\"saveEditImg\" onClick=\"saveEdit('"+ id + "'); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 
+            	 $(id).append($("<img id=\"saveEditImg\" onClick=\"saveEdit('"+ id + "'); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));
             }
 
             function saveEdit(id){
             	$(id+"> input").css({	"border":"none",
                 						"background-color":"#CDE2ED"
-                }); 
+                });
 
-            	$(id+"> input").attr("readonly", "readonly"); 
-                
+            	$(id+"> input").attr("readonly", "readonly");
+
             	$(id+" > img#saveEditImg").remove();
             	$(id).append($("<img id=\"editImg\" onClick=\"edit('"+ id + "'); return false;\" src=\"images/edit.png\" alt=\"Edit\" style=\"cursor:pointer\" />"));
             }
@@ -603,17 +627,17 @@
             function editServerSettings(){
 				// display warnings
 				$("div#editWarn").show();
-                
+
                 // change the css
-	            $("div#Server_Settings input").css({	"border":"0.1em solid #4297D7", 
+	            $("div#Server_Settings input").css({	"border":"0.1em solid #4297D7",
 	               	 									"background-color":"#F5F8F9"
 	            });
 				// remove the readonly attribute
-				$("div#Server_Settings input").removeAttr("readonly"); 
-	                
+				$("div#Server_Settings input").removeAttr("readonly");
+
 	            // append the save button
 	           	$("div#editSave img#editImg").remove();
-	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"saveEditServerSettings(); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 				
+	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"saveEditServerSettings(); return false;\" src=\"images/save.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));
             }
 
 			function saveEditServerSettings(){
@@ -625,13 +649,14 @@
 														"background-color":"#CDE2ED"
 	            });
 				// remove the readonly attribute
-				$("div#Server_Settings input").attr("readonly", "readonly"); 
-	                
+				$("div#Server_Settings input").attr("readonly", "readonly");
+
 	            // append the save button
 	           	$("div#editSave img#editImg").remove();
-	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"editServerSettings(); return false;\" src=\"images/edit.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));            	 								
+	           	$("div#editSave").append($("<img id=\"editImg\" onClick=\"editServerSettings(); return false;\" src=\"images/edit.png\" alt=\"Save edit\" style=\"cursor:pointer\" />"));
             }
-			
+
+            <c:if test="${wps:hasR()}">
             function addListItemForWPS4R(itemType){
                 var id = document.getElementById("id").value;
                  $("#"+itemType+"_List").append
@@ -642,68 +667,62 @@
     							"<tr><td style=\"font-weight:bold; padding-right:15px\">Name</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Name\" id=\"" + itemType + "-" + id + "_NameEntry\" /></td></tr>"+
     							"<tr><td style=\"font-weight:bold; padding-right:15px\">Class</td><td><input type=\"text\" name=\"" + itemType + "-" + id + "_Class\" id=\"" + itemType + "-" + id + "_ClassEntry\" /></td></tr>"+
     							"<tr><td style=\"font-weight:bold; padding-right:15px\">Active</td><td><input type=\"checkbox\" name=\"" + itemType + "-" + id + "_Activator\" id=\""+ itemType + "-" + id + "_Activator\" style=\"width:0\" /></td></tr>"+
-    							"<tr><td style=\"font-weight:bold; padding-right:15px\">R</td><td>"+
-        						"<input class=\"formButtons\" name=\"showRConfig\" type=\"button\"\r\n" + 
-        						" value=\"Show sessionInfo\" style=\"border:1px solid black;background:white; width:100pt\" onclick=\"openbox('R session information', 1, 'RSessionInfoBox') ;\">"+    							
-    							"</td></tr>"+	
     						"</table>"+
 
     		                "<br><br>" +
 
-    		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+ 
+    		                "Properties <img id=\"minMax-"+ itemType + "-" + id + "_Property" + "\" src=\"images/maximize.gif\" onClick=\"maximize_minimize('" + itemType + "-" + id + "_Property'); return false;\" style=\"padding-left:3em;\" style=\"cursor:pointer\" />"+
     						"<div id=\"maximizer-"+ itemType + "-" + id + "_Property" + "\" style=\"display:none;\">"+
     			                "<div class=\"propList\" id=\""+ itemType + "-" + id +"_Property_List\">" +
     				                "<div class=\"propListHeader\">" +
     					                "<label class=\"propertyNameLabel\" style=\"font-weight:bold;color:black;\">Name</label>" +
-    					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +					                
+    					                "<label class=\"propertyValueLabel\" style=\"font-weight:bold;color:black;\">Value</label>" +
     				                "</div>" +
     			                "</div>" +
     			                "<div class=\"propEnd\"><img onClick=\"addNewPropItem('" + itemType + "-" + id + "_Property'); return false;\" src=\"images/add.png\" alt=\"Add\" style=\"cursor:pointer\" /></div>"+
     			            "</div>"+
     	                "</p>"
                     );
-          
+
                 var newId = (id - 1) + 2;
                 document.getElementById("id").value = newId;
                 return id;
             }
-            
-			function rProcessInfo(){
-				this.algorithmName;
-				this.isValid;
-				this.isAvailable;
-				this.exception;
-				this.scriptURL;
+
+			function rProcessInfo(options){
+				this.algorithmName = options.algorithmName;
+				this.isValid = options.isValid;
+				this.isAvailable = options.isAvailable;
+				this.exception = options.exception;
+				this.scriptURL = options.scriptURL;
 			}
-			
+
 
 			function setWPS4RValidityFlags(){
 				var rProcessInfos = new Array();
-<%List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
-				int i = 0;
-				for (RProcessInfo rProcessInfo : rProcessInfoList) {
-					//TODO: use constructor, i.e. new ProcessInfo(algorithmname, isValid, isAvailable, ...) to shorten text
-					out.println("\t\t\t\trProcessInfos["+i+"] = new rProcessInfo();");
-					out.println("\t\t\t\trProcessInfos["+i+"].algorithmName = \""+ rProcessInfo.getWkn() +"\";");
-					out.println("\t\t\t\trProcessInfos["+i+"].isAvailable = "+   rProcessInfo.isAvailable() +";");
-					out.println("\t\t\t\trProcessInfos["+i+"].isValid = "+		 rProcessInfo.isValid()+";");
-					out.println("\t\t\t\trProcessInfos["+i+"].scriptURL = \""+	 rProcessInfo.getScriptURL()+"\";");
-					out.println("\t\t\t\trProcessInfos["+i+"].exception = \""+	 rProcessInfo.getLastErrormessage()+"\";");
-					i++;
-				}%>
-				
-				for(var i = 0; i<rProcessInfos.length; i++){					
+
+                <c:forEach var="rProcessInfo" items="${org.n52.wps.server.r.info.RProcessInfo.getRProcessInfoList()}">
+                        rProcessInfos.push(new rProcessInfo({
+                            algorithmName: "${rProcessInfo.getWkn()}",
+                            isAvailable: "${rProcessInfo.isAvailable()}",
+                            isValid: "${rProcessInfo.isValid()}",
+                            scriptURL: "${rProcessInfo.getScriptURL()}",
+                            exception: "${ProcessInfo.getLastErrormessage()}";
+                        });
+                </c:forEach>
+
+				for(var i = 0; i<rProcessInfos.length; i++){
 					var flagId = rProcessInfos[i].algorithmName.replace(/\./g,"_")+"_flag";
 					if(rProcessInfos[i].isValid){
 						$("#"+flagId).append(
-								"<img class=\"flagIcon\" src=\"images/script_valid.png\" alt=\"Script is valid\" title=\"Script is valid\" style=\"background-color:transparent\"></img>"		
+								"<img class=\"flagIcon\" src=\"images/script_valid.png\" alt=\"Script is valid\" title=\"Script is valid\" style=\"background-color:transparent\"></img>"
 							);
 					}else
 						if(!rProcessInfos[i].isAvailable){
 							var message = rProcessInfos[i].exception;
 							WPS4RErrors[i] = message;
 							$("#"+flagId).append(
-									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>"		
+									"<img class=\"flagIcon\" src=\"images/script_missing.png\" alt=\"Script not available\" title=\"Script not available\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>"
 								);
 						}
 					else{
@@ -712,15 +731,15 @@
  						text = 	"<img class=\"flagIcon\" src=\"images/script_invalid.png\" alt=\"Script not valid\" "
  							+ "title=\"Script is not valid, click here to see the last errormessage\" style=\"background-color:transparent; cursor:pointer\" onclick=alert(WPS4RErrors["+i+"])></img>";
  						$("#"+flagId).append(text);
-						
+
 						}
-					
+
 				}
 				//TODO: insert exceptions
 
 			}
 
-			
+            </c:if>
         -->
     </script>
 </head>
@@ -744,13 +763,15 @@
 						<td><input class="formButtons" type="reset" value="Reset" name="Reset" style="border:1px solid black;background:white;" /></td>
 						<td><input class="formButtons" id="upload_process" type="button" value="Upload Process" name="UploadProcess" style="border:1px solid black;background:white;" /></td>
 						<!--td><input class="formButtons" id="manage_rem_repos" type="button" value="Update Remote Repositories" name="ManageRemoteRepositories" style="border:1px solid black;background:white;" /></td-->
-						<td><input class="formButtons" id="upload_r_script" type="button" value="Upload R Script" name="UploadRScript" style="border:1px solid black;background:white;" /></td>
+                        <c:if test="${wps:hasR()}">
+                            <td><input class="formButtons" id="upload_r_script" type="button" value="Upload R Script" name="UploadRScript" style="border:1px solid black;background:white;" /></td>
+                        </c:if>
 					</tr>
 				</table>
 				<div id="sections">
 					<div class="section">
 						<div class="accHeader" style="text-indent: 40px">Server Settings</div>
-						
+
 						<div class="sectionContent">
 							<div id="Server_Settings">
 								<div id="editSave" style="float:right;"><img id="editImg" src="images/edit.png" onClick="editServerSettings()" style="cursor:pointer;" /></div>
@@ -831,9 +852,9 @@
 			</form>
 		</div>
 	</div>
-	
+
 	<!-- upload form -->
-	
+
 	<div id="filter"></div>
 	<div id="box">
 		<span id="boxtitle"></span>
@@ -853,52 +874,52 @@
 				<input type="file" name="processDescriptionFile" id="processDescriptionFile" size="40" accept="text/xml">
 			</p>
 			<p>
-				<input type="submit" name="submit"> 
+				<input type="submit" name="submit">
 				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box')">
 			</p>
 		</form>
 	</div>
+    <c:if test="${wps:hasR()}">
+        <div id="box2">
+            <span id="boxtitle"></span>
+            <form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadRFiles()">
+                <input type="hidden" name="uploadRscript" />
+                <p>
+                    Please enter the process name:<br>
+                    (only if process name should be unlike filename)<br><br>
+                    <input type="text" name="rProcessName" size="30" id="rProcessNameId">
+                </p>
+                <p>
+                    Please enter the location of an annotated R script<br>
+                    <br>
+                    <input type="file" name="rProcessFile" id="rProcessFile" size="40">
+                </p>
 
-	<div id="box2">
-		<span id="boxtitle"></span>
-		<form method="post" action="index.jsp" enctype="multipart/form-data" onsubmit="return uploadRFiles()">
-			<input type="hidden" name="uploadRscript" />
-			<p>
-				Please enter the process name:<br>
-				(only if process name should be unlike filename)<br><br>
-				<input type="text" name="rProcessName" size="30" id="rProcessNameId">
-			</p>
-			<p>
-				Please enter the location of an annotated R script<br>
-				<br>
-				<input type="file" name="rProcessFile" id="rProcessFile" size="40">
-			</p>
-		
-			<!--processDescriptionFile currently has no meaning, so it's just hidden-->
-			<input type="hidden" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
-			<!--<p>
-				Please specify the associated ProcessDescription .xml file
-				(optional, not yet implemented):<br>
-				<br>
-				<input type="file" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
+                <!--processDescriptionFile currently has no meaning, so it's just hidden-->
+                <input type="hidden" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
+                <!--<p>
+                    Please specify the associated ProcessDescription .xml file
+                    (optional, not yet implemented):<br>
+                    <br>
+                    <input type="file" name=""rProcessDescriptionFile" id="rProcessDescriptionFile" size="40" accept="text/xml">
 
-			</p>-->
-			<p>
-				<input type="submit" name="submit"> 
-				<input type="reset" name="cancel" value="Cancel" onclick="closebox('box2')">
-				<br>
-				<br>
-				<I>Process id will be org.n52.wps.server.r.[filename]
-					or org.n52.wps.server.r.[process name]</I>
-			</p>
-		</form>
-	</div>
+                </p>-->
+                <p>
+                    <input type="submit" name="submit">
+                    <input type="reset" name="cancel" value="Cancel" onclick="closebox('box2')">
+                    <br>
+                    <br>
+                    <I>Process id will be org.n52.wps.server.r.[filename]
+                        or org.n52.wps.server.r.[process name]</I>
+                </p>
+            </form>
+        </div>
 
-	<div id="RSessionInfoBox" style="display:none;">
-		<span id="boxtitle"></span>
-		<iframe width="600px" height="400px" src="../not_available"></iframe><br><br>
-		<input type="button" name="OK" value="OK" onclick="closebox('RSessionInfoBox')">
-	</div>
-
+        <div id="RSessionInfoBox" style="display:none;">
+            <span id="boxtitle"></span>
+            <iframe width="600px" height="400px" src="../not_available"></iframe><br><br>
+            <input type="button" name="OK" value="OK" onclick="closebox('RSessionInfoBox')">
+        </div>
+    </c:if>
 </body>
 </html>
