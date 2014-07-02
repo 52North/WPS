@@ -3,3 +3,11 @@ script: "mvn clean install -Pintegration-test"
 jdk:
   - openjdk7
   - oraclejdk7
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#52north"
+    on_success: always
+    on_failure: always
+    use_notice: true
+    skip_join: false
