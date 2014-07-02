@@ -9,6 +9,14 @@
 	<artifactId>52n-wps-algorithm</artifactId>
 	<name>52North WPS Algorithm API</name>
 	<description>API for implementation of algorithms to be exposed as web processes</description>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+	
 	<build>
 		<resources>
 			<resource>
@@ -17,13 +25,20 @@
 					<include>**/*.xml</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>.</directory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>../misc/licenses/license_header.txt</header>
+					<header>../misc/licenses/license_header_for_api_modules.txt</header>
 				</configuration>
 			</plugin>
 			<plugin>
