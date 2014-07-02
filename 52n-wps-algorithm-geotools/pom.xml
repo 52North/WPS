@@ -9,6 +9,14 @@
 	<artifactId>52n-wps-algorithm-geotools</artifactId>
 	<name>52North WPS Geotools Algorithm Implementations</name>
 	<description>Geotools Implementations of geospatial algorithms for raster and vector data.</description>
+	
+	<licenses>
+		<license>
+			<name>GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)</name>
+			<url>https://github.com/52North/WPS/tree/WPS-3.3.0/52n-wps-algorithm-geotools/src/main/resources/LICENSE</url>
+		</license>
+	</licenses>
+	
 	<build>
 		<resources>
 			<resource>
@@ -17,13 +25,17 @@
 					<include>**/*.xml</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>../misc/licenses/license_header.txt</header>
+					<header>../misc/licenses/license_header_for_geotools_modules.txt</header>
 				</configuration>
 			</plugin>
 			<plugin>
