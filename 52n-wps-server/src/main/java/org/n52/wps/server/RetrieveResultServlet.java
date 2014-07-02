@@ -58,7 +58,7 @@ public class RetrieveResultServlet extends HttpServlet {
     // in future parameterize
     private final boolean indentXML = false;
     
-    private final String defaultUUID = "-1";
+    private final int uuid_length = 36;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -219,9 +219,8 @@ public class RetrieveResultServlet extends HttpServlet {
     
     public boolean isIDValid(String id){    
     	
-    	if(id.length() <= 36){
+    	if(id.length() <= uuid_length){
     		
-            //the following can be used to check whether the id is a valid UUID 
             try {
                 UUID checkUUID = UUID.fromString(id);
                 
@@ -236,8 +235,8 @@ public class RetrieveResultServlet extends HttpServlet {
     		
     	}else {
     		
-    		String uuidPartOne = id.substring(0, 36);
-    		String uuidPartTwo = id.substring(id.length() - 36, id.length());
+    		String uuidPartOne = id.substring(0, uuid_length);
+    		String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());
     		
     		return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);    		
     	}
