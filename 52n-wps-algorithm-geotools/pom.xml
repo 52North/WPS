@@ -96,10 +96,6 @@
 			<groupId>org.geotools</groupId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis-jaxrpc</artifactId>
-		</dependency>
-		<dependency>
 			<artifactId>gt-opengis</artifactId>
 			<groupId>org.geotools</groupId>
 		</dependency>
