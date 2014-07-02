@@ -180,7 +180,11 @@
 		</dependency>
 		<dependency>
 			<groupId>axis</groupId>
-			<artifactId>axis-wsdl4j</artifactId>
+            <artifactId>axis-wsdl4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
 		</dependency>
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
@@ -253,6 +257,14 @@
 							</includes>
 							<filtering>true</filtering>
 							<targetPath>/</targetPath>
+						</resource>
+						<resource>
+							<directory>src/main/webapp/webAdmin</directory>
+							<filtering>true</filtering>
+							<targetPath>webAdmin</targetPath>
+							<includes>
+                				<include>**/*.jsp</include>
+              				</includes>
 						</resource>
 					</webResources>
 				</configuration>

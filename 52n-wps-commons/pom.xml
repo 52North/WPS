@@ -11,12 +11,26 @@
 	<description>Common classes for the WPS server modules.</description>
 	<inceptionYear>2006</inceptionYear>
 	
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+	
 	<build>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>.</directory>
+				<includes>
+					<include>LICENSE</include>
+					<include>NOTICE</include>
 				</includes>
 			</resource>
 		</resources>
@@ -37,7 +51,7 @@
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
 				<configuration>
-					<header>../misc/licenses/license_header.txt</header>
+					<header>../misc/licenses/license_header_for_api_modules.txt</header>
 				</configuration>
 			</plugin>
 			<plugin>
