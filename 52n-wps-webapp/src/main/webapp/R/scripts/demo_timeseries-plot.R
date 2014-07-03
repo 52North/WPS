@@ -19,8 +19,7 @@ myLog("Start script... ", Sys.time())
 
 # wps.in: sos_url, string, title = SOS service URL,
 # abstract = SOS URL endpoint,
-# minOccurs = 1, maxOccurs = 1
-# value = http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos;
+# minOccurs = 1, maxOccurs = 1;
 sos_url <- "http://sensorweb.demo.52north.org/PegelOnlineSOSv2.1/sos"
 
 # wps.in: offering_id, type = string, title = identifier for the used offering,
