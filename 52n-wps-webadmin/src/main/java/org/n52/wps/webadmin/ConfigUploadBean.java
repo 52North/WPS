@@ -435,7 +435,7 @@ public class ConfigUploadBean {
             String scriptDir = "";
             Property[] rConfig = WPSConfig.getInstance().getPropertiesForRepositoryClass("org.n52.wps.server.r.LocalRAlgorithmRepository");
             for (Property property : rConfig) {
-                if (property.getName().equalsIgnoreCase("Script_Dir")) {
+                if (property.getName().equalsIgnoreCase("R_scriptDirectory")) {
                     scriptDir = property.getStringValue();
                 }
             }
