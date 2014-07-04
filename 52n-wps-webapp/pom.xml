@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<!-- $Id: pom.xml 2310 2012-04-12 14:07:04Z it-is-continuous-integration
 		$ -->
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>3.3.0-SNAPSHOT</version>
+		<version>3.3.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-webapp</artifactId>
@@ -198,7 +197,7 @@
 				<executions>
 					<execution>
 						<id>check-licenses</id>
-						<phase></phase>
+						<phase />
 					</execution>
 				</executions>
 			</plugin>
@@ -327,8 +326,7 @@
 				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
 				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
 				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
-				</profile> tomcat-users.xml ================ <user name="admin" password="admin"
-				roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
+				</profile> tomcat-users.xml ================ <user name="admin" password="admin" roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
 				(Run Configuration in Eclipse) =============================================
 				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
 				in Eclipse =========================== Add Java options to Tomcat: -Xdebug
@@ -595,8 +593,7 @@
 							<execution>
 								<id>copy-external-wps-config</id>
 								<configuration>
-									<copy overwrite="true" file="${include.wps.config.file}"
-										tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml" />
+									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml" />
 								</configuration>
 								<goals>
 									<goal>run</goal>
