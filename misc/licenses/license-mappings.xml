@@ -77,6 +77,16 @@
 		<license>The Apache Software License, Version 2.0</license>
 	</artifact>
 
+	<!-- http://commons.apache.org/proper/commons-lang/ -->
+	<!-- specifically documented at http://svn.apache.org/viewvc/commons/proper/lang/tags/LANG_2_5/LICENSE.txt?view=markup -->
+	<artifact>
+		<groupId>commons-lang</groupId>
+		<artifactId>commons-lang</artifactId>
+		<version>2.5</version>
+		<name>Commons Lang</name>
+		<license>The Apache Software License, Version 2.0</license>
+	</artifact>
+
 	<!-- http://dom4j.sourceforge.net/dom4j-1.6.1/license.html -->
 	<artifact>
 		<groupId>dom4j</groupId>
