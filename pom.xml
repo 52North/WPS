@@ -995,14 +995,14 @@
 			</dependency>
 			<!-- START R dependencies -->
 			<dependency>
-				<groupId>org.rosuda</groupId>
+				<groupId>org.nuiton.thirdparty</groupId>
 				<artifactId>REngine</artifactId>
-				<version>0.6-8</version>
+				<version>1.7-3</version>
 			</dependency>
 			<dependency>
-				<groupId>org.rosuda</groupId>
-				<artifactId>RserveEngine</artifactId>
-				<version>0.6-8</version>
+				<groupId>org.nuiton.thirdparty</groupId>
+				<artifactId>Rserve</artifactId>
+				<version>1.7-3</version>
 			</dependency>
 			<!-- END R dependencies -->
             <dependency>
