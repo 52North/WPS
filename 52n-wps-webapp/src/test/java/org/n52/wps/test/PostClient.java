@@ -75,8 +75,10 @@ public class PostClient {
         wr.write(payloadP);
         wr.flush();
 
+        InputStream in = conn.getInputStream();
+        
         // Get the response
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
         String line;
         while ( (line = rd.readLine()) != null) {
