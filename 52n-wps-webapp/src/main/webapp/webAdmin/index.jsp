@@ -701,13 +701,13 @@
 			function setWPS4RValidityFlags(){
 				var rProcessInfos = new Array();
 
-                <c:forEach var="rProcessInfo" items="${org.n52.wps.server.r.info.RProcessInfo.getRProcessInfoList()}">
+                <c:forEach var="rProcessInfo" items="${org.n52.wps.server.r.info.RProcessInfo.getRProcessInfoList}">
                         rProcessInfos.push(new rProcessInfo({
-                            algorithmName: "${rProcessInfo.getWkn()}",
-                            isAvailable: "${rProcessInfo.isAvailable()}",
-                            isValid: "${rProcessInfo.isValid()}",
-                            scriptURL: "${rProcessInfo.getScriptURL()}",
-                            exception: "${ProcessInfo.getLastErrormessage()}";
+                            algorithmName: "${rProcessInfo.getWkn}",
+                            isAvailable: "${rProcessInfo.isAvailable}",
+                            isValid: "${rProcessInfo.isValid}",
+                            scriptURL: "${rProcessInfo.getScriptURL}",
+                            exception: "${ProcessInfo.getLastErrormessage}";
                         });
                 </c:forEach>
 
