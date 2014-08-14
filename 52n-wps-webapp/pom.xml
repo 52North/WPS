@@ -160,6 +160,11 @@
             <artifactId>cors-filter</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -175,6 +180,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>logback.xml</include>
+					<include>applicationContext.xml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>

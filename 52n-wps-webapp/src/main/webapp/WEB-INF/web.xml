@@ -5,6 +5,33 @@
 	<display-name>52°North Web Processing Service, Git: ${git.revision} @ ${timestamp}</display-name>
 	<description>A web processing framework supporting the OGC WPS 1.0.0 specification</description>
 
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>wps.config.file</param-name>
+        <param-value>${wps.config.file}</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+	<servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+	        <param-name>contextConfigLocation</param-name>
+	        <param-value>classpath*:dispatcher-servlet.xml</param-value>
+	    </init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	 
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	
 	<!-- security-constraint>
 		<web-resource-collection>
 			<web-resource-name>My JSP</web-resource-name>
@@ -65,32 +92,6 @@
         <filter-name>ResponseURLFilter</filter-name>
         <url-pattern>*</url-pattern>
     </filter-mapping>-->
-
-	<servlet>
-		<servlet-name>wpsServlet</servlet-name>
-		<servlet-class>org.n52.wps.server.WebProcessingService</servlet-class>
-		<load-on-startup>0</load-on-startup>
-		<init-param>
-			<param-name>wps.config.file</param-name>
-			<param-value>${wps.config.file}</param-value>
-		</init-param>
-	</servlet>
-	<servlet>
-		<servlet-name>retrieveResultServlet</servlet-name>
-		<servlet-class>org.n52.wps.server.RetrieveResultServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>wpsServlet</servlet-name>
-		<url-pattern>/WebProcessingService</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>retrieveResultServlet</servlet-name>
-		<url-pattern>/RetrieveResultServlet</url-pattern>
-	</servlet-mapping>
-	<welcome-file-list>
-		<welcome-file>/index.html</welcome-file>
-	</welcome-file-list>
 
 	<!-- 52n Security -->
     <context-param>

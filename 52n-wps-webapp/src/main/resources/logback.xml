@@ -46,6 +46,7 @@
 	<logger name="org.apache.catalina.session" level="OFF" />
 	<logger name="org.apache.http.wire" level="ERROR" />
 	<logger name="org.apache.http.headers" level="ERROR" />
+	<logger name="org.springframework" level="INFO" />
 
 	<root level="INFO">
 		<appender-ref ref="wpsfile" />
