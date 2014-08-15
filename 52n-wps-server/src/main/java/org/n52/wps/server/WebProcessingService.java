@@ -251,9 +251,8 @@ public class WebProcessingService {
 
     @RequestMapping(method = RequestMethod.GET)
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        try {
-            @SuppressWarnings("resource")
-            OutputStream out = res.getOutputStream(); // closed by res.flushBuffer();
+        try (OutputStream out = res.getOutputStream();) {
+            @SuppressWarnings("unchecked")
             RequestHandler handler = new RequestHandler(req.getParameterMap(), out);
             String mimeType = handler.getResponseMimeType();
             res.setContentType(mimeType);
@@ -274,8 +273,6 @@ public class WebProcessingService {
             if (res != null) {
                 res.flushBuffer();
             }
-            // out.flush();
-            // out.close();
         }
     }
 
