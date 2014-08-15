@@ -234,9 +234,9 @@
 							<targetPath>/</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/webapp/webAdmin</directory>
+							<directory>src/main/webapp/WEB-INF/views</directory>
 							<filtering>true</filtering>
-							<targetPath>webAdmin</targetPath>
+							<targetPath>WEB-INF/views</targetPath>
 							<includes>
                 				<include>**/*.jsp</include>
               				</includes>
