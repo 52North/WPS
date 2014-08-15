@@ -529,6 +529,12 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-io-geotools</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>with-geotools</id>

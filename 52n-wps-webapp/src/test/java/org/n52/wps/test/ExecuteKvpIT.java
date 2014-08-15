@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.wps.commons.WPSConfig;
 
 public class ExecuteKvpIT {
@@ -49,8 +48,7 @@ public class ExecuteKvpIT {
 
     private final String processSucceeded = "ProcessSucceeded";
     private final String exceptionReport = "ExceptionReport";
-    private final String referenceComplexBinaryInputURL = AllTestsIT.getURL() + "/../testData/elev_srtm_30m21.tif";
-    private final String referenceComplexXMLInputURL = AllTestsIT.getURL() + "/../testData/test-data.xml";
+
     private String referenceComplexBinaryInputURLEncoded;
     private String referenceComplexXMLInputURLEncoded;
     
@@ -63,8 +61,8 @@ public class ExecuteKvpIT {
     @Before
     public void before(){    	
     	try {
-			referenceComplexBinaryInputURLEncoded = URLEncoder.encode(referenceComplexBinaryInputURL, "UTF-8");
-			referenceComplexXMLInputURLEncoded = URLEncoder.encode(referenceComplexXMLInputURL, "UTF-8");
+			referenceComplexBinaryInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexBinaryInputURL, "UTF-8");
+			referenceComplexXMLInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexXMLInputURL, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}    	
