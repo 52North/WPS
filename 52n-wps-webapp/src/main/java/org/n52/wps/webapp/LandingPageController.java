@@ -42,8 +42,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class LandingPageController {
 
-    @RequestMapping({"/", "/home"})
+    @RequestMapping({"/home"})
     public String showHomePage(Map<String, Object> model) {
-        return "/static/index.html";
+        return "../../static/index.html";
+    }
+
+    @RequestMapping({"/"})
+    public String redirectToHome(Map<String, Object> model) {
+        return "redirect:/home";
     }
 }

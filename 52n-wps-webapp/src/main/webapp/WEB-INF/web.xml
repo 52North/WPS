@@ -29,7 +29,7 @@
 	 
 	<servlet-mapping>
 		<servlet-name>dispatcher</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 	
 	<!-- security-constraint>
@@ -131,13 +131,11 @@
         <filter-name>CORS</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
+ 
     <filter>
         <filter-name>authn</filter-name>
-        <!-- display-name>Authentication Chain Filter</display-name-->
-        <!-- description>
-            Delegates calls to AuthenticationChainFilter that is defined in the security-config.
-        </description-->
+        <display-name>Authentication Chain Filter</display-name>
+       	<description>Delegates calls to AuthenticationChainFilter that is defined in the security-config.</description>
         <filter-class>org.n52.security.service.config.support.SecurityConfigDelegatingServletFilter</filter-class>
     </filter>
 
