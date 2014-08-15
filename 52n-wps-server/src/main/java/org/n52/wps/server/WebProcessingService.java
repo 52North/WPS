@@ -102,7 +102,9 @@ public class WebProcessingService {
 
     /**
      *
-     * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding
+     * TODO: check if this method can be re-enabled
+     *
+     * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding, zipping content
      *
      * @param hsRequest
      *        the HttpServletRequest
