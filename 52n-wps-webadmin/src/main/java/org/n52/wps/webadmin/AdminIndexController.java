@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webAdmin;
+package org.n52.wps.webadmin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

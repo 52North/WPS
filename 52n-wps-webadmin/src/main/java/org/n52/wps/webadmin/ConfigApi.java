@@ -27,7 +27,7 @@
  * Public License for more details.
  */
 
-package org.n52.wps.webAdmin;
+package org.n52.wps.webadmin;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,7 +35,6 @@ import java.nio.file.Paths;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.WebProcessingService;
-import org.n52.wps.webadmin.ChangeConfigurationBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
