@@ -9,5 +9,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<context:component-scan base-package="org.n52.wps" />
 	
 	<mvc:annotation-driven />
+	
+	<mvc:resources mapping="/static/**" location="/static/" />
 
 </beans>
