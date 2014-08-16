@@ -172,10 +172,9 @@ public class RetrieveResultServlet {
     protected void errorResponse(String error, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        try (PrintWriter writer = response.getWriter();) {
-            writer.write("<html><title>Error</title><body>" + error + "</body></html>");
-            writer.flush();
-        }
+        PrintWriter writer = response.getWriter();
+        writer.write("<html><title>Error</title><body>" + error + "</body></html>");
+        writer.flush();
         LOGGER.warn("Error processing response: " + error);
     }
 
