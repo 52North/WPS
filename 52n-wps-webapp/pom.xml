@@ -226,12 +226,12 @@
 							<targetPath>config</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/webapp/</directory>
+							<directory>src/main/webapp/static</directory>
 							<includes>
 								<include>index.html</include>
 							</includes>
 							<filtering>true</filtering>
-							<targetPath>/</targetPath>
+							<targetPath>static</targetPath>
 						</resource>
 						<resource>
 							<directory>src/main/webapp/WEB-INF/views</directory>
