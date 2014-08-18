@@ -169,7 +169,7 @@
 
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
-		<wps.config.file>config/wps_config.xml</wps.config.file>
+		<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -593,7 +593,7 @@
 				</property>
 			</activation>
 			<properties>
-				<wps.config.file>config/wps_config.xml</wps.config.file>
+				<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
 			</properties>
 			<build>
 				<plugins>
@@ -605,7 +605,7 @@
 							<execution>
 								<id>copy-external-wps-config</id>
 								<configuration>
-									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml" />
+									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/config/wps_config.xml" />
 								</configuration>
 								<goals>
 									<goal>run</goal>

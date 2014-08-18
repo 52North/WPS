@@ -86,7 +86,7 @@ public class WebProcessingService {
     public static String WEBAPP_PATH = null;
     public static final String SERVLET_PATH = "WebProcessingService";
 
-    private static final String CONFIG_FILE_DIR = "config";
+    private static final String PUBLIC_CONFIG_FILE_DIR = "config";
 
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
     public static String DEFAULT_LANGUAGE = "en-US";
@@ -187,7 +187,7 @@ public class WebProcessingService {
         LOGGER.info("webappPath is set to: " + customWebappPath);
 
         try {
-            String capsConfigPath = getApplicationBaseDir() + File.separator + CONFIG_FILE_DIR
+            String capsConfigPath = getApplicationBaseDir() + File.separator + PUBLIC_CONFIG_FILE_DIR
                     + File.separator + CAPABILITES_SKELETON_NAME;
             CapabilitiesDocument capsDoc = CapabilitiesConfiguration.getInstance(capsConfigPath);
             LOGGER.debug("Initialized capabilities document:\n{}", capsDoc);

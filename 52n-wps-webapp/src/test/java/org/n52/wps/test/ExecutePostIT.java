@@ -65,7 +65,6 @@ import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.client.WPSClientSession;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.w3c.dom.Node;
@@ -97,7 +96,6 @@ public class ExecutePostIT {
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
-        WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");//FIXME bpross-52n: I don't think this is needed
         
     }
     

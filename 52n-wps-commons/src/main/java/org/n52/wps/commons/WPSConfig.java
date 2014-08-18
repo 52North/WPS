@@ -36,9 +36,6 @@ import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 
 import org.apache.xmlbeans.XmlException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
@@ -46,6 +43,8 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -65,7 +64,7 @@ public class WPSConfig implements Serializable {
     public static final String WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME = "WPSCapabilitiesUpdate";
     public static final String CONFIG_FILE_PROPERTY = "wps.config.file";
     public static final String CONFIG_FILE_NAME = "wps_config.xml";
-    private static final String CONFIG_FILE_DIR = "config";
+    private static final String CONFIG_FILE_DIR = "WEB-INF" + File.separator + "config";
     private static final String URL_DECODE_ENCODING = "UTF-8";
     // FvK: added Property Change support
     protected final PropertyChangeSupport propertyChangeSupport;
@@ -247,7 +246,9 @@ public class WPSConfig implements Serializable {
         for (WPSConfigFileStrategy strategy : getWPSConfigFileStrategies()) {
             Optional<File> file = strategy.find(servletConfig);
             if (file.isPresent()) {
-                return file.get().getAbsolutePath();
+                String path = file.get().getAbsolutePath();
+                LOGGER.info("Found config file at {} using the strategy {}", path, strategy.getClass().getName());
+                return path;
             }
         }
         throw new RuntimeException("Could not find and load wps_config.xml");
@@ -268,8 +269,8 @@ public class WPSConfig implements Serializable {
     }
 
     /**
-     * This method retrieves the full path for the file (wps_config.xml), searching in WEB-INF/config. This is
-     * only applicable for webapp applications. To customize this, please use directly
+     * This method retrieves the full path for the file (wps_config.xml), searching in several locations. This
+     * is only applicable for webapp applications. To customize this, please use directly
      * {@link WPSConfig#forceInitialization(String)} and then getInstance().
      *
      * @return
@@ -428,7 +429,8 @@ public class WPSConfig implements Serializable {
 
     public static abstract class WPSConfigFileStrategy {
         public Optional<File> find(Optional<ServletConfig> servletConfig) {
-            return checkPath(getPath(servletConfig));
+            String p = getPath(servletConfig);
+            return checkPath(p);
         }
 
         private Optional<File> checkPath(String path) {
@@ -468,7 +470,7 @@ public class WPSConfig implements Serializable {
                 }
                 return (String) ctx.lookup(CONFIG_FILE_PROPERTY);
             } catch (NamingException ex) {
-                LOGGER.info("Can not get java:comp/env context", ex);
+                LOGGER.info("Can not get java:comp/env context: {} : {}", ex.getClass(), ex.getMessage());
                 return null;
             }
         }
@@ -594,8 +596,6 @@ public class WPSConfig implements Serializable {
     private static class WebAppPathStrategy extends WPSConfigFileStrategy {
         @Override
         protected String getPath(Optional<ServletConfig> servletConfig) {
-            //XXX: any objectctions against using getResource("/") instead?
-            // String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
             String domain;
             try {
                 domain = new File(WPSConfig.class.getResource("/").toURI()).toString();
@@ -611,7 +611,8 @@ public class WPSConfig implements Serializable {
                 // substring = substring + CONFIG_FILE_DIR + File.separator + CONFIG_FILE_NAME;
                 File configDir = new File(new File(substring), CONFIG_FILE_DIR);
                 if (configDir.exists() && configDir.isDirectory()) {
-                    return new File(configDir, CONFIG_FILE_NAME).getAbsolutePath();
+                    String configFile = new File(configDir, CONFIG_FILE_NAME).getAbsolutePath();
+                    return configFile;
                 }
             }
             return null;
