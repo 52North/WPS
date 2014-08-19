@@ -367,7 +367,7 @@
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
+				<artifactId>gt-epsg-wkt</artifactId>
 				<version>${geotools.version}</version>
 			</dependency>
 			<dependency>
