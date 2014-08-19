@@ -1,0 +1,140 @@
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<definition name="base" template="/WEB-INF/tiles/template.jsp">
+		<put-attribute name="title" value="52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="" type="string" />
+		<put-attribute name="description" value="" type="string" />
+		<put-attribute name="header" value="/WEB-INF/tiles/common/header.jsp" />
+		<put-attribute name="sidebar" value="/WEB-INF/tiles/common/sidebar.jsp" />
+		<put-attribute name="body" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/common/footer.jsp" />
+	</definition>
+
+	<definition name="index" extends="base">
+		<put-attribute name="title" value="52° North WPS" />
+		<put-attribute name="pageHeader" value="52° North WPS" type="string" />
+		<put-attribute name="description" value="" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/index.jsp"></put-attribute>
+	</definition>
+
+	<definition name="server" extends="base">
+		<put-attribute name="title" value="Server Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Server Configurations" type="string" />
+		<put-attribute name="description" value="Configure the server" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/server.jsp"></put-attribute>
+	</definition>
+
+	<definition name="repositories" extends="base">
+		<put-attribute name="title" value="Repositories Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Repositories Configurations" type="string" />
+		<put-attribute name="description" value="Configure properties and processes" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/repositories.jsp"></put-attribute>
+	</definition>
+
+	<definition name="generators" extends="base">
+		<put-attribute name="title" value="Generators Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Generators Configurations" type="string" />
+		<put-attribute name="description" value="Configure properties and formats " type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/generators.jsp"></put-attribute>
+	</definition>
+
+	<definition name="parsers" extends="base">
+		<put-attribute name="title" value="Parsers Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Parsers Configurations" type="string" />
+		<put-attribute name="description" value="Configure properties and processes" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/parsers.jsp"></put-attribute>
+	</definition>
+	
+	<definition name="databases" extends="base">
+		<put-attribute name="title" value="Database Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Database Configurations" type="string" />
+		<put-attribute name="description" value="Configure database properties" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/databases.jsp"></put-attribute>
+	</definition>
+
+	<definition name="users" extends="base">
+		<put-attribute name="title" value="Users Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Users Configurations" type="string" />
+		<put-attribute name="description" value="Configure users and access settings" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/users.jsp"></put-attribute>
+	</definition>
+
+	<definition name="add_user" extends="base">
+		<put-attribute name="title" value="Add User - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Add User" type="string" />
+		<put-attribute name="description" value="Create a new user" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/add_user.jsp"></put-attribute>
+	</definition>
+
+	<definition name="edit_user" extends="base">
+		<put-attribute name="title" value="Edit User - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Edit User" type="string" />
+		<put-attribute name="description" value="Update user information" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/edit_user.jsp"></put-attribute>
+	</definition>
+
+	<definition name="change_password" extends="base">
+		<put-attribute name="title" value="Change Password - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Change Password" type="string" />
+		<put-attribute name="description" value="Update your password" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/users/change_password.jsp"></put-attribute>
+	</definition>
+
+	<definition name="log" extends="base">
+		<put-attribute name="title" value="Log Configurations - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Log Configurations" type="string" />
+		<put-attribute name="description" value="" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/log.jsp"></put-attribute>
+	</definition>
+
+	<definition name="service_identification" extends="base">
+		<put-attribute name="title" value="Service Identification Settings - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Service Identification Settings" type="string" />
+		<put-attribute name="description" value="Configure service identification settings" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/service_identification.jsp"></put-attribute>
+	</definition>
+
+	<definition name="service_provider" extends="base">
+		<put-attribute name="title" value="Service Provider Settings - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Service Provider Settings" type="string" />
+		<put-attribute name="description" value="Configure service provider settings" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/service_provider.jsp"></put-attribute>
+	</definition>
+
+	<definition name="get_capabilities" extends="base">
+		<put-attribute name="title" value="Get Capabilities Test - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Get Capabilities Test" type="string" />
+		<put-attribute name="description" value="Test capabilities generated document" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/get_capabilities.jsp"></put-attribute>
+	</definition>
+
+	<definition name="test_client" extends="base">
+		<put-attribute name="title" value="Test Client - 52° North WPS" />
+		<put-attribute name="pageHeader" value="Test Client" type="string" />
+		<put-attribute name="description" value="WPS test client" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/test_client.jsp"></put-attribute>
+	</definition>
+
+	<definition name="login" extends="base">
+		<put-attribute name="title" value="Login - 52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="Login" type="string" />
+		<put-attribute name="description" value="Enter your username and password" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/login.jsp"></put-attribute>
+	</definition>
+
+	<definition name="error" extends="base">
+		<put-attribute name="title" value="Error - 52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="Error" type="string" />
+		<put-attribute name="description" value="An error was encountered" type="string" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/error.jsp"></put-attribute>
+	</definition>
+
+	<definition name="backup" extends="base">
+		<put-attribute name="title" value="Backup and Restore - 52° North WPS" type="string" />
+		<put-attribute name="pageHeader" value="Backup and Restore" type="string" />
+		<put-attribute name="description" value="" type="Backup and restore your configurations" />
+		<put-attribute name="body" value="/WEB-INF/tiles/content/backup.jsp"></put-attribute>
+	</definition>
+</tiles-definitions>

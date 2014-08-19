@@ -31,6 +31,7 @@ package org.n52.wps.server;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -38,9 +39,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
@@ -229,5 +232,17 @@ public class ResponseURLFilter implements Filter {
             super.flush();
             outputStream.flush();
         }
+
+		@Override
+		public boolean isReady() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void setWriteListener(WriteListener arg0) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }

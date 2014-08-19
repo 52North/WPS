@@ -9,17 +9,33 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<context:component-scan base-package="org.n52.wps" />
 
 	<mvc:annotation-driven />
+	<mvc:view-controller path="/" view-name="index" />
 
 	<!-- static resource files -->
 	<mvc:resources mapping="/static/**" location="/static/" />
 
 	<!-- landing page and admin web application -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
-		<property name="prefix" value="/WEB-INF/views/" />
-		<!-- <property name="suffix" value=".jsp" /> -->
+<!-- 	<bean id="viewResolver" -->
+<!-- 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
+<!-- 		<property name="viewClass" -->
+<!-- 			value="org.springframework.web.servlet.view.JstlView" /> -->
+<!-- 		<property name="prefix" value="/WEB-INF/views/" /> -->
+<!-- 	</bean> -->
+
+	<!-- Apache Tiles 3 -->
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	</bean>
+
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<value>/WEB-INF/tiles.xml</value>
+		</property>
+	</bean>
+	<!-- End of Apache Tiles 3 -->
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000" />
 	</bean>
 
 </beans>

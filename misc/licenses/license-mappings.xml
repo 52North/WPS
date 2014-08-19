@@ -171,8 +171,8 @@
 	<!-- https://glassfish.dev.java.net/public/CDDLv1.0.html -->
 	<artifact>
 		<groupId>javax.servlet</groupId>
-		<artifactId>servlet-api</artifactId>
-		<version>2.5</version>
+		<artifactId>javax.servlet-api</artifactId>
+		<version>3.1.0</version>
 		<license>Commons Development and Distribution License, Version 1.0</license>
 	</artifact>
 
@@ -421,4 +421,37 @@
 		<name>jGridShift</name>
 		<license>GNU Lesser General Public License, version 2.0 (LGPLv2)</license>
 	</artifact>
+	
+	<artifact>
+        <groupId>jstl</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+		<license>GNU General Public License (GPL), version 2, with the CLASSPATH exception</license>
+    </artifact>
+    
+    <artifact>
+        <groupId>ognl</groupId>
+        <artifactId>ognl</artifactId>
+        <version>2.7.3</version>
+		<license>The Apache Software License, Version 2.0</license>
+    </artifact>
+    
+    <artifact>
+        <groupId>org.mvel</groupId>
+        <artifactId>mvel2</artifactId>
+        <version>2.0.11</version>
+		<license>The Apache Software License, Version 2.0</license>
+    </artifact>
+    <artifact>
+        <groupId>oro</groupId>
+        <artifactId>oro</artifactId>
+        <version>2.0.8</version>
+		<license>The Apache Software License, Version 1.1</license>
+    </artifact>
+    <artifact>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+		<license>The Apache Software License, Version 2.0</license>
+    </artifact>
 </license-lookup>

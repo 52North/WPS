@@ -9,10 +9,18 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
+	<context-param>
+		<param-name>spring.profiles.default</param-name>
+		<param-value>production</param-value>
+	</context-param>
     <context-param>
         <param-name>wps.config.file</param-name>
         <param-value>${wps.config.file}</param-value>
     </context-param>
+
+	<listener>
+		<listener-class>org.n52.wps.webapp.util.WebAppPropertiesListener</listener-class>
+	</listener>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -31,77 +39,6 @@
 		<servlet-name>dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-	
-	<!-- security-constraint>
-		<web-resource-collection>
-			<web-resource-name>My JSP</web-resource-name>
-			<url-pattern>/webAdmin/index.jsp</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>wpsAdmin</role-name>
-		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint-->
-	<!-- /security-constraint>
-
-    <login-config>
-    	<auth-method>BASIC</auth-method>
-    	<realm-name>Basic Authentication</realm-name>
-  	</login-config>
-
-  	<Security roles referenced by this web application -->
-  	<!-- >security-role>
-    	<description>The role that is required to log in to the Manager Application</description>
-    	<role-name>manager</role-name>
-  	</security-role-->
-
- 	<!--filter>
-		<filter-name>CommunicationSizeLogFilter</filter-name>
-		<filter-class>org.n52.wps.server.CommunicationSizeLogFilter</filter-class>
-	</filter-->
-	<!--filter>
-		<filter-name>CompressingFilter</filter-name>
-		<filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>false</param-value>
-		</init-param>
-		<init-param>
-			<param-name>statsEnabled</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>CompressingFilter</filter-name>
-		<url-pattern>/WebProcessingService</url-pattern>
-	</filter-mapping-->
-	<!-->filter-mapping>
-		<filter-name>CommunicationSizeLogFilter</filter-name>
-		<url-pattern>/WebProcessingService</url-pattern>
-	</filter-mapping-->
-
-<!--    <filter>
-        <filter-name>ResponseURLFilter</filter-name>
-        <filter-class>org.n52.wps.server.ResponseURLFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ResponseURLFilter</filter-name>
-        <url-pattern>*</url-pattern>
-    </filter-mapping>-->
-
-	<!-- 52n Security -->
-    <context-param>
-        <param-name>security.config.validation</param-name>
-        <param-value>false</param-value>
-        <!--description>
-           disables validation of the security-config.xml this is necessary
-           because the MavenProject: org.n52.wps:52n-wps-webapp:3.3.0-SNAPSHOT @ D:\dev\GitHub4w\WPS\52n-wps-webapp\pom.xml mechanism works only if the validation is disabled.
-       </description-->
-    </context-param>
 
     <filter>
         <filter-name>CORS</filter-name>
@@ -131,20 +68,24 @@
         <filter-name>CORS</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
- 
-    <filter>
-        <filter-name>authn</filter-name>
-        <display-name>Authentication Chain Filter</display-name>
-       	<description>Delegates calls to AuthenticationChainFilter that is defined in the security-config.</description>
-        <filter-class>org.n52.security.service.config.support.SecurityConfigDelegatingServletFilter</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>authn</filter-name>
-        <url-pattern>/webAdmin/*</url-pattern>
-    </filter-mapping>
-
-    <listener>
-        <listener-class>org.n52.security.service.config.support.SecurityConfigContextListener</listener-class>
-    </listener>
+    	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/403</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/error</location>
+	</error-page>
 </web-app>

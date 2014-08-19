@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/security
+           				http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+	<!-- Allow for security annotations -->
+	<global-method-security pre-post-annotations="enabled" />
+
+	<!-- No security for static resources -->
+	<http pattern="/resources/**" security="none" />
+
+	<http use-expressions="true">
+		<form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login?login_error=t" />
+		<remember-me key="wpsKey" token-validity-seconds="2419200" />
+		<logout />
+		<intercept-url pattern="/server/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/repositories/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/generators/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/parsers/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/user/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/backup/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/users/**" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/log/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/service_identification/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/service_provider/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+	</http>
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
+	<authentication-manager>
+		<authentication-provider>
+			<password-encoder hash="sha" ref="passwordEncoder" />
+			<jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="SELECT username, password, 'TRUE' AS enabled FROM users WHERE username=?"
+				authorities-by-username-query="SELECT username, role FROM users WHERE username=?" />
+		</authentication-provider>
+	</authentication-manager>
+</beans:beans>

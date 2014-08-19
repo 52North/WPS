@@ -40,11 +40,13 @@ import java.math.BigDecimal;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -104,6 +106,18 @@ class ResponseSizeInfoStream extends ServletOutputStream {
     	} else 
     		return -1;
     }
+
+	@Override
+	public boolean isReady() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setWriteListener(WriteListener arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
 
@@ -169,6 +183,24 @@ class RequestSizeInfoStream extends ServletInputStream {
 	   else
 		   return -1;
    }
+
+@Override
+public boolean isFinished() {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+@Override
+public boolean isReady() {
+	// TODO Auto-generated method stub
+	return false;
+}
+
+@Override
+public void setReadListener(ReadListener arg0) {
+	// TODO Auto-generated method stub
+	
+}
 }
 class RequestSizeInfoWrapper extends HttpServletRequestWrapper {
     private BufferedReader tpReader; 

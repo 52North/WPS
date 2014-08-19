@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Daniel Nüst
  *
  */
-@Controller
+//@Controller
 public class LandingPageController {
 
     @RequestMapping({"/home"})
