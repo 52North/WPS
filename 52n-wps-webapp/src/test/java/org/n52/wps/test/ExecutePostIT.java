@@ -65,8 +65,6 @@ import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.client.WPSClientSession;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -1331,11 +1329,7 @@ public class ExecutePostIT {
 	        
 	        if (responseObject instanceof InputStream) {
 				
-	            InputStream stream = (InputStream)responseObject;
-
-	            GeotiffParser parser = new GeotiffParser();
-	            IData iData = parser.parseBase64(stream, "image/tiff", null);
-	            assertThat(iData, is(not(nullValue())));
+	        	AllTestsIT.checkRawBinaryResultBase64((InputStream) responseObject);
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();
@@ -1355,11 +1349,7 @@ public class ExecutePostIT {
 	        
 	        if (responseObject instanceof InputStream) {
 				
-	            InputStream stream = (InputStream)responseObject;
-
-	            GeotiffParser parser = new GeotiffParser();
-	            IData iData = parser.parse(stream, "image/tiff", null);
-	            assertThat(iData, is(not(nullValue())));
+	        	AllTestsIT.checkRawBinaryResultDefault((InputStream) responseObject);
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();

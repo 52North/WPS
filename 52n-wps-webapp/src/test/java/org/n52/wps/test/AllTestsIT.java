@@ -38,8 +38,10 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
@@ -57,9 +59,6 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputReferenceType;
 
 import org.apache.commons.codec.binary.Base64;
-import org.geotools.coverage.grid.GridCoverage2D;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.n52.wps.server.WebProcessingService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -73,7 +72,8 @@ public class AllTestsIT {
     public static final String referenceComplexBinaryInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
                                                                                      "static/testData/elev_srtm_30m21.tif");
     public static final String referenceComplexXMLInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
-                                                                                  "static/testData/test-data.xml");
+                                                                                  "static/testData/test-data.xml");	
+    private final static String TIFF_MAGIC = "II";
 
     public static int getPort() {
         return Integer.parseInt(System.getProperty("test.port", "8080"));
@@ -256,33 +256,29 @@ public class AllTestsIT {
         assertThat(referencedDocument, referencedDocument, containsString(stringThatShouldBeContained));
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
     }
-
+    
     public static void checkReferenceBinaryResultBase64(String response) throws ParserConfigurationException,
-            SAXException,
-            IOException {
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("ProcessSucceeded"));
-        assertThat(response, response, containsString("Reference"));
-
-        InputStream stream = getRefAsStream(response);
-        GeotiffParser parser = new GeotiffParser();
-        IData data = parser.parseBase64(stream, "image/tiff", null);
-        assertThat(data.getPayload() instanceof GridCoverage2D, is(true));
-        stream.close();
+    SAXException,
+    IOException {
+    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, containsString("ProcessSucceeded"));
+    	assertThat(response, response, containsString("Reference"));
+    	
+    	String responseAsString = getRefAsString(response);
+    	
+    	assertTrue(Base64.isBase64(responseAsString));
     }
-
+    
     public static void checkReferenceBinaryResultDefault(String response) throws ParserConfigurationException,
-            SAXException,
-            IOException {
-        assertThat(response, response, not(containsString("ExceptionReport")));
-        assertThat(response, response, containsString("ProcessSucceeded"));
-        assertThat(response, response, containsString("Reference"));
-
-        InputStream stream = getRefAsStream(response);
-        GeotiffParser parser = new GeotiffParser();
-        IData data = parser.parse(stream, "image/tiff", null);
-        assertThat(data.getPayload() instanceof GridCoverage2D, is(true));
-        stream.close();
+    SAXException,
+    IOException {
+    	assertThat(response, response, not(containsString("ExceptionReport")));
+    	assertThat(response, response, containsString("ProcessSucceeded"));
+    	assertThat(response, response, containsString("Reference"));
+    	
+    	String responseAsString = getRefAsString(response);
+    	
+    	assertThat(responseAsString, responseAsString, containsString(TIFF_MAGIC));
     }
     
     public static void checkInlineResultBase64(String response){
@@ -328,5 +324,46 @@ public class AllTestsIT {
 		
 		assertTrue(Base64.isBase64(nodeValue));
     	
+    }
+    
+    public static void checkRawBinaryResultBase64(InputStream stream){
+
+        String responseAsString = saveInputStreamToString(stream);
+        
+        assertTrue(Base64.isBase64(responseAsString));
+    }
+
+    public static void checkRawBinaryResultDefault(InputStream stream){
+
+    	String responseAsString = saveInputStreamToString(stream);
+        
+        assertThat(responseAsString, responseAsString, containsString(TIFF_MAGIC));
+    }
+    
+    public static String saveInputStreamToString(InputStream stream){
+		
+    	StringBuilder stringBuilder = new StringBuilder();
+    	
+    	try {
+    		
+    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+    		
+    		String line = null;
+    		
+    		while ((line = bufferedReader.readLine()) !=  null) {
+				stringBuilder.append(line);
+			}
+    		
+		} catch (Exception e) {
+			System.err.println("Could not save inputstream content to String.");
+		} finally{    		
+    		try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
+    	
+		return stringBuilder.toString();
+		
     }
 }
