@@ -538,7 +538,7 @@
 		<profile>
 			<id>with-geotools</id>
 			<properties>
-				<wps.config.file>config/wps_config_geotools.xml</wps.config.file>
+				<wps.config.file>WEB-INF/config/wps_config_geotools.xml</wps.config.file>
 			</properties>
 			<build>
 				<!--<plugins> <plugin> <artifactId>maven-war-plugin</artifactId> <configuration>
