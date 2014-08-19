@@ -82,7 +82,7 @@ public class WebProcessingService {
 
     private static final String CAPABILITES_SKELETON_NAME = "wpsCapabilitiesSkeleton.xml";
 
-    private static final String CONFIG_FILE_DIR = "config";
+    private static final String PUBLIC_CONFIG_FILE_DIR = "config";
 
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
 
@@ -100,7 +100,7 @@ public class WebProcessingService {
 
     /**
      *
-     * TODO: check if this method can be re-enabled
+     * TODO: DNU: check if this method can be re-enabled or if we can achieve this functinality any other way
      *
      * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding, zipping content
      *
@@ -175,7 +175,7 @@ public class WebProcessingService {
         LOGGER.info("Initialized {}", database);
 
         try {
-            String capsConfigPath = getApplicationBaseDir() + File.separator + CONFIG_FILE_DIR
+            String capsConfigPath = getApplicationBaseDir() + File.separator + PUBLIC_CONFIG_FILE_DIR
                     + File.separator + CAPABILITES_SKELETON_NAME;
             CapabilitiesDocument capsDoc = CapabilitiesConfiguration.getInstance(capsConfigPath);
             LOGGER.debug("Initialized capabilities document:\n{}", capsDoc);
