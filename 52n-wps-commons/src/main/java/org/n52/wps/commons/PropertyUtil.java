@@ -22,6 +22,9 @@ import java.util.Map;
 import org.joda.time.Period;
 import org.n52.wps.PropertyDocument;
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +42,8 @@ public class PropertyUtil {
     
     private final String systemPropertyRoot;
     private final Map<String, Property> propertyNameMap;
+    private ConfigurationModule configurationModule;
+    private ConfigurationManager configurationManager;
     
     public PropertyUtil(Property[] properties) {
         this(properties, null);
@@ -54,6 +59,20 @@ public class PropertyUtil {
             }
         }
         this.systemPropertyRoot = systemPropertyRoot;
+    }
+    
+    public PropertyUtil(ConfigurationModule configurationModule) {
+    	this.configurationModule = configurationModule;
+    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
+    	systemPropertyRoot = null;
+    	propertyNameMap = null;
+    }
+    
+    public PropertyUtil(ConfigurationModule configurationModule, String systemPropertyRoot) {
+    	this.configurationModule = configurationModule;
+    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
+    	this.systemPropertyRoot = systemPropertyRoot;
+    	propertyNameMap = null;
     }
 
     public boolean extractBoolean(final String valueKey, boolean valueDefault) {
@@ -74,7 +93,7 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap.get(valueKey);
+        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             if (property.getActive()) {
                 valueAsString = property.getStringValue();
@@ -90,6 +109,14 @@ public class PropertyUtil {
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
+        }
+        
+        if(configurationModule != null && configurationManager != null){
+        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        	
+        	if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
+        		return (Boolean) configurationEntry.getValue();
+        	}        	
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -118,7 +145,7 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap.get(valueKey);
+        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             if (property.getActive()) {
                 valueAsString = property.getStringValue();
@@ -138,6 +165,14 @@ public class PropertyUtil {
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
+        }
+        
+        if(configurationModule != null && configurationManager != null){
+        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        	
+        	if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
+        		return (Long) configurationEntry.getValue();
+        	}        	
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -166,7 +201,7 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap.get(valueKey);
+        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             if (property.getActive()) {
                 valueAsString = property.getStringValue();
@@ -186,6 +221,14 @@ public class PropertyUtil {
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
+        }
+        
+        if(configurationModule != null && configurationManager != null){
+        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        	
+        	if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
+        		return (Double) configurationEntry.getValue();
+        	}        	
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -209,7 +252,7 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
          
-        Property property = propertyNameMap.get(valueKey);
+        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             if (property.getActive()) {
                 value = property.getStringValue();
@@ -224,6 +267,14 @@ public class PropertyUtil {
             }
         } else {
            LOGGER.debug("Config property \"{}\" not present", valueKey);
+        }
+        
+        if(configurationModule != null && configurationManager != null){
+        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        	
+        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+        		return (String) configurationEntry.getValue();
+        	}        	
         }
          
         LOGGER.info("Using default value for \"{}\": {}", valueKey, valueDefault);
@@ -257,7 +308,7 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        PropertyDocument.Property property = propertyNameMap.get(valueKey);
+        PropertyDocument.Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             if (property.getActive()) {
                 periodAsString = property.getStringValue();
@@ -282,6 +333,31 @@ public class PropertyUtil {
             }
         } else {
             LOGGER.debug("Config property for \"{}\"  not present", valueKey);
+        }
+        
+        if(configurationModule != null && configurationManager != null){
+        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+        	
+        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+        		periodAsString = (String) configurationEntry.getValue();
+                
+        		if (periodAsString != null) {
+                    try {
+                        Period period = Period.parse(periodAsString);
+                        if (period != null) {
+                            long periodMillis = period.toStandardDuration().getMillis();
+                            LOGGER.info("ConfigurationModule entry for \"{}\" exists, using value of: {} ({}ms) ", valueKey, periodAsString, periodMillis);
+                            return periodMillis;
+                        } else {
+                            LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                    }
+                } else {
+                    LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
+                }       		
+        	}        	
         }
         
         LOGGER.info("Using default value for \"{}\" of {}ms", valueKey, valueDefault);

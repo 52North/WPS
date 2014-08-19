@@ -33,7 +33,6 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.apache.xmlbeans.XmlException;
@@ -44,6 +43,8 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,27 @@ public class WPSConfig implements Serializable {
     protected final PropertyChangeSupport propertyChangeSupport;
 
     private static String configPath;
+    
+	private ConfigurationManager configurationManager;
+    private Server serverConfigurationModule;	
+
+	public Server getServerConfigurationModule() {
+
+		if (serverConfigurationModule == null) {
+			serverConfigurationModule = (Server) configurationManager
+					.getConfigurationServices().getConfigurationModule(
+							Server.class.getName());
+		}
+		return serverConfigurationModule;
+	}
+
+    public ConfigurationManager getConfigurationManager() {
+		return configurationManager;
+	}
+
+	public void setConfigurationManager(ConfigurationManager configurationManager) {
+		this.configurationManager = configurationManager;
+	}
     
     private WPSConfig(String wpsConfigPath) throws XmlException, IOException {
     	configPath = wpsConfigPath;    	

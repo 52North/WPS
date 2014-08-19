@@ -48,11 +48,11 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.DatabaseDocument.Database;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.MIMEUtil;
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
+import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,10 +123,12 @@ public final class FlatFileDatabase implements IDatabase {
     protected final Timer wipeTimer;
 
     protected FlatFileDatabase() {
-        
-        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-        Database database = server.getDatabase();
-        PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
+
+        FlatFileDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (FlatFileDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(FlatFileDatabaseConfigurationModule.class.getName());
+            	
+    	Server server = WPSConfig.getInstance().getServerConfigurationModule();
+
+        PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
         
         // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
         baseResultURL = String.format("http://%s:%s/%s/RetrieveResultServlet?id=",

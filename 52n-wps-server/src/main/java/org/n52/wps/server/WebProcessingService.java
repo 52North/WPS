@@ -40,6 +40,7 @@ import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.util.zip.GZIPOutputStream;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,12 +58,14 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.util.XMLBeansHelper;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.ServletConfigAware;
+import org.springframework.web.context.ServletContextAware;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
@@ -70,9 +73,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author foerster, Benjamin Pross, Daniel Nüst
  *
  */
-@Service
 @RequestMapping("/" + WebProcessingService.SERVLET_PATH)
-public class WebProcessingService {
+public class WebProcessingService implements ServletContextAware, ServletConfigAware{
 
     private static final String SPECIAL_XML_POST_VARIABLE = "request";
 
@@ -94,9 +96,13 @@ public class WebProcessingService {
 
     private static String applicationBaseDir = null;
 
-    @Autowired
-    public WebProcessingService(ServletContext context) {
-        init(context);
+    private ServletConfig servletConfig;
+    private ServletContext servletContext;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
+
+    public WebProcessingService() {
         LOGGER.info("NEW {}", this);
     }
 
@@ -135,9 +141,11 @@ public class WebProcessingService {
         // }
     }
 
-    public void init(ServletContext context) {
+    public void init() {
         LOGGER.info("*** WebProcessingService initializing... ***");
-        WPSConfig conf = WPSConfig.getInstance(context);
+        WPSConfig conf = WPSConfig.getInstance(servletContext);
+        
+        WPSConfig.getInstance().setConfigurationManager(configurationManager);
         
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
@@ -157,7 +165,7 @@ public class WebProcessingService {
         }
         LOGGER.info("Initialization of wps properties successful!\n\t\tWPSConfig: {}", conf);
 
-        applicationBaseDir = context.getRealPath("");
+        applicationBaseDir = servletContext.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
         BASE_DIR = applicationBaseDir;
 
@@ -395,4 +403,14 @@ public class WebProcessingService {
         super.finalize();
         DatabaseFactory.getDatabase().shutdown();
     }
+
+	@Override
+	public void setServletConfig(ServletConfig servletConfig) {
+		this.servletConfig = servletConfig;		
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		this.servletContext = servletContext;		
+	}
 }

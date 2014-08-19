@@ -6,13 +6,13 @@
 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<context:component-scan base-package="org.n52.wps" />
-
 	<mvc:annotation-driven />
 	<mvc:view-controller path="/" view-name="index" />
 
 	<!-- static resource files -->
 	<mvc:resources mapping="/static/**" location="/static/" />
+
+    <bean id="webProcessingService" class="org.n52.wps.server.WebProcessingService" init-method="init" />
 
 	<!-- landing page and admin web application -->
 <!-- 	<bean id="viewResolver" -->
@@ -37,5 +37,19 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="1000000" />
 	</bean>
+	
+	<beans profile="production">
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+		</context:component-scan>
+	</beans>
+
+	<beans profile="test">
+		<!-- Include test modules in the context for integration testing -->
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+		</context:component-scan>
+	</beans>
 
 </beans>

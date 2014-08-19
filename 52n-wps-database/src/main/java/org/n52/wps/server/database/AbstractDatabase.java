@@ -37,11 +37,16 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.ws.Response;
+
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.entities.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
 * An anstract-layer to the databases. 
@@ -105,6 +110,21 @@ public abstract class AbstractDatabase implements IDatabase{
 	protected static PreparedStatement insertSQL = null;
 	protected static PreparedStatement updateSQL = null;
 	protected static PreparedStatement selectSQL = null;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
+    private Server serverConfigurationModule;
+	
+
+	public Server getServerConfigurationModule() {
+
+		if (serverConfigurationModule == null) {
+			serverConfigurationModule = (Server) configurationManager
+					.getConfigurationServices().getConfigurationModule(
+							Server.class.getName());
+		}
+		return serverConfigurationModule;
+	}
 	
 	/**
 	 * Get an instance of the Database object. Only one instance is required. If
@@ -283,9 +303,12 @@ public abstract class AbstractDatabase implements IDatabase{
     @Override
 	public String generateRetrieveResultURL(String id) {
 		return "http://"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath() + "/"
+                + getServerConfigurationModule().getHostname() + ":"
+                + getServerConfigurationModule().getHostport() + "/"
+                + getServerConfigurationModule().getWebappPath() + "/"
+//                + WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":"
+//                + WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/"
+//                + WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath() + "/"
                 + "RetrieveResultServlet?id=";   // TODO:  Parameterize this... Execution Context..?
 	}
 	

@@ -50,6 +50,8 @@ import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,6 +77,9 @@ public class CapabilitiesConfiguration {
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
     public static String ENDPOINT_URL;
+    
+    private static ConfigurationManager configurationManager;	
+    private static Server serverConfigurationModule;	
 
     private CapabilitiesConfiguration() {
         /* nothing here */
@@ -199,7 +204,7 @@ public class CapabilitiesConfiguration {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-        return getInstance( !WPSConfig.getInstance().getWPSConfig().getServer().getCacheCapabilites());
+    	return getInstance(!getServerConfigurationModule().isCacheCapabilites());
     }
 
     /**
@@ -312,9 +317,8 @@ public class CapabilitiesConfiguration {
      *         if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
-        WPSConfig config = WPSConfig.getInstance();
-        String host = config.getWPSConfig().getServer().getHostname();
-        String port = config.getWPSConfig().getServer().getHostport();
+        String host = getServerConfigurationModule().getHostname();
+        String port = "" + getServerConfigurationModule().getHostport();
         if (host == null) {
             host = InetAddress.getLocalHost().getCanonicalHostName();
         }
@@ -356,6 +360,22 @@ public class CapabilitiesConfiguration {
             lock.unlock();
         }
     }
+    
+	public static Server getServerConfigurationModule() {
+
+		if (serverConfigurationModule == null) {
+
+			if (configurationManager == null) {
+				configurationManager = WPSConfig
+						.getInstance().getConfigurationManager();
+			}if(configurationManager != null){
+			    serverConfigurationModule = (Server) configurationManager
+					    .getConfigurationServices().getConfigurationModule(
+							    Server.class.getName());
+			}
+		}
+		return serverConfigurationModule;
+	}
 
     /**
      * Strategy to load a capabilities skeleton from a URL.
