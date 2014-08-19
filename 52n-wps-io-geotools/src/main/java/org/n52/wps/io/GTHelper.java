@@ -476,7 +476,7 @@ public class GTHelper {
 				domain = domain.substring(0,startIndex);			
 				String baseDirLocation = domain;
 			
-				String baseDir = baseDirLocation +  "schemas" + File.separator;
+				String baseDir = baseDirLocation +  "/static/schemas" + File.separator;
 				File folder = new File(baseDir);
 				if(!folder.exists()){
 					folder.mkdirs();
@@ -487,7 +487,7 @@ public class GTHelper {
 				writer.flush();
 				writer.close();
 				
-				String url = "http://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
+				String url = "http://"+hostname+":"+port+"/"+webapp+"/static/schemas/"+ uuid+".xsd";
 				return url;
 			}
 		}
