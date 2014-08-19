@@ -571,12 +571,16 @@
 							</execution>
 						</executions>
 						<configuration>
-							<file>${project.build.directory}/${project.build.finalName}/${wps.config.file}</file>
+							<file>${project.build.directory}/${project.build.finalName}/${wps.db.initial-data.file}</file>
 							<regex>false</regex>
 							<replacements>
+<!-- 								<replacement> -->
+<!-- 									<token>hostport="8080"</token> -->
+<!-- 									<value>hostport=""</value> -->
+<!-- 								</replacement> -->
 								<replacement>
-									<token>hostport="8080"</token>
-									<value>hostport="${jetty.http.port}"</value>
+									<token>('hostport','org.n52.wps.webapp.entities.Server','8080')</token>
+									<value>('hostport','org.n52.wps.webapp.entities.Server','${jetty.http.port}')</value>
 								</replacement>
 							</replacements>
 						</configuration>
