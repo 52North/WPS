@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.response;
+package org.n52.wps.response;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -44,11 +44,10 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Document;
-
 import org.n52.wps.server.request.ExecuteRequest;
-import org.n52.wps.server.request.InputHandlerTest;
-import org.n52.wps.server.request.WPSConfigTestUtil;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.w3c.dom.Document;
 
 /**
  * This class tests the getMimeType method of the ExecuteResponseBuilder class.
@@ -57,14 +56,14 @@ import org.n52.wps.server.request.WPSConfigTestUtil;
  * @author Benjamin Pross(bpross-52n)
  *
  */
-public class ExecuteResponseBuilderTest {
+public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 	private ExecuteRequest executeRequest;
 	private DocumentBuilderFactory fac;
 
     @BeforeClass
     public static void setupClass() throws XmlException, IOException {
-        WPSConfigTestUtil.generateMockConfig(InputHandlerTest.class, "/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
+//        WPSConfigTestUtil.generateMockConfig(InputHandlerTest.class, "/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
     }
 
 	@Before
@@ -74,6 +73,7 @@ public class ExecuteResponseBuilderTest {
 
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.request;
+package org.n52.wps.request;
 
 import static org.junit.Assert.assertTrue;
 
@@ -48,25 +48,26 @@ import org.apache.xmlbeans.XmlValidationError;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author bpross-52n
  */
-public class ExecuteRequestTest {
+public class ExecuteRequestTest extends AbstractITClass {
 
     private DocumentBuilderFactory fac;
 
     @BeforeClass
     public static void setUpClass()
             throws XmlException, IOException {
-        WPSConfig.forceInitialization("src/test/resources/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
+//        WPSConfig.forceInitialization("src/test/resources/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
     }
 
 	@Before
@@ -75,6 +76,7 @@ public class ExecuteRequestTest {
 
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
 	@Test

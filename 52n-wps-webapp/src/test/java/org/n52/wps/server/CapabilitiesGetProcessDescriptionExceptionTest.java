@@ -36,18 +36,26 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.n52.test.mock.MockUtil;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.algorithm.annotation.LiteralDataInput;
 import org.n52.wps.algorithm.annotation.LiteralDataOutput;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class CapabilitiesGetProcessDescriptionExceptionTest {
+public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITClass {
 	
 	public static final String IDENTIFIER = "CatchMeIfYouCan";	
 	public static boolean algorithmTriedToInstantiate;
 
+	@Before
+    public void setUp(){
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
+	
 	@Test
 	public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
 		MockUtil.getMockConfig();

@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.response;
+package org.n52.wps.response;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -46,6 +46,9 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.algorithm.test.DummyTestClass;
+import org.n52.wps.server.response.RawData;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * This class is for testing RawData output.
@@ -53,7 +56,7 @@ import org.n52.wps.server.algorithm.test.DummyTestClass;
  * @author Benjamin Pross (bpross-52n)
  *
  */
-public class RawDataTest {
+public class RawDataTest  extends AbstractITClass{
 
 	IAlgorithm algorithm;
 	ProcessDescriptionType processDescription;
@@ -61,13 +64,13 @@ public class RawDataTest {
 
     @BeforeClass
     public static void setUpClass() {
-        try {
-            WPSConfig.forceInitialization("../52n-wps-webapp/src/main/webapp/WEB-INF/config/wps_config.xml");
-        } catch (XmlException ex) {
-            System.out.println(ex.getMessage());
-        } catch (IOException ex) {
-        	 System.out.println(ex.getMessage());
-        }
+//        try {
+//            WPSConfig.forceInitialization("../52n-wps-webapp/src/main/webapp/WEB-INF/config/wps_config.xml");
+//        } catch (XmlException ex) {
+//            System.out.println(ex.getMessage());
+//        } catch (IOException ex) {
+//        	 System.out.println(ex.getMessage());
+//        }
     }
 
     @Before
@@ -75,6 +78,7 @@ public class RawDataTest {
     	algorithm = new DummyTestClass();
     	processDescription = algorithm.getDescription();
     	identifier = algorithm.getWellKnownName();
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
     @Test
