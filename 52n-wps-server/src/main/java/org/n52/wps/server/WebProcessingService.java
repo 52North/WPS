@@ -137,7 +137,7 @@ public class WebProcessingService {
 
     public void init(ServletContext context) {
         LOGGER.info("*** WebProcessingService initializing... ***");
-        WPSConfig conf = WPSConfig.getInstance();
+        WPSConfig conf = WPSConfig.getInstance(context);
         
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
