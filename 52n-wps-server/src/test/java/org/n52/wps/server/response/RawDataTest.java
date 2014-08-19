@@ -41,7 +41,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
@@ -63,7 +62,7 @@ public class RawDataTest {
     @BeforeClass
     public static void setUpClass() {
         try {
-            WPSConfig.forceInitialization("../52n-wps-webapp/src/main/webapp/config/wps_config.xml");
+            WPSConfig.forceInitialization("../52n-wps-webapp/src/main/webapp/WEB-INF/config/wps_config.xml");
         } catch (XmlException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {

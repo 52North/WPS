@@ -48,7 +48,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -73,7 +72,7 @@ import org.xml.sax.SAXException;
  * To enable the R process repository:
  * 
  * <ul>
- * <li>open your WPSConfiguration file, normally located in /config/wps_config.xml</li>
+ * <li>open your WPSConfiguration file, normally located in WEB-INF/config/wps_config.xml</li>
  * <li>Find the "LocalRAlgorithmRepository"</li>
  * <li>set the attribute "active" to <code>true</code></li>
  * <li>(restart your WPS server)</li>
@@ -103,11 +102,6 @@ public class Wps4rIT {
         catch (RserveException e1) {
             Assume.assumeNoException(e1);
         }
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        // WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");
     }
 
     private static RConnection getNewConnection(String host, int port, String user, String password) throws RserveException {

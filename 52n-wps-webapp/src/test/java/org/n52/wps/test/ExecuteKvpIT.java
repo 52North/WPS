@@ -55,7 +55,9 @@ public class ExecuteKvpIT {
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
-        WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");//FIXME bpross-52n: I don't think this is needed
+        WPSConfig.forceInitialization("src/main/webapp/WEB-INF/config/wps_config.xml");// FIXME bpross-52n: I
+                                                                                       // don't think this is
+                                                                                       // needed
     }
     
     @Before
