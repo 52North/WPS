@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.wps.commons.WPSConfig;
 
 public class ExecuteKvpIT {
@@ -49,22 +48,23 @@ public class ExecuteKvpIT {
 
     private final String processSucceeded = "ProcessSucceeded";
     private final String exceptionReport = "ExceptionReport";
-    private final String referenceComplexBinaryInputURL = AllTestsIT.getURL() + "/../testData/elev_srtm_30m21.tif";
-    private final String referenceComplexXMLInputURL = AllTestsIT.getURL() + "/../testData/test-data.xml";
+
     private String referenceComplexBinaryInputURLEncoded;
     private String referenceComplexXMLInputURLEncoded;
     
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
-        WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");//FIXME bpross-52n: I don't think this is needed
+        WPSConfig.forceInitialization("src/main/webapp/WEB-INF/config/wps_config.xml");// FIXME bpross-52n: I
+                                                                                       // don't think this is
+                                                                                       // needed
     }
     
     @Before
     public void before(){    	
     	try {
-			referenceComplexBinaryInputURLEncoded = URLEncoder.encode(referenceComplexBinaryInputURL, "UTF-8");
-			referenceComplexXMLInputURLEncoded = URLEncoder.encode(referenceComplexXMLInputURL, "UTF-8");
+			referenceComplexBinaryInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexBinaryInputURL, "UTF-8");
+			referenceComplexXMLInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexXMLInputURL, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}    	

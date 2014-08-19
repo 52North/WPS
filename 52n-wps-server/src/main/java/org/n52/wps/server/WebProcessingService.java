@@ -38,14 +38,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
-import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import net.opengis.wps.x100.CapabilitiesDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
@@ -54,29 +54,51 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * This WPS supports HTTP GET for describeProcess and getCapabilities and XML-POST for execute.
  *
- * @author foerster
+ * @author foerster, Benjamin Pross, Daniel Nüst
  *
  */
-public class WebProcessingService extends HttpServlet {
+@Service
+@RequestMapping("/" + WebProcessingService.SERVLET_PATH)
+public class WebProcessingService {
 
-    // Universal version identifier for a Serializable class.
-    // Should be used here, because HttpServlet implements the java.io.Serializable
-    private static final long serialVersionUID = 8943233273641771839L;
-    public static String PROPERTY_NAME_WEBAPP_PATH = "webappPath";
+    private static final String SPECIAL_XML_POST_VARIABLE = "request";
+
+    private static final String XML_CONTENT_TYPE = "text/xml";
+
+    private static final int MAXIMUM_REQUEST_SIZE = 128 << 20;
+
+    private static final String CAPABILITES_SKELETON_NAME = "wpsCapabilitiesSkeleton.xml";
+
     public static String BASE_DIR = null;
     public static String WEBAPP_PATH = null;
-    public static String SERVLET_PATH = "WebProcessingService";
+    public static final String SERVLET_PATH = "WebProcessingService";
+
+    private static final String PUBLIC_CONFIG_FILE_DIR = "config";
+
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
     public static String DEFAULT_LANGUAGE = "en-US";
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
+
+    private static String applicationBaseDir = null;
+
+    @Autowired
+    public WebProcessingService(ServletContext context) {
+        init(context);
+        LOGGER.info("NEW {}", this);
+    }
 
     /**
      *
@@ -113,9 +135,9 @@ public class WebProcessingService extends HttpServlet {
         // }
     }
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public void init(ServletContext context) {
+        LOGGER.info("*** WebProcessingService initializing... ***");
+        WPSConfig conf = WPSConfig.getInstance();
         
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
@@ -124,28 +146,34 @@ public class WebProcessingService extends HttpServlet {
         LOGGER.info("WebProcessingService initializing...");
 
         try {
-            if (WPSConfig.getInstance(config) == null) {
+            if (conf == null) {
                 LOGGER.error("Initialization failed! Please look at the properties file!");
                 return;
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             LOGGER.error("Initialization failed! Please look at the properties file!", e);
             return;
         }
-        LOGGER.info("Initialization of wps properties successful!");
+        LOGGER.info("Initialization of wps properties successful!\n\t\tWPSConfig: {}", conf);
 
-        BASE_DIR = this.getServletContext().getRealPath("");
+        applicationBaseDir = context.getRealPath("");
+        LOGGER.debug("Application base dir is {}", applicationBaseDir);
+        BASE_DIR = applicationBaseDir;
 
         Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
         ParserFactory.initialize(parsers);
+        LOGGER.info("Initialized {}", ParserFactory.getInstance());
 
         Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();
         GeneratorFactory.initialize(generators);
+        LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
 
-        // call RepositoyManager to initialize
-        RepositoryManager.getInstance();
-        LOGGER.info("Algorithms initialized");
+        RepositoryManager repoManager = RepositoryManager.getInstance();
+        LOGGER.info("Initialized {}", repoManager);
+
+        IDatabase database = DatabaseFactory.getDatabase();
+        LOGGER.info("Initialized {}", database);
 
         // String customWebappPath = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_WEBAPP_PATH);
         String customWebappPath = WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath();
@@ -159,25 +187,19 @@ public class WebProcessingService extends HttpServlet {
         LOGGER.info("webappPath is set to: " + customWebappPath);
 
         try {
-            CapabilitiesConfiguration.getInstance(BASE_DIR + File.separator + "config"
-                    + File.separator + "wpsCapabilitiesSkeleton.xml");
+            String capsConfigPath = getApplicationBaseDir() + File.separator + PUBLIC_CONFIG_FILE_DIR
+                    + File.separator + CAPABILITES_SKELETON_NAME;
+            CapabilitiesDocument capsDoc = CapabilitiesConfiguration.getInstance(capsConfigPath);
+            LOGGER.debug("Initialized capabilities document:\n{}", capsDoc);
         }
-        catch (IOException e) {
+        catch (IOException | XmlException e) {
             LOGGER.error("error while initializing capabilitiesConfiguration", e);
         }
-        catch (XmlException e) {
-            LOGGER.error("error while initializing capabilitiesConfiguration", e);
-        }
-
-        // Get an instance of the database for initialization of the database
-        DatabaseFactory.getDatabase();
-
-        LOGGER.info("WPS up and running!");
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
         // it will listen to changes of the wpsCapabilities
-        WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME,
+        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME,
                                                           new PropertyChangeListener() {
                                                               @Override
                                                               public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
@@ -201,7 +223,7 @@ public class WebProcessingService extends HttpServlet {
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
         // it will listen to changes of the wpsConfiguration
-        WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME,
+        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME,
                                                           new PropertyChangeListener() {
                                                               public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
                                                                   LOGGER.info(this.getClass().getName()
@@ -220,14 +242,19 @@ public class WebProcessingService extends HttpServlet {
                                                                   }
                                                               }
                                                           });
-
+        LOGGER.info("*** WPS up and running! ***");
     }
 
+    public static String getApplicationBaseDir() {
+        return applicationBaseDir;
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         try {
             @SuppressWarnings("resource")
             OutputStream out = res.getOutputStream(); // closed by res.flushBuffer();
-            RequestHandler handler = new RequestHandler((Map<String, String[]>) req.getParameterMap(), out);
+            RequestHandler handler = new RequestHandler(req.getParameterMap(), out);
             String mimeType = handler.getResponseMimeType();
             res.setContentType(mimeType);
             handler.handle();
@@ -252,10 +279,7 @@ public class WebProcessingService extends HttpServlet {
         }
     }
 
-    public final static int MAXIMUM_REQUEST_SIZE = 128 << 20;
-    public final static String SPECIAL_XML_POST_VARIABLE = "request";
-    private static final String XML_CONTENT_TYPE = "text/xml";
-
+    @RequestMapping(method = RequestMethod.POST)
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         BufferedReader reader = null;
 
@@ -342,14 +366,6 @@ public class WebProcessingService extends HttpServlet {
         }
     }
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        if (SERVLET_PATH == null) {
-            req.getContextPath();
-        }
-        super.service(req, res);
-    }
-
     private static void handleException(ExceptionReport exception, HttpServletResponse res) {
         res.setContentType(XML_CONTENT_TYPE);
         try {
@@ -374,8 +390,9 @@ public class WebProcessingService extends HttpServlet {
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
+    protected void finalize() throws Throwable {
+        LOGGER.debug("Finalizing {}", this);
+        super.finalize();
         DatabaseFactory.getDatabase().shutdown();
     }
 }

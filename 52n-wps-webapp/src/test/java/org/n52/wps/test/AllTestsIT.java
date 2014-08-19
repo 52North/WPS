@@ -60,6 +60,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
+import org.n52.wps.server.WebProcessingService;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -68,6 +69,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class AllTestsIT {
+
+    public static final String referenceComplexBinaryInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
+                                                                                     "static/testData/elev_srtm_30m21.tif");
+    public static final String referenceComplexXMLInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
+                                                                                  "static/testData/test-data.xml");
 
     public static int getPort() {
         return Integer.parseInt(System.getProperty("test.port", "8080"));

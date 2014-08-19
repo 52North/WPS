@@ -65,7 +65,6 @@ import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.client.WPSClientSession;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.w3c.dom.Node;
@@ -78,7 +77,6 @@ public class ExecutePostIT {
     private ExecuteRequestBuilder echoProcessExecuteRequestBuilder;
     private final String echoProcessIdentifier = "org.n52.wps.server.algorithm.test.EchoProcess";
     private final String echoProcessInlineComplexXMLInput = "<TestData><this><is><xml><Data>Test</Data></xml></is></this></TestData>";
-    private final String echoProcessReferenceComplexXMLInput = AllTestsIT.getURL() + "/../testData/test-data.xml";
     private final String testDataNodeName = "TestData";    
     private final String echoProcessLiteralInputID = "literalInput";
     private final String echoProcessLiteralInputString = "testData";
@@ -89,7 +87,6 @@ public class ExecutePostIT {
 
     private ExecuteRequestBuilder multiReferenceBinaryInputAlgorithmExecuteRequestBuilder;
     private final String multiReferenceBinaryInputAlgorithmIdentifier = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-    private final String multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput = AllTestsIT.getURL() + "/../testData/elev_srtm_30m21.tif";
     private final String multiReferenceBinaryInputAlgorithmComplexInputID = "data";
     private final String multiReferenceBinaryInputAlgorithmComplexOutputID = "result";
     private final String multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff= "image/tiff";
@@ -99,7 +96,6 @@ public class ExecutePostIT {
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();
-        WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");//FIXME bpross-52n: I don't think this is needed
         
     }
     
@@ -191,7 +187,7 @@ public class ExecutePostIT {
         System.out.println("\nRunning testExecutePOSTreferenceComplexXMLSynchronousXMLOutput");
         
         try {
-        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, AllTestsIT.referenceComplexXMLInputURL, null, null, echoProcessComplexMimeTypeTextXML);
 
 			echoProcessExecuteRequestBuilder.setResponseDocument(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
 			
@@ -219,7 +215,7 @@ public class ExecutePostIT {
     public void testExecutePOSTreferencePOSTComplexXMLSynchronousXMLOutput() throws IOException, ParserConfigurationException, SAXException {
     	System.out.println("\nRunning testExecutePOSTreferencePOSTComplexXMLSynchronousXMLOutput");
     	
-    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID,  AllTestsIT.referenceComplexXMLInputURL, null, null, echoProcessComplexMimeTypeTextXML);
 
 		echoProcessExecuteRequestBuilder.setRawData(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
 		    	
@@ -258,8 +254,8 @@ public class ExecutePostIT {
         System.out.println("\nRunning testExecutePOSTMultipleReferenceComplexXMLSynchronousXMLOutput");
         
         try {
-        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
-        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, AllTestsIT.referenceComplexXMLInputURL, null, null, echoProcessComplexMimeTypeTextXML);
+        	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, AllTestsIT.referenceComplexXMLInputURL, null, null, echoProcessComplexMimeTypeTextXML);
 
 			echoProcessExecuteRequestBuilder.setResponseDocument(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
 			
@@ -314,9 +310,17 @@ public class ExecutePostIT {
     
     private Object createAndSubmitMultiReferenceBinaryInputAlgorithmExecuteWithResponseDocument(List<InputType> inputs, boolean status, boolean storeSupport, boolean asReference) throws WPSClientException{    	
     	
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 
 		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.setResponseDocument(multiReferenceBinaryInputAlgorithmComplexOutputID, null, "base64", multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
@@ -357,7 +361,7 @@ public class ExecutePostIT {
     public void testExecutePOSTReferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testExecutePOSTReferenceComplexXMLSynchronousXMLOutput_WFS_POST_MissingMimeType");
         
-    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, echoProcessReferenceComplexXMLInput, null, null, echoProcessComplexMimeTypeTextXML);
+    	echoProcessExecuteRequestBuilder.addComplexDataReference(echoProcessComplexInputID, AllTestsIT.referenceComplexXMLInputURL, null, null, echoProcessComplexMimeTypeTextXML);
 
 		echoProcessExecuteRequestBuilder.setRawData(echoProcessComplexOutputID, null, null, echoProcessComplexMimeTypeTextXML);
         
@@ -447,7 +451,7 @@ public class ExecutePostIT {
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + AllTestsIT.referenceComplexBinaryInputURL + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -474,12 +478,14 @@ public class ExecutePostIT {
                 + "<wps:DataInputs>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + AllTestsIT.referenceComplexBinaryInputURL
+                + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "<wps:Input>"
                 + "<ows:Identifier>data</ows:Identifier>"
-                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput + "\">"
+                + "<wps:Reference mimeType=\"image/tiff\" xlink:href=\"" + AllTestsIT.referenceComplexBinaryInputURL
+                + "\">"
                 + "</wps:Reference>"
                 + "</wps:Input>"
                 + "</wps:DataInputs>"
@@ -1902,9 +1908,17 @@ public class ExecutePostIT {
 
     private Object createAndSubmitMultiReferenceBinaryInputAlgorithmExecuteWithResponseDocument(boolean status, boolean storeSupport, boolean asReference, String outputEncoding) throws WPSClientException{    	
     	
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 
 		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.setResponseDocument(multiReferenceBinaryInputAlgorithmComplexOutputID, null, outputEncoding, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
@@ -1919,9 +1933,17 @@ public class ExecutePostIT {
     
     private Object createAndSubmitMultiReferenceBinaryInputAlgorithmExecuteWithResponseDocument(boolean status, boolean storeSupport, boolean asReference) throws WPSClientException{    	
     	
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 
 		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.setResponseDocument(multiReferenceBinaryInputAlgorithmComplexOutputID, null, "base64", multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
@@ -1936,9 +1958,17 @@ public class ExecutePostIT {
     
     private Object createAndSubmitMultiReferenceBinaryInputAlgorithmExecuteWithRawData(boolean status, boolean storeSupport, boolean asReference, String encoding) throws WPSClientException{    	
     	
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		
-		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID, multiReferenceBinaryInputAlgorithmReferenceComplexBinaryInput, null, null, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
+        multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.addComplexDataReference(multiReferenceBinaryInputAlgorithmComplexInputID,
+                                                                                        AllTestsIT.referenceComplexBinaryInputURL,
+                                                                                        null,
+                                                                                        null,
+                                                                                        multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 
 		multiReferenceBinaryInputAlgorithmExecuteRequestBuilder.setRawData(multiReferenceBinaryInputAlgorithmComplexOutputID, null, encoding, multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff);
 		

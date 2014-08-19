@@ -160,11 +160,16 @@
             <artifactId>cors-filter</artifactId>
             <scope>runtime</scope>
         </dependency>
+        
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+		</dependency>
 	</dependencies>
 
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
-		<wps.config.file>config/wps_config.xml</wps.config.file>
+		<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -175,6 +180,7 @@
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>logback.xml</include>
+					<include>applicationContext.xml</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
@@ -220,17 +226,17 @@
 							<targetPath>config</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/webapp/</directory>
+							<directory>src/main/webapp/static</directory>
 							<includes>
 								<include>index.html</include>
 							</includes>
 							<filtering>true</filtering>
-							<targetPath>/</targetPath>
+							<targetPath>static</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/webapp/webAdmin</directory>
+							<directory>src/main/webapp/WEB-INF/views</directory>
 							<filtering>true</filtering>
-							<targetPath>webAdmin</targetPath>
+							<targetPath>WEB-INF/views</targetPath>
 							<includes>
                 				<include>**/*.jsp</include>
               				</includes>
@@ -523,6 +529,12 @@
 					</plugin>
 				</plugins>
 			</build>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-io-geotools</artifactId>
+				</dependency>
+			</dependencies>
 		</profile>
 		<profile>
 			<id>with-geotools</id>
@@ -581,7 +593,7 @@
 				</property>
 			</activation>
 			<properties>
-				<wps.config.file>config/wps_config.xml</wps.config.file>
+				<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
 			</properties>
 			<build>
 				<plugins>
@@ -593,7 +605,7 @@
 							<execution>
 								<id>copy-external-wps-config</id>
 								<configuration>
-									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/config/wps_config.xml" />
+									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/config/wps_config.xml" />
 								</configuration>
 								<goals>
 									<goal>run</goal>

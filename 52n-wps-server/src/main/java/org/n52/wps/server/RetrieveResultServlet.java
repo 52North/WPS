@@ -34,38 +34,46 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.UUID;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.commons.MIMEUtil;
 import org.n52.wps.commons.XMLUtil;
+import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.database.IDatabase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-public class RetrieveResultServlet extends HttpServlet {
+/**
+ * 
+ * @author Benjamin Pross, Daniel Nüst
+ *
+ */
+@Controller
+@RequestMapping(value = "/" + RetrieveResultServlet.SERVLET_PATH)
+public class RetrieveResultServlet {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RetrieveResultServlet.class);
-    private static final long serialVersionUID = -268198171054599696L;
+
     // This is required for URL generation for response documents.
     public final static String SERVLET_PATH = "RetrieveResultServlet";
-    // in future parameterize
+
+    // TODO: in future parameterize
     private final boolean indentXML = false;
     
     private final int uuid_length = 36;
 
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
+    public RetrieveResultServlet() {
+        LOGGER.debug("NEW {}", this);
     }
 
-    @Override
+    @RequestMapping(method = RequestMethod.GET)
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		// id of result to retrieve.
