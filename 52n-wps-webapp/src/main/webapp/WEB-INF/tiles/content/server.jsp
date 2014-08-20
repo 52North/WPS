@@ -55,4 +55,4 @@
 	</div>
 </form>
 
-<script src="<c:url value="/resources/js/standard.module.js" />"></script>
+<script src="<c:url value="/static/js/standard.module.js" />"></script>

@@ -23,7 +23,7 @@
 </form>
 <pre><textarea name="request" id="responseTextarea"></textarea></pre>
 
-<script src="resources/codemirror/codemirror.js" type="text/javascript"></script>
+<script src="static/js/codemirror/codemirror.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 	$(document).ready(
@@ -34,7 +34,7 @@
 				var serviceUrlString = urlBasisString + "WebProcessingService";
 
 				var datafolder = window.location.href.substring(0, window.location.href.lastIndexOf("/") + 1)
-						+ "resources/requests/";
+						+ "static/examples/requests/";
 
 				initEditors();
 
@@ -198,8 +198,8 @@
 		inputEditor = CodeMirror.fromTextArea("requestTextarea", {
 			height : "300px",
 			parserfile : "parsexml.js",
-			stylesheet : "resources/codemirror/xmlcolors.css",
-			path : "resources/codemirror/",
+			stylesheet : "static/js/codemirror/xmlcolors.css",
+			path : "static/js/codemirror/",
 			lineNumbers : true,
 			content : defaultInputString
 		});
@@ -207,8 +207,8 @@
 		outputEditor = CodeMirror.fromTextArea("responseTextarea", {
 			height : "300px",
 			parserfile : "parsexml.js",
-			stylesheet : "resources/codemirror/xmlcolors.css",
-			path : "resources/codemirror/",
+			stylesheet : "static/js/codemirror/xmlcolors.css",
+			path : "static/js/codemirror/",
 			lineNumbers : true,
 			readOnly : true,
 			content : defaultOutputString
