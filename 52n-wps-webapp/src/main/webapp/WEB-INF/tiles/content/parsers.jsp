@@ -32,7 +32,7 @@
 	</div>
 </div>
 
-<script src="<c:url value="/resources/js/library/jquery.form.js" />"></script>
+<script src="<c:url value="/static/js/library/jquery.form.js" />"></script>
 <script type="text/javascript">
 	$('form#addFormat').submit(function(event) {
 		event.preventDefault();

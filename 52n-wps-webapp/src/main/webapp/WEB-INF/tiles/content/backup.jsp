@@ -65,7 +65,7 @@
 	</div>
 </div>
 <div id="result"></div>
-<script src="<c:url value="/resources/js/library/jquery.form.js" />"></script>
+<script src="<c:url value="/static/js/library/jquery.form.js" />"></script>
 <script type="text/javascript">
 	$('form#backup').submit(function(event) {
 
@@ -86,7 +86,7 @@
 			success : function(xhr) {
 				var savePath = xhr;
 				var zipUrl = savePath.substring(savePath.lastIndexOf('\\') + 1);
-				$('span#zipUrl').html("<a href='resources/" + zipUrl + "'>Download (" + zipUrl + ")</a>");
+				$('span#zipUrl').html("<a href='static/" + zipUrl + "'>Download (" + zipUrl + ")</a>");
 			},
 			error : function(xhr) {
 				var link = $('span#zipUrl');

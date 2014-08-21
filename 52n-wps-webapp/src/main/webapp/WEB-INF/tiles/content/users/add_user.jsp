@@ -18,4 +18,4 @@
 	</div>
 	<input:customInput label="Add" type="submit" />
 </form:form>
-<script src="<c:url value="/resources/js/custom.module.js" />"></script>
+<script src="<c:url value="/static/js/custom.module.js" />"></script>

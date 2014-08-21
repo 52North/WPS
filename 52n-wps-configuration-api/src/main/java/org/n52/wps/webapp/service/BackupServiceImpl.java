@@ -53,7 +53,7 @@ import org.springframework.stereotype.Service;
  */
 @Service("backupService")
 public class BackupServiceImpl implements BackupService {
-	public final static String RESOURCES_FOLDER = "resources";
+	public final static String RESOURCES_FOLDER = "static";
 	public final static String DATABASE_FOLDER = "WEB-INF/classes/db/data";
 	public final static String LOG = "WEB-INF/classes/logback.xml";
 	public final static String WPS_CAPABILITIES_SKELETON = "config/wpsCapabilitiesSkeleton.xml";

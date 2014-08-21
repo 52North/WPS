@@ -10,7 +10,7 @@
 	<global-method-security pre-post-annotations="enabled" />
 
 	<!-- No security for static resources -->
-	<http pattern="/resources/**" security="none" />
+	<http pattern="/static/**" security="none" />
 
 	<http use-expressions="true">
 		<form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login?login_error=t" />
