@@ -31,7 +31,6 @@ package org.n52.wps.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -76,8 +75,6 @@ public class CapabilitiesConfiguration {
 
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
-    public static String ENDPOINT_URL;
-    
     private static ConfigurationManager configurationManager;	
     private static Server serverConfigurationModule;	
 
@@ -182,10 +179,8 @@ public class CapabilitiesConfiguration {
             if (strategy.equals(loadingStrategy)) {
                 return getInstance(false);
             }
-            else {
-                loadingStrategy = strategy;
-                return getInstance(true);
-            }
+            loadingStrategy = strategy;
+            return getInstance(true);
         }
         finally {
             lock.unlock();
@@ -204,7 +199,8 @@ public class CapabilitiesConfiguration {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-    	return getInstance(!getServerConfigurationModule().isCacheCapabilites());
+        boolean cached = WPSConfig.getInstance().getWPSConfig().getServer().getCacheCapabilites();
+        return getInstance( !cached);
     }
 
     /**
@@ -244,11 +240,11 @@ public class CapabilitiesConfiguration {
      *         if the local host name can not be obtained
      */
     private static void initSkeleton(CapabilitiesDocument skel) throws UnknownHostException {
-        ENDPOINT_URL = getEndpointURL();
+        String endpoint = getEndpointURL();
         if (skel.getCapabilities() == null) {
             skel.addNewCapabilities();
         }
-        initOperationsMetadata(skel, ENDPOINT_URL);
+        initOperationsMetadata(skel, endpoint);
         initProcessOfferings(skel);
     }
 
@@ -274,6 +270,7 @@ public class CapabilitiesConfiguration {
                     String processVersion = description.getProcessVersion();
                     process.setProcessVersion(processVersion);
                     process.setTitle(title);
+                    LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }	
         	}
         	catch (RuntimeException e) {
@@ -318,20 +315,7 @@ public class CapabilitiesConfiguration {
      */
     private static String getEndpointURL() throws UnknownHostException {
         String host = getServerConfigurationModule().getHostname();
-        String port = "" + getServerConfigurationModule().getHostport();
-        if (host == null) {
-            host = InetAddress.getLocalHost().getCanonicalHostName();
-        }
-
-        StringBuilder url = new StringBuilder();
-        // TODO what if this service runs on HTTPS?
-        url.append("http").append("://").append(host);
-        url.append(':').append(port).append('/');
-        if (WebProcessingService.WEBAPP_PATH != null && !WebProcessingService.WEBAPP_PATH.isEmpty()) {
-            url.append(WebProcessingService.WEBAPP_PATH).append('/');
-        }
-        url.append(WebProcessingService.SERVLET_PATH);
-        return url.toString();
+        return config.getServiceEndpoint();
     }
 
     /**

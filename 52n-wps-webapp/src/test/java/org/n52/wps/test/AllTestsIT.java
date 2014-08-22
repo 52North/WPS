@@ -59,7 +59,7 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputReferenceType;
 
 import org.apache.commons.codec.binary.Base64;
-import org.n52.wps.server.WebProcessingService;
+import org.n52.wps.commons.WPSConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -69,9 +69,9 @@ import org.xml.sax.SAXException;
 
 public class AllTestsIT {
 
-    public static final String referenceComplexBinaryInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
+    public static final String referenceComplexBinaryInputURL = AllTestsIT.getURL().replace(WPSConfig.SERVLET_PATH,
                                                                                      "static/testData/elev_srtm_30m21.tif");
-    public static final String referenceComplexXMLInputURL = AllTestsIT.getURL().replace(WebProcessingService.SERVLET_PATH,
+    public static final String referenceComplexXMLInputURL = AllTestsIT.getURL().replace(WPSConfig.SERVLET_PATH,
                                                                                   "static/testData/test-data.xml");	
     private final static String TIFF_MAGIC = "II";
 

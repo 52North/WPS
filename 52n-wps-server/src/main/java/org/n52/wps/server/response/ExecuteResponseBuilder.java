@@ -46,13 +46,9 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.StatusType;
 
 import org.apache.xmlbeans.XmlCursor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
@@ -60,6 +56,8 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * WPS Execute operation response. By default, this XML document is delivered to the client in response to an Execute request. If "status" is "false" in the Execute operation request, this document is normally returned when process execution has been completed.
@@ -89,7 +87,8 @@ public class ExecuteResponseBuilder {
 		c.toFirstChild();
 		c.toLastAttribute();
 		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
-		doc.getExecuteResponse().setServiceInstance(CapabilitiesConfiguration.ENDPOINT_URL+"?REQUEST=GetCapabilities&SERVICE=WPS");
+        doc.getExecuteResponse().setServiceInstance(WPSConfig.getInstance().getServiceEndpoint()
+                + "?REQUEST=GetCapabilities&SERVICE=WPS");
 		doc.getExecuteResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		doc.getExecuteResponse().setService("WPS");
 		doc.getExecuteResponse().setVersion(Request.SUPPORTED_VERSION);

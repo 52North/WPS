@@ -108,7 +108,7 @@ public class R_Config {
         this.connector = new RConnector(starter);
 
         try {
-            String wpsBasedir = WebProcessingService.BASE_DIR;
+            String wpsBasedir = WebProcessingService.getApplicationBaseDir();
             if (wpsBasedir != null) {
                 File f = new File(wpsBasedir, R_BASE_DIR);
                 String baseDirFull = f.getAbsolutePath();
@@ -146,7 +146,7 @@ public class R_Config {
             throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
         File testFile = new File(path);
         if ( !testFile.isAbsolute()) {
-            testFile = new File(WebProcessingService.BASE_DIR, path);
+            testFile = new File(WebProcessingService.getApplicationBaseDir(), path);
         }
         if ( !testFile.exists())
             throw new ExceptionReport("Invalid config property of name \"" + key + "\" and value \"" + path
@@ -219,7 +219,7 @@ public class R_Config {
             throw new IOException("Error in creating URL: " + currentWorkdir + " / " + path + " not found or broken.");
 
         // create URL
-        path = path.substring(WebProcessingService.BASE_DIR.length() + 1, path.length());
+        path = path.substring(WebProcessingService.getApplicationBaseDir().length() + 1, path.length());
         String urlString = getUrlPathUpToWebapp() + "/" + path;
 
         return new URL(urlString);
@@ -335,7 +335,7 @@ public class R_Config {
         for (String s : scriptDirs) {
             File dir = new File(s);
             if ( !dir.isAbsolute())
-                dir = new File(WebProcessingService.BASE_DIR, s);
+                dir = new File(WebProcessingService.getApplicationBaseDir(), s);
 
             scriptDirectories.add(dir);
             LOGGER.debug("Found script directory: {}", dir);

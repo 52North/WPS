@@ -38,21 +38,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
+import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.grass.GrassProcessRepository;
 import org.n52.wps.server.grass.util.JavaProcessStreamReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Benjamin Pross (bpross-52n)
@@ -86,20 +85,21 @@ public class GrassIOHandler {
 	private final String lineSeparator = System.getProperty("line.separator");
 	private final String appDataDir = System.getenv("APPDATA");
 	
-	public static final String GRASS_ADDON_PATH = "�addonPath�";	
-	public static final String PROCESS_IDENTIFIER = "�process_identifier�";
-	public static final String INPUT_IDENTIFIER = "�input_identifier�";
-	public static final String INPUT_PATH = "�input_path�";
-	public static final String DATA_TYPE = "�datatype�";
-	public static final String VALUE = "�value�";
-	public static final String OUTPUT_IDENTIFIER = "�output_identifier�";
-	public static final String OUTPUT_PATH = "�output_path�";
-	public static final String SCHEMA = "�schema�";
-	public static final String ENCODING = "�encoding�";
-	public static final String MIMETYPE = "�mimetype�";
-	public static final String WORKDIR = "�workdir�";
-	public static final String OUTPUTDIR = "�outputdir�";	
+    public static final String GRASS_ADDON_PATH = "�addonPath�";
+    public static final String PROCESS_IDENTIFIER = "�process_identifier�";
+    public static final String INPUT_IDENTIFIER = "�input_identifier�";
+    public static final String INPUT_PATH = "�input_path�";
+    public static final String DATA_TYPE = "�datatype�";
+    public static final String VALUE = "�value�";
+    public static final String OUTPUT_IDENTIFIER = "�output_identifier�";
+    public static final String OUTPUT_PATH = "�output_path�";
+    public static final String SCHEMA = "�schema�";
+    public static final String ENCODING = "�encoding�";
+    public static final String MIMETYPE = "�mimetype�";
+    public static final String WORKDIR = "�workdir�";
+    public static final String OUTPUTDIR = "�outputdir�";
 	public static final String OS_Name = System.getProperty("os.name");
+    private static final String LOGS_DIR_NAME = "GRASS_LOGS";
 	
 	public GrassIOHandler(){		
 		
@@ -290,7 +290,7 @@ public class GrassIOHandler {
 
 	private String getOutputDataBlock() {
 		if(outputDataBlock == null){
-			outputDataBlock = "[ComplexOutput]" + lineSeparator
+            outputDataBlock = "[ComplexOutput]" + lineSeparator
 			+ " Identifier=" + OUTPUT_IDENTIFIER + lineSeparator
 			+ " PathToFile=" + OUTPUT_PATH + lineSeparator + " MimeType=" + MIMETYPE + lineSeparator
 			+ " Encoding=" + ENCODING + lineSeparator
@@ -554,18 +554,15 @@ public class GrassIOHandler {
 			outputStreamReader.start();
 			
 			//fetch errors if there are any
-			BufferedReader errorReader = new BufferedReader(new InputStreamReader(pipedIn));
-			
-			String line = errorReader.readLine();
-			
-			String errors = "";		
-			
-			while(line != null){			
-				
-				errors = errors.concat(line + lineSeparator);
-				
-				line = errorReader.readLine();
-			}			
+            String errors = "";
+            try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(pipedIn));) {
+                String line = errorReader.readLine();
+
+                while (line != null) {
+                    errors = errors.concat(line + lineSeparator);
+                    line = errorReader.readLine();
+                }
+            }
 			
 			try {
 				proc.waitFor();
@@ -576,16 +573,11 @@ public class GrassIOHandler {
 			}
 
 			if(!errors.equals("")){
-				String baseDir = WebProcessingService.BASE_DIR + File.separator + "GRASS_LOGS";
+                String baseDir = WebProcessingService.getApplicationBaseDir() + File.separator + LOGS_DIR_NAME;
 				File baseDirFile = new File(baseDir);
 				if(!baseDirFile.exists()){
 					baseDirFile.mkdir();
 				}
-				String host = WPSConfig.getInstance().getWPSConfig().getServer().getHostname();
-				if(host == null) {
-					host = InetAddress.getLocalHost().getCanonicalHostName();
-				}
-				String hostPort = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
 				File tmpLog = new File(tmpDir + fileSeparator + uuid + logFilename);
 				File serverLog = new File(baseDir + fileSeparator + uuid + logFilename);
 				
@@ -614,7 +606,9 @@ public class GrassIOHandler {
 					bufWrite.close();
 				}
 				LOGGER.error("An error occured while executing the GRASS GIS process.");
-				throw new RuntimeException("An error occured while executing the GRASS GIS process. See the log under " + "http://" + host + ":" + hostPort+ "/" + WebProcessingService.WEBAPP_PATH + "/GRASS_LOGS/" + uuid + logFilename + " for more details.");
+                throw new RuntimeException("An error occured while executing the GRASS GIS process. See the log under "
+                        + WPSConfig.getInstance().getServiceBaseUrl() + "/" + LOGS_DIR_NAME + "/" + uuid + logFilename
+                        + " for more details.");
 			}
 			
 		} catch (IOException e) {
