@@ -33,6 +33,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.Random;
@@ -81,6 +82,7 @@ public class CorsIT {
         assertThat(code, is(equalTo(200)));
         Header acaoHeader = method.getResponseHeader("Access-Control-Allow-Origin");
 
+        assertNotNull(acaoHeader);
         assertThat(acaoHeader.toString(), containsString(randomOrigin.toString()));
     }
 
@@ -95,6 +97,7 @@ public class CorsIT {
         assertThat(code, is(equalTo(200)));
         Header acaoHeader = method.getResponseHeader("Access-Control-Allow-Origin");
 
+        assertNotNull(acaoHeader);
         assertThat(acaoHeader.toString(), containsString(randomOrigin.toString()));
     }
 
