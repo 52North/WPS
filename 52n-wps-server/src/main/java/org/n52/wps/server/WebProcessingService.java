@@ -71,7 +71,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 @Service
-@RequestMapping("/" + WebProcessingService.SERVLET_PATH)
+@RequestMapping("/" + WPSConfig.SERVLET_PATH)
 public class WebProcessingService {
 
     private static final String SPECIAL_XML_POST_VARIABLE = "request";
@@ -82,14 +82,12 @@ public class WebProcessingService {
 
     private static final String CAPABILITES_SKELETON_NAME = "wpsCapabilitiesSkeleton.xml";
 
-    public static String BASE_DIR = null;
-    public static String WEBAPP_PATH = null;
-    public static final String SERVLET_PATH = "WebProcessingService";
-
     private static final String PUBLIC_CONFIG_FILE_DIR = "config";
 
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
+
     public static String DEFAULT_LANGUAGE = "en-US";
+
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
 
     private static String applicationBaseDir = null;
@@ -102,7 +100,9 @@ public class WebProcessingService {
 
     /**
      *
-     * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding
+     * TODO: DNU: check if this method can be re-enabled or if we can achieve this functinality any other way
+     *
+     * Returns a preconfigured OutputStream It takes care of: - caching - content-Encoding, zipping content
      *
      * @param hsRequest
      *        the HttpServletRequest
@@ -137,7 +137,7 @@ public class WebProcessingService {
 
     public void init(ServletContext context) {
         LOGGER.info("*** WebProcessingService initializing... ***");
-        WPSConfig conf = WPSConfig.getInstance();
+        WPSConfig conf = WPSConfig.getInstance(context);
         
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
@@ -159,7 +159,6 @@ public class WebProcessingService {
 
         applicationBaseDir = context.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
-        BASE_DIR = applicationBaseDir;
 
         Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
         ParserFactory.initialize(parsers);
@@ -175,17 +174,6 @@ public class WebProcessingService {
         IDatabase database = DatabaseFactory.getDatabase();
         LOGGER.info("Initialized {}", database);
 
-        // String customWebappPath = WPSConfiguration.getInstance().getProperty(PROPERTY_NAME_WEBAPP_PATH);
-        String customWebappPath = WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath();
-        if (customWebappPath != null) {
-            WEBAPP_PATH = customWebappPath;
-        }
-        else {
-            WEBAPP_PATH = "wps";
-            LOGGER.warn("No custom webapp path found, use default wps");
-        }
-        LOGGER.info("webappPath is set to: " + customWebappPath);
-
         try {
             String capsConfigPath = getApplicationBaseDir() + File.separator + PUBLIC_CONFIG_FILE_DIR
                     + File.separator + CAPABILITES_SKELETON_NAME;
@@ -195,6 +183,11 @@ public class WebProcessingService {
         catch (IOException | XmlException e) {
             LOGGER.error("error while initializing capabilitiesConfiguration", e);
         }
+
+        LOGGER.info("Service base url is {} | Service endpoint is {} | Used config file is {}",
+                    conf.getServiceBaseUrl(),
+                    conf.getServiceEndpoint(),
+                    WPSConfig.getConfigPath());
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
