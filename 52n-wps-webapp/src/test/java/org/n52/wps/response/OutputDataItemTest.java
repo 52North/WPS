@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.response;
+package org.n52.wps.response;
 
 import static org.junit.Assert.assertTrue;
 
@@ -71,6 +71,9 @@ import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.Request;
+import org.n52.wps.server.response.OutputDataItem;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * @author BenjaminPross(bpross-52n)
@@ -78,7 +81,7 @@ import org.n52.wps.server.request.Request;
  * This class is for testing the updateResponseForLiteralData() method of the class OutputDataItem.java.
  *
  */
-public class OutputDataItemTest {
+public class OutputDataItemTest extends AbstractITClass{
 	
 	private ProcessDescriptionType descriptionsType;
 	private String processID = "org.n52.wps.server.response.OutputDataItemTest";
@@ -92,6 +95,7 @@ public class OutputDataItemTest {
 
 	@Before
 	public void setUp() {
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
 
 		literalDataList = new ArrayList<ILiteralData>();
 

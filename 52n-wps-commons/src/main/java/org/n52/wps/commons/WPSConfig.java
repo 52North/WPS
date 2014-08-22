@@ -43,7 +43,6 @@ import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -430,7 +429,7 @@ public class WPSConfig implements Serializable {
     }
 
     public String getServiceBaseUrl() {
-        Server server = getWPSConfig().getServer();
+        Server server = getServerConfigurationModule();
         String host = server.getHostname();
         if (host == null) {
             try {
@@ -440,7 +439,7 @@ public class WPSConfig implements Serializable {
                 LOGGER.warn("Could not derive host name automatically", e);
             }
         }
-        String port = server.getHostport();
+        int port = server.getHostport();
         String webapppath = server.getWebappPath();
 
         StringBuilder url = new StringBuilder();

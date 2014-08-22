@@ -314,8 +314,7 @@ public class CapabilitiesConfiguration {
      *         if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
-        String host = getServerConfigurationModule().getHostname();
-        return config.getServiceEndpoint();
+        return WPSConfig.getInstance().getServiceEndpoint();
     }
 
     /**
