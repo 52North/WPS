@@ -50,11 +50,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
@@ -63,6 +58,10 @@ import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.google.common.primitives.Doubles;
 
@@ -175,21 +174,29 @@ public class OutputDataItem extends ResponseData {
 		}
 	}
 
-	public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference){
-		OutputDataType output = prepareOutput(res);
-		String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
-		LiteralDataType literalData = output.addNewData().addNewLiteralData();
-		if (dataTypeReference != null) {
-			literalData.setDataType(dataTypeReference);
-		}
-	    literalData.setStringValue(processValue);
-		if(obj instanceof AbstractLiteralDataBinding){
-			String uom = ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
-			if(uom != null && !uom.equals("")){
-				literalData.setUom(uom);
-			}
-		}
-	}
+    public void updateResponseForLiteralData(ExecuteResponseDocument res, String dataTypeReference) {
+        OutputDataType output = prepareOutput(res);
+        String processValue = null;
+        if (obj == null) {
+            LOGGER.warn("Literal data object is 'null', cannot add it to response: " + output.xmlText()
+                    + " -- data type: " + dataTypeReference);
+            processValue = "ERROR: OBJECT IS NULL";
+        }
+        else {
+            processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
+        }
+        LiteralDataType literalData = output.addNewData().addNewLiteralData();
+        if (dataTypeReference != null) {
+            literalData.setDataType(dataTypeReference);
+        }
+        literalData.setStringValue(processValue);
+        if (obj instanceof AbstractLiteralDataBinding) {
+            String uom = ((AbstractLiteralDataBinding) obj).getUnitOfMeasurement();
+            if (uom != null && !uom.equals("")) {
+                literalData.setUom(uom);
+            }
+        }
+    }
 
 	public void updateResponseAsReference(ExecuteResponseDocument res, String reqID, String mimeType) throws ExceptionReport {
 		prepareGenerator();
