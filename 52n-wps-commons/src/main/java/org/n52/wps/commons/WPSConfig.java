@@ -43,7 +43,6 @@ import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 import org.n52.wps.webapp.api.ConfigurationManager;
