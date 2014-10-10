@@ -75,8 +75,9 @@ public class CapabilitiesConfiguration {
 
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
-    private static ConfigurationManager configurationManager;	
-    private static Server serverConfigurationModule;	
+    private static ConfigurationManager configurationManager;
+
+    private static Server serverConfigurationModule;
 
     private CapabilitiesConfiguration() {
         /* nothing here */
@@ -314,7 +315,8 @@ public class CapabilitiesConfiguration {
      *         if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
-        return WPSConfig.getInstance().getServiceEndpoint();
+        WPSConfig config = WPSConfig.getInstance();
+        return config.getServiceEndpoint();
     }
 
     /**
