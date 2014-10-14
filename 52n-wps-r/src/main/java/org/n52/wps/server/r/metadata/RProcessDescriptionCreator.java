@@ -32,6 +32,7 @@ package org.n52.wps.server.r.metadata;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.opengis.ows.x11.DomainMetadataType;
@@ -57,7 +58,7 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -69,16 +70,15 @@ public class RProcessDescriptionCreator {
 
     private static Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
-    private R_Config config;
+    private String id;
 
-    public RProcessDescriptionCreator(R_Config config) {
-        this.config = config;
-
+    public RProcessDescriptionCreator(String publicProcessId) {
+        this.id = publicProcessId;
         log.debug("NEW {}", this);
     }
 
     /**
-     * Usually called from GenericRProcess (extends AbstractObservableAlgorithm)
+     * Usually called from @GenericRProcess
      * 
      * @param annotations
      *        contain all process description information
@@ -193,40 +193,37 @@ public class RProcessDescriptionCreator {
     }
 
     private void addProcessResources(ProcessDescriptionType pdt, RAnnotation annotation) {
-        // Add URL to resource folder > FIXME rather add resources one by one,
-        // see below.
-
         try {
             Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
-            if (obj instanceof List< ? >) {
-                List< ? > namedList = (List< ? >) obj;
+            if (obj instanceof Collection< ? >) {
+                Collection< ? > namedList = (Collection< ? >) obj;
                 for (Object object : namedList) {
                     R_Resource resource = null;
                     if (object instanceof R_Resource)
                         resource = (R_Resource) object;
                     else
                         continue;
-                    MetadataType mt = pdt.addNewMetadata();
-                    mt.setTitle("Resource: " + resource.getResourceValue());
 
-                    URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
-                    mt.setHref(url.toExternalForm());
+                    if (resource.isPublic()) {
+                        MetadataType mt = pdt.addNewMetadata();
+                        mt.setTitle("Resource: " + resource.getResourceValue());
+
+                        // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
+                        URL url = RResource.getResourceURL(resource);
+                        mt.setHref(url.toExternalForm());
+                        log.trace("Added resource URL to metadata document: {}", url);
+                    }
+                    else
+                        log.trace("Not adding resource because it is not public: {}", resource);
                 }
             }
         }
-        catch (RAnnotationException e) {
-            e.printStackTrace();
-            log.error(e.getMessage());
+        catch (RAnnotationException | ExceptionReport e) {
+            log.error("Problem adding process resources to process description", e);
         }
     }
 
-    /**
-     * @param pdt
-     * @param annotation
-     * @throws RAnnotationException
-     */
-    private static void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
-        String id = R_Config.WKN_PREFIX + annotation.getStringValue(RAttribute.IDENTIFIER);
+    private void addProcessDescription(ProcessDescriptionType pdt, RAnnotation annotation) throws RAnnotationException {
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
@@ -271,11 +268,6 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    /**
-     * @param annotation
-     * @param input
-     * @throws RAnnotationException
-     */
     private static void addLiteralInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
         LiteralInputType literalInput = input.addNewLiteralData();
         DomainMetadataType dataType = literalInput.addNewDataType();
@@ -288,11 +280,6 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    /**
-     * @param annotation
-     * @param input
-     * @throws RAnnotationException
-     */
     private static void addComplexInput(RAnnotation annotation, InputDescriptionType input) throws RAnnotationException {
         SupportedComplexDataType complexInput = input.addNewComplexData();
         ComplexDataDescriptionType cpldata = complexInput.addNewDefault().addNewFormat();
@@ -345,11 +332,6 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    /**
-     * @param out
-     * @param output
-     * @throws RAnnotationException
-     */
     private static void addLiteralOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
         LiteralOutputType literalOutput = output.addNewLiteralOutput();
         DomainMetadataType dataType = literalOutput.addNewDataType();
@@ -357,11 +339,6 @@ public class RProcessDescriptionCreator {
         literalOutput.setDataType(dataType);
     }
 
-    /**
-     * @param out
-     * @param output
-     * @throws RAnnotationException
-     */
     private static void addComplexOutput(RAnnotation out, OutputDescriptionType output) throws RAnnotationException {
         SupportedComplexDataType complexOutput = output.addNewComplexOutput();
         ComplexDataDescriptionType complexData = complexOutput.addNewDefault().addNewFormat();

@@ -45,6 +45,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -54,19 +55,27 @@ import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RAnnotationParser {
 
     private static final String ANNOTATION_CHARACTER = "#";
 
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
 
+    private static final boolean DEFAULT_RESOURCE_VISIBILITY = true;
+
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
+    @Autowired
+    private RDataTypeRegistry dataTypeRegistry;
+
+    @Autowired
     private R_Config config;
 
-    public RAnnotationParser(R_Config config) {
-        this.config = config;
+    public RAnnotationParser() {
         LOGGER.debug("New {}", this);
     }
 
@@ -81,12 +90,10 @@ public class RAnnotationParser {
     public boolean validateScript(InputStream script, String identifier) throws RAnnotationException,
             IOException,
             ExceptionReport {
-        // TODO: improve this method to something more useful
-
         // try to parse annotations:
-        List<RAnnotation> annotations = parseAnnotationsfromScript(script);
+        List<RAnnotation> annotations = parse(script, true);
         // try to create process description:
-        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(this.config);
+        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier);
 
         // TODO: WPS.des and WPS.res should only occur once or not at all
         try {
@@ -102,14 +109,8 @@ public class RAnnotationParser {
             return valid;
 
         }
-        catch (ExceptionReport e) {
-            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
-            LOGGER.error(message, e);
-            throw e;
-        }
-        catch (RAnnotationException e) {
-            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
-            LOGGER.error(message, e);
+        catch (ExceptionReport | RAnnotationException e) {
+            LOGGER.error("Invalid R algorithm. Script validation failed when executing process description creator.", e);
             throw e;
         }
     }
@@ -117,6 +118,10 @@ public class RAnnotationParser {
     public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException {
         LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
+        return parse(inputScript, false);
+    }
+
+    private ArrayList<RAnnotation> parse(InputStream inputScript, boolean validationOnly) throws RAnnotationException {
         try {
             BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
             int lineCounter = 0;
@@ -124,6 +129,7 @@ public class RAnnotationParser {
             StringBuilder annotationString = null;
             RAnnotationType annotationType = null;
             ArrayList<RAnnotation> annotations = new ArrayList<RAnnotation>();
+            String scriptId = null;
 
             while (lineReader.ready()) {
                 String line = lineReader.readLine();
@@ -168,20 +174,20 @@ public class RAnnotationParser {
                             if ( !isCurrentlyParsingAnnotation) {
                                 RAnnotation newAnnotation = null;
                                 if (annotationType.equals(RAnnotationType.RESOURCE)) {
-                                    newAnnotation = createResourceAnnotation(annotationString.toString());
+                                    newAnnotation = createResourceAnnotation(scriptId, annotationString.toString());
                                 }
                                 else {
                                     HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
                                                                                           annotationString.toString());
-                                    newAnnotation = new RAnnotation(annotationType, attrHash);
-
+                                    newAnnotation = new RAnnotation(annotationType, attrHash, dataTypeRegistry);
                                 }
 
                                 annotations.add(newAnnotation);
+                                if (scriptId == null && annotationType.equals(RAnnotationType.DESCRIPTION)) {
+                                    scriptId = (String) newAnnotation.getObjectValue(RAttribute.IDENTIFIER);
+                                }
 
-                                LOGGER.debug("Done parsing annotation {} > contains: ",
-                                             newAnnotation,
-                                             annotationString.toString());
+                                LOGGER.debug("Done parsing annotation {} for script {}", newAnnotation, scriptId);
                             }
                         }
                     }
@@ -275,7 +281,8 @@ public class RAnnotationParser {
         return attrHash;
     }
 
-    private RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
+    private RAnnotation createResourceAnnotation(String scriptId, String attributeString) throws IOException,
+            RAnnotationException {
         List<R_Resource> resources = new ArrayList<R_Resource>();
 
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
@@ -283,7 +290,9 @@ public class RAnnotationParser {
 
         while (attrValueTokenizer.hasMoreElements()) {
             String resourceValue = attrValueTokenizer.nextToken().trim();
-            R_Resource r_resource = new R_Resource(resourceValue);
+            R_Resource r_resource = new R_Resource(config.getPublicScriptId(scriptId),
+                                                   resourceValue,
+                                                   DEFAULT_RESOURCE_VISIBILITY);
             resources.add(r_resource);
 
             LOGGER.debug("Found new resource in annotation: {}", r_resource);
@@ -291,9 +300,7 @@ public class RAnnotationParser {
 
         // add empty hasmap for now
         HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
-        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash,
-                                                                       resources,
-                                                                       config.getResourceDirURL());
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash, resources, dataTypeRegistry);
 
         return resourceAnnotation;
     }

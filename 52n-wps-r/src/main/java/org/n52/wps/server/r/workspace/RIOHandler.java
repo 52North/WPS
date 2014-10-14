@@ -85,7 +85,6 @@ public class RIOHandler {
     /**
      * these data bindings do not need any pre-procesing or wrapping when loaded into an R session
      */
-    @SuppressWarnings("unchecked")
     protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleInputLiterals = Arrays.asList(LiteralByteBinding.class,
                                                                                                             LiteralDoubleBinding.class,
                                                                                                             LiteralFloatBinding.class,
@@ -93,7 +92,6 @@ public class RIOHandler {
                                                                                                             LiteralLongBinding.class,
                                                                                                             LiteralShortBinding.class);
 
-    @SuppressWarnings("unchecked")
     protected static List<Class< ? extends AbstractLiteralDataBinding>> simpleOutputLiterals = Arrays.asList(LiteralByteBinding.class,
                                                                                                              LiteralDoubleBinding.class,
                                                                                                              LiteralFloatBinding.class,
@@ -123,7 +121,11 @@ public class RIOHandler {
 
     private RInputFilter filter;
 
-    public RIOHandler() {
+    private RDataTypeRegistry dataTypeRegistry;
+
+    public RIOHandler(RDataTypeRegistry dataTypeRegistry) {
+        this.dataTypeRegistry = dataTypeRegistry;
+
         log.debug("NEW {}", this);
 
         this.filter = new StringInputFilter();
@@ -166,7 +168,7 @@ public class RIOHandler {
 
         RAnnotation annotation = ioNotations.get(0);
         String rClass = annotation.getStringValue(RAttribute.TYPE);
-        dataType = RAnnotation.getDataClass(rClass);
+        dataType = annotation.getDataClass(rClass);
 
         if (dataType == null) {
             log.error("R-script-annotation for " + ioType.toString().toLowerCase() + " id \"" + id
@@ -318,6 +320,7 @@ public class RIOHandler {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public IData parseOutput(RConnection connection,
                              String result_id,
                              REXP result,
@@ -358,7 +361,6 @@ public class RIOHandler {
 
         if (iClass.equals(GenericFileDataBinding.class)) {
             log.debug("Creating output with GenericFileDataBinding for file {}", filename);
-            String mimeType = "application/unknown";
 
             File resultFile = new File(filename);
             log.debug("Loading file " + resultFile.getAbsolutePath());
@@ -383,14 +385,12 @@ public class RIOHandler {
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
+            String mimeType = dataTypeRegistry.getType(rType).getMimeType();
             GenericFileData out = new GenericFileData(outputFile, mimeType);
 
             return new GenericFileDataBinding(out);
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
-            String mimeType = "application/unknown";
-
             RTypeDefinition dataType = currentAnnotation.getRDataType();
             File outputFile;
 
@@ -435,19 +435,17 @@ public class RIOHandler {
             }
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
+            String mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
             GenericFileDataWithGT gfd = new GenericFileDataWithGT(outputFile, mimeType);
             GTVectorDataBinding gtvec = gfd.getAsGTVectorDataBinding();
             return gtvec;
         }
         else if (iClass.equals(GTRasterDataBinding.class)) {
-            String mimeType = "application/unknown";
-
             File tempfile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
+            String mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
             GeotiffParser tiffPar = new GeotiffParser();
             FileInputStream fis = new FileInputStream(tempfile);

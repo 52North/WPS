@@ -26,23 +26,24 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.r;
+
+package org.n52.wps.server.r.syntax;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.Util;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
-import org.n52.wps.server.r.syntax.RAnnotation;
-import org.n52.wps.server.r.syntax.RAnnotationException;
-import org.n52.wps.server.r.syntax.RAnnotationType;
-import org.n52.wps.server.r.syntax.RAttribute;
-import org.n52.wps.server.r.syntax.ResourceAnnotation;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class AnnotationParser {
 
@@ -52,7 +53,7 @@ public class AnnotationParser {
 
     @BeforeClass
     public static void initConfig() {
-        config = R_Config.getInstance();
+        config = Util.getConfig();
     }
 
     @Before
@@ -61,7 +62,10 @@ public class AnnotationParser {
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
-        RAnnotationParser parser = new RAnnotationParser(config);
+
+        RAnnotationParser parser = new RAnnotationParser();
+        ReflectionTestUtils.setField(parser, "config", config);
+
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
     }
@@ -98,12 +102,21 @@ public class AnnotationParser {
     }
 
     @Test
-    public void resource() {
+    public void resource() throws RAnnotationException {
         for (RAnnotation rAnnotation : this.annotations) {
             if (rAnnotation.getType().equals(RAnnotationType.RESOURCE)) {
                 ResourceAnnotation resourceAnnotation = (ResourceAnnotation) rAnnotation;
-                String value = resourceAnnotation.getResources().get(0).getResourceValue();
+                String value = resourceAnnotation.getResources().iterator().next().getResourceValue();
                 Assert.assertEquals("test.file.txt", value);
+
+                Object objValue = resourceAnnotation.getObjectValue(RAttribute.NAMED_LIST);
+                if (objValue instanceof Collection< ? >) {
+                    Collection<R_Resource> coll = (Collection<R_Resource>) objValue;
+
+                    coll.iterator().next();
+                    Assert.assertEquals("test.file.txt", objValue);
+                }
+                Assert.assertEquals("test.file.txt", objValue);
             }
         }
 

@@ -1,4 +1,4 @@
-# wps.des: id = R_andom, title = Random number generator, version = 42,
+# wps.des: id = uniform, title = Random number generator, version = 42,
 #	author = MC++,
 # 	abstract = Generates random numbers with uniform distribution; 
 

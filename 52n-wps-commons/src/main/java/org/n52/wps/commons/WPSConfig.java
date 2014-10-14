@@ -330,7 +330,6 @@ public class WPSConfig implements Serializable {
 
     public Repository[] getRegisterdAlgorithmRepositories() {
         return wpsConfigXMLBeans.getAlgorithmRepositoryList().getRepositoryArray();
-
     }
 
     public Property[] getPropertiesForGeneratorClass(String className) {

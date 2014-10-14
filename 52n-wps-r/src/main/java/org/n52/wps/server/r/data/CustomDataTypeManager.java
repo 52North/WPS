@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.data;
 
 import java.io.BufferedReader;
@@ -39,7 +40,10 @@ import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomDataTypeManager {
 
     private static final String COMMENT_CHARACTER = "#";
@@ -48,37 +52,44 @@ public class CustomDataTypeManager {
 
     private File configFile;
 
-    private static CustomDataTypeManager instance;
-
     private static final String HINT_FILE = "file";
 
-    private CustomDataTypeManager() {
+    @Autowired
+    private R_Config config;
 
+    @Autowired
+    private RDataTypeRegistry datatypeRegistry;
+
+    public CustomDataTypeManager() {
+        LOGGER.info("NEW {}", this);
     }
 
-    // Call by RPropertyChangeManager and eventually after config file was
-    // changed
-    public void update()
-    {
+    /**
+     * Called by RPropertyChangeManager and eventually after config file was changed
+     */
+    public void update() {
         try {
             readConfig();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             LOGGER.error("Invalid r config file. Costum R data types cannot be registered.", e);
-            RDataTypeRegistry.getInstance().clearCustomDataTypes();
-        } catch (ExceptionReport e) {
+            datatypeRegistry.clearCustomDataTypes();
+        }
+        catch (ExceptionReport e) {
             LOGGER.error("Failed to retrieve r config file. Costum R data types cannot be registered.", e);
-            RDataTypeRegistry.getInstance().clearCustomDataTypes();
+            datatypeRegistry.clearCustomDataTypes();
         }
     }
 
-    private void readConfig() throws IOException, ExceptionReport
-    {
-        this.configFile = new File(R_Config.getInstance().getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG));
+    private void readConfig() throws IOException, ExceptionReport {
+        String file = config.getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG);
+        this.configFile = new File(file);
         if (getConfigFile() == null) {
-            LOGGER.error("Config file not availailable. Costum R data types cannot be registered.");
+            LOGGER.error("Config file not availailable at '{}'. Costum R data types cannot be registered.", file);
             return;
         }
-        RDataTypeRegistry.getInstance().clearCustomDataTypes();
+
+        datatypeRegistry.clearCustomDataTypes();
 
         FileReader fr = new FileReader(getConfigFile());
         BufferedReader reader = new BufferedReader(fr);
@@ -101,34 +112,22 @@ public class CustomDataTypeManager {
         fr.close();
     }
 
-    // TODO: add schema, default value;
-    private static void addNewDataType(String key,
-            String mimetype,
-            String hint)
-    {
+    private void addNewDataType(String key, String mimetype, String hint) {
         LOGGER.debug("Adding new data type with key '{}', mimetype '{}', and hint '{}'", key, mimetype, hint);
 
         CustomDataType type = new CustomDataType();
         type.setKey(key);
-        type.setProcessKey(mimetype);
+        type.setMimeType(mimetype);
         if (hint.equalsIgnoreCase(HINT_FILE)) {
             // type.setEncoding("base64");
             type.setComplex(true);
         }
 
-        RDataTypeRegistry.getInstance().register(type);
+        datatypeRegistry.register(type);
     }
 
-    public File getConfigFile()
-    {
+    public File getConfigFile() {
         return this.configFile;
-    }
-
-    public static CustomDataTypeManager getInstance()
-    {
-        if (instance == null)
-            instance = new CustomDataTypeManager();
-        return instance;
     }
 
 }

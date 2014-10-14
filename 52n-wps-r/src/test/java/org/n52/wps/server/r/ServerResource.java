@@ -26,31 +26,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+package org.n52.wps.server.r;
 
-package org.n52.wps.server.r.syntax;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.junit.Test;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.syntax.RAnnotationException;
 
 /**
- * Separators used in annotations
  * 
- * @author Matthias Hinz
+ * @author Daniel
+ *
  */
-public enum RSeperator {
+public class ServerResource {
 
-    STARTKEY_SEPARATOR(":"), ATTRIBUTE_SEPARATOR(","), ATTRIBUTE_VALUE_SEPARATOR("="), ANNOTATION_END(";");
+    private String wkn = "wkn.42";
 
-    private String key;
+    @Test
+    public void scriptUrlIsGenerated() throws RAnnotationException, ExceptionReport, MalformedURLException {
+        URL scriptURL = RResource.getScriptURL(wkn);
 
-    private RSeperator(String key) {
-        this.key = key.toLowerCase();
-    }
-
-    public String getKey() {
-        return this.key;
-    }
-
-    @Override
-    public String toString() {
-        return getKey();
+        String expectedUrl = "http://localhost:8080/wps/script/" + wkn;
+        assertThat("script url is correct", scriptURL.toString(), is(equalTo(expectedUrl)));
     }
 
 }

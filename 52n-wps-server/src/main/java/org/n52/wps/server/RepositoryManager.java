@@ -97,6 +97,7 @@ public class RepositoryManager {
 
 		for(Repository repository : repositoryList){
 			if(repository.getActive()==false){
+                LOGGER.debug("Skipping deactivated process repository: {}", repository.getName());
 				continue;
 			}
 			String repositoryClassName = repository.getClassName();
@@ -117,9 +118,10 @@ public class RepositoryManager {
 				}
 				
 				repositories.add(algorithmRepository);
-                LOGGER.info("Algorithm Repository {} initialized", repositoryClassName);
+                LOGGER.info("Algorithm repository {} initialized", repositoryClassName);
+                LOGGER.info("Algorithm repository: {}", algorithmRepository.toString());
 			} catch (InstantiationException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
+                LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName, e);
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
 //				try {
@@ -141,26 +143,11 @@ public class RepositoryManager {
 //				}
                 LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
 
-			} catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException | IllegalArgumentException | SecurityException | InvocationTargetException
+                    | NoSuchMethodException e) {
                 LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
-			} catch (IllegalArgumentException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
-			} catch (SecurityException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
-			} catch (InvocationTargetException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
-			} catch (NoSuchMethodException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
+ repositoryClassName, e);
 			}
 		}
     }
@@ -206,17 +193,12 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	/**
-	 * 
-	 * @return allAlgorithms
-	 */
 	public List<String> getAlgorithms(){
 		List<String> allAlgorithmNamesCollection = new ArrayList<String>();
 		for(IAlgorithmRepository repository : repositories){
 			allAlgorithmNamesCollection.addAll(repository.getAlgorithmNames());
 		}
 		return allAlgorithmNamesCollection;
-		
 	}
 
 	public boolean containsAlgorithm(String algorithmName) {
@@ -329,6 +311,7 @@ public class RepositoryManager {
     }
     
     // shut down the update thread
+    @Override
     public void finalize(){
     	if (updateThread != null){
     		updateThread.interrupt();

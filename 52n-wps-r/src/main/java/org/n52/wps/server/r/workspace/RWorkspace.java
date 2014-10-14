@@ -101,6 +101,12 @@ public class RWorkspace {
 
     private boolean wpsWorkDirIsRWorkDir = true;
 
+    private R_Config config;
+
+    public RWorkspace(R_Config config) {
+        this.config = config;
+    }
+
     private REXP createAndSetNewWorkspaceDirectory(File directory, RConnection connection) throws RserveException {
         boolean b = directory.mkdir();
         if (b) {
@@ -247,7 +253,7 @@ public class RWorkspace {
                     throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
                 File testFile = new File(workDirName);
                 if ( !testFile.isAbsolute()) {
-                    Path bd = R_Config.getInstance().getBaseDir();
+                    Path bd = config.getBaseDir();
                     testFile = bd.resolve(path).toFile();
                 }
                 if ( !testFile.exists())

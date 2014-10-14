@@ -124,4 +124,17 @@ public class RStarter {
         log.info("Started R.");
     }
 
+    /**
+     * TODO test this method
+     */
+    public void killRserveOnWindows() {
+        try {
+            if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0)
+                return;
+        }
+        catch (InterruptedException | IOException e) {
+            log.warn("Error trying to stop Rserve on windows.", e);
+        }
+    }
+
 }

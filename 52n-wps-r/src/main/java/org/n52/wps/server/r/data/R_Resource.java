@@ -28,136 +28,81 @@
  */
 package org.n52.wps.server.r.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RWPSConfigVariables;
-import org.n52.wps.server.r.R_Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+/**
+ * 
+ * POJO for a file system resource use by R scripts.
+ * 
+ * @author Matthias Hinz, Daniel Nüst
+ *
+ */
 public class R_Resource {
-
-    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
 
     private String resourceValue;
 
-    public R_Resource(String resourceValue) {
+    private String processId;
+
+    private boolean isPublic = true;
+
+    public R_Resource(final String scriptId, final String resourceValue, boolean isPublic) {
+        this.processId = scriptId;
         this.resourceValue = resourceValue;
+        this.isPublic = isPublic;
     }
 
     public String getResourceValue() {
         return this.resourceValue;
     }
 
-    public URL getFullResourceURL(String resourceDirUrl) {
-
-        String fullResourceURL = null;
-        if (resourceDirUrl != null)
-            fullResourceURL = resourceDirUrl + "/" + this.resourceValue;
-        else
-            fullResourceURL = "http://not_available/" + this.resourceValue;
-
-        URL resourceURL;
-        try {
-            resourceURL = new URL(fullResourceURL);
-        }
-        catch (MalformedURLException e) {
-            LOGGER.error("Could not create URL from resource: " + fullResourceURL, e);
-            return null;
-        }
-
-        // TODO fix resource existing testing
-        // if ( !urlResourceExists(resourceURL)) {
-        // LOGGER.warn("Resource file from annotation '" + resourcePath
-        // + "' could not be found in the file system at " + resourceURL);
-        // return null;
-        // }
-
-        return resourceURL;
+    public String getProcessId() {
+        return processId;
     }
 
-    public File getFullResourcePath(R_Config config) {
-        String fullResourcePath = null;
-        try {
-            fullResourcePath = config.getConfigVariableFullPath(RWPSConfigVariables.RESOURCE_DIR)
-                    + File.separatorChar + this.resourceValue;
-        }
-        catch (ExceptionReport e) {
-            LOGGER.error("Cannot locate resource File: " + this.resourceValue, e);
-            e.printStackTrace();
-        }
-
-        File resourceFile = new File(fullResourcePath);
-        if ( !resourceFile.exists()) {
-            LOGGER.error("Cannot locate resource File: " + this.resourceValue + ", path: " + fullResourcePath);
-            return null;
-        }
-
-        // TODO fix resource existing testing
-        // if ( !urlResourceExists(resourceURL)) {
-        // LOGGER.warn("Resource file from annotation '" + resourcePath
-        // + "' could not be found in the file system at " + resourceURL);
-        // return null;
-        // }
-
-        return resourceFile;
-    }
-
-    @SuppressWarnings("unused")
-    private static boolean urlResourceExists(URL url) {
-        HttpURLConnection conn = null;
-
-        try {
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("HEAD"); // should be
-                                           // conn.setRequestMethod("HEAD");
-            conn.setConnectTimeout(3000);
-            conn.setReadTimeout(3000);
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not open connection to URL " + url, e);
-            return false;
-        }
-
-        // does not work
-        long length = conn.getContentLength();
-        System.out.println(length);
-
-        try {
-            conn.connect();
-        }
-        catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-
-        // does not work
-        int code;
-        try {
-            code = conn.getResponseCode();
-        }
-        catch (IOException e) {
-            LOGGER.error("Could not get header from connection.", e);
-            return false;
-        }
-
-        return (code == HttpURLConnection.HTTP_OK);
-
-        // last resort
+    public boolean isPublic() {
+        return isPublic;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("R_Resource [resourceValue=");
-        builder.append(this.resourceValue);
-        builder.append("]");
+        builder.append("R_Resource [resourceValue=").append(resourceValue).append(", scriptId=").append(processId).append(", isPublic=").append(isPublic).append("]");
         return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (isPublic ? 1231 : 1237);
+        result = prime * result + ( (resourceValue == null) ? 0 : resourceValue.hashCode());
+        result = prime * result + ( (processId == null) ? 0 : processId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        R_Resource other = (R_Resource) obj;
+        if (isPublic != other.isPublic)
+            return false;
+        if (resourceValue == null) {
+            if (other.resourceValue != null)
+                return false;
+        }
+        else if ( !resourceValue.equals(other.resourceValue))
+            return false;
+        if (processId == null) {
+            if (other.processId != null)
+                return false;
+        }
+        else if ( !processId.equals(other.processId))
+            return false;
+        return true;
     }
 
 }

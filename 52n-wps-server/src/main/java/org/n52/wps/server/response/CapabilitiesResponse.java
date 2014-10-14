@@ -31,6 +31,8 @@ package org.n52.wps.server.response;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.opengis.wps.x100.CapabilitiesDocument;
+
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.ExceptionReport;
@@ -56,9 +58,11 @@ public class CapabilitiesResponse extends Response {
 	 * @param os The OutputStream to save this Response to
 	 * @throws ExceptionReport
 	 */
-	public InputStream getAsStream() throws ExceptionReport{
+	@Override
+    public InputStream getAsStream() throws ExceptionReport{
 		try {
-			return CapabilitiesConfiguration.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
+            CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance();
+            return caps.newInputStream(XMLBeansHelper.getXmlOptions());
 		} catch (IOException e) {
 			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {

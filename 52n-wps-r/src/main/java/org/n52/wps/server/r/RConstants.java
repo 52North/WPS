@@ -28,24 +28,23 @@
  */
 package org.n52.wps.server.r;
 
-import java.util.List;
+import org.springframework.http.MediaType;
 
-import org.junit.Test;
-import org.n52.wps.server.r.info.RProcessInfo;
+/**
+ * 
+ * @author Daniel Nüst
+ *
+ */
+public class RConstants {
 
-public class ProcessInfo {
+    public static final String RDATA_FILE_EXTENSION = "RData";
 
-    @Test
-    public void dummy()
-    {
-        List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
-        for (RProcessInfo rProcessInfo : rProcessInfoList) {
-            rProcessInfo.getWkn();
-            rProcessInfo.isAvailable();
-            rProcessInfo.isValid();
-            rProcessInfo.getLastException().getMessage();
-            rProcessInfo.getScriptURL();
-        }
-    }
+    public static final String R_FILE_EXTENSION = "R";
+
+    public static final String R_SCRIPT_TYPE_VALUE = "text/x-r";
+
+    public static final MediaType R_SCRIPT_TYPE = MediaType.valueOf(R_SCRIPT_TYPE_VALUE);
+
+    public static final String MIME_TYPE_SOURCE = "text/x-r-source";
 
 }

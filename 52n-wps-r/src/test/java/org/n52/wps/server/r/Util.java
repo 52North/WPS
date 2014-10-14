@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -36,18 +37,22 @@ import org.junit.Assert;
 
 public class Util {
 
-    public static File loadFile(String filePath)
-    {
-        URL r = AnnotationParser.class.getResource(filePath);
+    public static File loadFile(String filePath) {
+        URL r = Util.class.getResource(filePath);
         File f;
         try {
             f = new File(r.toURI());
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             Assert.fail("Invalid file path (not URI).");
             return null;
         }
 
         return f;
+    }
+
+    public static R_Config getConfig() {
+        return new R_Config();
     }
 
 }

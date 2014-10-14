@@ -45,9 +45,11 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
@@ -182,12 +184,12 @@ public class RSessionManager {
             connection.eval(cmd);
             RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
 
-            String resourceUrl = config.getResourceDirURL();
-            connection.assign(RWPSSessionVariables.RESOURCE_URL_NAME, resourceUrl);
+            String resourceUrl = RResource.getResourceURL(new R_Resource(processWKN, "", true)).toExternalForm();
+            connection.assign(RWPSSessionVariables.RESOURCES_ENDPOINT, resourceUrl);
             log.debug("Assigned resource directory to variable '{}': {}",
-                      RWPSSessionVariables.RESOURCE_URL_NAME,
+                      RWPSSessionVariables.RESOURCES_ENDPOINT,
                       resourceUrl);
-            RLogger.logVariable(connection, RWPSSessionVariables.RESOURCE_URL_NAME);
+            RLogger.logVariable(connection, RWPSSessionVariables.RESOURCES_ENDPOINT);
 
             URL processDescription = config.getProcessDescriptionURL(processWKN);
 

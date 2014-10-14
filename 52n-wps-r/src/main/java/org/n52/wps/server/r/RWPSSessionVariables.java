@@ -36,7 +36,7 @@ package org.n52.wps.server.r;
  * TODO: create a complex object called "wps" with the slots processDescriptionLink, serverRuntime (52N WPS
  * build version), serverName, resourceBaseUrl, scriptBaseUrl, ...
  * 
- * @author Daniel
+ * @author Daniel Nüst
  * 
  */
 public class RWPSSessionVariables {
@@ -49,10 +49,12 @@ public class RWPSSessionVariables {
 
     public static final String ERROR_MESSAGE = "wpsErrorMessage";
 
-    public static String RESOURCE_URL_NAME = "wpsResourceURL";
+    public static final String RESOURCES_ENDPOINT = "wpsResourceEndpoint";
 
-    public static String SCRIPT_RESOURCES = "wpsScriptResources";
+    public static final String SCRIPT_URL = "wpsScriptUrl";
 
-    public static String WARNING_OUTPUT_STORAGE = "wpsWarningStorage";
+    public static final String SCRIPT_RESOURCES = "wpsScriptResources";
+
+    public static final String WARNING_OUTPUT_STORAGE = "wpsWarningStorage";
 
 }

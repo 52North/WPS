@@ -36,7 +36,7 @@ public class CustomDataType implements RTypeDefinition {
 
     String key;
 
-    String processKey;
+    String mimeType;
 
     String encoding;
 
@@ -54,8 +54,8 @@ public class CustomDataType implements RTypeDefinition {
     }
 
     @Override
-    public String getProcessKey() {
-        return this.processKey;
+    public String getMimeType() {
+        return this.mimeType;
     }
 
     @Override
@@ -67,8 +67,8 @@ public class CustomDataType implements RTypeDefinition {
         this.key = key;
     }
 
-    public void setProcessKey(String processKey) {
-        this.processKey = processKey;
+    public void setMimeType(String processKey) {
+        this.mimeType = processKey;
     }
 
     public void setEncoding(String encoding) {
@@ -103,9 +103,9 @@ public class CustomDataType implements RTypeDefinition {
             builder.append(key);
             builder.append(", ");
         }
-        if (processKey != null) {
+        if (mimeType != null) {
             builder.append("processKey=");
-            builder.append(processKey);
+            builder.append(mimeType);
             builder.append(", ");
         }
         if (encoding != null) {
