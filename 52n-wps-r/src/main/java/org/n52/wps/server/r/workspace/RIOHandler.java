@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -483,7 +484,8 @@ public class RIOHandler {
                     }
                     return cons.newInstance(param.newInstance(result.asString()));
                 }
-                catch (Exception e) {
+                catch (RuntimeException | InstantiationException | IllegalAccessException | InvocationTargetException
+                        | NoSuchMethodException e) {
                     String message = "Error for parsing String to IData for " + result_id + " and class " + iClass
                             + "\n" + e.getMessage();
                     log.error(message, e);

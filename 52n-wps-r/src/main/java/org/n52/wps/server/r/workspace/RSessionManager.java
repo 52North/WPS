@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.n52.wps.io.data.GenericFileData;
@@ -48,7 +50,6 @@ import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.util.RExecutor;
-import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.n52.wps.server.r.util.RLogger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -134,7 +135,7 @@ public class RSessionManager {
         loadUtilityScripts(executor);
     }
 
-    public String getConsoleOutput(String cmd) throws RserveException, REXPMismatchException {
+    private String getConsoleOutput(String cmd) throws RserveException, REXPMismatchException {
         return this.connection.eval("paste(capture.output(print(" + cmd + ")), collapse='\\n')").asString();
     }
 
@@ -153,9 +154,13 @@ public class RSessionManager {
             ExceptionReport {
         log.debug("Loading utility scripts.");
 
-        File[] utils = new File(config.utilsDirFull).listFiles(new RFileExtensionFilter());
+        Collection<File> utils = config.getUtilsFiles();
+        log.debug("Loading {} utils files: {}", utils.size(), Arrays.toString(utils.toArray()));
         for (File file : utils) {
-            executor.executeScript(file, this.connection);
+            if (file.exists())
+                executor.executeScript(file, this.connection);
+            else
+                log.warn("Configured script file does not longer exist: {}", file);
         }
 
         RLogger.log(connection, "workspace content after loading utility scripts:");

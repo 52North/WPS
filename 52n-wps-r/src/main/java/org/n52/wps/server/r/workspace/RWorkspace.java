@@ -32,6 +32,7 @@ package org.n52.wps.server.r.workspace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,7 @@ import java.util.UUID;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RWPSConfigVariables;
+import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.util.RLogger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -56,6 +58,7 @@ public class RWorkspace {
     public enum CreationStrategy {
         DEFAULT, MANUAL, MANUALBASEDIR, PRESET, TEMPORARY;
 
+        @Override
         public String toString() {
             return this.name().toLowerCase();
         }
@@ -105,10 +108,8 @@ public class RWorkspace {
             String wd = directory.getAbsolutePath();
             return setwd(connection, wd);
         }
-        else {
-            log.error("Could not create new temp workspace directory at {}", directory);
-            return null;
-        }
+        log.error("Could not create new temp workspace directory at {}", directory);
+        return null;
     }
 
     private REXP createAndSetNewWorkspaceDirectoryInRTempdir(RConnection connection) throws RserveException {
@@ -171,8 +172,8 @@ public class RWorkspace {
                             return true;
                         return false;
                     }
-                    else
-                        this.temporarilyPreventingRWorkingDirectoryFromDelete = false;
+
+                    this.temporarilyPreventingRWorkingDirectoryFromDelete = false;
                 }
                 else
                     log.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes.");
@@ -236,6 +237,33 @@ public class RWorkspace {
         }
 
         CreationStrategy strategy = CreationStrategy.valueOf(strategyName.trim().toUpperCase());
+
+        // if one of these strategies is used, then Java must be able to write in the folder and we need the
+        // full path
+        String workDirNameFullPath = null;
+        if (strategy.equals(CreationStrategy.MANUALBASEDIR) || strategy.equals(CreationStrategy.MANUAL)) {
+            try {
+                if (workDirName == null)
+                    throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
+                File testFile = new File(workDirName);
+                if ( !testFile.isAbsolute()) {
+                    Path bd = R_Config.getInstance().getBaseDir();
+                    testFile = bd.resolve(path).toFile();
+                }
+                if ( !testFile.exists())
+                    throw new ExceptionReport("Invalid work dir name \"" + workDirName + "\" and full path \""
+                            + testFile.getPath() + "\". It denotes a non-existent path.", "Inconsistent property");
+
+                workDirNameFullPath = testFile.getAbsolutePath();
+                log.debug("Manually set work dir name resolved to the full path '{}'", workDirNameFullPath);
+            }
+            catch (ExceptionReport e) {
+                log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
+                          RWPSConfigVariables.R_WORK_DIR_NAME,
+                          strategy,
+                          e);
+            }
+        }
 
         if (strategy.equals(DEFAULT_STRATEGY)) {
             // Default behaviour: R work directory is the same as temporary WPS work directory if R runs

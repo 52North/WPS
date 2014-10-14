@@ -158,7 +158,7 @@ public class RProcessDescriptionCreator {
 
             return pdt;
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             log.error("Error creating process description.", e);
             throw new ExceptionReport("Error creating process description.",
                                       "NA",

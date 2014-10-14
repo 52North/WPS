@@ -51,6 +51,7 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class RPropertyChangeManager implements PropertyChangeListener {
 
@@ -58,10 +59,11 @@ public class RPropertyChangeManager implements PropertyChangeListener {
 
     private static RPropertyChangeManager instance;
 
+    @Autowired
     private static R_Config config;
 
     private RPropertyChangeManager() {
-        config = R_Config.getInstance();
+        // config = R_Config.getInstance();
     }
 
     public static RPropertyChangeManager getInstance() {
@@ -380,6 +382,11 @@ public class RPropertyChangeManager implements PropertyChangeListener {
      * @return true
      */
     private boolean handleConfigVariable(Property property) {
+        if (config == null) {
+            LOGGER.error("Can not configure property because config is null: %s", property);
+            return false;
+        }
+
         String pname = property.getName();
         // RWPSConfigVariables.v
         boolean success = false;
@@ -409,7 +416,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             else
                 LOGGER.info("Process {} and process file {} successfully deleted!", processName, processFile.getName());
         }
-        catch (Exception e) {
+        catch (RuntimeException | ExceptionReport e) {
             LOGGER.error("Process file refering to {} could not be deleted", processName, e);
         }
         return deleted;

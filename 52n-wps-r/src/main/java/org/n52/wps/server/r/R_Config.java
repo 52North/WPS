@@ -30,15 +30,25 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
 
 import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
@@ -50,12 +60,18 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RConnector;
+import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.n52.wps.server.r.util.RStarter;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.ServletContextAware;
 
-public class R_Config {
+@Component
+@Scope(value = "singleton")
+public class R_Config implements ServletContextAware {
 
     private static Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
 
@@ -65,14 +81,6 @@ public class R_Config {
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
-    // TODO for resources to be downloadable the cannot be in WEB-INF, or this
-    // must be handled with a
-    // servlet, which is probably a better solution to keep track of files, see
-    // http://www.jguru.com/faq/view.jsp?EID=10646
-    private final String R_BASE_DIR = "R";
-
-    private final String UTILS_DIR = "utils";
-
     private static final String DEFAULT_RSERVE_HOST = "localhost";
 
     private static final int DEFAULT_RSERVE_PORT = 6311;
@@ -81,8 +89,7 @@ public class R_Config {
 
     private static final String DIR_DELIMITER = ";";
 
-    /** R scripts with utility functions to pre-load */
-    public String utilsDirFull;
+    private ArrayList<File> utilsFiles = null;
 
     private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
@@ -103,32 +110,26 @@ public class R_Config {
 
     private RStarter starter;
 
+    private ServletContext servletContext = null;
+
+    private Path baseDir = null;
+
+    private static FileFilter rFileFilter = new RFileExtensionFilter();
+
+    private Map<Path, File> utilFileCache = new HashMap<Path, File>();
+
     private R_Config() {
         this.starter = new RStarter();
         this.connector = new RConnector(starter);
-
-        try {
-            String wpsBasedir = WebProcessingService.getApplicationBaseDir();
-            if (wpsBasedir != null) {
-                File f = new File(wpsBasedir, R_BASE_DIR);
-                String baseDirFull = f.getAbsolutePath();
-                f = new File(baseDirFull, UTILS_DIR);
-                this.utilsDirFull = f.getAbsolutePath();
-            }
-            else
-                LOGGER.error("Could not get basedir from WPS!");
-        }
-        catch (Exception e) {
-            LOGGER.error("Error getting full path of baseDir and configDir.", e);
-        }
-
         this.annotationParser = new RAnnotationParser(this);
+
+        // TODO use injection wherever R_Config is required
+        instance = this;
+
+        LOGGER.info("NEW {}", this);
     }
 
     public static R_Config getInstance() {
-        if (instance == null)
-            instance = new R_Config();
-
         return instance;
     }
 
@@ -193,10 +194,6 @@ public class R_Config {
                 LOGGER.debug("Cannot create URL for script file {} at location {} of process {}", fname, dir, wkn);
                 return null;
             }
-            else {
-                URL url = new URL(getUrlPathUpToWebapp() + "/" + f.toString().replace("\\", "/"));
-                return url;
-            }
         }
 
         return null;
@@ -227,71 +224,62 @@ public class R_Config {
 
     protected boolean registerScript(File file) throws RAnnotationException, ExceptionReport {
         boolean registered = false;
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {
-            LOGGER.error("Could not create input stream for file {}", file);
-        }
 
-        if (fileToWknMap.containsKey(file.getAbsoluteFile()))
-            LOGGER.debug("File already registered, not doint it again: {}", file);
-        else {
+        try (FileInputStream fis = new FileInputStream(file);) {
 
-            LOGGER.info("Registering script file {} from input {}", file, fis);
-
-            List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
-            if (annotations.size() < 1) {
-                LOGGER.warn("Could not parse any annotations from file '{}'. Did not load the script.", file);
-                registered = false;
-            }
+            if (fileToWknMap.containsKey(file.getAbsoluteFile()))
+                LOGGER.debug("File already registered, not doint it again: {}", file);
             else {
-                RAnnotation descriptionAnnotation = RAnnotation.filterFirstMatchingAnnotation(annotations,
-                                                                                              RAnnotationType.DESCRIPTION);
-                if (descriptionAnnotation == null) {
-                    LOGGER.error("No description annotation for script '{}' - cannot be registered!", file);
+
+                LOGGER.info("Registering script file {} from input {}", file, fis);
+
+                List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
+                if (annotations.size() < 1) {
+                    LOGGER.warn("Could not parse any annotations from file '{}'. Did not load the script.", file);
                     registered = false;
                 }
                 else {
-                    String process_id = descriptionAnnotation.getStringValue(RAttribute.IDENTIFIER);
-                    String wkn = WKN_PREFIX + process_id;
-
-                    if (fileToWknMap.containsValue(wkn)) {
-                        File conflictFile = getScriptFileForWKN(wkn);
-                        if ( !conflictFile.exists()) {
-                            LOGGER.info("Cached mapping for process '{}' with file '{}' replaced by file '{}'",
-                                        wkn,
-                                        conflictFile.getName(),
-                                        file.getName());
-                        }
-                        else if ( !file.equals(conflictFile)) {
-                            String message = String.format("Conflicting identifier '{}' detected for R scripts '{}' and '{}'",
-                                                           wkn,
-                                                           file.getName(),
-                                                           conflictFile.getName());
-                            ExceptionReport e = new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
-                            LOGGER.error(message);
-                            wknConflicts.put(wkn, e);
-                            throw e;
-                        }
+                    RAnnotation descriptionAnnotation = RAnnotation.filterFirstMatchingAnnotation(annotations,
+                                                                                                  RAnnotationType.DESCRIPTION);
+                    if (descriptionAnnotation == null) {
+                        LOGGER.error("No description annotation for script '{}' - cannot be registered!", file);
+                        registered = false;
                     }
+                    else {
+                        String process_id = descriptionAnnotation.getStringValue(RAttribute.IDENTIFIER);
+                        String wkn = WKN_PREFIX + process_id;
 
-                    fileToWknMap.put(file.getAbsoluteFile(), wkn);
-                    wknToFileMap.put(wkn, file.getAbsoluteFile());
+                        if (fileToWknMap.containsValue(wkn)) {
+                            File conflictFile = getScriptFileForWKN(wkn);
+                            if ( !conflictFile.exists()) {
+                                LOGGER.info("Cached mapping for process '{}' with file '{}' replaced by file '{}'",
+                                            wkn,
+                                            conflictFile.getName(),
+                                            file.getName());
+                            }
+                            else if ( !file.equals(conflictFile)) {
+                                String message = String.format("Conflicting identifier '{}' detected for R scripts '{}' and '{}'",
+                                                               wkn,
+                                                               file.getName(),
+                                                               conflictFile.getName());
+                                ExceptionReport e = new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
+                                LOGGER.error(message);
+                                wknConflicts.put(wkn, e);
+                                throw e;
+                            }
+                        }
 
-                    registered = true;
+                        fileToWknMap.put(file.getAbsoluteFile(), wkn);
+                        wknToFileMap.put(wkn, file.getAbsoluteFile());
+
+                        registered = true;
+                    }
                 }
             }
         }
-
-        if (fis != null)
-            try {
-                fis.close();
-            }
-            catch (IOException e) {
-                LOGGER.error("Could not close input stream for file {}", file);
-            }
+        catch (IOException e) {
+            LOGGER.error("Could not create input stream for file {}", file);
+        }
 
         return registered;
     }
@@ -312,11 +300,9 @@ public class R_Config {
         if (out != null && out.exists() && out.isFile() && out.canRead()) {
             return out;
         }
-        else {
-            String fname = out == null ? "(unknown)" : out.getName();
-            throw new ExceptionReport("Error in Process: " + wkn + ", File " + fname + " not found or broken.",
-                                      ExceptionReport.NO_APPLICABLE_CODE);
-        }
+        String fname = out == null ? "(unknown)" : out.getName();
+        throw new ExceptionReport("Error in Process: " + wkn + ", File " + fname + " not found or broken.",
+                                  ExceptionReport.NO_APPLICABLE_CODE);
     }
 
     public void resetWknFileMapping() {
@@ -363,7 +349,7 @@ public class R_Config {
             boolean out = f.exists();
             return out;
         }
-        catch (Exception e) {
+        catch (RuntimeException | ExceptionReport e) {
             LOGGER.error("Script file unavailable for process id " + identifier, e);
             return false;
         }
@@ -384,7 +370,7 @@ public class R_Config {
             LOGGER.error("Script file unavailable for process " + wkn + ".", e);
             return false;
         }
-        catch (Exception e) {
+        catch (RuntimeException | ExceptionReport | RAnnotationException e) {
             LOGGER.error("Validation of process " + wkn + " failed.", e);
             return false;
         }
@@ -402,11 +388,10 @@ public class R_Config {
     public void killRserveOnWindows() {
         try {
             if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0)
-                ;
-            return;
+                return;
         }
-        catch (Exception e1) {
-            e1.printStackTrace();
+        catch (InterruptedException | IOException e) {
+            LOGGER.warn("Error trying to stop Rserve on windows.", e);
         }
     }
 
@@ -482,5 +467,97 @@ public class R_Config {
     public boolean getCacheProcesses() {
         String s = getConfigVariable(RWPSConfigVariables.R_CACHE_PROCESSES);
         return Boolean.valueOf(s);
+    }
+
+    public Collection<File> getUtilsFiles() {
+        if (this.utilsFiles == null) {
+            this.utilsFiles = new ArrayList<File>();
+            Path basedir = getBaseDir();
+            String configVariable = getConfigVariable(RWPSConfigVariables.R_UTILS_DIR);
+            String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
+            for (String s : configVariableDirs) {
+                Path dir = Paths.get(s);
+                Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
+                this.utilsFiles.addAll(files);
+                LOGGER.debug("Added {} files to the list of util files: {}",
+                             files.size(),
+                             Arrays.toString(files.toArray()));
+            }
+        }
+
+        return utilsFiles;
+    }
+
+    /**
+     * given a relative path, this method tries to locate the directory first within the webapp folder, then
+     * within the resources directory.
+     * 
+     * @param p
+     * @param baseDir
+     *        the full path to the webapp directory
+     * @return
+     */
+    private Collection<File> resolveFilesFromResourcesOrFromWebapp(Path p, Path baseDir) {
+        LOGGER.debug("Loading util files from {}", p);
+
+        if ( !baseDir.isAbsolute())
+            throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
+                                                     baseDir,
+                                                     p));
+
+        ArrayList<File> foundFiles = new ArrayList<File>();
+        File f = null;
+
+        // try resource first
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(p.toString());) {
+            if (input != null) {
+                if (this.utilFileCache.containsKey(p) && this.utilFileCache.get(p).exists()) {
+                    f = this.utilFileCache.get(p);
+                }
+                else {
+                    try {
+                        f = File.createTempFile("wps4rutil_", "_" + p.getFileName().toString());
+                        Files.copy(input, Paths.get(f.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                        if (f.exists() && rFileFilter.accept(f)) {
+                            foundFiles.add(f);
+                            this.utilFileCache.put(p, f);
+                        }
+                    }
+                    catch (IOException e) {
+                        LOGGER.warn("Could not add util file from classpath.", e);
+                    }
+                }
+            }
+        }
+        catch (IOException e) {
+            LOGGER.warn("Could not add util file from classpath.", e);
+        }
+
+        if (f == null) {
+            // try resolving with basedir
+            Path resolved = baseDir.resolve(p);
+            if (Files.exists(resolved)) {
+                f = resolved.toFile();
+                File[] files = f.listFiles(rFileFilter);
+                foundFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        LOGGER.debug("Found {} util files in directory configured as '{}' at {}", foundFiles.size(), p, f);
+
+        return foundFiles;
+    }
+
+    public Path getBaseDir() {
+        if (this.baseDir == null && this.servletContext != null) {
+            this.baseDir = Paths.get(this.servletContext.getRealPath(""));
+        }
+
+        return this.baseDir;
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 }

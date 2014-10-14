@@ -48,6 +48,8 @@ public class RStarter {
 
     private static Logger log = LoggerFactory.getLogger(RStarter.class);
 
+    private static boolean classicStartCommand = false;
+
     // TODO: make starter non-static and variables configurable
     public enum OutputLevel {
         quiet, slave, verbose;
@@ -77,30 +79,36 @@ public class RStarter {
      * @throws IOException
      */
     private static void startRServeOnWindows() throws IOException {
-        // so that it can be destroyed.
-        ProcessBuilder pb = new ProcessBuilder("cmd",
-                                               "/c",
-                                               "start",
-                                               "R",
-                                               log.isDebugEnabled() ? OutputLevel.verbose.getCommand()
-                                                                   : OutputLevel.slave.getCommand(),
-                                               "--vanilla",
-                                               "-e library(Rserve);Rserve()");
-        pb.inheritIO(); // nothing here since the command starts a new shell
+        // TODO save the process id so that it can be destroyed on shutdown.
 
-        log.info("ProcessBuilder: {} | command: {} | directory: {} | environment: {}",
-                 pb,
-                 pb.command(),
-                 pb.directory(),
-                 Arrays.toString(pb.environment().entrySet().toArray()));
-        Process process = pb.start();
+        if (classicStartCommand) {
+            String rserveStartCMD = "cmd /c start R -e library(Rserve);Rserve() --vanilla --slave";
+            Runtime.getRuntime().exec(rserveStartCMD);
+        }
+        else {
+            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", "start", "R",
+            // log.isDebugEnabled() ? OutputLevel.verbose.getCommand()
+            // : OutputLevel.slave.getCommand(),
+                                                   "-e",
+                                                   "library(Rserve);Rserve()",
+                                                   "--vanilla",
+                                                   OutputLevel.slave.getCommand());
+            pb.inheritIO(); // nothing here since the command starts a new shell
 
-        log.info("Process: {}, alive: {}, exit value: {}", process.toString(), process.isAlive());
-        // process should have already exited at this point
-        // TODO see if access to the started shell is possible, maybe this helps:
-        // http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
-        if ( !process.isAlive())
-            log.debug("Process exit status: {}", process.exitValue());
+            log.info("ProcessBuilder: {} | command: {} | directory: {} | environment: {}",
+                     pb,
+                     pb.command(),
+                     pb.directory(),
+                     Arrays.toString(pb.environment().entrySet().toArray()));
+            Process process = pb.start();
+
+            log.info("Process: {}, alive: {}", process.toString(), process.isAlive());
+            // process should have already exited at this point
+            // TODO see if access to the started shell is possible, maybe this helps:
+            // http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
+            if ( !process.isAlive())
+                log.debug("Process exit status: {}", process.exitValue());
+        }
     }
 
     public synchronized void startR() throws InterruptedException, IOException {

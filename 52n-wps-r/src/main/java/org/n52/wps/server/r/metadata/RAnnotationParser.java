@@ -200,7 +200,7 @@ public class RAnnotationParser {
             return annotations;
 
         }
-        catch (Exception e) {
+        catch (RuntimeException | IOException e) {
             LOGGER.error("Error parsing annotations.", e);
             throw new RAnnotationException("Error parsing annotations.", e);
         }

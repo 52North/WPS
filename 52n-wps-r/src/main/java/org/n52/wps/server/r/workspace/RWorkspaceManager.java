@@ -137,7 +137,7 @@ public class RWorkspaceManager {
                              this.workspace.listFiles());
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             log.error("Problem deleting the wps work directory.", e);
         }
     }

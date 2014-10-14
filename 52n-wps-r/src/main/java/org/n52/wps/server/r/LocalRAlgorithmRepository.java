@@ -192,8 +192,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
         if ( !this.algorithms.containsKey(algorithmName))
             throw new RuntimeException("This repository does not contain an algorithm '" + algorithmName + "'");
-        else
-            return this.algorithms.get(algorithmName);
+
+        return this.algorithms.get(algorithmName);
     }
 
     public Collection<String> getAlgorithmNames() {
@@ -205,7 +205,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         return this.algorithms.containsKey(className);
     }
 
-    private IAlgorithm loadAlgorithmAndValidate(String wellKnownName) throws Exception {
+    private IAlgorithm loadAlgorithmAndValidate(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
 
         IAlgorithm algorithm = new GenericRProcess(wellKnownName);
@@ -234,7 +234,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                         wellKnownName,
                         validationMessages.toString());
 
-            throw new Exception("Could not load algorithm " + wellKnownName + ". ProcessDescription not valid: "
+            throw new RuntimeException("Could not load algorithm " + wellKnownName + ". ProcessDescription not valid: "
                     + validationMessages.toString());
         }
 
@@ -253,14 +253,13 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
                 return true;
             }
-            catch (Exception e) {
+            catch (RuntimeException e) {
                 String message = "Could not load algorithm for class name '" + algorithmName + "'";
                 LOGGER.error(message, e);
                 throw new RuntimeException(message + ": " + e.getMessage(), e);
             }
         }
-        else
-            return false;
+        return false;
     }
 
     @Override

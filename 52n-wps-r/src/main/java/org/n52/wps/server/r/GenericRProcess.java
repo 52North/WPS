@@ -212,7 +212,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             return result;
         }
-        catch (IOException e) {
+        catch (IOException | RuntimeException e) {
             String message = "Attempt to run R script file failed:\n" + e.getClass() + " - " + e.getLocalizedMessage()
                     + "\n" + e.getCause();
             log.error(message, e);

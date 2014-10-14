@@ -96,7 +96,7 @@ public class RConnector {
                 try {
                     con = attemptStarts(host, port);
                 }
-                catch (Exception e) {
+                catch (RuntimeException | InterruptedException | IOException e) {
                     log.error("Attempted to start Rserve and establish a connection failed", e);
 
                     // Throwable#addSuppressed() only supported by Java 1.7+
@@ -132,7 +132,7 @@ public class RConnector {
                 break;
             }
             catch (RserveException rse) {
-                if (attempt >= attempts) {
+                if (attempt >= START_ATTEMP_COUNT) {
                     throw rse;
                 }
             }
