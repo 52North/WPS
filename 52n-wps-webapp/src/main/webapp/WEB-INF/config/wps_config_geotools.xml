@@ -110,6 +110,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -154,6 +155,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -437,6 +439,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 			</Generator>			
 			<Generator name="GenericFileDataWithGTGenerator"
 				className="org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator"
@@ -486,6 +489,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"

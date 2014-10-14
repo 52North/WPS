@@ -44,6 +44,9 @@
 				<Format mimetype="application/rData+SpatialPoints" />
 				<Format mimetype="application/rData+SpatialPolygons" />
 				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -126,6 +129,9 @@
 				<Format mimetype="application/pdf" />
 				<Format mimetype="application/zip" />
 				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 			</Generator>
 		</GeneratorList>
 	</Datahandlers>
