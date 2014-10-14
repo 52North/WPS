@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @author Daniel Nüst
  * 
  */
-public class FilteredRConnection extends RConnection {
+public class FilteredRConnection extends RConnection { // implements AutoCloseable {
 
     public static interface RCommandFilter {
 
@@ -160,7 +160,7 @@ public class FilteredRConnection extends RConnection {
 
     private boolean failOnFilter = true;
 
-    private Collection<RCommandFilter> filters = new ArrayList<FilteredRConnection.RCommandFilter>();;
+    private Collection<RCommandFilter> filters = new ArrayList<FilteredRConnection.RCommandFilter>();
 
     private boolean forceFilter;
 
@@ -206,8 +206,7 @@ public class FilteredRConnection extends RConnection {
     public REXP eval(String arg0) throws RserveException {
         if (forceFilter)
             return filteredEval(arg0);
-        else
-            return internalEval(arg0);
+        return internalEval(arg0);
     }
 
     /**
