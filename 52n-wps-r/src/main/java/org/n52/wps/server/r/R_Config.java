@@ -89,8 +89,6 @@ public class R_Config implements ServletContextAware {
 
     private RStarter starter;
 
-    private ServletContext servletContext = null;
-
     private Path baseDir = null;
 
     private static FileFilter rFileFilter = new RFileExtensionFilter();
@@ -340,16 +338,12 @@ public class R_Config implements ServletContextAware {
     }
 
     public Path getBaseDir() {
-        if (this.baseDir == null && this.servletContext != null) {
-            this.baseDir = Paths.get(this.servletContext.getRealPath(""));
-        }
-
         return this.baseDir;
     }
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
+        this.baseDir = Paths.get(servletContext.getRealPath(""));
     }
 
     public String getPublicScriptId(String s) {
