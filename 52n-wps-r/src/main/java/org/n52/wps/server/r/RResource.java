@@ -160,6 +160,8 @@ public class RResource {
 
     public static final MediaType ZIP_TYPE = MediaType.valueOf("application/x-zip-compressed");
 
+    private static final String CHARSET_STRING = "; charset=utf-8";
+
     static {
         try {
             ERROR_SESSION_INFO_URL = new URL("http://internal.error/sessionInfo.not.available");
@@ -257,7 +259,7 @@ public class RResource {
         return entity;
     }
 
-    @RequestMapping(value = SESSION_INFO_PATH, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = SESSION_INFO_PATH, produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
     public HttpEntity<String> sessionInfo() {
         FilteredRConnection rCon = null;
         try {
