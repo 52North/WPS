@@ -441,16 +441,7 @@ public class RWorkspaceManager {
 
                 log.debug("Output for {} is {} with payload {}", resultId, output, output.getPayload());
             }
-            catch (ExceptionReport e) {
-                throw e;
-            }
-            catch (RserveException e) {
-                log.error("Could not create output for {}", resultId, e);
-            }
-            catch (IOException e) {
-                log.error("Could not create output for {}", resultId, e);
-            }
-            catch (REXPMismatchException e) {
+            catch (RserveException | IOException | REXPMismatchException e) {
                 log.error("Could not create output for {}", resultId, e);
             }
         }

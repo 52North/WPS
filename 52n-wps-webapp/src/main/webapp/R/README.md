@@ -8,3 +8,4 @@ The sub-folders and their contents are as follows:
 * ``/resources``: Resource files for the scripts. If a script defines names of resource files from this directory then these files are loaded to the R workspace before script execution.
 * ``/scripts``: The WPS4R script repository, see seperate README.md file.
 * ``/utils``: R scripts that are loaded into the R session that may contain configuration, session wide utility functions, or session variables.
+* ``wps4r-utils.R``: A script file with functions to be used while developing scripts for WPS4R.

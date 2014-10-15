@@ -76,7 +76,18 @@ public class Server implements ConfigurationModule {
 	private int repoReloadInterval;
 	private boolean responseURLFilterEnabled;
 
-	@Override
+    public Server() {
+        //
+    }
+
+    public Server(String hostname, int hostport, String webappPath) {
+        super();
+        this.hostname = hostname;
+        this.hostport = hostport;
+        this.webappPath = webappPath;
+    }
+
+    @Override
 	public String getModuleName() {
 		return "Server Configuration";
 	}

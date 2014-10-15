@@ -26,10 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -43,6 +45,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.metadata.RProcessDescriptionCreator;
 import org.n52.wps.server.r.syntax.RAnnotation;
@@ -57,32 +60,32 @@ public class DescriptionCreator {
     private List<RAnnotation> annotations;
 
     @BeforeClass
-    public static void initConfig() {
+    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
         config = new R_Config();
+        Util.forceInitializeWPSConfig();
     }
 
     @Before
-    public void loadAnnotations() throws IOException, RAnnotationException
-    {
+    public void loadAnnotations() throws IOException, RAnnotationException {
         File scriptFile = Util.loadFile("/uniform.R");
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
         RAnnotationParser parser = new RAnnotationParser();
         ReflectionTestUtils.setField(parser, "config", config);
+        ReflectionTestUtils.setField(parser, "dataTypeRegistry", new RDataTypeRegistry());
 
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
     }
 
     @Test
-    public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException
-    {
+    public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException {
         File descriptionFile = Util.loadFile("/uniform.xml");
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(descriptionFile);
-        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.test---uniform");
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform");
         ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
                                                                             "R_andom",
                                                                             new URL("http://my.url/myScript.R"),

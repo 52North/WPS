@@ -144,6 +144,12 @@ public class ScriptFileRepo {
                    is(equalTo(false)));
     }
 
+    @Test(expected = ExceptionReport.class)
+    public void exceptionWhenFileIsMissing() throws IOException, RAnnotationException, ExceptionReport {
+        String missingWkn = prepareMissingScriptFile();
+        sr.getScriptFileForWKN(missingWkn);
+    }
+
     @Test
     public void scriptIsInvalidWhenFileMissing() throws IOException, RAnnotationException, ExceptionReport {
         boolean valid = sr.isScriptValid(prepareMissingScriptFile());

@@ -26,15 +26,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.xmlbeans.XmlException;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -48,11 +53,17 @@ public class ServerResource {
 
     private String wkn = "wkn.42";
 
+    @BeforeClass
+    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
+        Util.forceInitializeWPSConfig();
+    }
+
     @Test
     public void scriptUrlIsGenerated() throws RAnnotationException, ExceptionReport, MalformedURLException {
         URL scriptURL = RResource.getScriptURL(wkn);
 
-        String expectedUrl = "http://localhost:8080/wps/script/" + wkn;
+        String expectedUrl = "http://" + Util.testserver.getHostname() + ":" + Util.testserver.getHostport() + "/"
+                + Util.testserver.getWebappPath() + RResource.R_ENDPOINT + RResource.SCRIPT_PATH + "/" + wkn;
         assertThat("script url is correct", scriptURL.toString(), is(equalTo(expectedUrl)));
     }
 

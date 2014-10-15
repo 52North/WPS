@@ -78,7 +78,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public static final String COMPONENT_NAME = "RAlgorithmRepository";
 
-    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>();
+    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>();    // if set to true an error during one algorithm load stops subsequent algorithms to be loaded
+    private boolean exceptionOnAlgorithmLoad = false;
 
     @Autowired
     private R_Config config;
@@ -346,9 +347,11 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             catch (RuntimeException e) {
                 String message = "Could not load algorithm for class name '" + algorithmName + "'";
                 LOGGER.error(message, e);
-                throw new RuntimeException(message + ": " + e.getMessage(), e);
+                if (exceptionOnAlgorithmLoad)
+                    throw new RuntimeException(message + ": " + e.getMessage(), e);
             }
         }
+
         return false;
     }
 

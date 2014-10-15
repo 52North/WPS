@@ -133,7 +133,8 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         // retrieve set of string representations for all config variables:
         HashSet<String> configVariableNames = new HashSet<String>();
 
-        for (RWPSConfigVariables var : RWPSConfigVariables.values()) {
+        RWPSConfigVariables[] variables = RWPSConfigVariables.values().clone();
+        for (RWPSConfigVariables var : variables) {
             configVariableNames.add(var.toString().toLowerCase());
         }
 

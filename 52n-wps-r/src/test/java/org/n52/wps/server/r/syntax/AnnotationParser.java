@@ -29,18 +29,31 @@
 
 package org.n52.wps.server.r.syntax;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.Util;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -51,16 +64,18 @@ public class AnnotationParser {
 
     private List<RAnnotation> annotations;
 
+    private RAnnotationParser parser;
+
     @BeforeClass
-    public static void initConfig() {
+    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
         config = Util.getConfig();
+        Util.forceInitializeWPSConfig();
     }
 
     @Before
     public void loadAnnotations() throws IOException, RAnnotationException {
         File scriptFile = Util.loadFile("/uniform.R");
 
-        // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
 
         RAnnotationParser parser = new RAnnotationParser();
@@ -68,6 +83,13 @@ public class AnnotationParser {
 
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
+    }
+
+    @Before
+    public void loadParser() {
+        this.parser = new RAnnotationParser();
+        ReflectionTestUtils.setField(this.parser, "config", config);
+        ReflectionTestUtils.setField(this.parser, "dataTypeRegistry", new RDataTypeRegistry());
     }
 
     @Test
@@ -79,7 +101,7 @@ public class AnnotationParser {
                 Assert.assertEquals("MC++", rAnnotation.getStringValue(RAttribute.AUTHOR));
                 Assert.assertEquals("Generates random numbers with uniform distribution",
                                     rAnnotation.getStringValue(RAttribute.ABSTRACT));
-                Assert.assertEquals("R_andom", rAnnotation.getStringValue(RAttribute.IDENTIFIER));
+                Assert.assertEquals("uniform", rAnnotation.getStringValue(RAttribute.IDENTIFIER));
             }
             else if (rAnnotation.getType().equals(RAnnotationType.OUTPUT)) {
                 // output, text, Random number list,
@@ -110,16 +132,69 @@ public class AnnotationParser {
                 Assert.assertEquals("test.file.txt", value);
 
                 Object objValue = resourceAnnotation.getObjectValue(RAttribute.NAMED_LIST);
+                Assert.assertTrue("Resource list is a collection", objValue instanceof Collection< ? >);
                 if (objValue instanceof Collection< ? >) {
+                    @SuppressWarnings("unchecked")
                     Collection<R_Resource> coll = (Collection<R_Resource>) objValue;
 
-                    coll.iterator().next();
-                    Assert.assertEquals("test.file.txt", objValue);
+                    R_Resource resource = coll.iterator().next();
+                    Assert.assertEquals("test.file.txt", resource.getResourceValue());
                 }
-                Assert.assertEquals("test.file.txt", objValue);
             }
         }
+    }
 
+    @Test
+    public void validateValidAlgorithm() throws FileNotFoundException,
+            RAnnotationException,
+            IOException,
+            ExceptionReport {
+        File scriptFile = Util.loadFile("/uniform.R");
+
+        try (FileInputStream fis = new FileInputStream(scriptFile);) {
+            boolean b = parser.validateScript(fis, "test.id.only");
+            assertThat("validation result is positive", b, is(equalTo(true)));
+        }
+    }
+
+    @Test
+    public void validAlgorithmReturnsNoErrorsDuringValidation() throws FileNotFoundException,
+            RAnnotationException,
+            IOException,
+            ExceptionReport {
+        File scriptFile = Util.loadFile("/uniform.R");
+
+        try (FileInputStream fis = new FileInputStream(scriptFile);) {
+            Collection<Object> b = parser.validateScriptWithErrors(fis, "test.id.only");
+            assertThat("error list is empty", b, is(empty()));
+        }
+    }
+
+    @Test
+    public void validateInvalidAlgorithm() throws FileNotFoundException,
+            RAnnotationException,
+            IOException,
+            ExceptionReport {
+        String input = "# wps.d: id = R_andom, author = MC++, ;";
+
+        try (InputStream is = IOUtils.toInputStream(input);) {
+            boolean b = parser.validateScript(is, "test.id.only");
+            assertThat("validation result is negative", b, is(equalTo(false)));
+        }
+    }
+
+    @Test
+    public void validateInvalidWithErrors() throws IOException, RAnnotationException {
+        String input = "# wps.d: nothing";
+
+        try (InputStream is = IOUtils.toInputStream(input);) {
+            Collection<Object> errors = parser.validateScriptWithErrors(is, "test.id.only");
+            assertThat("error list is not empty", errors, is(not(empty())));
+            assertThat("error list contains one message", errors.size(), is(equalTo(1)));
+            assertThat("first error elements is an annotation exception",
+                       errors.iterator().next(),
+                       is(instanceOf(RAnnotationException.class)));
+        }
     }
 
 }

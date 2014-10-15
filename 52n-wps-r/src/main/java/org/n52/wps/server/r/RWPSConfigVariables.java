@@ -67,5 +67,6 @@ public enum RWPSConfigVariables {
         default:
             return "NO STRING REPRESENTATION DEFINED FOR ENUM CONSTANT!";
         }
+
     }
 }

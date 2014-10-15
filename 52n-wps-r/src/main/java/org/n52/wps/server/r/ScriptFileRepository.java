@@ -140,7 +140,7 @@ public class ScriptFileRepository {
         try (FileInputStream fis = new FileInputStream(file);) {
 
             if (fileToWknMap.containsKey(file.getAbsoluteFile()))
-                LOGGER.debug("File already registered, not doint it again: {}", file);
+                LOGGER.debug("File already registered, not doing it again: {}", file);
             else {
 
                 LOGGER.info("Registering script file {} from input {}", file, fis);

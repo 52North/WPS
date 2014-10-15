@@ -33,7 +33,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
@@ -61,7 +60,7 @@ public class RProcessInfo {
         try (FileInputStream fis = new FileInputStream(scriptfile);) {
             this.isValid = parser.validateScript(fis, wkn);
         }
-        catch (RuntimeException | ExceptionReport | IOException | RAnnotationException e) {
+        catch (RuntimeException | IOException | RAnnotationException e) {
             LOGGER.error("Script validation failed. Last exception stored for the process information.", e);
             this.lastException = e;
             this.isValid = false;

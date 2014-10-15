@@ -30,12 +30,24 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
+import org.mockito.Mockito;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.entities.Server;
+import org.n52.wps.webapp.service.ConfigurationService;
 
 public class Util {
+
+    public static final Server testserver = new Server("testhost", 42, "wps");
 
     public static File loadFile(String filePath) {
         URL r = Util.class.getResource(filePath);
@@ -51,8 +63,28 @@ public class Util {
         return f;
     }
 
+    /**
+     * public constructor access for {@link R_Config}
+     * 
+     * use helper method to instatiate the R_Config in this class, which is in the same package as R_Config
+     * and therefore can call the protected constructur.
+     * 
+     * @return
+     */
     public static R_Config getConfig() {
         return new R_Config();
+    }
+
+    public static void forceInitializeWPSConfig() throws FileNotFoundException, IOException, XmlException {
+        try (InputStream is = new FileInputStream(Util.loadFile("/test_wps_config_r.xml"))) {
+            WPSConfig.forceInitialization(is);
+            // mockup configuration service
+            ConfigurationService service = Mockito.mock(ConfigurationService.class);
+            Mockito.when(service.getConfigurationModule(Server.class.getName())).thenReturn(testserver);
+            ConfigurationManager manager = Mockito.mock(ConfigurationManager.class);
+            Mockito.when(manager.getConfigurationServices()).thenReturn(service);
+            WPSConfig.getInstance().setConfigurationManager(manager);
+        }
     }
 
 }
