@@ -121,10 +121,11 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                 resourceRepo.addResourceDirectory(rd);
             }
 
-            changeManager.updateRepositoryConfiguration();
+            changeManager.updateRepositoryConfiguration(); // updates the config file
+            addAllAlgorithmsToRepository(); // add the algorithms based on the config file
         }
         else
-            LOGGER.warn("Start up conditions are not fulfilled, not adding any algorithms!");
+            LOGGER.error("Start up conditions are not fulfilled, not adding ANY algorithms!");
 
         LOGGER.info("Initialized  Local*R*AlgorithmRepository");
     }
@@ -141,11 +142,14 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         if ( !wpsConfig.isRepositoryActive(className)) {
             LOGGER.debug("Local R Algorithm Repository is inactive.");
             Repository[] registeredAlgorithmRepositories = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
-            if (AbstractWrapperAlgorithmRepository.wrapperRepositoryActiveAndConfiguredForRepo(this,
-                                                                                             registeredAlgorithmRepositories))
+            boolean isWrapped = AbstractWrapperAlgorithmRepository.wrapperRepositoryActiveAndConfiguredForRepo(this,
+                                                                                                               registeredAlgorithmRepositories);
+            if (isWrapped)
                 LOGGER.debug("Ignoring 'inactive' configuration value because a wrapper repo is active!");
-            else
+            else {
+                LOGGER.warn("Local R Algorithm Repository is inactive and no wrapper is defined - if you do not want to use R then you can safely ignore this.");
                 return false;
+            }
         }
 
         // Try to build up a connection to Rserve. If it is refused, a new instance of Rserve will be opened
@@ -161,6 +165,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                          e);
             return false;
         }
+
         return true;
     }
 
@@ -334,7 +339,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             try {
                 GenericRProcess p = loadAlgorithmAndValidate(algorithmName);
                 this.algorithms.put(algorithmName, p);
-                LOGGER.info("Algorithm under name '{}' added: {}", algorithmName, p);
+                LOGGER.info("ADDED algorithm under name '{}': {}", algorithmName, p);
 
                 return true;
             }

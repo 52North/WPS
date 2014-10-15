@@ -146,7 +146,7 @@ public class R_Config implements ServletContextAware {
                 dir = getBaseDir().resolve(s);
 
             resourceDirectories.add(dir);
-            LOGGER.debug("Found script directory: {}", dir);
+            LOGGER.debug("Found resource directory configured in config variable: {}", dir);
         }
 
         return resourceDirectories;

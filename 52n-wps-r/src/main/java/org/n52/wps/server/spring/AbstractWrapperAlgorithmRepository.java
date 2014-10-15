@@ -86,9 +86,11 @@ public class AbstractWrapperAlgorithmRepository implements ITransactionalAlgorit
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ClassicRAlgorithmRepository [");
+        builder.append("AbstractWrapperAlgorithmRepository [");
         if (wrappedRepository != null)
             builder.append("wrappedRepository=").append(wrappedRepository);
+        else
+            builder.append("Wrapped repository not (yet) defined.");
         builder.append("]");
         return builder.toString();
     }

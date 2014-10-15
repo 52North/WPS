@@ -112,6 +112,22 @@ public class Wps4rIT {
     }
 
     @Test
+    public void sessionVariablesAreSet() throws ParserConfigurationException, SAXException, IOException, XmlException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestSessionVariables.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
+        assertThat("response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
+        assertThat(response, containsString("<wps:ProcessSucceeded>Process successful</wps:ProcessSucceeded>"));
+        assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
+        assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
+    }
+
+    @Test
     public void resourcesAreLoadedAndRead() throws IOException,
             ParserConfigurationException,
             SAXException,

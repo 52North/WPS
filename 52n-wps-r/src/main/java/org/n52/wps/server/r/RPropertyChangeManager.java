@@ -202,7 +202,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             }
         }
         else
-            LOGGER.debug("Update ran but no properties changes.");
+            LOGGER.debug("Update ran, but no properties changed.");
 
         LOGGER.info("Updated repository configuration. Batch start R if not running: {}", config.getEnableBatchStart());
     }
@@ -278,6 +278,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     LOGGER.debug("Could not register script based on file {}", scriptf);
                     continue;
                 }
+                LOGGER.debug("Registered script in scripte file repository: {}", fileRepository);
 
                 String wkn = fileRepository.getWKNForScriptFile(scriptf);
                 Property prop = algorithmPropertyHash.get(wkn);
@@ -294,7 +295,7 @@ public class RPropertyChangeManager implements PropertyChangeListener {
                     pChanged = true;
                 }
                 else {
-                    LOGGER.debug("Algorithm property already repo document: {}", prop);
+                    LOGGER.debug("Algorithm property already in repo document: {}", prop);
                     newPropertyList.add(algorithmPropertyHash.remove(wkn));
                 }
 

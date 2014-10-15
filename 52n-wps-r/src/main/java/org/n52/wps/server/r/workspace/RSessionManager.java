@@ -35,6 +35,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -185,20 +186,20 @@ public class RSessionManager {
             RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
 
             String resourceUrl = RResource.getResourceURL(new R_Resource(processWKN, "", true)).toExternalForm();
-            connection.assign(RWPSSessionVariables.RESOURCES_ENDPOINT, resourceUrl);
-            log.debug("Assigned resource directory to variable '{}': {}",
-                      RWPSSessionVariables.RESOURCES_ENDPOINT,
-                      resourceUrl);
-            RLogger.logVariable(connection, RWPSSessionVariables.RESOURCES_ENDPOINT);
+            assignAndLog(RWPSSessionVariables.RESOURCES_ENDPOINT, resourceUrl);
+
+            String scriptUrl;
+            try {
+                scriptUrl = RResource.getScriptURL(processWKN).toExternalForm();
+            }
+            catch (MalformedURLException e) {
+                log.warn("Could not retrieve script URL", e);
+                scriptUrl = "N/A";
+            }
+            assignAndLog(RWPSSessionVariables.SCRIPT_URL, scriptUrl);
 
             URL processDescription = config.getProcessDescriptionURL(processWKN);
-
-            connection.assign(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription.toString());
-            RLogger.logVariable(connection, RWPSSessionVariables.PROCESS_DESCRIPTION);
-
-            log.debug("Assigned process description to variable '{}': {}",
-                      RWPSSessionVariables.PROCESS_DESCRIPTION,
-                      processDescription);
+            assignAndLog(RWPSSessionVariables.PROCESS_DESCRIPTION, processDescription.toString());
 
             // create session variable for warning storage
             cmd = RWPSSessionVariables.WARNING_OUTPUT_STORAGE + " = c()";
@@ -214,6 +215,12 @@ public class RSessionManager {
                                       ExceptionReport.REMOTE_COMPUTATION_ERROR,
                                       e);
         }
+    }
+
+    private void assignAndLog(String name, String value) throws RserveException {
+        connection.assign(name, value);
+        RLogger.logVariable(connection, name);
+        log.debug("Assigned process description to variable '{}': {}", name, value);
     }
 
     /**

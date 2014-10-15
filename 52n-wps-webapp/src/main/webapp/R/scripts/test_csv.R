@@ -4,7 +4,7 @@
 
 #wps.in: id = filename, title = file name for the output, abstract = dummy
 # variable because we need input - will be prepended to the generated files,
-# type = string, value = test_geo, minOccurs = 0, maxOccurs = 1;
+# type = string, value = test_csv, minOccurs = 0, maxOccurs = 1;
 
 # wps.off;
 filename <- "test_csv_"
