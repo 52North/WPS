@@ -598,7 +598,7 @@
 			</Generator>
 		</GeneratorList>
 	</Datahandlers>
-		<AlgorithmRepositoryList><Repository name="RAlgorithmRepository" className="org.n52.wps.server.spring.SpringWrapperAlgorithmRepository" active="true">
+		<AlgorithmRepositoryList><Repository name="RAlgorithmRepository" className="org.n52.wps.server.spring.SpringWrapperAlgorithmRepository" active="false">
 	     	<Property active="true" name="wrappeeName">org.n52.wps.server.r.LocalRAlgorithmRepository</Property>
 		</Repository>
 		<Repository name="LocalRAlgorithmRepository"
