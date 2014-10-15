@@ -202,6 +202,12 @@ public class RResource {
 
             f = path.toFile();
 
+            if ( !f.exists()) {
+                log.debug("Resource file '{}' does not exist for process '{}'", resourceId, scriptId);
+                throw new ExceptionReport("Requested resourcce file does not exist: " + resourceId + " for script "
+                        + resourceId, ExceptionReport.NO_APPLICABLE_CODE);
+            }
+
             if (f.isDirectory()) {
                 f = IOUtils.zipDirectory(rid, f);
                 log.debug("Zipped directory {} to file {}", path, f);

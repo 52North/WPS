@@ -32,6 +32,7 @@ package org.n52.wps.server.r.syntax;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
@@ -41,6 +42,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -125,23 +127,27 @@ public class AnnotationParser {
 
     @Test
     public void resource() throws RAnnotationException {
+        int resourceAnnotationCounter = 0;
+        Collection<String> foundResources = 
+                new ArrayList<String>();
         for (RAnnotation rAnnotation : this.annotations) {
             if (rAnnotation.getType().equals(RAnnotationType.RESOURCE)) {
+                resourceAnnotationCounter++;
+                
                 ResourceAnnotation resourceAnnotation = (ResourceAnnotation) rAnnotation;
-                String value = resourceAnnotation.getResources().iterator().next().getResourceValue();
-                Assert.assertEquals("test.file.txt", value);
+                Collection<R_Resource> resources = resourceAnnotation.getResources();
 
-                Object objValue = resourceAnnotation.getObjectValue(RAttribute.NAMED_LIST);
-                Assert.assertTrue("Resource list is a collection", objValue instanceof Collection< ? >);
-                if (objValue instanceof Collection< ? >) {
-                    @SuppressWarnings("unchecked")
-                    Collection<R_Resource> coll = (Collection<R_Resource>) objValue;
-
-                    R_Resource resource = coll.iterator().next();
-                    Assert.assertEquals("test.file.txt", resource.getResourceValue());
+                for (R_Resource resource : resources) {
+                    foundResources.add(resource.getResourceValue());
+                    assertThat("resources are all public", resource.isPublic(), is(equalTo(true)));
                 }
             }
         }
+        
+        assertThat("two resource annotations are found", resourceAnnotationCounter, is(equalTo(2)));
+        assertThat("all resources are found",
+                   foundResources,
+                   containsInAnyOrder("test.file.txt", "uniform.xml", "dir/folder"));
     }
 
     @Test

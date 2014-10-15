@@ -120,36 +120,42 @@ public class RAnnotationParser {
             validationErrors.add(e);
         }
 
-        if (annotations != null && !annotations.isEmpty()) {
-            // check for exactly one description
-            List<RAnnotation> descriptions = RAnnotation.filterAnnotations(annotations, RAnnotationType.DESCRIPTION);
-            if (descriptions.size() != 1)
-                validationErrors.add(new RAnnotationException("Exactly one description annotation required, but found "
-                        + descriptions.size()));
-
-            try {
-                // try to create process description from annotations
-                RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier);
-                ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
-                                                                                                  identifier,
-                                                                                                  new URL("http://some.valid.url/"),
-                                                                                                  new URL("http://some.valid.url/"));
-
-                boolean valid = processType.validate(validationOptions);
-                if ( !valid) {
-                    LOGGER.warn("Invalid R algorithm. The process description created from the script is not valid. Validation errors: \n{}",
-                                Arrays.toString(validationErrors.toArray()));
-
-                    // save process description in output errors
-                    StringBuilder sb = new StringBuilder();
-                    validationErrors.add(sb.append("\n\nErrorenous XML Process Description:\n").append(processType.xmlText()).append("\n"));
-                }
-
+        if (annotations != null) {
+            if (annotations.isEmpty()) {
+                validationErrors.add(new RAnnotationException("No annotations found"));
             }
-            catch (ExceptionReport | RAnnotationException | MalformedURLException e) {
-                LOGGER.error("Invalid R algorithm. Script validation failed when executing process description creator.",
-                             e);
-                validationErrors.add(e);
+
+            else {
+                // check for exactly one description
+                List<RAnnotation> descriptions = RAnnotation.filterAnnotations(annotations, RAnnotationType.DESCRIPTION);
+                if (descriptions.size() != 1)
+                    validationErrors.add(new RAnnotationException("Exactly one description annotation required, but found "
+                            + descriptions.size()));
+
+                try {
+                    // try to create process description from annotations
+                    RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier);
+                    ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
+                                                                                                      identifier,
+                                                                                                      new URL("http://some.valid.url/"),
+                                                                                                      new URL("http://some.valid.url/"));
+
+                    boolean valid = processType.validate(validationOptions);
+                    if ( !valid) {
+                        LOGGER.warn("Invalid R algorithm. The process description created from the script is not valid. Validation errors: \n{}",
+                                    Arrays.toString(validationErrors.toArray()));
+
+                        // save process description in output errors
+                        StringBuilder sb = new StringBuilder();
+                        validationErrors.add(sb.append("\n\nErrorenous XML Process Description:\n").append(processType.xmlText()).append("\n"));
+                    }
+
+                }
+                catch (ExceptionReport | RAnnotationException | MalformedURLException e) {
+                    LOGGER.error("Invalid R algorithm. Script validation failed when executing process description creator.",
+                                 e);
+                    validationErrors.add(e);
+                }
             }
         }
 
@@ -222,13 +228,12 @@ public class RAnnotationParser {
                                     HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
                                                                                           annotationString.toString());
                                     newAnnotation = new RAnnotation(annotationType, attrHash, dataTypeRegistry);
-                                    annotations.add(newAnnotation);
                                     if (scriptId == null && annotationType.equals(RAnnotationType.DESCRIPTION)) {
                                         scriptId = (String) newAnnotation.getObjectValue(RAttribute.IDENTIFIER);
                                     }
-
-                                    LOGGER.debug("Done parsing annotation {} for script {}", newAnnotation, scriptId);
                                 }
+                                LOGGER.debug("Done parsing annotation {} for script {}", newAnnotation, scriptId);
+                                annotations.add(newAnnotation);
                             }
                         }
                     }

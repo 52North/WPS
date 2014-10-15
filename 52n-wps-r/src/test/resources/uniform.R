@@ -12,4 +12,6 @@ x = runif(n, min=min, max=max)
 output = "random_out"
 write.table(x, output)
 
-# wps.res: test.file.txt;
+# wps.res: test.file.txt, uniform.xml;
+
+# wps.res: dir/folder;

@@ -16,7 +16,7 @@ myLog <- function(...) {
 }
 myLog("Start script... wd: ", getwd())
 
-#wps.out: id = output.file, type = rData, title = 52 random values;
+#wps.out: id = output.file, type = rdata, title = 52 random values;
 output <- runif(52)
 output.file <- paste0(filename, ".RData")
 save(output, file = output.file)
