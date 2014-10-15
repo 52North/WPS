@@ -218,6 +218,14 @@ public class WPSConfig implements Serializable {
     }
 
     /**
+     * to allow easier testing
+     */
+    protected static void setInstance(WPSConfig config) {
+        LOGGER.warn("Manually setting config, only use for testing!");
+        wpsConfig = config;
+    }
+
+    /**
      * returns an instance of the WPSConfig class. WPSCofnig is a single. If there is need for
      * reinstantitation, use forceInitialization().
      *

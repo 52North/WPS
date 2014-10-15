@@ -38,7 +38,6 @@ import static org.hamcrest.Matchers.nullValue;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
@@ -110,26 +109,6 @@ public class Wps4rIT {
             con.login(user, password);
 
         return con;
-    }
-
-    /*
-     * DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
-     */
-    // @Test
-    public void sessionInfoRetrievedFromWPSWebsite() throws MalformedURLException {
-        String temp = wpsUrl.substring(0, wpsUrl.lastIndexOf("/"));
-        URL urlSessionInfo = new URL(temp + "/rsessioninfoendpoint");
-        try {
-            String response = GetClient.sendRequest(urlSessionInfo.toExternalForm());
-            assertThat(response, containsString("R ")); // "R version" fails if using unstable R!
-            assertThat(response, containsString("Platform:"));
-            assertThat(response, containsString("attached base packages:"));
-        }
-        catch (IOException e) {
-            String message = "Cannot retrieve the R session info from WPS.";
-            e.printStackTrace();
-            throw new AssertionError(message);
-        }
     }
 
     @Test

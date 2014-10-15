@@ -94,7 +94,7 @@ public class ResourceFileRepository {
 
     public void addResourceDirectory(Path dir) {
         this.resourceDirectories.add(dir);
-        LOGGER.debug("Resource directory '{}' added, now have {}: {}",
+        LOGGER.info("Resource directory '{}' added, now have {}: {}",
                      dir,
                      resourceDirectories.size(),
                      Arrays.toString(resourceDirectories.toArray()));

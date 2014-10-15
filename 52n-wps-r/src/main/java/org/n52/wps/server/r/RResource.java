@@ -116,7 +116,8 @@ public class RResource {
      */
     public static URL getSessionInfoURL() {
         StringBuilder sb = new StringBuilder();
-        sb.append(WPSConfig.getInstance().getServiceBaseUrl()).append(R_ENDPOINT).append(RResource.SESSION_INFO_PATH);
+        WPSConfig conf = WPSConfig.getInstance();
+        sb.append(conf.getServiceBaseUrl()).append(R_ENDPOINT).append(RResource.SESSION_INFO_PATH);
         try {
             return new URL(sb.toString());
         }
