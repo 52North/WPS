@@ -40,7 +40,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.xmlbeans.XmlException;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.WPSConfigurationDocument;
@@ -190,17 +189,19 @@ public class RPropertyChangeManager implements PropertyChangeListener {
             wpsConfigurationDocument.setWPSConfiguration(wpsConfig);
 
             // writes the new WPSConfig to a file
-            try {
-                String configurationPath = WPSConfig.getConfigPath();
-                File XMLFile = new File(configurationPath);
-                wpsConfigurationDocument.save(XMLFile,
-                                              new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
-                WPSConfig.forceInitialization(configurationPath);
-                LOGGER.info("WPS Config was changed and saved to path {}", configurationPath);
-            }
-            catch (IOException | XmlException e) {
-                LOGGER.error("Could not generate and save XML configuration file", e);
-            }
+            // FIXME the update of the configuration must be adapted to the new configuration API
+            LOGGER.warn("Configuration is NOT saved, update not implemented for new API");
+            // try {
+            // String configurationPath = WPSConfig.getConfigPath();
+            // File XMLFile = new File(configurationPath);
+            // wpsConfigurationDocument.save(XMLFile,
+            // new org.apache.xmlbeans.XmlOptions().setUseDefaultNamespace().setSavePrettyPrint());
+            // WPSConfig.forceInitialization(configurationPath);
+            // LOGGER.info("WPS Config was changed and saved to path {}", configurationPath);
+            // }
+            // catch (IOException | XmlException e) {
+            // LOGGER.error("Could not generate and save XML configuration file", e);
+            // }
         }
         else
             LOGGER.debug("Update ran, but no properties changed.");
