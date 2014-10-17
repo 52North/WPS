@@ -78,7 +78,14 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public static final String COMPONENT_NAME = "RAlgorithmRepository";
 
-    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>();    // if set to true an error during one algorithm load stops subsequent algorithms to be loaded
+    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>(); // if set to
+                                                                                              // true an error
+                                                                                              // during one
+                                                                                              // algorithm
+                                                                                              // load stops
+                                                                                              // subsequent
+                                                                                              // algorithms to
+                                                                                              // be loaded
     private boolean exceptionOnAlgorithmLoad = false;
 
     @Autowired
@@ -109,13 +116,21 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @PostConstruct
     public void init() {
-        LOGGER.info("Initializing Local*R*AlgorithmRepository");
+        LOGGER.info("Initializing Local*R*AlgorithmRepository..");
 
-        //changeManager.updateRepositoryConfiguration(); // loads config
-        changeManager.propertyChange(new PropertyChangeEvent(this, "init", null, null)); // loads config
+        // check activation, then load config. loaded config is required for further checks
+        boolean isActive = checkActivation();
+        if (isActive) {
+            // changeManager.updateRepositoryConfiguration(); // loads config
+            changeManager.propertyChange(new PropertyChangeEvent(this, "init", null, null)); // loads config
+        }
+        else {
+            LOGGER.info("Local*R*AlgorithmRepository is INACTIVE.");
+            return;
+        }
 
-        boolean startUpConditions = checkStartUpConditions();
-        if (startUpConditions) {
+        boolean rServeIsAvailable = checkRServe();
+        if (rServeIsAvailable) {
             // unregistered scripts from repository folder will be added as algorithm to WPSconfig
             Collection<Path> resourceDirectory = config.getResourceDirectory();
             for (Path rd : resourceDirectory) {
@@ -124,19 +139,18 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
             changeManager.updateRepositoryConfiguration(); // updates the config file
             addAllAlgorithmsToRepository(); // add the algorithms based on the config file
+
+            LOGGER.info("Initialized Local*R*AlgorithmRepository");
         }
         else
-            LOGGER.error("Start up conditions are not fulfilled, not adding ANY algorithms!");
-
-        LOGGER.info("Initialized  Local*R*AlgorithmRepository");
+            LOGGER.error("RServe is not available, not adding ANY algorithms!");
     }
 
     /**
-     * Check if repository is active and Rserve can be found
-     * 
-     * @return
+     * Check if repository is active, which requires a check if the repo is wrapped.
      */
-    private boolean checkStartUpConditions() {
+    private boolean checkActivation() {
+        LOGGER.debug("Checking activation state to verify startup conditions.");
         // check if the repository is active: ignored when wrapper is present (DNU)
         String className = this.getClass().getCanonicalName();
         WPSConfig wpsConfig = WPSConfig.getInstance();
@@ -153,15 +167,20 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             }
         }
 
-        // Try to build up a connection to Rserve. If it is refused, a new instance of Rserve will be opened
-        LOGGER.debug("Trying to connect to Rserve.");
+        return true;
+    }
+
+    /**
+     * Check if Rserve can be found
+     */
+    private boolean checkRServe() {
+        LOGGER.debug("Trying to connect to Rserve to verify startup conditions.");
         try {
             RConnection testcon = config.openRConnection();
             LOGGER.info("WPS successfully connected to Rserve.");
             testcon.close();
         }
         catch (RserveException e) {
-            // try to start Rserve via batchfile if enabled
             LOGGER.error("[Rserve] Could not connect to Rserve. Rserve may not be available or may not be ready at the current time.",
                          e);
             return false;
@@ -254,7 +273,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         catch (RAnnotationException e) {
             LOGGER.error("Could not get resoure annotations for algorithm  {}", algorithm_wkn);
         }
-        
+
         for (RAnnotation rAnnotation : resourceAnnotations) {
             boolean b = resourceRepo.registerResources(rAnnotation);
             if (b)

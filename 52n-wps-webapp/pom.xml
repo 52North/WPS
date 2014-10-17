@@ -659,7 +659,7 @@
 								</goals>
 								<configuration>
 									<excludes>
-										<exclude>**/Wps4rIT*</exclude>
+										<exclude>**/Wps4r*IT*</exclude>
 										<exclude>**/GrassIT*</exclude>
 									</excludes>
 
