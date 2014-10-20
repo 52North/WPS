@@ -83,12 +83,7 @@ public class Wps4rIT {
 
     @BeforeClass
     public static void beforeClass() {
-        wpsUrl = AllTestsIT.getURL();
-
-        // Seems not to work but it would be nice if it does...
-        // URL resource = WPS4RTester.class
-        // .getResource("/R/wps_config.xml");
-        // WPSConfig.forceInitialization(new File(resource.getFile()).getAbsolutePath());
+        wpsUrl = AllTestsIT.getWebappURL();
 
         String host = System.getProperty("test.rserve.host", "127.0.0.1");
         int port = Integer.parseInt(System.getProperty("test.rserve.port", "6311"));
@@ -123,8 +118,12 @@ public class Wps4rIT {
         assertThat("response is not an exception", response, not(containsString("ExceptionReport")));
         assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
         assertThat(response, containsString("<wps:ProcessSucceeded>Process successful</wps:ProcessSucceeded>"));
-        assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
-        assertThat(response, containsString("<ows:Identifier>scripturl</ows:Identifier>"));
+        assertThat(response, containsString("<ows:Identifier>servername</ows:Identifier>"));
+        assertThat(response, containsString("<ows:Identifier>resourceurl</ows:Identifier>"));
+        assertThat(response, containsString("<ows:Identifier>resources</ows:Identifier>"));
+        assertThat(response, containsString("52N-WPS"));
+        assertThat(response, containsString("/r/resource/org.n52.wps.server.r.test.session/test$subdir$dummy1.txt"));
+        assertThat(response, containsString("r/script/org.n52.wps.server.r.test.session"));
     }
 
     @Test

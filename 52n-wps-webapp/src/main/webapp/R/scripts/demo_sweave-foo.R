@@ -25,8 +25,8 @@ report_source_copy <- rnw_file
 
 #wps.out: report_source_link, string, reference link to Sweave source file;
 report_source_link <- "NA"
-if(exists("wpsResourceURL"))
-	report_source_link <- paste0(wpsResourceURL, rnw_file)
+if(exists("wpsResourceEndpoint"))
+	report_source_link <- paste0(wpsResourceEndpoint, rnw_file)
 
 # directly run the process with
-# http://localhost:8080/wps/WebProcessingService?Request=Execute&Service=WPS&version=1.0.0&identifier=org.n52.wps.server.r.test.sweaveFoo&DataInputs=dummy%3D42
+# http://localhost:8080/wps/WebProcessingService?Request=Execute&Service=WPS&version=1.0.0&identifier=org.n52.wps.server.r.demo.sweaveFoo&DataInputs=dummy%3D42

@@ -43,7 +43,16 @@
 				<ows:Identifier>sessionInfo</ows:Identifier>
 			</wps:Output>
 			<wps:Output>
-				<ows:Identifier>warnings</ows:Identifier>
+				<ows:Identifier>wpsServer</ows:Identifier>
+			</wps:Output>
+			<wps:Output>
+				<ows:Identifier>wpsProcessDescription</ows:Identifier>
+			</wps:Output>
+			<wps:Output>
+				<ows:Identifier>wpsServerName</ows:Identifier>
+			</wps:Output>
+			<wps:Output>
+				<ows:Identifier>wpsResourceEndpoint</ows:Identifier>
 			</wps:Output>
 		</wps:ResponseDocument>
 	</wps:ResponseForm>

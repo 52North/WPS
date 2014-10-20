@@ -16,7 +16,7 @@ configuration <- "develop"
 # abstract = the link to the process description of this process;
 #wps.out: wpsServerName, type = string, title = server name,
 # abstract = a name for the executing server of this process;
-#wps.out: wpsResourceURL, type = string, title = resource base url,
+#wps.out: wpsResourceEndpoint, type = string, title = resource base url,
 # abstract = the base URL to access the resources of this process;
 
 # capture function
