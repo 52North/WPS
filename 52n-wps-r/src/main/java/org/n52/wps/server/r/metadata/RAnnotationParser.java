@@ -82,6 +82,15 @@ public class RAnnotationParser {
         LOGGER.debug("New {}", this);
     }
 
+    public RAnnotationParser(RDataTypeRegistry dataTypeRegistry, R_Config config) {
+        this.dataTypeRegistry = dataTypeRegistry;
+        this.config = config;
+        LOGGER.debug("New {} and set registry and config manually to\n\t{}\n\t{}",
+                     this,
+                     this.dataTypeRegistry,
+                     this.config);
+    }
+
     /**
      * 
      * @param script
@@ -148,7 +157,8 @@ public class RAnnotationParser {
 
                         // save process description in output errors
                         StringBuilder sb = new StringBuilder();
-                        validationErrors.add(sb.append("\n\nErrorenous XML Process Description:\n").append(processType.xmlText()).append("\n"));
+                        validationErrors.add(sb.append("\nErrorenous XML Process Description, so the script '"
+                                + identifier + "' is not valid:\n").append(processType.xmlText()).append("\n"));
                     }
 
                 }

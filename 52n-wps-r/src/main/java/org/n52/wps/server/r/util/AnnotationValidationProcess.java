@@ -44,6 +44,8 @@ import org.n52.wps.io.data.binding.complex.PlainStringBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
+import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -66,6 +68,12 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
     private String validationResult;
 
     private String annotationsString = null;
+
+    private static RAnnotationParser parser = new RAnnotationParser(new RDataTypeRegistry(), new SimpleR_Config());
+
+    private static class SimpleR_Config extends R_Config {
+        //
+    }
 
     public AnnotationValidationProcess() {
         LOGGER.debug("NEW {}", this);
@@ -96,7 +104,6 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
         StringBuilder validation = new StringBuilder();
         boolean valid = false;
 
-        RAnnotationParser parser = new RAnnotationParser();
         try (InputStream inputStream = IOUtils.toInputStream(script);) {
             List<RAnnotation> annotations = parser.parseAnnotationsfromScript(inputStream);
             LOGGER.debug("Parsed {} annotations", annotations.size());

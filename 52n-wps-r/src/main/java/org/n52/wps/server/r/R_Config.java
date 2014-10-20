@@ -83,8 +83,6 @@ public class R_Config implements ServletContextAware {
 
     private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
 
-    private static R_Config instance = null;
-
     private RConnector connector;
 
     private RStarter starter;
@@ -99,15 +97,7 @@ public class R_Config implements ServletContextAware {
         this.starter = new RStarter();
         this.connector = new RConnector(starter);
 
-        // TODO use injection wherever R_Config is required
-        instance = this;
-
         LOGGER.info("NEW {}", this);
-    }
-
-    @Deprecated
-    public static R_Config getInstance() {
-        return instance;
     }
 
     public void setConfigVariable(RWPSConfigVariables key, String value) {
