@@ -149,9 +149,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             return doc;
         }
         catch (RAnnotationException | IOException | ExceptionReport e) {
-            log.error("Error initializing description", e);
-            throw new RuntimeException("Error while parsing script file or creating process description: "
-                    + e.getMessage(), e);
+            log.error("Error initializing description for script '{}'", wkn, e);
+            throw new RuntimeException("Error while parsing script file or creating process description of script '"
+                    + wkn + "': " + e.getMessage(), e);
         }
     }
 

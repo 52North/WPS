@@ -142,7 +142,8 @@ public class RAnnotationParser {
 
                     boolean valid = processType.validate(validationOptions);
                     if ( !valid) {
-                        LOGGER.warn("Invalid R algorithm. The process description created from the script is not valid. Validation errors: \n{}",
+                        LOGGER.warn("Invalid R algorithm '{}'. The process description created from the script is not valid. Validation errors: \n{}",
+                                    identifier,
                                     Arrays.toString(validationErrors.toArray()));
 
                         // save process description in output errors
@@ -152,7 +153,8 @@ public class RAnnotationParser {
 
                 }
                 catch (ExceptionReport | RAnnotationException | MalformedURLException e) {
-                    LOGGER.error("Invalid R algorithm. Script validation failed when executing process description creator.",
+                    LOGGER.error("Invalid R algorithm '{}'. Script validation failed when executing process description creator.",
+                                 identifier,
                                  e);
                     validationErrors.add(e);
                 }
