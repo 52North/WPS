@@ -43,7 +43,6 @@ import java.util.UUID;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RWPSConfigVariables;
-import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.util.RLogger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -101,10 +100,10 @@ public class RWorkspace {
 
     private boolean wpsWorkDirIsRWorkDir = true;
 
-    private R_Config config;
+    private Path basedir;
 
-    public RWorkspace(R_Config config) {
-        this.config = config;
+    public RWorkspace(Path basedir) {
+        this.basedir = basedir;
     }
 
     private REXP createAndSetNewWorkspaceDirectory(File directory, RConnection connection) throws RserveException {
@@ -237,12 +236,14 @@ public class RWorkspace {
         REXP oldWorkdir = null;
         log.debug("Working on localhost: {}", isRserveOnLocalhost);
 
+        CreationStrategy strategy = null;
         if (strategyName == null || strategyName.equals("")) {
-            log.error("Strategy is not defined: {}. Returning current work directory.", strategyName);
-            return currentWorkDir;
+            log.error("Strategy is not defined: {}. Falling back to default: {}", DEFAULT_STRATEGY);
+            strategy = DEFAULT_STRATEGY;
         }
+        else
+            strategy = CreationStrategy.valueOf(strategyName.trim().toUpperCase());
 
-        CreationStrategy strategy = CreationStrategy.valueOf(strategyName.trim().toUpperCase());
 
         // if one of these strategies is used, then Java must be able to write in the folder and we need the
         // full path
@@ -253,8 +254,7 @@ public class RWorkspace {
                     throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
                 File testFile = new File(workDirName);
                 if ( !testFile.isAbsolute()) {
-                    Path bd = config.getBaseDir();
-                    testFile = bd.resolve(path).toFile();
+                    testFile = basedir.resolve(path).toFile();
                 }
                 if ( !testFile.exists())
                     throw new ExceptionReport("Invalid work dir name \"" + workDirName + "\" and full path \""
@@ -380,26 +380,25 @@ public class RWorkspace {
     }
 
     public Collection<File> listFiles() {
-        File f = new File(this.path);
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(f.listFiles()));
+        ArrayList<File> files = new ArrayList<File>();
+        if (this.path != null) {
+            File f = new File(this.path);
+            files.addAll(Arrays.asList(f.listFiles()));
+        }
+        else
+            log.error("The path to the workspace is null, cannot create file list");
         return files;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RWorkspace [");
-        if (path != null) {
-            builder.append("path=");
-            builder.append(path);
-            builder.append(", ");
-        }
-        builder.append("deleteRWorkDirectory=");
-        builder.append(deleteRWorkDirectory);
-        builder.append(", temporarilyPreventingRWorkingDirectoryFromDelete=");
-        builder.append(temporarilyPreventingRWorkingDirectoryFromDelete);
-        builder.append(", wpsWorkDirIsRWorkDir=");
-        builder.append(wpsWorkDirIsRWorkDir);
+        builder.append("RWorkspace [deleteRWorkDirectory=").append(deleteRWorkDirectory).append(", ");
+        if (path != null)
+            builder.append("path=").append(path).append(", ");
+        builder.append("temporarilyPreventingRWorkingDirectoryFromDelete=").append(temporarilyPreventingRWorkingDirectoryFromDelete).append(", wpsWorkDirIsRWorkDir=").append(wpsWorkDirIsRWorkDir).append(", ");
+        if (basedir != null)
+            builder.append("basedir=").append(basedir);
         builder.append("]");
         return builder.toString();
     }

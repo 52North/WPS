@@ -123,6 +123,9 @@ public class RProcessDescriptionCreator {
                 case RESOURCE:
                     addProcessResources(pdt, annotation);
                     break;
+                case IMPORT:
+                    addImportProcessResources(pdt, annotation);
+                    break;
                 default:
                     break;
                 }
@@ -210,6 +213,37 @@ public class RProcessDescriptionCreator {
 
                         // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
                         URL url = RResource.getResourceURL(resource);
+                        mt.setHref(url.toExternalForm());
+                        log.trace("Added resource URL to metadata document: {}", url);
+                    }
+                    else
+                        log.trace("Not adding resource because it is not public: {}", resource);
+                }
+            }
+        }
+        catch (RAnnotationException | ExceptionReport e) {
+            log.error("Problem adding process resources to process description", e);
+        }
+    }
+
+    private void addImportProcessResources(ProcessDescriptionType pdt, RAnnotation annotation) {
+        try {
+            Object obj = annotation.getObjectValue(RAttribute.NAMED_LIST);
+            if (obj instanceof Collection< ? >) {
+                Collection< ? > namedList = (Collection< ? >) obj;
+                for (Object object : namedList) {
+                    R_Resource resource = null;
+                    if (object instanceof R_Resource)
+                        resource = (R_Resource) object;
+                    else
+                        continue;
+
+                    if (resource.isPublic()) {
+                        MetadataType mt = pdt.addNewMetadata();
+                        mt.setTitle("Import: " + resource.getResourceValue());
+
+                        // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
+                        URL url = RResource.getImportURL(resource);
                         mt.setHref(url.toExternalForm());
                         log.trace("Added resource URL to metadata document: {}", url);
                     }

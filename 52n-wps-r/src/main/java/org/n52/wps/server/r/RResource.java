@@ -102,13 +102,34 @@ public class RResource {
      * 
      * @param wkn
      *        well-known name for a process
-     * @return a publicly available URL to retrieve the process
+     * @return a publicly available URL to retrieve the process script
      */
     public static URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
         StringBuilder sb = new StringBuilder();
         sb.append(WPSConfig.getInstance().getServiceBaseUrl()).append(R_ENDPOINT);
         sb.append(RResource.SCRIPT_PATH).append("/").append(wkn);
         return new URL(sb.toString());
+    }
+
+    /**
+     * 
+     * @param wkn
+     *        well-known name for a process
+     * @return a publicly available URL to retrieve the imported script
+     */
+    public static URL getImportURL(R_Resource resource) throws ExceptionReport {
+        StringBuilder sb = new StringBuilder();
+        sb.append(WPSConfig.getInstance().getServiceBaseUrl()).append(R_ENDPOINT);
+        sb.append(RResource.IMPORT_PATH).append("/");
+        sb.append(resource.getProcessId());
+        String resourceForUrl = internalEncode(resource.getResourceValue());
+        try {
+            sb.append("/").append(resourceForUrl);
+            return new URL(sb.toString());
+        }
+        catch (MalformedURLException e) {
+            throw new ExceptionReport("Could not create import url", ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
     }
 
     /**
@@ -145,7 +166,12 @@ public class RResource {
 
     public static final String RESOURCE_PATH = "/resource";
 
+    public static final String IMPORT_PATH = "/importResource";
+
     private static final String RESOURCE_PATH_PARAMS = RESOURCE_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{"
+            + REQUEST_PARAM_RESOURCEID + ":.+}";
+
+    private static final String IMPORT_PATH_PARAMS = IMPORT_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{"
             + REQUEST_PARAM_RESOURCEID + ":.+}";
 
     public static final String SCRIPT_PATH = "/script";
@@ -261,6 +287,30 @@ public class RResource {
         headers.setContentType(RConstants.R_SCRIPT_TYPE);
         headers.setContentDispositionFormData("attachment", id + "." + RConstants.R_FILE_EXTENSION);
         // headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        ResponseEntity<Resource> entity = new ResponseEntity<Resource>(fsr, headers, HttpStatus.OK);
+        return entity;
+    }
+
+    @RequestMapping(value = IMPORT_PATH_PARAMS, method = RequestMethod.GET, produces = {RConstants.R_SCRIPT_TYPE_VALUE})
+    public ResponseEntity<Resource> getImport(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
+                                              @PathVariable(REQUEST_PARAM_RESOURCEID) String importId) throws ExceptionReport {
+        HttpHeaders headers = new HttpHeaders();
+
+        File f = null;
+        try {
+            f = scriptRepo.getImportedFileForWKN(scriptId, importId);
+            log.trace("Serving imported script file '{}' for id '{}': {}", importId, scriptId, f);
+        }
+        catch (ExceptionReport e) {
+            log.debug("Could not get  imported script file '{}' for id '{}'", importId, scriptId);
+            throw e;
+        }
+
+        FileSystemResource fsr = new FileSystemResource(f);
+
+        headers.setContentType(RConstants.R_SCRIPT_TYPE);
+        headers.setContentDispositionFormData("attachment", importId);
 
         ResponseEntity<Resource> entity = new ResponseEntity<Resource>(fsr, headers, HttpStatus.OK);
         return entity;

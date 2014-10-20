@@ -153,7 +153,21 @@ public class ScriptFileRepo {
     @Test
     public void scriptIsInvalidWhenFileMissing() throws IOException, RAnnotationException, ExceptionReport {
         boolean valid = sr.isScriptValid(prepareMissingScriptFile());
-        assertThat("dmissing script file: script is invalid", valid, is(equalTo(false)));
+        assertThat("missing script file: script is invalid", valid, is(equalTo(false)));
+    }
+
+    @Test
+    public void importedScriptIsFound() throws IOException, RAnnotationException, ExceptionReport {
+        File f = Util.loadFile("/annotations/import/script.R");
+        sr.registerScript(f);
+
+        File file = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "imported.R");
+        File fileInSubdir = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "dir/alsoImported.R");
+
+        assertThat("imported script file in same dir can be resolved", file.exists(), is(equalTo(true)));
+        assertThat("imported script file in subdir can be resolved", fileInSubdir.exists(), is(equalTo(true)));
+        assertThat("imported script file in subdir is absolute", fileInSubdir.isAbsolute(), is(equalTo(true)));
+        assertThat("imported script file in same dir is absolute", file.exists(), is(equalTo(true)));
     }
 
 }

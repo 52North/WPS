@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +90,24 @@ public class ScriptFileRepository {
         if (out != null && out.exists() && out.isFile() && out.canRead()) {
             return out;
         }
+
         String fname = out == null ? "(unknown)" : out.getName();
-        throw new ExceptionReport("Error in Process: " + wkn + ", File " + fname + " not found or broken.",
-                                  ExceptionReport.NO_APPLICABLE_CODE);
+        StringBuilder message = new StringBuilder();
+        message.append("Error in Process: '").append(wkn).append("' with file '").append(fname).append("':");
+        if (out == null) {
+            message.append("File is null. ");
+        }
+        if ( !out.exists()) {
+            message.append("File does not exist. ");
+        }
+        if ( !out.isFile()) {
+            message.append("Is not a file. ");
+        }
+        if ( !out.canRead()) {
+            message.append("Cannot read file.");
+        }
+
+        throw new ExceptionReport(message.toString(), ExceptionReport.NO_APPLICABLE_CODE);
     }
 
     public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
@@ -142,7 +160,6 @@ public class ScriptFileRepository {
             if (fileToWknMap.containsKey(file.getAbsoluteFile()))
                 LOGGER.debug("File already registered, not doing it again: {}", file);
             else {
-
                 LOGGER.info("Registering script file {} from input {}", file, fis);
 
                 List<RAnnotation> annotations = annotationParser.parseAnnotationsfromScript(fis);
@@ -196,6 +213,40 @@ public class ScriptFileRepository {
         return registered;
     }
 
+    /**
+     * For testing purposes only! Register all scripts in the given directory, returns true only if all
+     * scripts could be registered and does not provide information about which script failed.
+     */
+    public boolean registerScripts(File directory) {
+        if ( !directory.isDirectory()) {
+            LOGGER.error("Provided file is not a directory, cannot load scripts: {}", directory);
+            return false;
+        }
+
+        File[] scripts = directory.listFiles(new RFileExtensionFilter());
+        LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
+
+        boolean allRegistered = true;
+        for (File file : scripts) {
+            try {
+                boolean registered = registerScript(file);
+
+                if ( !registered) {
+                    LOGGER.debug("Could not register script based on file {}", file);
+                    allRegistered = false;
+                }
+                LOGGER.debug("Registered script in scripte file {} into {}", file, this);
+
+            }
+            catch (RAnnotationException | ExceptionReport e) {
+                LOGGER.error("Could not register script based on file {}", file, e);
+                allRegistered = false;
+            }
+        }
+
+        return allRegistered;
+    }
+
     public void reset() {
         LOGGER.info("Resetting {}", this);
 
@@ -204,4 +255,18 @@ public class ScriptFileRepository {
         this.wknConflicts.clear();
     }
 
+    public File getImportedFileForWKN(String scriptId, String importId) throws ExceptionReport {
+        File basefile = getScriptFileForWKN(scriptId);
+        Path basepath = basefile.toPath();
+        Path importedFile = basepath.resolveSibling(importId);
+
+        if (importedFile.toFile().exists()) {
+            LOGGER.debug("Resolved imported '{}' for script with id '{}': {}", importId, scriptId, importedFile);
+            return importedFile.toFile();
+        }
+
+        LOGGER.warn("Could not find import {} for {} at {}", importId, scriptId, importedFile);
+        throw new ExceptionReport("Imported script '" + importId + "' not found for script '" + scriptId + "'.",
+                                  ExceptionReport.NO_APPLICABLE_CODE);
+    }
 }

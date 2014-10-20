@@ -54,11 +54,9 @@ public class ResourceAnnotation extends RAnnotation {
 
     private List<R_Resource> resources = new ArrayList<R_Resource>();
 
-    public ResourceAnnotation(HashMap<RAttribute, Object> attributeHash,
-                              List<R_Resource> resources,
-                              RDataTypeRegistry dataTypeRegistry) throws IOException,
+    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry) throws IOException,
             RAnnotationException {
-        super(RAnnotationType.RESOURCE, attributeHash, dataTypeRegistry);
+        super(RAnnotationType.RESOURCE, new HashMap<RAttribute, Object>(), dataTypeRegistry);
         this.resources.addAll(resources);
         log.debug("NEW {}", this);
     }

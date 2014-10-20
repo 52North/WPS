@@ -78,7 +78,8 @@ public class Util {
     public static void forceInitializeWPSConfig() throws FileNotFoundException, IOException, XmlException {
         try (InputStream is = new FileInputStream(Util.loadFile("/test_wps_config_r.xml"))) {
             WPSConfig.forceInitialization(is);
-            // mockup configuration service
+
+            // mockup configuration service to return a valid URL
             ConfigurationService service = Mockito.mock(ConfigurationService.class);
             Mockito.when(service.getConfigurationModule(Server.class.getName())).thenReturn(testserver);
             ConfigurationManager manager = Mockito.mock(ConfigurationManager.class);

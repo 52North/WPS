@@ -94,7 +94,7 @@ public class RWorkspaceManager {
                              R_Config config,
                              ResourceFileRepository fileRepo) {
         this.connection = connection;
-        this.workspace = new RWorkspace(config);
+        this.workspace = new RWorkspace(config.getBaseDir());
         this.executor = new RExecutor();
         this.iohandler = iohandler;
         this.config = config;

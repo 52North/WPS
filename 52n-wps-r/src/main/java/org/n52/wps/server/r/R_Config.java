@@ -69,7 +69,7 @@ public class R_Config implements ServletContextAware {
 
     public static final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
 
-    private static final String WKN_PREFIX = "org.n52.wps.server.r.";
+    private String wknPrefix = "org.n52.wps.server.r.";
 
     private static final String DEFAULT_RSERVE_HOST = "localhost";
 
@@ -251,15 +251,19 @@ public class R_Config implements ServletContextAware {
             this.utilsFiles = new ArrayList<File>();
             Path basedir = getBaseDir();
             String configVariable = getConfigVariable(RWPSConfigVariables.R_UTILS_DIR);
-            String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
-            for (String s : configVariableDirs) {
-                Path dir = Paths.get(s);
-                Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
-                this.utilsFiles.addAll(files);
-                LOGGER.debug("Added {} files to the list of util files: {}",
-                             files.size(),
-                             Arrays.toString(files.toArray()));
+            if (configVariable != null) {
+                String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
+                for (String s : configVariableDirs) {
+                    Path dir = Paths.get(s);
+                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
+                    this.utilsFiles.addAll(files);
+                    LOGGER.debug("Added {} files to the list of util files: {}",
+                                 files.size(),
+                                 Arrays.toString(files.toArray()));
+                }
             }
+            else
+                LOGGER.error("Could not load utils directory variable from config, not loading any utils files!");
         }
 
         return utilsFiles;
@@ -337,6 +341,14 @@ public class R_Config implements ServletContextAware {
     }
 
     public String getPublicScriptId(String s) {
-        return R_Config.WKN_PREFIX + s;
+        return getWknPrefix() + s;
+    }
+
+    public String getWknPrefix() {
+        return wknPrefix;
+    }
+
+    public void setWknPrefix(String wknPrefix) {
+        this.wknPrefix = wknPrefix;
     }
 }

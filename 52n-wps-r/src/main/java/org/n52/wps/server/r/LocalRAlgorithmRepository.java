@@ -266,6 +266,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         LOGGER.debug("Adding resources for algorithm {}", algorithm_wkn);
         GenericRProcess process = algorithms.get(algorithm_wkn);
 
+        // resources
         List<RAnnotation> resourceAnnotations = null;
         try {
             resourceAnnotations = RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.RESOURCE);
@@ -283,6 +284,25 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             else
                 LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
         }
+
+        // imports
+        try {
+            resourceAnnotations = RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.IMPORT);
+        }
+        catch (RAnnotationException e) {
+            LOGGER.error("Could not get import annotations for algorithm  {}", algorithm_wkn);
+        }
+
+        for (RAnnotation rAnnotation : resourceAnnotations) {
+            boolean b = resourceRepo.registerResources(rAnnotation);
+            if (b)
+                LOGGER.debug("Registered import as resource for algorithm {} based on annotation: {}",
+                             algorithm_wkn,
+                             rAnnotation);
+            else
+                LOGGER.warn("Could not register resources based on annotation {}", rAnnotation);
+        }
+
     }
 
     @Override

@@ -50,6 +50,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.syntax.ImportAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
@@ -69,6 +70,8 @@ public class RAnnotationParser {
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
 
     private static final boolean DEFAULT_RESOURCE_VISIBILITY = true;
+
+    private static final boolean DEFAULT_IMPORT_VISIBILITY = true;
 
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
@@ -236,6 +239,9 @@ public class RAnnotationParser {
                                 if (annotationType.equals(RAnnotationType.RESOURCE)) {
                                     newAnnotation = createResourceAnnotation(scriptId, annotationString.toString());
                                 }
+                                else if (annotationType.equals(RAnnotationType.IMPORT)) {
+                                    newAnnotation = createImportAnnotation(scriptId, annotationString.toString());
+                                }
                                 else {
                                     HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
                                                                                           annotationString.toString());
@@ -342,6 +348,25 @@ public class RAnnotationParser {
 
     private RAnnotation createResourceAnnotation(String scriptId, String attributeString) throws IOException,
             RAnnotationException {
+        List<R_Resource> resources = getResourcesFromAnnotation(scriptId, attributeString, DEFAULT_RESOURCE_VISIBILITY);
+
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(resources, dataTypeRegistry);
+
+        return resourceAnnotation;
+    }
+
+    private RAnnotation createImportAnnotation(String scriptId, String attributeString) throws IOException,
+            RAnnotationException {
+        List<R_Resource> resources = getResourcesFromAnnotation(scriptId, attributeString, DEFAULT_IMPORT_VISIBILITY);
+
+        ImportAnnotation importAnnotation = new ImportAnnotation(resources, dataTypeRegistry);
+
+        return importAnnotation;
+    }
+
+    private List<R_Resource> getResourcesFromAnnotation(String scriptId,
+                                                        String attributeString,
+                                                        boolean defaultVisibility) {
         List<R_Resource> resources = new ArrayList<R_Resource>();
 
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
@@ -349,19 +374,12 @@ public class RAnnotationParser {
 
         while (attrValueTokenizer.hasMoreElements()) {
             String resourceValue = attrValueTokenizer.nextToken().trim();
-            R_Resource r_resource = new R_Resource(config.getPublicScriptId(scriptId),
-                                                   resourceValue,
-                                                   DEFAULT_RESOURCE_VISIBILITY);
+            R_Resource r_resource = new R_Resource(config.getPublicScriptId(scriptId), resourceValue, defaultVisibility);
             resources.add(r_resource);
 
             LOGGER.debug("Found new resource in annotation: {}", r_resource);
         }
-
-        // add empty hasmap for now
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
-        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash, resources, dataTypeRegistry);
-
-        return resourceAnnotation;
+        return resources;
     }
 
 }
