@@ -44,7 +44,6 @@ import org.n52.wps.io.data.binding.complex.PlainStringBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
-import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -66,19 +65,15 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
 
     private String validationResult;
 
-    private R_Config rConfig;
-
     private String annotationsString = null;
 
     public AnnotationValidationProcess() {
-        this.rConfig = R_Config.getInstance();
-
         LOGGER.debug("NEW {}", this);
     }
 
-    @ComplexDataInput(identifier = "script", title = "annotated R script", abstrakt = "An annotated R script to be validated for use within WPS4R.", binding = PlainStringBinding.class)
-    public void setScriptToValidate(String script) {
-        this.script = script;
+    @ComplexDataInput(identifier = "script", title = "annotated R script (as CDATA)", abstrakt = "An annotated R script to be validated for use within WPS4R. IMPORTANT: Wrap script in CDATA elements.", binding = PlainStringBinding.class)
+    public void setScriptToValidate(Object script) {
+        this.script = (String) script;
     }
 
     @LiteralDataOutput(identifier = "validationResultString", title = "Validation output as text", binding = LiteralStringBinding.class)
