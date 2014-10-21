@@ -46,9 +46,9 @@ import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -217,6 +217,10 @@ public class RResource {
     @RequestMapping(value = RESOURCE_PATH_PARAMS, method = RequestMethod.GET)
     public ResponseEntity<Resource> getResource(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
                                                 @PathVariable(REQUEST_PARAM_RESOURCEID) String resourceId) throws ExceptionReport {
+        if ( !config.isResourceDownloadEnabled())
+            return new ResponseEntity<Resource>(new ByteArrayResource(new String("Access forbidden.").getBytes()),
+                                                HttpStatus.FORBIDDEN);
+
         HttpHeaders headers = new HttpHeaders();
 
         Path path = null;
@@ -269,6 +273,10 @@ public class RResource {
                                                                                         RConstants.R_SCRIPT_TYPE_VALUE})
     public ResponseEntity<Resource> getScript(@PathVariable(REQUEST_PARAM_SCRIPTID) String id) throws ExceptionReport,
             IOException {
+        if ( !config.isScriptDownloadEnabled())
+            return new ResponseEntity<Resource>(new ByteArrayResource(new String("Access forbidden.").getBytes()),
+                                                HttpStatus.FORBIDDEN);
+
         HttpHeaders headers = new HttpHeaders();
 
         File f = null;
@@ -295,6 +303,10 @@ public class RResource {
     @RequestMapping(value = IMPORT_PATH_PARAMS, method = RequestMethod.GET, produces = {RConstants.R_SCRIPT_TYPE_VALUE})
     public ResponseEntity<Resource> getImport(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
                                               @PathVariable(REQUEST_PARAM_RESOURCEID) String importId) throws ExceptionReport {
+        if ( !config.isImportDownloadEnabled())
+            return new ResponseEntity<Resource>(new ByteArrayResource(new String("Access forbidden.").getBytes()),
+                                                HttpStatus.FORBIDDEN);
+
         HttpHeaders headers = new HttpHeaders();
 
         File f = null;
@@ -317,7 +329,10 @@ public class RResource {
     }
 
     @RequestMapping(value = SESSION_INFO_PATH, produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
-    public HttpEntity<String> sessionInfo() {
+    public ResponseEntity<String> sessionInfo() {
+        if ( !config.isSessionInfoLinkEnabled())
+            return new ResponseEntity<String>("Access to sessionInfo() output forbidden.", HttpStatus.FORBIDDEN);
+
         FilteredRConnection rCon = null;
         try {
             rCon = config.openRConnection();

@@ -68,12 +68,37 @@ import org.slf4j.LoggerFactory;
 
 public class RProcessDescriptionCreator {
 
+    public static final String SCRIPT_LINK_TITLE = "R Script";
+
+    public static final String SESSION_INFO_TITLE = "R Session Info";
+
+    public static final String RESOURCE_TITLE_PREFIX = "Resource: ";
+
+    public static final String IMPORT_TITLE_PREFIX = "Import: ";
+
     private static Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
     private String id;
 
-    public RProcessDescriptionCreator(String publicProcessId) {
+    private boolean resourceDownloadEnabled;
+
+    private boolean importDownloadEnabled;
+
+    private boolean scriptDownloadEnabled;
+
+    private boolean sessionInfoLinkEnabled;
+
+    public RProcessDescriptionCreator(String publicProcessId,
+                                      boolean resourceDownload,
+                                      boolean importDownload,
+                                      boolean scriptDownload,
+                                      boolean sessionInfoLink) {
         this.id = publicProcessId;
+        this.resourceDownloadEnabled = resourceDownload;
+        this.importDownloadEnabled = importDownload;
+        this.scriptDownloadEnabled = scriptDownload;
+        this.sessionInfoLinkEnabled = sessionInfoLink;
+
         log.debug("NEW {}", this);
     }
 
@@ -101,7 +126,15 @@ public class RProcessDescriptionCreator {
             pdt.setStatusSupported(true);
             pdt.setStoreSupported(true);
 
-            addMetadataLinks(fileUrl, sessionInfoUrl, pdt);
+            if (scriptDownloadEnabled)
+                addScriptLink(fileUrl, pdt);
+            else
+                log.trace("Script download link disabled.");
+
+            if (sessionInfoLinkEnabled)
+                addSessionInfoLink(sessionInfoUrl, pdt);
+            else
+                log.trace("Session info download link disabled.");
 
             ProcessOutputs outputs = pdt.addNewProcessOutputs();
             DataInputs inputs = pdt.addNewDataInputs();
@@ -121,10 +154,16 @@ public class RProcessDescriptionCreator {
                     addProcessDescription(pdt, annotation);
                     break;
                 case RESOURCE:
-                    addProcessResources(pdt, annotation);
+                    if (resourceDownloadEnabled)
+                        addProcessResources(pdt, annotation);
+                    else
+                        log.trace("Resource download is disabled, not adding elements to description.");
                     break;
                 case IMPORT:
-                    addImportProcessResources(pdt, annotation);
+                    if (importDownloadEnabled)
+                        addImportProcessResources(pdt, annotation);
+                    else
+                        log.trace("Import download is disabled, not adding elements to description.");
                     break;
                 default:
                     break;
@@ -170,7 +209,7 @@ public class RProcessDescriptionCreator {
         }
     }
 
-    private void addMetadataLinks(URL fileUrl, URL sessionInfoUrl, ProcessDescriptionType pdt) {
+    private void addScriptLink(URL fileUrl, ProcessDescriptionType pdt) {
         // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
         // not used for the resources
         // because validation fails with the cause:
@@ -180,15 +219,17 @@ public class RProcessDescriptionCreator {
         // 'xlin:type' has a fixed value of 'simple'."
         if (fileUrl != null) {
             MetadataType mt = pdt.addNewMetadata();
-            mt.setTitle("R Script");
+            mt.setTitle(SCRIPT_LINK_TITLE);
             mt.setHref(fileUrl.toExternalForm());
         }
         else
             log.warn("Cannot add url to script, is null");
+    }
 
+    private void addSessionInfoLink(URL sessionInfoUrl, ProcessDescriptionType pdt) {
         if (sessionInfoUrl != null) {
             MetadataType mt = pdt.addNewMetadata();
-            mt.setTitle("R Session Info");
+            mt.setTitle(SESSION_INFO_TITLE);
             mt.setHref(sessionInfoUrl.toExternalForm());
         }
         else
@@ -209,7 +250,7 @@ public class RProcessDescriptionCreator {
 
                     if (resource.isPublic()) {
                         MetadataType mt = pdt.addNewMetadata();
-                        mt.setTitle("Resource: " + resource.getResourceValue());
+                        mt.setTitle(RESOURCE_TITLE_PREFIX + resource.getResourceValue());
 
                         // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
                         URL url = RResource.getResourceURL(resource);
@@ -240,7 +281,7 @@ public class RProcessDescriptionCreator {
 
                     if (resource.isPublic()) {
                         MetadataType mt = pdt.addNewMetadata();
-                        mt.setTitle("Import: " + resource.getResourceValue());
+                        mt.setTitle(IMPORT_TITLE_PREFIX + resource.getResourceValue());
 
                         // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
                         URL url = RResource.getImportURL(resource);
@@ -494,6 +535,16 @@ public class RProcessDescriptionCreator {
 
         }
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RProcessDescriptionCreator [");
+        if (id != null)
+            builder.append("id=").append(id).append(", ");
+        builder.append("resourceDownloadEnabled=").append(resourceDownloadEnabled).append(", importDownloadEnabled=").append(importDownloadEnabled).append("]");
+        return builder.toString();
     }
 
 }

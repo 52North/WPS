@@ -351,4 +351,20 @@ public class R_Config implements ServletContextAware {
     public void setWknPrefix(String wknPrefix) {
         this.wknPrefix = wknPrefix;
     }
+
+    public boolean isResourceDownloadEnabled() {
+        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_RESOURCE_DOWNLOAD));
+    }
+
+    public boolean isImportDownloadEnabled() {
+        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_IMPORT_DOWNLOAD));
+    }
+
+    public boolean isScriptDownloadEnabled() {
+        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_SCRIPT_DOWNLOAD));
+    }
+
+    public boolean isSessionInfoLinkEnabled() {
+        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_SESSION_INFO_DOWNLOAD));
+    }
 }

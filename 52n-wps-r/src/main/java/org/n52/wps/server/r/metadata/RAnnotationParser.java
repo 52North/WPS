@@ -146,7 +146,11 @@ public class RAnnotationParser {
 
                 try {
                     // try to create process description from annotations
-                    RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier);
+                    RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier,
+                                                                                                   config.isResourceDownloadEnabled(),
+                                                                                                   config.isImportDownloadEnabled(),
+                                                                                                   config.isScriptDownloadEnabled(),
+                                                                                                   config.isSessionInfoLinkEnabled());
                     ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
                                                                                                       identifier,
                                                                                                       new URL("http://some.valid.url/"),

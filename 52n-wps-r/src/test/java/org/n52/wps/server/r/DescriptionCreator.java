@@ -29,13 +29,20 @@
 
 package org.n52.wps.server.r;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import net.opengis.ows.x11.MetadataType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
@@ -53,6 +60,8 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import com.google.common.collect.Lists;
 
 public class DescriptionCreator {
 
@@ -83,9 +92,11 @@ public class DescriptionCreator {
     public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException {
         File descriptionFile = Util.loadFile("/uniform.xml");
 
-        // GenericRProcess process = new GenericRProcess("R_andom");
-        FileInputStream fis = new FileInputStream(descriptionFile);
-        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform");
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
         ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
                                                                             "R_andom",
                                                                             new URL("http://my.url/myScript.R"),
@@ -118,8 +129,156 @@ public class DescriptionCreator {
         // XMLAssert.assertXMLEqual("Comparing process descriptions for uniform.",
         // controlDocument,
         // testDocument);
+    }
 
-        fis.close();
+    @Test
+    public void sessionInfoLinkEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("session link title in in the metadata elements",
+                   titles,
+                   hasItem(RProcessDescriptionCreator.SESSION_INFO_TITLE));
+
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, true, false);
+        testType = creator.createDescribeProcessType(this.annotations,
+                                                     "R_andom",
+                                                     new URL("http://my.url/myScript.R"),
+                                                     new URL("http://my.url/to_the_session_info"));
+
+        metadataArray = testType.getMetadataArray();
+        titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("session link title NOT in in the metadata elements",
+                   titles,
+                   not(hasItem(RProcessDescriptionCreator.SESSION_INFO_TITLE)));
+    }
+
+    @Test
+    public void scriptDownloaodEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("script link title in in the metadata elements",
+                   titles,
+                   hasItem(RProcessDescriptionCreator.SCRIPT_LINK_TITLE));
+
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, false, true);
+        testType = creator.createDescribeProcessType(this.annotations,
+                                                     "R_andom",
+                                                     new URL("http://my.url/myScript.R"),
+                                                     new URL("http://my.url/to_the_session_info"));
+
+        metadataArray = testType.getMetadataArray();
+        titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("script link title NOT in in the metadata elements",
+                   titles,
+                   not(hasItem(RProcessDescriptionCreator.SCRIPT_LINK_TITLE)));
+    }
+
+    @Test
+    public void resourceDownloaodEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("resource link title in in the metadata elements", titles, hasItem("Resource: test.file.txt"));
+
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", false, true, true, true);
+        testType = creator.createDescribeProcessType(this.annotations,
+                                                     "R_andom",
+                                                     new URL("http://my.url/myScript.R"),
+                                                     new URL("http://my.url/to_the_session_info"));
+
+        metadataArray = testType.getMetadataArray();
+        titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        for (String t : titles) {
+            assertThat("resource link title NOT in in the metadata elements",
+                       t,
+                       not(startsWith(RProcessDescriptionCreator.RESOURCE_TITLE_PREFIX)));
+        }
+    }
+
+    @Test
+    public void importDownloaodEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        assertThat("resource link title in in the metadata elements",
+                   titles,
+                   hasItem("Import: annotations/import/imported.R"));
+
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, false, true, true);
+        testType = creator.createDescribeProcessType(this.annotations,
+                                                     "R_andom",
+                                                     new URL("http://my.url/myScript.R"),
+                                                     new URL("http://my.url/to_the_session_info"));
+
+        metadataArray = testType.getMetadataArray();
+        titles = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+        }
+        for (String t : titles) {
+            assertThat("resource link title NOT in in the metadata elements",
+                       t,
+                       not(startsWith(RProcessDescriptionCreator.IMPORT_TITLE_PREFIX)));
+        }
     }
 
 }

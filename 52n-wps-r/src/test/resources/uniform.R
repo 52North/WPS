@@ -15,3 +15,5 @@ write.table(x, output)
 # wps.res: test.file.txt, uniform.xml;
 
 # wps.res: dir/folder;
+
+# wps.import: annotations/import/imported.R;

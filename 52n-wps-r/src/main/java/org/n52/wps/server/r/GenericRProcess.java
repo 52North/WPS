@@ -143,7 +143,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // submits annotation with process informations to ProcessdescriptionCreator:
-            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(wkn);
+            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(wkn,
+                                                                                config.isResourceDownloadEnabled(),
+                                                                                config.isImportDownloadEnabled(),
+                                                                                config.isScriptDownloadEnabled(),
+                                                                                config.isSessionInfoLinkEnabled());
             ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
                                                                            wkn,
                                                                            RResource.getScriptURL(wkn),
