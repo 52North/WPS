@@ -633,13 +633,13 @@
 			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
 		</Repository>
 		<Repository name="GrassRepository"
-			className="org.n52.wps.server.grass.GrassProcessRepository" active="false">
-			<Property name="Grass_Home" active="true">c:\programme\GRASS 7.0.svn</Property>
-			<Property name="Python_Home" active="true">c:\python25</Property>
-			<Property name="Python_Path" active="true">c:\python25</Property>
-			<Property name="ModuleStarter_Home" active="true">C:\grass\wps-grass-bridge2\gms\</Property>
-			<Property name="GISRC_Dir" active="true">c:\programme\GRASS 7.0.svn\demolocation\.grassrc70</Property>
-			<Property name="TMP_Dir" active="true">C:\tmp\grass_tmp</Property>
+			className="org.n52.wps.server.grass.GrassProcessRepository" active="true">
+			<Property name="Grass_Home" active="true">C:/Program Files (x86)/GRASS GIS 7.0.0beta3</Property>
+			<Property name="Python_Home" active="true">c:/python27</Property>
+			<Property name="Python_Path" active="true">c:/python27</Property>
+			<Property name="ModuleStarter_Home" active="true">D:/dev/grass/wps-grass-bridge-patched/gms/</Property>
+			<Property name="GISRC_Dir" active="true">C:/Program Files (x86)/GRASS GIS 7.0.0beta3/demolocation/.grassrc70</Property>
+			<Property name="TMP_Dir" active="true">d:\tmp\grass_tmp</Property>
 			<Property name="Algorithm" active="true">i.atcorr</Property>
 			<Property name="Algorithm" active="true">i.biomass</Property>
 			<Property name="Algorithm" active="true">i.cca</Property>
