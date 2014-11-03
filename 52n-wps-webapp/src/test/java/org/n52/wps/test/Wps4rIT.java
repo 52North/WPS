@@ -106,6 +106,9 @@ public class Wps4rIT {
         return con;
     }
 
+     * FIXME: DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
+	}
+
     @Test
     public void sessionVariablesAreSet() throws ParserConfigurationException, SAXException, IOException, XmlException {
         URL resource = Wps4rIT.class.getResource("/R/ExecuteTestSessionVariables.xml");
@@ -389,6 +392,36 @@ public class Wps4rIT {
         assertThat("Response contains test data names",
                    response,
                    containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
+    }
+
+    @Test
+    public void csvLiteralInputWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSVInput_literal.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String response = PostClient.sendRequest(wpsUrl, xmlPayload.toString());
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        assertThat("Response contains test data names", response, containsString("\"Ford\""));
+        assertThat("Response contains test data names", response, containsString("\"Cougar\""));
+        assertThat("Response contains test data names", response, containsString("2.38"));
+    }
+
+    @Test
+    public void csvComplexInputWorks() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/ExecuteTestCSVInput_complex.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String response = PostClient.sendRequest(wpsUrl, xmlPayload.toString());
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains mime type", response, containsString("mimeType=\"text/csv\""));
+
+        assertThat("Response contains test data names", response, containsString("\"Ford\""));
+        assertThat("Response contains test data names", response, containsString("\"Cougar\""));
+        assertThat("Response contains test data names", response, containsString("2.38"));
     }
 
     @Test
