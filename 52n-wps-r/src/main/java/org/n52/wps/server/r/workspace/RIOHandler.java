@@ -237,7 +237,7 @@ public class RIOHandler {
         if (ivalue instanceof ILiteralData)
             return parseLiteralInput(iclass, ivalue.getPayload());
 
-        if (ivalue instanceof GenericFileDataWithGTBinding) {
+        if (ivalue instanceof GenericFileDataWithGTBinding || ivalue instanceof GenericFileDataBinding) {
             GenericFileData value = (GenericFileData) ivalue.getPayload();
 
             InputStream is = value.getDataStream();
