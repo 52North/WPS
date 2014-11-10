@@ -94,7 +94,7 @@ public class PostgresDatabase extends AbstractDatabase {
                     "Results");
     private static File BASE_DIRECTORY;
     private static final ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-    private static final String baseResultURL = String.format("http://%s:%s/%s/RetrieveResultServlet?id=",
+    private static final String baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
             server.getHostname(), server.getHostport(), server.getWebappPath());
     public static final String pgCreationString = "CREATE TABLE RESULTS ("
             + "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, "
