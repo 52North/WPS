@@ -513,7 +513,7 @@ public class ExecuteRequestBuilder {
 			defaultMimeType = "text/xml";
 		}
 		if (defaultMimeType.equals(mimeType)) {
-//			outputDef.setMimeType(mimeType);//TODO: check
+			outputDef.setMimeType(mimeType);
 			return true;
 		} else {
 			for (ComplexDataDescriptionType data : outputDesc
