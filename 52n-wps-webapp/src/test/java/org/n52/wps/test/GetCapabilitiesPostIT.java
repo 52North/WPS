@@ -30,9 +30,7 @@ package org.n52.wps.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -41,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import net.opengis.wps.x100.CapabilitiesDocument;
@@ -113,18 +112,12 @@ public class GetCapabilitiesPostIT {
         URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/WrongVersion.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(url, payload.toString());
+            PostClient.checkForExceptionReport(url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "VersionNegotiationFailed");
         }
         catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("VersionNegotiationFailed"));
-
-        assertThat(response, response, not(containsString("<wps:Capabilities")));
     }
 
     @Test
@@ -132,17 +125,14 @@ public class GetCapabilitiesPostIT {
         URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/WrongService.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(GetCapabilitiesPostIT.url, payload.toString());
-        }
+            PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue");
+		}
         catch (IOException e) {
             fail(e.getMessage());
         }
+        
 
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("exceptionCode=\"InvalidParameterValue\""));
     }
     
     @Test
@@ -150,17 +140,14 @@ public class GetCapabilitiesPostIT {
         URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/MissingService.xml");
         XmlObject payload = XmlObject.Factory.parse(resource);
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(GetCapabilitiesPostIT.url, payload.toString());
-        }
+            PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
+		}
         catch (IOException e) {
             fail(e.getMessage());
         }
+        
 
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("exceptionCode=\"MissingParameterValue\""));
     }
 
 }
