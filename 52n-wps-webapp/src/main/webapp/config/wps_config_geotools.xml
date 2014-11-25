@@ -491,6 +491,8 @@
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
 				active="true">
 				<Format mimetype="text/xml"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
+				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
@@ -506,6 +508,8 @@
 					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/2.1.2.1"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
+				<Format mimetype="application/vnd.google-earth.kml+xml"
+					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Generator>
 			<Generator name="ProxyGMLGenerator4Files"
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"

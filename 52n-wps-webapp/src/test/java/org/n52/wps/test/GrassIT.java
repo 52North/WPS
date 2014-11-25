@@ -34,9 +34,12 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,6 +56,8 @@ import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.xml.sax.SAXException;
 
+import com.vividsolutions.jts.io.InputStreamInStream;
+
 /**
  * 
  * To run this integration tests the GRASS 7 repository must be enabled and properly configured in the WPS config.
@@ -62,6 +67,9 @@ public class GrassIT {
 
     private static String wpsUrl;
 
+    private String hostExp = "$host$";
+    private String portExp = "$port$";
+    
     @BeforeClass
     public static void beforeClass() {
         wpsUrl = AllTestsIT.getURL();
@@ -134,9 +142,7 @@ public class GrassIT {
 	public void resultRawGeoTiffIsBase64Encoded() throws IOException,
 	ParserConfigurationException, SAXException, XmlException {
 		
-		URL resource = GrassIT.class
-				.getResource("/Grass/r.resample_request_out_tiff_raw_base64.xml");
-		XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+		XmlObject xmlPayload = createPayloadReplacingHostAndPort("/Grass/r.resample_request_out_tiff_raw_base64.xml");
 		
 		String payload = xmlPayload.toString();
 		String response = PostClient.sendRequest(wpsUrl, payload);
@@ -147,9 +153,8 @@ public class GrassIT {
     
     @Test
     public void resultRawGeoTiffIsNotBase64Encoded() throws XmlException, IOException {
-    	
-    	URL resource = GrassIT.class.getResource("/Grass/r.resample_request_out_tiff_raw.xml");
-    	XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+    	XmlObject xmlPayload = createPayloadReplacingHostAndPort("/Grass/r.resample_request_out_tiff_raw.xml");
     	
     	String payload = xmlPayload.toString();
     	InputStream response = PostClient.sendRequestForInputStream(wpsUrl, payload);
@@ -160,21 +165,52 @@ public class GrassIT {
     	
     	assertTrue(gtRasterDataBinding.getPayload() != null);
     	assertTrue(gtRasterDataBinding.getPayload().getEnvelope() != null);
-    	assertTrue(gtRasterDataBinding.getPayload().getEnvelope().getLowerCorner().getCoordinate()[0] == 630000.0);
+    	assertTrue(gtRasterDataBinding.getPayload().getEnvelope().getLowerCorner().getCoordinate()[0] == 633872.54238781);
     }
 
 	@Test
 	public void resultEmbeddedGeoTiffIsBase64Encoded() throws IOException,
 			ParserConfigurationException, SAXException, XmlException {
 
-		URL resource = GrassIT.class
-				.getResource("/Grass/r.resample_request_out_tiff_doc_base64.xml");
-		XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+		XmlObject xmlPayload = createPayloadReplacingHostAndPort("/Grass/r.resample_request_out_tiff_doc_base64.xml");
 
 		String payload = xmlPayload.toString();
 		String response = PostClient.sendRequest(wpsUrl, payload);
 		assertThat(response, not(containsString("ExceptionReport")));
 
 		AllTestsIT.checkInlineResultBase64(response);
+	}
+	
+	private XmlObject createPayloadReplacingHostAndPort(String resourceURL){
+		
+		URL resource = GrassIT.class
+				.getResource(resourceURL);
+		
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.openStream()));
+			
+			String payload = "";
+			
+			String line = "";
+			
+			while((line = bufferedReader.readLine()) != null){
+				
+				if(line.contains(hostExp)){
+					line = line.replace(hostExp, AllTestsIT.getHost());
+				}
+				if(line.contains(portExp)){
+					line = line.replace(portExp, ""+AllTestsIT.getPort());
+				}
+				payload = payload.concat(line);
+			}
+			bufferedReader.close();
+			return XmlObject.Factory.parse(payload);
+		} catch (IOException e) {
+			fail(e.getMessage());
+		} catch (XmlException e) {
+			fail(e.getMessage());
+		}
+		return XmlObject.Factory.newInstance();
+		
 	}
 }

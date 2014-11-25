@@ -223,6 +223,8 @@ public class GrassProcessDescriptionCreator {
 							|| schema
 									.contains("http://schemas.opengis.net/gml/3.0.1/base/feature.xsd")
 							|| schema
+									.contains("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")
+							|| schema
 									.contains("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd")) {
 
 						ComplexDataDescriptionType xZippedShapeType = outputType.getSupported().addNewFormat();
