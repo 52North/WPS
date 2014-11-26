@@ -358,7 +358,7 @@ public class WebProcessingService extends HttpServlet {
             exception.getExceptionDocument().save(res.getOutputStream(),
                                                   XMLBeansHelper.getXmlOptions());
 
-            res.setStatus(HttpServletResponse.SC_OK);
+            res.setStatus(exception.getHTTPStatusCode());
         }
         catch (IOException e) {
             LOGGER.warn("exception occured while writing ExceptionReport to stream");

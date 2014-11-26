@@ -36,6 +36,7 @@ import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.BeforeClass;
@@ -95,62 +96,34 @@ public class DescribeProcessKvpIT {
     public void testDescribeProcessMissingVersionParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingVersionParameter");
         
-        String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Identifier=" + testProcessID);
-     
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("locator=\"version\""));
-        assertThat(response, response, not(containsString(testProcessID)));
+        GetClient.checkForExceptionReport(url, "Service=WPS&Request=DescribeProcess&Identifier=" + testProcessID, HttpServletResponse.SC_BAD_REQUEST, "locator=\"version\"");
     }
 
     @Test
     public void testDescribeProcessMissingServiceParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingServiceParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID);
-        
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("locator=\"service\""));
-        assertThat(response, response, not(containsString(testProcessID)));
+        GetClient.checkForExceptionReport(url, "Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID, HttpServletResponse.SC_BAD_REQUEST, "locator=\"service\"");
     }
 
     @Test
     public void testDescribeProcessMissingIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingIdentifierParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0");
-        
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("MissingParameterValue"));
-        assertThat(response, response, containsString("locator=\"identifier\""));
-        assertThat(response, response, not(containsString(testProcessID)));
+        GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"identifier\"");
     }
 
     @Test
     public void testDescribeProcessWrongIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessWrongIdentifierParameter");
         
-        String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=XXX");
-        
-        assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-        assertThat(response, response, containsString("ExceptionReport"));
-        assertThat(response, response, containsString("InvalidParameterValue"));
-        assertThat(response, response, containsString("locator=\"identifier\""));
-        assertThat(response, response, not(containsString(testProcessID)));
+        GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=XXX", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
     }
     
     @Test
     public void testDescribeProcessMissingIdentifierValue() throws IOException, ParserConfigurationException, SAXException {
     	System.out.println("\nRunning testDescribeProcessMissingIdentifierValue");
     	
-    	String response = GetClient.sendRequest(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=");
-    	
-    	assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
-    	assertThat(response, response, containsString("ExceptionReport"));
-    	assertThat(response, response, containsString("InvalidParameterValue"));
-    	assertThat(response, response, containsString("locator=\"identifier\""));
-    	assertThat(response, response, not(containsString(testProcessID)));
+        GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
     }
 }

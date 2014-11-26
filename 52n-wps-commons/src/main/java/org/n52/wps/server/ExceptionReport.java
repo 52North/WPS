@@ -19,6 +19,8 @@ package org.n52.wps.server;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.http.HttpServletResponse;
+
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 
@@ -107,5 +109,31 @@ public class ExceptionReport extends Exception {
         w.flush();
         w.flush();
         return w.toString();
+	}
+	
+	public int getHTTPStatusCode(){
+		
+		switch (errorKey) {
+		case OPERATION_NOT_SUPPORTED:
+			return HttpServletResponse.SC_NOT_IMPLEMENTED;
+			
+		case MISSING_PARAMETER_VALUE:
+			return HttpServletResponse.SC_BAD_REQUEST;
+			
+		case INVALID_PARAMETER_VALUE:
+			return HttpServletResponse.SC_BAD_REQUEST;
+			
+		case VERSION_NEGOTIATION_FAILED:
+			return HttpServletResponse.SC_BAD_REQUEST;
+			
+		case INVALID_UPDATE_SEQUENCE:
+			return HttpServletResponse.SC_BAD_REQUEST;
+			
+		case NO_APPLICABLE_CODE:
+			return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+			
+		default:
+			return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+		}		
 	}
 }

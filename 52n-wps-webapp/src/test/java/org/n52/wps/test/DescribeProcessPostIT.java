@@ -32,6 +32,8 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -83,18 +85,11 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier>" + testProcessID + "</ows:Identifier>"
                 + "</wps:DescribeProcess>";
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-            // parseXML(response);
-        }
-        catch (Exception e) {
+        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "language");
+        } catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("language"));
-        assertTrue( !response.contains(testProcessID));
     }
 
     @Test
@@ -152,18 +147,12 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier>" + testProcessID + "</ows:Identifier>" +
 
                 "</wps:DescribeProcess>";
-
-        String response = "";
+        
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-        }
-        catch (IOException e) {
-            fail(e.getMessage());
-        }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("locator=\"version\""));
-        assertTrue( !response.contains(testProcessID));
+			PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"version\"");
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
     }
 
     @Test
@@ -174,17 +163,11 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier>" + testProcessID + "</ows:Identifier>"
                 + "</wps:DescribeProcess>";
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-        }
-        catch (IOException e) {
+        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"service\"");
+        } catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("locator=\"service\""));
-        assertTrue( !response.contains(testProcessID));
     }
 
     @Test
@@ -194,18 +177,11 @@ public class DescribeProcessPostIT {
                 + "http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_request.xsd\" service=\"WPS\" version=\"1.0.0\" language=\"en-US\">"
                 + "</wps:DescribeProcess>";
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-        }
-        catch (IOException e) {
+        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"identifier\"");
+        } catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("MissingParameterValue"));
-        assertTrue(response.contains("locator=\"identifier\""));
-        assertTrue( !response.contains(testProcessID));
     }
     
     @Test
@@ -215,18 +191,11 @@ public class DescribeProcessPostIT {
                 + "http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_request.xsd\" service=\"WPS\" version=\"1.0.0\" language=\"en-US\">"
                 + "<ows:Identifier></ows:Identifier>" + "</wps:DescribeProcess>";
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-        }
-        catch (IOException e) {
+        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
+        } catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("InvalidParameterValue"));
-        assertTrue(response.contains("locator=\"identifier\""));
-        assertTrue( !response.contains(testProcessID));
     }
 
     @Test
@@ -236,17 +205,11 @@ public class DescribeProcessPostIT {
                 + "http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_request.xsd\" service=\"WPS\" version=\"1.0.0\" language=\"en-US\">"
                 + "<ows:Identifier>XXX</ows:Identifier>" + "</wps:DescribeProcess>";
 
-        String response = "";
         try {
-            response = PostClient.sendRequest(DescribeProcessPostIT.url, payload);
-        }
-        catch (IOException e) {
+        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
+        } catch (IOException e) {
             fail(e.getMessage());
         }
-
-        assertTrue(response.contains("ExceptionReport"));
-        assertTrue(response.contains("InvalidParameterValue"));
-        assertTrue(response.contains("locator=\"identifier\""));
     }
 
 }
