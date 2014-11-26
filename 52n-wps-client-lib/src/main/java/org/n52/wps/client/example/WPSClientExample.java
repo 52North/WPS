@@ -38,10 +38,12 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.ProcessBriefType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.xmlbeans.XmlException;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.client.ExecuteResponseAnalyser;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.client.WPSClientSession;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
@@ -151,7 +153,7 @@ public class WPSClientExample {
 									inputName,
 									data,
 									"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
-									"UTF-8", "text/xml");
+									null, "text/xml");
 				}
 				// Complexdata Reference
 				if (inputValue instanceof String) {
@@ -160,7 +162,7 @@ public class WPSClientExample {
 									inputName,
 									(String) inputValue,
 									"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd",
-									"UTF-8", "text/xml");
+									null, "text/xml");
 				}
 
 				if (inputValue == null && input.getMinOccurs().intValue() > 0) {
@@ -189,6 +191,15 @@ public class WPSClientExample {
 	}
 
 	public static void main(String[] args) {
+		
+		try {
+			WPSConfig.forceInitialization(WPSClientExample.class.getResourceAsStream("wps_config_geotools.xml"));
+		} catch (XmlException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		WPSClientExample client = new WPSClientExample();
 		client.testExecute();
 	}
