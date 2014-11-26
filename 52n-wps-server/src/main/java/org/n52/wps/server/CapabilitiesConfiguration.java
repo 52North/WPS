@@ -313,6 +313,7 @@ public class CapabilitiesConfiguration {
      */
     private static String getEndpointURL() throws UnknownHostException {
         WPSConfig config = WPSConfig.getInstance();
+        String protocol = config.getWPSConfig().getServer().getProtocol();
         String host = config.getWPSConfig().getServer().getHostname();
         String port = config.getWPSConfig().getServer().getHostport();
         if (host == null) {
@@ -320,8 +321,7 @@ public class CapabilitiesConfiguration {
         }
 
         StringBuilder url = new StringBuilder();
-        // TODO what if this service runs on HTTPS?
-        url.append("http").append("://").append(host);
+        url.append(protocol).append("://").append(host);
         url.append(':').append(port).append('/');
         if (WebProcessingService.WEBAPP_PATH != null && !WebProcessingService.WEBAPP_PATH.isEmpty()) {
             url.append(WebProcessingService.WEBAPP_PATH).append('/');

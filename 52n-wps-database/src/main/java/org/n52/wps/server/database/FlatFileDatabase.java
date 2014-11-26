@@ -129,7 +129,7 @@ public final class FlatFileDatabase implements IDatabase {
         PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
         
         // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
-        baseResultURL = String.format("http://%s:%s/%s/RetrieveResultServlet?id=",
+        baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
                 server.getHostname(), server.getHostport(), server.getWebappPath());
         LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
         

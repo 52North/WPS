@@ -31,6 +31,7 @@ package org.n52.wps.webadmin;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -313,6 +314,9 @@ public class ChangeConfigurationBean {
      */
     private void createServer(HashMap<String, String> serverEntries) {
 
+        if (serverEntries.containsKey("protocol")) {
+        	server.setProtocol(serverEntries.get("protocol"));
+        }
         if (serverEntries.containsKey("hostname")) {
             server.setHostname(serverEntries.get("hostname"));
         }
@@ -333,6 +337,18 @@ public class ChangeConfigurationBean {
         }
         if (serverEntries.containsKey("repoReloadInterval")) {
             server.setRepoReloadInterval(Double.parseDouble(serverEntries.get("repoReloadInterval")));
+        }
+        if (serverEntries.containsKey("minPoolSize")) {
+        	server.setMinPoolSize(new BigInteger(serverEntries.get("minPoolSize")));
+        }
+        if (serverEntries.containsKey("maxPoolSize")) {
+        	server.setMaxPoolSize(new BigInteger(serverEntries.get("maxPoolSize")));
+        }
+        if (serverEntries.containsKey("keepAliveSeconds")) {
+        	server.setKeepAliveSeconds(new BigInteger(serverEntries.get("keepAliveSeconds")));
+        }
+        if (serverEntries.containsKey("maxQueuedTasks")) {
+        	server.setMaxQueuedTasks(new BigInteger(serverEntries.get("maxQueuedTasks")));
         }
     }
 
