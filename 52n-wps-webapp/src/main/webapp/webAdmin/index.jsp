@@ -158,6 +158,7 @@
                 var confFile = configFile + "?" + 1*new Date();
 
                 $.get(confFile,{},function(xml){
+                    var protocol = $("Server:first",xml).attr("protocol");
                     var hostname = $("Server:first",xml).attr("hostname");
                     var hostport = $("Server:first",xml).attr("hostport");
                     var includeDataInputsInResponse = $("Server:first",xml).attr("includeDataInputsInResponse");
@@ -165,7 +166,12 @@
                     var cacheCapabilites = $("Server:first",xml).attr("cacheCapabilites");
                     var webappPath = $("Server:first",xml).attr("webappPath");
                     var repoReloadInterval = $("Server:first",xml).attr("repoReloadInterval");
+                    var minPoolSize = $("Server:first",xml).attr("minPoolSize");
+                    var maxPoolSize = $("Server:first",xml).attr("maxPoolSize");
+                    var keepAliveSeconds = $("Server:first",xml).attr("keepAliveSeconds");
+                    var maxQueuedTasks = $("Server:first",xml).attr("maxQueuedTasks");
 
+                    $("#Server_Settings input[name='Server-protocol']:first").val(protocol);
                     $("#Server_Settings input[name='Server-hostname']:first").val(hostname);
                     $("#Server_Settings input[name='Server-hostport']:first").val(hostport);
                     $("#Server_Settings input[name='Server-includeDataInputsInResponse']:first").val(includeDataInputsInResponse);
@@ -173,6 +179,10 @@
                     $("#Server_Settings input[name='Server-cacheCapabilites']:first").val(cacheCapabilites);
                     $("#Server_Settings input[name='Server-webappPath']:first").val(webappPath);
                     $("#Server_Settings input[name='Server-repoReloadInterval']:first").val(repoReloadInterval);
+                    $("#Server_Settings input[name='Server-minPoolSize']:first").val(minPoolSize);
+                    $("#Server_Settings input[name='Server-maxPoolSize']:first").val(maxPoolSize);
+                    $("#Server_Settings input[name='Server-keepAliveSeconds']:first").val(keepAliveSeconds);
+                    $("#Server_Settings input[name='Server-maxQueuedTasks']:first").val(maxQueuedTasks);
 
                     // display all algorithm repositories, parsers and generators
                     for (itemType in itemListTypes ){					// "Generator" / "Parser" / "Repository"
@@ -776,6 +786,11 @@
 							<div id="Server_Settings">
 								<div id="editSave" style="float:right;"><img id="editImg" src="images/edit.png" onClick="editServerSettings()" style="cursor:pointer;" /></div>
 								<p>
+									<label for="Server-protocol">Server Protocol:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
+									<input type="text" name="Server-protocol" value="testValue" readonly/>
+									<br style="clear:left;" />
+								</p>
+								<p>
 									<label for="Server-hostname">Server Host Name:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
 									<input type="text" name="Server-hostname" value="testValue" readonly/>
 									<br style="clear:left;" />
@@ -805,6 +820,26 @@
 								<p>
 									<label for="Server-repoReloadInterval">Repository Reload Interval: <br/> (In hours. 0 = No Auto Reload)</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
 									<input type="text" name="Server-repoReloadInterval" value="0" readonly/>
+									<br style="clear:left;" />
+								</p>
+								<p>
+									<label for="Server-minPoolSize">Minimum size of Threadpool: </label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
+									<input type="text" name="Server-minPoolSize" value="0" readonly/>
+									<br style="clear:left;" />
+								</p>
+								<p>
+									<label for="Server-maxPoolSize">Maximum size of Threadpool: </label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
+									<input type="text" name="Server-maxPoolSize" value="0" readonly/>
+									<br style="clear:left;" />
+								</p>
+								<p>
+									<label for="Server-keepAliveSeconds">Time idle threads should be kept alive: <br/> (In seconds.)</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
+									<input type="text" name="Server-keepAliveSeconds" value="0" readonly/>
+									<br style="clear:left;" />
+								</p>
+								<p>
+									<label for="Server-maxQueuedTasks">Maximum number of queued tasks for the Threadpool: </label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
+									<input type="text" name="Server-maxQueuedTasks" value="0" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p></p>

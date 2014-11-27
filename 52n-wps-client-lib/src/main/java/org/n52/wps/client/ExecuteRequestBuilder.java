@@ -39,6 +39,7 @@ import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
 import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteDocument.Execute;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
@@ -46,25 +47,22 @@ import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ExecuteDocument.Execute;
 import net.opengis.wps.x100.ResponseDocumentType;
 import net.opengis.wps.x100.ResponseFormType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlString;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author foerster
- * TODO: this does not handle referenced datasets
  */
-
 public class ExecuteRequestBuilder {
 	ProcessDescriptionType processDesc;
 	ExecuteDocument execute;
@@ -122,38 +120,33 @@ public class ExecuteRequestBuilder {
 		}
 		
 		
-		InputStream stream = null;  
-				
-			InputType input = execute.getExecute().getDataInputs().addNewInput();
-			input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
-			// encoding is UTF-8 (or nothing and we default to UTF-8)
-			// everything that goes to this condition should be inline xml data
+		InputStream stream = null;
+
+		InputType input = execute.getExecute().getDataInputs().addNewInput();
+		input.addNewIdentifier().setStringValue(
+				inputDesc.getIdentifier().getStringValue());
+		// encoding is UTF-8 (or nothing and we default to UTF-8)
+		// everything that goes to this condition should be inline xml data
 		try {
-			
-			if (encoding == null || encoding.equals("") || encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)){
-					stream = generator.generateStream(value, mimeType, schema);
-					
-			}else if(encoding.equalsIgnoreCase("base64")){
-					stream = generator.generateBase64Stream(value, mimeType, schema);
-			}else{
+
+			if (encoding == null || encoding.equals("")
+					|| encoding.equalsIgnoreCase(IOHandler.DEFAULT_ENCODING)) {
+				stream = generator.generateStream(value, mimeType, schema);
+
+			} else if (encoding.equalsIgnoreCase("base64")) {
+				stream = generator
+						.generateBase64Stream(value, mimeType, schema);
+			} else {
 				throw new WPSClientException("Encoding not supported");
 			}
-					ComplexDataType data = input.addNewData().addNewComplexData();
-					data.set(XmlObject.Factory.parse(stream));
-					if (schema != null) {
-						data.setSchema(schema);
-					}
-					if (mimeType != null) {
-						data.setMimeType(mimeType);
-					}
-					if (encoding != null) {
-						data.setEncoding(encoding);
-					}
-			}catch(XmlException e) {
-					throw new IllegalArgumentException("error inserting node into execute request", e);
-			} catch (IOException e) {
-					throw new IllegalArgumentException("error reading generator output", e);
-			}
+			ComplexDataType data = input.addNewData().addNewComplexData();
+
+			setComplexData(data, stream, schema, mimeType, encoding);
+
+		} catch (IOException e) {
+			throw new IllegalArgumentException(
+					"error reading generator output", e);
+		}
 			
 	}
 
@@ -179,32 +172,9 @@ public class ExecuteRequestBuilder {
 		InputType input = execute.getExecute().getDataInputs().addNewInput();
 		input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
 		
-		// encoding is UTF-8 (or nothing and we default to UTF-8)
-		// everything that goes to this condition should be inline xml data
-		try {
-			
-			ComplexDataType data = input.addNewData().addNewComplexData();
-			
-			XmlOptions xmlOptions = new XmlOptions();
-			
-			/*
-			 * TODO: set appropriate flags
-			 */
-			
-			data.set(XmlObject.Factory.parse(value, xmlOptions));
-			if (schema != null) {
-				data.setSchema(schema);
-			}
-			if (mimeType != null) {
-				data.setMimeType(mimeType);
-			}
-			if (encoding != null) {
-				data.setEncoding(encoding);
-			}
-		} catch (XmlException e) {
-			throw new IllegalArgumentException(
-					"error inserting node into execute request", e);
-		}
+		ComplexDataType data = input.addNewData().addNewComplexData();
+		
+		setComplexData(data, value, schema, mimeType, encoding);
 			
 	}
 	
@@ -219,42 +189,30 @@ public class ExecuteRequestBuilder {
 	 * @throws WPSClientException
 	 */
 	public void addComplexData(String parameterID, String value, String schema, String encoding, String mimeType, boolean asReference) throws WPSClientException {
-		InputDescriptionType inputDesc = getParameterDescription(parameterID);
-		if (inputDesc == null) {
-			throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
-		}
-		if (inputDesc.getComplexData() == null) {
-			throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);			
-		}
-						
-		InputType input = execute.getExecute().getDataInputs().addNewInput();
-		input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
 		
-		// encoding is UTF-8 (or nothing and we default to UTF-8)
-		// everything that goes to this condition should be inline xml data
-		try {
-			
+		if(asReference){
+			addComplexDataReference(parameterID, value, schema, encoding, mimeType);
+		} else {
+
+			InputDescriptionType inputDesc = getParameterDescription(parameterID);
+			if (inputDesc == null) {
+				throw new IllegalArgumentException(
+						"inputDescription is null for: " + parameterID);
+			}
+			if (inputDesc.getComplexData() == null) {
+				throw new IllegalArgumentException(
+						"inputDescription is not of type ComplexData: "
+								+ parameterID);
+			}
+
+			InputType input = execute.getExecute().getDataInputs()
+					.addNewInput();
+			input.addNewIdentifier().setStringValue(
+					inputDesc.getIdentifier().getStringValue());
+
 			ComplexDataType data = input.addNewData().addNewComplexData();
-			
-			XmlOptions xmlOptions = new XmlOptions();
-			
-			/*
-			 * TODO: set appropriate flags
-			 */
-			
-			data.set(XmlObject.Factory.parse(value, xmlOptions));
-			if (schema != null) {
-				data.setSchema(schema);
-			}
-			if (mimeType != null) {
-				data.setMimeType(mimeType);
-			}
-			if (encoding != null) {
-				data.setEncoding(encoding);
-			}
-		} catch (XmlException e) {
-			throw new IllegalArgumentException(
-					"error inserting node into execute request", e);
+
+			setComplexData(data, value, schema, mimeType, encoding);
 		}
 			
 	}
@@ -513,7 +471,7 @@ public class ExecuteRequestBuilder {
 			defaultMimeType = "text/xml";
 		}
 		if (defaultMimeType.equals(mimeType)) {
-//			outputDef.setMimeType(mimeType);//TODO: check
+			outputDef.setMimeType(mimeType);
 			return true;
 		} else {
 			for (ComplexDataDescriptionType data : outputDesc
@@ -778,5 +736,70 @@ public class ExecuteRequestBuilder {
 			}
 		}
 		return null;
+	}
+	
+	private void setComplexData(ComplexDataType data, Object value,
+			String schema, String mimeType, String encoding) {
+
+		if (value instanceof String) {
+
+			String valueString = (String) value;
+
+			try {
+				data.set(XmlObject.Factory.parse(valueString));
+			} catch (XmlException e) {
+
+				LOGGER.warn("error parsing data String as xml node, trying to parse data as xs:string");
+
+				XmlString xml = XmlString.Factory.newInstance();
+
+				xml.setStringValue(valueString);
+
+				data.set(xml);
+
+			}
+
+		} else if (value instanceof InputStream) {
+
+			InputStream stream = (InputStream) value;
+
+			try {
+				data.set(XmlObject.Factory.parse(stream));
+			} catch (XmlException e) {
+
+				LOGGER.warn("error parsing data stream as xml node, trying to parse data as xs:string");
+
+				String text = "";
+
+				int i = -1;
+
+				try {
+					while ((i = stream.read()) != -1) {
+						text = text + (char) i;
+					}
+				} catch (IOException e1) {
+					LOGGER.error("error parsing stream", e);
+				}
+
+				XmlString xml = XmlString.Factory.newInstance();
+
+				xml.setStringValue(text);
+
+				data.set(xml);
+			} catch (IOException e) {
+				LOGGER.error("error parsing stream", e);
+			}
+
+		}
+		if (schema != null) {
+			data.setSchema(schema);
+		}
+		if (mimeType != null) {
+			data.setMimeType(mimeType);
+		}
+		if (encoding != null) {
+			data.setEncoding(encoding);
+		}
+
 	}
 }

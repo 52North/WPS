@@ -28,10 +28,14 @@
  */
 package org.n52.wps.test;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.LinkedList;
@@ -46,23 +50,11 @@ public class GetClient {
     }
 
     public static String sendRequest(String targetURL, String payload) throws IOException {
-        // Construct data
         // Send data
-        URL url = null;
-        if (payload == null || payload.equalsIgnoreCase("")) {
-            url = new URL(targetURL);
-        }
-        else {
-            String payloadClean = payload.replace("?", "");
-            url = new URL(targetURL + "?" + payloadClean);
-        }
-
-        URLConnection conn = url.openConnection();
-
-        conn.setDoOutput(true);
-
+    	InputStream in = sendRequestForInputStream(targetURL, payload);
+    	
         // Get the response
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
         String line;
         while ( (line = rd.readLine()) != null) {
@@ -73,12 +65,51 @@ public class GetClient {
     }
 
     public static InputStream sendRequestForInputStream(String targetURL, String payload) throws IOException {
-        // Construct data
 
+        // Send data
+        URL url = null;
+        if (payload == null || payload.equalsIgnoreCase("")) {
+            url = new URL(targetURL);
+        }
+        else {
+            String payloadClean = payload.replace("?", "");
+            url = new URL(targetURL + "?" + payloadClean);
+        }
+
+        return url.openStream();
+    }
+    
+    public static void checkForExceptionReport(String targetURL, String payload, int expectedHTTPStatusCode, String... expectedExceptionParameters) throws IOException{
         // Send data
         String payloadClean = payload.replace("?", "");
         URL url = new URL(targetURL + "?" + payloadClean);
 
-        return url.openStream();
+        URLConnection conn = url.openConnection();
+
+        try {            
+            conn.getInputStream();			
+		} catch (IOException e) {
+			/*
+			 * expected, ignore
+			 */			
+		}
+    	
+        InputStream error = ((HttpURLConnection) conn).getErrorStream();
+        
+        String exceptionReport = "";
+        
+        int data = error.read();
+        while (data != -1) {
+        	exceptionReport = exceptionReport + (char)data;
+            data = error.read();
+        }
+        error.close();
+        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);    
+        
+        for (String expectedExceptionParameter : expectedExceptionParameters) {
+            
+            assertTrue(exceptionReport.contains(expectedExceptionParameter)); 
+			
+		}   
     }
 }

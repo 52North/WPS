@@ -68,7 +68,7 @@ public class ResponseURLFilter implements Filter {
         // Build URL from WPS configuration.  This is the
         // hardcoded URL that we expect to see in reponses and would like to
         // replace with the URL from the HTTP request.
-        configURLString =  "http://" +
+        configURLString =  server.getProtocol() + "://" +
             server.getHostname() + ":" +
             server.getHostport() + "/" +
             server.getWebappPath();

@@ -28,10 +28,14 @@
  */
 package org.n52.wps.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport;
 import net.opengis.wps.x100.DocumentOutputDefinitionType;
@@ -41,8 +45,13 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /*
  * 
@@ -52,7 +61,7 @@ import org.n52.wps.io.data.IData;
  */
 public class ExecuteResponseAnalyser {
 	
-	
+	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseAnalyser.class);
 	
 	ProcessDescriptionType processDesc;
 	ExecuteDocument exec;
@@ -75,7 +84,7 @@ public class ExecuteResponseAnalyser {
  * @return the parsed ComplexData in the requested format defined by the binding
  * @throws WPSClientException
  */
-	public IData getComplexData(String outputID, Class binding) throws WPSClientException {
+	public IData getComplexData(String outputID, Class<?> binding) throws WPSClientException {
 		return parseProcessOutput(outputID, binding);
 		
 	}
@@ -87,7 +96,7 @@ public class ExecuteResponseAnalyser {
 	 * @return the parsed ComplexData in the requested format defined by the binding
 	 * @throws WPSClientException
 	 */
-	public IData getComplexDataByIndex(int index, Class binding) throws WPSClientException {
+	public IData getComplexDataByIndex(int index, Class<?> binding) throws WPSClientException {
 		ExecuteResponseDocument doc = null;
 		if(response instanceof ExecuteResponseDocument){
 			doc = (ExecuteResponseDocument) response;
@@ -130,7 +139,9 @@ public class ExecuteResponseAnalyser {
 				counter ++;
 			}
 		}
-		throw new RuntimeException("No reference found in response");
+		RuntimeException rte = new RuntimeException("No reference found in response");		
+		LOGGER.error(rte.getMessage());
+		throw rte;
 	}
 		
 	
@@ -144,7 +155,7 @@ public class ExecuteResponseAnalyser {
 	 * @return parsed WPS output as IData
 	 * @throws WPSClientException
 	 */
-	private IData parseProcessOutput(String outputID, Class outputDataBindingClass) throws WPSClientException {
+	private IData parseProcessOutput(String outputID, Class<?> outputDataBindingClass) throws WPSClientException {
 		OutputDescriptionType outputDesc = null;
 		
 		String schema = null;
@@ -204,7 +215,20 @@ public class ExecuteResponseAnalyser {
 						}
 						
 					}else{
-						is = processOutput.getData().getComplexData().newInputStream();
+						String complexDataContent;
+						try {
+							
+							NodeList candidateNodes = processOutput.getData().getComplexData().getDomNode().getChildNodes();
+							
+						    Node complexDataNode = candidateNodes.getLength() > 1 ? candidateNodes.item(1) : candidateNodes.item(0);							
+							
+							complexDataContent = XMLUtil.nodeToString(complexDataNode);
+							is = new ByteArrayInputStream(complexDataContent.getBytes());
+						} catch (TransformerFactoryConfigurationError e) {
+							LOGGER.error(e.getMessage());
+						} catch (TransformerException e) {
+							LOGGER.error(e.getMessage());
+						}
 					}
 					
 				}
@@ -216,13 +240,14 @@ public class ExecuteResponseAnalyser {
 		
 		
 		if(parser != null) {
-			if(encoding.equalsIgnoreCase("base64")){
+			if(encoding != null && encoding.equalsIgnoreCase("base64")){
 				return parser.parseBase64(is, mimeType, schema);
 			}else{
 				return parser.parse(is, mimeType, schema);
 			}
 		}
-
-		throw new RuntimeException("Could not find suitable parser");
+		RuntimeException rte = new RuntimeException("Could not find suitable parser");		
+		LOGGER.error(rte.getMessage());
+		throw rte;
 	}
 }
