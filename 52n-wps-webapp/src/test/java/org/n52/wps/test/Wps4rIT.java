@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
@@ -323,12 +324,9 @@ public class Wps4rIT {
             String payload = xmlPayload.toString();
             payload = payload.replace("@@@data@@@", cmd);
 
-            String response = PostClient.sendRequest(wpsUrl, payload);
-
             String expected = "illegal input";
-            assertThat("Response is an exception", response, containsString("ExceptionReport"));
-            assertThat("Response contains the keyphrase '" + expected + "'", response, containsString(expected));
-            assertThat("Response contains the illegal input", response, containsString(cmd));
+            
+            PostClient.checkForExceptionReport(wpsUrl, payload, HttpServletResponse.SC_BAD_REQUEST, expected, cmd);
         }
     }
 
@@ -342,12 +340,9 @@ public class Wps4rIT {
         for (String cmd : illegalCommands) {
             String payload = xmlPayload.toString();
             payload = payload.replace("@@@data@@@", cmd);
-
-            String response = PostClient.sendRequest(wpsUrl, payload);
-
-            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+            
             String expected = "eval failed";
-            assertThat("Response contains '" + expected + "'", response, containsString(expected));
+            PostClient.checkForExceptionReport(wpsUrl, payload, HttpServletResponse.SC_BAD_REQUEST, expected);
         }
     }
 
