@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>3.3.1-SNAPSHOT</version>
+		<version>3.3.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-io-geotools</artifactId>
@@ -15,7 +15,7 @@
 	<licenses>
 		<license>
 			<name>GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)</name>
-			<url>https://github.com/52North/WPS/tree/WPS-3.3.0/52n-wps-io-geotools/src/main/resources/LICENSE</url>
+			<url>https://raw.githubusercontent.com/52North/WPS/WPS-3.3.0/52n-wps-io-geotools/LICENSE</url>
 		</license>
 	</licenses>
 
