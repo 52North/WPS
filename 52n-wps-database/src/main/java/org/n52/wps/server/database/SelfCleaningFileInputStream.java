@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * After calling close on this InputStream, will attempt to delete the
  * underlying file
  *
- * @author isuftin
+ * @author isuftin (Ivan Suftin, USGS)
  */
 public class SelfCleaningFileInputStream extends FileInputStream {
 

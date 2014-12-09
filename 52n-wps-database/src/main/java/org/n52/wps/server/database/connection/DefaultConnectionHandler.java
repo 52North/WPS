@@ -35,7 +35,7 @@ import java.util.Properties;
 
 /**
  *
- * @author isuftin
+ * @author isuftin (Ivan Suftin, USGS)
  */
 public class DefaultConnectionHandler implements ConnectionHandler {
 

@@ -32,7 +32,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * @author abramhall
+ * @author abramhall (Arthur Bramhall, USGS)
  */
 public interface ConnectionHandler {
 

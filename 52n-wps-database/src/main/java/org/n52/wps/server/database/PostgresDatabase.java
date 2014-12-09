@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *Uses the Postgres database to store and retrieve data.
- * @author isuftin
+ * @author isuftin (Ivan Suftin, USGS)
  */
 public class PostgresDatabase extends AbstractDatabase {
 

@@ -35,7 +35,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
- * @author abramhall
+ * @author abramhall (Arthur Bramhall, USGS)
  */
 public class JNDIConnectionHandler implements ConnectionHandler {
 
