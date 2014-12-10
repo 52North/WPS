@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<inceptionYear>2014</inceptionYear>
+	<parent>
+		<groupId>org.n52.wps</groupId>
+		<artifactId>52n-wps-parent</artifactId>
+		<version>3.3.2-SNAPSHOT</version>
+	</parent>
+	<artifactId>52n-wps-fusion</artifactId>
+	<name>TUD Spatial data fusion backend</name>
+	<description>Module for spatial data fusion processes</description>
+  
+	<dependencies>
+	
+  		<!-- testing -->
+  		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+  		<!-- project dependencies -->
+  		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-algorithm</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-io</artifactId>
+		</dependency>
+		
+  		<!-- external dependencies -->
+  		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>de.tudresden.gis</groupId>
+			<artifactId>fusion-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>de.tudresden.gis</groupId>
+			<artifactId>fusion-impl</artifactId>
+		</dependency>
+		
+	</dependencies>
+  
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<configuration>
+					<header>../misc/licenses/license_header.txt</header>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jasig.maven</groupId>
+				<artifactId>maven-notice-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>check-licenses</id>
+						<phase></phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>

@@ -351,7 +351,8 @@ public class GTHelper {
 					}else if(property.getType().getBinding().equals(Double.class)){
 						schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
 						"<xs:simpleType> ";
-						schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+//						schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+						schema = schema + "<xs:restriction base=\"xs:double\"> "+
 						"</xs:restriction> "+
 						"</xs:simpleType> "+
 						"</xs:element> ";
@@ -422,7 +423,8 @@ public class GTHelper {
 						}else if(property.getType().getBinding().equals(Double.class)){
 							schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
 							"<xs:simpleType> ";
-							schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+//							schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+							schema = schema + "<xs:restriction base=\"xs:double\"> "+
 							"</xs:restriction> "+
 							"</xs:simpleType> "+
 							"</xs:element> ";

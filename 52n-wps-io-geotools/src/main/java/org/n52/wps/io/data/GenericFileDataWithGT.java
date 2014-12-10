@@ -322,9 +322,12 @@ public class GenericFileDataWithGT {
 	}
 
 	private static boolean isSupportedShapefileType(PropertyType type) {
+//		String supported[] = { "String", "Integer", "Double", "Boolean",
+//				"Date", "LineString", "MultiLineString", "Polygon",
+//				"MultiPolygon", "Point", "MultiPoint", "Long"};
 		String supported[] = { "String", "Integer", "Double", "Boolean",
 				"Date", "LineString", "MultiLineString", "Polygon",
-				"MultiPolygon", "Point", "MultiPoint", "Long"};
+				"MultiPolygon", "Point", "MultiPoint", "Long", "BigInteger", "Float"};
 		for (String iter : supported) {
 			if (type.getBinding().getSimpleName().equalsIgnoreCase(iter)) {
 				return true;

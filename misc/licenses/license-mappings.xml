@@ -22,6 +22,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="https://source.jasig.org/schemas/maven-notice-plugin/license-lookup https://source.jasig.org/schemas/maven-notice-plugin/license-lookup/license-lookup-v1.0.xsd">
 
+	<artifact>
+        <groupId>de.tudresden.gis</groupId>
+        <artifactId>fusion-base</artifactId>
+        <version>0.0.2-SNAPSHOT</version>
+        <license>The Apache Software License, Version 2.0</license>
+    </artifact>
+    <artifact>
+        <groupId>de.tudresden.gis</groupId>
+        <artifactId>fusion-impl</artifactId>
+        <version>0.0.2-SNAPSHOT</version>
+        <license>The Apache Software License, Version 2.0</license>
+    </artifact>
+    
 	<!-- http://axis.apache.org/axis/ -->
 	<artifact>
 		<groupId>org.apache.axis</groupId>

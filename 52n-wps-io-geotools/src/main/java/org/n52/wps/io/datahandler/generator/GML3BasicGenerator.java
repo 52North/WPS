@@ -165,8 +165,9 @@ public class GML3BasicGenerator extends AbstractGenerator {
 				QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 			}
-			SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
-		
+//			SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+			SimpleFeature resultFeature = GTHelper.createFeature(feature.getID(), (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+
 			simpleFeatureList.add(resultFeature);
 			i++;
 		}
