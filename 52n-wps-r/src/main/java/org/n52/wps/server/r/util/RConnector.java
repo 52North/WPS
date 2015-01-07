@@ -103,8 +103,10 @@ public class RConnector {
                     // rse.addSuppressed(e);
                 }
             }
-            else
+            else {
+                log.trace("Batch start is disabled!");
                 throw rse;
+            }
         }
 
         if (con == null)

@@ -34,7 +34,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -267,20 +266,28 @@ public class RSessionManager {
                                                                       GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)));
             warningsStream.close();
         }
-        catch (UnsupportedEncodingException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (IOException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (REXPMismatchException e) {
-            log.error("Could not save session info and warnings.", e);
-        }
-        catch (RserveException e) {
+        catch (IOException | REXPMismatchException | RserveException e) {
             log.error("Could not save session info and warnings.", e);
         }
 
         return result;
+    }
+
+    public void loadImportedScripts(RExecutor executor, Collection<File> imports) throws RserveException,
+            IOException,
+            RAnnotationException,
+            ExceptionReport {
+        log.debug("Loading {} imports: {}", imports.size(), Arrays.toString(imports.toArray()));
+
+        for (File file : imports) {
+            if (file.exists())
+                executor.executeScript(file, this.connection);
+            else
+                log.warn("Imported script does not exist: {}", file);
+        }
+
+        RLogger.log(connection, "workspace content after loading imports:");
+        RLogger.logSessionContent(connection);
     }
 
 }

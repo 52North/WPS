@@ -45,11 +45,13 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.metadata.RProcessDescriptionCreator;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
+import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
 import org.n52.wps.server.r.workspace.RIOHandler;
@@ -59,6 +61,8 @@ import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
@@ -139,7 +143,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
 
             // submits annotation with process informations to ProcessdescriptionCreator:
-            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(wkn);
+            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(wkn,
+                                                                                config.isResourceDownloadEnabled(),
+                                                                                config.isImportDownloadEnabled(),
+                                                                                config.isScriptDownloadEnabled(),
+                                                                                config.isSessionInfoLinkEnabled());
             ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
                                                                            wkn,
                                                                            RResource.getScriptURL(wkn),
@@ -177,13 +185,31 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
             workspace.loadInputValues(inputData, inAnnotations);
 
+            List<RAnnotation> importAnnotations = RAnnotation.filterAnnotations(this.annotations,
+                                                                                RAnnotationType.IMPORT);
+            List<File> imports = Lists.newArrayList();
+            for (RAnnotation rAnnotation : importAnnotations) {
+                @SuppressWarnings("unchecked")
+                List<R_Resource> importList = (List<R_Resource>) rAnnotation.getObjectValue(RAttribute.NAMED_LIST);
+                for (R_Resource importedScript : importList) {
+                    String value = importedScript.getResourceValue();
+                    File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
+                    imports.add(f);
+                    log.debug("Got imported file {} based on import resource {}", f, importList);
+                }
+            }
+            session.loadImportedScripts(executor, imports);
+
             if (log.isDebugEnabled())
                 workspace.saveImage("preExecution");
 
             File scriptFile = scriptFileRepository.getScriptFileForWKN(getWellKnownName());
 
-            HashMap<String, IData> result = null;
             boolean success = executor.executeScript(scriptFile, rCon);
+            if (log.isDebugEnabled())
+                workspace.saveImage("afterExecution");
+
+            HashMap<String, IData> result = null;
             if (success) {
                 List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
                                                                                  RAnnotationType.OUTPUT);
@@ -196,8 +222,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 throw new ExceptionReport(msg, getClass().getName());
             }
 
-            if (log.isDebugEnabled())
-                workspace.saveImage("afterExecution");
             log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
 
             session.cleanUp();

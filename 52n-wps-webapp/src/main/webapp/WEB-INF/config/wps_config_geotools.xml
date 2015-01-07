@@ -616,6 +616,10 @@
 			<Property name="R_utilsScriptDirectory" active="true">R/utils;org/n52/wps/R/unzipRenameFile.R;org/n52/wps/R/wpsStatus.R</Property>
 			<Property name="R_cacheProcesses" active="true">true</Property>
 			<Property name="R_session_memoryLimit" active="true">1000</Property>
+			<Property name="R_enableResourceDownload" active="true">true</Property>
+			<Property name="R_enableImportDownload" active="true">true</Property>
+			<Property name="R_enableScriptDownload" active="true">true</Property>
+			<Property name="R_enableSessionInfoDownload" active="true">false</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"

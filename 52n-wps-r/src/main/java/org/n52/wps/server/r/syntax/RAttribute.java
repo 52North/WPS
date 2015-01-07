@@ -46,7 +46,7 @@ public enum RAttribute {
     // A sequence of values:
     NAMED_LIST("seq", null, true),
     // derives from a named list
-    NAMED_LIST_R_SYNTAX("rseq", null, true);
+    NAMED_LIST_R_SYNTAX("rseq", null, true), IMPORT_START("wps.import", null, false);
 
     private String key;
 

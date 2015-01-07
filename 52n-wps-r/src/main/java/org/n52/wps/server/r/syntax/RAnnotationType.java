@@ -63,7 +63,9 @@ public enum RAnnotationType {
                               RAttribute.ABSTRACT,
                               RAttribute.AUTHOR)),
 
-    RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST));
+    RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST)),
+
+    IMPORT(Arrays.asList(RAttribute.IMPORT_START, RAttribute.NAMED_LIST));
 
     private HashMap<String, RAttribute> attributeLut = new HashMap<String, RAttribute>();
 
