@@ -38,7 +38,7 @@ package org.n52.wps.server.r.syntax;
 public enum RAttribute {
 
     INPUT_START("wps.in", null, true), OUTPUT_START("wps.out", null, true), DESCRIPTION_START("wps.des", null, true), RESOURCE_START(
-            "wps.res", null, true), IDENTIFIER("id", null, true), TYPE("type", null, true), TITLE("title", IDENTIFIER,
+            "wps.res", null, true), IDENTIFIER("id", null, true), TYPE("type", null, true), TITLE("title", null,
             false), VERSION("version", null, false), ABSTRACT("abstract", null, false), MIN_OCCURS("minOccurs", 1, true), MAX_OCCURS(
             "maxOccurs", 1, true), DEFAULT_VALUE("value", null, false), METADATA("meta", null, false), MIMETYPE(
             "mimetype", null, false), SCHEMA("schema", null, false), ENCODING("encoding", null, false), AUTHOR(
@@ -46,7 +46,11 @@ public enum RAttribute {
     // A sequence of values:
     NAMED_LIST("seq", null, true),
     // derives from a named list
-    NAMED_LIST_R_SYNTAX("rseq", null, true), IMPORT_START("wps.import", null, false);
+    NAMED_LIST_R_SYNTAX("rseq", null, true),
+    // imports:
+    IMPORT_START("wps.import", null, false),
+    // metadata links:
+    HREF("href", null, true), METADATA_START("wps.metadata", null, false);
 
     private String key;
 

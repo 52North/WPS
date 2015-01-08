@@ -40,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.opengis.ows.x11.MetadataType;
@@ -67,6 +69,7 @@ public class DescriptionCreator {
 
     private static R_Config config;
     private List<RAnnotation> annotations;
+    private RDataTypeRegistry registry;
 
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
@@ -82,7 +85,8 @@ public class DescriptionCreator {
         FileInputStream fis = new FileInputStream(scriptFile);
         RAnnotationParser parser = new RAnnotationParser();
         ReflectionTestUtils.setField(parser, "config", config);
-        ReflectionTestUtils.setField(parser, "dataTypeRegistry", new RDataTypeRegistry());
+        registry = new RDataTypeRegistry();
+        ReflectionTestUtils.setField(parser, "dataTypeRegistry", registry);
 
         this.annotations = parser.parseAnnotationsfromScript(fis);
         fis.close();
@@ -148,7 +152,7 @@ public class DescriptionCreator {
         for (MetadataType metadata : metadataArray) {
             titles.add(metadata.getTitle());
         }
-        assertThat("session link title in in the metadata elements",
+        assertThat("session link title is in the metadata elements",
                    titles,
                    hasItem(RProcessDescriptionCreator.SESSION_INFO_TITLE));
 
@@ -281,5 +285,101 @@ public class DescriptionCreator {
         }
     }
 
+    @Test
+    public void metadataAnnotationParsing() throws MalformedURLException, ExceptionReport, RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+        String t = "metadatatitle";
+        String h = "http://url.to/metadata.doc";
+        attributeHash.put(RAttribute.TITLE, t);
+        attributeHash.put(RAttribute.HREF, h);
+        testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
+
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
+                                                                            "R_andom",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        List<String> hrefs = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+            hrefs.add(metadata.getHref());
+        }
+        assertThat("metadata title in in the metadata elements", titles, hasItem(t));
+        assertThat("metadata href in in the metadata elements", hrefs, hasItem(h));
+    }
+
+    @Test
+    public void invalidMetadataHrefAnnotationParsing() throws MalformedURLException,
+            ExceptionReport,
+            RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.meta",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+        String t = "metadatatitle";
+        String h = "http://url.to/metadata.doc";
+        attributeHash.put(RAttribute.TITLE, t);
+        // attributeHash.put(RAttribute.HREF, h);
+        testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
+
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
+                                                                            "Meta",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        List<String> hrefs = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+            hrefs.add(metadata.getHref());
+        }
+        assertThat("metadata title NOT in in the metadata elements", titles, not(hasItem(t)));
+        assertThat("metadata href NOT in in the metadata elements", hrefs, not(hasItem(h)));
+    }
+
+    @Test
+    public void invalidMetadataTitleAnnotationParsing() throws MalformedURLException,
+            ExceptionReport,
+            RAnnotationException {
+        RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.meta",
+                                                                            true,
+                                                                            true,
+                                                                            true,
+                                                                            true);
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+        String t = "metadatatitle";
+        String h = "http://url.to/metadata.doc";
+        // attributeHash.put(RAttribute.TITLE, t);
+        attributeHash.put(RAttribute.HREF, h);
+        testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
+
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
+                                                                            "Meta",
+                                                                            new URL("http://my.url/myScript.R"),
+                                                                            new URL("http://my.url/to_the_session_info"));
+
+        MetadataType[] metadataArray = testType.getMetadataArray();
+        List<String> titles = Lists.newArrayList();
+        List<String> hrefs = Lists.newArrayList();
+        for (MetadataType metadata : metadataArray) {
+            titles.add(metadata.getTitle());
+            hrefs.add(metadata.getHref());
+        }
+        assertThat("metadata title NOT in in the metadata elements", titles, not(hasItem(t)));
+        assertThat("metadata href NOT in in the metadata elements", hrefs, not(hasItem(h)));
+    }
 
 }

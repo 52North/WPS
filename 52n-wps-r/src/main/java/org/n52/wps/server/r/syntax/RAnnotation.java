@@ -70,7 +70,7 @@ public class RAnnotation {
      *         if AttributHash is not valid for any cause
      * @throws RAnnotationException
      */
-    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash, RDataTypeRegistry registry) throws IOException,
+    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash, RDataTypeRegistry registry) throws
             RAnnotationException {
         super();
         this.type = type;

@@ -76,6 +76,8 @@ public class RProcessDescriptionCreator {
 
     public static final String IMPORT_TITLE_PREFIX = "Import: ";
 
+    private static final String DEFAULT_VERSION = "1";
+
     private static Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
     private String id;
@@ -165,6 +167,9 @@ public class RProcessDescriptionCreator {
                     else
                         log.trace("Import download is disabled, not adding elements to description.");
                     break;
+                case METADATA:
+                    addMetadataResources(pdt, annotation);
+                    break;
                 default:
                     break;
                 }
@@ -207,6 +212,31 @@ public class RProcessDescriptionCreator {
                                       RProcessDescriptionCreator.class.getName(),
                                       e);
         }
+    }
+
+    private void addMetadataResources(ProcessDescriptionType pdt, RAnnotation annotation) {
+        String title = null;
+        String href = null;
+        try {
+            title = annotation.getStringValue(RAttribute.TITLE);
+            href = annotation.getStringValue(RAttribute.HREF);
+        }
+        catch (RAnnotationException e) {
+            log.error("Problem adding process resources to process description", e);
+            return;
+        }
+
+        if (title != null && !title.isEmpty()) {
+            if (href != null && !href.isEmpty()) {
+                MetadataType mt = pdt.addNewMetadata();
+                mt.setTitle(title);
+                mt.setHref(href);
+            }
+            else
+                log.warn("Cannot add metadat resource, 'href' is null or empty");
+        }
+        else
+            log.warn("Cannot add metadat resource, 'title' is null or empty");
     }
 
     private void addScriptLink(URL fileUrl, ProcessDescriptionType pdt) {
@@ -302,12 +332,18 @@ public class RProcessDescriptionCreator {
         pdt.addNewIdentifier().setStringValue(id);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
-        pdt.addNewAbstract().setStringValue("" + abstr);
+        if (abstr != null && !abstr.isEmpty())
+            pdt.addNewAbstract().setStringValue(abstr);
 
         String title = annotation.getStringValue(RAttribute.TITLE);
-        pdt.addNewTitle().setStringValue("" + title);
+        if (title != null && !title.isEmpty())
+            pdt.addNewTitle().setStringValue(title);
 
-        pdt.setProcessVersion(annotation.getStringValue(RAttribute.VERSION));
+        String version = annotation.getStringValue(RAttribute.VERSION);
+        if (version != null && !version.isEmpty())
+            pdt.setProcessVersion(version);
+        else
+            pdt.setProcessVersion(DEFAULT_VERSION);
     }
 
     private static void addInput(DataInputs inputs, RAnnotation annotation) throws RAnnotationException {
@@ -316,13 +352,16 @@ public class RProcessDescriptionCreator {
         String identifier = annotation.getStringValue(RAttribute.IDENTIFIER);
         input.addNewIdentifier().setStringValue(identifier);
 
-        // title is optional, therefore it could be null
+        // title is optional in the annotation, therefore it could be null, but it is required in the
+        // description - then set to ID
         String title = annotation.getStringValue(RAttribute.TITLE);
         if (title != null)
             input.addNewTitle().setStringValue(title);
+        else
+            input.addNewTitle().setStringValue(identifier);
 
         String abstr = annotation.getStringValue(RAttribute.ABSTRACT);
-        // abstract is optional, therefore it could be null
+        // abstract is optional, therefore it can be missing
         if (abstr != null)
             input.addNewAbstract().setStringValue(abstr);
 
@@ -389,10 +428,12 @@ public class RProcessDescriptionCreator {
         String identifier = out.getStringValue(RAttribute.IDENTIFIER);
         output.addNewIdentifier().setStringValue(identifier);
 
-        // title is optional, therefore it could be null
+        // title is optional, therefore it could be null; but required in description, so the to id
         String title = out.getStringValue(RAttribute.TITLE);
         if (title != null)
             output.addNewTitle().setStringValue(title);
+        else
+            output.addNewTitle().setStringValue(identifier);
 
         // is optional, therefore it could be null
         String abstr = out.getStringValue(RAttribute.ABSTRACT);
