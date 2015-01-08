@@ -206,7 +206,7 @@ public class DescriptionCreator {
     }
 
     @Test
-    public void resourceDownloaodEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+    public void resourceDownloadEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
         RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
                                                                             true,
                                                                             true,
@@ -243,7 +243,7 @@ public class DescriptionCreator {
     }
 
     @Test
-    public void importDownloaodEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
+    public void importDownloadEnablingWorks() throws MalformedURLException, ExceptionReport, RAnnotationException {
         RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
                                                                             true,
                                                                             true,
@@ -280,5 +280,6 @@ public class DescriptionCreator {
                        not(startsWith(RProcessDescriptionCreator.IMPORT_TITLE_PREFIX)));
         }
     }
+
 
 }
