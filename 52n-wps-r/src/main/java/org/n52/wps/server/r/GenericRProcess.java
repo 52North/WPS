@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
@@ -153,7 +154,12 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                            RResource.getScriptURL(wkn),
                                                                            RResource.getSessionInfoURL());
 
-            log.debug("Created process description for {}:\n{}", wkn, doc.xmlText());
+            if (log.isDebugEnabled()) {
+                ProcessDescriptionsDocument outerDoc = ProcessDescriptionsDocument.Factory.newInstance();
+                ProcessDescriptionType type = outerDoc.addNewProcessDescriptions().addNewProcessDescription();
+                type.set(doc);
+                log.debug("Created process description for {}:\n{}", wkn, outerDoc.xmlText());
+            }
             return doc;
         }
         catch (RAnnotationException | IOException | ExceptionReport e) {
