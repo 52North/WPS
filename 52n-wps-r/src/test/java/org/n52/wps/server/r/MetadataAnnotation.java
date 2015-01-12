@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import static org.hamcrest.CoreMatchers.not;
@@ -113,17 +112,17 @@ public class MetadataAnnotation {
 
             for (RAnnotation annotation : annotations) {
                 assertThat("title of metadata annotation is available",
-                           annotation.containsKey(RAttribute.TITLE),
-                           is(equalTo(true)));
+                        annotation.containsKey(RAttribute.TITLE),
+                        is(equalTo(true)));
                 assertThat("href of metadata annotation is available",
-                           annotation.containsKey(RAttribute.HREF),
-                           is(equalTo(true)));
+                        annotation.containsKey(RAttribute.HREF),
+                        is(equalTo(true)));
                 assertThat("title of metadata annotation is not empty",
-                           annotation.getStringValue(RAttribute.HREF),
-                           not(isEmptyString()));
+                        annotation.getStringValue(RAttribute.HREF),
+                        not(isEmptyString()));
                 assertThat("href of metadata annotation is not empty",
-                           annotation.getStringValue(RAttribute.HREF),
-                           not(isEmptyString()));
+                        annotation.getStringValue(RAttribute.HREF),
+                        not(isEmptyString()));
             }
 
         }
@@ -154,15 +153,15 @@ public class MetadataAnnotation {
 
         assertThat("metadata 1 title is in description", description, containsString("title=\"detailed manual\""));
         assertThat("metadata 2 title is in description",
-                   description,
-                   containsString("title=\"scientific publication\""));
+                description,
+                containsString("title=\"scientific publication\""));
 
         assertThat("metadata 1 link is in description",
-                   description,
-                   containsString("href=\"http://my.url/information.pdf\""));
+                description,
+                containsString("href=\"http://my.url/information.pdf\""));
         assertThat("metadata 2 link is in description",
-                   description,
-                   containsString("href=\"http://my.other.url/journal-publication.pdf\""));
+                description,
+                containsString("href=\"http://my.other.url/journal-publication.pdf\""));
     }
 
     @Test
@@ -172,8 +171,8 @@ public class MetadataAnnotation {
 
         assertThat("metadata 1 title is NOT in description", description, not(containsString("detailed manual")));
         assertThat("metadata 1 link is NOT in description",
-                   description,
-                   not(containsString("http://my.url/information.pdf")));
+                description,
+                not(containsString("http://my.url/information.pdf")));
     }
 
 }

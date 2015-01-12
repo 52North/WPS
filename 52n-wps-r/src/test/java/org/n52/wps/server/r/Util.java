@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -54,8 +53,7 @@ public class Util {
         File f;
         try {
             f = new File(r.toURI());
-        }
-        catch (URISyntaxException e) {
+        } catch (URISyntaxException e) {
             Assert.fail("Invalid file path (not URI): " + e.getMessage());
             return null;
         }

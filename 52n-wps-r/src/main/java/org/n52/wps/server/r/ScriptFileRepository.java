@@ -68,9 +68,6 @@ public class ScriptFileRepository {
     /** Maps each identifier to an R script file **/
     private HashMap<String, File> wknToFileMap = new HashMap<String, File>();
 
-    /** caches conflicts for the wkn-Rscript mapping until resetWknFileMapping is invoked **/
-    private HashMap<String, ExceptionReport> wknConflicts = new HashMap<String, ExceptionReport>();
-
     @Autowired
     private RAnnotationParser annotationParser;
 
@@ -82,10 +79,6 @@ public class ScriptFileRepository {
     }
 
     public File getScriptFileForWKN(String wkn) throws ExceptionReport {
-        // check for existing identifier conflicts
-        if (wknConflicts.containsKey(wkn))
-            throw wknConflicts.get(wkn);
-
         File out = wknToFileMap.get(wkn);
         if (out != null && out.exists() && out.isFile() && out.canRead()) {
             return out;
@@ -181,7 +174,7 @@ public class ScriptFileRepository {
                         if (fileToWknMap.containsValue(wkn)) {
                             File conflictFile = getScriptFileForWKN(wkn);
                             if ( !conflictFile.exists()) {
-                                LOGGER.info("Cached mapping for process '{}' with file '{}' replaced by file '{}'",
+                                LOGGER.info("Mapping for process '{}' with file '{}' replaced by file '{}'",
                                             wkn,
                                             conflictFile.getName(),
                                             file.getName());
@@ -189,11 +182,10 @@ public class ScriptFileRepository {
                             else if ( !file.equals(conflictFile)) {
                                 String message = String.format("Conflicting identifier '%s' detected for R scripts '%s' and '%s'",
                                                                wkn,
-                                                               file.getName(),
-                                                               conflictFile.getName());
+                                                               file.getAbsoluteFile(),
+                                                               conflictFile.getAbsoluteFile());
                                 ExceptionReport e = new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
                                 LOGGER.error(message);
-                                wknConflicts.put(wkn, e);
                                 throw e;
                             }
                         }
@@ -207,7 +199,7 @@ public class ScriptFileRepository {
             }
         }
         catch (IOException e) {
-            LOGGER.error("Could not create input stream for file {}", file);
+            LOGGER.error("Could not create input stream for file '{}'", file, e);
         }
 
         return registered;
@@ -246,13 +238,12 @@ public class ScriptFileRepository {
 
         return allRegistered;
     }
-
+    
     public void reset() {
         LOGGER.info("Resetting {}", this);
 
         this.wknToFileMap.clear();
         this.fileToWknMap.clear();
-        this.wknConflicts.clear();
     }
 
     public File getImportedFileForWKN(String scriptId, String importId) throws ExceptionReport {

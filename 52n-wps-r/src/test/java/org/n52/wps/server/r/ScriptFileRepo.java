@@ -29,11 +29,8 @@
 
 package org.n52.wps.server.r;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -50,6 +47,13 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.io.Files;
+import java.io.FileNotFoundException;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 
 /**
  * 
@@ -82,6 +86,9 @@ public class ScriptFileRepo {
         ReflectionTestUtils.setField(sr, "config", config);
         expectedWKN = config.getPublicScriptId("uniform");
     }
+    
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     public String prepareMissingScriptFile() throws IOException, RAnnotationException, ExceptionReport {
         File temp = File.createTempFile("wps4rIT_", ".R");
@@ -158,8 +165,7 @@ public class ScriptFileRepo {
 
     @Test
     public void importedScriptIsFound() throws IOException, RAnnotationException, ExceptionReport {
-        File f = Util.loadFile("/annotations/import/script.R");
-        sr.registerScript(f);
+        sr.registerScript(Util.loadFile("/annotations/import/script.R"));
 
         File file = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "imported.R");
         File fileInSubdir = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "dir/alsoImported.R");
@@ -168,6 +174,17 @@ public class ScriptFileRepo {
         assertThat("imported script file in subdir can be resolved", fileInSubdir.exists(), is(equalTo(true)));
         assertThat("imported script file in subdir is absolute", fileInSubdir.isAbsolute(), is(equalTo(true)));
         assertThat("imported script file in same dir is absolute", file.exists(), is(equalTo(true)));
+    }
+    
+    @Test
+    public void errorOnSameIdentifier() throws FileNotFoundException, RAnnotationException, IOException, ExceptionReport {
+        boolean registered = sr.registerScripts(Util.loadFile("/annotations/identifier"));
+        assertThat("not all scripts registered", registered, is(equalTo(false)));
+        
+        thrown.expect(ExceptionReport.class);
+        thrown.expectMessage(Matchers.containsString("Conflicting identifier"));
+        thrown.expectMessage(Matchers.containsString("notunique"));
+        sr.registerScript(Util.loadFile("/annotations/identifier/script2.R"));
     }
 
 }
