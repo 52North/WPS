@@ -111,7 +111,8 @@ public class R_Config implements ServletContextAware {
     public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport {
         String path = getConfigVariable(key);
         if (path == null)
-            throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
+            throw new ExceptionReport("Config variable '" + key.toString() + "' is not set!", "Inconsistent property", key.name());
+        
         File file = new File(path);
         if ( !file.isAbsolute()) {
             file = getBaseDir().resolve(Paths.get(path)).toFile();

@@ -187,7 +187,7 @@ public class ScriptFileRepository {
                                             file.getName());
                             }
                             else if ( !file.equals(conflictFile)) {
-                                String message = String.format("Conflicting identifier '{}' detected for R scripts '{}' and '{}'",
+                                String message = String.format("Conflicting identifier '%s' detected for R scripts '%s' and '%s'",
                                                                wkn,
                                                                file.getName(),
                                                                conflictFile.getName());

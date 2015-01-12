@@ -56,7 +56,7 @@ public class Util {
             f = new File(r.toURI());
         }
         catch (URISyntaxException e) {
-            Assert.fail("Invalid file path (not URI).");
+            Assert.fail("Invalid file path (not URI): " + e.getMessage());
             return null;
         }
 

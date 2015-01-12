@@ -145,33 +145,36 @@ public class RProcessDescriptionCreator {
             // The annotation type (RAnnotationType - enumeration) determines
             // next method call
             for (RAnnotation annotation : annotations) {
+                log.trace("Adding information to process description based on annotation {}", annotation);
+                
                 switch (annotation.getType()) {
-                case INPUT:
-                    addInput(inputs, annotation);
-                    break;
-                case OUTPUT:
-                    addOutput(outputs, annotation);
-                    break;
-                case DESCRIPTION:
-                    addProcessDescription(pdt, annotation);
-                    break;
-                case RESOURCE:
-                    if (resourceDownloadEnabled)
-                        addProcessResources(pdt, annotation);
-                    else
-                        log.trace("Resource download is disabled, not adding elements to description.");
-                    break;
-                case IMPORT:
-                    if (importDownloadEnabled)
-                        addImportProcessResources(pdt, annotation);
-                    else
-                        log.trace("Import download is disabled, not adding elements to description.");
-                    break;
-                case METADATA:
-                    addMetadataResources(pdt, annotation);
-                    break;
-                default:
-                    break;
+                    case INPUT:
+                        addInput(inputs, annotation);
+                        break;
+                    case OUTPUT:
+                        addOutput(outputs, annotation);
+                        break;
+                    case DESCRIPTION:
+                        addProcessDescription(pdt, annotation);
+                        break;
+                    case RESOURCE:
+                        if (resourceDownloadEnabled)
+                            addProcessResources(pdt, annotation);
+                        else
+                            log.trace("Resource download is disabled, not adding elements to description.");
+                        break;
+                    case IMPORT:
+                        if (importDownloadEnabled)
+                            addImportProcessResources(pdt, annotation);
+                        else
+                            log.trace("Import download is disabled, not adding elements to description.");
+                        break;
+                    case METADATA:
+                        addMetadataResources(pdt, annotation);
+                        break;
+                    default:
+                        log.trace("Unhandled annotation: {}", annotation);
+                        break;
                 }
             }
 

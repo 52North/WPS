@@ -220,6 +220,7 @@ public class RWorkspace {
      * @param workDirName
      * 
      * @return the new working directory, which is already set.
+     * @throws org.rosuda.REngine.REXPMismatchException
      */
     public String setWorkingDirectory(RConnection connection,
                                       String currentWorkDir,
@@ -251,7 +252,8 @@ public class RWorkspace {
         if (strategy.equals(CreationStrategy.MANUALBASEDIR) || strategy.equals(CreationStrategy.MANUAL)) {
             try {
                 if (workDirName == null)
-                    throw new ExceptionReport("Config variable is not set!", "Inconsistent property");
+                    throw new ExceptionReport("Error setting working directory with strategy '" + strategy +  "': WorkDirName is 'null' is not set!", "Inconsistent property");
+
                 File testFile = new File(workDirName);
                 if ( !testFile.isAbsolute()) {
                     testFile = basedir.resolve(path).toFile();
