@@ -322,12 +322,12 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Override
     public Collection<String> getAlgorithmNames() {
-        return new ArrayList<String>(this.algorithms.keySet());
+        return new ArrayList<>(this.algorithms.keySet());
     }
 
     @Override
-    public boolean containsAlgorithm(String className) {
-        return this.algorithms.containsKey(className);
+    public boolean containsAlgorithm(String processID) {
+        return this.algorithms.containsKey(processID);
     }
 
     private GenericRProcess loadAlgorithmAndValidate(String wellKnownName) {
