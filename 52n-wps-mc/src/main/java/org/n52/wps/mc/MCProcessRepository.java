@@ -28,7 +28,6 @@
  */
 package org.n52.wps.mc;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.movingcode.runtime.GlobalRepositoryManager;
-import org.n52.movingcode.runtime.ProcessorConfig;
 import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
 import org.n52.movingcode.runtime.coderepository.IMovingCodeRepository;
 import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
@@ -63,7 +61,6 @@ import org.n52.wps.server.IAlgorithmRepository;
 public class MCProcessRepository implements IAlgorithmRepository {
 
 	// static string definitions
-	private static final String CONFIG_FILE_NAME = "processors.xml";
 	private static final String REPO_FEED_REPO_PARAM = "REMOTE_REPOSITORY";
 	private static final String LOCAL_ZIP_REPO_PARAM = "LOCAL_REPOSITORY";
 	private static final String CACHED_REMOTE_REPO_PARAM = "CACHED_REMOTE_REPOSITORY";
@@ -81,8 +78,6 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 		// check if the repository is active
 		if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
-			// configure the runtime
-			configureMCRuntime();
 			
 			// trigger remote repo init in separate thread
 			Thread tLoadRemote = new LoadRepoThread();
@@ -142,17 +137,6 @@ public class MCProcessRepository implements IAlgorithmRepository {
 	public void shutdown() {
 		// TODO Auto-generated method stub
 		// we probably do not need any logic here
-	}
-
-	// ----------------------------------------------------------------
-	// methods and logic for processor configuration
-	private static void configureMCRuntime() {
-		String configFilePath = WPSConfig.getConfigDir() + CONFIG_FILE_NAME;
-		File configFile = new File(configFilePath);
-		boolean loaded = ProcessorConfig.getInstance().setConfig(configFile);
-		if ( !loaded) {
-			logger.error("Could not load processor configuration from " + configFilePath);
-		}
 	}
 
 	/**
