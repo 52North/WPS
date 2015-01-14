@@ -146,12 +146,16 @@
 		<Repository name="ServiceLoaderAlgorithmRepository"
 			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
 		</Repository>
+		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
+			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed2/gpfeed.xml</Property>
+			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
+		</Repository>
   </AlgorithmRepositoryList>
-	<RemoteRepositoryList />
-
+	<RemoteRepositoryList/>
+	
 	<Server protocol="http" hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
-		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0" maxPoolSize="20" keepAliveSeconds="1000" maxQueuedTasks="100" minPoolSize="10" >
+		cacheCapabilites="false" webappPath="52n-wps-webapp" repoReloadInterval="0" maxPoolSize="20" keepAliveSeconds="1000" maxQueuedTasks="100" minPoolSize="10" >
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. -->
         <Property name="responseURLFilterEnabled" active="true">false</Property>
