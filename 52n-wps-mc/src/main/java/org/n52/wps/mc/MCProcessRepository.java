@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.movingcode.runtime.GlobalRepositoryManager;
 import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
-import org.n52.movingcode.runtime.coderepository.IMovingCodeRepository;
+import org.n52.movingcode.runtime.coderepository.MovingCodeRepository;
 import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
 import org.n52.movingcode.runtime.processors.ProcessorFactory;
 import org.n52.wps.PropertyDocument.Property;
@@ -82,7 +82,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 		rm.addRepositoryChangeListener(new RepositoryChangeListener() {
 			
 			@Override
-			public void onRepositoryUpdate(IMovingCodeRepository updatedRepo) {
+			public void onRepositoryUpdate(MovingCodeRepository updatedRepo) {
 				// trigger a content update of this repo
 				updateContent();
 				// and notify the WPS framework to trigger a Capabilities update
