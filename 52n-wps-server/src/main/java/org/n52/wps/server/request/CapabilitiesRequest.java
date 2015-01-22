@@ -130,7 +130,7 @@ public class CapabilitiesRequest extends Request {
         }
 
         String[] versions = getMapArray(PARAM_VERSION, false);
-        if ( !requireVersion(SUPPORTED_VERSION, false)) {
+        if ( !requireVersion(SUPPORTED_VERSIONS, false)) {
             throw new ExceptionReport("Requested versions are not supported, you requested: "
                     + Request.accumulateString(versions), ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
         }

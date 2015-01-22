@@ -91,7 +91,7 @@ public class ExecuteResponseBuilder {
                 + "?REQUEST=GetCapabilities&SERVICE=WPS");
 		doc.getExecuteResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		doc.getExecuteResponse().setService("WPS");
-		doc.getExecuteResponse().setVersion(Request.SUPPORTED_VERSION);
+		doc.getExecuteResponse().setVersion("1.0.0");//FIXME set to requested version
 		this.identifier = request.getExecute().getIdentifier().getStringValue().trim();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);

@@ -245,7 +245,7 @@ public class RequestHandler {
 		if(!isCapabilitiesNode && version == null) {
 			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
-		if(!isCapabilitiesNode && !version.equals(Request.SUPPORTED_VERSION)) {
+		if(!isCapabilitiesNode && !Request.SUPPORTED_VERSIONS.contains(version)) {
 			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type

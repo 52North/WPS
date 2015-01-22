@@ -156,7 +156,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
 		String version = getMapValue("version", ciMap, true);
-		if (!version.equals(Request.SUPPORTED_VERSION)) {
+		if (!Request.SUPPORTED_VERSIONS.contains(version)) {
 			throw new ExceptionReport("request version is not supported: "
 					+ version, ExceptionReport.VERSION_NEGOTIATION_FAILED);
 		}
@@ -504,7 +504,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		 * ExceptionReport.INVALID_PARAMETER_VALUE); }
 		 * 
 		 */
-		if (!execDom.getExecute().getVersion().equals(SUPPORTED_VERSION)) {
+		if (!Request.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
 			throw new ExceptionReport("Specified version is not supported.",
 					ExceptionReport.INVALID_PARAMETER_VALUE, "version="
 							+ getExecute().getVersion());

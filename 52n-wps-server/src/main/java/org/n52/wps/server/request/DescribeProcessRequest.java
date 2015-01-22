@@ -145,7 +145,7 @@ public class DescribeProcessRequest extends Request {
 		String[] identifiers = getMapValue("identifier", true).split(",");
 		document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		document.getProcessDescriptions().setService("WPS");
-		document.getProcessDescriptions().setVersion(Request.SUPPORTED_VERSION);
+		document.getProcessDescriptions().setVersion("1.0.0");//FIXME set to requested version
 		
 		if(identifiers.length==1 && identifiers[0].equalsIgnoreCase("all")){
 			List<String> identifierList = RepositoryManager.getInstance().getAlgorithms();

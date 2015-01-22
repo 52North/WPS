@@ -28,6 +28,8 @@
  */
 package org.n52.wps.server.request;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
@@ -50,7 +52,7 @@ abstract public class Request implements Callable <Response> {
 	protected Document doc = null;
 	protected static Logger LOGGER = LoggerFactory.getLogger(Request.class);
 	protected UUID id = null;
-	public static final String SUPPORTED_VERSION = "1.0.0";
+	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{"1.0.0", "2.0"});
 	public static final String[] SUPPORTED_LANGUAGES = new String[]{"en-US"};
 	
 	/**
@@ -193,7 +195,7 @@ abstract public class Request implements Callable <Response> {
 	 * @param version The version that is required on the client
 	 * @return True if the required version matches, False otherwise.
 	 */
-	public boolean requireVersion(String version, boolean mandatory) throws ExceptionReport{
+	public boolean requireVersion(List<String> supportedVersions, boolean mandatory) throws ExceptionReport{
 		String[] versions = getRequestedVersions(mandatory);
 		if(mandatory && versions == null) {
 			//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
@@ -204,7 +206,7 @@ abstract public class Request implements Callable <Response> {
 		}
 		for(String v : versions) {
 			//remove possible blanks
-			if(v.trim().equals(version)) {
+			if(supportedVersions.contains(v.trim())) {
 				return true;
 			}
 		}

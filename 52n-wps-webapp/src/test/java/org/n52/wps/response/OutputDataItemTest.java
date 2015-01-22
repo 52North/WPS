@@ -150,7 +150,7 @@ public class OutputDataItemTest extends AbstractITClass{
 				+ "?REQUEST=GetCapabilities&SERVICE=WPS");
 		responseElem.setLang(WebProcessingService.DEFAULT_LANGUAGE);
 		responseElem.setService("WPS");
-		responseElem.setVersion(Request.SUPPORTED_VERSION);
+		responseElem.setVersion("1.0.0");
 		ProcessBriefType process = responseElem.addNewProcess();
 		process.addNewIdentifier().setStringValue(processID);
 		process.setProcessVersion("1.0.0");
