@@ -66,6 +66,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IComplexData;
@@ -156,7 +157,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
 		String version = getMapValue("version", ciMap, true);
-		if (!Request.SUPPORTED_VERSIONS.contains(version)) {
+		if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {
 			throw new ExceptionReport("request version is not supported: "
 					+ version, ExceptionReport.VERSION_NEGOTIATION_FAILED);
 		}
@@ -504,7 +505,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		 * ExceptionReport.INVALID_PARAMETER_VALUE); }
 		 * 
 		 */
-		if (!Request.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
+		if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
 			throw new ExceptionReport("Specified version is not supported.",
 					ExceptionReport.INVALID_PARAMETER_VALUE, "version="
 							+ getExecute().getVersion());

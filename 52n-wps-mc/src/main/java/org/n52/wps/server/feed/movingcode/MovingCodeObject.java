@@ -48,6 +48,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
+import org.n52.wps.server.ProcessDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
@@ -66,6 +67,7 @@ public class MovingCodeObject {
 	private final File algorithmWorkspace;
 
 	private ProcessDescriptionType processDescription;
+	private static ProcessDescription superProcessDescription;
 	private AlgorithmDescription algorithmDescription;
 
 	static Logger LOGGER = LoggerFactory.getLogger(MovingCodeObject.class);
@@ -84,7 +86,7 @@ public class MovingCodeObject {
 	public MovingCodeObject (File processDescriptionXML, File workspaceTemplateRoot){
 
 		// create descriptions
-		processDescription = createProcessDescription(processDescriptionXML);
+		processDescription = (ProcessDescriptionType) createProcessDescription(processDescriptionXML).getProcessDescriptionType("1.0.0");
 		algorithmDescription = createAlgorithmDescription(processDescriptionXML);
 
 		// assemble template workspace
@@ -143,8 +145,8 @@ public class MovingCodeObject {
 		return doublecheck;
 	}
 
-	public ProcessDescriptionType getProcessDescription(){
-		return processDescription;
+	public ProcessDescription getProcessDescription(){
+		return superProcessDescription;
 	}
 
 	public File getInstanceWorkspace(){
@@ -200,7 +202,7 @@ public class MovingCodeObject {
 
 	}
 
-	private static ProcessDescriptionType createProcessDescription (File describeProcessFile){
+	private static ProcessDescription createProcessDescription (File describeProcessFile){
 
 		try {
 			InputStream xmlDesc = new FileInputStream(describeProcessFile);
@@ -211,7 +213,11 @@ public class MovingCodeObject {
 				LOGGER.warn("ProcessDescription is empty!");
 				return null;
 			}
-			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
+			superProcessDescription = new ProcessDescription();
+			
+			superProcessDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+			
+			return superProcessDescription;
 		}
 		catch(IOException e) {
 			LOGGER.warn("Could not initialize algorithm, parsing error! ", e);

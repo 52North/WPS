@@ -69,7 +69,7 @@ public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 	}
 
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		IAlgorithm algo = getAlgorithm(processID);
 		if (algo != null) {
 			return algo.getDescription();

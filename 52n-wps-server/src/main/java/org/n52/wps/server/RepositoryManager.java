@@ -282,7 +282,7 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	public ProcessDescriptionType getProcessDescription(String processClassName){
+	public ProcessDescription getProcessDescription(String processClassName){
 		for(IAlgorithmRepository repository : repositories){
 			if(repository.containsAlgorithm(processClassName)){
 				return repository.getProcessDescription(processClassName);

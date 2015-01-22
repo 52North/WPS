@@ -76,7 +76,7 @@ public class RawDataTest  extends AbstractITClass{
     @Before
     public void setUp(){
     	algorithm = new DummyTestClass();
-    	processDescription = algorithm.getDescription();
+    	processDescription = (ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType("1.0.0");
     	identifier = algorithm.getWellKnownName();
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
     }

@@ -44,7 +44,7 @@ public class ExecuteRequestBuilderTest {
 
     @Test
     public void addComplexDataInputType() {
-        ProcessDescriptionType processDescriptionType = new MultiReferenceBinaryInputAlgorithm().getDescription();
+        ProcessDescriptionType processDescriptionType = (ProcessDescriptionType) new MultiReferenceBinaryInputAlgorithm().getDescription().getProcessDescriptionType("1.0.0");//FIXME check other versions
 
         ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
 

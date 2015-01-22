@@ -16,25 +16,21 @@
  */
 package org.n52.wps.server;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * @author 	Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
- *
- */
-public interface IAlgorithmRepository {
-	Collection<String> getAlgorithmNames();
-	
-	IAlgorithm getAlgorithm(String processID);
-	
-	ProcessDescription getProcessDescription(String processID);
-	
-	boolean containsAlgorithm(String processID);
+import org.apache.xmlbeans.XmlObject;
 
-	/**
-	 * use to free resources
-	 */
-	public void shutdown();
-	
+public class ProcessDescription {
 
+	private Map<String, XmlObject> versionDescriptionTypeMap = new HashMap<String, XmlObject>();
+
+	public XmlObject getProcessDescriptionType(String version) {
+		return versionDescriptionTypeMap.get(version);
+	}
+
+	public void addProcessDescriptionForVersion(XmlObject processDescription, String version){
+		versionDescriptionTypeMap.put(version, processDescription);		
+	}
+	
 }

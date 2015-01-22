@@ -111,7 +111,7 @@ public class SimpleBufferAlgorithmTest {
     private void printAlgorithmProcessDescription(IAlgorithm algorithm) {
         System.out.println();
         System.out.println(" ### DescribeProcess for " + algorithm.getClass().getName() + " ###");
-        System.out.println(getXMLAsStringFromDescription(algorithm.getDescription()));
+        System.out.println(getXMLAsStringFromDescription((ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType("1.0.0")));//FIXME check versions
         System.out.println();
     }
 
@@ -119,7 +119,7 @@ public class SimpleBufferAlgorithmTest {
         XmlOptions xmlOptions = new XmlOptions();
         List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();
             xmlOptions.setErrorListener(xmlValidationErrorList);
-        boolean valid = algorithm.getDescription().validate(xmlOptions);
+        boolean valid = algorithm.getDescription().getProcessDescriptionType("1.0.0").validate(xmlOptions);//FIXME check versions
         if (!valid) {
             System.err.println("Error validating process description for " + getClass().getCanonicalName());
             for (XmlValidationError xmlValidationError : xmlValidationErrorList) {

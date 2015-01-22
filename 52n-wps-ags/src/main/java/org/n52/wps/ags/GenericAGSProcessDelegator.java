@@ -54,6 +54,7 @@ import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,24 +72,26 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	private String[] toolParameters;
 	private final int parameterCount;
 	private final ProcessDescriptionType processDescription;
+	private final ProcessDescription superProcessDescription;
 	private final File instanceWorkspace;
 	
 	
 	
-	public GenericAGSProcessDelegator(File workspace, String processID, ToolParameter[] legacyParameters, ProcessDescriptionType processDescription) {
+	public GenericAGSProcessDelegator(File workspace, String processID, ToolParameter[] legacyParameters, ProcessDescription processDescription) {
 		errors = new ArrayList<String>();
 		this.processID = processID;
 		this.parameterDescriptions = legacyParameters;
 		this.parameterCount = legacyParameters.length;
-		this.processDescription = processDescription;
+		this.superProcessDescription = processDescription;
+		this.processDescription = (ProcessDescriptionType) processDescription.getProcessDescriptionType("1.0.0");//FIXME check
 		this.toolParameters = new String[this.parameterCount];
 		this.instanceWorkspace = workspace;
 		
 	}
 	
 	
-	public ProcessDescriptionType getDescription() {
-		return processDescription;
+	public ProcessDescription getDescription() {
+		return superProcessDescription;
 	}
 
 	public List<String> getErrors() {
@@ -97,7 +100,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	
 	
 	public Class<?> getInputDataType(String id) {
-		InputDescriptionType[] inputs = this.getDescription().getDataInputs().getInputArray();
+		InputDescriptionType[] inputs = processDescription.getDataInputs().getInputArray();
 		
 		for(InputDescriptionType input : inputs){
 			
@@ -134,7 +137,7 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	}
 
 	public Class<?> getOutputDataType(String id) {
-		OutputDescriptionType[] outputs = this.getDescription().getProcessOutputs().getOutputArray();
+		OutputDescriptionType[] outputs = processDescription.getProcessOutputs().getOutputArray();
 		
 		for(OutputDescriptionType output : outputs){
 			
@@ -175,8 +178,8 @@ public class GenericAGSProcessDelegator implements IAlgorithm{
 	}
 
 	
-	public boolean processDescriptionIsValid() {
-		return this.getDescription().validate();
+	public boolean processDescriptionIsValid(String version) {
+		return superProcessDescription.getProcessDescriptionType(version).validate();
 	}
 
 	

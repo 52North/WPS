@@ -49,6 +49,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.ProcessDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Comment;
@@ -63,7 +64,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(AGSProcessRepository.class);
 	
-	private Map<String, ProcessDescriptionType> registeredProcessDescriptions;
+	private Map<String, ProcessDescription> registeredProcessDescriptions;
 	private Map<String, ToolParameter[]> registeredAlgorithmParameters;
 	
 	
@@ -71,7 +72,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 		LOGGER.info("Initializing ArcGIS Server Repository ...");
 		
 		//initialize local variables
-		this.registeredProcessDescriptions = new HashMap<String, ProcessDescriptionType>();
+		this.registeredProcessDescriptions = new HashMap<String, ProcessDescription>();
 		this.registeredAlgorithmParameters = new HashMap<String, ToolParameter[]>();
 		
 		String describeProcessPathString = AGSProperties.getInstance().getProcessDescriptionDir();
@@ -115,10 +116,12 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	
 	private void addAlgorithm(File processDescriptionFile){
 		
-		ProcessDescriptionType pd = this.loadProcessDescription(processDescriptionFile);
+		ProcessDescription superPD = this.loadProcessDescription(processDescriptionFile);
+		
+		ProcessDescriptionType pd = (ProcessDescriptionType) superPD.getProcessDescriptionType("1.0.0");//FIXME check
 		String processID = pd.getIdentifier().getStringValue();
 		LOGGER.debug("Registering: " + processID);
-		this.registeredProcessDescriptions.put(processID, pd);
+		this.registeredProcessDescriptions.put(processID, superPD);
 		ToolParameter[] params = this.loadParameters(pd);
 		this.registeredAlgorithmParameters.put(processID, params);
 		
@@ -280,7 +283,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	}
 	
 
-	private ProcessDescriptionType loadProcessDescription(File describeProcessFile){
+	private ProcessDescription loadProcessDescription(File describeProcessFile){
 		
 		try {
 			InputStream xmlDesc = new FileInputStream(describeProcessFile);
@@ -292,7 +295,11 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 				return null;
 			}
 			
-			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
+			ProcessDescription processDescription = new ProcessDescription();
+			
+			processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+			
+			return processDescription;
 		}
 		catch(IOException e) {
 			LOGGER.warn("Could not initialize algorithm, parsing error! " + describeProcessFile.getName(), e);
@@ -304,7 +311,7 @@ public class AGSProcessRepository implements IAlgorithmRepository {
 	}
 	
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		if(!registeredProcessDescriptions.containsKey(processID)){
 			registeredProcessDescriptions.put(processID, getAlgorithm(processID).getDescription());
 		}

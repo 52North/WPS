@@ -31,6 +31,7 @@ package org.n52.wps.server.request;
 import java.util.ArrayList;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.server.response.CapabilitiesResponse;
@@ -130,7 +131,7 @@ public class CapabilitiesRequest extends Request {
         }
 
         String[] versions = getMapArray(PARAM_VERSION, false);
-        if ( !requireVersion(SUPPORTED_VERSIONS, false)) {
+        if ( !requireVersion(WPSConfig.SUPPORTED_VERSIONS, false)) {
             throw new ExceptionReport("Requested versions are not supported, you requested: "
                     + Request.accumulateString(versions), ExceptionReport.VERSION_NEGOTIATION_FAILED, "version");
         }

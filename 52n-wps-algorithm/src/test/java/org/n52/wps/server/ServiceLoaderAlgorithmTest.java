@@ -62,7 +62,7 @@ public class ServiceLoaderAlgorithmTest {
 	
 	@Test
 	public void shouldResolveProcessDescription() {
-		ProcessDescriptionType description = repo.getProcessDescription(DummyAnnotatedAlgorithm.class.getCanonicalName());
+		ProcessDescriptionType description = (ProcessDescriptionType) repo.getProcessDescription(DummyAnnotatedAlgorithm.class.getCanonicalName()).getProcessDescriptionType("1.0.0");//FIXME check other versions
 		Assert.assertThat(description, is(notNullValue()));
 		Assert.assertThat(description, is(instanceOf(ProcessDescriptionType.class)));
 	}

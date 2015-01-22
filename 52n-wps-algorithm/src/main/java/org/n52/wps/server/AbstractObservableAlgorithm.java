@@ -34,7 +34,7 @@ import org.n52.wps.server.observerpattern.ISubject;
 
 public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
 
-	protected ProcessDescriptionType description;
+	protected ProcessDescription description;
 	protected final String wkName;
 	private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
 	
@@ -46,7 +46,7 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 		this.wkName = "";
 	}
 	
-	public AbstractObservableAlgorithm(ProcessDescriptionType description) {
+	public AbstractObservableAlgorithm(ProcessDescription description) {
 		this.description = description;
 		this.wkName = "";
 	}
@@ -66,7 +66,7 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 	 * name as the class, but with the extension XML.
 	 * @return
 	 */
-	protected ProcessDescriptionType initializeDescription() {
+	protected ProcessDescription initializeDescription() {
 		String className = this.getClass().getName().replace(".", "/");
 		InputStream xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");
 		try {
@@ -85,7 +85,11 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 				LOGGER.warn("Identifier was not correct, was changed now temporary for server use to " + this.getClass().getName() + ". Please change it later in the description!");
 			}
 			
-			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
+			ProcessDescription processDescription = new ProcessDescription();
+			
+			processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+			
+			return processDescription;
 		}
 		catch(IOException e) {
 			LOGGER.warn("Could not initialize algorithm, parsing error: " + this.getClass().getName(), e);
@@ -96,12 +100,12 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 		return null;
 	}
 	
-	public ProcessDescriptionType getDescription()  {
+	public ProcessDescription getDescription()  {
 		return description;
 	}
 
-	public boolean processDescriptionIsValid() {
-		return description.validate();
+	public boolean processDescriptionIsValid(String version) {
+		return description.getProcessDescriptionType(version).validate();
 	}
 	
 	public String getWellKnownName() {

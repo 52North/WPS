@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.Context;
@@ -77,6 +78,7 @@ public class WPSConfig implements Serializable {
     protected final PropertyChangeSupport propertyChangeSupport;
 
     public static final String SERVLET_PATH = "WebProcessingService";
+	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{"1.0.0", "2.0"});
 
     private static String configPath;
     

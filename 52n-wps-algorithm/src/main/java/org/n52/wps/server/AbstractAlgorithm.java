@@ -42,7 +42,7 @@ import org.apache.xmlbeans.XmlOptions;
  */
 public abstract class AbstractAlgorithm implements IAlgorithm 
 {
-	private ProcessDescriptionType description; // private, force access through getter method for lazy loading.
+	private ProcessDescription description; // private, force access through getter method for lazy loading.
 	private final String wkName;
 	private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
 	
@@ -67,7 +67,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	 * name as the class, but with the extension XML.
 	 * @return
 	 */
-	protected ProcessDescriptionType initializeDescription() {
+	protected ProcessDescription initializeDescription() {
 		String className = this.getClass().getName().replace(".", "/");
 		InputStream xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");
 		try {
@@ -86,7 +86,11 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 				LOGGER.warn("Identifier was not correct, was changed now temporary for server use to " + this.getClass().getName() + ". Please change it later in the description!");
 			}
 			
-			return doc.getProcessDescriptions().getProcessDescriptionArray(0);
+			ProcessDescription processDescription = new ProcessDescription();
+			
+			processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+			
+			return processDescription;
 		}
 		catch(IOException e) {
 			LOGGER.warn("Could not initialize algorithm, parsing error: " + this.getClass().getName(), e);
@@ -98,7 +102,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	}
 	
     @Override
-	public synchronized ProcessDescriptionType getDescription()  {
+	public synchronized ProcessDescription getDescription()  {
         if (description == null) {
             description = initializeDescription();
         }
@@ -106,8 +110,8 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	}
 
     @Override
-	public boolean processDescriptionIsValid() {
-		return getDescription().validate();
+	public boolean processDescriptionIsValid(String version) {
+		return getDescription().getProcessDescriptionType(version).validate();
 	}
 	
     @Override

@@ -31,6 +31,7 @@ package org.n52.wps.server.grass;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.server.AbstractAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 
 /**
  * @author Benjamin Pross (bpross-52n)
@@ -38,7 +39,7 @@ import org.n52.wps.server.AbstractAlgorithm;
  */
 public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
 
-	private ProcessDescriptionType description;
+	private ProcessDescription description;
 	private final String wkName;
 	
 	/** 
@@ -64,16 +65,16 @@ public abstract class GenericGrassAlgorithm extends AbstractAlgorithm{
 	 * name as the class, but with the extension XML.
 	 * @return
 	 */
-	protected ProcessDescriptionType initializeDescription() {
+	protected ProcessDescription initializeDescription() {
 		return null;
 	}
 	
-	public ProcessDescriptionType getDescription()  {
+	public ProcessDescription getDescription()  {
 		return description;
 	}
 
-	public boolean processDescriptionIsValid() {
-		return description.validate();
+	public boolean processDescriptionIsValid(String version) {
+		return description.getProcessDescriptionType(version).validate();
 	}
 	
 	public String getWellKnownName() {

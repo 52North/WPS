@@ -40,6 +40,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.grass.util.GRASSWPSConfigVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class GrassProcessRepository implements IAlgorithmRepository {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessRepository.class);
-	private Map<String, ProcessDescriptionType> registeredProcesses;
+	private Map<String, ProcessDescription> registeredProcesses;
 	private Map<String, Boolean> processesAddonFlagMap;
 	private final String fileSeparator = System.getProperty("file.separator");
 	public static String tmpDir;
@@ -63,7 +64,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	public static String addonPath;
 
 	public GrassProcessRepository() {
-		registeredProcesses = new HashMap<String, ProcessDescriptionType>();
+		registeredProcesses = new HashMap<String, ProcessDescription>();
 		processesAddonFlagMap = new HashMap<String, Boolean>();
 		// check if the repository is active
 		if (WPSConfig.getInstance().isRepositoryActive(
@@ -177,7 +178,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 					}
 					if (processList.contains(process)) {
 
-						ProcessDescriptionType pDescType;
+						ProcessDescription pDescType;
 						try {
 							pDescType = creator
 									.createDescribeProcessType(process, false);
@@ -223,7 +224,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 					}
 					if (processList.contains(process)) {
 
-						ProcessDescriptionType pDescType;
+						ProcessDescription pDescType;
 						try {
 							if(registeredProcesses.keySet().contains(process)){
 								LOGGER.info("Skipping duplicate process " + process);
@@ -307,7 +308,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	}
 
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		if(!registeredProcesses.containsKey(processID)){
 			registeredProcesses.put(processID, getAlgorithm(processID).getDescription());
 		}

@@ -54,6 +54,7 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 
 /**
@@ -66,7 +67,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
 	private String processID;
 	private boolean isAddon;
-	private ProcessDescriptionType processDescription;
+	private ProcessDescription processDescription;
 	private List<String> errors;	
 	private HashMap<String, Class<?>> complexInputTypes;	
 	private HashMap<String, Class<?>> literalInputTypes;
@@ -79,12 +80,12 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	private final String dataTypeDouble = "double";
 	
 	
-	public GrassProcessDelegator(String processID, ProcessDescriptionType processDescriptionType, boolean isAddon){
+	public GrassProcessDelegator(String processID, ProcessDescription processDescriptionType, boolean isAddon){
 		this.processID = processID;
 		this.isAddon = isAddon;
 		this.processDescription = processDescriptionType;
 		this.errors = new ArrayList<String>();
-		mapInputAndOutputTypes(processDescriptionType);		
+		mapInputAndOutputTypes((ProcessDescriptionType) processDescriptionType.getProcessDescriptionType("1.0.0"));		
 	}
 	
 	private void mapInputAndOutputTypes(ProcessDescriptionType processDescriptionType){
@@ -147,7 +148,7 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	}
 	
 	@Override
-	public ProcessDescriptionType getDescription() {
+	public ProcessDescription getDescription() {
 		return processDescription;
 	}
 
@@ -178,8 +179,8 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 	}
 
 	@Override
-	public boolean processDescriptionIsValid() {
-		return processDescription.validate();
+	public boolean processDescriptionIsValid(String version) {
+		return processDescription.getProcessDescriptionType(version).validate();
 	}
 
 	@Override

@@ -40,11 +40,11 @@ public class UploadedAlgorithmRepository implements
 	private static Logger LOGGER = LoggerFactory
 			.getLogger(LocalAlgorithmRepository.class);
 	private Map<String, String> algorithmMap;
-	private Map<String, ProcessDescriptionType> processDescriptionMap;
+	private Map<String, ProcessDescription> processDescriptionMap;
 
 	public UploadedAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
-		processDescriptionMap = new HashMap<String, ProcessDescriptionType>();
+		processDescriptionMap = new HashMap<String, ProcessDescription>();
 
 		if (WPSConfig.getInstance().isRepositoryActive(
 				this.getClass().getCanonicalName())) {
@@ -109,11 +109,13 @@ public class UploadedAlgorithmRepository implements
 			throws Exception {
 		IAlgorithm algorithm = (IAlgorithm) LocalAlgorithmRepository.class
 				.getClassLoader().loadClass(algorithmClassName).newInstance();
-		if (!algorithm.processDescriptionIsValid()) {
-			LOGGER.warn("Algorithm description is not valid: "
-					+ algorithmClassName);
-			throw new Exception("Could not load algorithm "
-					+ algorithmClassName + ". ProcessDescription Not Valid.");
+		
+        for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
+            
+    		if(!algorithm.processDescriptionIsValid(supportedVersion)) {
+    			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
+    			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+    		}
 		}
 		return algorithm;
 	}
@@ -144,10 +146,9 @@ public class UploadedAlgorithmRepository implements
 	}
 
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		if (!processDescriptionMap.containsKey(processID)) {
-			processDescriptionMap.put(processID, getAlgorithm(processID)
-					.getDescription());
+			processDescriptionMap.put(processID, getAlgorithm(processID).getDescription());
 		}
 		return processDescriptionMap.get(processID);
 	}

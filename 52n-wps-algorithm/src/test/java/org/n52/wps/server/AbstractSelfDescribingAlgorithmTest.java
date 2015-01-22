@@ -71,7 +71,7 @@ public class AbstractSelfDescribingAlgorithmTest extends TestCase {
     private void printAlgorithmProcessDescription(IAlgorithm algorithm) {
         System.out.println();
         System.out.println(" ### DescribeProcess for " + algorithm.getClass().getName() + " ###");
-        System.out.println(getXMLAsStringFromDescription(algorithm.getDescription()));
+        System.out.println(getXMLAsStringFromDescription((ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType("1.0.0")));//FIXME check
         System.out.println();
     }
 

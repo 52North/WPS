@@ -28,16 +28,15 @@
  */
 package org.n52.wps.server.request;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -52,7 +51,6 @@ abstract public class Request implements Callable <Response> {
 	protected Document doc = null;
 	protected static Logger LOGGER = LoggerFactory.getLogger(Request.class);
 	protected UUID id = null;
-	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{"1.0.0", "2.0"});
 	public static final String[] SUPPORTED_LANGUAGES = new String[]{"en-US"};
 	
 	/**

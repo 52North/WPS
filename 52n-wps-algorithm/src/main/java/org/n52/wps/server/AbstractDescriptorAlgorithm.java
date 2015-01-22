@@ -64,14 +64,14 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractDescriptorAlgorithm.class);
     
     private AlgorithmDescriptor descriptor;
-    private ProcessDescriptionType description;
+    private ProcessDescription description;
     
     public AbstractDescriptorAlgorithm() {
         super();
     }
 
     @Override
-    public synchronized ProcessDescriptionType getDescription() {
+    public synchronized ProcessDescription getDescription() {
         if (description == null) {
             description = createProcessDescription();
         }
@@ -83,7 +83,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         return getAlgorithmDescriptor().getIdentifier();
     }
 
-    private ProcessDescriptionType createProcessDescription() {
+    private ProcessDescription createProcessDescription() {
 
         AlgorithmDescriptor algorithmDescriptor = getAlgorithmDescriptor();
 
@@ -182,7 +182,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                }
             }
         }
-        return document.getProcessDescriptions().getProcessDescriptionArray(0);
+		ProcessDescription superProcessDescription = new ProcessDescription();
+		
+		superProcessDescription.addProcessDescriptionForVersion(document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+		
+		return superProcessDescription;
     }
 
     private void describeComplexDataInputType(SupportedComplexDataType complexData, Class dataTypeClass) {
@@ -307,11 +311,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
 
     @Override
-    public boolean processDescriptionIsValid() {
+    public boolean processDescriptionIsValid(String version) {
         XmlOptions xmlOptions = new XmlOptions();
         List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();
             xmlOptions.setErrorListener(xmlValidationErrorList);
-        boolean valid = getDescription().validate(xmlOptions);
+        boolean valid = getDescription().getProcessDescriptionType(version).validate(xmlOptions);
         if (!valid) {
             LOGGER.error("Error validating process description for " + getClass().getCanonicalName());
             for (XmlValidationError xmlValidationError : xmlValidationErrorList) {

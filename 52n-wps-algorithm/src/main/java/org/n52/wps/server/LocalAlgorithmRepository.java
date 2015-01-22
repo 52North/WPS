@@ -41,11 +41,11 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(LocalAlgorithmRepository.class);
 	private Map<String, String> algorithmMap;
-	private Map<String, ProcessDescriptionType> processDescriptionMap;
+	private Map<String, ProcessDescription> processDescriptionMap;
 	
 	public LocalAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
-		processDescriptionMap = new HashMap<String, ProcessDescriptionType>(); 
+		processDescriptionMap = new HashMap<String, ProcessDescription>(); 
 		
 		// check if the repository is active
 		if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
@@ -101,9 +101,12 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
             throw new Exception("Could not load algorithm " + algorithmClassName + " does not implement IAlgorithm or have a Algorithm annotation.");
         }
 		
-		if(!algorithm.processDescriptionIsValid()) {
-			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);
-			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+        for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
+            
+    		if(!algorithm.processDescriptionIsValid(supportedVersion)) {
+    			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
+    			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+    		}
 		}
 		return algorithm;
 	}
@@ -136,7 +139,7 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 	}
 
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		if(!processDescriptionMap.containsKey(processID)){
 			processDescriptionMap.put(processID, getAlgorithm(processID).getDescription());
 		}

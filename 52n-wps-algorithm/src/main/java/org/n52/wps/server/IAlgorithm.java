@@ -19,8 +19,6 @@ package org.n52.wps.server;
 import java.util.List;
 import java.util.Map;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 
@@ -34,7 +32,7 @@ public interface IAlgorithm  {
 	
 	List<String> getErrors();
 	
-	ProcessDescriptionType getDescription();
+	ProcessDescription getDescription();
 	
 	/** Returns some well-known name for the process.
 	 *  
@@ -47,7 +45,7 @@ public interface IAlgorithm  {
 	/**
 	 * Checks if the processDescription complies to the process itself and fits any schema or other dependencies.
 	 */
-	boolean processDescriptionIsValid();
+	boolean processDescriptionIsValid(String version);
 	
 	Class< ? > getInputDataType(String id);
 	

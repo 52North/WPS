@@ -48,6 +48,7 @@ import org.apache.xmlbeans.XmlException;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.datahandler.parser.GenericFileDataWithGTParser;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.grass.io.GrassIOHandler;
 import org.n52.wps.server.grass.util.JavaProcessStreamReader;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class GrassProcessDescriptionCreator {
 		addonPath = GrassProcessRepository.addonPath;
 	}
 
-	public ProcessDescriptionType createDescribeProcessType(String identifier, boolean addon)
+	public ProcessDescription createDescribeProcessType(String identifier, boolean addon)
 			throws IOException, XmlException {
 
 		Process proc = null;
@@ -244,7 +245,11 @@ public class GrassProcessDescriptionCreator {
 
 			}
 
-			return result;
+			ProcessDescription processDescription = new ProcessDescription();
+			
+			processDescription.addProcessDescriptionForVersion(result, "1.0.0");
+			
+			return processDescription;
 		}
 
 		return null;

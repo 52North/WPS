@@ -44,6 +44,7 @@ import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.feed.FeedRepository;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 import org.slf4j.Logger;
@@ -229,7 +230,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		return registeredAlgorithms.keySet();
 	}
 	
-	public ProcessDescriptionType getProcessDescription(String processID) {
+	public ProcessDescription getProcessDescription(String processID) {
 		return registeredAlgorithms.get(processID).getProcessDescription();
 	}
 

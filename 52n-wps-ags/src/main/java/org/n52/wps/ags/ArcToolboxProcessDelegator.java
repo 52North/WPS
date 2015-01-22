@@ -43,13 +43,13 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.feed.movingcode.AlgorithmParameterType;
 import org.n52.wps.server.feed.movingcode.CommandLineParameter;
 import org.n52.wps.server.feed.movingcode.MovingCodeObject;
@@ -189,7 +189,7 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 		return errors;
 	}
 
-	public ProcessDescriptionType getDescription() {
+	public ProcessDescription getDescription() {
 		return mco.getProcessDescription();
 	}
 
@@ -197,8 +197,8 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 		return mco.getProcessID();
 	}
 
-	public boolean processDescriptionIsValid() {
-		return mco.getProcessDescription().validate();
+	public boolean processDescriptionIsValid(String version) {
+		return mco.getProcessDescription().getProcessDescriptionType(version).validate();
 	}
 
 	public Class<?> getInputDataType(String id) {
