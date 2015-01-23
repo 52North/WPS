@@ -52,7 +52,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.FileDataBinding;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
@@ -62,6 +61,7 @@ import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoFixedTable;
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
@@ -96,20 +96,20 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 	private static Logger LOGGER = LoggerFactory.getLogger(GenericSextanteProcessDelegator.class);
 
 	private String processID;
-	private ProcessDescriptionType processDescription;
+	private ProcessDescription processDescription;
 	private List<String> errors;
 	private GeoAlgorithm sextanteProcess;
 
 
-	public GenericSextanteProcessDelegator(String processID, ProcessDescriptionType processDescriptionType) {
+	public GenericSextanteProcessDelegator(String processID, ProcessDescription processDescription) {
 		this.processID = processID.replace("Sextante_","");;
 		errors = new ArrayList<String>();
-		this.processDescription = processDescriptionType;
+		this.processDescription = processDescription;
 		sextanteProcess = Sextante.getAlgorithmFromCommandLineName(processID);
 
 	}
 
-	public ProcessDescriptionType getDescription() {
+	public ProcessDescription getDescription() {
 		return processDescription;
 	}
 
@@ -121,8 +121,8 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 		return processID;
 	}
 
-	public boolean processDescriptionIsValid() {
-		return processDescription.validate();
+	public boolean processDescriptionIsValid(String version) {
+		return processDescription.getProcessDescriptionType(version).validate();
 	}
 
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
@@ -519,7 +519,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 			}else if (type.equals("String")){
 				return LiteralStringBinding.class;
 			}else if (type.equals("Multiple Input")){
-				InputDescriptionType[] inputs = processDescription.getDataInputs().getInputArray();
+				InputDescriptionType[] inputs = ((ProcessDescriptionType)processDescription.getProcessDescriptionType("1.0.0")).getDataInputs().getInputArray();
 				for(InputDescriptionType input : inputs){
 					if(input.getIdentifier().getStringValue().equals(id)){
 						if(input.isSetLiteralData()){
@@ -562,7 +562,7 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 	}
 
 	public Class<?> getOutputDataType(String id) {
-		OutputDescriptionType[] outputs = processDescription.getProcessOutputs().getOutputArray();
+		OutputDescriptionType[] outputs = ((ProcessDescriptionType)processDescription.getProcessDescriptionType("1.0.0")).getProcessOutputs().getOutputArray();
 
 		for(OutputDescriptionType output : outputs){
 

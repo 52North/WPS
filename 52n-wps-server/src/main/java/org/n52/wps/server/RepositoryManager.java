@@ -288,7 +288,7 @@ public class RepositoryManager {
 				return repository.getProcessDescription(processClassName);
 			}
 		}
-		return null;
+		return new ProcessDescription();
 	}
 	
     static class UpdateThread extends Thread {

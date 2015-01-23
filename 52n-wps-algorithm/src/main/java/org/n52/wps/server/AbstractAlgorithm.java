@@ -111,6 +111,9 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 
     @Override
 	public boolean processDescriptionIsValid(String version) {
+    	if(getDescription().getProcessDescriptionType(version) == null){
+    		return false;
+    	}
 		return getDescription().getProcessDescriptionType(version).validate();
 	}
 	

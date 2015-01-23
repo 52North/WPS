@@ -95,7 +95,7 @@ public class ExecuteResponseBuilder {
 		this.identifier = request.getExecute().getIdentifier().getStringValue().trim();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
-		description = RepositoryManager.getInstance().getProcessDescription(this.identifier);
+		description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(this.identifier).getProcessDescriptionType(WPSConfig.VERSION_100);
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}
@@ -184,7 +184,7 @@ public class ExecuteResponseBuilder {
 
 				// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.
 
-				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue());
+				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue()).getProcessDescriptionType(WPSConfig.VERSION_100);
 				if(description==null){
 					throw new RuntimeException("Error while accessing the process description for "+ request.getExecute().getIdentifier().getStringValue());
 				}

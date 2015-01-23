@@ -40,6 +40,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
@@ -174,7 +175,7 @@ public class DescribeProcessRequest extends Request {
 											ExceptionReport.INVALID_PARAMETER_VALUE, 
 											"identifier");
 			}
-			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(algorithmName);
+			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
 			document.getProcessDescriptions().addNewProcessDescription().set(description);
 		}
 		

@@ -43,6 +43,7 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
@@ -245,7 +246,7 @@ public class RequestHandler {
 		if(!isCapabilitiesNode && version == null) {
 			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
-		if(!isCapabilitiesNode && !Request.SUPPORTED_VERSIONS.contains(version)) {
+		if(!isCapabilitiesNode && !WPSConfig.SUPPORTED_VERSIONS.contains(version)) {
 			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type

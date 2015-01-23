@@ -54,6 +54,7 @@ import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.server.ProcessDescription;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
@@ -85,7 +86,7 @@ import es.unex.sextante.parameters.ParameterVectorLayer;
 
 public class SextanteProcessDescriptionCreator implements SextanteConstants{
 
-	public ProcessDescriptionType createDescribeProcessType(GeoAlgorithm algorithm) throws NullParameterAdditionalInfoException, UnsupportedGeoAlgorithmException{
+	public ProcessDescription createDescribeProcessType(GeoAlgorithm algorithm) throws NullParameterAdditionalInfoException, UnsupportedGeoAlgorithmException{
 
 			ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
 			pdt.setStatusSupported(true);
@@ -117,7 +118,11 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				addOutput(outputs, out);
 			}
 
-			return pdt;
+			ProcessDescription processDescription = new ProcessDescription();
+			
+			processDescription.addProcessDescriptionForVersion(pdt, "1.0.0");
+			
+			return processDescription;
 		
 
 	}

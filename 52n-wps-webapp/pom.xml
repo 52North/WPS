@@ -140,11 +140,11 @@
 			<artifactId>52n-wps-io-geotools</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-r</artifactId>
-			<scope>test</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>${project.groupId}</groupId> -->
+<!-- 			<artifactId>52n-wps-r</artifactId> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -691,14 +691,14 @@
 					<classifier>geotools</classifier> </configuration> </plugin> </plugins> -->
 			</build>
 			<dependencies>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-ags</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-python</artifactId>
-				</dependency>
+<!-- 				<dependency> -->
+<!-- 					<groupId>${project.groupId}</groupId> -->
+<!-- 					<artifactId>52n-wps-ags</artifactId> -->
+<!-- 				</dependency> -->
+<!-- 				<dependency> -->
+<!-- 					<groupId>${project.groupId}</groupId> -->
+<!-- 					<artifactId>52n-wps-python</artifactId> -->
+<!-- 				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-io-geotools</artifactId>
@@ -707,24 +707,24 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-algorithm-geotools</artifactId>
 				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-r</artifactId>
-				</dependency>
+<!-- 				<dependency> -->
+<!-- 					<groupId>${project.groupId}</groupId> -->
+<!-- 					<artifactId>52n-wps-r</artifactId> -->
+<!-- 				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-grass</artifactId>
 				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-mc</artifactId>
-					<exclusions>
-						<exclusion>
-							<artifactId>xml-apis</artifactId>
-							<groupId>xml-apis</groupId>
-						</exclusion>
-					</exclusions>
-				</dependency>
+<!-- 				<dependency> -->
+<!-- 					<groupId>${project.groupId}</groupId> -->
+<!-- 					<artifactId>52n-wps-mc</artifactId> -->
+<!-- 					<exclusions> -->
+<!-- 						<exclusion> -->
+<!-- 							<artifactId>xml-apis</artifactId> -->
+<!-- 							<groupId>xml-apis</groupId> -->
+<!-- 						</exclusion> -->
+<!-- 					</exclusions> -->
+<!-- 				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>

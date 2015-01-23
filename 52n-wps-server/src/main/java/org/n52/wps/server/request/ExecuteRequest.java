@@ -193,7 +193,7 @@ public class ExecuteRequest extends Request implements IObserver {
 					value = inputString.substring(position + 1);
 				}
 			}
-			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
+			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 			
 			if (description == null) {
 				throw new ExceptionReport("Data Identifier not supported: "
@@ -379,7 +379,7 @@ public class ExecuteRequest extends Request implements IObserver {
 					outputDataInput = outputID;
 				}
 				outputDataInput = outputDataInput.replace("=", "");
-				ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
+				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 				OutputDescriptionType outputDesc = XMLBeansHelper
 						.findOutputByID(outputDataInput, description.getProcessOutputs()
 								.getOutputArray());
@@ -429,7 +429,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			} else {
 				rawDataInput = rawData;
 			}
-			ProcessDescriptionType description = RepositoryManager.getInstance().getProcessDescription(processID);
+			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 			OutputDescriptionType outputDesc = XMLBeansHelper.findOutputByID(
 					rawDataInput, 
 							description.getProcessOutputs().getOutputArray());
@@ -530,7 +530,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		}
 
 		// validate if the process can be executed
-		ProcessDescriptionType desc = RepositoryManager.getInstance().getProcessDescription(getAlgorithmIdentifier());
+		ProcessDescriptionType desc = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_100);
 		// We need a description of the inputs for the algorithm
 		if (desc == null) {
 			LOGGER.warn("desc == null");

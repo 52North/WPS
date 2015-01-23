@@ -55,6 +55,7 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
@@ -131,7 +132,7 @@ public class InputHandler {
 	 */
         private InputHandler(Builder builder) throws ExceptionReport {
 		this.algorithmIdentifier = builder.algorithmIdentifier;
-		this.processDesc = RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier);
+		this.processDesc = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier).getProcessDescriptionType(WPSConfig.VERSION_100);
 
 		if (processDesc == null) {
                     throw new ExceptionReport("Error while accessing the process description for " + algorithmIdentifier,

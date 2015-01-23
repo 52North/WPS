@@ -260,8 +260,8 @@ public class CapabilitiesConfiguration {
         for (String algorithmName : RepositoryManager.getInstance()
                 .getAlgorithms()) {
         	try {
-        		ProcessDescriptionType description = RepositoryManager
-                        .getInstance().getProcessDescription(algorithmName);
+        		ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager
+                        .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
                 if (description != null) {
                     ProcessBriefType process = processes.addNewProcess();
                     CodeType ct = process.addNewIdentifier();

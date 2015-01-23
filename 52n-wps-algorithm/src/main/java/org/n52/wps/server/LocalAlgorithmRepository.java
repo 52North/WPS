@@ -101,13 +101,17 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
             throw new Exception("Could not load algorithm " + algorithmClassName + " does not implement IAlgorithm or have a Algorithm annotation.");
         }
 		
+        boolean isNoProcessDescriptionValid = false;
+        
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
-            
-    		if(!algorithm.processDescriptionIsValid(supportedVersion)) {
-    			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
-    			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
-    		}
+        	isNoProcessDescriptionValid = isNoProcessDescriptionValid && !algorithm.processDescriptionIsValid(supportedVersion);
 		}
+        
+		if(isNoProcessDescriptionValid) {
+			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
+			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+		}
+		
 		return algorithm;
 	}
 

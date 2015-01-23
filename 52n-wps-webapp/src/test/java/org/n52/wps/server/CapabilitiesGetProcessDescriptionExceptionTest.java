@@ -96,7 +96,7 @@ public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITCl
 		}
 		
 		@Override
-		public synchronized ProcessDescriptionType getDescription() {
+		public synchronized ProcessDescription getDescription() {
 			throw new RuntimeException("Gotcha!");
 		}
 
