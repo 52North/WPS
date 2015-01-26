@@ -78,9 +78,9 @@ public class WPSConfig implements Serializable {
     protected final PropertyChangeSupport propertyChangeSupport;
 
     public static final String SERVLET_PATH = "WebProcessingService";
-	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{"1.0.0", "2.0"});
 	public static final String VERSION_100 = "1.0.0";
-	public static final String VERSION_20 = "2.0";
+	public static final String VERSION_200 = "2.0.0";
+	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{VERSION_100, VERSION_200});
 
     private static String configPath;
     

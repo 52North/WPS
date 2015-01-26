@@ -30,11 +30,15 @@ package org.n52.wps.server.response;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.xmlbeans.XmlException;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.CapabilitiesConfiguration;
+import org.n52.wps.server.CapabilitiesConfigurationV200;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.CapabilitiesRequest;
+import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
 
 /**
@@ -58,7 +62,32 @@ public class CapabilitiesResponse extends Response {
 	 */
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			return CapabilitiesConfiguration.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
+
+			/* [OGC 06-121r9 OWS Common 2.0]:
+			 * if acceptVersions parameter was send, the first supported version should be used
+			 */
+			String[] requestedVersions = (String[]) getRequest().getMap().get("version");
+			
+			if(requestedVersions != null && requestedVersions.length != 0){
+				
+				for (int i = 0; i < requestedVersions.length; i++) {
+					String requestedVersion = requestedVersions[i].trim();
+					if(WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)){
+
+						if(requestedVersion.equals(WPSConfig.VERSION_100)){
+							return CapabilitiesConfiguration.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());							
+						}else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+							return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());	
+						}
+					}
+				}
+				
+			}
+			/* [OGC 06-121r9 OWS Common 2.0]:
+			 * if no acceptVersions parameter was send, the highest supported version should be used
+			 * WPS 2.0 in this case
+			 */
+			return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
 		} catch (IOException e) {
 			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
 		} catch (XmlException e) {

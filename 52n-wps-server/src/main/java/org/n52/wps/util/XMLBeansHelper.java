@@ -91,6 +91,11 @@ public class XMLBeansHelper {
      * The namespace for WPS 1.0.0: {@value}.
      */
     public static final String NS_WPS_1_0_0 = "http://www.opengis.net/wps/1.0.0";
+    
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_WPS_2_0_0 = "http://www.opengis.net/wps/2.0.0";
 
     /**
      * The prefix for WPS 1.0.0: {@value}.
@@ -101,6 +106,11 @@ public class XMLBeansHelper {
      * The namespace for WPS 1.0.0: {@value}.
      */
     public static final String NS_OWS_1_1 = "http://www.opengis.net/ows/1.1";
+    
+    /**
+     * The namespace for WPS 1.0.0: {@value}.
+     */
+    public static final String NS_OWS_2_0 = "http://www.opengis.net/ows/2.0";
 
     /**
      * The prefix for WPS 1.0.0: {@value}.
@@ -124,7 +134,9 @@ public class XMLBeansHelper {
         PREFIXES = Maps.newConcurrentMap();
         PREFIXES.put(NS_XSI, NS_XSI_PREFIX);
         PREFIXES.put(NS_WPS_1_0_0, NS_WPS_PREFIX);
+        PREFIXES.put(NS_WPS_2_0_0, NS_WPS_PREFIX);
         PREFIXES.put(NS_OWS_1_1, NS_OWS_PREFIX);
+        PREFIXES.put(NS_OWS_2_0, NS_OWS_PREFIX);
     }
 
 }
