@@ -95,7 +95,7 @@ public class ExecuteResponseBuilder {
 		this.identifier = request.getExecute().getIdentifier().getStringValue().trim();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
-		description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(this.identifier).getProcessDescriptionType(WPSConfig.VERSION_100);
+		description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(this.identifier).getProcessDescriptionType(WPSConfig.VERSION_100);//TODO check
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
 		}

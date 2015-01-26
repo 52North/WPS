@@ -21,6 +21,12 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 
+/**
+ * TODO: javadoc
+ * 
+ * @author Benjamin Pross
+ *
+ */
 public class ProcessDescription {
 
 	private Map<String, XmlObject> versionDescriptionTypeMap = new HashMap<String, XmlObject>();
