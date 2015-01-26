@@ -81,6 +81,16 @@ public class WPSConfig implements Serializable {
 	public static final String VERSION_100 = "1.0.0";
 	public static final String VERSION_200 = "2.0.0";
 	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{VERSION_100, VERSION_200});
+	
+	public static final String JOB_CONTROL_OPTION_SYNC_EXECUTE = "sync-execute";
+	public static final String JOB_CONTROL_OPTION_ASYNC_EXECUTE = "async-execute";
+	
+	public static final String JOB_CONTROL_OPTIONS_SEPARATOR = " ";
+	
+	public static final String OUTPUT_TRANSMISSION_VALUE = "value";
+	public static final String OUTPUT_TRANSMISSION_REFERENCE = "reference";
+	
+	public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
 
     private static String configPath;
     

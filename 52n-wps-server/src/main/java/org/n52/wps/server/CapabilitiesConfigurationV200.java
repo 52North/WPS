@@ -36,9 +36,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-
 import net.opengis.ows.x20.AddressType;
 import net.opengis.ows.x20.CodeType;
 import net.opengis.ows.x20.ContactType;
@@ -49,7 +46,6 @@ import net.opengis.ows.x20.OperationDocument.Operation;
 import net.opengis.ows.x20.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.ows.x20.RequestMethodType;
 import net.opengis.ows.x20.ResponsiblePartySubsetType;
-import net.opengis.ows.x20.ResponsiblePartyType;
 import net.opengis.ows.x20.ServiceIdentificationDocument.ServiceIdentification;
 import net.opengis.ows.x20.ServiceProviderDocument.ServiceProvider;
 import net.opengis.wps.x200.CapabilitiesDocument;
@@ -59,11 +55,8 @@ import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x200.ProcessSummaryType;
 import net.opengis.wps.x200.WPSCapabilitiesType;
 
-import org.apache.xml.utils.XMLStringFactory;
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.XmlString;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.entities.Server;
@@ -295,6 +288,10 @@ public class CapabilitiesConfigurationV200 {
                     String processVersion = offering.getProcessVersion();
                     process.setProcessVersion(processVersion);
                     
+                    process.setJobControlOptions(offering.getJobControlOptions());
+                    
+                    process.setOutputTransmission(offering.getOutputTransmission());
+                    
                     if(description.getTitleArray().length < 1){
                     	description.addNewTitle();
                     	description.getTitleArray()[0] = title;
@@ -525,11 +522,11 @@ public class CapabilitiesConfigurationV200 {
         CreateInstanceStrategy() {
             this.instance = CapabilitiesDocument.Factory.newInstance();
             
-    		XmlCursor c = instance.newCursor();
-    		c.toFirstChild();
-    		c.toLastAttribute();
-    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetCapabilities.xsd");
-            
+//    		XmlCursor c = instance.newCursor();
+//    		c.toFirstChild();
+//    		c.toLastAttribute();
+//    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetCapabilities.xsd");
+//            
             /*
              * TODO get necessary input from config
              */
