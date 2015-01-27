@@ -197,7 +197,6 @@
 <!-- 		<module>52n-wps-transactional</module> -->
 		<module>52n-wps-webadmin</module>
 		<module>52n-wps-ags</module>
-		<module>52n-wps-python</module>
 		<module>52n-wps-r</module>
 		<module>52n-wps-mc</module>
 	</modules>
