@@ -34,7 +34,7 @@
 //
 
 
-package org.n52.wps.ags.feed.movingcode;
+package org.n52.wps.ags.algorithmpackage;
 
 import java.util.ArrayList;
 import java.util.List;

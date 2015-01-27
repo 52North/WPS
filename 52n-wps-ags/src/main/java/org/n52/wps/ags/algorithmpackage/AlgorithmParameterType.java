@@ -34,7 +34,7 @@
 //
 
 
-package org.n52.wps.ags.feed.movingcode;
+package org.n52.wps.ags.algorithmpackage;
 
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
