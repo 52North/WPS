@@ -43,17 +43,16 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.wps.ags.feed.movingcode.AlgorithmParameterType;
+import org.n52.wps.ags.feed.movingcode.CommandLineParameter;
+import org.n52.wps.ags.feed.movingcode.MovingCodeObject;
+import org.n52.wps.ags.feed.movingcode.MovingCodeUtils;
 import org.n52.wps.ags.workspace.AGSWorkspace;
 import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.feed.movingcode.AlgorithmParameterType;
-import org.n52.wps.server.feed.movingcode.CommandLineParameter;
-import org.n52.wps.server.feed.movingcode.MovingCodeObject;
-import org.n52.wps.server.feed.movingcode.MovingCodeUtils;
 
 /**
  * @author Matthias Mueller, TU Dresden

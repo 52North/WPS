@@ -41,11 +41,11 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.ags.feed.FeedRepository;
+import org.n52.wps.ags.feed.movingcode.MovingCodeObject;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.feed.FeedRepository;
-import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
