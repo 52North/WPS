@@ -142,7 +142,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 	@Override
 	public ProcessDescriptionType getProcessDescription(String processID) {
-		return rm.getProcessDescription(processID);
+		return filterProcessDescription(rm.getProcessDescription(processID));
 	}
 
 	@Override
@@ -154,6 +154,12 @@ public class MCProcessRepository implements IAlgorithmRepository {
 	public void shutdown() {
 		// TODO Auto-generated method stub
 		// we probably do not need any logic here
+	}
+	
+	static ProcessDescriptionType filterProcessDescription(ProcessDescriptionType description){
+		description.setStatusSupported(true);
+		description.setStoreSupported(true);
+		return description;
 	}
 
 	/**

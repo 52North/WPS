@@ -253,9 +253,11 @@ public class MCProcessDelegator implements IAlgorithm {
 	@Override
 	public ProcessDescriptionType getDescription() {
 		if (description == null) {
-			description = GlobalRepositoryManager.getInstance().getProcessDescription(identifier);
+			ProcessDescriptionType originalDescription = GlobalRepositoryManager.getInstance().getProcessDescription(identifier);
+			MCProcessRepository.filterProcessDescription(originalDescription);
+			description = originalDescription;
 		}
-
+		
 		return description;
 	}
 
