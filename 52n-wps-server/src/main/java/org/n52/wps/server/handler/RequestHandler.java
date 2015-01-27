@@ -48,6 +48,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
+import org.n52.wps.server.request.DescribeProcessRequestV200;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
@@ -132,7 +133,7 @@ public class RequestHandler {
 		if(language != null){
 			Request.checkLanguageSupported(language);
 		}
-
+		
 		// get the request type
 		String requestType = Request.getMapValue("request", ciMap, true);
 		
@@ -140,7 +141,16 @@ public class RequestHandler {
 			req = new CapabilitiesRequest(ciMap);
 		} 
 		else if (requestType.equalsIgnoreCase("DescribeProcess")) {
-			req = new DescribeProcessRequest(ciMap);
+
+			String requestedVersion = Request.getMapValue("version", ciMap, true);
+			
+			if(requestedVersion.equals(WPSConfig.VERSION_100)){				
+				req = new DescribeProcessRequest(ciMap);				
+			}else if(requestedVersion.equals(WPSConfig.VERSION_200)){				
+				req = new DescribeProcessRequestV200(ciMap);				
+			}else{
+				throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");		
+			}
 		}
 		else if (requestType.equalsIgnoreCase("Execute")) {
 			req = new ExecuteRequest(ciMap);
@@ -250,23 +260,48 @@ public class RequestHandler {
 			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type
-		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("Execute")) {
-			req = new ExecuteRequest(doc);
-			setResponseMimeType((ExecuteRequest)req);
-		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("GetCapabilities")){
-			req = new CapabilitiesRequest(doc);
-			this.responseMimeType = "text/xml";
-		} else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE) && localName.equals("DescribeProcess")) {
-			req = new DescribeProcessRequest(doc);
-			this.responseMimeType = "text/xml";
+		
+		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE_1_0_0)){
 			
-		}  else if(!localName.equals("Execute")){
-			throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
-					+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
-		}
-		else if(nodeURI.equals(WebProcessingService.WPS_NAMESPACE)) {
-			throw new ExceptionReport("specified namespace is not supported: "
-					+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
+		    if (localName.equals("Execute")) {
+		    	req = new ExecuteRequest(doc);
+		    	setResponseMimeType((ExecuteRequest)req);
+		    }else if (localName.equals("GetCapabilities")){
+		    	req = new CapabilitiesRequest(doc);
+		    	this.responseMimeType = "text/xml";
+		    } else if (localName.equals("DescribeProcess")) {
+		    	req = new DescribeProcessRequest(doc);
+		    	this.responseMimeType = "text/xml";
+		    	
+		    }  else if(!localName.equals("Execute")){
+		    	throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
+		    			+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+		    }
+		    else{
+		    	throw new ExceptionReport("specified namespace is not supported: "
+		    			+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
+		    }
+		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE_2_0_0)){
+			
+		    if (localName.equals("Execute")) {
+		    	req = new ExecuteRequest(doc);
+		    	setResponseMimeType((ExecuteRequest)req);
+		    }else if (localName.equals("GetCapabilities")){
+		    	req = new CapabilitiesRequest(doc);
+		    	this.responseMimeType = "text/xml";
+		    } else if (localName.equals("DescribeProcess")) {
+		    	req = new DescribeProcessRequestV200(doc);
+		    	this.responseMimeType = "text/xml";
+		    	
+		    }  else if(!localName.equals("Execute")){
+		    	throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
+		    			+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+		    }
+		    else{
+		    	throw new ExceptionReport("specified namespace is not supported: "
+		    			+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
+		    }
+			
 		}
 	}
 

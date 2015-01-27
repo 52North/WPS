@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import javanet.staxutils.IndentingXMLStreamWriter;
 import javanet.staxutils.XMLStreamUtils;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -40,6 +41,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.Node;
 
 import com.ctc.wstx.stax.WstxInputFactory;
@@ -142,4 +146,23 @@ public class XMLUtil {
 
         return stringWriter.toString();
     }
+    
+    public static XmlObject qualifySubstitutionGroup(XmlObject xobj, QName newInstance, SchemaType newType) {
+        XmlObject substitute = null;
+        if (newType != null) {
+           substitute = xobj.substitute(newInstance, newType);
+            if (substitute != null && substitute.schemaType() == newType &&
+                  substitute.getDomNode().getLocalName().equals(newInstance.getLocalPart())) {
+               return substitute;
+            }
+        }
+        
+         XmlCursor cursor = xobj.newCursor();
+         cursor.setName(newInstance);
+         QName qName = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
+         cursor.removeAttribute(qName);
+         cursor.dispose();
+         
+         return null;
+     }
 }

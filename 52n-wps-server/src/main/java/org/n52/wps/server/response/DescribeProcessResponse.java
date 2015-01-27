@@ -31,25 +31,45 @@ package org.n52.wps.server.response;
 import java.io.InputStream;
 
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
+import net.opengis.wps.x200.ProcessOfferingsDocument;
 
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.request.DescribeProcessRequest;
+import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
 
 
 public class DescribeProcessResponse extends Response{
 
-	public DescribeProcessResponse(DescribeProcessRequest request){
+	public DescribeProcessResponse(Request request){
 		super(request);
 	}
 	
     @Override
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+			
+			String[] requestedVersions = (String[]) getRequest().getMap().get("version");
+			
+			if(requestedVersions != null && requestedVersions.length > 0){
+				
+				String requestedVersion = requestedVersions[0];
+				
+				if(requestedVersion.equals(WPSConfig.VERSION_100)){
+					
+					return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+					
+				}else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+					
+					return ((ProcessOfferingsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+					
+				}
+				
+			}
 		}
 		catch(Exception e) {
 			throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
+		return null;
 	}
 }

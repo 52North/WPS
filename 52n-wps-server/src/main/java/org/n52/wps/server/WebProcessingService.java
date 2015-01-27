@@ -86,7 +86,9 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
     private static final String PUBLIC_CONFIG_FILE_DIR = "config";
 
-    public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
+    public static String WPS_NAMESPACE_1_0_0 = "http://www.opengis.net/wps/1.0.0";
+    
+    public static String WPS_NAMESPACE_2_0_0 = "http://www.opengis.net/wps/2.0.0";
 
     public static String DEFAULT_LANGUAGE = "en-US";
 

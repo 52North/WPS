@@ -79,6 +79,10 @@
 			<groupId>org.n52.wps</groupId>
 		</dependency>
 		<dependency>
+			<artifactId>52n-xml-wps-v20</artifactId>
+			<groupId>org.n52.wps</groupId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-config</artifactId>
 		</dependency>
