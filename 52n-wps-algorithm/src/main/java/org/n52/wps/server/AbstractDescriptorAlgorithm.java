@@ -268,8 +268,6 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     	
     	defaultFormatType.setDefault(true);
     	
-    	net.opengis.wps.x200.FormatDocument.Format supportedFormatType = complexDataType.addNewFormat();
-    	
     	boolean needDefault = true;
     	for (IOHandler handler : handlers) {
     		
@@ -283,7 +281,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     			}
     			for (int formatIndex = 0, formatCount = fullFormats.length; formatIndex < formatCount; ++formatIndex) {
     				describeComplexDataFormat200(
-    						supportedFormatType,
+    						complexDataType.addNewFormat(),
     						fullFormats[formatIndex]);
     			}
     		} else {
@@ -318,7 +316,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     										format, encoding, schema);
     							}
     							describeComplexDataFormat200(
-    									supportedFormatType,
+    									complexDataType.addNewFormat(),
     									format, encoding, schema);
     						}
     					}
