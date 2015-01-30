@@ -93,13 +93,13 @@ public class SimpleBufferAlgorithmInputHandlerTest {
     @Test(expected = ExceptionReport.class)
     public void testInputHandlerInitializationWithIncorrectAlgorithmName() throws ExceptionReport {
         System.out.println("Testing testInputHandlerInitialization...");
-        InputHandler instance = new InputHandler.Builder(inputArray, "this.algorithm.name.does.not.exist").build();
+        InputHandler instance = new InputHandler.Builder(new Input(inputArray), "this.algorithm.name.does.not.exist").build();
     }
 
     @Test(expected = ExceptionReport.class)
     public void testInputHandlerInitializationWithNullAlgorithmName() throws ExceptionReport {
         System.out.println("Testing testInputHandlerInitialization...");
-        InputHandler instance = new InputHandler.Builder(inputArray, null).build();
+        InputHandler instance = new InputHandler.Builder(new Input(inputArray), null).build();
     }
 
     @Test(expected = NullPointerException.class)
@@ -111,7 +111,7 @@ public class SimpleBufferAlgorithmInputHandlerTest {
     @Test
     public void testInputHandlerInitializationWithEmptyInputsArray() throws ExceptionReport {
         System.out.println("Testing testInputHandlerInitialization...");
-        InputHandler instance = new InputHandler.Builder(new InputType[]{}, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
+        InputHandler instance = new InputHandler.Builder(new Input(new InputType[]{}), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
 
         assertThat(instance, not(nullValue()));
         assertThat(instance.getParsedInputData().isEmpty(), is(true));
@@ -120,7 +120,7 @@ public class SimpleBufferAlgorithmInputHandlerTest {
     @Test
     public void testInputHandlerInitialization() throws ExceptionReport, XmlException, IOException {
         System.out.println("Testing testInputHandlerInitialization...");
-        InputHandler instance = new InputHandler.Builder(inputArray, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
+        InputHandler instance = new InputHandler.Builder(new Input(inputArray), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
 
         assertThat(instance, not(nullValue()));
     }
@@ -128,7 +128,7 @@ public class SimpleBufferAlgorithmInputHandlerTest {
     @Test
     public void testGetParsedInputDataWithCorrectInput() throws ExceptionReport, XmlException, IOException {
         System.out.println("Testing testInputHandlerInitialization...");
-        InputHandler instance = new InputHandler.Builder(inputArray, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
+        InputHandler instance = new InputHandler.Builder(new Input(inputArray), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
 
         assertThat(instance.getParsedInputData().isEmpty(), is(false));
         assertThat(instance.getParsedInputData().size(), equalTo(2));

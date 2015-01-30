@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 
-import net.opengis.wps.x100.InputType;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -46,9 +44,10 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.InputReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.server.ExceptionReport;
 
 /**
  * 
@@ -68,24 +67,24 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 	static final HttpHost proxy = null;
 	
 	@Override
-	public boolean isApplicable(InputType input) {
-		// TODO Auto-generated method stub
+	public boolean isApplicable(InputReference input) {
+		// true by default
 		return true;
 	}
 	
 	// TODO: follow references, e..g 
 	
 	@Override
-	public ReferenceInputStream fetchData(InputType input) throws ExceptionReport {
-		
-		String href = input.getReference().getHref();
-		String mimeType = input.getReference().getMimeType();
+	public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport {
+				
+		String href = input.getHref();
+		String mimeType = input.getMimeType();
 		
 		try {
 			// Handling POST with referenced document
-			if(input.getReference().isSetBodyReference()) {
+			if(input.isSetBodyReference()) {
 				
-				String bodyHref = input.getReference().getBodyReference().getHref();
+				String bodyHref = input.getBodyReferenceHref();
 				
 				// but Body reference into a String
 				StringWriter writer = new StringWriter();
@@ -98,8 +97,8 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 			}
 			
 			// Handle POST with inline message
-			else if (input.getReference().isSetBody()) {
-				String body = input.getReference().getBody().toString();
+			else if (input.isSetBody()) {
+				String body = input.getBody().toString();
 				return httpPost(href, body, mimeType);
 			}
 			
@@ -115,12 +114,12 @@ public class DefaultReferenceStrategy implements IReferenceStrategy{
 										ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		catch(MalformedURLException e) {
-			String inputID = input.getIdentifier().getStringValue();
+			String inputID = input.getIdentifier();
 			throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + href, 
 										ExceptionReport.INVALID_PARAMETER_VALUE );
 		}
 		catch(IOException e) {
-			 String inputID = input.getIdentifier().getStringValue();
+			 String inputID = input.getIdentifier();
 			 throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + href, 
 					 				ExceptionReport.INVALID_PARAMETER_VALUE );
 		}

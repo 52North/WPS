@@ -38,14 +38,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.zip.GZIPInputStream;
 
-import net.opengis.wps.x100.InputType;
-
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.InputReference;
 
 public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenceStrategy{
     
@@ -53,25 +50,25 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
     private String fetchedEncoding;
 
 	@Override
-	public boolean isApplicable(InputType input) {
+	public boolean isApplicable(InputReference input) {
 
-		if(input.getReference().isSetBody()) {			
-			XmlObject xo =  input.getReference().getBody();			
+		if(input.isSetBody()) {			
+			XmlObject xo = input.getBody();			
 			return xo.toString().contains("http://www.opengis.net/wcs/1.1.1");
 		}else{
-			String dataURLString = input.getReference().getHref();
+			String dataURLString = input.getHref();
 			return (dataURLString.contains("=GetCoverage") && dataURLString.contains("=1.1.1"));		
 		}
 	}
 
 	@Override
-	public ReferenceInputStream fetchData(InputType input) throws ExceptionReport {
+	public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport {
 
-		String dataURLString = input.getReference().getHref();
+		String dataURLString = input.getHref();
 	
-		String schema = input.getReference().getSchema();
-		String encoding = input.getReference().getEncoding();
-		String mimeType = input.getReference().getMimeType();
+		String schema = input.getSchema();
+		String encoding = input.getEncoding();
+		String mimeType = input.getMimeType();
 		
 		try {
 			URL dataURL = new URL(dataURLString);
@@ -81,8 +78,8 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 			conn.setRequestProperty("Accept-Encoding", "gzip");
 			conn.setRequestProperty("Content-type", "multipart/mixed");
 			//Handling POST with referenced document
-			if(input.getReference().isSetBodyReference()) {
-				String bodyReference = input.getReference().getBodyReference().getHref();
+			if(input.isSetBodyReference()) {
+				String bodyReference = input.getBodyReferenceHref();
 				URL bodyReferenceURL = new URL (bodyReference);
 				URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
 				bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
@@ -90,10 +87,10 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 				IOUtils.copy(referenceInputStream, conn.getOutputStream());
 			}
 			//Handling POST with inline message
-			else if (input.getReference().isSetBody()) {
+			else if (input.isSetBody()) {
 				conn.setDoOutput(true);
 				
-				input.getReference().getBody().save(conn.getOutputStream());
+				input.getBody().save(conn.getOutputStream());
 			}
 			InputStream inputStream = retrievingZippedContent(conn);
 			
@@ -161,12 +158,12 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
 										ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		catch(MalformedURLException e) {
-			String inputID = input.getIdentifier().getStringValue();
+			String inputID = input.getIdentifier();
 			throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString, 
 										ExceptionReport.INVALID_PARAMETER_VALUE );
 		}
 		catch(IOException e) {
-			 String inputID = input.getIdentifier().getStringValue();
+			 String inputID = input.getIdentifier();
 			 throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString, 
 					 				ExceptionReport.INVALID_PARAMETER_VALUE );
 		}

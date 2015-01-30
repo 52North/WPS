@@ -45,6 +45,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.algorithm.test.DummyTestClass;
 import org.n52.wps.server.response.RawData;
 import org.n52.wps.webapp.common.AbstractITClass;
@@ -59,7 +60,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class RawDataTest  extends AbstractITClass{
 
 	IAlgorithm algorithm;
-	ProcessDescriptionType processDescription;
+	ProcessDescription processDescription;
 	String identifier;
 
     @BeforeClass
@@ -76,7 +77,7 @@ public class RawDataTest  extends AbstractITClass{
     @Before
     public void setUp(){
     	algorithm = new DummyTestClass();
-    	processDescription = (ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType("1.0.0");
+    	processDescription = algorithm.getDescription();
     	identifier = algorithm.getWellKnownName();
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
     }

@@ -32,14 +32,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.util.XMLBeansHelper;
 
 import com.google.common.base.Charsets;
@@ -62,7 +61,7 @@ public class RawData extends ResponseData {
 	 */
     public RawData(IData obj, String id, String schema, String encoding,
                    String mimeType, String algorithmIdentifier,
-                   ProcessDescriptionType description)
+                   ProcessDescription description)
             throws ExceptionReport {
         super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
         if (obj instanceof IComplexData) {

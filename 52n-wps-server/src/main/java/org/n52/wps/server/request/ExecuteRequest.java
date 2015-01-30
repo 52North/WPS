@@ -79,7 +79,7 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
 import org.n52.wps.server.response.ExecuteResponse;
-import org.n52.wps.server.response.ExecuteResponseBuilder;
+import org.n52.wps.server.response.ExecuteResponseBuilderV100;
 import org.n52.wps.server.response.Response;
 import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
@@ -95,7 +95,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequest.class);
 	private ExecuteDocument execDom;
 	private Map<String, IData> returnResults;
-	private ExecuteResponseBuilder execRespType;
+	private ExecuteResponseBuilderV100 execRespType;
 	
 	
 
@@ -126,7 +126,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		validate();
 
 		// create an initial response
-		execRespType = new ExecuteResponseBuilder(this);
+		execRespType = new ExecuteResponseBuilderV100(this);
         
         storeRequest(execDom);
 	}
@@ -143,7 +143,7 @@ public class ExecuteRequest extends Request implements IObserver {
 		validate();
 
 		// create an initial response
-		execRespType = new ExecuteResponseBuilder(this);
+		execRespType = new ExecuteResponseBuilderV100(this);
 
         storeRequest(ciMap);
 	}
@@ -157,7 +157,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
 		String version = getMapValue("version", ciMap, true);
-		if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {
+		if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {//TODO check if this mustn't be 1.0.0
 			throw new ExceptionReport("request version is not supported: "
 					+ version, ExceptionReport.VERSION_NEGOTIATION_FAILED);
 		}
@@ -660,7 +660,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			if( getExecute().getDataInputs()!=null){
 				inputs = getExecute().getDataInputs().getInputArray();
 			}
-			InputHandler parser = new InputHandler.Builder(inputs, getAlgorithmIdentifier()).build();
+			InputHandler parser = new InputHandler.Builder(new Input(inputs), getAlgorithmIdentifier()).build();
 			
 			// we got so far:
 			// get the algorithm, and run it with the clients input
@@ -793,7 +793,7 @@ public class ExecuteRequest extends Request implements IObserver {
 				.getStatus();
 	}
 
-	public ExecuteResponseBuilder getExecuteResponseBuilder() {
+	public ExecuteResponseBuilderV100 getExecuteResponseBuilder() {
 		return this.execRespType;
 	}
 

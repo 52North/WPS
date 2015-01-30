@@ -41,6 +41,7 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.request.InputReference;
 import org.n52.wps.server.request.strategy.DefaultReferenceStrategy;
 import org.n52.wps.server.request.strategy.IReferenceStrategy;
 
@@ -63,7 +64,7 @@ public class HttpInputTest {
 			
 			IReferenceStrategy strategy = new DefaultReferenceStrategy();
 			try {
-				InputStream is = strategy.fetchData(currentInput);
+				InputStream is = strategy.fetchData(new InputReference(currentInput));
 				Assert.assertNotNull(is);
 				printStream(is);
 				

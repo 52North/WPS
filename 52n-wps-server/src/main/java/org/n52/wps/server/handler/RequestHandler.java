@@ -39,6 +39,8 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.opengis.wps.x200.ExecuteRequestType;
+
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -50,6 +52,7 @@ import org.n52.wps.server.request.CapabilitiesRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.DescribeProcessRequestV200;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
@@ -153,8 +156,15 @@ public class RequestHandler {
 			}
 		}
 		else if (requestType.equalsIgnoreCase("Execute")) {
-			req = new ExecuteRequest(ciMap);
-			setResponseMimeType((ExecuteRequest)req);
+			
+			String requestedVersion = Request.getMapValue("version", ciMap, true);			
+			
+			if(requestedVersion.equals(WPSConfig.VERSION_100)){	
+				req = new ExecuteRequest(ciMap);
+				setResponseMimeType((ExecuteRequest)req);				
+			}else{
+				throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");		
+			}
 		} 
 		else if (requestType.equalsIgnoreCase("RetrieveResult")) {
 			req = new RetrieveResultRequest(ciMap);
@@ -284,8 +294,8 @@ public class RequestHandler {
 		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE_2_0_0)){
 			
 		    if (localName.equals("Execute")) {
-		    	req = new ExecuteRequest(doc);
-		    	setResponseMimeType((ExecuteRequest)req);
+		    	req = new ExecuteRequestV200(doc);
+		    	setResponseMimeType((ExecuteRequestV200)req);
 		    }else if (localName.equals("GetCapabilities")){
 		    	req = new CapabilitiesRequest(doc);
 		    	this.responseMimeType = "text/xml";
@@ -319,6 +329,7 @@ public class RequestHandler {
 		if(req ==null){
 			throw new ExceptionReport("Internal Error","");
 		}
+		//TODO wrap execute requests and avoid duplication below
 		if (req instanceof ExecuteRequest) {
 			// cast the request to an executerequest
 			ExecuteRequest execReq = (ExecuteRequest) req;
@@ -394,6 +405,78 @@ public class RequestHandler {
                 }
                 throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
 			}
+		} else 	if (req instanceof ExecuteRequestV200) {
+			// cast the request to an executerequest
+			ExecuteRequestV200 execReq = (ExecuteRequestV200) req;
+			
+			execReq.updateStatusAccepted();
+			
+			ExceptionReport exceptionReport = null;
+			try {
+				if (execReq.getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC)) {
+					resp = new ExecuteResponse(execReq);
+					InputStream is = resp.getAsStream();
+					IOUtils.copy(is, os);
+					is.close();
+                    pool.submit(execReq);
+					return;
+				}
+				try {
+					// retrieve status with timeout enabled
+					try {
+						resp = pool.submit(execReq).get();
+					}
+					catch (ExecutionException ee) {
+						LOGGER.warn("exception while handling ExecuteRequest.");
+						// the computation threw an error
+						// probably the client input is not valid
+						if (ee.getCause() instanceof ExceptionReport) {
+							exceptionReport = (ExceptionReport) ee
+									.getCause();
+						} else {
+							exceptionReport = new ExceptionReport(
+									"An error occurred in the computation: "
+											+ ee.getMessage(),
+									ExceptionReport.NO_APPLICABLE_CODE);
+						}
+					} catch (InterruptedException ie) {
+						LOGGER.warn("interrupted while handling ExecuteRequest.");
+						// interrupted while waiting in the queue
+						exceptionReport = new ExceptionReport(
+								"The computation in the process was interrupted.",
+								ExceptionReport.NO_APPLICABLE_CODE);
+					}
+				} finally {
+					if (exceptionReport != null) {
+						LOGGER.debug("ExceptionReport not null: " + exceptionReport.getMessage());
+						// NOT SURE, if this exceptionReport is also written to the DB, if required... test please!
+						throw exceptionReport;
+					}
+					// send the result to the outputstream of the client.
+					else if(resp == null) {
+						LOGGER.warn("null response handling ExecuteRequest.");
+						throw new ExceptionReport("Problem with handling threads in RequestHandler", ExceptionReport.NO_APPLICABLE_CODE);
+					}
+					if(!execReq.getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC)) {//TODO check meaning
+						InputStream is = resp.getAsStream();
+						IOUtils.copy(is, os);
+						is.close();
+						LOGGER.info("Served ExecuteRequest.");
+					}
+				}
+			} catch (RejectedExecutionException ree) {
+                LOGGER.warn("exception handling ExecuteRequest.", ree);
+				// server too busy?
+				throw new ExceptionReport(
+						"The requested process was rejected. Maybe the server is flooded with requests.",
+						ExceptionReport.SERVER_BUSY);
+			} catch (Exception e) {
+                LOGGER.error("exception handling ExecuteRequest.", e);
+                if (e instanceof ExceptionReport) {
+                    throw (ExceptionReport)e;
+                }
+                throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
+			}
 		} else {
 			// for GetCapabilities and DescribeProcess:
 			resp = req.call();
@@ -408,13 +491,27 @@ public class RequestHandler {
 		}
 	}
 	
-	protected void setResponseMimeType(ExecuteRequest req) {
-		if(req.isRawData()){
-			responseMimeType = req.getExecuteResponseBuilder().getMimeType();
-		}else{
-			responseMimeType = "text/xml";
-		}
+	protected void setResponseMimeType(Request req) {
 		
+		if(req instanceof ExecuteRequest){
+			
+			ExecuteRequest executeRequest = (ExecuteRequest)req;
+			
+			if(executeRequest.isRawData()){
+				responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
+			}else{
+				responseMimeType = "text/xml";
+			}
+		}else if(req instanceof ExecuteRequestV200){
+			
+			ExecuteRequestV200 executeRequest = (ExecuteRequestV200)req;
+			
+			if(executeRequest.isRawData()){
+				responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
+			}else{
+				responseMimeType = "text/xml";
+			}
+		}		
 		
 	}
 	

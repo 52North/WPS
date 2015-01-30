@@ -29,16 +29,23 @@
 package org.n52.wps.server.response;
 
 import java.io.InputStream;
+
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV200;
+import org.n52.wps.server.request.Request;
 
 public class ExecuteResponse extends Response {
 
 	private ExecuteResponseBuilder builder;
 	
-	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
+	public ExecuteResponse(Request request) throws ExceptionReport{
 		super(request);
-		this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
+		if(request instanceof ExecuteRequest){
+			this.builder = ((ExecuteRequest)this.request).getExecuteResponseBuilder();
+		}else if(request instanceof ExecuteRequestV200){
+			this.builder = ((ExecuteRequestV200)this.request).getExecuteResponseBuilder();
+		}
 	}
 	
     @Override

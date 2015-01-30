@@ -28,12 +28,22 @@
  */
 package org.n52.wps.util;
 
+import java.net.URL;
 import java.util.concurrent.ConcurrentMap;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
 
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
+import net.opengis.wps.x200.DataInputType;
+import net.opengis.wps.x200.ExecuteDocument;
+import net.opengis.wps.x200.ExecuteRequestType;
+import net.opengis.wps.x200.ProcessDescriptionType;
 
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import com.google.common.base.Preconditions;
@@ -64,6 +74,24 @@ public class XMLBeansHelper {
         }
         return null;
     }
+	
+	public static net.opengis.wps.x200.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x200.OutputDescriptionType[] outputDescs) {
+		for(net.opengis.wps.x200.OutputDescriptionType desc : outputDescs) {
+			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+                return desc;
+            }
+        }
+        return null;
+    }
+
+	public static net.opengis.wps.x200.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
+		for(net.opengis.wps.x200.InputDescriptionType desc : descType.getInputArray()) {
+			if(desc.getIdentifier().getStringValue().equals(inputID)) {
+                return desc;
+            }
+        }
+        return null;
+    }
 
     /**
      * @return the default XmlOptions used in responses
@@ -85,6 +113,21 @@ public class XMLBeansHelper {
     public static void registerPrefix(String namespace, String prefix) {
         PREFIXES.put(Preconditions.checkNotNull(Strings.emptyToNull(namespace)),
                      Preconditions.checkNotNull(Strings.emptyToNull(prefix)));
+    }
+    
+    /**
+     * TODO javadoc
+     * 
+     * @param object
+     * @param schemaLocation
+     */
+    public static void addSchemaLocationToXMLObject(XmlObject object, String schemaLocation){
+    	
+		XmlCursor c = object.newCursor();
+		c.toFirstChild();
+		c.toLastAttribute();
+		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+    	
     }
 
     /**

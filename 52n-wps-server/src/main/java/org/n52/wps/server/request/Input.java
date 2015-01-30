@@ -26,59 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.handler;
+package org.n52.wps.server.request;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-import org.n52.wps.io.data.IData;
+import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x200.DataInputType;
 
 /**
- * For some algorithms it is needed to intercept
- * the DataInputs before being processed. An algorithm
- * should provide implementations of these through this
- * interface and the corresponding annotation.
+ * Wrapper for inputs of different WPS versions
  * 
- * @author matthes rieke
+ * @author Benjamin Pross
  *
  */
-public interface DataInputInterceptors {
-	
+public class Input {
 
-	/**
-	 * @return a map where input identifiers are keys
-	 */
-	public Map<String, InterceptorInstance> getInterceptors();
+	private InputType[] inputsV100;
+
+	private DataInputType[] inputsV200;
 	
-	
-	public static interface InterceptorInstance {
-		
-		/**
-		 * applies the actual interception
-		 * @param input the input as provided in the Execute request
-		 * 
-		 * @return true if processed, this triggers a skip of parsing within the InputHandler 
-		 */
-		public List<IData> applyInterception(XmlObject inputObject);
-		
+	public Input(InputType[] inputs){
+		inputsV100 = inputs;
 	}
 	
-	/**
-	 * Decorate your Algorithm implementation with this
-	 * annotation. the value must be the fully qualified
-	 * class name of the {@link DataInputInterceptors} implementation.
-	 * 
-	 * @author matthes rieke
-	 *
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface DataInputInterceptorImplementations {
-		
-		String value();
-		
+	public Input(DataInputType[] inputs){
+		inputsV200 = inputs;
 	}
 
+	public InputType[] getInputsV100() {
+		return inputsV100;
+	}
+
+	public void setInputsV100(InputType[] inputsV100) {
+		this.inputsV100 = inputsV100;
+	}
+
+	public DataInputType[] getInputsV200() {
+		return inputsV200;
+	}
+
+	public void setInputsV200(DataInputType[] inputsV200) {
+		this.inputsV200 = inputsV200;
+	}
 }

@@ -37,10 +37,12 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManager;
 
 /*
@@ -58,11 +60,11 @@ public abstract class ResponseData {
 	protected String mimeType;
 	protected IGenerator generator = null;
 	protected String algorithmIdentifier = null;
-	protected ProcessDescriptionType description = null;
+	protected ProcessDescription description = null;
 	
 		
 	public ResponseData(IData obj, String id, String schema, String encoding, 
-			String mimeType, String algorithmIdentifier, ProcessDescriptionType description) throws ExceptionReport {
+			String mimeType, String algorithmIdentifier, ProcessDescription description) throws ExceptionReport {
 		
 		this.obj = obj;
 		this.id = id;
@@ -72,7 +74,7 @@ public abstract class ResponseData {
 	
 		OutputDescriptionType outputType =null;
 		
-		OutputDescriptionType[] describeProcessOutput = description.getProcessOutputs().getOutputArray();
+		OutputDescriptionType[] describeProcessOutput = ((ProcessDescriptionType)description.getProcessDescriptionType(WPSConfig.VERSION_100)).getProcessOutputs().getOutputArray();
 		for(OutputDescriptionType tempOutputType : describeProcessOutput){
 			if(tempOutputType.getIdentifier().getStringValue().equalsIgnoreCase(id)){
 				outputType = tempOutputType;

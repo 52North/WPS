@@ -26,59 +26,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.handler;
+package org.n52.wps.server.response;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.apache.xmlbeans.XmlObject;
+import net.opengis.wps.x200.ResultDocument;
+
+import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.ILiteralData;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.util.XMLBeansHelper;
 
-/**
- * For some algorithms it is needed to intercept
- * the DataInputs before being processed. An algorithm
- * should provide implementations of these through this
- * interface and the corresponding annotation.
- * 
- * @author matthes rieke
- *
- */
-public interface DataInputInterceptors {
-	
+import com.google.common.base.Charsets;
+import com.google.common.primitives.Doubles;
 
-	/**
-	 * @return a map where input identifiers are keys
-	 */
-	public Map<String, InterceptorInstance> getInterceptors();
-	
-	
-	public static interface InterceptorInstance {
-		
-		/**
-		 * applies the actual interception
-		 * @param input the input as provided in the Execute request
-		 * 
-		 * @return true if processed, this triggers a skip of parsing within the InputHandler 
-		 */
-		public List<IData> applyInterception(XmlObject inputObject);
-		
+public class Result extends ResponseData {
+
+	public Result(IData obj, String id, String schema, String encoding,
+			String mimeType, String algorithmIdentifier,
+			ProcessDescription description) throws ExceptionReport {
+		super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
+		// TODO Auto-generated constructor stub
 	}
 	
-	/**
-	 * Decorate your Algorithm implementation with this
-	 * annotation. the value must be the fully qualified
-	 * class name of the {@link DataInputInterceptors} implementation.
-	 * 
-	 * @author matthes rieke
-	 *
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface DataInputInterceptorImplementations {
-		
-		String value();
-		
-	}
-
 }

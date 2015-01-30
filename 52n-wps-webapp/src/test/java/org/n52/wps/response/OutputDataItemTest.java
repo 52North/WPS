@@ -69,8 +69,8 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.WebProcessingService;
-import org.n52.wps.server.request.Request;
 import org.n52.wps.server.response.OutputDataItem;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -84,6 +84,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class OutputDataItemTest extends AbstractITClass{
 	
 	private ProcessDescriptionType descriptionsType;
+	private ProcessDescription description;
 	private String processID = "org.n52.wps.server.response.OutputDataItemTest";
 	private ExecuteResponseDocument mockupResponseDocument;
 	private LanguageStringType outputTitle = LanguageStringType.Factory
@@ -224,8 +225,12 @@ public class OutputDataItemTest extends AbstractITClass{
 
 		outputType.addNewDataType().setStringValue(dataTypeAsString);
 
+		description = new ProcessDescription();
+		
+		description.addProcessDescriptionForVersion(descriptionsType, WPSConfig.VERSION_100);
+		
 		OutputDataItem ouDI = new OutputDataItem(literalDataBinding, "output",
-				null, null, null, outputTitle, processID, descriptionsType);
+				null, null, null, outputTitle, processID, description);
 
 		ouDI.updateResponseForLiteralData(mockupResponseDocument,
 				dataTypeAsString);
