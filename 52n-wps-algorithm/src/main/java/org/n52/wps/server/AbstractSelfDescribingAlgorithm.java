@@ -65,8 +65,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		processDescription.setProcessVersion("1.0.0");
 		
 		//1. Identifier
-		processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
-		processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
+		processDescription.addNewIdentifier().setStringValue(this.getWellKnownName());
+		processDescription.addNewTitle().setStringValue("FusionProcess#" + this.getWellKnownName());
+//		processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
+//		processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
 	
 		//2. Inputs
 		List<String> identifiers = this.getInputIdentifiers();

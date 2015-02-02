@@ -51,6 +51,12 @@ This project includes:
   Abdera Bundle Jar under The Apache Software License, Version 2.0
   Activation 1.1 under The Apache Software License, Version 2.0
   AOP alliance under Public Domain
+  Apache Commons CSV under The Apache Software License, Version 2.0
+  Apache HttpClient Cache under Apache License
+  Apache Jena - ARQ (SPARQL 1.1 Query Engine) under The Apache Software License, Version 2.0
+  Apache Jena - Core under The Apache Software License, Version 2.0
+  Apache Jena - IRI under The Apache Software License, Version 2.0
+  Apache Thrift under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -86,6 +92,9 @@ This project includes:
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
   Filter XML Support under Lesser General Public License (LGPL)
+  FindBugs-Annotations under GNU Lesser Public License
+  fusion-base under The Apache Software License, Version 2.0
+  fusion-impl under The Apache Software License, Version 2.0
   GeoJSON Support under Lesser General Public License (LGPL)
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
   GML2 XML Support under Lesser General Public License (LGPL)
@@ -115,6 +124,9 @@ This project includes:
   Jackrabbit SPI under The Apache Software License, Version 2.0
   Jackrabbit SPI Commons under The Apache Software License, Version 2.0
   Jackrabbit Text Extractors under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
@@ -123,6 +135,7 @@ This project includes:
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail 1.4 under The Apache Software License, Version 2.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
+  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
@@ -135,6 +148,7 @@ This project includes:
   Joda time under Apache 2
   json-lib under The Apache Software License, Version 2.0
   JSON.simple under The Apache Software License, Version 2.0
+  JSONLD Java :: Core under Revised BSD License
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
   jstl under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
@@ -144,6 +158,7 @@ This project includes:
   KML XML Support under Lesser General Public License (LGPL)
   kXML 2 under The BSD License
   libMath under GPL 2.0 license
+  log4j under The Apache Software License, Version 2.0
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
@@ -164,6 +179,7 @@ This project includes:
   PJL Compressing Filter under Apache Software License V2.0
   precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
+  Reflections under WTFPL or The New BSD License
   REngine under GNU General Public License, version 2
   RserveEngine under GNU General Public License, version 2
   servlet-api under Commons Development and Distribution License, Version 1.0
@@ -173,6 +189,7 @@ This project includes:
   sextante_gui under GPL 2.0 license
   Shapefile module under Lesser General Public License (LGPL)
   SLF4J API Module under MIT License
+  SLF4J LOG4J-12 Binding under MIT License
   SLF4J Simple Binding under MIT License
   Spring Framework: Beans under The Apache Software License, Version 2.0
   Spring Framework: Context under The Apache Software License, Version 2.0
@@ -184,6 +201,7 @@ This project includes:
   Support and utility classes under Simplified BSD
   support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
+  TUD Spatial data fusion backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
   W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Web Feature Service Model under Lesser General Public License (LGPL)
