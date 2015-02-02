@@ -65,6 +65,10 @@ public interface IDatabase {
 	// Retrieve the Response on a previous Request, based on an unique
 	// identifier, which was already given to the client for reference.
 	public InputStream lookupResponse(String request_id);
+    
+	// Retrieve the Status of a running process, based on an unique
+	// identifier, which was already given to the client for reference.
+	public InputStream lookupStatus(String request_id);
 	
 	public String storeComplexValue(String id, InputStream stream, String type, String mimeType);
 	

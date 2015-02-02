@@ -29,6 +29,7 @@
 package org.n52.wps.server.database;
 
 import com.google.common.base.Joiner;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -56,15 +57,19 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.DatabaseDocument;
 import org.n52.wps.ServerDocument;
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
+
 import static org.n52.wps.server.database.AbstractDatabase.getDatabasePath;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -615,5 +620,10 @@ public class PostgresDatabase extends AbstractDatabase {
     public String getConnectionURL() {
         return PostgresDatabase.connectionURL;
     }
+
+	@Override
+	public InputStream lookupStatus(String request_id) {
+		return null;
+	}
 
 }

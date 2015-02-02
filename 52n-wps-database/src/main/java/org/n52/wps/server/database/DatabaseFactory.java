@@ -235,5 +235,10 @@ public class DatabaseFactory implements IDatabase
 	public File lookupResponseAsFile(String id) {
 		return DatabaseFactory.database.lookupResponseAsFile(id);
 	}
+
+	@Override
+	public InputStream lookupStatus(String request_id) {
+		return DatabaseFactory.database.lookupStatus(request_id);
+	}
 	
 }

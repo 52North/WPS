@@ -29,6 +29,7 @@
 package org.n52.wps.server.database;
 
 import java.io.File;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -261,6 +262,12 @@ public class DerbyDatabase extends AbstractDatabase {
 
     @Override
 	public File lookupResponseAsFile(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InputStream lookupStatus(String request_id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
