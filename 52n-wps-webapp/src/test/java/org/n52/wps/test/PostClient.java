@@ -28,6 +28,8 @@
  */
 package org.n52.wps.test;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,37 +61,20 @@ public class PostClient {
 
         payloadP = "request=" + payloadP;
 
-        // Send data
-        URL url = new URL(targetURL);
-
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-        conn.setRequestMethod("POST");
-
-        // URLConnection conn = url.openConnection();
-
-        conn.setDoOutput(true);
-
-        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-
-        wr.write(payloadP);
-        wr.flush();
-
+        InputStream in = sendRequestForInputStream(targetURL, payloadP);
+        
         // Get the response
-        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
         String line;
         while ( (line = rd.readLine()) != null) {
             lines.add(line);
         }
-        wr.close();
         rd.close();
         return Joiner.on('\n').join(lines);
     }
 
     public static InputStream sendRequestForInputStream(String targetURL, String payload) throws IOException {
-        // Construct data
-
         // Send data
         URL url = new URL(targetURL);
 
@@ -100,9 +85,49 @@ public class PostClient {
         OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
 
         wr.write(payload);
-        wr.flush();
+        wr.close();
 
         return conn.getInputStream();
 
+    }
+    
+    public static void checkForExceptionReport(String targetURL, String payload, int expectedHTTPStatusCode, String... expectedExceptionParameters) throws IOException{
+        // Send data
+        URL url = new URL(targetURL);
+
+        URLConnection conn = url.openConnection();
+
+        conn.setDoOutput(true);
+
+        OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+
+        wr.write(payload);
+        wr.close();
+
+        try {            
+            conn.getInputStream();			
+		} catch (IOException e) {
+			/*
+			 * expected, ignore
+			 */			
+		}
+    	
+        InputStream error = ((HttpURLConnection) conn).getErrorStream();
+        
+        String exceptionReport = "";
+        
+        int data = error.read();
+        while (data != -1) {
+        	exceptionReport = exceptionReport + (char)data;
+            data = error.read();
+        }
+        error.close();
+        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);    
+        
+        for (String expectedExceptionParameter : expectedExceptionParameters) {
+            
+            assertTrue(exceptionReport.contains(expectedExceptionParameter)); 
+			
+		}   
     }
 }
