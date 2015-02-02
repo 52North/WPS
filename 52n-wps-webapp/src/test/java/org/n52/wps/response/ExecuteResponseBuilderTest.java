@@ -44,7 +44,7 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV100;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.w3c.dom.Document;
@@ -58,7 +58,7 @@ import org.w3c.dom.Document;
  */
 public class ExecuteResponseBuilderTest extends AbstractITClass{
 
-	private ExecuteRequest executeRequest;
+	private ExecuteRequestV100 executeRequest;
 	private DocumentBuilderFactory fac;
 
     @BeforeClass
@@ -90,7 +90,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here
@@ -124,7 +124,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here
@@ -160,7 +160,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here
@@ -198,7 +198,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here
@@ -236,7 +236,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			DocumentOutputDefinitionType[] outputs = executeRequest.getExecute().getResponseForm().getResponseDocument().getOutputArray();
 
@@ -278,7 +278,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			DocumentOutputDefinitionType[] outputs = executeRequest.getExecute().getResponseForm().getResponseDocument().getOutputArray();
 
@@ -320,7 +320,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here
@@ -356,7 +356,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 			is.close();
 
-			executeRequest = new ExecuteRequest(doc);
+			executeRequest = new ExecuteRequestV100(doc);
 
 			/*
 			 * only one output here

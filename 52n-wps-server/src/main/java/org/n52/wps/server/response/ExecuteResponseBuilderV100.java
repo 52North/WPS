@@ -55,7 +55,7 @@ import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV100;
 import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 	private String identifier;
 	private DataInputsType dataInputs;
 	//private DocumentOutputDefinitionType[] outputDefs;
-	private ExecuteRequest request;
+	private ExecuteRequestV100 request;
 	private ExecuteResponseDocument doc;
 	private RawData rawDataHandler = null;
 	private ProcessDescription superDescription;
@@ -81,7 +81,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilderV100.class);
 	private Calendar creationTime;
 
-	public ExecuteResponseBuilderV100(ExecuteRequest request) throws ExceptionReport{
+	public ExecuteResponseBuilderV100(ExecuteRequestV100 request) throws ExceptionReport{
 		this.request = request;
 		doc = ExecuteResponseDocument.Factory.newInstance();
 		doc.addNewExecuteResponse();

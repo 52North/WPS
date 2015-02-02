@@ -36,7 +36,6 @@ import net.opengis.wps.x200.DataInputType;
 import net.opengis.wps.x200.ExecuteDocument;
 import net.opengis.wps.x200.ExecuteRequestType;
 import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.StatusInfoDocument;
 import net.opengis.wps.x200.StatusInfoDocument.StatusInfo;
 
 import org.apache.commons.io.IOUtils;
@@ -63,7 +62,7 @@ import org.w3c.dom.Document;
 /**
  * Handles an ExecuteRequest
  */
-public class ExecuteRequestV200 extends Request implements IObserver {
+public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	private static Logger LOGGER = LoggerFactory
 			.getLogger(ExecuteRequestV200.class);
@@ -180,7 +179,7 @@ public class ExecuteRequestV200 extends Request implements IObserver {
 
 			LOGGER.debug("started with execution");
 
-			updateStatusRunning();
+			updateStatusStarted();
 
 			// parse the input
 			DataInputType[] inputs = new DataInputType[0];
@@ -211,7 +210,7 @@ public class ExecuteRequestV200 extends Request implements IObserver {
 						+ getAlgorithmIdentifier() + ": " + errorMessage);
 //				updateStatusError(errorMessage);
 			} else {
-				updateStatusSucceeded();
+				updateStatusSuccess();
 			}
 		} catch (Throwable e) {
 			String errorMessage = null;
@@ -315,7 +314,7 @@ public class ExecuteRequestV200 extends Request implements IObserver {
 		updateStatus(status);
 	}
 
-	public void updateStatusSucceeded() {		
+	public void updateStatusSuccess() {		
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Succeeded.toString());
 		updateStatus(status);
@@ -327,26 +326,15 @@ public class ExecuteRequestV200 extends Request implements IObserver {
 		updateStatus(status);
 	}
 
-	public void updateStatusRunning() {		
+	public void updateStatusStarted() {		
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
 		status.setPercentCompleted(0);
 		updateStatus(status);
 	}
-	
-//
-//	public void updateStatusError(String errorMessage) {
-//		StatusType status = StatusType.Factory.newInstance();
-//		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep = status
-//				.addNewProcessFailed().addNewExceptionReport();
-//		excRep.setVersion("1.0.0");
-//		ExceptionType excType = excRep.addNewException();
-//		excType.addNewExceptionText().setStringValue(errorMessage);
-//		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
-//		updateStatus(status);
-//	}
 
 	private void updateStatus(StatusInfo status) {
+		status.setJobID(getUniqueId().toString());
 		getExecuteResponseBuilder().setStatus(status);
 		try {
 			getExecuteResponseBuilder().update();
@@ -378,5 +366,14 @@ public class ExecuteRequestV200 extends Request implements IObserver {
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
+	}
+	@Override
+	public boolean isStoreResponse() {
+		return getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC);
+	}
+
+	@Override
+	public void updateStatusError(String errorMessage) {
+		// TODO Auto-generated method stub		
 	}
 }

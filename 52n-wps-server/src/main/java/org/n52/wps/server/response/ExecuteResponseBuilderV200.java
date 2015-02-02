@@ -85,7 +85,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		this.request = request;
 		resultDoc = ResultDocument.Factory.newInstance();
 		resultDoc.addNewResult();
-		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsExecute.xsd");
+		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetResult.xsd");
 		statusInfoDoc = StatusInfoDocument.Factory.newInstance();		
 		statusInfoDoc.addNewStatusInfo();
 		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetStatus.xsd");
@@ -98,18 +98,10 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 	}
 
 	public void update() throws ExceptionReport {
-		// copying the request parameters to the response
-		Result responseElem = resultDoc.getResult();
 
 		// if status succeeded, update response with result
 		if (statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())) {
 			// the response only include dataInputs, if the property is set to true;
-			//if(Boolean.getBoolean(WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_INCLUDE_DATAINPUTS_IN_RESPONSE))) {
-//			if(new Boolean(WPSConfig.getInstance().getWPSConfig().getServer().getIncludeDataInputsInResponse())){
-//				dataInputs = request.getExecute().getDataInputs();
-//				responseElem.setDataInputs(dataInputs);
-//			}
-//			responseElem.addNewProcessOutputs();
 			// has the client specified the outputs?
 				// Get the outputdescriptions from the algorithm
 
@@ -176,13 +168,8 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
 					}
 				}
-		} 
-//		else {
-//			responseElem.setStatusLocation(DatabaseFactory.getDatabase().generateRetrieveResultURL((request.getUniqueId()).toString()));
-//		}
+		}
 	}
-
-
 
 	/**
 	 * Returns the schema according to the given output description and type.
@@ -299,30 +286,17 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		if(request.isRawData() && rawDataHandler != null) {
 			return rawDataHandler.getAsStream();
 		}
-		String id = request.getUniqueId().toString();
-		//TODO just store and make available for getResult operation
-//		String statusLocation = DatabaseFactory.getDatabase().generateRetrieveResultURL(id);
-//		doc.getExecuteResponse().setStatusLocation(statusLocation);		
 		
 		if(request.getExecute().getMode().equals(ExecuteRequestType.Mode.SYNC)){
-			//TODO return status doc
+			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
+		}else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
+			//save last status info and return result document
+			DatabaseFactory.getDatabase().insertResponse(
+					request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
 			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 		}
 		
-		StatusInfoDocument statusInfoDocument = StatusInfoDocument.Factory.newInstance();
-				
-		statusInfoDocument.getStatusInfo().setStatus("Running");
-		
-		statusInfoDocument.getStatusInfo().setJobID(request.getUniqueId().toString());
-			
-		return statusInfoDocument.newInputStream(XMLBeansHelper.getXmlOptions());
-		
-//		try {
-//			return doc.newInputStream(XMLBeansHelper.getXmlOptions());
-//		}
-//		catch(Exception e) {
-//			throw new RuntimeException(e);
-//		}
+		return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 	}
 
 	public void setStatus(XmlObject statusObject) {
@@ -331,7 +305,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 			
 			StatusInfo status = (StatusInfo)statusObject;
 			
-			statusInfoDoc.setStatusInfo(status);			
+			statusInfoDoc.setStatusInfo(status);
 		}else{
 			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x200.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));
 		}

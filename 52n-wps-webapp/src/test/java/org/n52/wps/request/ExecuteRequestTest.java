@@ -50,7 +50,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.server.request.ExecuteRequest;
+import org.n52.wps.server.request.ExecuteRequestV100;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.w3c.dom.Document;
@@ -87,7 +87,7 @@ public class ExecuteRequestTest extends AbstractITClass {
 		// parse the InputStream to create a Document
 		Document doc = fac.newDocumentBuilder().parse(fis);
 
-    	ExecuteRequest request = new ExecuteRequest(doc);
+    	ExecuteRequestV100 request = new ExecuteRequestV100(doc);
 
     	String exceptionText = "TestError";
 
