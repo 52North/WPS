@@ -87,6 +87,8 @@ public class RequestHandler {
 	
 	protected Request req;
 	
+	private String requestedVersion;
+	
 	// Empty constructor due to classes which extend the RequestHandler
 	protected RequestHandler() {
 		
@@ -146,7 +148,7 @@ public class RequestHandler {
 		} 
 		else if (requestType.equalsIgnoreCase("DescribeProcess")) {
 
-			String requestedVersion = Request.getMapValue("version", ciMap, true);
+			requestedVersion = Request.getMapValue("version", ciMap, true);
 			
 			if(requestedVersion.equals(WPSConfig.VERSION_100)){				
 				req = new DescribeProcessRequest(ciMap);				
@@ -158,7 +160,7 @@ public class RequestHandler {
 		}
 		else if (requestType.equalsIgnoreCase("Execute")) {
 			
-			String requestedVersion = Request.getMapValue("version", ciMap, true);			
+			requestedVersion = Request.getMapValue("version", ciMap, true);			
 			
 			if(requestedVersion.equals(WPSConfig.VERSION_100)){	
 				req = new ExecuteRequestV100(ciMap);
@@ -168,7 +170,7 @@ public class RequestHandler {
 			}
 		} 
 		else if (requestType.equalsIgnoreCase("GetStatus")) {
-			String requestedVersion = Request.getMapValue("version", ciMap, true);			
+			requestedVersion = Request.getMapValue("version", ciMap, true);			
 			
 			if(requestedVersion.equals(WPSConfig.VERSION_200)){
 				req = new GetStatusRequestV200(ciMap);
@@ -177,7 +179,7 @@ public class RequestHandler {
 			}
 		} 
 		else if (requestType.equalsIgnoreCase("GetResult")) {
-			String requestedVersion = Request.getMapValue("version", ciMap, true);			
+			requestedVersion = Request.getMapValue("version", ciMap, true);			
 			
 			if(requestedVersion.equals(WPSConfig.VERSION_200)){
 				req = new GetResultRequestV200(ciMap);				
@@ -211,7 +213,7 @@ public class RequestHandler {
 	 */
 	public RequestHandler(InputStream is, OutputStream os)
 			throws ExceptionReport {
-		String nodeName, localName, nodeURI, version = null;
+		String nodeName, localName, nodeURI = null;
 		Document doc;
 		this.os = os;
 		
@@ -253,10 +255,8 @@ public class RequestHandler {
 			if(versionNode == null && !isCapabilitiesNode) {
 				throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 			}
-			//TODO: I think this can be removed, as capabilities requests do not have a version parameter (BenjaminPross)
 			if(!isCapabilitiesNode){
-//				version = child.getFirstChild().getTextContent();//.getNextSibling().getFirstChild().getNextSibling().getFirstChild().getNodeValue();
-				version = child.getAttributes().getNamedItem("version").getNodeValue();
+				requestedVersion = child.getAttributes().getNamedItem("version").getNodeValue();
 			}
 			/*
 			 * check language, if not supported, return ExceptionReport
@@ -282,10 +282,10 @@ public class RequestHandler {
 					ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
 		//Fix for Bug 904 https://bugzilla.52north.org/show_bug.cgi?id=904
-		if(!isCapabilitiesNode && version == null) {
+		if(!isCapabilitiesNode && requestedVersion == null) {
 			throw new ExceptionReport("Parameter <version> not specified." , ExceptionReport.MISSING_PARAMETER_VALUE, "version");
 		}
-		if(!isCapabilitiesNode && !WPSConfig.SUPPORTED_VERSIONS.contains(version)) {
+		if(!isCapabilitiesNode && !WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)) {
 			throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
 		}
 		// get the request type
@@ -468,6 +468,10 @@ public class RequestHandler {
 			return "text/xml";
 		}
 		return responseMimeType.toLowerCase();
+	}
+
+	public String getRequestedVersion() {
+		return requestedVersion;
 	}
 	
 	

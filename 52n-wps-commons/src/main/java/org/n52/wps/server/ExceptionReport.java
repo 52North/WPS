@@ -21,13 +21,16 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.xmlbeans.XmlObject;
+import org.n52.wps.commons.WPSConfig;
+
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 
 /**
- * encapsulates a exception, which occured by service execution and which has to lead to a service Exception as
+ * encapsulates a exception, which occurred by service execution and which has to lead to a service Exception as
  * specified in the spec.
- * @author foerster
+ * @author foerster, Benjamin Pross
  *
  */
 public class ExceptionReport extends Exception {
@@ -35,7 +38,7 @@ public class ExceptionReport extends Exception {
 	// Should be used here, because HttpServlet implements the java.io.Serializable
 	private static final long serialVersionUID = 5784360334341938021L;
 	/*
-	 * Error Codes specified by the OGC Common Document.
+	 * Error Codes specified by the OGC Common Document version 1.1.
 	 */
 	public static final String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
 	/** Operation request does not include a parameter value, and this server did not declare a default value for that parameter */
@@ -52,6 +55,10 @@ public class ExceptionReport extends Exception {
 	public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
 	/** An error occurs during remote and distributed computation process. */
 	public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
+	
+	/*
+	 * Error Codes specified by the OGC Common Document version 2.0.
+	 */
 	
 	protected String errorKey;
 	protected String locator;
@@ -76,12 +83,62 @@ public class ExceptionReport extends Exception {
 		this.locator = locator;
 	}
 	
-	public ExceptionReportDocument getExceptionDocument() {
-		// Printing serivce Exception
+	public XmlObject getExceptionDocument(String version) {
+		
+		if(version == null){			
+			return createExceptionReportV200();			
+		}		
+		switch (version) {		
+		case WPSConfig.VERSION_100:				
+			return createExceptionReportV100();			
+		case WPSConfig.VERSION_200:			
+			return createExceptionReportV200();
+		default:			
+			return createExceptionReportV200();
+		}
+	}
+
+	private String encodeStackTrace(Throwable t) {
+        StringWriter w = new StringWriter();
+        PrintWriter p = new PrintWriter(w);
+        t.printStackTrace(p);
+        w.flush();
+        w.flush();
+        return w.toString();
+	}
+	
+	private net.opengis.ows.x20.ExceptionReportDocument createExceptionReportV200(){		
+		
+		// Printing service Exception
+		net.opengis.ows.x20.ExceptionReportDocument reportV200 = net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
+		net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 = reportV200.addNewExceptionReport();
+		exceptionReportV200.setVersion(WPSConfig.VERSION_200);
+		net.opengis.ows.x20.ExceptionType exV200 = exceptionReportV200.addNewException();
+		exV200.setExceptionCode(errorKey);
+		exV200.addExceptionText(this.getMessage());
+		// Adding additional Java exception
+		net.opengis.ows.x20.ExceptionType stackTraceV200 = exceptionReportV200.addNewException();
+		stackTraceV200.addExceptionText(encodeStackTrace(this));
+		stackTraceV200.setExceptionCode("JAVA_StackTrace");
+		//	adding Rootcause
+		net.opengis.ows.x20.ExceptionType stackTraceRootExceptionV200 = exceptionReportV200.addNewException();
+		if (getCause() != null) {
+			stackTraceRootExceptionV200.addExceptionText(getCause().getMessage());
+			stackTraceRootExceptionV200.addExceptionText(encodeStackTrace(getCause()));
+		}
+		stackTraceRootExceptionV200.setExceptionCode("JAVA_RootCause");
+		if (locator != null) {
+			exV200.setLocator(locator);
+		}
+		return reportV200;
+	}
+	
+	private ExceptionReportDocument createExceptionReportV100(){		
+		
+		// Printing service Exception
 		ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
 		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
-		//Fix for Bug 903 https://bugzilla.52north.org/show_bug.cgi?id=903
-		exceptionReport.setVersion("1.0.0");
+		exceptionReport.setVersion(WPSConfig.VERSION_100);
 		ExceptionType ex = exceptionReport.addNewException();
 		ex.setExceptionCode(errorKey);
 		ex.addExceptionText(this.getMessage());
@@ -100,15 +157,7 @@ public class ExceptionReport extends Exception {
 			ex.setLocator(locator);
 		}
 		return report;
-	}
-
-	private String encodeStackTrace(Throwable t) {
-        StringWriter w = new StringWriter();
-        PrintWriter p = new PrintWriter(w);
-        t.printStackTrace(p);
-        w.flush();
-        w.flush();
-        return w.toString();
+		
 	}
 	
 	public int getHTTPStatusCode(){

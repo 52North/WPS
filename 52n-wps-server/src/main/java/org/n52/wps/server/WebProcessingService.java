@@ -95,8 +95,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
 
     private static String applicationBaseDir = null;
-
-    private ServletConfig servletConfig;
+    
     private ServletContext servletContext;
 
 	@Autowired
@@ -254,31 +253,31 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
     @RequestMapping(method = RequestMethod.GET)
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+        String requestedVersion = null;
         try {
-            @SuppressWarnings("resource")
             OutputStream out = res.getOutputStream(); // closed by res.flushBuffer();
             RequestHandler handler = new RequestHandler(req.getParameterMap(), out);
             String mimeType = handler.getResponseMimeType();
+            requestedVersion = handler.getRequestedVersion();         
             res.setContentType(mimeType);
             handler.handle();
 
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (ExceptionReport e) {
-            handleException(e, res);
+            handleException(e, res, requestedVersion);
         }
         catch (RuntimeException e) {
             ExceptionReport er = new ExceptionReport("Error handing request: " + e.getMessage(),
                                                      ExceptionReport.NO_APPLICABLE_CODE,
                                                      e);
-            handleException(er, res);
+            handleException(er, res, requestedVersion);
         }
         finally {
             if (res != null) {
                 res.flushBuffer();
             }
-            // out.flush();
-            // out.close();
         }
     }
 
@@ -286,6 +285,8 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         BufferedReader reader = null;
 
+        String requestedVersion = null;
+        
         try {
             String contentType = req.getContentType();
             String characterEncoding = req.getCharacterEncoding();
@@ -298,7 +299,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
                 LOGGER.warn("POST request rejected, request size of " + contentLength + " too large.");
                 ExceptionReport er = new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
                         + " bytes", ExceptionReport.NO_APPLICABLE_CODE);
-                handleException(er, res);
+                handleException(er, res, "2.0.0");
             }
 
             LOGGER.debug("Received POST: Content-Type = " + contentType + ", Character-Encoding = " + characterEncoding
@@ -322,7 +323,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
                 LOGGER.warn("POST request rejected, request size of " + requestSize + " too large.");
                 ExceptionReport er = new ExceptionReport("Request body too large, limited to " + MAXIMUM_REQUEST_SIZE
                         + " bytes", ExceptionReport.NO_APPLICABLE_CODE);
-                handleException(er, res);
+                handleException(er, res, "2.0.0");
             }
 
             String documentString = writer.toString();
@@ -344,6 +345,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
             RequestHandler handler = new RequestHandler(new ByteArrayInputStream(documentString.getBytes("UTF-8")),
                                                         res.getOutputStream());
+            requestedVersion = handler.getRequestedVersion();
             String mimeType = handler.getResponseMimeType();
             res.setContentType(mimeType);
 
@@ -352,11 +354,11 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
             res.setStatus(HttpServletResponse.SC_OK);
         }
         catch (ExceptionReport e) {
-            handleException(e, res);
+            handleException(e, res, requestedVersion);
         }
         catch (Exception e) {
             ExceptionReport er = new ExceptionReport("Error handing request: " + e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE, e);
-            handleException(er, res);
+            handleException(er, res, requestedVersion);
         }
         finally {
             if (res != null) {
@@ -369,12 +371,12 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         }
     }
 
-    private static void handleException(ExceptionReport exception, HttpServletResponse res) {
+    private static void handleException(ExceptionReport exception, HttpServletResponse res, String version) {
         res.setContentType(XML_CONTENT_TYPE);
         try {
             LOGGER.debug(exception.toString());
             // DO NOT MIX getWriter and getOuputStream!
-            exception.getExceptionDocument().save(res.getOutputStream(),
+            exception.getExceptionDocument(version).save(res.getOutputStream(),
                                                   XMLBeansHelper.getXmlOptions());
 
             res.setStatus(exception.getHTTPStatusCode());
@@ -400,9 +402,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
     }
 
 	@Override
-	public void setServletConfig(ServletConfig servletConfig) {
-		this.servletConfig = servletConfig;		
-	}
+	public void setServletConfig(ServletConfig servletConfig) {}
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
