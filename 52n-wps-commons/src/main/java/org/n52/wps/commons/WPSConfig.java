@@ -445,6 +445,7 @@ public class WPSConfig implements Serializable {
     public String getServiceBaseUrl() {
         Server server = getServerConfigurationModule();
         String host = server.getHostname();
+        String protocol = server.getProtocol();
         if (host == null) {
             try {
                 host = InetAddress.getLocalHost().getCanonicalHostName();

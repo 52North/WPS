@@ -28,9 +28,9 @@ import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
 
 /**
- * encapsulates a exception, which occurred by service execution and which has to lead to a service Exception as
+ * encapsulates a exception, which occured by service execution and which has to lead to a service Exception as
  * specified in the spec.
- * @author foerster, Benjamin Pross
+ * @author foerster
  *
  */
 public class ExceptionReport extends Exception {
@@ -38,7 +38,7 @@ public class ExceptionReport extends Exception {
 	// Should be used here, because HttpServlet implements the java.io.Serializable
 	private static final long serialVersionUID = 5784360334341938021L;
 	/*
-	 * Error Codes specified by the OGC Common Document version 1.1.
+	 * Error Codes specified by the OGC Common Document.
 	 */
 	public static final String OPERATION_NOT_SUPPORTED = "OperationNotSupported";
 	/** Operation request does not include a parameter value, and this server did not declare a default value for that parameter */
@@ -55,10 +55,6 @@ public class ExceptionReport extends Exception {
 	public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
 	/** An error occurs during remote and distributed computation process. */
 	public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
-	
-	/*
-	 * Error Codes specified by the OGC Common Document version 2.0.
-	 */
 	
 	protected String errorKey;
 	protected String locator;
@@ -83,7 +79,7 @@ public class ExceptionReport extends Exception {
 		this.locator = locator;
 	}
 	
-	public XmlObject getExceptionDocument(String version) {
+public XmlObject getExceptionDocument(String version) {
 		
 		if(version == null){			
 			return createExceptionReportV200();			

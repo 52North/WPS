@@ -302,7 +302,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */	
     @Override
 	public String generateRetrieveResultURL(String id) {
-		return "http://"
+		return WPSConfig.getInstance().getWPSConfig().getServer().getProtocol() + "://"
                 + getServerConfigurationModule().getHostname() + ":"
                 + getServerConfigurationModule().getHostport() + "/"
                 + getServerConfigurationModule().getWebappPath() + "/"

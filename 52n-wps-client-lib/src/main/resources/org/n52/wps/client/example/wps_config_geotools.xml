@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WPSConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://n52.org/wps https://raw.githubusercontent.com/52North/wps-config/52n-wps-config-1.2.1/src/main/xsd/schema_v2.xsd" xmlns="http://n52.org/wps">
+	xsi:schemaLocation="http://n52.org/wps schema_v2.xsd" xmlns="http://n52.org/wps">
 	<Datahandlers>
 		<ParserList>
 			<Parser name="GML3BasicParser"
@@ -491,8 +491,6 @@
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
-				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
@@ -508,8 +506,6 @@
 					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/2.1.2.1"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
-				<Format mimetype="application/vnd.google-earth.kml+xml"
-					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Generator>
 			<Generator name="ProxyGMLGenerator4Files"
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"
@@ -1144,9 +1140,9 @@
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	
-	<Server protocol="http" hostname="localhost" hostport="8080"
+	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
-		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0" maxPoolSize="20" keepAliveSeconds="1000" maxQueuedTasks="100" minPoolSize="10">
+		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>

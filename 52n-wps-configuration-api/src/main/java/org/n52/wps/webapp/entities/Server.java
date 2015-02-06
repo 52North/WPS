@@ -47,7 +47,9 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 public class Server implements ConfigurationModule {
 
 	private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",
-			true, "localhost");
+			true, "localhost");	
+	private ConfigurationEntry<String> protocolEntry = new StringConfigurationEntry("protocol", "Server protocol", "",
+			true, "http");
 	private ConfigurationEntry<Integer> hostportEntry = new IntegerConfigurationEntry("hostport", "Server Host Port",
 			"", true, 8080);
 	private ConfigurationEntry<Boolean> includeDataInputsInResponseEntry = new BooleanConfigurationEntry(
@@ -63,11 +65,12 @@ public class Server implements ConfigurationModule {
 	private ConfigurationEntry<Boolean> responseURLFilterEnabledEntry = new BooleanConfigurationEntry(
 			"response_url_filter_enabled", "Response URL Filter Enabled", "", true, false);
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(hostnameEntry, hostportEntry,
+	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
 			computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
 			cacheCapabilitesEntry, responseURLFilterEnabledEntry);
 
 	private String hostname;
+	private String protocol;
 	private int hostport;
 	private boolean includeDataInputsInResponse;
 	private int computationTimeout;
@@ -122,6 +125,15 @@ public class Server implements ConfigurationModule {
 	@ConfigurationKey(key = "hostport")
 	public void setHostport(int hostport) {
 		this.hostport = hostport;
+	}
+
+	public String getProtocol() {
+		return protocol;
+	}
+	
+	@ConfigurationKey(key = "protocol")
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
 	}
 
 	public boolean isIncludeDataInputsInResponse() {

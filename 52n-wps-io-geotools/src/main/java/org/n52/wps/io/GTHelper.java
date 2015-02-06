@@ -450,6 +450,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+			String protocol = server.getProtocol();
 			String hostname = server.getHostname();
 			String port = server.getHostport();
 			String webapp = server.getWebappPath();
@@ -487,7 +488,7 @@ public class GTHelper {
 				writer.flush();
 				writer.close();
 				
-				String url = "http://"+hostname+":"+port+"/"+webapp+"/static/schemas/"+ uuid+".xsd";
+				String url = protocol+"://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
 				return url;
 			}
 		}

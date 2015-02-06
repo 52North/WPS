@@ -27,8 +27,8 @@
  * Public License for more details.
  */
 
-package org.n52.wps.test;
-
+//package org.n52.wps.test;
+//
 //import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.hamcrest.Matchers.containsString;
 //import static org.hamcrest.Matchers.is;
@@ -43,11 +43,13 @@ package org.n52.wps.test;
 //import java.util.Random;
 //import java.util.UUID;
 //
+//import javax.servlet.http.HttpServletResponse;
 //import javax.xml.parsers.ParserConfigurationException;
 //
 //import org.apache.commons.io.IOUtils;
 //import org.apache.xmlbeans.XmlException;
 //import org.apache.xmlbeans.XmlObject;
+//import org.junit.AfterClass;
 //import org.junit.Assume;
 //import org.junit.BeforeClass;
 //import org.junit.Test;
@@ -72,7 +74,7 @@ package org.n52.wps.test;
 // * To enable the R process repository:
 // * 
 // * <ul>
-// * <li>open your WPSConfiguration file, normally located in WEB-INF/config/wps_config.xml</li>
+// * <li>open your WPSConfiguration file, normally located in /config/wps_config.xml</li>
 // * <li>Find the "LocalRAlgorithmRepository"</li>
 // * <li>set the attribute "active" to <code>true</code></li>
 // * <li>(restart your WPS server)</li>
@@ -102,6 +104,11 @@ package org.n52.wps.test;
 //        catch (RserveException e1) {
 //            Assume.assumeNoException(e1);
 //        }
+//    }
+//
+//    @AfterClass
+//    public static void afterClass() {
+//        // WPSConfig.forceInitialization("src/main/webapp/config/wps_config.xml");
 //    }
 //
 //    private static RConnection getNewConnection(String host, int port, String user, String password) throws RserveException {
@@ -317,12 +324,9 @@ package org.n52.wps.test;
 //            String payload = xmlPayload.toString();
 //            payload = payload.replace("@@@data@@@", cmd);
 //
-//            String response = PostClient.sendRequest(wpsUrl, payload);
-//
 //            String expected = "illegal input";
-//            assertThat("Response is an exception", response, containsString("ExceptionReport"));
-//            assertThat("Response contains the keyphrase '" + expected + "'", response, containsString(expected));
-//            assertThat("Response contains the illegal input", response, containsString(cmd));
+//            
+//            PostClient.checkForExceptionReport(wpsUrl, payload, HttpServletResponse.SC_BAD_REQUEST, expected, cmd);
 //        }
 //    }
 //
@@ -336,12 +340,9 @@ package org.n52.wps.test;
 //        for (String cmd : illegalCommands) {
 //            String payload = xmlPayload.toString();
 //            payload = payload.replace("@@@data@@@", cmd);
-//
-//            String response = PostClient.sendRequest(wpsUrl, payload);
-//
-//            assertThat("Response is an exception", response, containsString("ExceptionReport"));
+//            
 //            String expected = "eval failed";
-//            assertThat("Response contains '" + expected + "'", response, containsString(expected));
+//            PostClient.checkForExceptionReport(wpsUrl, payload, HttpServletResponse.SC_BAD_REQUEST, expected);
 //        }
 //    }
 //
