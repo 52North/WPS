@@ -85,6 +85,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		this.request = request;
 		resultDoc = ResultDocument.Factory.newInstance();
 		resultDoc.addNewResult();
+		resultDoc.getResult().setJobID(request.getUniqueId().toString());
 		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetResult.xsd");
 		statusInfoDoc = StatusInfoDocument.Factory.newInstance();		
 		statusInfoDoc.addNewStatusInfo();
