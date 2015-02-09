@@ -488,7 +488,7 @@ public class GTHelper {
 				writer.flush();
 				writer.close();
 				
-				String url = protocol+"://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
+				String url = protocol+"://"+hostname+":"+port+"/"+webapp+"/static/schemas/"+ uuid+".xsd";
 				return url;
 			}
 		}
