@@ -31,6 +31,8 @@ package org.n52.wps.server.database;
 import java.io.File;
 import java.io.InputStream;
 
+import org.n52.wps.server.ExceptionReport;
+
 /**
 * An interface-layer to the databases.
 * 
@@ -68,7 +70,7 @@ public interface IDatabase {
     
 	// Retrieve the Status of a running process, based on an unique
 	// identifier, which was already given to the client for reference.
-	public InputStream lookupStatus(String request_id);
+	public InputStream lookupStatus(String request_id) throws ExceptionReport;
 	
 	public String storeComplexValue(String id, InputStream stream, String type, String mimeType);
 	

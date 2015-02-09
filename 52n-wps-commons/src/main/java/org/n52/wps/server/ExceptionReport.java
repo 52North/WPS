@@ -56,6 +56,10 @@ public class ExceptionReport extends Exception {
 	/** An error occurs during remote and distributed computation process. */
 	public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
 	
+
+	/** A GetStatus request was send with a JobID of a synchronous job, or if the JobID doesn't exist at all. */
+	public static final String NO_SUCH_JOB = "NoSuchJob";
+	
 	protected String errorKey;
 	protected String locator;
 	
@@ -79,7 +83,7 @@ public class ExceptionReport extends Exception {
 		this.locator = locator;
 	}
 	
-public XmlObject getExceptionDocument(String version) {
+    public XmlObject getExceptionDocument(String version) {
 		
 		if(version == null){			
 			return createExceptionReportV200();			
@@ -172,6 +176,9 @@ public XmlObject getExceptionDocument(String version) {
 			return HttpServletResponse.SC_BAD_REQUEST;
 			
 		case INVALID_UPDATE_SEQUENCE:
+			return HttpServletResponse.SC_BAD_REQUEST;
+			
+		case NO_SUCH_JOB:
 			return HttpServletResponse.SC_BAD_REQUEST;
 			
 		case NO_APPLICABLE_CODE:

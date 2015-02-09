@@ -50,11 +50,11 @@ import net.opengis.wps.x200.StatusInfoDocument;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
-import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.commons.MIMEUtil;
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -486,7 +486,7 @@ public final class FlatFileDatabase implements IDatabase {
     }
 
 	@Override
-	public InputStream lookupStatus(String request_id) {
+	public InputStream lookupStatus(String request_id) throws ExceptionReport {
         File responseFile = lookupResponseAsFile(request_id);
         if (responseFile != null && responseFile.exists()) {
             LOGGER.debug("Response file for {} is {}", request_id, responseFile.getPath());
@@ -495,7 +495,7 @@ public final class FlatFileDatabase implements IDatabase {
             	InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile))
                 : new FileInputStream(responseFile);
             	
-            	//TODO check if status doc
+            	//Check if status doc
             	try {
 					StatusInfoDocument.Factory.parse(inputStream);
 				} catch (Exception e) {
@@ -515,8 +515,8 @@ public final class FlatFileDatabase implements IDatabase {
 						StatusInfoDocument.Factory.parse(latestStatusFile);
 						
 					} catch (XmlException e1) {
-						LOGGER.error("Could not parse status info document.", e);
-						return null;
+						LOGGER.error("Could not parse status info document, probably wrong JobID, or synchronous job.", e);
+						throw new ExceptionReport("Status info for specified JobID not found.", ExceptionReport.NO_SUCH_JOB, "JobID");
 					}
 
 				}

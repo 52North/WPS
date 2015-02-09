@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.n52.wps.server.ExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -237,7 +238,7 @@ public class DatabaseFactory implements IDatabase
 	}
 
 	@Override
-	public InputStream lookupStatus(String request_id) {
+	public InputStream lookupStatus(String request_id) throws ExceptionReport {
 		return DatabaseFactory.database.lookupStatus(request_id);
 	}
 	
