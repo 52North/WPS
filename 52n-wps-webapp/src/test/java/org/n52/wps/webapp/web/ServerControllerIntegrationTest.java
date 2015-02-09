@@ -73,7 +73,7 @@ public class ServerControllerIntegrationTest extends AbstractITClass {
 		ResultActions result = this.mockMvc.perform(request);
 		result.andExpect(status().isOk());
 		assertEquals("testhost", server.getHostname());
-		assertEquals("testhost", server.getConfigurationEntries().get(0).getValue());
+		assertEquals("testhost", server.getConfigurationEntries().get(1).getValue());
 	}
 
 	@Test
