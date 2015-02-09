@@ -550,10 +550,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public void setFormatEntry(String mimeType, String schema,
+	public void setFormatEntry(String moduleClassName, String mimeType, String schema,
 			String encoding, boolean status) {
-		// TODO Auto-generated method stub
-		
+		configurationDAO.updateFormatEntry(moduleClassName, mimeType, schema, encoding, status);
+		LOGGER.debug(
+				"Format with mime type '{}', schema '{}', encoding '{}' and status '{}' of module '{}' has been updated.",
+				mimeType, schema, encoding, status, moduleClassName);	
 	}
 
 	@Override

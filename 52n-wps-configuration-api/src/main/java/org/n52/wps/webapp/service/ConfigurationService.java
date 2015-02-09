@@ -185,6 +185,8 @@ public interface ConfigurationService {
 	/**
 	 * Set the value of an format entry.
 	 *  
+	 * @param moduleClassName
+	 *            the fully qualified name of the module holding the format entry
 	 * @param mimeType
 	 *            the mime type of the format entry	
 	 * @param schema
@@ -194,7 +196,7 @@ public interface ConfigurationService {
 	 * @param status
 	 *            the format active status
 	 */
-	void setFormatEntry(String mimeType, String schema, String encoding, boolean status);
+	void setFormatEntry(String moduleClassName,String mimeType, String schema, String encoding, boolean status);
 
 	/**
 	 * Adds a new format entry.

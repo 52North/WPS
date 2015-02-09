@@ -32,10 +32,14 @@ import java.util.Map;
 
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 /**
@@ -58,5 +62,75 @@ public class GeneratorsController extends BaseConfigurationsController {
 		model.addAttribute("configurations", configurations);
 		LOGGER.info("Reterived '{}' configurations.", category);
 		return "generators";
+	}
+	
+	/**
+	 * TODO update
+	 * Add a new algorithm to the repository
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithmName
+	 *            The algorithm name
+	 */
+	@RequestMapping(value = "formats/add_format", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void addFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("mimeType") String mimeType, @RequestParam("schema") String schema, @RequestParam("encoding") String encoding) {
+		configurationManager.getConfigurationServices().addFormatEntry(moduleClassName, mimeType, schema, encoding);
+		LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
+	}
+	
+	/**
+	 * TODO update
+	 * Delete an algorithm from the repository
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithmName
+	 *            The algorithm name
+	 */
+	@RequestMapping(value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void deleteFormat2(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
+		mimeType = mimeType.replace("forwardslash", "/");
+		
+		if(schema.equals("null")){
+			schema = "";
+		}
+		if(encoding.equals("null")){
+			encoding = "";
+		}
+		
+		configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
+		LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
+	}
+
+	/**
+	 * TODO: update parameters
+	 * Set the status of a configuration format to active/inactive
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithm
+	 *            The algorithm name
+	 * @param status
+	 *            The new status
+	 */
+	@RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
+			@PathVariable boolean status) {
+		
+		mimeType = mimeType.replace("forwardslash", "/");
+		
+		if(schema.equals("null")){
+			schema = "";
+		}
+		if(encoding.equals("null")){
+			encoding = "";
+		}
+		
+		configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
+//		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
 	}
 }

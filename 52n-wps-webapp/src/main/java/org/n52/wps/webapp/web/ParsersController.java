@@ -103,4 +103,33 @@ public class ParsersController extends BaseConfigurationsController {
 		configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
 		LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
 	}
+
+	/**
+	 * TODO: update parameters
+	 * Set the status of a configuration format to active/inactive
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithm
+	 *            The algorithm name
+	 * @param status
+	 *            The new status
+	 */
+	@RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
+			@PathVariable boolean status) {
+		
+		mimeType = mimeType.replace("forwardslash", "/");
+		
+		if(schema.equals("null")){
+			schema = "";
+		}
+		if(encoding.equals("null")){
+			encoding = "";
+		}
+		
+		configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
+//		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
+	}
 }

@@ -152,7 +152,7 @@
 										<td>${formatEntry.schema}</td>
 										<td>${formatEntry.encoding}</td>
 										<td><a id="formatStatusButton" class="${formatStatusClass}"
-											href="<c:url value="/${baseUrl}/algorithms/activate/${fullClassName}/${algorithmEntry.algorithm}/${targetAlgorithmStatus}" />"><c:out
+											href="<c:url value="/${baseUrl}/formats/activate/${fullClassName}/${fn:replace(formatEntry.mimeType, '/', 'forwardslash')}/${formatEntry.schema == '' ? 'null' : formatEntry.schema}/${formatEntry.encoding == '' ? 'null' : formatEntry.encoding}/${targetFormatStatus}" />"><c:out
 													value="${formatStatusText}" /></a></td>
 										<td><a id="editFormat" class="btn btn-default btn-mini" href="<c:url value="/parsers/formats/{fullClassName}/{formatEntry.mimeType}/{formatEntry.schema}/{formatEntry.encoding}/edit" />">Edit</a>
 										</td>
@@ -211,5 +211,27 @@ $('input#hiddenModuleName').val(moduleName);
 			}
 		});
 	});
-	
+
+	$('a#formatStatusButton').click(function(event) {
+		event.preventDefault();
+		var button = $(this);
+		var url = button.attr('href');
+		$.ajax({
+			type : "POST",
+			url : url,
+			success : function() {
+				var currentStatus = url.substring(url.lastIndexOf('/') + 1);
+				var trgetStatus = currentStatus == 'true' ? 'false' : 'true';
+				// remove the last false or true and replace it with the new target status for toggling
+				url = url.substr(0, url.lastIndexOf('/') + 1) + trgetStatus;
+				button.attr('href', url);
+				button.toggleClass("btn-success btn-danger").text(button.text() == 'Active' ? "Inactive" : "Active");
+				$("<span class='text-success'>	Status updated</span>").insertAfter(button).fadeOut(3000);
+			},
+			error : function(textStatus, errorThrown) {
+				$("<span class='text-danger'>	Error</span>").insertAfter(button).fadeOut(3000);
+				alertMessage("Error: ", "unable to update algorithm status", "alert alert-danger");
+			}
+		});
+	});
 </script>
