@@ -197,7 +197,6 @@
 <!-- 		<module>52n-wps-transactional</module> -->
 		<module>52n-wps-webadmin</module>
 		<module>52n-wps-ags</module>
-		<module>52n-wps-python</module>
 		<module>52n-wps-r</module>
 		<module>52n-wps-mc</module>
 	</modules>
@@ -449,7 +448,7 @@
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-exec</artifactId>
-				<version>1.1</version>
+				<version>1.3</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.neethi</groupId>
@@ -551,13 +550,8 @@
 			</dependency>
 			<dependency>
 				<groupId>org.n52.mc</groupId>
-				<artifactId>mc-schema</artifactId>
-				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.n52.mc</groupId>
 				<artifactId>mc-runtime</artifactId>
-				<version>0.6</version>
+				<version>1.1-SNAPSHOT</version>
 				<exclusions>
 					<exclusion>
 						<artifactId>log4j</artifactId>
@@ -567,9 +561,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.n52.mc</groupId>
-				<artifactId>mc-xml-processors</artifactId>
-				<version>0.6</version>
+				<artifactId>mc-schema</artifactId>
+				<version>1.1-SNAPSHOT</version>
 			</dependency>
+			
+			
 			<dependency>
 				<groupId>net.sourceforge.pjl-comp-filter</groupId>
 				<artifactId>pjl-comp-filter</artifactId>

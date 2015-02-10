@@ -45,9 +45,9 @@ import org.n52.movingcode.runtime.iodata.IODataType;
 import org.n52.movingcode.runtime.iodata.MediaData;
 import org.n52.movingcode.runtime.processors.AbstractProcessor;
 import org.n52.movingcode.runtime.processors.ProcessorFactory;
-import org.n52.wps.io.data.GenericFileDataWithGT;
+import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
+import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
@@ -109,7 +109,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 							// media data
 						case MEDIA:
-							GenericFileDataWithGT gfd = (GenericFileDataWithGT) iData.getPayload();
+							GenericFileData gfd = (GenericFileData) iData.getPayload();
 							processor.addData(inputID, new MediaData(gfd.getDataStream(), gfd.getMimeType()));
 							break;
 						default:
@@ -230,8 +230,8 @@ public class MCProcessDelegator implements IAlgorithm {
 					case MEDIA:
 
 						MediaData md = (MediaData) param.get(0);
-						GenericFileDataWithGT gfd = new GenericFileDataWithGT(md.getMediaStream(), md.getMimeType());
-						result.put(param.getMessageOutputIdentifier(), new GenericFileDataWithGTBinding(gfd));
+						GenericFileData gfd = new GenericFileData(md.getMediaStream(), md.getMimeType());
+						result.put(param.getMessageOutputIdentifier(), new GenericFileDataBinding(gfd));
 						break;
 				}
 			}
@@ -253,9 +253,11 @@ public class MCProcessDelegator implements IAlgorithm {
 	@Override
 	public ProcessDescriptionType getDescription() {
 		if (description == null) {
-			description = GlobalRepositoryManager.getInstance().getProcessDescription(identifier);
+			ProcessDescriptionType originalDescription = GlobalRepositoryManager.getInstance().getProcessDescription(identifier);
+			MCProcessRepository.filterProcessDescription(originalDescription);
+			description = originalDescription;
 		}
-
+		
 		return description;
 	}
 
@@ -300,7 +302,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 			// Complex Output
 			if (input.isSetComplexData()) {
-				return GenericFileDataWithGTBinding.class;
+				return GenericFileDataBinding.class;
 			}
 		}
 
@@ -338,7 +340,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 			// Complex Output
 			if (output.isSetComplexOutput()) {
-				return GenericFileDataWithGTBinding.class;
+				return GenericFileDataBinding.class;
 			}
 		}
 		return null;
@@ -367,7 +369,7 @@ public class MCProcessDelegator implements IAlgorithm {
 			return IODataType.STRING;
 		}
 
-		if (clazz == GenericFileDataWithGT.class) {
+		if (clazz == GenericFileData.class) {
 			return IODataType.MEDIA;
 		}
 

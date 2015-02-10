@@ -46,10 +46,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-mc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-server</artifactId>
 		</dependency>
 		<!-- pre-compiled AGSWorkspace -->
