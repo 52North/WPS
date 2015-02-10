@@ -1,0 +1,28 @@
+{
+	"processors" : [
+		{
+			"id" : "org.n52.movingcode.runtime.processors.java.JavaJARProcessor",
+			"supportedContainer" : "http://gis.geo.tu-dresden.de/movingcode/containerregistry/java-jar"
+		},
+		{
+			"id" : "org.n52.movingcode.runtime.processors.python.PythonCLIProcessor",
+			"supportedContainer" : "http://gis.geo.tu-dresden.de/movingcode/containerregistry/pythonscript-2.5"
+		}
+	], 
+	
+	"defaults" : {
+		"availablePlatforms" :
+			[
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/gdal-1.8",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/python-2.6",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/python-2.7",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/gdal-1.8-python-2.6",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/arcgis-10.0",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/component/arcgis-10.0-spatialanalyst",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/platform/arcgis-10.0-analysis",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/platform/java-1.6",
+				"http://gis.geo.tu-dresden.de/movingcode/platformregistry/platform/java-1.7"
+			],
+			"tempWorkspace" : "C:/tmp"
+	}
+}
