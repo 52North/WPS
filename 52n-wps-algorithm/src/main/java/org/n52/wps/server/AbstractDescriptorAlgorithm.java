@@ -41,14 +41,12 @@ import net.opengis.wps.x200.ComplexDataType;
 import net.opengis.wps.x200.LiteralDataDocument;
 import net.opengis.wps.x200.LiteralDataDomainType;
 import net.opengis.wps.x200.LiteralDataType;
-import net.opengis.wps.x200.ProcessOfferingDocument;
 import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x200.ProcessOfferingsDocument;
 import net.opengis.wps.x200.ProcessOfferingsDocument.ProcessOfferings;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.algorithm.descriptor.AlgorithmDescriptor;
 import org.n52.wps.algorithm.descriptor.ComplexDataInputDescriptor;
 import org.n52.wps.algorithm.descriptor.ComplexDataOutputDescriptor;
@@ -66,6 +64,7 @@ import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
+import org.n52.wps.webapp.api.FormatEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -149,18 +148,18 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         boolean needDefault = true;
         for (IOHandler handler : handlers) {
             
-            Format[] fullFormats = handler.getSupportedFullFormats();
-            if (fullFormats != null && fullFormats.length > 0) {
+            List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
+            if (fullFormats != null && fullFormats.size() > 0) {
                 if (needDefault) {
                     needDefault = false;
                     describeComplexDataFormat(
                             defaultFormatType.addNewFormat(),
-                            fullFormats[0]);
+                            fullFormats.get(0));
                 }
-                for (int formatIndex = 0, formatCount = fullFormats.length; formatIndex < formatCount; ++formatIndex) {
+                for (int formatIndex = 0, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
                     describeComplexDataFormat(
                             supportedFormatType.addNewFormat(),
-                            fullFormats[formatIndex]);
+                            fullFormats.get(formatIndex));
                 }
             } else {
                 
@@ -206,10 +205,10 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
     private void describeComplexDataFormat(
             ComplexDataDescriptionType description,
-            Format format)
+            FormatEntry format)
     {
         describeComplexDataFormat(description,
-                format.getMimetype(),
+                format.getMimeType(),
                 format.getEncoding(),
                 format.getSchema());
     }
@@ -271,18 +270,18 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     	boolean needDefault = true;
     	for (IOHandler handler : handlers) {
     		
-    		Format[] fullFormats = handler.getSupportedFullFormats();
-    		if (fullFormats != null && fullFormats.length > 0) {
+    		List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
+    		if (fullFormats != null && fullFormats.size() > 0) {
     			if (needDefault) {
     				needDefault = false;
     				describeComplexDataFormat200(
     						defaultFormatType,
-    						fullFormats[0]);
+    						fullFormats.get(0));
     			}
-    			for (int formatIndex = 0, formatCount = fullFormats.length; formatIndex < formatCount; ++formatIndex) {
+    			for (int formatIndex = 0, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
     				describeComplexDataFormat200(
     						complexDataType.addNewFormat(),
-    						fullFormats[formatIndex]);
+    						fullFormats.get(formatIndex));
     			}
     		} else {
     			
@@ -328,10 +327,10 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     
     private void describeComplexDataFormat200(
     		net.opengis.wps.x200.FormatDocument.Format supportedFormatType,
-    		Format format)
+    		FormatEntry format)
     {
     	describeComplexDataFormat200(supportedFormatType,
-    			format.getMimetype(),
+    			format.getMimeType(),
     			format.getEncoding(),
     			format.getSchema());
     }

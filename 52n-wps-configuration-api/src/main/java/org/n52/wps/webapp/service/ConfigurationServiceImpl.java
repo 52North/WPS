@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.jsp.jstl.core.IteratedExpression;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;

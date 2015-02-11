@@ -20,10 +20,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.n52.wps.GeneratorDocument.Generator;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,50 +36,57 @@ public class GeneratorFactory {
 	private static Logger LOGGER = LoggerFactory.getLogger(GeneratorFactory.class);
 	
 	private List<IGenerator> registeredGenerators;
-
+	
 	/**
-	 * This factory provides all available {@link AbstractXMLGenerator} to WPS.
+	 * This factory provides all available {@link Generators} to WPS.
 	 * @param generators
 	 */
-	public static void initialize(Generator[] generators) {
+	public static void initialize(Map<String, ConfigurationModule> generatorMap) {
 		if (factory == null) {
-			factory = new GeneratorFactory(generators);
+			factory = new GeneratorFactory(generatorMap);
 		}
 		else {
 			LOGGER.warn("Factory already initialized");
 		}
 	}
 	
-	private GeneratorFactory(Generator[] generators) {
-		loadAllGenerators(generators);
-
-        // FvK: added Property Change Listener support
-        // creates listener and register it to the wpsConfig instance.
-        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
-            public void propertyChange(
-                    final PropertyChangeEvent propertyChangeEvent) {
-                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredGenerator());
-            }
-        });
+	private GeneratorFactory(Map<String, ConfigurationModule> generatorMap) {
+		loadAllGenerators(generatorMap);
+		
+		// FvK: added Property Change Listener support
+		// creates listener and register it to the wpsConfig instance.
+		org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+			public void propertyChange(
+					final PropertyChangeEvent propertyChangeEvent) {
+				LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+				loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredGeneratorModules());
+			}
+		});
 	}
 
-    private void loadAllGenerators(Generator[] generators){
+    private void loadAllGenerators(Map<String, ConfigurationModule> generatorMap){
         registeredGenerators = new ArrayList<IGenerator>();
-		for(Generator currentGenerator : generators) {
+		for(String currentGeneratorName : generatorMap.keySet()) {
 
-			// remove inactive properties
-			Property[] activeProperties = {};
-			ArrayList<Property> activeProps = new ArrayList<Property>();
-			for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
-				if(currentGenerator.getPropertyArray()[i].getActive()){
-					activeProps.add(currentGenerator.getPropertyArray()[i]);
-				}
+//			// remove inactive properties
+//			Property[] activeProperties = {};
+//			ArrayList<Property> activeProps = new ArrayList<Property>();
+//			for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
+//				if(currentGenerator.getPropertyArray()[i].getActive()){
+//					activeProps.add(currentGenerator.getPropertyArray()[i]);
+//				}
+//			}			
+//			currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
+						
+			ConfigurationModule currentGenerator = generatorMap.get(currentGeneratorName);
+			
+			String generatorClass = "";
+			
+			if(currentGenerator instanceof ClassKnowingModule){
+				generatorClass = ((ClassKnowingModule)currentGenerator).getClassName();
 			}			
-			currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
 			
 			IGenerator generator = null;
-			String generatorClass = currentGenerator.getClassName();
 			try {
 				 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
 			}
@@ -99,8 +108,8 @@ public class GeneratorFactory {
 
 	public static GeneratorFactory getInstance() {
 		if(factory == null){
-			Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();
-			initialize(generators);
+			Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
+			initialize(generatorMap);
 		}
 		return factory;
 	}

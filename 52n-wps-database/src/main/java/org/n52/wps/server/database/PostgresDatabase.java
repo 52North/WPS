@@ -28,8 +28,6 @@
  */
 package org.n52.wps.server.database;
 
-import com.google.common.base.Joiner;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,15 +61,13 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.n52.wps.DatabaseDocument;
-import org.n52.wps.ServerDocument;
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
-
-import static org.n52.wps.server.database.AbstractDatabase.getDatabasePath;
-
+import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
 
 /**
  *
@@ -98,9 +94,7 @@ public class PostgresDatabase extends AbstractDatabase {
                     "Database",
                     "Results");
     private static File BASE_DIRECTORY;
-    private static final ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-    private static final String baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
-            server.getHostname(), server.getHostport(), server.getWebappPath());
+    protected final String baseResultURL;
     public static final String pgCreationString = "CREATE TABLE RESULTS ("
             + "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, "
             + "REQUEST_DATE TIMESTAMP, "
@@ -119,8 +113,16 @@ public class PostgresDatabase extends AbstractDatabase {
             // Create lock object
             storeResponseSerialNumberLock = new Object();
             
+            PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
+        	
+        	Server server = WPSConfig.getInstance().getServerConfigurationModule();
+
+            baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
+                    server.getHostname(), server.getHostport(), server.getWebappPath());
+        	
+            PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
+            
             // Create database wiper task 
-            PropertyUtil propertyUtil = new PropertyUtil(server.getDatabase().getPropertyArray(), KEY_DATABASE_ROOT);
             if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
                 long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
                 long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
@@ -155,8 +157,9 @@ public class PostgresDatabase extends AbstractDatabase {
             }
         }
 
-        DatabaseDocument.Database database = server.getDatabase();
-        PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
+        PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
+
+        PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         BASE_DIRECTORY = new File(baseDirectoryPath);
         LOGGER.info("Using \"{}\" as base directory for results database", baseDirectoryPath);

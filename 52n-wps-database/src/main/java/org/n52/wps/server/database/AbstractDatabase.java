@@ -36,13 +36,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.ws.Response;
 
-import org.n52.wps.DatabaseDocument.Database;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,13 +305,10 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */	
     @Override
 	public String generateRetrieveResultURL(String id) {
-		return WPSConfig.getInstance().getWPSConfig().getServer().getProtocol() + "://"
+		return WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getProtocol() + "://"
                 + getServerConfigurationModule().getHostname() + ":"
                 + getServerConfigurationModule().getHostport() + "/"
                 + getServerConfigurationModule().getWebappPath() + "/"
-//                + WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":"
-//                + WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/"
-//                + WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath() + "/"
                 + "RetrieveResultServlet?id=";   // TODO:  Parameterize this... Execution Context..?
 	}
 	
@@ -326,11 +326,23 @@ public abstract class AbstractDatabase implements IDatabase{
 	}
 	
 	static String getDatabaseProperties(String propertyName) {
-		Database database = WPSConfig.getInstance().getWPSConfig().getServer().getDatabase();
-		Property[] dbProperties = database.getPropertyArray();
-		for(Property property : dbProperties){
-			if(property.getName().equalsIgnoreCase(propertyName)){
-				return property.getStringValue();
+		
+		Map<String, ConfigurationModule> activeDatabaseConfigModules = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
+		
+		ConfigurationModule databaseConfigModule = null;
+		
+		try{
+			//there should be only one
+			databaseConfigModule = activeDatabaseConfigModules.get(activeDatabaseConfigModules.keySet().iterator().next());
+		}catch(Exception e){
+			throw new RuntimeException("Could not load any active database configuration module.");
+		}
+		
+		List<? extends ConfigurationEntry<?>> configurationEntries = databaseConfigModule.getConfigurationEntries();
+
+		for(ConfigurationEntry<?> property : configurationEntries){
+			if(property.getKey().equalsIgnoreCase(propertyName)){
+				return property.getValue().toString();
 			}
 		}
 		return null;

@@ -27,7 +27,6 @@ Public License for more details.
 
 This project includes:
   52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North Web Admin Interface under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
   52North WPS Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -212,7 +211,6 @@ This project includes:
   Web Feature Service Model under Lesser General Public License (LGPL)
   WFS XML Support under Lesser General Public License (LGPL)
   Woodstox under The Apache Software License, Version 2.0
-  WPS-Config under The Apache Software License, Version 2.0
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0

@@ -28,14 +28,16 @@
  */
 package org.n52.wps.client;
 
-import org.n52.wps.GeneratorDocument.Generator;
-import org.n52.wps.ParserDocument.Parser;
+import java.util.Map;
+
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
+import org.n52.wps.webapp.api.ConfigurationModule;
 
 /*
  * Initializes the Factories for Generators and Parsers, based on static information.
+ * TODO will this work with the new config?
  * @author foerster
  *
  */
@@ -46,22 +48,17 @@ public class StaticDataHandlerRepository {
 	
 	public static GeneratorFactory getGeneratorFactory() {
 		if(genFactory == null) {
-			Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();		
-			
+			Map<String, ConfigurationModule> generators = WPSConfig.getInstance().getActiveRegisteredGeneratorModules();
 			GeneratorFactory.initialize(generators);
-			genFactory = GeneratorFactory.getInstance();
-			
-			
-			
+			genFactory = GeneratorFactory.getInstance();			
 		}
 		return genFactory;
 	}
 	
 	public static ParserFactory getParserFactory() {
 		if(parserFactory == null) {
-			Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
+			Map<String, ConfigurationModule> parsers = WPSConfig.getInstance().getActiveRegisteredParserModules();
 			ParserFactory.initialize(parsers);
-			
 			parserFactory = ParserFactory.getInstance();
 		}
 		return parserFactory;

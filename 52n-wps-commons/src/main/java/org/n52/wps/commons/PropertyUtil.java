@@ -17,11 +17,10 @@
 package org.n52.wps.commons;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.Period;
-import org.n52.wps.PropertyDocument;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
@@ -41,38 +40,36 @@ public class PropertyUtil {
     private final static Joiner JOINER = Joiner.on(".");
     
     private final String systemPropertyRoot;
-    private final Map<String, Property> propertyNameMap;
+    private final Map<String, ConfigurationEntry<?>> propertyNameMap;
     private ConfigurationModule configurationModule;
     private ConfigurationManager configurationManager;
-    
-    public PropertyUtil(Property[] properties) {
-        this(properties, null);
-    }
-    
-    public PropertyUtil(Property[] properties, String systemPropertyRoot) {
-        propertyNameMap = new LinkedHashMap<String, Property>();
-        if (properties != null) {
-            for (Property property : properties) {
-                if (property != null) {
-                    propertyNameMap.put(property.getName(), property);
-                }
-            }
-        }
-        this.systemPropertyRoot = systemPropertyRoot;
-    }
     
     public PropertyUtil(ConfigurationModule configurationModule) {
     	this.configurationModule = configurationModule;
     	configurationManager = WPSConfig.getInstance().getConfigurationManager();
     	systemPropertyRoot = null;
-    	propertyNameMap = null;
+        propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
+    	fillPropertyNameMap();
     }
     
     public PropertyUtil(ConfigurationModule configurationModule, String systemPropertyRoot) {
     	this.configurationModule = configurationModule;
     	configurationManager = WPSConfig.getInstance().getConfigurationManager();
     	this.systemPropertyRoot = systemPropertyRoot;
-    	propertyNameMap = null;
+        propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
+    	fillPropertyNameMap();
+    }
+    
+    private void fillPropertyNameMap(){
+        List<? extends ConfigurationEntry<?>> properties = configurationModule.getConfigurationEntries();
+        if (properties != null) {
+            for (ConfigurationEntry<?> property : properties) {
+                if (property != null) {
+                    propertyNameMap.put(property.getKey(), property);
+                }
+            }
+        }
+    	
     }
 
     public boolean extractBoolean(final String valueKey, boolean valueDefault) {
@@ -93,19 +90,15 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
+        ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
-            if (property.getActive()) {
-                valueAsString = property.getStringValue();
-                if (valueAsString != null) {
-                   boolean value = Boolean.parseBoolean(valueAsString);
-                   LOGGER.info("Config property \"{}\" exists, using value of: {} ({}) ", valueKey, valueAsString, value);
-                   return value;
-                } else {
-                   LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
-                }
+            valueAsString = property.getValue().toString();
+            if (valueAsString != null) {
+               boolean value = Boolean.parseBoolean(valueAsString);
+               LOGGER.info("Config property \"{}\" exists, using value of: {} ({}) ", valueKey, valueAsString, value);
+               return value;
             } else {
-                LOGGER.warn("Config property \"{}\" exists but is not active, ignoring", valueKey);
+               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
@@ -145,23 +138,19 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
+        ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
-            if (property.getActive()) {
-                valueAsString = property.getStringValue();
-                if (valueAsString != null) {
-                    try {
-                        long value = Long.parseLong(valueAsString);
-                        LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
-                        return value;
-                    } catch (NumberFormatException e) {
-                        LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
-                    }
-                } else {
-                   LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
+            valueAsString = property.getValue().toString();
+            if (valueAsString != null) {
+                try {
+                    long value = Long.parseLong(valueAsString);
+                    LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
+                    return value;
+                } catch (NumberFormatException e) {
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
                 }
             } else {
-                LOGGER.warn("Config property \"{}\" exists but is not active, ignoring", valueKey);
+               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
@@ -201,23 +190,19 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
+        ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
-            if (property.getActive()) {
-                valueAsString = property.getStringValue();
-                if (valueAsString != null) {
-                    try {
-                        double value = Double.parseDouble(valueAsString);
-                        LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
-                        return value;
-                    } catch (NumberFormatException e) {
-                        LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
-                    }
-                } else {
-                   LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
+            valueAsString = property.getValue().toString();
+            if (valueAsString != null) {
+                try {
+                    double value = Double.parseDouble(valueAsString);
+                    LOGGER.info("System property \"{}\" exists, using value of: {}", valueKey, value);
+                    return value;
+                } catch (NumberFormatException e) {
+                    LOGGER.error("System property \"{}\" exists, but value of \"{}\" is invalid", valueKey, valueAsString);
                 }
             } else {
-                LOGGER.warn("Config property \"{}\" exists but is not active, ignoring", valueKey);
+               LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
@@ -252,18 +237,14 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
          
-        Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
+        ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
-            if (property.getActive()) {
-                value = property.getStringValue();
-                if (value != null) {
-                   LOGGER.info("Config property \"{}\" exists, using value of: ", valueKey, value);
-                   return property.getStringValue();
-                } else {
-                    LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
-                }
+            value = property.getValue().toString();
+            if (value != null) {
+               LOGGER.info("Config property \"{}\" exists, using value of: ", valueKey, value);
+               return property.getValue().toString();
             } else {
-                LOGGER.warn("Config property \"{}\" exists but is not active, ignoring", valueKey);
+                LOGGER.warn("Config property \"{}\" exists but value is null, ignoring", valueKey);
             }
         } else {
            LOGGER.debug("Config property \"{}\" not present", valueKey);
@@ -308,28 +289,24 @@ public class PropertyUtil {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
         
-        PropertyDocument.Property property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
+        ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
-            if (property.getActive()) {
-                periodAsString = property.getStringValue();
-                if (periodAsString != null) {
-                    try {
-                        Period period = Period.parse(periodAsString);
-                        if (period != null) {
-                            long periodMillis = period.toStandardDuration().getMillis();
-                            LOGGER.info("Config property for \"{}\" exists, using value of: {} ({}ms) ", valueKey, periodAsString, periodMillis);
-                            return periodMillis;
-                        } else {
-                            LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
-                        }
-                    } catch (Exception e) {
+            periodAsString = property.getValue().toString();
+            if (periodAsString != null) {
+                try {
+                    Period period = Period.parse(periodAsString);
+                    if (period != null) {
+                        long periodMillis = period.toStandardDuration().getMillis();
+                        LOGGER.info("Config property for \"{}\" exists, using value of: {} ({}ms) ", valueKey, periodAsString, periodMillis);
+                        return periodMillis;
+                    } else {
                         LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
                     }
-                } else {
+                } catch (Exception e) {
                     LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
                 }
             } else {
-                LOGGER.warn("Config property for \"{}\" exists but is not active, ignoring", valueKey);
+                LOGGER.error("Config property for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
             }
         } else {
             LOGGER.debug("Config property for \"{}\"  not present", valueKey);

@@ -32,8 +32,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.entities.Server;
 
 /**
  * After the client Request is accepted, it should be executed. To prevent
@@ -48,15 +48,15 @@ import org.n52.wps.commons.WPSConfig;
  */
 public class RequestExecutor extends ThreadPoolExecutor {
 
-	public static Server serverConfig = WPSConfig.getInstance().getWPSConfig().getServer();
+	public static Server serverConfig = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
 	
 	/**
 	 * Create a RequestExecutor.
 	 */
 	public RequestExecutor() {
-		super(serverConfig.getMinPoolSize().intValue(), serverConfig.getMaxPoolSize().intValue(), serverConfig.getKeepAliveSeconds().intValue(),
+		super(serverConfig.getMinPoolSize(), serverConfig.getMaxPoolSize(), serverConfig.getKeepAliveSeconds(),
 				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(
-						serverConfig.getMaxQueuedTasks().intValue()));
+						serverConfig.getMaxQueuedTasks()));
 	}
 
 }

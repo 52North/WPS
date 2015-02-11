@@ -28,25 +28,23 @@
  */
 package org.n52.wps.server.sextante;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.xmlbeans.XmlException;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.sextante.SextanteProcessDescriptionCreator.UnsupportedGeoAlgorithmException;
+import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.unex.sextante.core.GeoAlgorithm;
 import es.unex.sextante.core.Sextante;
@@ -80,18 +78,19 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		 * 		add all valid processes to WPSConfig
 		 */
 		
-		Property[] propertyProcesses = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getName());
-		
-		ArrayList<String> processList = new ArrayList<String>(propertyProcesses.length);
-		
-		for (Property prop : propertyProcesses) {
+		ConfigurationModule sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 			
-			if(prop.getActive()){
-				processList.add(prop.getStringValue());
+		List<AlgorithmEntry> algorithmEntries = sextanteAlgorithmRepoConfigModule.getAlgorithmEntries();	
+		
+		ArrayList<String> processList = new ArrayList<String>(algorithmEntries.size());		
+		
+		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+			if(algorithmEntry.isActive()){
+				processList.add(algorithmEntry.getAlgorithm());
 			}else{
-				LOGGER.info("Sextante Process : " + prop.getStringValue() + " not active.");				
+				LOGGER.info("Sextante Process : " + algorithmEntry.getAlgorithm() + " not active.");				
 			}
-		}
+		}		
 		
 		Sextante.initialize();
 		HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
@@ -123,38 +122,6 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		
 		LOGGER.info("Initialization of Sextante Repository successfull");
 	}
-	
-	
-//	public boolean addAlgorithm(Object describeProcess) {
-//		String processName = "";
-//		ProcessDescriptionType document = null;
-//		try {
-//			if(describeProcess instanceof File){
-//		
-//			document = ProcessDescriptionType.Factory.parse((File)describeProcess);
-//			}
-//			if(describeProcess instanceof ProcessDescriptionType){
-//				document = (ProcessDescriptionType) describeProcess;
-//			}
-//		
-//		
-//		} catch (IOException e) {
-//			LOGGER.warn("Could not add Sextante Extension Process. Identifier: Unknown", e);
-//			e.printStackTrace();
-//		} catch (XmlException e) {
-//			e.printStackTrace();
-//		}
-//		if(describeProcess == null){
-//			throw new RuntimeException("Could not add process");
-//		}
-//		
-//		
-//		registeredProcesses.put(document.getIdentifier().getStringValue(), document);
-//		
-//		LOGGER.info("Sextante Extension Process "+ processName + " added successfully");
-//		return true;
-//		
-//	}
 
 	public boolean containsAlgorithm(String processID) {
 		if(registeredProcesses.containsKey(processID)){

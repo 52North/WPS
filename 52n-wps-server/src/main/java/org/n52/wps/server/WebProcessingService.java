@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletConfig;
@@ -49,8 +50,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.opengis.wps.x100.CapabilitiesDocument;
 
 import org.apache.xmlbeans.XmlException;
-import org.n52.wps.GeneratorDocument.Generator;
-import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
@@ -58,7 +57,9 @@ import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
 import org.n52.wps.server.handler.RequestHandler;
 import org.n52.wps.util.XMLBeansHelper;
+import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,12 +170,12 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         applicationBaseDir = servletContext.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
 
-        Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
-        ParserFactory.initialize(parsers);
+		Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
+        ParserFactory.initialize(parserMap);
         LOGGER.info("Initialized {}", ParserFactory.getInstance());
 
-        Generator[] generators = WPSConfig.getInstance().getActiveRegisteredGenerator();
-        GeneratorFactory.initialize(generators);
+		Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
+        GeneratorFactory.initialize(generatorMap);
         LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
 
         RepositoryManager repoManager = RepositoryManager.getInstance();

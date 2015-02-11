@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
@@ -46,7 +47,7 @@ import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
-public class GenericFileParserCM implements ConfigurationModule{
+public class GenericFileParserCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
 	private ConfigurationEntry<String> entry1 = new StringConfigurationEntry("test.string.key", "String Title", "Desc",
@@ -111,6 +112,11 @@ public class GenericFileParserCM implements ConfigurationModule{
 	@Override
 	public List<FormatEntry> getFormatEntries() {
 		return formatEntries;
+	}
+
+	@Override
+	public String getClassName() {
+		return GenericFileParser.class.getName();
 	}
 
 }

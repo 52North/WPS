@@ -225,7 +225,6 @@
 		<module>52n-wps-sextante</module>
 		<module>52n-wps-grass</module>
 <!-- 		<module>52n-wps-transactional</module> -->
-		<module>52n-wps-webadmin</module>
 <!-- 		<module>52n-wps-ags</module> -->
 <!-- 		<module>52n-wps-python</module> -->
 <!-- 		<module>52n-wps-r</module> -->
@@ -821,11 +820,6 @@
 				<artifactId>52n-wps-database</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>${project.groupId}</groupId> -->
-<!-- 				<artifactId>52n-wps-grid</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 			</dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-webapp</artifactId>
@@ -844,11 +838,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>52n-wps-webadmin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 <!-- 			<dependency> -->
@@ -871,11 +860,6 @@
 <!-- 				<artifactId>52n-wps-mc</artifactId> -->
 <!-- 				<version>${project.version}</version> -->
 <!-- 			</dependency> -->
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>52n-wps-config</artifactId>
-				<version>1.2.1</version>
-			</dependency>			
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>

@@ -57,12 +57,11 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.HttpException;
 import org.geotools.data.simple.SimpleFeatureCollection;
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.mapserver.MSMapfileBinding;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -99,21 +98,18 @@ public class MapserverWMSGenerator extends AbstractGenerator {
 
 		this.supportedIDataTypes.add(GTVectorDataBinding.class);
 
-		Property[] properties = WPSConfig.getInstance()
-				.getPropertiesForGeneratorClass(this.getClass().getName());
-
-		for (Property property : properties) {
-			if (property.getName().equalsIgnoreCase("Mapserver_workspace")) {
-				workspace = property.getStringValue();
+		for (ConfigurationEntry<?> property : properties) {
+			if (property.getKey().equalsIgnoreCase("Mapserver_workspace")) {
+				workspace = property.getValue().toString();
 			}
-			if (property.getName().equalsIgnoreCase("Mapserver_mapfile")) {
-				mapfile = property.getStringValue();
+			if (property.getKey().equalsIgnoreCase("Mapserver_mapfile")) {
+				mapfile = property.getValue().toString();
 			}
-			if (property.getName().equalsIgnoreCase("Mapserver_dataRepository")) {
-				shapefileRepository = property.getStringValue();
+			if (property.getKey().equalsIgnoreCase("Mapserver_dataRepository")) {
+				shapefileRepository = property.getValue().toString();
 			}
-			if (property.getName().equalsIgnoreCase("Mapserver_wmsUrl")) {
-				wmsUrl = property.getStringValue();
+			if (property.getKey().equalsIgnoreCase("Mapserver_wmsUrl")) {
+				wmsUrl = property.getValue().toString();
 			}
 		}
 		for (String supportedFormat : supportedFormats) {

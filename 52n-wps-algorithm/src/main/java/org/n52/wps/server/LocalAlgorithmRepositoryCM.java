@@ -20,22 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class LocalAlgorithmRepositoryCM implements ConfigurationModule{
+public class LocalAlgorithmRepositoryCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
-
-//	private AlgorithmEntry algorithmEntry = new AlgorithmEntry("org.n52.wps.server.algorithm.JTSConvexHullAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry1 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.DummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.LongRunningDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry3 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry4 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry5 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry6 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.EchoProcess", true);
 
 	private List<AlgorithmEntry> algorithmEntries;
 
@@ -43,7 +36,6 @@ public class LocalAlgorithmRepositoryCM implements ConfigurationModule{
 	
 	public LocalAlgorithmRepositoryCM() {
 		algorithmEntries = new ArrayList<>();
-//		algorithmEntries.addAll(Arrays.asList(algorithmEntry, algorithmEntry1, algorithmEntry2, algorithmEntry3, algorithmEntry4, algorithmEntry5, algorithmEntry6));
 	}
 	
 	@Override
@@ -80,6 +72,11 @@ public class LocalAlgorithmRepositoryCM implements ConfigurationModule{
 	public List<FormatEntry> getFormatEntries() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getClassName() {
+		return LocalAlgorithmRepository.class.getName();
 	}
 
 }

@@ -32,16 +32,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.grass.util.GRASSWPSConfigVariables;
+import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,13 +69,13 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		registeredProcesses = new HashMap<String, ProcessDescription>();
 		processesAddonFlagMap = new HashMap<String, Boolean>();
 		// check if the repository is active
-		if (WPSConfig.getInstance().isRepositoryActive(
-				this.getClass().getCanonicalName())) {
+		
+		ConfigurationModule grassConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+		
+		if (grassConfigModule.isActive()) {
 			LOGGER.info("Initializing Grass Repository");
 
-			Property[] propertyArray = WPSConfig.getInstance()
-					.getPropertiesForRepositoryClass(
-							this.getClass().getCanonicalName());
+			List<? extends ConfigurationEntry<?>> propertyArray = grassConfigModule.getConfigurationEntries();
 			
 			/*
 			 * get properties of Repository
@@ -82,38 +84,48 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 			 * 
 			 * if properties are empty (not initialized yet)
 			 * 		add all valid processes to WPSConfig
-			 */			
-			ArrayList<String> processList = new ArrayList<String>(propertyArray.length);
+			 */
 			
-			for (Property property : propertyArray) {
-				if (property.getName().equalsIgnoreCase(
+			for (ConfigurationEntry<?> property : propertyArray) {
+				if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.TMP_Dir.toString())) {
-					tmpDir = property.getStringValue();
+					tmpDir = property.getValue().toString();
 				}
-				if (property.getName().equalsIgnoreCase(
+				if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.Grass_Home.toString())) {
-					grassHome = property.getStringValue();
-				} else if (property.getName().equalsIgnoreCase(
+					grassHome = property.getValue().toString();
+				} else if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.ModuleStarter_Home.toString())) {
-					grassModuleStarterHome = property.getStringValue();
-				} else if (property.getName().equalsIgnoreCase(
+					grassModuleStarterHome = property.getValue().toString();
+				} else if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.Python_Home.toString())) {
-					pythonHome = property.getStringValue();
-				} else if (property.getName().equalsIgnoreCase(
+					pythonHome = property.getValue().toString();
+				} else if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.GISRC_Dir.toString())) {
-					gisrcDir = property.getStringValue();
-				}else if (property.getName().equalsIgnoreCase(
+					gisrcDir = property.getValue().toString();
+				}else if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.Addon_Dir.toString())) {
-					addonPath = property.getStringValue();
-				}else if (property.getName().equalsIgnoreCase(
+					addonPath = property.getValue().toString();
+				}else if (property.getKey().equalsIgnoreCase(
 						GRASSWPSConfigVariables.Python_Path.toString())) {
-					pythonPath = property.getStringValue();
-				}else if(property.getName().equals("Algorithm")){
-					if(property.getActive()){
-						processList.add(property.getStringValue());
-					}else{
-						LOGGER.info("GRASS process : " + property.getStringValue() + " not active.");				
-					}
+					pythonPath = property.getValue().toString();
+				}
+				//TODO get algorithm entries
+//				else if(property.getKey().equals("Algorithm")){
+//					if(property.getActive()){
+//						processList.add(property.getStringValue());
+//					}else{
+//						LOGGER.info("GRASS process : " + property.getStringValue() + " not active.");				
+//					}
+//				}
+			}
+			
+			List<AlgorithmEntry> algorithmEntries = grassConfigModule.getAlgorithmEntries();			
+			ArrayList<String> processList = new ArrayList<String>(algorithmEntries.size());
+			
+			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+				if(algorithmEntry.isActive()){
+					processList.add(algorithmEntry.getAlgorithm());
 				}
 			}
 

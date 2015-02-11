@@ -41,7 +41,6 @@ import net.opengis.wps.x100.SupportedCRSsType.Default;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
@@ -51,6 +50,7 @@ import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
+import org.n52.wps.webapp.api.FormatEntry;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
@@ -313,7 +313,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		for (int i = 0; i < foundParsers.size(); i++) {
 			IParser parser = foundParsers.get(i);
 
-			Format[] supportedFullFormats = parser.getSupportedFullFormats();
+			List<FormatEntry> supportedFullFormats = parser.getSupportedFullFormats();
 
 			if (complexData.getDefault() == null) {
 				ComplexDataCombinationType defaultInputFormat = complexData
@@ -321,10 +321,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 				/*
 				 * default format will be the first config format
 				 */
-				Format format = supportedFullFormats[0];
+				FormatEntry format = supportedFullFormats.get(0);
 				ComplexDataDescriptionType defaultFormat = defaultInputFormat
 						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimetype());
+				defaultFormat.setMimeType(format.getMimeType());
 
 				String encoding = format.getEncoding();
 
@@ -340,19 +340,19 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 
 			}
 
-			for (int j = 0; j < supportedFullFormats.length; j++) {
+			for (int j = 0; j < supportedFullFormats.size(); j++) {
 				/*
 				 * create supportedFormat for each mimetype, encoding, schema
 				 * composition mimetypes can have several encodings and schemas
 				 */
-				Format format1 = supportedFullFormats[j];
+				FormatEntry format1 = supportedFullFormats.get(j);
 
 				/*
 				 * add one format for this mimetype
 				 */
 				ComplexDataDescriptionType supportedFormat = supportedInputFormat
 						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimetype());
+				supportedFormat.setMimeType(format1.getMimeType());
 				if (format1.getEncoding() != null) {
 					supportedFormat.setEncoding(format1.getEncoding());
 				}
@@ -371,7 +371,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 		for (int i = 0; i < foundGenerators.size(); i++) {
 			IGenerator generator = foundGenerators.get(i);
 
-			Format[] supportedFullFormats = generator.getSupportedFullFormats();
+			List<FormatEntry> supportedFullFormats = generator.getSupportedFullFormats();
 
 			if (complexData.getDefault() == null) {
 				ComplexDataCombinationType defaultInputFormat = complexData
@@ -379,10 +379,10 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 				/*
 				 * default format will be the first config format
 				 */
-				Format format = supportedFullFormats[0];
+				FormatEntry format = supportedFullFormats.get(0);
 				ComplexDataDescriptionType defaultFormat = defaultInputFormat
 						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimetype());
+				defaultFormat.setMimeType(format.getMimeType());
 
 				String encoding = format.getEncoding();
 
@@ -398,19 +398,19 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 
 			}
 
-			for (int j = 0; j < supportedFullFormats.length; j++) {
+			for (int j = 0; j < supportedFullFormats.size(); j++) {
 				/*
 				 * create supportedFormat for each mimetype, encoding, schema
 				 * composition mimetypes can have several encodings and schemas
 				 */
-				Format format1 = supportedFullFormats[j];
+				FormatEntry format1 = supportedFullFormats.get(j);
 
 				/*
 				 * add one format for this mimetype
 				 */
 				ComplexDataDescriptionType supportedFormat = supportedOutputFormat
 						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimetype());
+				supportedFormat.setMimeType(format1.getMimeType());
 				if (format1.getEncoding() != null) {
 					supportedFormat.setEncoding(format1.getEncoding());
 				}

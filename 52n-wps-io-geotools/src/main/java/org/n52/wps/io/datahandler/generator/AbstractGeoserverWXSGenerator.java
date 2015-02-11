@@ -45,68 +45,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.modules;
+package org.n52.wps.io.datahandler.generator;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator;
-import org.n52.wps.webapp.api.AlgorithmEntry;
-import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.FormatEntry;
-import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
+import org.n52.wps.io.data.binding.complex.GeotiffBinding;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule{
+public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 
-	private boolean isActive = true;
-
-	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
+	protected String username;
+	protected String password;
+	protected String host;
+	protected String port;
 	
-	private List<FormatEntry> formatEntries;
-	
-	public GenericFileDataWithGTGeneratorCM(){
-		formatEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "GenericFileDataWithGTGenerator configuration";
-	}
-
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
-
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
-
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.GENERATOR;
-	}
-
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
-
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
-
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
-
-	@Override
-	public String getClassName() {
-		return GenericFileDataWithGTGenerator.class.getName();
+	public AbstractGeoserverWXSGenerator() {		
+		super();
+		this.supportedIDataTypes.add(GTRasterDataBinding.class);
+		this.supportedIDataTypes.add(GeotiffBinding.class);
+		
+		for(ConfigurationEntry<?> property : properties){
+			if(property.getKey().equalsIgnoreCase("Geoserver_username")){
+				username = property.getValue().toString();
+			}
+			if(property.getKey().equalsIgnoreCase("Geoserver_password")){
+				password = property.getValue().toString();
+			}
+			if(property.getKey().equalsIgnoreCase("Geoserver_host")){
+				host = property.getValue().toString();
+			}
+			if(property.getKey().equalsIgnoreCase("Geoserver_port")){
+				port = property.getValue().toString();
+			}
+		}
+		if(port == null){
+			port = "" + WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getHostport();
+		}
+		
+		for(String supportedFormat : supportedFormats){
+			if(supportedFormat.equals("text/xml")){
+				supportedFormats.remove(supportedFormat);
+			}
+		}
+		
 	}
 
 }

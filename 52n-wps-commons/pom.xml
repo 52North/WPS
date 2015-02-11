@@ -79,10 +79,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
 		<dependency>

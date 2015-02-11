@@ -54,11 +54,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GML2BasicGenerator;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  * This class is for testing the GML2BasicParser and -Generator.
@@ -86,11 +87,11 @@ public class GML2BasicParserGeneratorTest extends AbstractTestCase<GML2BasicGene
 
 		GML2BasicParser parser = new GML2BasicParser();
 
-		Format[] formats = parser.getSupportedFullFormats();
+		List<FormatEntry> formats = parser.getSupportedFullFormats();
 
-		Format format = formats[0];
+		FormatEntry format = formats.get(0);
 
-		String mimeType = format.getMimetype();
+		String mimeType = format.getMimeType();
 		String schema = format.getSchema();
 
 		InputStream input = null;

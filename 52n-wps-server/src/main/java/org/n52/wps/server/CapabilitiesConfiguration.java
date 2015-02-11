@@ -199,7 +199,7 @@ public class CapabilitiesConfiguration {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-        boolean cached = WPSConfig.getInstance().getWPSConfig().getServer().getCacheCapabilites();
+        boolean cached = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isCacheCapabilites();
         return getInstance( !cached);
     }
 

@@ -115,8 +115,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 		// if status succeeded, update reponse with result
 		if (responseElem.getStatus().isSetProcessSucceeded()) {
 			// the response only include dataInputs, if the property is set to true;
-			//if(Boolean.getBoolean(WPSConfiguration.getInstance().getProperty(WebProcessingService.PROPERTY_NAME_INCLUDE_DATAINPUTS_IN_RESPONSE))) {
-			if(new Boolean(WPSConfig.getInstance().getWPSConfig().getServer().getIncludeDataInputsInResponse())){
+			if(new Boolean(WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isIncludeDataInputsInResponse())){
 				dataInputs = request.getExecute().getDataInputs();
 				responseElem.setDataInputs(dataInputs);
 			}

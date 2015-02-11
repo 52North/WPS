@@ -26,32 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.response;
+package org.n52.wps.webapp.api;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
-import net.opengis.wps.x200.ResultDocument;
-
-import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.data.IBBOXData;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.ILiteralData;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.ProcessDescription;
-import org.n52.wps.util.XMLBeansHelper;
-
-import com.google.common.base.Charsets;
-import com.google.common.primitives.Doubles;
-
-public class Result extends ResponseData {
-
-	public Result(IData obj, String id, String schema, String encoding,
-			String mimeType, String algorithmIdentifier,
-			ProcessDescription description) throws ExceptionReport {
-		super(obj, id, schema, encoding, mimeType, algorithmIdentifier, description);
-		// TODO Auto-generated constructor stub
-	}
+public abstract class ClassKnowingModule implements ConfigurationModule{
 	
+	public abstract String getClassName();	
 }

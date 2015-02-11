@@ -54,11 +54,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.SimpleGMLGenerator;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  * This class is for testing the SimpleGMLParser and -Generator.
@@ -86,13 +87,13 @@ public class SimpleGMLParserGeneratorTest extends
 
 		SimpleGMLParser parser = new SimpleGMLParser();
 
-		Format[] formats = parser.getSupportedFullFormats();
+		List<FormatEntry> formats = parser.getSupportedFullFormats();
 
-		for (int i = 0; i < formats.length; i++) {
+		for (int i = 0; i < formats.size(); i++) {
 
-			Format format = formats[i];
+			FormatEntry format = formats.get(i);
 
-			String mimeType = format.getMimetype();
+			String mimeType = format.getMimeType();
 			String schema = format.getSchema();
 
 			try {

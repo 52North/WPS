@@ -44,9 +44,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,23 +65,17 @@ public class ResponseURLFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         
-        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+        Server server = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
         
         // Build URL from WPS configuration.  This is the
-        // hardcoded URL that we expect to see in reponses and would like to
+        // hardcoded URL that we expect to see in responses and would like to
         // replace with the URL from the HTTP request.
         configURLString =  server.getProtocol() + "://" +
             server.getHostname() + ":" +
             server.getHostport() + "/" +
             server.getWebappPath();
         
-        // Is filtering enabled in WPS configuration?
-        Property[] serverProperties = server.getPropertyArray();
-        for (Property serverProperty : serverProperties) {
-            if (/* serverProperty.getActive() && */ PROP_responseURLFilterEnabled.equals(serverProperty.getName())) {
-                enabled = Boolean.parseBoolean(serverProperty.getStringValue());
-            }
-        }
+        enabled = server.isResponseURLFilterEnabled();
         
         if (enabled) {
             LOGGER.info("Response URL filtering enabled using base URL of {}", configURLString);
