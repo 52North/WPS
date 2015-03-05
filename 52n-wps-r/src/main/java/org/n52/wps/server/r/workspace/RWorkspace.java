@@ -252,7 +252,7 @@ public class RWorkspace {
         if (strategy.equals(CreationStrategy.MANUALBASEDIR) || strategy.equals(CreationStrategy.MANUAL)) {
             try {
                 if (workDirName == null)
-                    throw new ExceptionReport("Error setting working directory with strategy '" + strategy +  "': WorkDirName is 'null' is not set!", "Inconsistent property");
+                    throw new ExceptionReport("Error setting working directory with strategy '" + strategy +  "': workDirName is 'null'!", "Inconsistent property");
 
                 File testFile = new File(workDirName);
                 if ( !testFile.isAbsolute()) {

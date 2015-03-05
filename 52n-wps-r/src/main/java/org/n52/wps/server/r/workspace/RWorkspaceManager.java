@@ -379,6 +379,7 @@ public class RWorkspaceManager {
                       RWPSConfigVariables.R_WORK_DIR_NAME,
                       strategy,
                       e);
+            throw e;
         }
 
         this.workspace.setWorkingDirectory(this.connection,
