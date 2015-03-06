@@ -125,7 +125,7 @@ public class RDataTypeRegistry {
 
     @Override
     public String toString() {
-        String out = "Key\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
+        String out = "RDataTypeRegistry:\nKey\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
         out += "\n-------------------------------------------------------------------------------------------------";
         out += "---------------------------";
 
