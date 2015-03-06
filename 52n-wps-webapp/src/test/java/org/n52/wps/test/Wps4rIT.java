@@ -83,7 +83,7 @@ public class Wps4rIT {
 
     @BeforeClass
     public static void beforeClass() {
-        wpsUrl = AllTestsIT.getWebappURL();
+        wpsUrl = AllTestsIT.getURL();
 
         String host = System.getProperty("test.rserve.host", "127.0.0.1");
         int port = Integer.parseInt(System.getProperty("test.rserve.port", "6311"));
@@ -416,6 +416,28 @@ public class Wps4rIT {
         String csv = writer.toString();
 
         assertThat("CSV file contains test data names", csv, containsString("\"cadmium\",\"copper\",\"lead\",\"zinc\""));
+    }
+
+    @Test
+    public void metadataLinksAreInProcessDescription() throws XmlException, IOException {
+        URL resource = Wps4rIT.class.getResource("/R/DescribeProcessTestMetadata.xml");
+        XmlObject xmlPayload = XmlObject.Factory.parse(resource);
+
+        String payload = xmlPayload.toString();
+        String response = PostClient.sendRequest(wpsUrl, payload);
+
+        assertThat("Response is not an exception", response, not(containsString("ExceptionReport")));
+        assertThat("Response contains process ID", response, containsString("org.n52.wps.server.r.test.metadata"));
+        assertThat("Response contains first metadata link title",
+                   response,
+                   containsString("title=\"A test title for: a metadata link\""));
+        assertThat("Response contains first metadata link href",
+                   response,
+                   containsString("href=\"http://test.url/metadata\""));
+        assertThat("Response contains second metadata title", response, containsString("title=\"Another link\""));
+        assertThat("Response contains second metadata href",
+                   response,
+                   containsString("href=\"http://link.to/metadata\""));
     }
 
 }
