@@ -39,7 +39,7 @@ public class PlainStringBinding implements IComplexData{
 		payload = string;
 	}
 
-	public Object getPayload() {
+	public String getPayload() {
 		return payload;
 	}
 
