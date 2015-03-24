@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2009 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,40 +26,55 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.data.binding.complex;
+package org.n52.wps.ags.algorithmpackage;
 
-import java.io.IOException;
+import java.util.LinkedList;
 
-import org.n52.wps.io.data.IComplexData;
+/**
+ * @author Matthias Mueller, TU Dresden
+ *
+ */
+public class CommandLineParameter {
 
-public class PlainStringBinding implements IComplexData{
-	protected transient String payload;
-	
-	public PlainStringBinding(String string) {
-		payload = string;
+	private String prefix;
+	private String suffix;
+	private String separator;
+
+	private LinkedList<String> values;
+
+	public CommandLineParameter (String prefixString, String suffixString, String separatorString){
+		prefix = prefixString;
+		suffix = suffixString;
+		separator = separatorString;
+
+		values = new LinkedList<String>();
+
 	}
 
-	public String getPayload() {
-		return payload;
+	public void addValue(String value){
+		values.add(value);
 	}
 
-	public Class getSupportedClass() {
-		return String.class;
+	public String getAsCommandString(){
+		String str = prefix;
+
+		boolean firstrun = true;
+		for (String currentValue : values){
+			if (!firstrun){
+				str = str + separator + currentValue;
+			} else {
+				str = str + currentValue;
+				firstrun = false;
+			}
+		}
+
+		str = str + suffix;
+		return str;
 	}
-	
-	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-	{
-		oos.writeObject(payload);
+
+	public String getAsPlainString(){
+		return values.get(0);
 	}
-	
-	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-	{
-		payload = (String) oos.readObject();
-	}
-    
-    @Override
-	public void dispose(){
-		
-	}
+
 
 }

@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,33 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.feed.movingcode;
+package org.n52.wps.server.database.connection;
 
-import java.net.URI;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
- * @author Matthias Mueller, TU Dresden
  *
+ * @author isuftin (Ivan Suftin, USGS)
  */
-public class AlgorithmURL {
+public class DefaultConnectionHandler implements ConnectionHandler {
 
-	private final URI uri;
-	private static final String SCHEME = "algorithm";
+	private final String dbConnectionURL;
+	private final Properties dbProps;
 
-	public AlgorithmURL (String str){
-		uri = URI.create(str);
+	public DefaultConnectionHandler(String dbConnectionURL, Properties dbProps) {
+		this.dbConnectionURL = dbConnectionURL;
+		this.dbProps = dbProps;
 	}
 
-	public boolean isValid(){
-		return uri.getScheme().equalsIgnoreCase(SCHEME);
+	@Override
+	public Connection getConnection() throws SQLException {
+		Connection conn = DriverManager.getConnection(dbConnectionURL, dbProps);
+		return conn;
 	}
-
-	public String getPublicPath(){
-		return uri.getPath();
-	}
-
-	public String getPrivatePath(){
-		return uri.getQuery();
-	}
-
 }

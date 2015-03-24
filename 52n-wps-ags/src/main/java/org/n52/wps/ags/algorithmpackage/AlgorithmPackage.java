@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2009 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.feed.movingcode;
+package org.n52.wps.ags.algorithmpackage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,15 +62,15 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class MovingCodeObject {
+public class AlgorithmPackage {
 	private final File algorithmWorkspace;
 
 	private ProcessDescriptionType processDescription;
 	private AlgorithmDescription algorithmDescription;
 
-	static Logger LOGGER = LoggerFactory.getLogger(MovingCodeObject.class);
+	static Logger LOGGER = LoggerFactory.getLogger(AlgorithmPackage.class);
 
-	public MovingCodeObject (ProcessDescriptionType pd, AlgorithmDescription ad, File algorithmWorkspace){
+	public AlgorithmPackage (ProcessDescriptionType pd, AlgorithmDescription ad, File algorithmWorkspace){
 
 		// create descriptions
 		algorithmDescription = ad;
@@ -81,7 +81,7 @@ public class MovingCodeObject {
 
 	}
 
-	public MovingCodeObject (File processDescriptionXML, File workspaceTemplateRoot){
+	public AlgorithmPackage (File processDescriptionXML, File workspaceTemplateRoot){
 
 		// create descriptions
 		processDescription = createProcessDescription(processDescriptionXML);
@@ -99,10 +99,10 @@ public class MovingCodeObject {
 		algorithmWorkspace = new File(wsDirString);
 	}
 
-	public MovingCodeObject createChild (File destinationRoot) throws IOException{
+	public AlgorithmPackage createChild (File destinationRoot) throws IOException{
 		FileUtils.copyDirectoryToDirectory(algorithmWorkspace, destinationRoot);
 		File wsDir = new File(destinationRoot.getAbsolutePath() + File.separator + getWorkspacePathFragment());
-		MovingCodeObject child = new MovingCodeObject(processDescription, algorithmDescription, wsDir);
+		AlgorithmPackage child = new AlgorithmPackage(processDescription, algorithmDescription, wsDir);
 		return child;
 	}
 

@@ -59,12 +59,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-io-geotools</artifactId>
+			<artifactId>52n-wps-io-impl</artifactId>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-server</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-commons</artifactId>
@@ -103,17 +103,12 @@
 
 		<dependency>
 			<groupId>org.n52.mc</groupId>
-			<artifactId>mc-schema</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.n52.mc</groupId>
-			<artifactId>mc-xml-processors</artifactId>
+			<artifactId>mc-schema</artifactId>
 		</dependency>
 
 	</dependencies>

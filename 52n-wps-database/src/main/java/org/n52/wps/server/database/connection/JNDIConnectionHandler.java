@@ -26,40 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.data.binding.complex;
+package org.n52.wps.server.database.connection;
 
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
-import org.n52.wps.io.data.IComplexData;
+/**
+ * @author abramhall (Arthur Bramhall, USGS)
+ */
+public class JNDIConnectionHandler implements ConnectionHandler {
 
-public class PlainStringBinding implements IComplexData{
-	protected transient String payload;
-	
-	public PlainStringBinding(String string) {
-		payload = string;
+	private final DataSource dataSource;
+
+	/**
+	 * Create a new JNDI Connection Handler.
+	 *
+	 * @param jndiName the name used by the container to tie to the database
+	 * @throws NamingException
+	 */
+	public JNDIConnectionHandler(String jndiName) throws NamingException {
+		InitialContext context = new InitialContext();
+		dataSource = (DataSource) context.lookup("java:comp/env/jdbc/" + jndiName);
 	}
 
-	public String getPayload() {
-		return payload;
+	/**
+	 * Gets a connection from the database. Attempts to retrieve a new
+	 * connection from the connection pool
+	 *
+	 * @return
+	 * @throws SQLException
+	 */
+	@Override
+	public Connection getConnection() throws SQLException {
+		Connection conn = dataSource.getConnection();
+		return conn;
 	}
-
-	public Class getSupportedClass() {
-		return String.class;
-	}
-	
-	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-	{
-		oos.writeObject(payload);
-	}
-	
-	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-	{
-		payload = (String) oos.readObject();
-	}
-    
-    @Override
-	public void dispose(){
-		
-	}
-
 }

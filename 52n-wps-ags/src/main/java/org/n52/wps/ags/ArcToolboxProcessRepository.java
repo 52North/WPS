@@ -41,11 +41,10 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.ags.algorithmpackage.AlgorithmPackage;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.feed.FeedRepository;
-import org.n52.wps.server.feed.movingcode.MovingCodeObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 	private static final String PROPERTY_BACKEND_URN = "BACKEND_URN";
 	private static final String PROPERTY_WORKSPACEBASE = "WORKSPACEBASE";
 	
-	private HashMap<String, MovingCodeObject> registeredAlgorithms;
+	private HashMap<String, AlgorithmPackage> registeredAlgorithms;
 	private URI[] supportedContainers;
 	private URI[] supportedBackends;
 	private File workspaceBase = null;
@@ -75,11 +74,10 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		LOGGER.info("Initializing ArcToolbox Process Repository ...");
 		
 		//initialize local variables
-		registeredAlgorithms = new HashMap<String, MovingCodeObject>();
+		registeredAlgorithms = new HashMap<String, AlgorithmPackage>();
 		try{
 			loadConfiguration();
 			loadLocalProcesses();
-			loadFeedProcesses();
 		} catch (Exception e){
 			LOGGER.error("Could not initialize ArcToolbox Process Repository.");
 		}
@@ -87,7 +85,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		// check if workspaceBase is specified
 		if (workspaceBase == null){
 			LOGGER.error("Workspace base is missing: Clearing my Process Inventory");
-			registeredAlgorithms = new HashMap<String, MovingCodeObject>();
+			registeredAlgorithms = new HashMap<String, AlgorithmPackage>();
 		}
 		
 		// log active Processes ...
@@ -149,7 +147,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		// create new MovingCodeObjects
 		for (String currentFileName : describeProcessFiles){
 			File currentFile = new File (inventoryDir.getAbsolutePath() + File.separator + currentFileName);
-			MovingCodeObject currentMCO = new MovingCodeObject(currentFile, inventoryDir);
+			AlgorithmPackage currentMCO = new AlgorithmPackage(currentFile, inventoryDir);
 			if (isSupportedScript(currentMCO)){
 				registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
 			} else {
@@ -159,16 +157,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		}
 	}
 	
-	private void loadFeedProcesses(){
-		// retrieve supported MCOs from the feed
-		MovingCodeObject[] feedMCOs = FeedRepository.getInstance().getMovingCodeObjects(supportedContainers, supportedBackends);
-		for (MovingCodeObject currentMCO : feedMCOs){
-			// add those algorithms to this Repository
-			registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
-		}
-	}
-	
-	private boolean isSupportedScript(MovingCodeObject mco){
+	private boolean isSupportedScript(AlgorithmPackage mco){
 		boolean rightContainer = false;
 		boolean rightBackends = false;
 		for (URI currentContainer : supportedContainers){

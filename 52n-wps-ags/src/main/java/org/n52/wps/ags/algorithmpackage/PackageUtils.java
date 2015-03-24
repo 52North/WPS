@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2009 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.feed.movingcode;
+package org.n52.wps.ags.algorithmpackage;
 
 import java.io.File;
 
@@ -46,9 +46,9 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class MovingCodeUtils {
+public class PackageUtils {
 
-	public static Class getInputDataType(MovingCodeObject mco, String id) {
+	public static Class getInputDataType(AlgorithmPackage mco, String id) {
 		InputDescriptionType[] inputs = mco.getProcessDescription().getDataInputs().getInputArray();
 
 		for(InputDescriptionType input : inputs){
@@ -88,7 +88,7 @@ public class MovingCodeUtils {
 		return null;
 	}
 
-	public static Class getOutputDataType(MovingCodeObject mco, String id) {
+	public static Class getOutputDataType(AlgorithmPackage mco, String id) {
 		OutputDescriptionType[] outputs = mco.getProcessDescription().getProcessOutputs().getOutputArray();
 
 		for(OutputDescriptionType output : outputs){

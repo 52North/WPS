@@ -28,7 +28,6 @@ Public License for more details.
 This project includes:
   52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52n-wps-ags-workspace under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
-  52North Moving Code Runtime under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Admin Interface under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
@@ -43,7 +42,6 @@ This project includes:
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
   52North WPS Moving Code Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Python Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS R Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -51,6 +49,8 @@ This project includes:
   Abdera Bundle Jar under The Apache Software License, Version 2.0
   Activation 1.1 under The Apache Software License, Version 2.0
   AOP alliance under Public Domain
+  Apache Commons Exec under Apache License, Version 2.0
+  Apache Commons Lang under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -62,7 +62,6 @@ This project includes:
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)
   Commons Codec under The Apache Software License, Version 2.0
-  Commons Exec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JXPath under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
@@ -115,6 +114,9 @@ This project includes:
   Jackrabbit SPI under The Apache Software License, Version 2.0
   Jackrabbit SPI Commons under The Apache Software License, Version 2.0
   Jackrabbit Text Extractors under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
@@ -151,9 +153,9 @@ This project includes:
   Lucene Core under Apache 2
   Main module under Lesser General Public License (LGPL)
   mapscript under MapServer License (MIT license)
-  mc-xml-processors under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Metadata under Lesser General Public License (LGPL)
-  MovingCode-Schema under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  Moving Code Runtime under Apache License, Version 2.0
+  Moving Code XML Schema under Apache License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)

@@ -540,10 +540,6 @@
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-python</artifactId>
-				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-io-geotools</artifactId>
 				</dependency>
 				<dependency>
