@@ -21,65 +21,58 @@
  * if the distribution is compliant with both the GNU General Public
  * License version 2 and the aforementioned licenses.
  *
+ * As an exception to the terms of the GPL, you may copy, modify,
+ * propagate, and distribute a work formed by combining 52°North WPS
+ * GeoTools Modules with the Eclipse Libraries, or a work derivative of
+ * such a combination, even if such copying, modification, propagation, or
+ * distribution would otherwise violate the terms of the GPL. Nothing in
+ * this exception exempts you from complying with the GPL in all respects
+ * for all of the code used other than the Eclipse Libraries. You may
+ * include this exception and its grant of permissions when you distribute
+ * 52°North WPS GeoTools Modules. Inclusion of this notice with such a
+ * distribution constitutes a grant of such permissions. If you do not wish
+ * to grant these permissions, remove this paragraph from your
+ * distribution. "52°North WPS GeoTools Modules" means the 52°North WPS
+ * modules using GeoTools functionality - software licensed under version 2
+ * or any later version of the GPL, or a work based on such software and
+ * licensed under the GPL. "Eclipse Libraries" means Eclipse Modeling
+ * Framework Project and XML Schema Definition software distributed by the
+ * Eclipse Foundation and licensed under the Eclipse Public License Version
+ * 1.0 ("EPL"), or a work based on such software and licensed under the EPL.
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.datahandler.parser;
+package org.n52.wps.io.modules.generator;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.n52.wps.io.datahandler.generator.KMLGenerator;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
-import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
-import org.n52.wps.webapp.api.types.FileConfigurationEntry;
-import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
-import org.n52.wps.webapp.api.types.StringConfigurationEntry;
-import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
-public class GenericFileParserCM extends ClassKnowingModule{
+public class KMLGeneratorCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
-	private ConfigurationEntry<String> entry1 = new StringConfigurationEntry("test.string.key", "String Title", "Desc",
-			true, "Initial Value");
-	private ConfigurationEntry<Integer> entry2 = new IntegerConfigurationEntry("test.integer.key", "Integer Title",
-			"Integer Desc", true, 44);
-	private ConfigurationEntry<Double> entry3 = new DoubleConfigurationEntry("test.double.key", "Double Title",
-			"Double Desc", true, 10.4);
-	private ConfigurationEntry<Boolean> entry4 = new BooleanConfigurationEntry("test.boolean.key", "Boolean Title",
-			"Boolean Desc", true, true);
-	private ConfigurationEntry<File> entry5 = new FileConfigurationEntry("test.file.key", "File Title", "File Desc",
-			true, new File("path"));
-	private ConfigurationEntry<URI> entry6 = new URIConfigurationEntry("test.uri.key", "URI Title", "URI Desc", true,
-			URI.create("path"));
 
-	private ConfigurationEntry<String> entry7 = new StringConfigurationEntry("test.string.key2", "String Title",
-			"Desc", true, "Initial Value 2");
-	private IntegerConfigurationEntry entry8 = new IntegerConfigurationEntry("test.integer.key2", "Integer Title",
-			"Integer Desc", true, 15);
-
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(entry1, entry2, entry3, entry4,
-			entry5, entry6, entry7, entry8);
+	private List<? extends ConfigurationEntry<?>> configurationEntries;
 	
 	private List<FormatEntry> formatEntries;
 	
-	public GenericFileParserCM(){
+	public KMLGeneratorCM(){
 		formatEntries = new ArrayList<>();
+		configurationEntries = new ArrayList<>();
 	}
 	
 	@Override
 	public String getModuleName() {
-		return "GenericFileParser Configuration Module";
+		return "KMLGenerator";
 	}
 
 	@Override
@@ -94,18 +87,16 @@ public class GenericFileParserCM extends ClassKnowingModule{
 
 	@Override
 	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
+		return ConfigurationCategory.GENERATOR;
 	}
 
 	@Override
 	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		// TODO Auto-generated method stub
-		return null;
+		return configurationEntries;
 	}
 
 	@Override
 	public List<AlgorithmEntry> getAlgorithmEntries() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -116,7 +107,7 @@ public class GenericFileParserCM extends ClassKnowingModule{
 
 	@Override
 	public String getClassName() {
-		return GenericFileParser.class.getName();
+		return KMLGenerator.class.getName();
 	}
 
 }

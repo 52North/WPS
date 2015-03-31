@@ -45,33 +45,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.modules;
+package org.n52.wps.io.modules.generator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator;
+import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
-import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule{
+public class GeotiffGeneratorCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
+	private List<? extends ConfigurationEntry<?>> configurationEntries;
 	
 	private List<FormatEntry> formatEntries;
 	
-	public GenericFileDataWithGTGeneratorCM(){
+	public GeotiffGeneratorCM(){
 		formatEntries = new ArrayList<>();
+		configurationEntries = new ArrayList<>();
 	}
 	
 	@Override
 	public String getModuleName() {
-		return "GenericFileDataWithGTGenerator configuration";
+		return "GeotiffGenerator";
 	}
 
 	@Override
@@ -106,7 +107,7 @@ public class GenericFileDataWithGTGeneratorCM extends ClassKnowingModule{
 
 	@Override
 	public String getClassName() {
-		return GenericFileDataWithGTGenerator.class.getName();
+		return GeotiffGenerator.class.getName();
 	}
 
 }

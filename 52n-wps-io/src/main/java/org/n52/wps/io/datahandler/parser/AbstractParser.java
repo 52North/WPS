@@ -46,9 +46,9 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 		super();
 		
 		// load Parser Properties		
-		this.properties = WPSConfig.getInstance().getConfigurationEntriesForGeneratorClass(this.getClass().getName());
+		this.properties = WPSConfig.getInstance().getConfigurationEntriesForParserClass(this.getClass().getName());
 		
-		this.formats = WPSConfig.getInstance().getFormatEntriesForGeneratorClass(this.getClass().getName());
+		this.formats = WPSConfig.getInstance().getFormatEntriesForParserClass(this.getClass().getName());
 				
 		for (FormatEntry format : formats) {			
 
