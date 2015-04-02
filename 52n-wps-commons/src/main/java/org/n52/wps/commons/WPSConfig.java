@@ -736,13 +736,13 @@ public class WPSConfig implements Serializable {
 	}
 
 	public boolean isGeneratorActive(String className) {
-		ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.PARSER);
-		return module != null;
+		ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.GENERATOR);
+		return module != null ? module.isActive() : false;
 	}
 
 	public boolean isParserActive(String className) {
 		ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.PARSER);
-		return module != null;
+		return module != null ? module.isActive() : false;
 	}
 
 	public Map<String, ConfigurationModule> getActiveRegisteredParserModules() {
