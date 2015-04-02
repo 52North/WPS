@@ -104,22 +104,24 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClass {
 		jDomUtil.write(originalDoc, path);
 	}
 
-	@Test
-	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/service_provider")
-				.param("providerName", "")
-				.param("providerSite", "providerSite")
-				.param("individualName", "individualName")
-				.param("position", "position")
-				.param("phone", "phone")
-				.param("facsimile", "facsimile")
-				.param("email", "email")
-				.param("deliveryPoint", "deliveryPoint")
-				.param("city", "city")
-				.param("administrativeArea", "administrativeArea")
-				.param("postalCode", "postalCode")
-				.param("country", "country");
-		ResultActions result = this.mockMvc.perform(request);
-		result.andExpect(status().isBadRequest());
-	}
+	//not needed anymore in this form, as all provider parameters are optional now 
+//	@Test
+//	public void processPost_failure() throws Exception {
+//		RequestBuilder request = post("/service_provider")
+//				.param("providerName", "providerName")
+//				.param("providerSite", "providerSite")
+//				.param("individualName", "individualName")
+//				.param("position", "position")
+//				.param("phone", "phone")
+//				.param("facsimile", "facsimile")
+//				.param("email", "email")
+//				.param("deliveryPoint", "deliveryPoint")
+//				.param("city", "city")
+//				.param("administrativeArea", "administrativeArea")
+//				.param("postalCode", "postalCode")
+//				.param("country", "country")
+//				.param("providerName", "providerName");
+//		ResultActions result = this.mockMvc.perform(request);
+//		result.andExpect(status().isBadRequest());
+//	}
 }

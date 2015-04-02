@@ -28,6 +28,9 @@
  */
 package org.n52.wps.webapp.dao;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -69,7 +72,23 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		serviceIdentification.setTitle(getValue(serviceIdentificationElement, "Title"));
 		serviceIdentification.setServiceAbstract(getValue(serviceIdentificationElement, "Abstract"));
 		serviceIdentification.setServiceType(getValue(serviceIdentificationElement, "ServiceType"));
-		serviceIdentification.setServiceTypeVersion(getValue(serviceIdentificationElement, "ServiceTypeVersion"));
+		
+		// versions
+		List<?> versions = serviceIdentificationElement.getChildren("ServiceTypeVersion", Namespace.getNamespace(NAMESPACE));
+		if (versions != null) {
+			StringBuilder sb = new StringBuilder();
+			Iterator<?> versionIterator = versions.iterator();
+			while (versionIterator.hasNext()) {
+				Object version = versionIterator.next();				
+				String suffix = "";
+				if(versionIterator.hasNext()){
+					suffix = "; ";
+				}
+				sb.append(((Element) version).getValue() + suffix);		
+			}
+			serviceIdentification.setServiceTypeVersions(sb.toString());
+		}
+		
 		serviceIdentification.setFees(getValue(serviceIdentificationElement, "Fees"));
 		serviceIdentification.setAccessConstraints(getValue(serviceIdentificationElement, "AccessConstraints"));
 
@@ -77,10 +96,16 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		Element keywords = serviceIdentificationElement.getChild("Keywords", Namespace.getNamespace(NAMESPACE));
 		if (keywords != null) {
 			StringBuilder sb = new StringBuilder();
-			for (Object keyword : keywords.getChildren()) {
-				sb.append(((Element) keyword).getValue() + "; ");
+			Iterator<?> keywordIterator = keywords.getChildren().iterator();
+			while (keywordIterator.hasNext()) {
+				Object keyword = keywordIterator.next();				
+				String suffix = "";
+				if(keywordIterator.hasNext()){
+					suffix = "; ";
+				}
+				sb.append(((Element) keyword).getValue() + suffix);	
+				serviceIdentification.setKeywords(sb.toString());			
 			}
-			serviceIdentification.setKeywords(sb.toString());
 		}
 		LOGGER.info("'{}' is parsed and a ServiceIdentification object is returned", absolutePath);
 		return serviceIdentification;
@@ -97,8 +122,16 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 		setElement(getElement(serviceIdentificationElement, "Title"), serviceIdentification.getTitle());
 		setElement(getElement(serviceIdentificationElement, "Abstract"), serviceIdentification.getServiceAbstract());
 		setElement(getElement(serviceIdentificationElement, "ServiceType"), serviceIdentification.getServiceType());
-		setElement(getElement(serviceIdentificationElement, "ServiceTypeVersion"),
-				serviceIdentification.getServiceTypeVersion());
+		
+		serviceIdentificationElement.removeChildren("ServiceTypeVersion", Namespace.getNamespace(NAMESPACE));
+		
+		String[] versionArray = serviceIdentification.getServiceTypeVersions() != null ? serviceIdentification.getServiceTypeVersions().split(";") : new String[0];
+		
+		for (String version : versionArray) {
+			Element versionElement = new Element("ServiceTypeVersion", Namespace.getNamespace("ows", NAMESPACE)).setText(version);
+			serviceIdentificationElement.addContent(versionElement);
+		}
+		
 		setElement(getElement(serviceIdentificationElement, "Fees"), serviceIdentification.getFees());
 		setElement(getElement(serviceIdentificationElement, "AccessConstraints"),
 				serviceIdentification.getAccessConstraints());

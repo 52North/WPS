@@ -86,7 +86,7 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractITCl
 				.param("title", "Posted Title")
 				.param("serviceAbstract", "Posted Service Abstract")
 				.param("serviceType", "Posted Service Type")
-				.param("serviceTypeVersion", "Posted Service vERSION")
+				.param("serviceTypeVersions", "Posted Service Versions")
 				.param("keywords", "keyword1;keyword2")
 				.param("fees", "Posted Fees")
 				.param("accessConstraints", "Posted Access Constraints");

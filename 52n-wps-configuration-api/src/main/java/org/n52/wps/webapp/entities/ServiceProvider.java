@@ -28,7 +28,8 @@
  */
 package org.n52.wps.webapp.entities;
 
-import org.hibernate.validator.constraints.NotBlank;
+import org.n52.wps.webapp.dao.CapabilitiesDAO;
+import org.n52.wps.webapp.service.CapabilitiesService;
 
 /**
  * Holds parsed service provider values.
@@ -38,42 +39,28 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class ServiceProvider  {
 
-	private final String blankErrorMessage = "Field cannot be blank.";
-
-	@NotBlank(message = blankErrorMessage)
 	private String providerName;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String providerSite;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String individualName;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String position;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String phone;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String facsimile;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String deliveryPoint;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String city;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String administrativeArea;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String postalCode;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String country;
-	
-	@NotBlank(message = blankErrorMessage)
+
 	private String email;
 	
 	public String getProviderName() {
