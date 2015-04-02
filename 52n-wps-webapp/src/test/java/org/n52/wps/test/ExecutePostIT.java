@@ -88,6 +88,7 @@ public class ExecutePostIT {
     private final String multiReferenceBinaryInputAlgorithmComplexInputID = "data";
     private final String multiReferenceBinaryInputAlgorithmComplexOutputID = "result";
     private final String multiReferenceBinaryInputAlgorithmComplexMimeTypeImageTiff= "image/tiff";
+    private final String base64TiffStart= "SUkqAAgAAAASAAA";
     
     private String tiffImageBinaryInputAsBase64String;
     
@@ -930,7 +931,7 @@ public class ExecutePostIT {
 	            assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
 	            assertThat(response, response, not(containsString("ExceptionReport")));
 	            assertThat(response, response, containsString("ExecuteResponse"));
-	            assertThat(response, response, containsString(TIFF_MAGIC));
+	            assertThat(response, response, containsString(base64TiffStart));
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();
@@ -1038,7 +1039,7 @@ public class ExecutePostIT {
 	            assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
 	            assertThat(response, response, not(containsString("ExceptionReport")));
 	            assertThat(response, response, containsString("ProcessSucceeded"));
-	            assertThat(response, response, containsString(TIFF_MAGIC));
+	            assertThat(response, response, containsString(base64TiffStart));
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();
@@ -1147,7 +1148,7 @@ public class ExecutePostIT {
 	            assertThat(AllTestsIT.parseXML(async), is(not(nullValue())));
 	            assertThat(async, async, not(containsString("ExceptionReport")));
 	            assertThat(async, async, containsString("ProcessSucceeded"));
-	            assertThat(async, async, containsString(TIFF_MAGIC));
+	            assertThat(async, async, containsString(base64TiffStart));
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();
@@ -1254,7 +1255,7 @@ public class ExecutePostIT {
 	            String asyncDoc = AllTestsIT.getAsyncDoc(response);
 	            assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
 	            assertThat(asyncDoc, asyncDoc, containsString("ProcessSucceeded"));
-	            assertThat(asyncDoc, asyncDoc, containsString(TIFF_MAGIC));
+	            assertThat(asyncDoc, asyncDoc, containsString(base64TiffStart));
 			}
 		} catch (WPSClientException e) {
 			e.printStackTrace();

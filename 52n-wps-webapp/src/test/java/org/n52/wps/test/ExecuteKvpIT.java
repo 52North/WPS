@@ -104,7 +104,7 @@ public class ExecuteKvpIT {
     	String response = GetClient.sendRequest(getURL);
 
     	assertThat(response, response, not(containsString(exceptionReport)));
-    	assertThat(response, response, containsString("POLYGON"));
+    	assertThat(response, response, containsString("Polygon"));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ExecuteKvpIT {
     	String response = GetClient.sendRequest(getURL);
 
     	assertThat(response, response, not(containsString(exceptionReport)));
-    	assertThat(response, response, containsString("POLYGON"));
+    	assertThat(response, response, containsString("Polygon"));
     }
 
     @Test
