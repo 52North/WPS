@@ -34,7 +34,6 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import net.opengis.wps.x200.ProcessDescriptionType;
 import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x200.ProcessOfferingsDocument;
 

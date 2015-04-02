@@ -48,7 +48,7 @@ public class DescribeProcessResponse extends Response{
     @Override
 	public InputStream getAsStream() throws ExceptionReport{
 		try {
-			
+			//TODO change to Request.getMapValue
 			String[] requestedVersions = (String[]) getRequest().getMap().get("version");
 			
 			if(requestedVersions != null && requestedVersions.length > 0){

@@ -47,7 +47,7 @@ import com.google.common.primitives.Doubles;
 
 /*
  * @author foerster
- *
+ * TODO adjust for WPS 2.0
  */
 public class RawData extends ResponseData {
     public static final Joiner SPACE_JOINER = Joiner.on(" ");

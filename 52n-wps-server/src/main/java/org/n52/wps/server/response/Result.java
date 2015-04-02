@@ -47,6 +47,7 @@ import com.google.common.primitives.Doubles;
 
 public class Result extends ResponseData {
 
+	//TODO remove
 	public Result(IData obj, String id, String schema, String encoding,
 			String mimeType, String algorithmIdentifier,
 			ProcessDescription description) throws ExceptionReport {
