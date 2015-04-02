@@ -48,21 +48,35 @@ import net.opengis.wps.x100.ResponseFormType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.client.ExecuteRequestBuilder;
 import org.n52.wps.client.WPSClientException;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class ExecuteRequestBuilderTest {
+public class ExecuteRequestBuilderTest extends AbstractITClass{
 
-	private ProcessDescription processDescription = new MultiReferenceBinaryInputAlgorithm().getDescription();	
-	private ProcessDescriptionType processDescriptionType = ((ProcessDescriptionType)processDescription.getProcessDescriptionType(WPSConfig.VERSION_100));	
-	private String inputID = processDescriptionType.getDataInputs().getInputArray(0).getIdentifier().getStringValue();
-	private String outputID = processDescriptionType.getProcessOutputs().getOutputArray(0).getIdentifier().getStringValue();
+	private ProcessDescription processDescription;	
+	private ProcessDescriptionType processDescriptionType;	
+	private String inputID;
+	private String outputID;
 	private String url = "http://xyz.test.data";
 	private String complexDataString = "testString";
+	
+	@Before
+	public void setUp(){
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));	
+		processDescription = new MultiReferenceBinaryInputAlgorithm().getDescription();
+		processDescriptionType = ((ProcessDescriptionType)processDescription.getProcessDescriptionType(WPSConfig.VERSION_100));	
+		inputID = processDescriptionType.getDataInputs().getInputArray(0).getIdentifier().getStringValue();
+		outputID = processDescriptionType.getProcessOutputs().getOutputArray(0).getIdentifier().getStringValue();
+	}
 	
     @Test
     public void addComplexDataInputByReference() {

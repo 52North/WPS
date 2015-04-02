@@ -55,6 +55,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.KMLGenerator;
 import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
@@ -63,6 +65,7 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 
+	@Test
 	public void testGenerator(){
 
 		if(!isDataHandlerActive()){
@@ -74,7 +77,7 @@ public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
@@ -88,15 +91,15 @@ public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		String mimetype = mimetypes1[0];
 
 		GTVectorDataBinding theBinding = theParser.parse(input, mimetype, "");
 
-		assertNotNull(theBinding.getPayload());
-		assertTrue(!theBinding.getPayload().isEmpty());
+		Assert.assertNotNull(theBinding.getPayload());
+		Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 		String[] mimetypes2 = dataHandler.getSupportedFormats();
 		String[] schemas2 = dataHandler.getSupportedSchemas();
@@ -109,13 +112,13 @@ public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 
 					GTVectorDataBinding generatedParsedBinding = kmlParser.parse(in, kmlParser.getSupportedFormats()[0], kmlParser.getSupportedSchemas()[0]);
 
-					assertNotNull(generatedParsedBinding.getPayload());
-					assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
-					assertTrue(!generatedParsedBinding.getPayload().isEmpty());
+					Assert.assertNotNull(generatedParsedBinding.getPayload());
+					Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
+					Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
 
 				} catch (IOException e) {
 					e.printStackTrace();
-					fail(e.getMessage());
+					Assert.fail(e.getMessage());
 				}
 			}
 

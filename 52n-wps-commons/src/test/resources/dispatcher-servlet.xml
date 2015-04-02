@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<mvc:annotation-driven />
+	<mvc:view-controller path="/" view-name="index" />
+
+	<!-- static resource files -->
+	<mvc:resources mapping="/static/**" location="/static/" />
+
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000" />
+	</bean>
+	
+	<beans profile="production">
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+		</context:component-scan>
+	</beans>
+
+	<beans profile="test">
+		<!-- Include test modules in the context for integration testing -->
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+		</context:component-scan>
+	</beans>
+
+</beans>

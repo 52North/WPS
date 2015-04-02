@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.response;
+package org.n52.wps.server.response;
 
 import static org.junit.Assert.assertTrue;
 
@@ -72,6 +72,7 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.response.OutputDataItem;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -97,6 +98,7 @@ public class OutputDataItemTest extends AbstractITClass{
 	@Before
 	public void setUp() {
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
 
 		literalDataList = new ArrayList<ILiteralData>();
 

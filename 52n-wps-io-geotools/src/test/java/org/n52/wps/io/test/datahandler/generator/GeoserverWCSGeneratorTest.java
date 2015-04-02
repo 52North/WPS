@@ -59,7 +59,8 @@ import java.net.URLDecoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.generator.GeoserverWCSGenerator;
 import org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator;
@@ -72,6 +73,7 @@ public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGene
 	Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGeneratorTest.class);
 
 
+	@Test
 	public void testGenerator() {
 
 		if(!isDataHandlerActive()){
@@ -93,7 +95,7 @@ public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGene
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		GeotiffParser theParser = new GeotiffParser();
@@ -105,13 +107,13 @@ public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGene
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
 				null);
 
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 
 		GeoserverWMSGenerator generator = new GeoserverWMSGenerator();
 		String[] mimetypes2 = generator.getSupportedFormats();
@@ -132,7 +134,7 @@ public class GeoserverWCSGeneratorTest extends AbstractTestCase<GeoserverWCSGene
 
 			} catch (IOException e) {
 				e.printStackTrace();
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 		}

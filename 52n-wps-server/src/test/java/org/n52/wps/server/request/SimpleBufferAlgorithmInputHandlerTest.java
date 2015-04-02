@@ -50,27 +50,28 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
  * @author isuftin
  */
-public class SimpleBufferAlgorithmInputHandlerTest {
+public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass{
 
     private static String sampleFileName = null;
     private static File sampleFile = null;
     private static ExecuteDocument execDoc = null;
     private static InputType[] inputArray = null;
-    private static File projectRoot = null;
 
     @BeforeClass
     public static void setupClass() throws XmlException, IOException {
         sampleFileName = "src/test/resources/SimpleBufferAlgorithm.xml";
         sampleFile = new File(sampleFileName);
-        WPSConfigTestUtil.generateMockConfig(SimpleBufferAlgorithmInputHandlerTest.class, "/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
 
         execDoc = ExecuteDocument.Factory.parse(sampleFile);
         inputArray = execDoc.getExecute().getDataInputs().getInputArray();
@@ -82,8 +83,8 @@ public class SimpleBufferAlgorithmInputHandlerTest {
 
     @Before
     public void setUp() throws XmlException, IOException {
-        File f = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
-        projectRoot = new File(f.getParentFile().getParentFile().getParent());
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @After

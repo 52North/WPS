@@ -34,6 +34,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.wps.io.datahandler.generator.WKTGenerator;
 import org.n52.wps.io.datahandler.parser.WKTParser;
@@ -47,6 +49,7 @@ public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 
 	protected Logger LOGGER = LoggerFactory.getLogger(WKTParserGeneratorTest.class);
 	
+	@Test
 	public void testGenerator() {
 		
 		if(!isDataHandlerActive()){
@@ -72,7 +75,7 @@ public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 			LOGGER.warn("Failed to close ByteArrayInputStream containing input WKT.");
 		}
 		
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 		
 		InputStream generatedStream = null;
 		
@@ -81,7 +84,7 @@ public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 			
 		} catch (IOException e) {
 			LOGGER.error("Failed to generate result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		String outputWKTPolygonString = "";
@@ -94,7 +97,7 @@ public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 			}
 		} catch (IOException e) {
 			LOGGER.error("Failed to read result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		try {
@@ -103,7 +106,7 @@ public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 			LOGGER.warn("Failed to close generated stream containing result WKT.");
 		}
 		
-		assertTrue(inputWKTPolygonString.equals(outputWKTPolygonString));
+		Assert.assertTrue(inputWKTPolygonString.equals(outputWKTPolygonString));
 		
 		LOGGER.info("Generated WKT      : " + outputWKTPolygonString);
 		

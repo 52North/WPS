@@ -32,17 +32,17 @@ import java.io.IOException;
 
 import net.opengis.wps.x100.CapabilitiesDocument;
 import net.opengis.wps.x100.ProcessBriefType;
-import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.test.mock.MockUtil;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.algorithm.annotation.LiteralDataInput;
 import org.n52.wps.algorithm.annotation.LiteralDataOutput;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -54,11 +54,12 @@ public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITCl
 	@Before
     public void setUp(){
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 	
 	@Test
 	public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
-		MockUtil.getMockConfig();
+//		MockUtil.getMockConfig();
 		CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
 		
 		Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);

@@ -54,12 +54,15 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
 
+	@Test
 	public void testParser() {
 
 		if(!isDataHandlerActive()){
@@ -73,7 +76,7 @@ public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 //		String[] mimetypes = theParser.getSupportedFormats();
@@ -83,7 +86,7 @@ public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		// for (String mimetype : mimetypes) {
@@ -92,9 +95,9 @@ public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
 				"text/xml; subtype=gml/3.2.1",
 				"http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 
-		assertNotNull(theBinding.getPayload());
-		assertTrue(theBinding.getPayloadAsShpFile().exists());
-		assertTrue(!theBinding.getPayload().isEmpty());
+		Assert.assertNotNull(theBinding.getPayload());
+		Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+		Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 		// }
 

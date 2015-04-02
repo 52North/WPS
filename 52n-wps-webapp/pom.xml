@@ -135,6 +135,12 @@
 			<artifactId>52n-wps-io-geotools</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-commons</artifactId>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
 <!-- 		<dependency> -->
 <!-- 			<groupId>${project.groupId}</groupId> -->
 <!-- 			<artifactId>52n-wps-r</artifactId> -->

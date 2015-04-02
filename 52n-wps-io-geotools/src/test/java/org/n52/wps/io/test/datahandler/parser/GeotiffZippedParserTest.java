@@ -54,13 +54,15 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.parser.GeotiffZippedParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GeotiffZippedParserTest extends AbstractTestCase<GeotiffZippedParser> {
 
-
+    @Test
 	public void testParser(){
 
 		if(!isDataHandlerActive()){
@@ -72,7 +74,7 @@ public class GeotiffZippedParserTest extends AbstractTestCase<GeotiffZippedParse
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		String[] mimetypes = dataHandler.getSupportedFormats();
@@ -84,12 +86,12 @@ public class GeotiffZippedParserTest extends AbstractTestCase<GeotiffZippedParse
 			try {
 				input = new FileInputStream(new File(testFilePath));
 			} catch (FileNotFoundException e) {
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 			GTRasterDataBinding theBinding = dataHandler.parse(input, mimetype, null);
 
-			assertTrue(theBinding.getPayload() != null);
+			Assert.assertTrue(theBinding.getPayload() != null);
 
 		}
 

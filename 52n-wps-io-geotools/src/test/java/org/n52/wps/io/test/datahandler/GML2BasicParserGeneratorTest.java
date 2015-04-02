@@ -56,6 +56,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GML2BasicGenerator;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser;
@@ -69,6 +71,7 @@ import org.n52.wps.webapp.api.FormatEntry;
  */
 public class GML2BasicParserGeneratorTest extends AbstractTestCase<GML2BasicGenerator> {
 
+	@Test
 	public void testParser() {
 
 		if(!isDataHandlerActive()){
@@ -82,7 +85,7 @@ public class GML2BasicParserGeneratorTest extends AbstractTestCase<GML2BasicGene
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		GML2BasicParser parser = new GML2BasicParser();
@@ -99,27 +102,27 @@ public class GML2BasicParserGeneratorTest extends AbstractTestCase<GML2BasicGene
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		GTVectorDataBinding theBinding = parser.parse(input, mimeType, schema);
 
-		assertNotNull(theBinding.getPayload());
-		assertTrue(theBinding.getPayloadAsShpFile().exists());
-		assertTrue(!theBinding.getPayload().isEmpty());
+		Assert.assertNotNull(theBinding.getPayload());
+		Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+		Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 		try {
 			InputStream stream = dataHandler.generateStream(theBinding, mimeType, schema);
 
 			theBinding = parser.parse(stream, mimeType, schema);
 
-			assertNotNull(theBinding.getPayload());
-			assertTrue(theBinding.getPayloadAsShpFile().exists());
-			assertTrue(!theBinding.getPayload().isEmpty());
+			Assert.assertNotNull(theBinding.getPayload());
+			Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+			Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 		} catch (IOException e) {
 			System.err.println(e);
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 	}

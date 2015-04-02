@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.io.datahandler.generator.GenericXMLDataGenerator;
@@ -48,7 +49,7 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
 					
 		GenericXMLDataBinding xmlDataBinding = dataHandler.parse(new ByteArrayInputStream(inputXMLString.getBytes()), mimeType, "");
 			
-		assertTrue(xmlDataBinding.getPayload() != null);
+		Assert.assertTrue(xmlDataBinding.getPayload() != null);
 		
 		InputStream generatedStream = null;
 		
@@ -57,7 +58,7 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
 			
 		} catch (IOException e) {
 			System.err.println("Failed to generate result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		String outputXMLString = "";
@@ -70,7 +71,7 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
 			}
 		} catch (IOException e) {
 			System.err.println("Failed to read result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		try {
@@ -79,7 +80,7 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
 			System.out.println("Failed to close generated stream containing result XML.");
 		}
 		
-		assertTrue(inputXMLString.equals(outputXMLString));
+		Assert.assertTrue(inputXMLString.equals(outputXMLString));
 		
 		System.out.println("Generated XML      : " + outputXMLString);
 		

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<UserRepository xmlns="http://www.52north.org/users" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.52north.org/users http://incubator.52north.org/maven/schemas/users/1.0/users.xsd">
-  <User  username="wps" password="wps" realname="wps"/>
-  <User  username="guest" password="guest" realname="Guest"/>
-</UserRepository>

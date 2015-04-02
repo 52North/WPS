@@ -16,19 +16,17 @@
  */
 package org.n52.wps.io.test.datahandler;
 import java.io.File;
-import java.io.IOException;
 
-import org.apache.xmlbeans.XmlException;
+import org.junit.Before;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.AbstractIOHandler;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.common.AbstractITClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.commons.WPSConfigTestUtil;
-import org.n52.wps.io.AbstractIOHandler;
-
-import junit.framework.TestCase;
-
-public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends TestCase {
+public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends AbstractITClass {
 
 	protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
 
@@ -36,21 +34,18 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Tes
 
 	protected T dataHandler;
 
-	public AbstractTestCase() {
-        try {
-            File f = new File(this.getClass().getProtectionDomain().getCodeSource()
-                    .getLocation().getFile());
-
-            projectRoot = f.getParentFile().getParentFile().getParent();
-            WPSConfigTestUtil.generateMockConfig(getClass(), "/org/n52/wps/io/test/datahandler/generator/wps_config.xml");
-            initializeDataHandler();
-        } catch (XmlException ex) {
-            throw new RuntimeException(ex);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-
+	public AbstractTestCase() {        	
+		 File f = new File(this.getClass().getProtectionDomain().getCodeSource()
+				 .getLocation().getFile());
+				 projectRoot = f.getParentFile().getParentFile().getParent();
     }
+	
+	@Before
+	public void setUp(){
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));		
+		initializeDataHandler();
+	}
 
 	protected boolean isDataHandlerActive(){
 
