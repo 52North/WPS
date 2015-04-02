@@ -4,7 +4,7 @@
 	xmlns:ows="http://www.opengis.net/ows/2.0"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.opengis.net/wps/2.0.0 ../wpsExecute.xsd"
+	xsi:schemaLocation="http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsExecute.xsd"
 	service="WPS" version="2.0.0" response="document" mode="sync">
 	<ows:Identifier>org.n52.wps.server.algorithm.SimpleBufferAlgorithm</ows:Identifier>
 	<wps:Input id="data">

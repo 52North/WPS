@@ -44,9 +44,13 @@
 				requests[100] = datafolder + "GetCapabilities.xml";
 				requests[101] = datafolder + "DescribeProcess.xml";
 
-				requests[120] = datafolder + "SimpleBuffer.xml";
-				requests[121] = datafolder + "Intersectionrequest.xml";
-				requests[122] = datafolder + "Unionrequest.xml";
+				requests[120] = datafolder + "/2.0.0/GetCapabilitiesRequest200.xml";
+				requests[121] = datafolder + "/2.0.0/DescribeProcessRequest200.xml";
+				requests[122] = datafolder + "/2.0.0/SimpleBufferExecute200.xml";
+
+				requests[123] = datafolder + "SimpleBuffer.xml";
+				requests[124] = datafolder + "Intersectionrequest.xml";
+				requests[125] = datafolder + "Unionrequest.xml";
 
 				var rasters = 200;
 				requests[rasters] = datafolder + "r.contour_request_all_bands_out_gml.xml";
