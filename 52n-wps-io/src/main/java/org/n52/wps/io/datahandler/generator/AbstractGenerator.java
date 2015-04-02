@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -46,14 +46,14 @@ public abstract class AbstractGenerator extends AbstractIOHandler implements IGe
 	public AbstractGenerator(){
 		super();
 		
-		this.properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
+		this.properties = WPSConfig.getInstance().getConfigurationEntriesForGeneratorClass(this.getClass().getName());
 		
-		this.formats = WPSConfig.getInstance().getFormatsForGeneratorClass(this.getClass().getName());
+		this.formats = WPSConfig.getInstance().getFormatEntriesForGeneratorClass(this.getClass().getName());
 				
-		for (Format format : formats) {			
+		for (FormatEntry format : formats) {			
 
-			if(format.getMimetype()!= null && !format.getMimetype().equals("")){
-				String mimetype = format.getMimetype();
+			if(format.getMimeType()!= null && !format.getMimeType().equals("")){
+				String mimetype = format.getMimeType();
 				supportedFormats.add(mimetype);
 			}
 			if(format.getSchema()!= null && !format.getSchema().equals("")){

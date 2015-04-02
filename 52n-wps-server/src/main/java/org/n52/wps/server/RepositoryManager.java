@@ -30,14 +30,13 @@ package org.n52.wps.server;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.RepositoryDocument.Repository;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class RepositoryManager {
             }
         });
         
-        Double updateHours = WPSConfig.getInstance().getWPSConfig().getServer().getRepoReloadInterval();
+        Double updateHours = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getRepoReloadInterval();
         
         if (updateHours != 0){
             LOGGER.info("Setting repository update period to {} hours.", updateHours);
@@ -91,28 +90,28 @@ public class RepositoryManager {
 
         System.gc();
 
-		Repository[] repositoryList = WPSConfig.getInstance().getRegisterdAlgorithmRepositories();
-
-		for(Repository repository : repositoryList){
-			if(repository.getActive()==false){
+		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
+			
+		for (String repositoryName : repositoryMap.keySet()) {
+			
+			ConfigurationModule repository = repositoryMap.get(repositoryName);
+			
+			if(repository.isActive()==false){
 				continue;
 			}
-			String repositoryClassName = repository.getClassName();
-			try {
+			
+			String repositoryClassName = "";
+			
+			if(repository instanceof ClassKnowingModule){
+				repositoryClassName = ((ClassKnowingModule)repository).getClassName();
+			}
+			
+			try{
 				IAlgorithmRepository algorithmRepository = null;
-				Class repositoryClass = RepositoryManager.class.getClassLoader().loadClass(repositoryClassName);
-				Constructor[] constructors = repositoryClass.getConstructors();
-				for(Constructor constructor : constructors){
 				
-					if(constructor.getParameterTypes().length==1 && constructor.getParameterTypes()[0].equals(String.class)){
-						Property[] properties = repository.getPropertyArray();
-						Property formatProperty = WPSConfig.getInstance().getPropertyForKey(properties, "supportedFormat");
-						String format = formatProperty.getStringValue();
-						algorithmRepository = (IAlgorithmRepository) repositoryClass.getConstructor(String.class).newInstance(format);
-					}else{
-						algorithmRepository = (IAlgorithmRepository) repositoryClass.newInstance();
-					}
-				}
+				Class<?> repositoryClass = RepositoryManager.class.getClassLoader().loadClass(repositoryClassName);
+				
+				algorithmRepository = (IAlgorithmRepository) repositoryClass.newInstance();
 				
 				repositories.add(algorithmRepository);
                 LOGGER.info("Algorithm Repository {} initialized", repositoryClassName);
@@ -120,23 +119,6 @@ public class RepositoryManager {
                 LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
 			} catch (IllegalAccessException e) {
 				//in case of an singleton
-//				try {
-//
-//					IAlgorithmRepository algorithmRepository = (IAlgorithmRepository)RepositoryManager.class.getClassLoader().loadClass(repositoryClassName).getMethod("getInstance", new Class[0]).invoke(null, new Object[0]);
-//					repositories.add(algorithmRepository);
-//				} catch (IllegalArgumentException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				} catch (SecurityException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				} catch (IllegalAccessException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				} catch (InvocationTargetException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				} catch (NoSuchMethodException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				} catch (ClassNotFoundException e1) {
-//					LOGGER.warn("An error occured while registering AlgorithmRepository: " + repositoryClassName);
-//				}
                 LOGGER.warn("An error occured while registering AlgorithmRepository: {}", repositoryClassName);
 
 			} catch (ClassNotFoundException e) {
@@ -151,15 +133,8 @@ public class RepositoryManager {
                 LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
                             repositoryClassName,
                             e.getMessage());
-			} catch (InvocationTargetException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
-			} catch (NoSuchMethodException e) {
-                LOGGER.warn("An error occured while registering AlgorithmRepository: {}",
-                            repositoryClassName,
-                            e.getMessage());
 			}
+			
 		}
     }
 	
@@ -235,13 +210,13 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	public Class getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
+	public Class<?> getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getInputDataType(inputIdentifier);
 		
 	}
 	
-	public Class getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
+	public Class<?> getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getOutputDataType(inputIdentifier);
 		

@@ -48,11 +48,14 @@
 package org.n52.wps.io.test.datahandler.parser;
 
 import java.io.InputStream;
+import java.util.List;
 
-import org.n52.wps.FormatDocument.Format;
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.io.datahandler.parser.GML2BasicParser4Files;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  * This class is for testing the GML2BasicParser4Files.
@@ -63,18 +66,18 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 public class GML2BasicParser4FilesTest extends
 		AbstractTestCase<GML2BasicParser4Files> {
 
+	@Test
 	public void testParser() {
 
 		if (!isDataHandlerActive()) {
 			return;
 		}
+		
+		List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
 
+		FormatEntry format = formats.get(0);
 
-		Format[] formats = dataHandler.getSupportedFullFormats();
-
-		Format format = formats[0];
-
-		String mimeType = format.getMimetype();
+		String mimeType = format.getMimeType();
 		String schema = format.getSchema();
 
         InputStream input = getClass().getResourceAsStream("/tasmania_roads_gml2.xml");
@@ -82,8 +85,8 @@ public class GML2BasicParser4FilesTest extends
 		GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
 				schema);
 
-		assertNotNull(theBinding.getPayload());
-		assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
+		Assert.assertNotNull(theBinding.getPayload());
+		Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
 
 	}
 

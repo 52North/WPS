@@ -57,6 +57,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.generator.GeoserverWFSGenerator;
 import org.n52.wps.io.datahandler.parser.GML3BasicParser;
@@ -64,6 +66,7 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GeoserverWFSGeneratorTest extends AbstractTestCase<GeoserverWFSGenerator> {
 
+	@Test
 	public void testGenerator() {
 
 		if(!isDataHandlerActive()){
@@ -76,7 +79,7 @@ public class GeoserverWFSGeneratorTest extends AbstractTestCase<GeoserverWFSGene
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		GML3BasicParser theParser = new GML3BasicParser();
@@ -88,14 +91,14 @@ public class GeoserverWFSGeneratorTest extends AbstractTestCase<GeoserverWFSGene
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		GTVectorDataBinding theBinding = theParser.parse(input,
 				"text/xml; subtype=gml/3.2.1",
 				"http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 
 		String[] mimetypes2 = dataHandler.getSupportedFormats();
 
@@ -115,7 +118,7 @@ public class GeoserverWFSGeneratorTest extends AbstractTestCase<GeoserverWFSGene
 
 			} catch (IOException e) {
 				e.printStackTrace();
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 		}

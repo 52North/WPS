@@ -21,9 +21,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.n52.wps.FormatDocument.Format;
+
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  *
@@ -97,12 +98,11 @@ public class MockParser implements IParser {
     }
 
     @Override
-    public Format[] getSupportedFullFormats() {
-        Format f = Format.Factory.newInstance();
-        f.setSchema(schemaSet.get(0));
-        f.setEncoding(encodingSet.get(0));
-        f.setMimetype(formatSet.get(0));
-        return new Format[] {f};
+    public List<FormatEntry> getSupportedFullFormats() {
+    	FormatEntry f = new FormatEntry(formatSet.get(0), schemaSet.get(0), encodingSet.get(0), true);
+    	List<FormatEntry> result = new ArrayList<>();
+    	result.add(f);
+        return result;
     }
 
     @Override

@@ -54,12 +54,15 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.parser.KMLParser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class KMLParserTest extends AbstractTestCase<KMLParser> {
 
+	@Test
 	public void testParser(){
 
 		if(!isDataHandlerActive()){
@@ -74,7 +77,7 @@ public class KMLParserTest extends AbstractTestCase<KMLParser> {
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		String[] mimetypes = dataHandler.getSupportedFormats();
@@ -86,21 +89,21 @@ public class KMLParserTest extends AbstractTestCase<KMLParser> {
 			try {
 				input = new FileInputStream(new File(testFilePath));
 			} catch (FileNotFoundException e) {
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 
-			assertNotNull(theBinding.getPayload());
+			Assert.assertNotNull(theBinding.getPayload());
 
 			try {
 				File f = theBinding.getPayloadAsShpFile();
-				assertTrue(f.exists());
+				Assert.assertTrue(f.exists());
 			} catch (Exception e) {
 				e.printStackTrace();
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
-			assertTrue(!theBinding.getPayload().isEmpty());
+			Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 		}
 

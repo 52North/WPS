@@ -16,7 +16,9 @@
  */
 package org.n52.wps.io;
 
-import org.n52.wps.FormatDocument.Format;
+import java.util.List;
+
+import org.n52.wps.webapp.api.FormatEntry;
 
 public interface IOHandler {
 	
@@ -36,7 +38,7 @@ public interface IOHandler {
 	public String[] getSupportedSchemas();
 	public String[] getSupportedFormats();
 	public String[] getSupportedEncodings();
-	public Format[] getSupportedFullFormats();
+	public List<FormatEntry> getSupportedFullFormats();
 	public Class<?>[] getSupportedDataBindings();
 	
 }

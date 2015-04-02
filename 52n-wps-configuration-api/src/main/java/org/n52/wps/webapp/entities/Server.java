@@ -38,6 +38,7 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
 import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
@@ -60,14 +61,22 @@ public class Server implements ConfigurationModule {
 			"Cache Capabilities", "", true, false);
 	private ConfigurationEntry<String> weppappPathEntry = new StringConfigurationEntry("weppapp_path", "Webapp Path",
 			"", true, "wps");
-	private ConfigurationEntry<Integer> repoReloadIntervalEntry = new IntegerConfigurationEntry("repo_reload_interval",
-			"Repo Reload Interval", "(In hours. 0 = No Auto Reload)", true, 0);
+	private ConfigurationEntry<Double> repoReloadIntervalEntry = new DoubleConfigurationEntry("repo_reload_interval",
+			"Repo Reload Interval", "(In hours. 0 = No Auto Reload)", true, 0.0);
 	private ConfigurationEntry<Boolean> responseURLFilterEnabledEntry = new BooleanConfigurationEntry(
 			"response_url_filter_enabled", "Response URL Filter Enabled", "", true, false);
+	private ConfigurationEntry<Integer> minPoolSizeEntry = new IntegerConfigurationEntry("min_pool_size", "Minimum thread pool size",
+			"Request executor core thread pool size", true, 10);
+	private ConfigurationEntry<Integer> maxPoolSizeEntry = new IntegerConfigurationEntry("max_pool_size", "Maxmum thread pool size",
+			"Request executor maximum thread pool size", true, 20);
+	private ConfigurationEntry<Integer> keepAliveSecondsEntry = new IntegerConfigurationEntry("keep_alive_seconds", "Keep alive seconds",
+			"Maximum time that excess idle threads are kept alive", true, 1000);
+	private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
+			"Maximum queued tasks of the work queue", true, 100);
 
 	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
 			computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
-			cacheCapabilitesEntry, responseURLFilterEnabledEntry);
+			cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry);
 
 	private String hostname;
 	private String protocol;
@@ -76,8 +85,12 @@ public class Server implements ConfigurationModule {
 	private int computationTimeout;
 	private boolean cacheCapabilites;
 	private String webappPath;
-	private int repoReloadInterval;
+	private double repoReloadInterval;
 	private boolean responseURLFilterEnabled;
+	private int minPoolSize;
+	private int maxPoolSize;
+	private int keepAliveSeconds;
+	private int maxQueuedTasks;
 
 	@Override
 	public String getModuleName() {
@@ -172,12 +185,12 @@ public class Server implements ConfigurationModule {
 		this.webappPath = webappPath;
 	}
 
-	public int getRepoReloadInterval() {
+	public double getRepoReloadInterval() {
 		return repoReloadInterval;
 	}
 
 	@ConfigurationKey(key = "repo_reload_interval")
-	public void setRepoReloadInterval(int repoReloadInterval) {
+	public void setRepoReloadInterval(double repoReloadInterval) {
 		this.repoReloadInterval = repoReloadInterval;
 	}
 
@@ -194,6 +207,42 @@ public class Server implements ConfigurationModule {
 	public List<FormatEntry> getFormatEntries() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getMinPoolSize() {
+		return minPoolSize;
+	}
+	
+	public int getMaxPoolSize() {
+		return maxPoolSize;
+	}
+
+	public int getKeepAliveSeconds() {
+		return keepAliveSeconds;
+	}
+
+	public int getMaxQueuedTasks() {
+		return maxQueuedTasks;
+	}
+
+	@ConfigurationKey(key = "min_pool_size")
+	public void setMinPoolSize(int minPoolSize) {
+		this.minPoolSize = minPoolSize;
+	}
+
+	@ConfigurationKey(key = "max_pool_size")
+	public void setMaxPoolSize(int maxPoolSize) {
+		this.maxPoolSize = maxPoolSize;
+	}
+
+	@ConfigurationKey(key = "keep_alive_seconds")
+	public void setKeepAliveSeconds(int keepAliveSeconds) {
+		this.keepAliveSeconds = keepAliveSeconds;
+	}
+
+	@ConfigurationKey(key = "max_queued_tasks")
+	public void setMaxQueuedTasks(int maxQueuedTasks) {
+		this.maxQueuedTasks = maxQueuedTasks;
 	}
 
 }

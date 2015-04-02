@@ -62,8 +62,8 @@ import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.entities.Server;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -449,15 +449,10 @@ public class GTHelper {
 			}
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
-			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String protocol = server.getProtocol();
-			String hostname = server.getHostname();
-			String port = server.getHostport();
-			String webapp = server.getWebappPath();
 			
-			LOGGER.debug("GTHelper hostname " + hostname);
-			LOGGER.debug("GTHelper port " + port);
-			LOGGER.debug("GTHelper webapp " + webapp);
+			String serviceBaseURL = WPSConfig.getInstance().getWPSConfig().getServiceBaseUrl();
+			
+			LOGGER.debug("GTHelper service base URL " + serviceBaseURL);
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			
@@ -488,7 +483,7 @@ public class GTHelper {
 				writer.flush();
 				writer.close();
 				
-				String url = protocol+"://"+hostname+":"+port+"/"+webapp+"/static/schemas/"+ uuid+".xsd";
+				String url = serviceBaseURL +"/static/schemas/"+ uuid+".xsd";
 				return url;
 			}
 		}

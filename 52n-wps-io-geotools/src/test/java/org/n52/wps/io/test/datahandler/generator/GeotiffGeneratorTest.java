@@ -55,6 +55,8 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.datahandler.generator.GeotiffGenerator;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
@@ -62,6 +64,7 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GeotiffGeneratorTest extends AbstractTestCase<GeotiffGenerator> {
 
+	@Test
 	public void testGenerator() {
 
 		if(!isDataHandlerActive()){
@@ -74,7 +77,7 @@ public class GeotiffGeneratorTest extends AbstractTestCase<GeotiffGenerator> {
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		GeotiffParser theParser = new GeotiffParser();
@@ -86,13 +89,13 @@ public class GeotiffGeneratorTest extends AbstractTestCase<GeotiffGenerator> {
 		try {
 			input = new FileInputStream(new File(testFilePath));
 		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
+			Assert.fail(e.getMessage());
 		}
 
 		GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
 				null);
 
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 
 		String[] mimetypes2 = dataHandler.getSupportedFormats();
 
@@ -102,13 +105,13 @@ public class GeotiffGeneratorTest extends AbstractTestCase<GeotiffGenerator> {
 
 				GTRasterDataBinding rasterBinding = theParser.parse(resultStream, mimetypes[0], null);
 
-				assertTrue(rasterBinding.getPayload() != null);
-				assertTrue(rasterBinding.getPayload().getDimension() != 0);
-				assertTrue(rasterBinding.getPayload().getEnvelope() != null);
+				Assert.assertTrue(rasterBinding.getPayload() != null);
+				Assert.assertTrue(rasterBinding.getPayload().getDimension() != 0);
+				Assert.assertTrue(rasterBinding.getPayload().getEnvelope() != null);
 
 			} catch (IOException e) {
 				e.printStackTrace();
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 		}

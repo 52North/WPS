@@ -40,10 +40,8 @@ public class ServiceIdentification {
 
 	private final String blankErrorMessage = "Field cannot be blank.";
 
-	@NotBlank(message = blankErrorMessage)
 	private String title;
 
-	@NotBlank(message = blankErrorMessage)
 	private String serviceAbstract;
 
 	private String keywords;
@@ -52,12 +50,10 @@ public class ServiceIdentification {
 	private String serviceType;
 
 	@NotBlank(message = blankErrorMessage)
-	private String serviceTypeVersion;
+	private String serviceTypeVersions;
 
-	@NotBlank(message = blankErrorMessage)
 	private String fees;
 
-	@NotBlank(message = blankErrorMessage)
 	private String accessConstraints;
 
 	public String getTitle() {
@@ -92,12 +88,12 @@ public class ServiceIdentification {
 		this.serviceType = serviceType;
 	}
 
-	public String getServiceTypeVersion() {
-		return serviceTypeVersion;
+	public String getServiceTypeVersions() {
+		return serviceTypeVersions;
 	}
 
-	public void setServiceTypeVersion(String serviceTypeVersion) {
-		this.serviceTypeVersion = serviceTypeVersion;
+	public void setServiceTypeVersions(String serviceTypeVersions) {
+		this.serviceTypeVersions = serviceTypeVersions;
 	}
 
 	public String getFees() {

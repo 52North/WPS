@@ -20,15 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
-import org.n52.wps.PropertyDocument;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 /**
  *
@@ -50,8 +51,8 @@ public class MockUtil {
                         "/org/n52/test/mock/wps_config.xml");
                 WPSConfig.forceInitialization(configInputStream);
                 MOCK_CONFIG = WPSConfig.getInstance();
-                ParserFactory.initialize(MOCK_CONFIG.getActiveRegisteredParser());
-                GeneratorFactory.initialize(MOCK_CONFIG.getActiveRegisteredGenerator());
+                ParserFactory.initialize(MOCK_CONFIG.getActiveRegisteredParserModules());
+                GeneratorFactory.initialize(MOCK_CONFIG.getActiveRegisteredGeneratorModules());
             } finally {
                 IOUtils.closeQuietly(configInputStream);
             }
@@ -88,11 +89,11 @@ public class MockUtil {
         ArrayList<String> propertyList = new ArrayList<String>();
         try {
             WPSConfig mockConfig = MockUtil.getMockConfig();
-            PropertyDocument.Property properties[] =
-                    mockConfig.getPropertiesForParserClass(clazzName);
-            for (Property property : properties) {
-                if (propertyName.equals(property.getName())) {
-                    propertyList.add(property.getStringValue());
+            List<? extends ConfigurationEntry<?>> properties =
+                    mockConfig.getConfigurationEntriesForParserClass(clazzName);
+            for (ConfigurationEntry<?> property : properties) {
+                if (propertyName.equals(property.getKey())) {
+                    propertyList.add(property.getValue().toString());
                 }
             }
             propertyList.trimToSize();
@@ -107,11 +108,11 @@ public class MockUtil {
         ArrayList<String> propertyList = new ArrayList<String>();
         try {
             WPSConfig mockConfig = MockUtil.getMockConfig();
-            PropertyDocument.Property properties[] =
-                    mockConfig.getPropertiesForGeneratorClass(clazzName);
-            for (Property property : properties) {
-                if (propertyName.equals(property.getName())) {
-                    propertyList.add(property.getStringValue());
+            List<? extends ConfigurationEntry<?>> properties =
+                    mockConfig.getConfigurationEntriesForParserClass(clazzName);
+            for (ConfigurationEntry<?> property : properties) {
+                if (propertyName.equals(property.getKey())) {
+                    propertyList.add(property.getValue().toString());
                 }
             }
         } catch (Exception e) {

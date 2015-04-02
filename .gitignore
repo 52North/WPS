@@ -8,3 +8,4 @@ nb-configuration*.xml
 .project
 .classpath
 .Rhistory
+*.log

@@ -20,12 +20,14 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.n52.wps.ParserDocument.Parser;
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.commons.WPSConfig;
 
 /**
  * XMLParserFactory. Will be initialized within each Framework. 
@@ -40,22 +42,22 @@ public class ParserFactory {
 	private static Logger LOGGER = LoggerFactory.getLogger(ParserFactory.class);
 	
 	private List<IParser> registeredParsers;
-
+	
 	/**
 	 * This factory provides all available {@link IParser} to WPS.
 	 * @param parsers
 	 */
-	public static void initialize(Parser[] parsers) {
+	public static void initialize(Map<String, ConfigurationModule> parserMap) {
 		if (factory == null) {
-			factory = new ParserFactory(parsers);
+			factory = new ParserFactory(parserMap);
 		}
 		else {
 			LOGGER.warn("Factory already initialized");
 		}
 	}
 	
-	private ParserFactory(Parser[] parsers) {
-		loadAllParsers(parsers);
+	private ParserFactory(Map<String, ConfigurationModule> parserMap) {
+		loadAllParsers(parserMap);
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
@@ -63,26 +65,33 @@ public class ParserFactory {
             public void propertyChange(
                     final PropertyChangeEvent propertyChangeEvent) {
                 LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredParser());
+                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredParserModules());
             }
         });
 	}
-
-    private void loadAllParsers(Parser[] parsers){
+    
+    private void loadAllParsers(Map<String, ConfigurationModule> parserMap){
         registeredParsers = new ArrayList<IParser>();
-		for(Parser currentParser : parsers) {
+		for(String currentParserName : parserMap.keySet()) {
 			
-			// remove inactive parser
-			Property[] activeProperties = {};
-			ArrayList<Property> activePars = new ArrayList<Property>();
-			for(int i=0; i<currentParser.getPropertyArray().length; i++){
-				if(currentParser.getPropertyArray()[i].getActive()){
-					activePars.add(currentParser.getPropertyArray()[i]);					
-				}
+			ConfigurationModule currentParser = parserMap.get(currentParserName);
+			
+//			// remove inactive parser
+//			Property[] activeProperties = {};
+//			ArrayList<Property> activePars = new ArrayList<Property>();
+//			for(int i=0; i<currentParser.getPropertyArray().length; i++){
+//				if(currentParser.getPropertyArray()[i].getActive()){
+//					activePars.add(currentParser.getPropertyArray()[i]);					
+//				}
+//			}
+//			currentParser.setPropertyArray(activePars.toArray(activeProperties));
+			
+			String parserClass = "";
+			
+			if(currentParser instanceof ClassKnowingModule){
+				parserClass = ((ClassKnowingModule)currentParser).getClassName();
 			}
-			currentParser.setPropertyArray(activePars.toArray(activeProperties));
 			
-			String parserClass = currentParser.getClassName();
 			IParser parser = null;
 			try {
 				 parser = (IParser) this.getClass().getClassLoader().loadClass(parserClass).newInstance();
@@ -107,9 +116,9 @@ public class ParserFactory {
     }
 
 	public static ParserFactory getInstance() {
-		if(factory == null){
-			Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();
-			initialize(parsers);
+		if(factory == null){			
+			Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
+			initialize(parserMap);
 		}
 		return factory;
 	}

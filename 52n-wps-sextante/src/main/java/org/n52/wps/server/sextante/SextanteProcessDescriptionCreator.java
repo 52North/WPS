@@ -47,7 +47,6 @@ import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
@@ -55,6 +54,7 @@ import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.webapp.api.FormatEntry;
 
 import es.unex.sextante.additionalInfo.AdditionalInfoMultipleInput;
 import es.unex.sextante.additionalInfo.AdditionalInfoNumericalValue;
@@ -418,7 +418,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		for (int i = 0; i < foundParsers.size(); i++) {
 			IParser parser = foundParsers.get(i);
 
-			Format[] supportedFullFormats = parser.getSupportedFullFormats();
+			List<FormatEntry> supportedFullFormats = parser.getSupportedFullFormats();
 
 			if (complex.getDefault() == null) {
 				ComplexDataCombinationType defaultInputFormat = complex
@@ -426,10 +426,10 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				/*
 				 * default format will be the first config format
 				 */
-				Format format = supportedFullFormats[0];
+				FormatEntry format = supportedFullFormats.get(0);
 				ComplexDataDescriptionType defaultFormat = defaultInputFormat
 						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimetype());
+				defaultFormat.setMimeType(format.getMimeType());
 
 				String encoding = format.getEncoding();
 
@@ -445,19 +445,19 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 
 			}
 
-			for (int j = 0; j < supportedFullFormats.length; j++) {
+			for (int j = 0; j < supportedFullFormats.size(); j++) {
 				/*
 				 * create supportedFormat for each mimetype, encoding, schema
 				 * composition mimetypes can have several encodings and schemas
 				 */
-				Format format1 = supportedFullFormats[j];
+				FormatEntry format1 = supportedFullFormats.get(j);
 
 				/*
 				 * add one format for this mimetype
 				 */
 				ComplexDataDescriptionType supportedFormat = supportedInputFormat
 						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimetype());
+				supportedFormat.setMimeType(format1.getMimeType());
 				if (format1.getEncoding() != null) {
 					supportedFormat.setEncoding(format1.getEncoding());
 				}
@@ -466,53 +466,6 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				}
 			}
 		}
-		
-		
-		
-//		ComplexDataCombinationsType supported = complex.addNewSupported();
-//		for(int i = 0; i<foundParsers.size(); i++){
-//			IParser parser = foundParsers.get(i);
-//			String[] supportedFormats = parser.getSupportedFormats();
-//			String[] supportedSchemas = parser.getSupportedSchemas();
-//			if(supportedSchemas == null){
-//				supportedSchemas = new String[0];
-//			}
-//			String[] supportedEncodings = parser.getSupportedEncodings();
-//		
-//			for(int j=0; j<supportedFormats.length;j++){
-//				for(int k=0; k<supportedEncodings.length;k++){
-//					if(j==0 && k==0 && i == 0){
-//						String supportedFormat = supportedFormats[j];
-//						ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
-//						
-//						defaultFormat.setMimeType(supportedFormat);
-//						defaultFormat.setEncoding(supportedEncodings[k]);
-//						for(int t = 0; t<supportedSchemas.length;t++){
-//							if(t==0){
-//								defaultFormat.setSchema(supportedSchemas[t]);
-//							}
-//						}
-//					}else{
-//						
-//						String supportedFormat = supportedFormats[j];
-//						ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
-//						supportedCreatedFormat.setMimeType(supportedFormat);
-//						supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-//						for(int t = 0; t<supportedSchemas.length;t++){
-//							if(t==0){
-//								supportedCreatedFormat.setSchema(supportedSchemas[t]);
-//							}
-//							if(t>0){
-//								ComplexDataDescriptionType supportedCreatedFormatAdditional = supported.addNewFormat();
-//								supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
-//								supportedCreatedFormatAdditional.setMimeType(supportedFormat);
-//								supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
 		
 	}
 
@@ -534,7 +487,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 		for (int i = 0; i < foundGenerators.size(); i++) {
 			IGenerator generator = foundGenerators.get(i);
 
-			Format[] supportedFullFormats = generator.getSupportedFullFormats();
+			List<FormatEntry> supportedFullFormats = generator.getSupportedFullFormats();
 
 			if (complex.getDefault() == null) {
 				ComplexDataCombinationType defaultInputFormat = complex
@@ -542,10 +495,10 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				/*
 				 * default format will be the first config format
 				 */
-				Format format = supportedFullFormats[0];
+				FormatEntry format = supportedFullFormats.get(0);
 				ComplexDataDescriptionType defaultFormat = defaultInputFormat
 						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimetype());
+				defaultFormat.setMimeType(format.getMimeType());
 
 				String encoding = format.getEncoding();
 
@@ -561,19 +514,19 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 
 			}
 
-			for (int j = 0; j < supportedFullFormats.length; j++) {
+			for (int j = 0; j < supportedFullFormats.size(); j++) {
 				/*
 				 * create supportedFormat for each mimetype, encoding, schema
 				 * composition mimetypes can have several encodings and schemas
 				 */
-				Format format1 = supportedFullFormats[j];
+				FormatEntry format1 = supportedFullFormats.get(j);
 
 				/*
 				 * add one format for this mimetype
 				 */
 				ComplexDataDescriptionType supportedFormat = supporteOutputFormat
 						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimetype());
+				supportedFormat.setMimeType(format1.getMimeType());
 				if (format1.getEncoding() != null) {
 					supportedFormat.setEncoding(format1.getEncoding());
 				}
@@ -582,54 +535,10 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 				}
 			}
 		}
-		
-
-//		ComplexDataCombinationsType supported = complex.addNewSupported();		
-//		for(int i = 0; i<foundGenerators.size(); i++){
-//				IGenerator generator = foundGenerators.get(i);
-//				String[] supportedFormats = generator.getSupportedFormats();
-//				String[] supportedSchemas = generator.getSupportedSchemas();
-//				if(supportedSchemas == null){
-//					supportedSchemas = new String[0];
-//				}
-//				String[] supportedEncodings = generator.getSupportedEncodings();
-//				
-//				for(int j=0; j<supportedFormats.length;j++){
-//					for(int k=0; k<supportedEncodings.length;k++){
-//						if(j==0 && k==0 && i == 0){
-//							String supportedFormat = supportedFormats[j];
-//							ComplexDataDescriptionType defaultFormat = complex.addNewDefault().addNewFormat();
-//							defaultFormat.setMimeType(supportedFormat);
-//							defaultFormat.setEncoding(supportedEncodings[k]);
-//							for(int t = 0; t<supportedSchemas.length;t++){
-//								if(t==0){
-//									defaultFormat.setSchema(supportedSchemas[t]);
-//								}
-//							}
-//						}else{
-//							
-//							String supportedFormat = supportedFormats[j];
-//							ComplexDataDescriptionType supportedCreatedFormat = supported.addNewFormat();
-//							supportedCreatedFormat.setMimeType(supportedFormat);
-//							supportedCreatedFormat.setEncoding(supportedEncodings[k]);
-//							for(int t = 0; t<supportedSchemas.length;t++){
-//								if(t==0){
-//									supportedCreatedFormat.setSchema(supportedSchemas[t]);
-//								}
-//								if(t>0){
-//									ComplexDataDescriptionType supportedCreatedFormatAdditional = supported.addNewFormat();
-//									supportedCreatedFormatAdditional.setMimeType(supportedFormat);
-//									supportedCreatedFormatAdditional.setSchema(supportedSchemas[t]);
-//									supportedCreatedFormatAdditional.setEncoding(supportedEncodings[k]);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
 					
 		
 	}
+	
 	//This class is thrown when there is any problem creating the XML
 	//WPS file from a geoalgorithm, due to some yet unsupported feature
 	//or parameter

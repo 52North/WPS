@@ -58,8 +58,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.HttpException;
-import org.n52.wps.PropertyDocument.Property;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
@@ -70,10 +68,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
 //TODO: compact the 3 OWS Generators into a single one
-
-public class GeoserverWCSGenerator extends AbstractGenerator {
+public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGenerator.class);
 	private String username;
@@ -81,37 +77,10 @@ public class GeoserverWCSGenerator extends AbstractGenerator {
 	private String host;
 	private String port;
 	
-	public GeoserverWCSGenerator() {
-		
+	public GeoserverWCSGenerator() {		
 		super();
 		this.supportedIDataTypes.add(GTRasterDataBinding.class);
-		this.supportedIDataTypes.add(GeotiffBinding.class);
-		
-		properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getName());
-		for(Property property : properties){
-			if(property.getName().equalsIgnoreCase("Geoserver_username")){
-				username = property.getStringValue();
-			}
-			if(property.getName().equalsIgnoreCase("Geoserver_password")){
-				password = property.getStringValue();
-			}
-			if(property.getName().equalsIgnoreCase("Geoserver_host")){
-				host = property.getStringValue();
-			}
-			if(property.getName().equalsIgnoreCase("Geoserver_port")){
-				port = property.getStringValue();
-			}
-		}
-		if(port == null){
-			port = WPSConfig.getInstance().getWPSConfig().getServer().getHostport();
-		}
-		
-		for(String supportedFormat : supportedFormats){
-			if(supportedFormat.equals("text/xml")){
-				supportedFormats.remove(supportedFormat);
-			}
-		}
-		
+		this.supportedIDataTypes.add(GeotiffBinding.class);		
 	}
 	
 	@Override

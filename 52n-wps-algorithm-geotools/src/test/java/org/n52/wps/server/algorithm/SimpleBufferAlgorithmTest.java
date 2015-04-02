@@ -49,14 +49,12 @@ package org.n52.wps.server.algorithm;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
 import org.junit.After;
@@ -64,29 +62,23 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
  * @author tkunicki
  */
-public class SimpleBufferAlgorithmTest {
+public class SimpleBufferAlgorithmTest extends AbstractITClass{
 
     public SimpleBufferAlgorithmTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
-        try {
-            WPSConfig.forceInitialization("../52n-wps-io/src/test/resources/org/n52/wps/io/test/datahandler/generator/wps_config.xml");
-        } catch (XmlException ex) {
-            LoggerFactory.getLogger(SimpleBufferAlgorithmTest.class.getName()).error(ex.getMessage());
-        } catch (IOException ex) {
-            LoggerFactory.getLogger(SimpleBufferAlgorithmTest.class.getName()).error(ex.getMessage());
-        }
     }
 
     @AfterClass
@@ -95,6 +87,8 @@ public class SimpleBufferAlgorithmTest {
 
     @Before
     public void setUp() {
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @After

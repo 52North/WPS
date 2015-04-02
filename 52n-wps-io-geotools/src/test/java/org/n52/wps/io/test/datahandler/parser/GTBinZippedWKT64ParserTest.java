@@ -57,8 +57,9 @@ import java.net.URLDecoder;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.junit.Assert;
+import org.junit.Test;
 import org.opengis.feature.Feature;
-
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser;
 import org.n52.wps.io.test.datahandler.AbstractTestCase;
@@ -75,7 +76,7 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
  */
 public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT64Parser> {
 
-
+	@Test
 	public void testParser(){
 
 		if(!isDataHandlerActive()){
@@ -87,7 +88,7 @@ public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT6
 		try {
 			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
 		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
+			Assert.fail(e1.getMessage());
 		}
 
 		String[] mimetypes = dataHandler.getSupportedFormats();
@@ -100,13 +101,13 @@ public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT6
 
 				input = new Base64InputStream(new FileInputStream(new File(testFilePath)));
 			} catch (FileNotFoundException e) {
-				fail(e.getMessage());
+				Assert.fail(e.getMessage());
 			}
 
 			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 
-			assertNotNull(theBinding.getPayload());
-			assertTrue(!theBinding.getPayload().isEmpty());
+			Assert.assertNotNull(theBinding.getPayload());
+			Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
 			FeatureCollection<?, ?> collection = theBinding.getPayload();
 
@@ -118,7 +119,7 @@ public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT6
 				System.out.println(f.getDefaultGeometryProperty());
 			}
 
-			assertTrue(theBinding.getPayloadAsShpFile().exists());
+			Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
 
 		}
 

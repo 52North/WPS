@@ -20,15 +20,17 @@ package org.n52.wps.server;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -47,13 +49,16 @@ public class LocalAlgorithmRepository implements ITransactionalAlgorithmReposito
 		algorithmMap = new HashMap<String, String>();
 		processDescriptionMap = new HashMap<String, ProcessDescription>(); 
 		
+		ConfigurationModule localAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+		
 		// check if the repository is active
-		if(WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())){
-			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
-			for(Property property : propertyArray){
-				// check the name and active state
-				if(property.getName().equalsIgnoreCase("Algorithm") && property.getActive()){
-					addAlgorithm(property.getStringValue());
+		if(localAlgorithmRepoConfigModule.isActive()){
+			
+			List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule.getAlgorithmEntries();			
+			
+			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+				if(algorithmEntry.isActive()){
+					addAlgorithm(algorithmEntry.getAlgorithm());
 				}
 			}
 		} else {

@@ -45,10 +45,6 @@
             <artifactId>52n-wps-commons</artifactId>
         </dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-config</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>

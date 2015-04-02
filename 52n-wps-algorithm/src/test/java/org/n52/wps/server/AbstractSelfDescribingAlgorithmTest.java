@@ -17,52 +17,63 @@
 package org.n52.wps.server;
 
 import java.util.HashMap;
-import org.n52.test.mock.MockUtil;
-import junit.framework.TestCase;
+
 import net.opengis.wps.x100.ProcessDescriptionType;
+
 import org.apache.xmlbeans.XmlOptions;
+import org.junit.Before;
+import org.junit.Test;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
  * @author tkunicki
  */
-public class AbstractSelfDescribingAlgorithmTest extends TestCase {
+public class AbstractSelfDescribingAlgorithmTest extends AbstractITClass {
     
-    public AbstractSelfDescribingAlgorithmTest(String testName) {
-        super(testName);
+    public AbstractSelfDescribingAlgorithmTest() {
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        MockUtil.getMockConfig();
+    @Before
+    public void setUp() throws Exception {
+		MockMvcBuilders.webAppContextSetup(this.wac).build();
+		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
+    @Test
     public void testComplexSelfDescribingAlgorithmUsingDescriptor() {
         IAlgorithm algorithm = new ComplexSelfDescribingAlgorithmUsingDescriptor();
         printAlgorithmProcessDescription(algorithm);
     }
 
+    @Test
     public void testComplexAnnotatedAlgorithm() {
         IAlgorithm algorithm = new ComplexAnnotatedAlgorithm();
         printAlgorithmProcessDescription(algorithm);
     }
 
+    @Test
     public void testStringReverseSelfDescribingAlgorithm() {
         IAlgorithm algorithm = new StringReverseSelfDescribingAlgorithm();
         printAlgorithmProcessDescription(algorithm);
     }
 
+    @Test
     public void testStringReverseAnnotatedAlgorithm() {
         IAlgorithm algorithm = new StringReverseAnnotatedAlgorithm();
         printAlgorithmProcessDescription(algorithm);
     }
 
+    @Test
     public void testStringJoinSelfDescribingAlgorithm() {
         IAlgorithm algorithm = new StringJoinSelfDescribingAlgorithm();
         printAlgorithmProcessDescription(algorithm);
     }
 
+    @Test
     public void testStringJoinAnnotatedAlgorithm() {
         IAlgorithm algorithm = new StringJoinAnnotatedAlgorithm();
         printAlgorithmProcessDescription(algorithm);

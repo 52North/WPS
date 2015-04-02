@@ -51,6 +51,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -91,7 +92,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
 		}
 		
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 		
 		InputStream generatedStream = null;
 		
@@ -100,7 +101,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			
 		} catch (IOException e) {
 			System.err.println("Failed to generate result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		String outputGeoJSONPointString = "";
@@ -113,7 +114,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			}
 		} catch (IOException e) {
 			System.err.println("Failed to read result inputstream.");
-			fail();
+			Assert.fail();
 		}
 		
 		try {
@@ -122,7 +123,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			System.out.println("Failed to close generated stream containing result GeoJSON.");
 		}
 		
-		assertTrue(inputGeoJSONPointString.equals(outputGeoJSONPointString));
+		Assert.assertTrue(inputGeoJSONPointString.equals(outputGeoJSONPointString));
 		
 		System.out.println("Generated GeoJSON      : " + outputGeoJSONPointString);
 		
@@ -175,7 +176,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 				null);
 		
 		if(!(theBinding instanceof GTVectorDataBinding)){
-			fail();
+			Assert.fail();
 		}
 
 		try {
@@ -184,7 +185,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
 		}
 		
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 		
 		try {
 			InputStream is = dataHandler.generateStream(theBinding, mimetype, null);
@@ -193,7 +194,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 					null);
 			
 			if(!(theGeneratedParsedBinding instanceof GTVectorDataBinding)){
-				fail();
+				Assert.fail();
 			}
 			
 			try {
@@ -202,7 +203,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 				System.err.println("Failed to close InputStream containing input GeoJSON.");
 			}
 			
-			assertTrue(theBinding.getPayload() != null);
+			Assert.assertTrue(theBinding.getPayload() != null);
 			
 		} catch (IOException e) {
 			System.err.println("Failed to generate stream from GTVectorDataBinding.");
@@ -227,7 +228,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 				null);
 		
 		if(!(theBinding instanceof GTVectorDataBinding)){
-			fail();
+			Assert.fail();
 		}
 
 		try {
@@ -236,7 +237,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 			System.out.println("Failed to close ByteArrayInputStream containing input GeoJSON.");
 		}
 		
-		assertTrue(theBinding.getPayload() != null);
+		Assert.assertTrue(theBinding.getPayload() != null);
 		
 		try {
 			InputStream is = dataHandler.generateStream(theBinding, mimetype, null);
@@ -245,7 +246,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 					null);
 			
 			if(!(theGeneratedParsedBinding instanceof GTVectorDataBinding)){
-				fail();
+				Assert.fail();
 			}
 			
 			try {
@@ -254,7 +255,7 @@ public class GeoJSONParserGeneratorTest extends AbstractTestCase<GeoJSONGenerato
 				System.err.println("Failed to close InputStream containing input GeoJSON.");
 			}
 			
-			assertTrue(theBinding.getPayload() != null);
+			Assert.assertTrue(theBinding.getPayload() != null);
 			
 		} catch (IOException e) {
 			System.err.println("Failed to generate stream from GTVectorDataBinding.");

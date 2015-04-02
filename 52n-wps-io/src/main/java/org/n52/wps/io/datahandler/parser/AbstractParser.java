@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.webapp.api.FormatEntry;
 
 /**
  * @author Matthias Mueller, TU Dresden
@@ -45,15 +45,15 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 	public AbstractParser(){
 		super();
 		
-		// load Parser Properties
-		this.properties = WPSConfig.getInstance().getPropertiesForParserClass(this.getClass().getName());
+		// load Parser Properties		
+		this.properties = WPSConfig.getInstance().getConfigurationEntriesForParserClass(this.getClass().getName());
 		
-		this.formats = WPSConfig.getInstance().getFormatsForParserClass(this.getClass().getName());
-		
-		for (Format format : formats) {			
+		this.formats = WPSConfig.getInstance().getFormatEntriesForParserClass(this.getClass().getName());
+				
+		for (FormatEntry format : formats) {			
 
-			if(format.getMimetype()!= null && !format.getMimetype().equals("")){
-				String mimetype = format.getMimetype();
+			if(format.getMimeType()!= null && !format.getMimeType().equals("")){
+				String mimetype = format.getMimeType();
 				supportedFormats.add(mimetype);
 			}
 			if(format.getSchema()!= null && !format.getSchema().equals("")){
@@ -67,23 +67,7 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 			}else{
 				supportedEncodings.add(IOHandler.DEFAULT_ENCODING);
 			}			
-		}	
-		
-		
-//		for(Property property : properties){
-//			if(property.getName().equalsIgnoreCase("supportedFormat")){
-//				String format = property.getStringValue();
-//				supportedFormats.add(format);
-//			}
-//			if(property.getName().equalsIgnoreCase("supportedSchema")){
-//				String schema = property.getStringValue();
-//				supportedSchemas.add(schema);
-//			}
-//			if(property.getName().equalsIgnoreCase("supportedEncoding")){
-//				String encoding = property.getStringValue();
-//				supportedEncodings.add(encoding);
-//			} 
-//		}
+		}
 		finalizeFiles = new ArrayList<File>();
 	}
 

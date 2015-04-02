@@ -36,11 +36,15 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.xml.XMLConstants;
+import javax.xml.namespace.QName;
+
 import net.opengis.ows.x20.AddressType;
 import net.opengis.ows.x20.CodeType;
 import net.opengis.ows.x20.ContactType;
 import net.opengis.ows.x20.DCPDocument.DCP;
 import net.opengis.ows.x20.HTTPDocument.HTTP;
+import net.opengis.ows.x20.KeywordsType;
 import net.opengis.ows.x20.LanguageStringType;
 import net.opengis.ows.x20.OperationDocument.Operation;
 import net.opengis.ows.x20.OperationsMetadataDocument.OperationsMetadata;
@@ -55,6 +59,7 @@ import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
 import net.opengis.wps.x200.ProcessSummaryType;
 import net.opengis.wps.x200.WPSCapabilitiesType;
 
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
@@ -85,8 +90,10 @@ public class CapabilitiesConfigurationV200 {
 
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
-    private static ConfigurationManager configurationManager;	
-    private static Server serverConfigurationModule;	
+    private static ConfigurationManager configurationManager;
+    private Server serverConfigurationModule;	
+    private static org.n52.wps.webapp.entities.ServiceIdentification serviceIdentificationConfigurationModule;	
+    private static org.n52.wps.webapp.entities.ServiceProvider serviceProviderConfigurationModule;	
 
     private CapabilitiesConfigurationV200() {
         /* nothing here */
@@ -209,7 +216,7 @@ public class CapabilitiesConfigurationV200 {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-        boolean cached = WPSConfig.getInstance().getWPSConfig().getServer().getCacheCapabilites();
+        boolean cached = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isCacheCapabilites();
         return getInstance( !cached);
     }
 
@@ -284,20 +291,21 @@ public class CapabilitiesConfigurationV200 {
                     ProcessSummaryType process = contents.addNewProcessSummary();
                     CodeType ct = process.addNewIdentifier();
                     ct.setStringValue(algorithmName);
-                    LanguageStringType title = description.getTitleArray(0);
+                    //a title is mandatory for a process offering
+                    LanguageStringType title = null;
+                    try {
+                        title = description.getTitleArray(0);						
+					} catch (Exception e) {
+						throw new RuntimeException(String.format("Process offering for process '{}' not valid. No title specified.", algorithmName));
+					}
                     String processVersion = offering.getProcessVersion();
                     process.setProcessVersion(processVersion);
                     
                     process.setJobControlOptions(offering.getJobControlOptions());
                     
                     process.setOutputTransmission(offering.getOutputTransmission());
-                    
-                    if(description.getTitleArray().length < 1){
-                    	description.addNewTitle();
-                    	description.getTitleArray()[0] = title;
-                    }else{
-                    	description.getTitleArray()[0] = title;
-                    }
+
+                    process.addNewTitle().setStringValue(title.getStringValue());
                     
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }	
@@ -373,20 +381,19 @@ public class CapabilitiesConfigurationV200 {
         }
     }
     
-	public static Server getServerConfigurationModule() {
+	public static ConfigurationManager getConfigurationManager() {
 
-		if (serverConfigurationModule == null) {
-
-			if (configurationManager == null) {
-				configurationManager = WPSConfig
-						.getInstance().getConfigurationManager();
-			}if(configurationManager != null){
-			    serverConfigurationModule = (Server) configurationManager
-					    .getConfigurationServices().getConfigurationModule(
-							    Server.class.getName());
-			}
+		if (configurationManager == null) {
+			configurationManager = WPSConfig.getInstance()
+					.getConfigurationManager();
 		}
-		return serverConfigurationModule;
+		return configurationManager;
+	}
+    
+	public Server getServerConfigurationModule() {
+		return serverConfigurationModule = (Server) getConfigurationManager()
+			    .getConfigurationServices().getConfigurationModule(
+					    Server.class.getName());
 	}
 
     /**
@@ -522,51 +529,76 @@ public class CapabilitiesConfigurationV200 {
         CreateInstanceStrategy() {
             this.instance = CapabilitiesDocument.Factory.newInstance();
             
-//    		XmlCursor c = instance.newCursor();
-//    		c.toFirstChild();
-//    		c.toLastAttribute();
-//    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetCapabilities.xsd");
-//            
-            /*
-             * TODO get necessary input from config
-             */
+    		XmlCursor c = instance.newCursor();
+    		c.toFirstChild();
+    		c.toLastAttribute();
+    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetCapabilities.xsd");
+            
+            serviceIdentificationConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceIdentification();
+            
+            serviceProviderConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceProvider();
+            
             WPSCapabilitiesType wpsCapabilities = instance.addNewCapabilities();
             
-            wpsCapabilities.addNewService().setStringValue("WPS"); //TODO: put in WPSConfig or so
+            wpsCapabilities.addNewService().setStringValue("WPS");//Fixed to WPS TODO: put in WPSConfig or so
             
             wpsCapabilities.setVersion(WPSConfig.VERSION_200);
             
             ServiceProvider serviceProvider = wpsCapabilities.addNewServiceProvider();
             
-            serviceProvider.setProviderName("52°North GmbH");
+            serviceProvider.setProviderName(serviceProviderConfigurationModule.getProviderName() != null ? serviceProviderConfigurationModule.getProviderName() : "");
             
-            serviceProvider.addNewProviderSite().setHref("http://52north.org");
+            serviceProvider.addNewProviderSite().setHref(serviceProviderConfigurationModule.getProviderSite() != null ? serviceProviderConfigurationModule.getProviderSite() : "");
                         
             ResponsiblePartySubsetType responsiblePartySubsetType = serviceProvider.addNewServiceContact();
             
-            responsiblePartySubsetType.setIndividualName("Benjamin Pross");
+            responsiblePartySubsetType.setIndividualName(serviceProviderConfigurationModule.getIndividualName() != null ? serviceProviderConfigurationModule.getIndividualName() : "");
             
             ContactType contactType = responsiblePartySubsetType.addNewContactInfo();
             
             AddressType addressType = contactType.addNewAddress();
             
-            addressType.addElectronicMailAddress("b.pross@52north.org");
+            addressType.setAdministrativeArea(serviceProviderConfigurationModule.getAdministrativeArea() != null ? serviceProviderConfigurationModule.getAdministrativeArea() : "");
+            
+            addressType.setCity(serviceProviderConfigurationModule.getCity() != null ? serviceProviderConfigurationModule.getCity() : "");
+            
+            addressType.setCountry(serviceProviderConfigurationModule.getCountry() != null ? serviceProviderConfigurationModule.getCountry() : "");
+            
+            addressType.setPostalCode(serviceProviderConfigurationModule.getPostalCode() != null ? serviceProviderConfigurationModule.getPostalCode() : "");
+     
+            addressType.addDeliveryPoint(serviceProviderConfigurationModule.getDeliveryPoint() != null ? serviceProviderConfigurationModule.getDeliveryPoint() : "");
+            
+            addressType.addElectronicMailAddress(serviceProviderConfigurationModule.getEmail() != null ? serviceProviderConfigurationModule.getEmail() : "");
             
             ServiceIdentification serviceIdentification = wpsCapabilities.addNewServiceIdentification();
             
-            serviceIdentification.addNewTitle().setStringValue("52°North WPS");
+            serviceIdentification.addNewTitle().setStringValue(serviceIdentificationConfigurationModule.getTitle() != null ? serviceIdentificationConfigurationModule.getTitle() : "");
             
-            serviceIdentification.addAccessConstraints("NONE");
+            serviceIdentification.addAccessConstraints(serviceIdentificationConfigurationModule.getAccessConstraints() != null ? serviceIdentificationConfigurationModule.getAccessConstraints() : "");
             
-            serviceIdentification.addNewAbstract().setStringValue("52°North WPS");
+            serviceIdentification.addNewAbstract().setStringValue(serviceIdentificationConfigurationModule.getServiceAbstract() != null ? serviceIdentificationConfigurationModule.getServiceAbstract() : "");
             
-            serviceIdentification.addNewServiceType().setStringValue("WPS");
+            serviceIdentification.addNewServiceType().setStringValue("WPS");//Fixed to WPS
             
-            serviceIdentification.addNewServiceTypeVersion().setStringValue(WPSConfig.VERSION_200);
+            String[] versionArray = serviceIdentificationConfigurationModule.getServiceTypeVersions().split(";");  
             
-            serviceIdentification.setFees("NONE");
+            for (String version : versionArray) {
+				if(version.trim() != ""){
+					serviceIdentification.addNewServiceTypeVersion().setStringValue(version);
+				}
+			}
             
-            serviceIdentification.addNewKeywords().addNewKeyword().setStringValue("WPS");
+            serviceIdentification.setFees(serviceIdentificationConfigurationModule.getFees() != null ? serviceIdentificationConfigurationModule.getFees() : "");
+            
+            String[] keywordArray = serviceIdentificationConfigurationModule.getKeywords().split(";");  
+            
+            KeywordsType keywordsType = serviceIdentification.addNewKeywords();
+            
+            for (String keyword : keywordArray) {
+				if(keyword.trim() != ""){
+					keywordsType.addNewKeyword().setStringValue(keyword);
+				}
+			}
             
             OperationsMetadata operationsMetadata = wpsCapabilities.addNewOperationsMetadata();
             

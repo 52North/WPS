@@ -59,19 +59,19 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.gml.producer.FeatureTransformer;
 import org.geotools.gml.producer.FeatureTransformer.FeatureTypeNamespaces;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Theodor Foerster, ITC; Matthias Mueller, TU Dresden
@@ -82,8 +82,7 @@ public class GML2BasicGenerator extends AbstractGenerator {
 	private boolean featureTransformerIncludeBounding;
 	private int featureTransformerDecimalPlaces;
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
-		
+	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);		
 	
 	public GML2BasicGenerator(){
 		super();
@@ -91,13 +90,13 @@ public class GML2BasicGenerator extends AbstractGenerator {
 		
 		featureTransformerIncludeBounding = false;
 		featureTransformerDecimalPlaces = 4;
-		for(Property property : properties){
-			if(property.getName().equalsIgnoreCase("featureTransformerIncludeBounding")){
-				featureTransformerIncludeBounding = new Boolean(property.getStringValue());
+		for(ConfigurationEntry<?> property : properties){
+			if(property.getKey().equalsIgnoreCase("featureTransformerIncludeBounding")){
+				featureTransformerIncludeBounding = new Boolean(property.getValue().toString());
 				
 			}
-			if(property.getName().equalsIgnoreCase("featureTransformerDecimalPlaces")){
-				featureTransformerDecimalPlaces = new Integer(property.getStringValue());
+			if(property.getKey().equalsIgnoreCase("featureTransformerDecimalPlaces")){
+				featureTransformerDecimalPlaces = new Integer(property.getValue().toString());
 				
 			}
 		}
