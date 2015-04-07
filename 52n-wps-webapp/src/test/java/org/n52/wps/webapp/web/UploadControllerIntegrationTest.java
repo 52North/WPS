@@ -39,9 +39,8 @@ import java.io.FileInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.wps.webapp.common.AbstractITClass;
+import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
 import org.n52.wps.webapp.util.ResourcePathUtil;
-import org.n52.wps.webapp.web.UploadController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -55,7 +54,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
-public class UploadControllerIntegrationTest extends AbstractITClass {
+public class UploadControllerIntegrationTest extends AbstractITClassForControllerTests {
 
 	private MockMvc mockMvc;
 

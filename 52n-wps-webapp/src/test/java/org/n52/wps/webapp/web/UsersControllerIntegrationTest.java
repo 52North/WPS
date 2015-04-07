@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
-import org.n52.wps.webapp.common.AbstractITClass;
+import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
 import org.n52.wps.webapp.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -53,7 +53,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class UsersControllerIntegrationTest extends AbstractITClass {
+public class UsersControllerIntegrationTest extends AbstractITClassForControllerTests {
 	private MockMvc mockMvc;
 
 	@Autowired

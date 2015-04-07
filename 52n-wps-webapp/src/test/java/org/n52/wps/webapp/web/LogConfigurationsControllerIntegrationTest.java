@@ -39,7 +39,7 @@ import org.jdom.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
-import org.n52.wps.webapp.common.AbstractITClass;
+import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
 import org.n52.wps.webapp.dao.XmlLogConfigurationsDAO;
 import org.n52.wps.webapp.entities.LogConfigurations;
 import org.n52.wps.webapp.util.JDomUtil;
@@ -51,7 +51,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-public class LogConfigurationsControllerIntegrationTest extends AbstractITClass {
+public class LogConfigurationsControllerIntegrationTest extends AbstractITClassForControllerTests {
 
 	private MockMvc mockMvc;
 

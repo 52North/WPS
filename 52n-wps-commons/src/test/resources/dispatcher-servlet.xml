@@ -27,6 +27,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 		<!-- Include test modules in the context for integration testing -->
 		<context:component-scan base-package="org.n52.wps">
 			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
 		</context:component-scan>
 	</beans>
 

@@ -71,7 +71,7 @@ public class JdbcConfigurationDAOTest {
 	public void setup() {
 		builder = new EmbeddedDatabaseBuilder();
 		db = builder.setType(EmbeddedDatabaseType.HSQL).addScript("db" + File.separator + "schema.sql")
-				.addScript("test-data.sql").build();
+				.addScript("test-data-simple.sql").build();
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(db);
 		configurationDAO = new JdbcConfigurationDAO();
 		testModule1 = new TestConfigurationModule1();

@@ -67,7 +67,7 @@ public class JdbcUserDAOTest {
 		builder = new EmbeddedDatabaseBuilder();
 		db = builder.setType(EmbeddedDatabaseType.HSQL)
 				.addScript("db" + File.separator + "schema.sql")
-				.addScript("test-data.sql")
+				.addScript("test-data-simple.sql")
 				.build();
 		namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(db);
 		userDAO = new JdbcUserDAO();
