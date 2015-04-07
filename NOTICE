@@ -143,12 +143,13 @@ This project includes:
   mvel under The Apache Software License, Version 2.0
   Objenesis under MIT License
   OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v2.0.2) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Open Web Services Model under Lesser General Public License (LGPL)
-  org.n52.wps:52n-xml-wps-v20 under GNU Lesser General Public License, version 2.0 (LGPLv2)
   oro under The Apache Software License, Version 1.1
   OWS XML Support under Lesser General Public License (LGPL)
   PicoContainer Core under BSD License
