@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.AlgorithmEntry;
@@ -41,16 +42,16 @@ public class LocalAlgorithmRepository implements
 
 	private static Logger LOGGER = LoggerFactory
 			.getLogger(LocalAlgorithmRepository.class);
-	private Map<String, String> algorithmMap;
 	private Map<String, ProcessDescription> processDescriptionMap;
+	private Map<String, IAlgorithm> algorithmMap;
+	private ConfigurationModule localAlgorithmRepoConfigModule;
 
 	public LocalAlgorithmRepository() {
-		algorithmMap = new HashMap<String, String>();
 		processDescriptionMap = new HashMap<String, ProcessDescription>();
+		algorithmMap = new HashMap<String, IAlgorithm>();
 
-		ConfigurationModule localAlgorithmRepoConfigModule = WPSConfig
-				.getInstance().getConfigurationModuleForClass(
-						this.getClass().getName(),
+		localAlgorithmRepoConfigModule = WPSConfig.getInstance()
+				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
 
 		// check if the repository is active
@@ -70,29 +71,39 @@ public class LocalAlgorithmRepository implements
 	}
 
 	public boolean addAlgorithms(String[] algorithms) {
-		for (String algorithmClassName : algorithms) {
-			addAlgorithm(algorithmClassName);
-		}
-		LOGGER.info("Algorithms registered!");
-		return true;
-
+		throw new NotImplementedException();
 	}
 
 	public IAlgorithm getAlgorithm(String className) {
-		try {
-			return loadAlgorithm(algorithmMap.get(className));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		if(getAlgorithmNames().contains(className)){
+			return algorithmMap.get(className);
 		}
+		return null;
 	}
 
 	public Collection<String> getAlgorithmNames() {
-		return new ArrayList<String>(algorithmMap.keySet());
+		
+		Collection<String> algorithmNames = new ArrayList<>();
+		
+		if (localAlgorithmRepoConfigModule.isActive()) {
+
+			List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule
+					.getAlgorithmEntries();
+
+			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+				if (algorithmEntry.isActive()) {
+					algorithmNames.add(algorithmEntry.getAlgorithm());
+				}
+			}
+		} else {
+			LOGGER.debug("Local Algorithm Repository is inactive.");
+		}
+		
+		return algorithmNames;
 	}
 
 	public boolean containsAlgorithm(String className) {
-		return algorithmMap.containsKey(className);
+		return getAlgorithmNames().contains(className);
 	}
 
 	private IAlgorithm loadAlgorithm(String algorithmClassName)
@@ -136,38 +147,40 @@ public class LocalAlgorithmRepository implements
 		}
 		String algorithmClassName = (String) processID;
 
-		algorithmMap.put(algorithmClassName, algorithmClassName);
-		LOGGER.info("Algorithm class registered: " + algorithmClassName);
+		try {
+			
+			IAlgorithm algorithm = loadAlgorithm(algorithmClassName);
+			
+			processDescriptionMap.put(algorithmClassName,
+					algorithm.getDescription());
+			algorithmMap.put(algorithmClassName, algorithm);
+			LOGGER.info("Algorithm class registered: " + algorithmClassName);
 
-		return true;
+			return true;
+		} catch (Exception e) {
+			LOGGER.error("Exception while trying to add algorithm {}",
+					algorithmClassName);
+			LOGGER.error(e.getMessage());
+
+		}
+
+		return false;
 
 	}
 
 	public boolean removeAlgorithm(Object processID) {
-		if (!(processID instanceof String)) {
-			return false;
-		}
-		String className = (String) processID;
-		if (algorithmMap.containsKey(className)) {
-			algorithmMap.remove(className);
-			return true;
-		}
-		return false;
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public ProcessDescription getProcessDescription(String processID) {
-		if (!processDescriptionMap.containsKey(processID)) {
-			processDescriptionMap.put(processID, getAlgorithm(processID)
-					.getDescription());
+		if (getAlgorithmNames().contains(processID)) {
+			return processDescriptionMap.get(processID);
 		}
-		return processDescriptionMap.get(processID);
+		return null;
 	}
 
 	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-
-	}
+	public void shutdown() {}
 
 }
