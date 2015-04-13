@@ -55,14 +55,13 @@ import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
  * A container, which allows the 52n WPS to recognize the sextante library.
  * Basic initialization is performed here.
  * 
- * Whenever a getcapabilities request comes in, the process names are extraced based on the available process description documents for sextante processes.
+ * Whenever a getcapabilities request comes in, the process names are extracted based on the available process description documents for sextante processes.
  * This should be changed in the future, when process descriptions should be generated automatically. When a execute process request comes in, a generic GenericSextanteProcessDelegator is created. 
  */
-
-
 public class SextanteProcessRepository implements IAlgorithmRepository{
 	private static Logger LOGGER = LoggerFactory.getLogger(SextanteProcessRepository.class);
 	private Map<String, ProcessDescription> registeredProcesses;
+	private ConfigurationModule sextanteAlgorithmRepoConfigModule;
 	 
 	
 	public SextanteProcessRepository(){
@@ -78,19 +77,9 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 		 * 		add all valid processes to WPSConfig
 		 */
 		
-		ConfigurationModule sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-			
-		List<AlgorithmEntry> algorithmEntries = sextanteAlgorithmRepoConfigModule.getAlgorithmEntries();	
+		sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 		
-		ArrayList<String> processList = new ArrayList<String>(algorithmEntries.size());		
-		
-		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-			if(algorithmEntry.isActive()){
-				processList.add(algorithmEntry.getAlgorithm());
-			}else{
-				LOGGER.info("Sextante Process : " + algorithmEntry.getAlgorithm() + " not active.");				
-			}
-		}		
+		Collection<String> processList = getAlgorithmNames();
 		
 		Sextante.initialize();
 		HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
@@ -124,11 +113,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	}
 
 	public boolean containsAlgorithm(String processID) {
-		if(registeredProcesses.containsKey(processID)){
-			return true;
-		}
-		LOGGER.warn("Could not find Sextante Process " + processID);
-		return false;
+		return getAlgorithmNames().contains(processID);
 	}
 
 	public IAlgorithm getAlgorithm(String processID) {
@@ -136,12 +121,22 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 			throw new RuntimeException("Could not allocate Process");
 		}
 		return new GenericSextanteProcessDelegator(processID, registeredProcesses.get(processID));
-				
-		
 	}
 
 	public Collection<String> getAlgorithmNames() {
-		return registeredProcesses.keySet();
+
+		Collection<String> algorithmNames = new ArrayList<>();
+
+		List<AlgorithmEntry> algorithmEntries = sextanteAlgorithmRepoConfigModule
+				.getAlgorithmEntries();
+
+		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+			if (algorithmEntry.isActive()) {
+				algorithmNames.add(algorithmEntry.getAlgorithm());
+			}
+		}
+
+		return algorithmNames;
 	}
 
 	public boolean removeAlgorithm(Object className) {
@@ -151,17 +146,14 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
 	
 	@Override
 	public ProcessDescription getProcessDescription(String processID) {
-		if(!registeredProcesses.containsKey(processID)){
-			registeredProcesses.put(processID, getAlgorithm(processID).getDescription());
+		if (getAlgorithmNames().contains(processID)) {
+			return registeredProcesses.get(processID);
 		}
-		return registeredProcesses.get(processID);
+		return null;
 	}
 
 
 	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void shutdown() {}
 
 }
