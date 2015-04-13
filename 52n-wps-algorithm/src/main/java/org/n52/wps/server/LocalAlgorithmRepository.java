@@ -82,23 +82,18 @@ public class LocalAlgorithmRepository implements
 	}
 
 	public Collection<String> getAlgorithmNames() {
-		
+
 		Collection<String> algorithmNames = new ArrayList<>();
-		
-		if (localAlgorithmRepoConfigModule.isActive()) {
 
-			List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule
-					.getAlgorithmEntries();
+		List<AlgorithmEntry> algorithmEntries = localAlgorithmRepoConfigModule
+				.getAlgorithmEntries();
 
-			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-				if (algorithmEntry.isActive()) {
-					algorithmNames.add(algorithmEntry.getAlgorithm());
-				}
+		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+			if (algorithmEntry.isActive()) {
+				algorithmNames.add(algorithmEntry.getAlgorithm());
 			}
-		} else {
-			LOGGER.debug("Local Algorithm Repository is inactive.");
 		}
-		
+
 		return algorithmNames;
 	}
 
