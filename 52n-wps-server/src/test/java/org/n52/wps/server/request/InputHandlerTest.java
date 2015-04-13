@@ -28,6 +28,15 @@
  */
 package org.n52.wps.server.request;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -42,12 +51,7 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -66,11 +70,6 @@ public class InputHandlerTest {
     private static ExecuteDocument dummyTestClassAlgorithmExecDoc = null;
     private static InputType[] simpleBufferAlgorithmInputArray = null;
     private static InputType[] dummyTestClassAlgorithmInputArray = null;
-
-    @BeforeClass
-    public static void setupClass() throws XmlException, IOException {
-        WPSConfigTestUtil.generateMockConfig(InputHandlerTest.class, "/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
-    }
 
     @AfterClass
     public static void tearDownClass() {

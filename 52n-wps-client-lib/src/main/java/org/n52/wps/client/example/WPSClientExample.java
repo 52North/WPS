@@ -192,13 +192,7 @@ public class WPSClientExample {
 
 	public static void main(String[] args) {
 		
-		try {
-			WPSConfig.forceInitialization(WPSClientExample.class.getResourceAsStream("wps_config_geotools.xml"));
-		} catch (XmlException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		//TODO find way to initialize parsers/generators
 		
 		WPSClientExample client = new WPSClientExample();
 		client.testExecute();

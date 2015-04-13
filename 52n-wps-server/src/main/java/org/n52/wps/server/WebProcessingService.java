@@ -194,10 +194,9 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
             LOGGER.error("error while initializing capabilitiesConfiguration", e);
         }
 
-        LOGGER.info("Service base url is {} | Service endpoint is {} | Used config file is {}",
+        LOGGER.info("Service base url is {} | Service endpoint is {}",
                     conf.getServiceBaseUrl(),
-                    conf.getServiceEndpoint(),
-                    WPSConfig.getConfigPath());
+                    conf.getServiceEndpoint());
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.

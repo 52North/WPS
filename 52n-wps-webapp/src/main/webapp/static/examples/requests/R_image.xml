@@ -5,7 +5,6 @@
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
 	<ows:Identifier>org.n52.wps.server.r.demo.image</ows:Identifier>
-	<wps:DataInputs></wps:DataInputs>
 	<wps:ResponseForm>
 		<wps:RawDataOutput mimeType="image/png">
 			<ows:Identifier>image</ows:Identifier>

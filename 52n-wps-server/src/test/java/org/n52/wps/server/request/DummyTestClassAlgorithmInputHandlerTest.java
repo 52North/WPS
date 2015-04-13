@@ -78,7 +78,6 @@ public class DummyTestClassAlgorithmInputHandlerTest {
 
     @Before
     public void setUp() throws XmlException, IOException {
-        WPSConfigTestUtil.generateMockConfig(getClass(), "/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
 
         execDoc = ExecuteDocument.Factory.parse(sampleFile);
         inputArray = execDoc.getExecute().getDataInputs().getInputArray();
