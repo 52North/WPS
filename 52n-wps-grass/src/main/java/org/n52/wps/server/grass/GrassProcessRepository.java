@@ -39,6 +39,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
 import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM;
 import org.n52.wps.server.grass.util.GRASSWPSConfigVariables;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
@@ -57,6 +58,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	private Map<String, ProcessDescription> registeredProcesses;
 	private Map<String, Boolean> processesAddonFlagMap;
 	private final String fileSeparator = System.getProperty("file.separator");
+	private ConfigurationModule grassConfigModule;
 	public static String tmpDir;
 	public static String grassHome;
 	public static String pythonHome;
@@ -70,7 +72,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 		processesAddonFlagMap = new HashMap<String, Boolean>();
 		// check if the repository is active
 		
-		ConfigurationModule grassConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+		grassConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 		
 		if (grassConfigModule.isActive()) {
 			LOGGER.info("Initializing Grass Repository");
@@ -88,36 +90,28 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 			
 			for (ConfigurationEntry<?> property : propertyArray) {
 				if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.TMP_Dir.toString())) {
+						GrassProcessRepositoryCM.tmpDirKey)) {
 					tmpDir = property.getValue().toString();
 				}
 				if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.Grass_Home.toString())) {
+						GrassProcessRepositoryCM.grassHomeKey)) {
 					grassHome = property.getValue().toString();
 				} else if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.ModuleStarter_Home.toString())) {
+						GrassProcessRepositoryCM.moduleStarterHomeKey)) {
 					grassModuleStarterHome = property.getValue().toString();
 				} else if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.Python_Home.toString())) {
+						GrassProcessRepositoryCM.pythonHomeKey)) {
 					pythonHome = property.getValue().toString();
 				} else if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.GISRC_Dir.toString())) {
+						GrassProcessRepositoryCM.gisrcDirKey)) {
 					gisrcDir = property.getValue().toString();
 				}else if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.Addon_Dir.toString())) {
+						GrassProcessRepositoryCM.addonDirKey)) {
 					addonPath = property.getValue().toString();
 				}else if (property.getKey().equalsIgnoreCase(
-						GRASSWPSConfigVariables.Python_Path.toString())) {
+						GrassProcessRepositoryCM.pythonPathKey)) {
 					pythonPath = property.getValue().toString();
 				}
-				//TODO get algorithm entries
-//				else if(property.getKey().equals("Algorithm")){
-//					if(property.getActive()){
-//						processList.add(property.getStringValue());
-//					}else{
-//						LOGGER.info("GRASS process : " + property.getStringValue() + " not active.");				
-//					}
-//				}
 			}
 			
 			List<AlgorithmEntry> algorithmEntries = grassConfigModule.getAlgorithmEntries();			
@@ -129,6 +123,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 				}
 			}
 
+			//TODO check
 			HashMap<String, String> variableMap = new HashMap<String, String>();
 
 			variableMap.put(GRASSWPSConfigVariables.TMP_Dir.toString(), tmpDir);
@@ -215,7 +210,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 
 			}
 			
-			if(addonPath != null){
+			if(addonPath != null && !addonPath.equalsIgnoreCase("N/A")){
 			
 			File addonDirectory = new File(addonPath);
 
@@ -265,8 +260,6 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 
 			}
 		}
-			
-			
 
 		} else {
 			LOGGER.debug("GRASS Algorithm Repository is inactive.");
@@ -275,11 +268,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	}
 
 	public boolean containsAlgorithm(String processID) {
-		if (registeredProcesses.containsKey(processID)) {
-			return true;
-		}
-		LOGGER.warn("Could not find Grass process " + processID);
-		return false;
+		return getAlgorithmNames().contains(processID);
 	}
 
 	public IAlgorithm getAlgorithm(String processID) {
@@ -292,7 +281,19 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 	}
 
 	public Collection<String> getAlgorithmNames() {
-		return registeredProcesses.keySet();
+
+		Collection<String> algorithmNames = new ArrayList<>();
+
+		List<AlgorithmEntry> algorithmEntries = grassConfigModule
+				.getAlgorithmEntries();
+
+		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+			if (algorithmEntry.isActive()) {
+				algorithmNames.add(algorithmEntry.getAlgorithm());
+			}
+		}
+
+		return algorithmNames;
 	}
 
 	private void deleteFiles(File tmpDirectory) {
@@ -321,10 +322,10 @@ public class GrassProcessRepository implements IAlgorithmRepository {
 
 	@Override
 	public ProcessDescription getProcessDescription(String processID) {
-		if(!registeredProcesses.containsKey(processID)){
-			registeredProcesses.put(processID, getAlgorithm(processID).getDescription());
+		if (getAlgorithmNames().contains(processID)) {
+			return registeredProcesses.get(processID);
 		}
-		return registeredProcesses.get(processID);
+		return null;
 	}
 
 	@Override

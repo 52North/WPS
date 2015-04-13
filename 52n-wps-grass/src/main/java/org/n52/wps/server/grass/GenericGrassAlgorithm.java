@@ -28,8 +28,6 @@
  */
 package org.n52.wps.server.grass;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
 import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.ProcessDescription;
 
