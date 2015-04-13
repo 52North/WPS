@@ -26,7 +26,7 @@ import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class ServiceLoadetAlgorithmRepositoryCM extends ClassKnowingModule{
+public class ServiceLoaderAlgorithmRepositoryCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
 
@@ -34,7 +34,7 @@ public class ServiceLoadetAlgorithmRepositoryCM extends ClassKnowingModule{
 
 	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
 	
-	public ServiceLoadetAlgorithmRepositoryCM() {
+	public ServiceLoaderAlgorithmRepositoryCM() {
 		algorithmEntries = new ArrayList<>();
 	}
 	
