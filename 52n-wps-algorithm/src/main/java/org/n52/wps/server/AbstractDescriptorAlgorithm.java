@@ -42,8 +42,6 @@ import net.opengis.wps.x200.LiteralDataDocument;
 import net.opengis.wps.x200.LiteralDataDomainType;
 import net.opengis.wps.x200.LiteralDataType;
 import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.ProcessOfferingsDocument;
-import net.opengis.wps.x200.ProcessOfferingsDocument.ProcessOfferings;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
@@ -484,9 +482,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     	 * We need to use the ProcessOffering here, because it holds some information that will be 
     	 * shown in the ProcessSummary of the Capabilities
     	 */
-    	ProcessOfferingsDocument document = ProcessOfferingsDocument.Factory.newInstance();
-    	ProcessOfferings processOfferings = document.addNewProcessOfferings();
-    	ProcessOffering processOffering = processOfferings.addNewProcessOffering();
+    	ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 
     	net.opengis.wps.x200.ProcessDescriptionType processDescription = processOffering.addNewProcess();
     	
@@ -652,8 +648,6 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
         
         return processOffering;
-    	
-    	
     }
     
     @Override
