@@ -87,10 +87,6 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
     private static final String PUBLIC_CONFIG_FILE_DIR = "config";
 
-    public static String WPS_NAMESPACE_1_0_0 = "http://www.opengis.net/wps/1.0.0";
-    
-    public static String WPS_NAMESPACE_2_0_0 = "http://www.opengis.net/wps/2.0.0";
-
     public static String DEFAULT_LANGUAGE = "en-US";
 
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
@@ -152,9 +148,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
         System.setProperty("org.geotools.referencing.forceXY", "true");
-
-        LOGGER.info("WebProcessingService initializing...");
-
+        
         try {
             if (conf == null) {
                 LOGGER.error("Initialization failed! Please look at the properties file!");
@@ -165,7 +159,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
             LOGGER.error("Initialization failed! Please look at the properties file!", e);
             return;
         }
-        LOGGER.info("Initialization of wps properties successful!\n\t\tWPSConfig: {}", conf);
+        LOGGER.info("Initialization of wps properties successful! WPSConfig: {}", conf);
 
         applicationBaseDir = servletContext.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
@@ -197,53 +191,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         LOGGER.info("Service base url is {} | Service endpoint is {}",
                     conf.getServiceBaseUrl(),
                     conf.getServiceEndpoint());
-
-        // FvK: added Property Change Listener support
-        // creates listener and register it to the wpsConfig instance.
-        // it will listen to changes of the wpsCapabilities
-        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME,
-                                                          new PropertyChangeListener() {
-                                                              @Override
-                                                              public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-                                                                  LOGGER.info(this.getClass().getName()
-                                                                          + ": Received Property Change Event: "
-                                                                          + propertyChangeEvent.getPropertyName());
-                                                                  try {
-                                                                      CapabilitiesConfiguration.reloadSkeleton();
-                                                                  }
-                                                                  catch (IOException e) {
-                                                                      LOGGER.error("error while initializing capabilitiesConfiguration",
-                                                                                   e);
-                                                                  }
-                                                                  catch (XmlException e) {
-                                                                      LOGGER.error("error while initializing capabilitiesConfiguration",
-                                                                                   e);
-                                                                  }
-                                                              }
-                                                          });
-
-        // FvK: added Property Change Listener support
-        // creates listener and register it to the wpsConfig instance.
-        // it will listen to changes of the wpsConfiguration
-        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME,
-                                                          new PropertyChangeListener() {
-                                                              public void propertyChange(final PropertyChangeEvent propertyChangeEvent) {
-                                                                  LOGGER.info(this.getClass().getName()
-                                                                          + ": Received Property Change Event: "
-                                                                          + propertyChangeEvent.getPropertyName());
-                                                                  try {
-                                                                      CapabilitiesConfiguration.reloadSkeleton();
-                                                                  }
-                                                                  catch (IOException e) {
-                                                                      LOGGER.error("error while initializing capabilitiesConfiguration",
-                                                                                   e);
-                                                                  }
-                                                                  catch (XmlException e) {
-                                                                      LOGGER.error("error while initializing capabilitiesConfiguration",
-                                                                                   e);
-                                                                  }
-                                                              }
-                                                          });
+        
         LOGGER.info("*** WPS up and running! ***");
     }
 

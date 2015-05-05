@@ -52,14 +52,13 @@ import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputReferenceType;
 import net.opengis.wps.x100.InputType;
 import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x200.DataDescriptionType;
-import net.opengis.wps.x200.DataDocument.Data;
-import net.opengis.wps.x200.DataInputType;
-import net.opengis.wps.x200.FormatDocument.Format;
-import net.opengis.wps.x200.LiteralDataType;
-import net.opengis.wps.x200.LiteralDataType.LiteralDataDomain;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.ReferenceType;
+import net.opengis.wps.x20.DataDescriptionType;
+import net.opengis.wps.x20.DataDocument.Data;
+import net.opengis.wps.x20.DataInputType;
+import net.opengis.wps.x20.FormatDocument.Format;
+import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.LiteralDataType.LiteralDataDomain;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -206,11 +205,11 @@ public class InputHandler {
 
 				if(input.getData() != null) {
 					
-					net.opengis.wps.x200.InputDescriptionType inputDescription = XMLBeansHelper.findInputByID(inputId, processOffering.getProcess());
+					net.opengis.wps.x20.InputDescriptionType inputDescription = XMLBeansHelper.findInputByID(inputId, processOffering.getProcess());
 					
 					DataDescriptionType dataDesc = inputDescription.getDataDescription();
 					
-					if(dataDesc instanceof net.opengis.wps.x200.ComplexDataType) {
+					if(dataDesc instanceof net.opengis.wps.x20.ComplexDataType) {
 						handleComplexData(input, inputId);
 					}
 					else if(dataDesc instanceof LiteralDataType) {
@@ -625,7 +624,7 @@ public class InputHandler {
 	private void handleComplexData(DataInputType input, String inputId)
 			throws ExceptionReport {
 		String complexValue;
-		net.opengis.wps.x200.InputDescriptionType inputReferenceDesc;
+		net.opengis.wps.x20.InputDescriptionType inputReferenceDesc;
 		Data data;
 		Node complexValueNode;
 		Format format = null;
@@ -987,7 +986,7 @@ public class InputHandler {
 		String encoding = null;
 
 		// overwrite with data format from request if appropriate
-		ReferenceType referenceData = input.getReference();
+		net.opengis.wps.x20.ReferenceType referenceData = input.getReference();
 
 		if (referenceData.isSetMimeType()
 				&& referenceData.getMimeType() != null) {
@@ -1467,7 +1466,7 @@ public class InputHandler {
 		return null;
 	}
 	
-	private Format findFormat(net.opengis.wps.x200.InputDescriptionType inputReferenceDesc,
+	private Format findFormat(net.opengis.wps.x20.InputDescriptionType inputReferenceDesc,
 			String dataMimeType, String dataSchema, String dataEncoding,
 			String potentialFormatSchema, String potentialFormatEncoding) {
 		Format result = null;
@@ -1512,7 +1511,7 @@ public class InputHandler {
 	}
 	
 	private Format getNonDefaultFormat(
-			net.opengis.wps.x200.InputDescriptionType inputRefDesc, String dataMimeType,
+			net.opengis.wps.x20.InputDescriptionType inputRefDesc, String dataMimeType,
 			String dataSchema, String dataEncoding) {
 		//TODO still needed?
 //		if (inputRefDesc.getComplexData() == null) {
@@ -1700,7 +1699,7 @@ public class InputHandler {
 			LOGGER.error("Could not parse supposed LiteralData. " + input.toString(), e1);
 		}
 
-		net.opengis.wps.x200.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
+		net.opengis.wps.x20.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
 				
 		LiteralDataDomain literalDataDomain = ((LiteralDataType)inputDesc.getDataDescription()).getLiteralDataDomainArray(0);
 		

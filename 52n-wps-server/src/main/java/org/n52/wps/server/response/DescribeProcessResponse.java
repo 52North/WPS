@@ -31,7 +31,7 @@ package org.n52.wps.server.response;
 import java.io.InputStream;
 
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
-import net.opengis.wps.x200.ProcessOfferingsDocument;
+import net.opengis.wps.x20.ProcessOfferingsDocument;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;

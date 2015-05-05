@@ -52,12 +52,12 @@ import net.opengis.ows.x20.RequestMethodType;
 import net.opengis.ows.x20.ResponsiblePartySubsetType;
 import net.opengis.ows.x20.ServiceIdentificationDocument.ServiceIdentification;
 import net.opengis.ows.x20.ServiceProviderDocument.ServiceProvider;
-import net.opengis.wps.x200.CapabilitiesDocument;
-import net.opengis.wps.x200.ContentsDocument.Contents;
-import net.opengis.wps.x200.ProcessDescriptionType;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.ProcessSummaryType;
-import net.opengis.wps.x200.WPSCapabilitiesType;
+import net.opengis.wps.x20.CapabilitiesDocument;
+import net.opengis.wps.x20.ContentsDocument.Contents;
+import net.opengis.wps.x20.ProcessDescriptionType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.ProcessSummaryType;
+import net.opengis.wps.x20.WPSCapabilitiesType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -532,7 +532,7 @@ public class CapabilitiesConfigurationV200 {
     		XmlCursor c = instance.newCursor();
     		c.toFirstChild();
     		c.toLastAttribute();
-    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetCapabilities.xsd");
+    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetCapabilities.xsd");
             
             serviceIdentificationConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceIdentification();
             

@@ -28,7 +28,6 @@
  */
 package org.n52.wps.util;
 
-import java.net.URL;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.xml.XMLConstants;
@@ -37,10 +36,7 @@ import javax.xml.namespace.QName;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
-import net.opengis.wps.x200.DataInputType;
-import net.opengis.wps.x200.ExecuteDocument;
-import net.opengis.wps.x200.ExecuteRequestType;
-import net.opengis.wps.x200.ProcessDescriptionType;
+import net.opengis.wps.x20.ProcessDescriptionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -75,8 +71,8 @@ public class XMLBeansHelper {
         return null;
     }
 	
-	public static net.opengis.wps.x200.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x200.OutputDescriptionType[] outputDescs) {
-		for(net.opengis.wps.x200.OutputDescriptionType desc : outputDescs) {
+	public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
+		for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
 			if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
@@ -84,8 +80,8 @@ public class XMLBeansHelper {
         return null;
     }
 
-	public static net.opengis.wps.x200.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
-		for(net.opengis.wps.x200.InputDescriptionType desc : descType.getInputArray()) {
+	public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
+		for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
 			if(desc.getIdentifier().getStringValue().equals(inputID)) {
                 return desc;
             }
@@ -138,7 +134,7 @@ public class XMLBeansHelper {
     /**
      * The namespace for WPS 1.0.0: {@value}.
      */
-    public static final String NS_WPS_2_0_0 = "http://www.opengis.net/wps/2.0.0";
+    public static final String NS_WPS_2_0 = "http://www.opengis.net/wps/2.0";
 
     /**
      * The prefix for WPS 1.0.0: {@value}.
@@ -177,7 +173,7 @@ public class XMLBeansHelper {
         PREFIXES = Maps.newConcurrentMap();
         PREFIXES.put(NS_XSI, NS_XSI_PREFIX);
         PREFIXES.put(NS_WPS_1_0_0, NS_WPS_PREFIX);
-        PREFIXES.put(NS_WPS_2_0_0, NS_WPS_PREFIX);
+        PREFIXES.put(NS_WPS_2_0, NS_WPS_PREFIX);
         PREFIXES.put(NS_OWS_1_1, NS_OWS_PREFIX);
         PREFIXES.put(NS_OWS_2_0, NS_OWS_PREFIX);
     }

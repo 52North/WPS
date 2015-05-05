@@ -33,17 +33,17 @@ import java.io.InputStream;
 import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.DomainMetadataType;
 import net.opengis.ows.x20.LanguageStringType;
-import net.opengis.wps.x200.ComplexDataType;
-import net.opengis.wps.x200.ExecuteRequestType;
-import net.opengis.wps.x200.FormatDocument.Format;
-import net.opengis.wps.x200.LiteralDataType;
-import net.opengis.wps.x200.OutputDefinitionType;
-import net.opengis.wps.x200.OutputDescriptionType;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.ResultDocument;
-import net.opengis.wps.x200.ResultDocument.Result;
-import net.opengis.wps.x200.StatusInfoDocument;
-import net.opengis.wps.x200.StatusInfoDocument.StatusInfo;
+import net.opengis.wps.x20.ComplexDataType;
+import net.opengis.wps.x20.DataTransmissionModeType;
+import net.opengis.wps.x20.ExecuteRequestType;
+import net.opengis.wps.x20.FormatDocument.Format;
+import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.OutputDefinitionType;
+import net.opengis.wps.x20.OutputDescriptionType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.ResultDocument;
+import net.opengis.wps.x20.StatusInfoDocument;
+import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
@@ -86,10 +86,10 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		resultDoc = ResultDocument.Factory.newInstance();
 		resultDoc.addNewResult();
 		resultDoc.getResult().setJobID(request.getUniqueId().toString());
-		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetResult.xsd");
+		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetResult.xsd");
 		statusInfoDoc = StatusInfoDocument.Factory.newInstance();		
 		statusInfoDoc.addNewStatusInfo();
-		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsGetStatus.xsd");
+		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetStatus.xsd");
 		this.identifier = request.getAlgorithmIdentifier().trim();
 		superDescription = RepositoryManager.getInstance().getProcessDescription(this.identifier);
 		description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
@@ -149,7 +149,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						String schema = getSchema(definition);
 						String encoding = getEncoding(definition);
 						
-						generateComplexDataOutput(responseID, definition.getTransmission().equals("reference"), false,  schema, mimeType, encoding, desc.getTitleArray(0));
+						generateComplexDataOutput(responseID, definition.getTransmission().equals(DataTransmissionModeType.REFERENCE), false,  schema, mimeType, encoding, desc.getTitleArray(0));
 					}
 					else if (desc.getDataDescription() instanceof LiteralDataType) {
 						String mimeType = null;
@@ -308,7 +308,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 			
 			statusInfoDoc.setStatusInfo(status);
 		}else{
-			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x200.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));
+			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x20.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));
 		}
 	}
 

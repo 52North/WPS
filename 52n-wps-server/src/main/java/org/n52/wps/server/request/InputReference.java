@@ -28,10 +28,10 @@
  */
 package org.n52.wps.server.request;
 
-import org.apache.xmlbeans.XmlObject;
-
 import net.opengis.wps.x100.InputType;
-import net.opengis.wps.x200.DataInputType;
+import net.opengis.wps.x20.DataInputType;
+
+import org.apache.xmlbeans.XmlObject;
 
 /**
  * Wrapper for inputs references of different WPS versions

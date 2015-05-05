@@ -36,12 +36,12 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x100.ProcessDescriptionsDocument.ProcessDescriptions;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
-import net.opengis.wps.x200.ComplexDataDocument;
-import net.opengis.wps.x200.ComplexDataType;
-import net.opengis.wps.x200.LiteralDataDocument;
-import net.opengis.wps.x200.LiteralDataDomainType;
-import net.opengis.wps.x200.LiteralDataType;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.ComplexDataDocument;
+import net.opengis.wps.x20.ComplexDataType;
+import net.opengis.wps.x20.LiteralDataDocument;
+import net.opengis.wps.x20.LiteralDataDomainType;
+import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
@@ -261,7 +261,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     		ComplexDataType complexDataType,
     		List<? extends IOHandler> handlers)
     {
-    	net.opengis.wps.x200.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
+    	net.opengis.wps.x20.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
     	
     	defaultFormatType.setDefault(true);
     	
@@ -324,7 +324,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
     
     private void describeComplexDataFormat200(
-    		net.opengis.wps.x200.FormatDocument.Format supportedFormatType,
+    		net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
     		FormatEntry format)
     {
     	describeComplexDataFormat200(supportedFormatType,
@@ -333,7 +333,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     			format.getSchema());
     }
     
-    private void describeComplexDataFormat200(net.opengis.wps.x200.FormatDocument.Format supportedFormatType,
+    private void describeComplexDataFormat200(net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
     		String format,
     		String encoding,
     		String schema) {
@@ -484,7 +484,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     	 */
     	ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 
-    	net.opengis.wps.x200.ProcessDescriptionType processDescription = processOffering.addNewProcess();
+    	net.opengis.wps.x20.ProcessDescriptionType processDescription = processOffering.addNewProcess();
     	
         if (algorithmDescriptor == null) {
             throw new IllegalStateException("Instance must have an algorithm descriptor");
@@ -523,7 +523,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             DataInputs dataInputs = null;
             for (InputDescriptor inputDescriptor : inputDescriptors) {
 
-                net.opengis.wps.x200.InputDescriptionType dataInput = processDescription.addNewInput();
+                net.opengis.wps.x20.InputDescriptionType dataInput = processDescription.addNewInput();
                 dataInput.setMinOccurs(inputDescriptor.getMinOccurs());
                 dataInput.setMaxOccurs(inputDescriptor.getMaxOccurs());
 
@@ -540,13 +540,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance();
                     
-                    net.opengis.wps.x200.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
                     
                     defaultFormat.setDefault(true);
                     
                     defaultFormat.setMimeType("text/plain");
                     
-                    net.opengis.wps.x200.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
                     
                     textXMLFormat.setMimeType("text/xml");
                     
@@ -601,7 +601,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             }
             for (OutputDescriptor outputDescriptor : outputDescriptors) {
 
-                net.opengis.wps.x200.OutputDescriptionType dataOutput = processDescription.addNewOutput();
+                net.opengis.wps.x20.OutputDescriptionType dataOutput = processDescription.addNewOutput();
                 dataOutput.addNewIdentifier().setStringValue(outputDescriptor.getIdentifier());
                 dataOutput.addNewTitle().setStringValue( outputDescriptor.hasTitle() ?
                         outputDescriptor.getTitle() :
@@ -615,13 +615,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance(); 
                     
-                    net.opengis.wps.x200.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
                     
                     defaultFormat.setDefault(true);
                     
                     defaultFormat.setMimeType("text/plain");
                     
-                    net.opengis.wps.x200.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
                     
                     textXMLFormat.setMimeType("text/xml");
                     

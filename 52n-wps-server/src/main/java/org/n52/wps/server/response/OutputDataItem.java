@@ -44,20 +44,15 @@ import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.LiteralDataType;
 import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputReferenceType;
-import net.opengis.wps.x200.DataDocument.Data;
-import net.opengis.wps.x200.DataOutputType;
-import net.opengis.wps.x200.ReferenceType;
-import net.opengis.wps.x200.ResultDocument;
+import net.opengis.wps.x20.DataDocument.Data;
+import net.opengis.wps.x20.DataOutputType;
+import net.opengis.wps.x20.ResultDocument;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
@@ -67,6 +62,10 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import com.google.common.primitives.Doubles;
 
@@ -277,7 +276,7 @@ public class OutputDataItem extends ResponseData {
 		DataOutputType output = prepareOutput(res);
 		InputStream stream;
 
-		ReferenceType outReference = output.addNewReference();
+		net.opengis.wps.x20.ReferenceType outReference = output.addNewReference();
 		if (schema != null) {
 			outReference.setSchema(schema);
 		}

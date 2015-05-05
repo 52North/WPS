@@ -55,6 +55,7 @@ import org.n52.wps.server.request.Request;
 import org.n52.wps.server.request.RetrieveResultRequest;
 import org.n52.wps.server.response.ExecuteResponse;
 import org.n52.wps.server.response.Response;
+import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -289,7 +290,7 @@ public class RequestHandler {
 		}
 		// get the request type
 		
-		if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE_1_0_0)){
+		if (nodeURI.equals(XMLBeansHelper.NS_WPS_1_0_0)){
 			
 		    if (localName.equals("Execute")) {
 		    	req = new ExecuteRequestV100(doc);
@@ -309,7 +310,7 @@ public class RequestHandler {
 		    	throw new ExceptionReport("specified namespace is not supported: "
 		    			+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
 		    }
-		}else if (nodeURI.equals(WebProcessingService.WPS_NAMESPACE_2_0_0)){
+		}else if (nodeURI.equals(XMLBeansHelper.NS_WPS_2_0)){
 			
 		    if (localName.equals("Execute")) {
 		    	req = new ExecuteRequestV200(doc);

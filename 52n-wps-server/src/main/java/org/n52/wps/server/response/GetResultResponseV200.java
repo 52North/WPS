@@ -30,7 +30,7 @@ package org.n52.wps.server.response;
 
 import java.io.InputStream;
 
-import net.opengis.wps.x200.ResultDocument;
+import net.opengis.wps.x20.ResultDocument;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.GetResultRequestV200;

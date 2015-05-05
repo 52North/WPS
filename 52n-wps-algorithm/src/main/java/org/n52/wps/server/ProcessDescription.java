@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x20.ValueType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataDescriptionType;
@@ -31,13 +32,13 @@ import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.SupportedComplexDataInputType;
 import net.opengis.wps.x100.SupportedComplexDataType;
-import net.opengis.wps.x200.ComplexDataDocument;
-import net.opengis.wps.x200.ComplexDataType;
-import net.opengis.wps.x200.FormatDocument.Format;
-import net.opengis.wps.x200.LiteralDataDocument;
-import net.opengis.wps.x200.LiteralDataDomainType;
-import net.opengis.wps.x200.LiteralDataType;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.ComplexDataDocument;
+import net.opengis.wps.x20.ComplexDataType;
+import net.opengis.wps.x20.FormatDocument.Format;
+import net.opengis.wps.x20.LiteralDataDocument;
+import net.opengis.wps.x20.LiteralDataDomainType;
+import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
@@ -76,7 +77,7 @@ public class ProcessDescription {
 		
 		ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 		
-    	net.opengis.wps.x200.ProcessDescriptionType processDescription = processOffering.addNewProcess();
+    	net.opengis.wps.x20.ProcessDescriptionType processDescription = processOffering.addNewProcess();
     	
         	processOffering.setProcessVersion(processDescriptionV100.getProcessVersion());
         	
@@ -110,7 +111,7 @@ public class ProcessDescription {
             
             for (InputDescriptionType inputDescriptionType : inputDescriptionTypes) {
 				
-                net.opengis.wps.x200.InputDescriptionType dataInput = processDescription.addNewInput();
+                net.opengis.wps.x20.InputDescriptionType dataInput = processDescription.addNewInput();
                 dataInput.setMinOccurs(inputDescriptionType.getMinOccurs());
                 dataInput.setMaxOccurs(inputDescriptionType.getMaxOccurs());
 
@@ -127,19 +128,25 @@ public class ProcessDescription {
                     
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance();
                     
-                    net.opengis.wps.x200.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
                     
                     defaultFormat.setDefault(true);
                     
                     defaultFormat.setMimeType("text/plain");
                     
-                    net.opengis.wps.x200.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
                     
                     textXMLFormat.setMimeType("text/xml");
                     
                     LiteralDataDomainType literalDataDomainType = literalData.addNewLiteralDataDomain();
                     
-                    literalDataDomainType.addNewDataType().setReference(literalInputType.getDataType().getStringValue());
+                    String dataType = literalInputType.getDataType().getStringValue();
+                    
+                    if(dataType == null || dataType.equals("")){
+                    	dataType = literalInputType.getDataType().getReference();
+                    }
+                    
+                    literalDataDomainType.addNewDataType().setReference(dataType);
 
                     if (literalInputType.getDefaultValue() != null) {
                     	
@@ -153,6 +160,24 @@ public class ProcessDescription {
                         net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed = literalDataDomainType.addNewAllowedValues();
                         for (net.opengis.ows.x11.ValueType allowedValue : literalInputType.getAllowedValues().getValueArray()) {
                             allowed.addNewValue().setStringValue(allowedValue.getStringValue());
+                        }
+                        for (RangeType range : literalInputType.getAllowedValues().getRangeArray()) {
+                            net.opengis.ows.x20.RangeType newRange = allowed.addNewRange();
+                            String minimumValue = range.getMinimumValue() != null ? range.getMinimumValue().getStringValue() : "";
+                            
+                            if(minimumValue != null && !minimumValue.equals("")){
+                                newRange.addNewMinimumValue().setStringValue(minimumValue);
+                            }
+                            String maximumValue = range.getMaximumValue() != null ? range.getMaximumValue().getStringValue() : "";
+                            
+                            if(maximumValue != null && !maximumValue.equals("")){
+                                newRange.addNewMaximumValue().setStringValue(maximumValue);
+                            }
+                            String spacing = range.getSpacing() != null ? range.getSpacing().getStringValue() : "";
+                            
+                            if(spacing != null && !spacing.equals("")){
+                                newRange.addNewSpacing().setStringValue(spacing);
+                            }
                         }
                     } else {
                     	literalDataDomainType.addNewAnyValue();
@@ -180,7 +205,7 @@ public class ProcessDescription {
 
             for (OutputDescriptionType outputDescription : outputDescriptions) {
 
-                net.opengis.wps.x200.OutputDescriptionType dataOutput = processDescription.addNewOutput();
+                net.opengis.wps.x20.OutputDescriptionType dataOutput = processDescription.addNewOutput();
                 dataOutput.addNewIdentifier().setStringValue(outputDescription.getIdentifier().getStringValue());
                 dataOutput.addNewTitle().setStringValue( outputDescription.getTitle() != null ?
                 		outputDescription.getTitle().getStringValue() :
@@ -194,13 +219,13 @@ public class ProcessDescription {
                     
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance(); 
                     
-                    net.opengis.wps.x200.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
                     
                     defaultFormat.setDefault(true);
                     
                     defaultFormat.setMimeType("text/plain");
                     
-                    net.opengis.wps.x200.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
+                    net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
                     
                     textXMLFormat.setMimeType("text/xml");
                     
@@ -218,7 +243,7 @@ public class ProcessDescription {
                 	
                 	ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
                 	
-                	transformComplexOutputDataFromV100ToV200(complexDataType, outputDescription.getComplexOutput());
+                	transformComplexDataFromV100ToV200(complexDataType, outputDescription.getComplexOutput());
                     
                     dataOutput.setDataDescription(complexDataType);
                     
@@ -229,43 +254,49 @@ public class ProcessDescription {
 	    return processOffering;
     }
 
-	private void transformComplexOutputDataFromV100ToV200(
-			ComplexDataType complexDataType,
-			SupportedComplexDataType complexData) {
-		
-		ComplexDataCombinationType defaultFormat = complexData.getDefault();
-		
-		Format defaultFormatV200 = complexDataType.addNewFormat();
-		
-		defaultFormatV200.setDefault(true);
-		
-		describeComplexDataFormat200(defaultFormatV200, defaultFormat.getFormat().getMimeType(), defaultFormat.getFormat().getEncoding(), defaultFormat.getFormat().getSchema());
-		
-		ComplexDataDescriptionType[] supportedFormats = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedFormats) {
-			Format supportedFormat = complexDataType.addNewFormat();
-			describeComplexDataFormat200(supportedFormat, complexDataDescriptionType.getMimeType(), complexDataDescriptionType.getEncoding(), complexDataDescriptionType.getSchema());
-		}
-	}
-
 	private void transformComplexDataFromV100ToV200(
 			ComplexDataType complexDataType,
-			SupportedComplexDataInputType complexData) {
+			XmlObject complexData) {
 		
-		ComplexDataCombinationType defaultFormat = complexData.getDefault();
+		ComplexDataCombinationType defaultFormat = ComplexDataCombinationType.Factory.newInstance();
+				
+		if(complexData instanceof SupportedComplexDataType){
+			defaultFormat = ((SupportedComplexDataType)complexData).getDefault();
+		}else if(complexData instanceof SupportedComplexDataInputType){
+			defaultFormat = ((SupportedComplexDataInputType)complexData).getDefault();
+		}
 		
 		Format defaultFormatV200 = complexDataType.addNewFormat();
 		
 		defaultFormatV200.setDefault(true);
 		
-		describeComplexDataFormat200(defaultFormatV200, defaultFormat.getFormat().getMimeType(), defaultFormat.getFormat().getEncoding(), defaultFormat.getFormat().getSchema());
+		String defaultMimeType = defaultFormat.getFormat().getMimeType();
+		String defaultEncoding = defaultFormat.getFormat().getEncoding();
+		String defaultSchema = defaultFormat.getFormat().getSchema();
 		
-		ComplexDataDescriptionType[] supportedFormats = complexData.getSupported().getFormatArray();
+		describeComplexDataFormat200(defaultFormatV200, defaultMimeType, defaultEncoding, defaultSchema);
+		
+		ComplexDataDescriptionType[] supportedFormats = new ComplexDataDescriptionType[0];
+		
+		if(complexData instanceof SupportedComplexDataType){
+			supportedFormats = ((SupportedComplexDataType)complexData).getSupported().getFormatArray();
+		}else if(complexData instanceof SupportedComplexDataInputType){
+			supportedFormats = ((SupportedComplexDataInputType)complexData).getSupported().getFormatArray();
+		}
 		
 		for (ComplexDataDescriptionType complexDataDescriptionType : supportedFormats) {
-			Format supportedFormat = complexDataType.addNewFormat();
-			describeComplexDataFormat200(supportedFormat, complexDataDescriptionType.getMimeType(), complexDataDescriptionType.getEncoding(), complexDataDescriptionType.getSchema());
+			
+			String mimeType = complexDataDescriptionType.getMimeType();
+			String encoding = complexDataDescriptionType.getEncoding();
+			String schema = complexDataDescriptionType.getSchema();
+			
+			//prevent duplicate format			
+			if(!((encoding == null ? encoding == defaultEncoding : encoding.equals(defaultEncoding)) && 
+					(mimeType == null ? mimeType == defaultMimeType : mimeType.equals(defaultMimeType))&&
+					(schema == null ? schema == defaultSchema : schema.equals(defaultSchema)))){
+			    Format supportedFormat = complexDataType.addNewFormat();
+			    describeComplexDataFormat200(supportedFormat, mimeType, encoding, schema);				
+			}
 		}
 	}
     

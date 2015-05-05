@@ -30,7 +30,7 @@ package org.n52.wps.server.request;
 
 import java.io.IOException;
 
-import net.opengis.wps.x200.StatusInfoDocument;
+import net.opengis.wps.x20.StatusInfoDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlException;

@@ -32,11 +32,11 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import net.opengis.wps.x200.DataInputType;
-import net.opengis.wps.x200.ExecuteDocument;
-import net.opengis.wps.x200.ExecuteRequestType;
-import net.opengis.wps.x200.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x200.StatusInfoDocument.StatusInfo;
+import net.opengis.wps.x20.DataInputType;
+import net.opengis.wps.x20.ExecuteDocument;
+import net.opengis.wps.x20.ExecuteRequestType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;

@@ -29,7 +29,7 @@
 package org.n52.wps.server.request;
 
 import net.opengis.wps.x100.InputType;
-import net.opengis.wps.x200.DataInputType;
+import net.opengis.wps.x20.DataInputType;
 
 /**
  * Wrapper for inputs of different WPS versions

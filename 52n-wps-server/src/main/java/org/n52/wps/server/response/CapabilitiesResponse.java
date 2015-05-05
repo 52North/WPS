@@ -30,7 +30,6 @@ package org.n52.wps.server.response;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
 
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
@@ -38,7 +37,6 @@ import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.CapabilitiesConfigurationV200;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.CapabilitiesRequest;
-import org.n52.wps.server.request.Request;
 import org.n52.wps.util.XMLBeansHelper;
 
 /**

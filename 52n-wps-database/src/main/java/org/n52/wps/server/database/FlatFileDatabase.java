@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import net.opengis.wps.x200.StatusInfoDocument;
+import net.opengis.wps.x20.StatusInfoDocument;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
