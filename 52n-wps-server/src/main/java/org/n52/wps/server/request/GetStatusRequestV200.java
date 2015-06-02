@@ -30,6 +30,7 @@ package org.n52.wps.server.request;
 
 import java.io.IOException;
 
+import net.opengis.wps.x20.GetStatusDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -38,11 +39,17 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.response.GetStatusResponseV200;
 import org.n52.wps.server.response.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class GetStatusRequestV200 extends Request {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(GetStatusRequestV200.class);
+	
 	private StatusInfoDocument document;
+	
+	private GetStatusDocument getStatusDocument;
 	
 	private String jobID;
 	
@@ -52,8 +59,19 @@ public class GetStatusRequestV200 extends Request {
 	}
 
 	public GetStatusRequestV200(Document doc) throws ExceptionReport {
-		super(doc);		
-		jobID = getMapValue("jobid", true);	
+		super(doc);
+		
+		if(!validate()){
+			throw new ExceptionReport("GetStatusRequest not valid",
+					ExceptionReport.NO_APPLICABLE_CODE);
+		}
+		if(getStatusDocument.getGetStatus() != null){
+			jobID = getStatusDocument.getGetStatus().getJobID();
+		}
+		if(jobID == null || jobID.equals("")){
+			throw new ExceptionReport("JobID not valid",
+					ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+		}
 	}
 
 	@Override
@@ -74,7 +92,12 @@ public class GetStatusRequestV200 extends Request {
 
 	@Override
 	public boolean validate() throws ExceptionReport {		
-		return true;
+		try {
+			getStatusDocument = GetStatusDocument.Factory.parse(doc.getFirstChild());
+		} catch (XmlException e) {
+			return false;
+		}
+		return getStatusDocument != null;
 	}
 
 }

@@ -11,6 +11,7 @@ INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultipleCom
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.EchoProcess','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.StatusTestingProcess','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);

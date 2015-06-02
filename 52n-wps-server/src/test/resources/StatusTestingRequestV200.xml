@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wps:Execute
+  xmlns:wps="http://www.opengis.net/wps/2.0"
+  xmlns:ows="http://www.opengis.net/ows/2.0"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsExecute.xsd"
+  service="WPS" version="2.0.0" response="document" mode="async">
+  <ows:Identifier>org.n52.wps.server.algorithm.test.StatusTestingProcess</ows:Identifier>
+  <wps:Input id="literalInput">
+    <wps:Data>echo</wps:Data> </wps:Input>
+  <!-- Uses default output format -->
+  <wps:Output id="literalOutput" transmission="value"/>
+</wps:Execute>

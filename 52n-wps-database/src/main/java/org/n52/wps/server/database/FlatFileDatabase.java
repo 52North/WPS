@@ -46,10 +46,12 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.MIMEUtil;
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
@@ -485,54 +487,54 @@ public final class FlatFileDatabase implements IDatabase {
         return false;
     }
 
-	@Override
-	public InputStream lookupStatus(String request_id) throws ExceptionReport {
+    @Override
+    public InputStream lookupStatus(String request_id) throws ExceptionReport {
         File responseFile = lookupResponseAsFile(request_id);
         if (responseFile != null && responseFile.exists()) {
             LOGGER.debug("Response file for {} is {}", request_id, responseFile.getPath());
             try {
-            	
-            	InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile))
-                : new FileInputStream(responseFile);
-            	
-            	//Check if status doc
-            	try {
-					StatusInfoDocument.Factory.parse(inputStream);
-				} catch (Exception e) {
 
-					LOGGER.info("Last response file not of type status info document.");
-					
-					File responseDirectory = generateResponseDirectory(request_id);
-					
-					int lastFileIndex = findLatestResponseIndex(responseDirectory, false);
-					
-					File latestStatusFile = generateResponseFile(responseDirectory, lastFileIndex - 1);
-					
-					try {						
-						inputStream = latestStatusFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(latestStatusFile))
-		                : new FileInputStream(latestStatusFile);
-						
-						StatusInfoDocument.Factory.parse(latestStatusFile);
-						
-					} catch (XmlException e1) {
-						LOGGER.error("Could not parse status info document, probably wrong JobID, or synchronous job.", e);
-						throw new ExceptionReport("Status info for specified JobID not found.", ExceptionReport.NO_SUCH_JOB, "JobID");
-					}
+                InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile)) : new FileInputStream(responseFile);
+                
+                /*
+                 * Check if status doc
+                 * Status docs and result docs are saved in the same folder and
+                 * there is no other possibility to differentiate between them other than the following
+                 */
+                XmlObject object;
+                try {
+                    object = XmlObject.Factory.parse(inputStream);
+                } catch (XmlException e) {
+                    LOGGER.error("Could not look up status. XMLException while trying to parse xml file.", e);
+                    //check exception code
+                    throw new ExceptionReport("Status info for specified JobID not found.", ExceptionReport.NO_APPLICABLE_CODE, "JobID");
+                }
 
-				}
+                if (object instanceof StatusInfoDocument) {
+                    return object.newInputStream();
+                } else if (object instanceof ResultDocument) {
+
+                    LOGGER.info("Last response file not of type status info document.");
+
+                    File responseDirectory = generateResponseDirectory(request_id);
+
+                    int lastFileIndex = findLatestResponseIndex(responseDirectory, false);
+
+                    File latestStatusFile = generateResponseFile(responseDirectory, lastFileIndex - 1);
+
+                    inputStream = latestStatusFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(latestStatusFile)) : new FileInputStream(latestStatusFile);
+                }
                 return inputStream;
-            }
-            catch (FileNotFoundException ex) {
+            } catch (FileNotFoundException ex) {
                 // should never get here due to checks above...
                 LOGGER.warn("Response not found for id {}", request_id);
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 LOGGER.warn("Error processing response for id {}", request_id);
             }
         }
         LOGGER.warn("Response not found for id {}", request_id);
         return null;
-	}
+    }
 
     private int findLatestResponseIndex(File responseDirectory, boolean includeTemp) {
         int responseIndex = Integer.MIN_VALUE;
