@@ -64,7 +64,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ConfigurationManager;
-import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +90,6 @@ public class CapabilitiesConfigurationV200 {
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
     private static ConfigurationManager configurationManager;
-    private Server serverConfigurationModule;	
     private static org.n52.wps.webapp.entities.ServiceIdentification serviceIdentificationConfigurationModule;	
     private static org.n52.wps.webapp.entities.ServiceProvider serviceProviderConfigurationModule;	
 
@@ -389,12 +387,6 @@ public class CapabilitiesConfigurationV200 {
 		}
 		return configurationManager;
 	}
-    
-	public Server getServerConfigurationModule() {
-		return serverConfigurationModule = (Server) getConfigurationManager()
-			    .getConfigurationServices().getConfigurationModule(
-					    Server.class.getName());
-	}
 
     /**
      * Strategy to load a capabilities skeleton from a URL.
@@ -529,16 +521,16 @@ public class CapabilitiesConfigurationV200 {
         CreateInstanceStrategy() {
             this.instance = CapabilitiesDocument.Factory.newInstance();
             
-    		XmlCursor c = instance.newCursor();
-    		c.toFirstChild();
-    		c.toLastAttribute();
-    		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetCapabilities.xsd");
-            
             serviceIdentificationConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceIdentification();
             
             serviceProviderConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceProvider();
             
             WPSCapabilitiesType wpsCapabilities = instance.addNewCapabilities();
+            
+            XmlCursor c = instance.newCursor();
+            c.toFirstChild();
+            c.toLastAttribute();
+            c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
             
             wpsCapabilities.addNewService().setStringValue("WPS");//Fixed to WPS TODO: put in WPSConfig or so
             
@@ -615,6 +607,8 @@ public class CapabilitiesConfigurationV200 {
             addOperation(operationsMetadata, "Execute", "", postHREF);
             addOperation(operationsMetadata, "GetStatus", getHREF, postHREF);
             addOperation(operationsMetadata, "GetResult", getHREF, postHREF);
+            
+            wpsCapabilities.addNewLanguages().addLanguage("en-US");
         }
 
         @Override
