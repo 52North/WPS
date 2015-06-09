@@ -170,7 +170,7 @@ public class XmlCapabilitiesDAO implements CapabilitiesDAO {
 				Namespace.getNamespace("http://www.w3.org/1999/xlink")));
 
 		// contact info
-		Element serviceContact = getElement(serviceProviderElement, "serviceContact");
+		Element serviceContact = getElement(serviceProviderElement, "ServiceContact");
 		serviceProvider.setIndividualName(getValue(serviceContact, "IndividualName"));
 		serviceProvider.setPosition(getValue(serviceContact, "PositionName"));
 
