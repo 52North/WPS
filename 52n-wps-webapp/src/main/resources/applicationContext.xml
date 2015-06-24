@@ -1,14 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
-http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.1.xsd">
 
-	<context:annotation-config />
+	<ctx:annotation-config />
 
 	<import resource="spring/spring-db-config.xml" />
 	<import resource="spring/spring-security-config.xml" />
+
+    <!-- Binding implementations from iceland -->
+    <bean id="kvpBinding" class="org.n52.iceland.binding.kvp.KvpBinding"/>
+
+   <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
+    <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
+
+    <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
+
+    <bean class="org.n52.iceland.service.ServiceConfiguration"/>
+
+    <bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
+    <bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />
+    <bean id="supportedTypeRepository" class="org.n52.iceland.coding.SupportedTypeRepository"/>
+    <bean id="owsExtendedCapabilitiesRepository" class="org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderRepository" />
+    <bean id="offeringExtensionRepository" class="org.n52.iceland.ogc.swes.OfferingExtensionRepository" />
+    <bean id="capabilitiesExtensionRepository" class="org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository" />
+    <bean id="i18nDaoRepository" class="org.n52.iceland.i18n.I18NDAORepository" />
+    <bean id="schemaRepository" class="org.n52.iceland.coding.encode.SchemaRepository"/>
+    <bean id="operationHandlerRepository" class="org.n52.iceland.ds.OperationHandlerRepository" />
+    <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
+    <bean id="responseWriterRepository" class="org.n52.iceland.coding.encode.ResponseWriterRepository" />
+    <bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
+    <bean id="requestOperatorRepository" class="org.n52.iceland.request.operator.RequestOperatorRepository" />
+    <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
+    <bean id="decoderRepository" class="org.n52.iceland.coding.decode.DecoderRepository" />
+    <bean id="encoderRepository" class="org.n52.iceland.coding.encode.EncoderRepository" />
+        
+    <bean id="xmlOptionsHelper" class="org.n52.simplewps.encode.XmlOptionsHelper" />
+        
+     <bean id="xmlResponseWriterFactory" class="org.n52.simplewps.encode.XmlResponseWriterFactory" />    
+     <bean id="abstractServiceResponseWriterFactory" class="org.n52.simplewps.encode.AbstractServiceResponseWriterFactory"/>
+
+    <!-- Decoder implementations from bindings/rest/code -->
+    <bean class="org.n52.simplewps.decode.kvp.DescribeProcessKvpDecoder"/>
+    
+        <!-- Encoder implementations from extensions/gda/operation -->
+    <bean class="org.n52.simplewps.encode.DescribeProcessEncoder"/>
+    
+        <bean id="eventBus" class="org.n52.iceland.event.ServiceEventBus">
+        <property name="async" value="false" />
+    </bean>
+    
+        <bean class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor">
+        <description>This calls Constructable#init and Destroyable#destroy for all beans.</description>
+    </bean>
+    
+    <bean class="org.n52.simplewps.handler.DescribeProcessHandler"/>
+    
+    <bean class="org.n52.simplewps.request.operator.DescribeProcessRequestOperator"/>
+    
+        <!-- ServiceOperator implementations from operations/core-v20 -->
+    <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
+        <property name="service" value="WPS" />
+        <property name="version" value="1.0.0" />
+    </bean>
 
 </beans>

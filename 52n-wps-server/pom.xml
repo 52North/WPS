@@ -40,6 +40,10 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>org.n52.iceland</groupId>
+			<artifactId>iceland</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>

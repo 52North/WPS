@@ -39,6 +39,7 @@ import net.opengis.wps.x20.ProcessOfferingsDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
@@ -139,7 +140,7 @@ public class DescribeProcessRequestV200 extends Request {
 		XmlCursor c = document.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsDescribeProcess.xsd");
+		c.setAttributeText(W3CConstants.QN_SCHEMA_LOCATION_PREFIXED, "http://www.opengis.net/wps/2.0.0 http://schemas.opengis.net/wps/2.0.0/wpsDescribeProcess.xsd");
 				
 		String[] identifiers = getMapValue("identifier", true).split(",");
 		

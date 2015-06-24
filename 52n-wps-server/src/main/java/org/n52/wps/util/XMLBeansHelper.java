@@ -41,6 +41,7 @@ import net.opengis.wps.x20.ProcessDescriptionType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.iceland.w3c.W3CConstants;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -122,7 +123,7 @@ public class XMLBeansHelper {
 		XmlCursor c = object.newCursor();
 		c.toFirstChild();
 		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+		c.setAttributeText(W3CConstants.QN_SCHEMA_LOCATION_PREFIXED, schemaLocation);
     	
     }
 

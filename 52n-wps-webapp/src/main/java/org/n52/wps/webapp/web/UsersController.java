@@ -204,7 +204,7 @@ public class UsersController {
 	@ExceptionHandler(DuplicateKeyException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	@ResponseBody
-	public ValidationResponse hanleException(DuplicateKeyException e) {
+	public ValidationResponse handleException(DuplicateKeyException e) {
 		ValidationResponse validationResponse = new ValidationResponse();
 		List<FieldError> listOfErros = new ArrayList<FieldError>();
 		FieldError error = new FieldError("User", "username",
