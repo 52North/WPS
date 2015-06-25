@@ -74,7 +74,7 @@
 	</bean>
 	
 	<beans profile="production">
-		<ctx:component-scan base-package="org.n52.wps">
+		<ctx:component-scan base-package="org.n52">
 			<ctx:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
 			<ctx:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
 		</ctx:component-scan>
@@ -82,14 +82,14 @@
 
 	<beans profile="controller-test">
 		<!-- Include test modules in the context for integration testing -->
-		<ctx:component-scan base-package="org.n52.wps">
+		<ctx:component-scan base-package="org.n52">
 			<ctx:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
 		</ctx:component-scan>
 	</beans>
 
 	<beans profile="test">
 		<!-- Include test modules in the context for integration testing -->
-		<ctx:component-scan base-package="org.n52.wps">
+		<ctx:component-scan base-package="org.n52">
 			<ctx:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
 			<ctx:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
 		</ctx:component-scan>
