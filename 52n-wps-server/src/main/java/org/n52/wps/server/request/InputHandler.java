@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
@@ -107,6 +108,9 @@ public class InputHandler {
 	private ProcessOffering processOffering;
 	private String algorithmIdentifier = null; // Needed to take care of handling a conflict between different parsers.
 
+    @Inject
+	private ParserFactory parserFactory;
+    
         public static class Builder {
             protected Input inputs;
             protected String algorithmIdentifier = null;
@@ -555,7 +559,7 @@ public class InputHandler {
 					" encoding: " + formatEncoding);
 
 			Class<?> algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputId);
-			parser = ParserFactory.getInstance().getParser(formatSchema, dataMimeType, formatEncoding, algorithmInput);
+			parser = parserFactory.getParser(formatSchema, dataMimeType, formatEncoding, algorithmInput);
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
 		}
@@ -893,7 +897,7 @@ public class InputHandler {
 			Class<?> algorithmInput = RepositoryManager.getInstance()
 					.getInputDataTypeForAlgorithm(this.algorithmIdentifier,
 							inputId);
-			parser = ParserFactory.getInstance().getParser(formatSchema,
+			parser = parserFactory.getParser(formatSchema,
 					dataMimeType, formatEncoding, algorithmInput);
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data",
@@ -1425,7 +1429,7 @@ public class InputHandler {
 					+ schema + "\", mimeType: \"" + mimeType
 					+ "\", encoding: \"" + encoding + "\"");
 
-			parser = ParserFactory.getInstance().getParser(schema, mimeType,
+			parser = parserFactory.getParser(schema, mimeType,
 					encoding, algorithmInputClass);
 
 			if (parser == null) {
@@ -2279,7 +2283,7 @@ public class InputHandler {
 					"\", mimeType: \"" + mimeType +
 					"\", encoding: \"" + encoding + "\"");
 
-			parser = ParserFactory.getInstance().getParser(schema, mimeType, encoding, algorithmInputClass);
+			parser = parserFactory.getParser(schema, mimeType, encoding, algorithmInputClass);
 
 			if(parser == null) {
 				throw new ExceptionReport("Error. No applicable parser found for schema=\"" + schema + "\", mimeType=\"" + mimeType + "\", encoding=\"" + encoding + "\"", ExceptionReport.NO_APPLICABLE_CODE);

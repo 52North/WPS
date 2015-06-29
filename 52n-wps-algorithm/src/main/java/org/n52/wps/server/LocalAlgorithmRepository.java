@@ -22,12 +22,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.NotImplementedException;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.modules.LocalAlgorithmRepositoryCM;
 import org.n52.wps.webapp.api.AlgorithmEntry;
-import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,22 +40,22 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class LocalAlgorithmRepository implements
-		ITransactionalAlgorithmRepository {
+		ITransactionalAlgorithmRepository, Constructable {
 
 	private static Logger LOGGER = LoggerFactory
 			.getLogger(LocalAlgorithmRepository.class);
 	private Map<String, ProcessDescription> processDescriptionMap;
 	private Map<String, IAlgorithm> algorithmMap;
-	private ConfigurationModule localAlgorithmRepoConfigModule;
+	@Inject
+	private LocalAlgorithmRepositoryCM localAlgorithmRepoConfigModule;
 
 	public LocalAlgorithmRepository() {
+	}
+	
+	@Override
+	public void init() {
 		processDescriptionMap = new HashMap<String, ProcessDescription>();
 		algorithmMap = new HashMap<String, IAlgorithm>();
-
-		localAlgorithmRepoConfigModule = WPSConfig.getInstance()
-				.getConfigurationModuleForClass(this.getClass().getName(),
-						ConfigurationCategory.REPOSITORY);
-
 		// check if the repository is active
 		if (localAlgorithmRepoConfigModule.isActive()) {
 
@@ -67,7 +69,7 @@ public class LocalAlgorithmRepository implements
 			}
 		} else {
 			LOGGER.debug("Local Algorithm Repository is inactive.");
-		}
+		}		
 	}
 
 	public boolean addAlgorithms(String[] algorithms) {

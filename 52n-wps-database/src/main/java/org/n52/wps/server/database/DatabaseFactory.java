@@ -35,6 +35,9 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.inject.Inject;
+
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,8 @@ public class DatabaseFactory implements IDatabase
 	private static IDatabase database;
 
     private static PropertyChangeListener propertyChangeListener;
+    @Inject
+	private static WPSConfig wpsConfig;
 	
 	public static IDatabase getDatabase() {
 
@@ -65,7 +70,7 @@ public class DatabaseFactory implements IDatabase
                         LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
                     }
             }; 
-            org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, propertyChangeListener);
+            wpsConfig.addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, propertyChangeListener);
         }
 
         if(DatabaseFactory.database == null) {

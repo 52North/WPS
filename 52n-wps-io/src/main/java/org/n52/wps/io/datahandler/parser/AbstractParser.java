@@ -21,7 +21,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 import org.n52.wps.io.IOHandler;
@@ -33,7 +36,7 @@ import org.n52.wps.webapp.api.FormatEntry;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public abstract class AbstractParser extends AbstractIOHandler implements IParser{
+public abstract class AbstractParser extends AbstractIOHandler implements IParser, Constructable{
 	
 	/**
 	 * A list of files that shall be deleted by destructor.
@@ -41,14 +44,25 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 	 * to be written during the generation procedure.
 	 */
 	protected List<File> finalizeFiles;
+	@Inject
+	protected WPSConfig wpsConfig;
 	
 	public AbstractParser(){
 		super();
+	}
+
+	@Override
+	public IData parseBase64(InputStream input, String mimeType, String schema) {
+		return parse(new Base64InputStream(input), mimeType, schema);
+	}
+	
+	@Override
+	public void init() {
 		
 		// load Parser Properties		
-		this.properties = WPSConfig.getInstance().getConfigurationEntriesForParserClass(this.getClass().getName());
+		this.properties = wpsConfig.getConfigurationEntriesForParserClass(this.getClass().getName());
 		
-		this.formats = WPSConfig.getInstance().getFormatEntriesForParserClass(this.getClass().getName());
+		this.formats = wpsConfig.getFormatEntriesForParserClass(this.getClass().getName());
 				
 		for (FormatEntry format : formats) {			
 
@@ -69,11 +83,6 @@ public abstract class AbstractParser extends AbstractIOHandler implements IParse
 			}			
 		}
 		finalizeFiles = new ArrayList<File>();
-	}
-
-	@Override
-	public IData parseBase64(InputStream input, String mimeType, String schema) {
-		return parse(new Base64InputStream(input), mimeType, schema);
 	}
 	
 	/**

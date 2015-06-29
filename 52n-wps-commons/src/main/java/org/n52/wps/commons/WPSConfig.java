@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -90,25 +91,17 @@ public class WPSConfig implements Serializable {
 	
 	public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
     
+	@Inject
 	private ConfigurationManager configurationManager;
+	@Inject
     private Server serverConfigurationModule;	
 
 	public Server getServerConfigurationModule() {
-
-		if (serverConfigurationModule == null) {
-			serverConfigurationModule = (Server) configurationManager
-					.getConfigurationServices().getConfigurationModule(
-							Server.class.getName());
-		}
 		return serverConfigurationModule;
 	}
 
     public ConfigurationManager getConfigurationManager() {
 		return configurationManager;
-	}
-
-	public void setConfigurationManager(ConfigurationManager configurationManager) {
-		this.configurationManager = configurationManager;
 	}
 
     /**

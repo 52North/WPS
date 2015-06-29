@@ -40,7 +40,7 @@ public class AbstractSelfDescribingAlgorithmTest extends AbstractITClass {
     @Before
     public void setUp() throws Exception {
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @Test

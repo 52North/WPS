@@ -37,8 +37,6 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.OperationKey;
@@ -51,47 +49,32 @@ import org.n52.iceland.ogc.ows.DCP;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.iceland.ogc.wps.WpsConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
-import org.n52.simplewps.request.operator.DescribeProcessResponse;
-import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.RepositoryManager;
-import org.n52.wps.server.request.DescribeProcessRequest;
-import org.n52.wps.server.request.DescribeProcessRequestV200;
 
-public class DescribeProcessHandler implements OperationHandler {
+public class GetCapabilitiesHandler implements OperationHandler {
 
 	@Inject
 	private BindingRepository bindingRepository;
 	
-	private RepositoryManager repositoryManager;
-
-	public DescribeProcessHandler() {
-	}
-	
-	public DescribeProcessHandler(RepositoryManager repositoryManager) {
-		this.repositoryManager = repositoryManager;
-	}
-
 	@Override
 	public Set<OperationHandlerKey> getKeys() {
-		OperationHandlerKey key = new OperationHandlerKey(WpsConstants.WPS, WpsConstants.Operations.DescribeProcess.name());
+		OperationHandlerKey key = new OperationHandlerKey(WpsConstants.WPS, WpsConstants.Operations.GetCapabilities.name());
 		return Collections.singleton(key);
 	}
 
 	@Override
 	public String getOperationName() {		
-		return WpsConstants.Operations.DescribeProcess.name();
+		return WpsConstants.Operations.GetCapabilities.name();
 	}
 
 	@Override
 	public OwsOperation getOperationsMetadata(String service, String version)
 			throws OwsExceptionReport {
-        Map<String, Set<DCP>> dcp = getDCP(new OperationKey(service, version, WpsConstants.Operations.DescribeProcess.name()));
+        Map<String, Set<DCP>> dcp = getDCP(new OperationKey(service, version, WpsConstants.Operations.GetCapabilities.name()));
         if (dcp == null || dcp.isEmpty()) {
 //            LOG.debug("Operation {} for Service {} not available due to empty DCP map.", getOperationName(), "WPS");
             return null;
@@ -151,54 +134,4 @@ public class DescribeProcessHandler implements OperationHandler {
         return dcps;
     }
 	
-    
-	public AbstractServiceResponse getProcessDescription(String processIdentifier,
-			String version) {
-
-		DescribeProcessResponse describeProcessResponse = new DescribeProcessResponse();
-		
-		describeProcessResponse.setService(WpsConstants.WPS);
-		describeProcessResponse.setVersion(version);
-		
-		CaseInsensitiveMap ciMap = new CaseInsensitiveMap();
-		
-		ciMap.put("service", WpsConstants.WPS);
-		ciMap.put("version", new String[]{version});
-		ciMap.put("identifier", new String[]{processIdentifier});
-		
-		Object xmlDescribeProcessResponse = null;
-		
-		try {
-			
-			if (version.equals(WPSConfig.VERSION_100)) {
-
-				DescribeProcessRequest request = new DescribeProcessRequest(ciMap);
-				
-				request.setRepositoryManager(repositoryManager);
-				
-				request.call();
-				
-				xmlDescribeProcessResponse = request.getAttachedResult();
-
-			} else if (version.equals(WPSConfig.VERSION_200)) {
-
-				DescribeProcessRequestV200 request = new DescribeProcessRequestV200(ciMap);
-				
-				request.call();
-				
-				xmlDescribeProcessResponse = request.getAttachedResult();
-
-			}
-			
-		} catch (Exception e) {
-			/*
-			 * TODO
-			 */
-		}
-		describeProcessResponse.setXmlDescribeProcessResponse((XmlObject) xmlDescribeProcessResponse);		
-		
-		return describeProcessResponse;
-
-	}
-    
 }

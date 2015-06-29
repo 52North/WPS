@@ -36,6 +36,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.inject.Inject;
+
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.DCPDocument.DCP;
 import net.opengis.ows.x11.LanguageStringType;
@@ -49,7 +51,6 @@ import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,9 +75,11 @@ public class CapabilitiesConfiguration {
     private static CapabilitiesDocument capabilitiesDocumentObj;
 
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
-
-    private static ConfigurationManager configurationManager;	
-    private static Server serverConfigurationModule;	
+    
+    @Inject    
+    private static Server serverConfigurationModule;
+    @Inject
+	private static WPSConfig wpsConfig;
 
     private CapabilitiesConfiguration() {
         /* nothing here */
@@ -199,7 +202,7 @@ public class CapabilitiesConfiguration {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-        boolean cached = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isCacheCapabilites();
+        boolean cached = wpsConfig.getServerConfigurationModule().isCacheCapabilites();
         return getInstance( !cached);
     }
 
@@ -314,7 +317,7 @@ public class CapabilitiesConfiguration {
      *         if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
-        return WPSConfig.getInstance().getServiceEndpoint();
+        return wpsConfig.getServiceEndpoint();
     }
 
     /**
@@ -345,18 +348,6 @@ public class CapabilitiesConfiguration {
     }
     
 	public static Server getServerConfigurationModule() {
-
-		if (serverConfigurationModule == null) {
-
-			if (configurationManager == null) {
-				configurationManager = WPSConfig
-						.getInstance().getConfigurationManager();
-			}if(configurationManager != null){
-			    serverConfigurationModule = (Server) configurationManager
-					    .getConfigurationServices().getConfigurationModule(
-							    Server.class.getName());
-			}
-		}
 		return serverConfigurationModule;
 	}
 

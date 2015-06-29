@@ -29,19 +29,30 @@
 package org.n52.simplewps.request.operator;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.wps.WpsConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 
 public class DescribeProcessRequest extends
 		AbstractServiceRequest<DescribeProcessResponse> {
 
+	private String processIdentifier;
+	
 	@Override
-	public DescribeProcessResponse getResponse() throws OwsExceptionReport {			
+	public DescribeProcessResponse getResponse() throws OwsExceptionReport {
 		return (DescribeProcessResponse) new DescribeProcessResponse().set(this);
 	}
 
 	@Override
 	public String getOperationName() {
-		return "DescribeProcess";
+		return WpsConstants.Operations.DescribeProcess.name();
+	}
+
+	public String getProcessIdentifier() {
+		return processIdentifier;
+	}
+
+	public void setProcessIdentifier(String processIdentifier) {
+		this.processIdentifier = processIdentifier;
 	}
 
 }

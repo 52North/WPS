@@ -16,15 +16,15 @@
  */
 package org.n52.wps.io;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ClassKnowingModule;
-import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 
-public class ParserFactory {
+public class ParserFactory implements Constructable{
 	
 	public static String PROPERTY_NAME_REGISTERED_PARSERS = "registeredParsers";
 	private static ParserFactory factory;
@@ -43,31 +43,11 @@ public class ParserFactory {
 	
 	private List<IParser> registeredParsers;
 	
-	/**
-	 * This factory provides all available {@link IParser} to WPS.
-	 * @param parsers
-	 */
-	public static void initialize(Map<String, ConfigurationModule> parserMap) {
-		if (factory == null) {
-			factory = new ParserFactory(parserMap);
-		}
-		else {
-			LOGGER.warn("Factory already initialized");
-		}
-	}
+	@Inject
+	private WPSConfig wpsConfig;
 	
-	private ParserFactory(Map<String, ConfigurationModule> parserMap) {
-		loadAllParsers(parserMap);
-
-        // FvK: added Property Change Listener support
-        // creates listener and register it to the wpsConfig instance.
-        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
-            public void propertyChange(
-                    final PropertyChangeEvent propertyChangeEvent) {
-                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-                loadAllParsers(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredParserModules());
-            }
-        });
+	public void init() {
+		loadAllParsers(wpsConfig.getActiveRegisteredParserModules());
 	}
     
     private void loadAllParsers(Map<String, ConfigurationModule> parserMap){
@@ -75,16 +55,6 @@ public class ParserFactory {
 		for(String currentParserName : parserMap.keySet()) {
 			
 			ConfigurationModule currentParser = parserMap.get(currentParserName);
-			
-//			// remove inactive parser
-//			Property[] activeProperties = {};
-//			ArrayList<Property> activePars = new ArrayList<Property>();
-//			for(int i=0; i<currentParser.getPropertyArray().length; i++){
-//				if(currentParser.getPropertyArray()[i].getActive()){
-//					activePars.add(currentParser.getPropertyArray()[i]);					
-//				}
-//			}
-//			currentParser.setPropertyArray(activePars.toArray(activeProperties));
 			
 			String parserClass = "";
 			
@@ -116,10 +86,6 @@ public class ParserFactory {
     }
 
 	public static ParserFactory getInstance() {
-		if(factory == null){			
-			Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
-			initialize(parserMap);
-		}
 		return factory;
 	}
 	

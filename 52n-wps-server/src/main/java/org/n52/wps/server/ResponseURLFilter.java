@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 
+import javax.inject.Inject;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -60,12 +61,14 @@ public class ResponseURLFilter implements Filter {
     public final static String PROP_responseURLFilterEnabled = "responseURLFilterEnabled";
 
     private String configURLString;
-    private boolean enabled;
+    private boolean enabled;	
+    @Inject
+	private static WPSConfig wpsConfig;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         
-        Server server = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
+        Server server = wpsConfig.getServerConfigurationModule();
         
         // Build URL from WPS configuration.  This is the
         // hardcoded URL that we expect to see in responses and would like to

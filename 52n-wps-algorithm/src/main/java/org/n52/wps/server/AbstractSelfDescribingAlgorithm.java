@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.CRSsType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -54,6 +56,11 @@ import org.n52.wps.webapp.api.FormatEntry;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
+   
+	@Inject
+	private GeneratorFactory generatorFactory;
+    @Inject
+	private ParserFactory parserFactory;
 
 	@Override
 	protected ProcessDescription initializeDescription() {
@@ -134,7 +141,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 									
 				}else if(implementedInterface.equals(IComplexData.class)){
 					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();					
-					List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+					List<IParser> parsers = parserFactory.getAllParsers();
 					List<IParser> foundParsers = new ArrayList<IParser>();
 					for(IParser parser : parsers) {
 						Class<?>[] supportedClasses = parser.getSupportedDataBindings();
@@ -214,7 +221,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
 					
 						SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
 						
-						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+						List<IGenerator> generators = generatorFactory.getAllGenerators();
 						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 						for(IGenerator generator : generators) {
 							Class<?>[] supportedClasses = generator.getSupportedDataBindings();

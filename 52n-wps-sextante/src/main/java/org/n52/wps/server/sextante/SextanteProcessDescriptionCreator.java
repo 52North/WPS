@@ -32,6 +32,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.RangeType;
@@ -85,6 +87,11 @@ import es.unex.sextante.parameters.ParameterTableField;
 import es.unex.sextante.parameters.ParameterVectorLayer;
 
 public class SextanteProcessDescriptionCreator implements SextanteConstants{
+	
+	@Inject
+	private GeneratorFactory generatorFactory;    
+	@Inject
+	private ParserFactory parserFactory;
 
 	public ProcessDescription createDescribeProcessType(GeoAlgorithm algorithm) throws NullParameterAdditionalInfoException, UnsupportedGeoAlgorithmException{
 
@@ -401,7 +408,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 
 	private void addVectorInputsFormats(SupportedComplexDataInputType complex) {
 
-		List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+		List<IParser> parsers = parserFactory.getAllParsers();
 		List<IParser> foundParsers = new ArrayList<IParser>();
 		for(IParser parser : parsers) {
 			Class<?>[] supportedClasses = parser.getSupportedDataBindings();
@@ -472,7 +479,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
 	private void addVectorOutputFormats(SupportedComplexDataType complex){
 		
 					
-		List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+		List<IGenerator> generators = generatorFactory.getAllGenerators();
 		List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
 		for(IGenerator generator : generators) {
 			Class<?>[] supportedClasses = generator.getSupportedDataBindings();

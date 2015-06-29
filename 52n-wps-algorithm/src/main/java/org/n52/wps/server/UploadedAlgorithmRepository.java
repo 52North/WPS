@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
@@ -42,12 +44,14 @@ public class UploadedAlgorithmRepository implements
 			.getLogger(LocalAlgorithmRepository.class);
 	private Map<String, String> algorithmMap;
 	private Map<String, ProcessDescription> processDescriptionMap;
+	@Inject
+	private WPSConfig wpsConfig;
 
 	public UploadedAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
 		processDescriptionMap = new HashMap<String, ProcessDescription>();
 		
-		ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+		ConfigurationModule uploadedAlgorithmRepoConfigModule = wpsConfig.getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 		
 		// check if the repository is active
 		if(uploadedAlgorithmRepoConfigModule.isActive()){

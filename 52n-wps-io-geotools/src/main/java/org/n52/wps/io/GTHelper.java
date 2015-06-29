@@ -54,16 +54,14 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.Collection;
 
+import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.referencing.CRS;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.webapp.entities.Server;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -75,6 +73,8 @@ import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -88,6 +88,8 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
 	private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
+	@Inject
+	private static WPSConfig wpsConfig;
 	
 	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
 		String namespace = "http://www.52north.org/"+uuid;
@@ -450,7 +452,7 @@ public class GTHelper {
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
 			
-			String serviceBaseURL = WPSConfig.getInstance().getWPSConfig().getServiceBaseUrl();
+			String serviceBaseURL = wpsConfig.getServiceBaseUrl();
 			
 			LOGGER.debug("GTHelper service base URL " + serviceBaseURL);
 			

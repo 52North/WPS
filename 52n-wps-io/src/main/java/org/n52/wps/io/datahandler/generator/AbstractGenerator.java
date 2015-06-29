@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64InputStream;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.AbstractIOHandler;
 import org.n52.wps.io.IGenerator;
@@ -34,7 +37,7 @@ import org.n52.wps.webapp.api.FormatEntry;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public abstract class AbstractGenerator extends AbstractIOHandler implements IGenerator {
+public abstract class AbstractGenerator extends AbstractIOHandler implements IGenerator, Constructable {
 	
 	/**
 	 * A list of files that shall be deleted by destructor.
@@ -42,13 +45,19 @@ public abstract class AbstractGenerator extends AbstractIOHandler implements IGe
 	 * to be written during the generation procedure.
 	 */
 	protected List<File> finalizeFiles;
+	@Inject
+	protected WPSConfig wpsConfig;
 	
 	public AbstractGenerator(){
 		super();
+	}
+	
+	@Override
+	public void init() {
 		
-		this.properties = WPSConfig.getInstance().getConfigurationEntriesForGeneratorClass(this.getClass().getName());
+		this.properties = wpsConfig.getConfigurationEntriesForGeneratorClass(this.getClass().getName());
 		
-		this.formats = WPSConfig.getInstance().getFormatEntriesForGeneratorClass(this.getClass().getName());
+		this.formats = wpsConfig.getFormatEntriesForGeneratorClass(this.getClass().getName());
 				
 		for (FormatEntry format : formats) {			
 
@@ -70,8 +79,9 @@ public abstract class AbstractGenerator extends AbstractIOHandler implements IGe
 		}
 		
 		finalizeFiles = new ArrayList<File>();
+		
 	}
-	
+		
 	public InputStream generateBase64Stream(IData data, String mimeType, String schema) throws IOException {
 		return new Base64InputStream(generateStream(data, mimeType, schema), true);
 	}

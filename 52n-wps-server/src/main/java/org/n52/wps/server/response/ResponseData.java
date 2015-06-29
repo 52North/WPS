@@ -31,6 +31,8 @@ package org.n52.wps.server.response;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.opengis.wps.x100.ComplexDataDescriptionType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionType;
@@ -61,6 +63,9 @@ public abstract class ResponseData {
 	protected IGenerator generator = null;
 	protected String algorithmIdentifier = null;
 	protected ProcessDescription description = null;
+
+	@Inject
+	private GeneratorFactory generatorFactory;
 	
 		
 	public ResponseData(IData obj, String id, String schema, String encoding, 
@@ -345,8 +350,7 @@ public abstract class ResponseData {
 		
 		LOGGER.debug("Looking for matching Generator: schema: {}, mimeType {}, encoding: {}", schema, mimeType, encoding);
 		
-		GeneratorFactory factory = GeneratorFactory.getInstance();
-		this.generator =  factory.getGenerator(this.schema, this.mimeType, this.encoding, algorithmOutput);
+		this.generator =  generatorFactory.getGenerator(this.schema, this.mimeType, this.encoding, algorithmOutput);
 		
 		if(this.generator != null){ 
 			LOGGER.info("Using generator " + generator.getClass().getName() + " for Schema: " + schema);

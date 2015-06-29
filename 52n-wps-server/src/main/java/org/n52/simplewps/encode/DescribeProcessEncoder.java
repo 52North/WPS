@@ -62,13 +62,13 @@ public class DescribeProcessEncoder<T extends DescribeProcessResponse> extends A
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }
-        XmlObject xml = XmlObject.Factory.newInstance();
-		try {
-			xml = XmlObject.Factory.parse(response.getResponse());
-		} catch (XmlException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        XmlObject xml = response.getXmlDescribeProcessResponse();
+//		try {
+//			xml = XmlObject.Factory.parse(response.getResponse());
+//		} catch (XmlException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
         return xml;
 	}
 

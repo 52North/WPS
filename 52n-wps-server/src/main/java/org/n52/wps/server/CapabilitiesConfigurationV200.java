@@ -36,8 +36,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
+import javax.inject.Inject;
 
 import net.opengis.ows.x20.AddressType;
 import net.opengis.ows.x20.CodeType;
@@ -89,7 +88,10 @@ public class CapabilitiesConfigurationV200 {
     private static CapabilitiesDocument capabilitiesDocumentObj;
 
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
-
+   
+    @Inject
+	private static WPSConfig wpsConfig;
+    @Inject
     private static ConfigurationManager configurationManager;
     private static org.n52.wps.webapp.entities.ServiceIdentification serviceIdentificationConfigurationModule;	
     private static org.n52.wps.webapp.entities.ServiceProvider serviceProviderConfigurationModule;	
@@ -215,7 +217,7 @@ public class CapabilitiesConfigurationV200 {
      *         if an IO error occurs
      */
     public static CapabilitiesDocument getInstance() throws XmlException, IOException {
-        boolean cached = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().isCacheCapabilites();
+        boolean cached = wpsConfig.getServerConfigurationModule().isCacheCapabilites();
         return getInstance( !cached);
     }
 
@@ -350,7 +352,7 @@ public class CapabilitiesConfigurationV200 {
      *         if the local host name could not be resolved into an address
      */
     private static String getEndpointURL() throws UnknownHostException {
-        return WPSConfig.getInstance().getServiceEndpoint();
+        return wpsConfig.getServiceEndpoint();
     }
 
     /**
@@ -381,11 +383,6 @@ public class CapabilitiesConfigurationV200 {
     }
     
 	public static ConfigurationManager getConfigurationManager() {
-
-		if (configurationManager == null) {
-			configurationManager = WPSConfig.getInstance()
-					.getConfigurationManager();
-		}
 		return configurationManager;
 	}
 
@@ -595,7 +592,7 @@ public class CapabilitiesConfigurationV200 {
             
             OperationsMetadata operationsMetadata = wpsCapabilities.addNewOperationsMetadata();
             
-            String wpsWebappPath = WPSConfig.getInstance().getServiceBaseUrl();
+            String wpsWebappPath = wpsConfig.getServiceBaseUrl();
             
             String getHREF = wpsWebappPath.endsWith("/") ? wpsWebappPath.substring(0, wpsWebappPath.length()-1) : wpsWebappPath;
             

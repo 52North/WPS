@@ -43,7 +43,7 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Abs
 	@Before
 	public void setUp(){
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));		
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));		
 		initializeDataHandler();
 	}
 

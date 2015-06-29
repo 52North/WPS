@@ -76,7 +76,7 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
 	}
 
 	@Test

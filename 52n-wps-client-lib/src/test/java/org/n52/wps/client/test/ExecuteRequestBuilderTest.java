@@ -71,7 +71,7 @@ public class ExecuteRequestBuilderTest extends AbstractITClass{
 	@Before
 	public void setUp(){
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));	
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));	
 		processDescription = new MultiReferenceBinaryInputAlgorithm().getDescription();
 		processDescriptionType = ((ProcessDescriptionType)processDescription.getProcessDescriptionType(WPSConfig.VERSION_100));	
 		inputID = processDescriptionType.getDataInputs().getInputArray(0).getIdentifier().getStringValue();

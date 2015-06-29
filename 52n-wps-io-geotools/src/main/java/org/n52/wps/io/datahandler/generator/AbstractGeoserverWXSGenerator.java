@@ -60,7 +60,12 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 	protected String port;
 	
 	public AbstractGeoserverWXSGenerator() {		
-		super();
+		super();		
+	}
+	
+	@Override
+	public void init() {
+		super.init();
 		this.supportedIDataTypes.add(GTRasterDataBinding.class);
 		this.supportedIDataTypes.add(GeotiffBinding.class);
 		
@@ -79,7 +84,7 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 			}
 		}
 		if(port == null){
-			port = "" + WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getHostport();
+			port = "" + wpsConfig.getWPSConfig().getServerConfigurationModule().getHostport();
 		}
 		
 		for(String supportedFormat : supportedFormats){
@@ -87,7 +92,6 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 				supportedFormats.remove(supportedFormat);
 			}
 		}
-		
 	}
 
 }

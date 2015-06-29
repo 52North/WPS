@@ -37,13 +37,15 @@ import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.coding.decode.OperationDecoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.iceland.ogc.wps.Wps1Constants;
+import org.n52.iceland.ogc.wps.WpsConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.simplewps.request.operator.DescribeProcessRequest;
 
 public class DescribeProcessKvpDecoder implements Decoder<AbstractServiceRequest<?>, Map<String, String>> {
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey("WPS",
-            "1.0.0", "DescribeProcess", MediaTypes.APPLICATION_KVP);
+    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(WpsConstants.WPS,
+            Wps1Constants.SERVICEVERSION, WpsConstants.Operations.DescribeProcess.name(), MediaTypes.APPLICATION_KVP);
 
     @Override
     public Set<DecoderKey> getKeys() {
@@ -58,8 +60,9 @@ public class DescribeProcessKvpDecoder implements Decoder<AbstractServiceRequest
 		
 		dscpr.setService(objectToDecode.get("service"));
 		dscpr.setVersion(objectToDecode.get("version"));
+		dscpr.setProcessIdentifier(objectToDecode.get("identifier"));
 		
-		return dscpr;		
+		return dscpr;
 	}
 
 }

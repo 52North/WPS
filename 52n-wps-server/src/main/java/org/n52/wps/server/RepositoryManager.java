@@ -35,6 +35,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationModule;
@@ -45,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @author Bastian Schaeffer, University of Muenster
  *
  */
-public class RepositoryManager {
+public class RepositoryManager implements Constructable{
 	
 	private static RepositoryManager instance;
 	private static Logger LOGGER = LoggerFactory.getLogger(RepositoryManager.class);
@@ -53,7 +56,10 @@ public class RepositoryManager {
 	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
 	private UpdateThread updateThread;
 	
-	private RepositoryManager(){
+	@Inject
+	private WPSConfig wpsConfig;
+	
+	public void init() {
 		
 		// clear registry
 		globalProcessIDs.clearRegistry();
@@ -63,7 +69,7 @@ public class RepositoryManager {
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
-        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+        wpsConfig.addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
             public void propertyChange(
                     final PropertyChangeEvent propertyChangeEvent) {
                                                                   LOGGER.info("Received Property Change Event: {}",
@@ -72,7 +78,7 @@ public class RepositoryManager {
             }
         });
         
-        Double updateHours = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getRepoReloadInterval();
+        Double updateHours = wpsConfig.getServerConfigurationModule().getRepoReloadInterval();
         
         if (updateHours != 0){
             LOGGER.info("Setting repository update period to {} hours.", updateHours);
@@ -81,15 +87,14 @@ public class RepositoryManager {
             this.updateThread = new UpdateThread(updateInterval);
         	updateThread.start();
         }
-        
-    	
+
 	}
 
 	private List<String> getRepositoryNames(){
 		
 		List<String> repositoryNames = new ArrayList<>();
 		
-		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
+		Map<String, ConfigurationModule> repositoryMap = wpsConfig.getRegisteredAlgorithmRepositoryConfigModules();
 		
 		for (ConfigurationModule repository : repositoryMap.values()) {
 			
@@ -118,7 +123,7 @@ public class RepositoryManager {
 
         System.gc();
 
-		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
+		Map<String, ConfigurationModule> repositoryMap = wpsConfig.getRegisteredAlgorithmRepositoryConfigModules();
 			
 		for (String repositoryName : repositoryMap.keySet()) {
 
@@ -140,8 +145,7 @@ public class RepositoryManager {
 		LOGGER.debug("Loading repository: {}", repositoryName);
 
 		if(repositoryMap == null){
-			repositoryMap = WPSConfig
-					.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
+			repositoryMap = wpsConfig.getRegisteredAlgorithmRepositoryConfigModules();
 		}
 
 		ConfigurationModule repository = repositoryMap.get(repositoryName);

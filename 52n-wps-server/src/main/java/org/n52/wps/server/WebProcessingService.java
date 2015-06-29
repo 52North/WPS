@@ -143,7 +143,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         LOGGER.info("*** WebProcessingService initializing... ***");
         WPSConfig conf = WPSConfig.getInstance(servletContext);
         
-        WPSConfig.getInstance().setConfigurationManager(configurationManager);
+//        WPSConfig.getInstance().setConfigurationManager(configurationManager);
         
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
@@ -164,13 +164,13 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         applicationBaseDir = servletContext.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
 
-		Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
-        ParserFactory.initialize(parserMap);
-        LOGGER.info("Initialized {}", ParserFactory.getInstance());
-
-		Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
-        GeneratorFactory.initialize(generatorMap);
-        LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
+//		Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
+//        ParserFactory.initialize(parserMap);
+//        LOGGER.info("Initialized {}", ParserFactory.getInstance());
+//
+//		Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
+//        GeneratorFactory.initialize(generatorMap);
+//        LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
 
         RepositoryManager repoManager = RepositoryManager.getInstance();
         LOGGER.info("Initialized {}", repoManager);

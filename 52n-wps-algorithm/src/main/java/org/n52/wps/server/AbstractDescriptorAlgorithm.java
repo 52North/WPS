@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.ows.x20.ValueType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
@@ -74,6 +76,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     
     private AlgorithmDescriptor descriptor;
     private ProcessDescription description;
+
+    @Inject
+	private GeneratorFactory generatorFactory;
+    @Inject
+	private ParserFactory parserFactory;
     
     public AbstractDescriptorAlgorithm() {
         super();
@@ -106,7 +113,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
 
     private void describeComplexDataInputType(SupportedComplexDataType complexData, Class dataTypeClass) {
-        List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+        List<IParser> parsers = parserFactory.getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
         for (IParser parser : parsers) {
 // /*2.0*/    Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
@@ -122,7 +129,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
     private void describeComplexDataOutputType(SupportedComplexDataType complexData, Class dataTypeClass) {
 
-        List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+        List<IGenerator> generators = generatorFactory.getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
 // /*2.0*/    Class[] supportedClasses = generator.getSupportedInternalInputDataType(); // appears to have been removed in 52n WPS 3.0
@@ -227,7 +234,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
     
     private void describeComplexDataInputType200(ComplexDataType complexDataType, Class dataTypeClass) {
-    	List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+    	List<IParser> parsers = parserFactory.getAllParsers();
     	List<IParser> foundParsers = new ArrayList<IParser>();
     	for (IParser parser : parsers) {
 // /*2.0*/    Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
@@ -243,7 +250,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     
     private void describeComplexDataOutputType200(ComplexDataType complexData, Class dataTypeClass) {
     	
-    	List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+    	List<IGenerator> generators = generatorFactory.getAllGenerators();
     	List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
     	for (IGenerator generator : generators) {
 // /*2.0*/    Class[] supportedClasses = generator.getSupportedInternalInputDataType(); // appears to have been removed in 52n WPS 3.0

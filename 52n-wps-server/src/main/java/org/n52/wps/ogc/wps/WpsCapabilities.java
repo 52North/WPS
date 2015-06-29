@@ -26,36 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.simplewps.request.operator;
+package org.n52.wps.ogc.wps;
 
-import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.ogc.ows.OwsCapabilities;
 import org.n52.iceland.ogc.wps.WpsConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
 
-public class DescribeProcessResponse extends AbstractServiceResponse {
+public class WpsCapabilities extends OwsCapabilities {
 
-	private String response = "<helloXml>Hello iceland!</helloXml>";
-	private XmlObject xmlDescribeProcessResponse;
-	
-	@Override
-	public String getOperationName() {		
-		return WpsConstants.Operations.DescribeProcess.name();
+	public WpsCapabilities(String version) {
+		super(WpsConstants.WPS, version);
 	}
 
-	public String getResponse() {
-		return response;
-	}
-
-	public void setResponse(String response) {
-		this.response = response;
-	}
- 
-	public XmlObject getXmlDescribeProcessResponse() {		
-		return xmlDescribeProcessResponse;
-	}
-
-	public void setXmlDescribeProcessResponse(XmlObject xmlDescribeProcessResponse) {
-		this.xmlDescribeProcessResponse = xmlDescribeProcessResponse;
-	}
-	
 }

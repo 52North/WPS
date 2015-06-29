@@ -68,7 +68,7 @@ public class StatusTest extends AbstractITClass {
     @Before
     public void setUp() {
         MockMvcBuilders.webAppContextSetup(this.wac).build();
-        WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+//        WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
         fac = DocumentBuilderFactory.newInstance();
         fac.setNamespaceAware(true);
         algorithm = new StatusTestingProcess();

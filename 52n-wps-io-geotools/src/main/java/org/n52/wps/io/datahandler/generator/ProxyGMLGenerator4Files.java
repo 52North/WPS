@@ -50,6 +50,8 @@ package org.n52.wps.io.datahandler.generator;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
@@ -61,7 +63,10 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  * @author Matthias Mueller, TU Dresden
  *
  */
-public class ProxyGMLGenerator4Files extends AbstractGenerator{
+public class ProxyGMLGenerator4Files extends AbstractGenerator{	
+	   
+	@Inject
+	private GeneratorFactory generatorFactory;
 	
 	public ProxyGMLGenerator4Files(){
 		super();
@@ -78,7 +83,7 @@ public class ProxyGMLGenerator4Files extends AbstractGenerator{
 //		}
 		
 		GTVectorDataBinding vectorBindingData = ((GenericFileDataWithGTBinding)data).getPayload().getAsGTVectorDataBinding();
-		IGenerator assistanceGen = GeneratorFactory.getInstance().getGenerator(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
+		IGenerator assistanceGen = generatorFactory.getGenerator(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
 		
 		return assistanceGen.generateStream(vectorBindingData, mimeType, schema);
 	}

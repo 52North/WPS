@@ -30,6 +30,8 @@ package org.n52.wps.client;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
@@ -43,24 +45,16 @@ import org.n52.wps.webapp.api.ConfigurationModule;
  */
 public class StaticDataHandlerRepository {
 
+	@Inject
 	private static GeneratorFactory genFactory;
+	@Inject
 	private static ParserFactory parserFactory;
 	
 	public static GeneratorFactory getGeneratorFactory() {
-		if(genFactory == null) {
-			Map<String, ConfigurationModule> generators = WPSConfig.getInstance().getActiveRegisteredGeneratorModules();
-			GeneratorFactory.initialize(generators);
-			genFactory = GeneratorFactory.getInstance();			
-		}
 		return genFactory;
 	}
 	
 	public static ParserFactory getParserFactory() {
-		if(parserFactory == null) {
-			Map<String, ConfigurationModule> parsers = WPSConfig.getInstance().getActiveRegisteredParserModules();
-			ParserFactory.initialize(parsers);
-			parserFactory = ParserFactory.getInstance();
-		}
 		return parserFactory;
 	}
 }

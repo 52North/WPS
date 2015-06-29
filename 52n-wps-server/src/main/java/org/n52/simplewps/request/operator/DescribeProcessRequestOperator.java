@@ -31,6 +31,9 @@ package org.n52.simplewps.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsOperation;
 import org.n52.iceland.request.AbstractServiceRequest;
@@ -38,8 +41,12 @@ import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.simplewps.handler.DescribeProcessHandler;
+import org.n52.wps.server.RepositoryManager;
 
 public class DescribeProcessRequestOperator implements RequestOperator {
+
+	@Inject
+	private RepositoryManager repositoryManager;
 
 	@Override
 	public Set<RequestOperatorKey> getKeys() {
@@ -50,7 +57,8 @@ public class DescribeProcessRequestOperator implements RequestOperator {
 	@Override
 	public AbstractServiceResponse receiveRequest(
 			AbstractServiceRequest<?> request) throws OwsExceptionReport {		
-		return (DescribeProcessResponse) new DescribeProcessResponse().set(request);
+		return new DescribeProcessHandler(repositoryManager).getProcessDescription(((DescribeProcessRequest)request).getProcessIdentifier(), request.getVersion());
+//		return (DescribeProcessResponse) new DescribeProcessResponse().set(request);
 	}
 
 	@Override

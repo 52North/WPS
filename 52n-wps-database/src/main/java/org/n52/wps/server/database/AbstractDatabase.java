@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.xml.ws.Response;
 
 import org.n52.wps.commons.WPSConfig;
@@ -114,11 +115,10 @@ public abstract class AbstractDatabase implements IDatabase{
 	protected static PreparedStatement updateSQL = null;
 	protected static PreparedStatement selectSQL = null;
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+	@Inject
+	private static ConfigurationManager configurationManager;
     private Server serverConfigurationModule;
-	
-
+    
 	public Server getServerConfigurationModule() {
 
 		if (serverConfigurationModule == null) {
@@ -305,7 +305,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */	
     @Override
 	public String generateRetrieveResultURL(String id) {
-		return WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getProtocol() + "://"
+		return getServerConfigurationModule().getProtocol() + "://"
                 + getServerConfigurationModule().getHostname() + ":"
                 + getServerConfigurationModule().getHostport() + "/"
                 + getServerConfigurationModule().getWebappPath() + "/"
@@ -327,7 +327,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	
 	static String getDatabaseProperties(String propertyName) {
 		
-		Map<String, ConfigurationModule> activeDatabaseConfigModules = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
+		Map<String, ConfigurationModule> activeDatabaseConfigModules = configurationManager.getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
 		
 		ConfigurationModule databaseConfigModule = null;
 		

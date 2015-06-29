@@ -28,12 +28,9 @@
  */
 package org.n52.wps.server.request;
 
-
-
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
+import javax.inject.Inject;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
@@ -57,7 +54,9 @@ import org.w3c.dom.NodeList;
  * @see Request  
  */
 public class DescribeProcessRequest extends Request {
-
+	
+	private RepositoryManager repositoryManager;
+	
 	private ProcessDescriptionsDocument document;
 	
 	/**
@@ -150,7 +149,7 @@ public class DescribeProcessRequest extends Request {
 		document.getProcessDescriptions().setVersion("1.0.0");//FIXME set to requested version
 		
 		if(identifiers.length==1 && identifiers[0].equalsIgnoreCase("all")){
-			List<String> identifierList = RepositoryManager.getInstance().getAlgorithms();
+			List<String> identifierList = repositoryManager.getAlgorithms();
 			identifiers = new String[identifierList.size()];
 			for(int i = 0;i<identifierList.size();i++){
 				identifiers[i] = identifierList.get(i);
@@ -171,17 +170,21 @@ public class DescribeProcessRequest extends Request {
 		}
 		
 		for(String algorithmName : identifiers) {
-			if(!RepositoryManager.getInstance().containsAlgorithm(algorithmName)) {
+			if(!repositoryManager.containsAlgorithm(algorithmName)) {
 				throw new ExceptionReport("Algorithm does not exist: " + algorithmName, 
 											ExceptionReport.INVALID_PARAMETER_VALUE, 
 											"identifier");
 			}
-			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
+			ProcessDescriptionType description = (ProcessDescriptionType) repositoryManager.getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
 			document.getProcessDescriptions().addNewProcessDescription().set(description);
 		}
 		
 		LOGGER.info("Handled Request successfully for: " + getMapValue("identifier", true));
 		return new DescribeProcessResponse(this);
+	}
+
+	public void setRepositoryManager(RepositoryManager repositoryManager) {
+		this.repositoryManager = repositoryManager;		
 	}
 
 }

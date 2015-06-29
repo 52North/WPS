@@ -99,7 +99,7 @@ public class OutputDataItemTest extends AbstractITClass{
 	@Before
 	public void setUp() {
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
 
 		literalDataList = new ArrayList<ILiteralData>();
 

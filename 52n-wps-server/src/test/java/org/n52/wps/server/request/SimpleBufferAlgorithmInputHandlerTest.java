@@ -84,7 +84,7 @@ public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass{
     @Before
     public void setUp() throws XmlException, IOException {
 		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+//		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @After
