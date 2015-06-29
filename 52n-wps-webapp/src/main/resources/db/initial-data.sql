@@ -794,4 +794,4 @@ INSERT INTO CONFIGURATIONENTRY VALUES('hostport','org.n52.wps.webapp.entities.Se
 --
 -- O&M Parser Configuration
 --
-INSERT INTO FORMATENTRY VALUES('text/xml; subtype=om/2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
+INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
