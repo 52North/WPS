@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,16 +33,13 @@ import org.n52.wps.io.data.IComplexData;
 
 /**
  * 
- * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and - Generator.
+ * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and -Generator.
  * 
  * @author bpross-52n
  *
  */
 public class GenericXMLDataBinding implements IComplexData {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6875103125533078664L;
 
 	private XmlObject payload;

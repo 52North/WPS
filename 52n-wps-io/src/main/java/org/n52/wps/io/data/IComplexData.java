@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,13 @@
  */
 package org.n52.wps.io.data;
 
+/**
+ * TODO javadoc
+ */
 public interface IComplexData extends IData{
+	
+	/**
+	 * TODO javadoc
+	 */
     void dispose();
 }

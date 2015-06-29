@@ -243,7 +243,7 @@
 		<apache.axis2.version>1.5.1</apache.axis2.version>
         <org.springframework.security.version>4.0.1.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.1.6.RELEASE</org.springframework.version>
-		<currentYear>2014</currentYear> <!-- manual setting -->
+		<currentYear>2015</currentYear> <!-- manual setting -->
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
 	</properties>
