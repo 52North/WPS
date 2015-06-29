@@ -62,25 +62,25 @@ class ResponseSizeInfoStream extends ServletOutputStream {
 	private LargeBufferStream baStream;
 	private boolean closed = false;
 	private long streamSize = 0;
-	
+
 	public ResponseSizeInfoStream(OutputStream outStream) {
 		this.intStream = outStream;
 		// baStream = new ByteArrayOutputStream();
 	}
-     
-    public void write(int i) throws java.io.IOException {
-    	this.streamSize++;
-    	this.intStream.write(i);
-    }
-     
-    public void close() throws java.io.IOException {
-    	if (!this.closed) {
-    		this.intStream.close();
-    		this.closed = true;
-    	}
-    }
-    
-/*    public void flush() throws java.io.IOException {
+
+	public void write(int i) throws java.io.IOException {
+		this.streamSize++;
+		this.intStream.write(i);
+	}
+
+	public void close() throws java.io.IOException {
+		if (!this.closed) {
+			this.intStream.close();
+			this.closed = true;
+		}
+	}
+
+	/*    public void flush() throws java.io.IOException {
         if (baStream.size() != 0) {
              if (! closed) {
 //              processStream();              // need to synchronize the flush!
@@ -88,133 +88,128 @@ class ResponseSizeInfoStream extends ServletOutputStream {
               }
            }
         }
-*/
-    public void processStream() throws java.io.IOException {
-    	baStream.close();
-    	baStream.writeTo(intStream);
-    	this.intStream.flush();
-    }
-     
-    public byte []  countBytes(byte [] inBytes) {
-    	//streamSize = streamSize + inBytes.length;
-    	return inBytes;
-    }
-    
-    public long getSize() {
-    	if(this.closed) {
-    		return streamSize;
-    	} else 
-    		return -1;
-    }
+	 */
+	public void processStream() throws java.io.IOException {
+		baStream.close();
+		baStream.writeTo(intStream);
+		this.intStream.flush();
+	}
 
-	@Override
+	public byte []  countBytes(byte [] inBytes) {
+		//streamSize = streamSize + inBytes.length;
+		return inBytes;
+	}
+
+	public long getSize() {
+		if(this.closed) {
+			return streamSize;
+		} else 
+			return -1;
+	}
+
 	public boolean isReady() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void setWriteListener(WriteListener arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
 
 class ResponseSizeInfoWrapper extends HttpServletResponseWrapper {
-    private PrintWriter tpWriter; 
-    private ResponseSizeInfoStream tpStream;
+	private PrintWriter tpWriter; 
+	private ResponseSizeInfoStream tpStream;
 
-    public ResponseSizeInfoWrapper(ServletResponse inResp) throws java.io.IOException { 
-            super((HttpServletResponse) inResp);
-            tpStream = new ResponseSizeInfoStream(inResp.getOutputStream());
-            tpWriter = new PrintWriter(tpStream);
-    }
+	public ResponseSizeInfoWrapper(ServletResponse inResp) throws java.io.IOException { 
+		super((HttpServletResponse) inResp);
+		tpStream = new ResponseSizeInfoStream(inResp.getOutputStream());
+		tpWriter = new PrintWriter(tpStream);
+	}
 
-    public ServletOutputStream getOutputStream() throws java.io.IOException {
+	public ServletOutputStream getOutputStream() throws java.io.IOException {
 
-            return tpStream;
-     }
-    public PrintWriter getWriter() throws java.io.IOException {
+		return tpStream;
+	}
+	public PrintWriter getWriter() throws java.io.IOException {
 
-            return tpWriter;
-     }
+		return tpWriter;
+	}
 }
 
 class RequestSizeInfoStream extends ServletInputStream {
-    // private BufferedInputStream buStream;
-    private boolean closed = false;
-    private long streamSize = 0;
-    private InputStream inputStream;
-    
+	// private BufferedInputStream buStream;
+	private boolean closed = false;
+	private long streamSize = 0;
+	private InputStream inputStream;
+
 	public RequestSizeInfoStream(InputStream inStream) {
 		this.inputStream = inStream;
 		// buStream = new BufferedInputStream(inStream);
 	}
 
-    @Override
+	@Override
 	public int read() throws IOException {
-    	this.streamSize++;
+		this.streamSize++;
 		return this.inputStream.read();
 	}
-    
-    public void close() throws java.io.IOException {
-    	if (!this.closed) {
-    		// processStream();
-        	this.inputStream.close();
-        	this.closed = true;
-        }
-    }
 
- /*  public void processStream() throws IOException {
+	public void close() throws java.io.IOException {
+		if (!this.closed) {
+			// processStream();
+			this.inputStream.close();
+			this.closed = true;
+		}
+	}
+
+	/*  public void processStream() throws IOException {
 	   byte[] bytes = new byte[8096];
 	   int length = buStream.read(bytes, 0 , 8096);
 	   while(length != -1) {
 		   length = buStream.read(bytes, 0 , 8096);
 		   streamSize = streamSize + length;
 	   }
-       
+
    }*/
-   
-   public long getSize() {
-	   if(this.closed) {
-		   return this.streamSize;
-	   }
-	   else
-		   return -1;
-   }
 
-@Override
-public boolean isFinished() {
-	// TODO Auto-generated method stub
-	return false;
-}
+	public long getSize() {
+		if(this.closed) {
+			return this.streamSize;
+		}
+		else
+			return -1;
+	}
 
-@Override
-public boolean isReady() {
-	// TODO Auto-generated method stub
-	return false;
-}
+	public boolean isFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-@Override
-public void setReadListener(ReadListener arg0) {
-	// TODO Auto-generated method stub
-	
-}
+	public boolean isReady() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void setReadListener(ReadListener arg0) {
+		// TODO Auto-generated method stub
+
+	}
 }
 class RequestSizeInfoWrapper extends HttpServletRequestWrapper {
-    private BufferedReader tpReader; 
-    private RequestSizeInfoStream tpStream;
+	private BufferedReader tpReader; 
+	private RequestSizeInfoStream tpStream;
 
-    public RequestSizeInfoWrapper(ServletRequest req) throws java.io.IOException {
-    	super((HttpServletRequest) req);
-    	this.tpStream = new RequestSizeInfoStream(req.getInputStream());
-    	this.tpReader = new BufferedReader(new InputStreamReader(this.tpStream));
-    }
+	public RequestSizeInfoWrapper(ServletRequest req) throws java.io.IOException {
+		super((HttpServletRequest) req);
+		this.tpStream = new RequestSizeInfoStream(req.getInputStream());
+		this.tpReader = new BufferedReader(new InputStreamReader(this.tpStream));
+	}
 
-    public ServletInputStream getInputStream() throws java.io.IOException {
-    	return this.tpStream;
-    }
+	public ServletInputStream getInputStream() throws java.io.IOException {
+		return this.tpStream;
+	}
 
 	public BufferedReader getReader() throws IOException {
 		return this.tpReader;
