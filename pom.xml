@@ -191,7 +191,7 @@
 				<configuration>
 					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
 					<licenseMapping>
-						<param>misc/licenses/license-mappings.xml</param>
+						<param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
 					</licenseMapping>
 					<generateChildNotices>false</generateChildNotices>
 				</configuration>
@@ -237,15 +237,34 @@
 		<geotools.version>8.7</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
-		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
-		<org.spring-security.version>3.1.7.RELEASE</org.spring-security.version>
+		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
+		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
 		<currentYear>2014</currentYear> <!-- manual setting -->
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
+        <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
+        <n52.sos.version>5.0.0-SNAPSHOT</n52.sos.version>
+        <n52.iceland.version>1.0.0-SNAPSHOT</n52.iceland.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-			<!-- testing -->
+		    <dependency>
+			    <groupId>org.n52.iceland</groupId>
+			    <artifactId>iceland</artifactId>
+                <version>${n52.iceland.version}</version>
+		    </dependency>
+		    <!--  O&M Parser -->
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>api</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    </dependency>
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>coding-sos-v20</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    </dependency>
+		    <!-- testing -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
