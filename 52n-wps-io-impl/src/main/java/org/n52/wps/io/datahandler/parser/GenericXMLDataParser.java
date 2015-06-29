@@ -59,9 +59,7 @@ public class GenericXMLDataParser extends AbstractParser {
 		
 		try {
 			xmlData = XmlObject.Factory.parse(input);
-		} catch (XmlException e) {
-			LOGGER.error("Could not parse inputstream as XMLObject.", e);
-		} catch (IOException e) {
+		} catch (XmlException|IOException e) {
 			LOGGER.error("Could not parse inputstream as XMLObject.", e);
 		}	
 		

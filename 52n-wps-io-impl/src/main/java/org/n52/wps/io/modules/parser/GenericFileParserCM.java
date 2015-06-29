@@ -28,25 +28,15 @@
  */
 package org.n52.wps.io.modules.parser;
 
-import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
-import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
-import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
-import org.n52.wps.webapp.api.types.FileConfigurationEntry;
-import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
-import org.n52.wps.webapp.api.types.StringConfigurationEntry;
-import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
 public class GenericFileParserCM extends ClassKnowingModule{
 
