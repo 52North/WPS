@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,13 +67,7 @@ public class ParserFactory implements Constructable{
 				 parser = (IParser) this.getClass().getClassLoader().loadClass(parserClass).newInstance();
 
 			}
-			catch (ClassNotFoundException e) {
-				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
-			}
-			catch(IllegalAccessException e) {
-				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
-			}
-			catch(InstantiationException e) {
+			catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
 				LOGGER.error("One of the parsers could not be loaded: " + parserClass, e);
 			}
 

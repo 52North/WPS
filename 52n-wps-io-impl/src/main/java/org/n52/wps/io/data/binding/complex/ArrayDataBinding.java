@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,7 +37,10 @@ import org.n52.wps.io.data.IComplexData;
  * @author Dimitar Misev
  */
 public class ArrayDataBinding implements IComplexData {
-    private final List<byte[]> payload;
+	
+	private static final long serialVersionUID = 1L;
+	
+	private final List<byte[]> payload;
 
     public ArrayDataBinding(List<byte[]> payload) {
         this.payload = payload;
@@ -47,7 +50,7 @@ public class ArrayDataBinding implements IComplexData {
         return payload;
     }
 
-    public Class getSupportedClass() {
+    public Class<?> getSupportedClass() {
         return payload.getClass();
     }
 

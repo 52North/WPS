@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,6 +35,7 @@ import org.n52.wps.io.data.IComplexData;
 
 public class GeotiffBinding implements IComplexData{
 
+	private static final long serialVersionUID = 1L;
 	protected File geotiff;
 	protected String mimeType;
 	
@@ -49,7 +50,7 @@ public class GeotiffBinding implements IComplexData{
 	}
 
 	@Override
-	public Class getSupportedClass() {
+	public Class<?> getSupportedClass() {
 		return File.class;
 	}
 

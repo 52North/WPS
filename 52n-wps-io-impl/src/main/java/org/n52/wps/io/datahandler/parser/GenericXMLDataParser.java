@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,9 +59,7 @@ public class GenericXMLDataParser extends AbstractParser {
 		
 		try {
 			xmlData = XmlObject.Factory.parse(input);
-		} catch (XmlException e) {
-			LOGGER.error("Could not parse inputstream as XMLObject.", e);
-		} catch (IOException e) {
+		} catch (XmlException|IOException e) {
 			LOGGER.error("Could not parse inputstream as XMLObject.", e);
 		}	
 		
