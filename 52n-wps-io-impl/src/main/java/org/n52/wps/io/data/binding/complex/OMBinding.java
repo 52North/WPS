@@ -28,28 +28,22 @@
  */
 package org.n52.wps.io.data.binding.complex;
 
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.wps.io.data.IComplexData;
 
 /**
+ * Payload is one of:
+ * <ul><li> {@link OmObservation}</li>
+ * <li>{@link Set}&lt;NamedValue&lt;?&gt;&gt;</li></ul>
+ * 
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
-public class OMBinding implements IComplexData {
+public abstract class OMBinding implements IComplexData {
 
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	public Object getPayload() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Class<?> getSupportedClass() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void dispose() {}

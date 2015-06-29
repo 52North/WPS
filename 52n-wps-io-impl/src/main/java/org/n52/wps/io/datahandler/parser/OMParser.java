@@ -28,18 +28,34 @@
  */
 package org.n52.wps.io.datahandler.parser;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.decode.OmDecoderv20;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.io.data.binding.complex.OMBinding;
+import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.OMObservationType;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * 
  * @since 4.0.0
+ * 
+ * TODO add javadoc
+ * TODO remove return null and throw exceptions
  *
  */
 public class OMParser extends AbstractParser {
@@ -52,21 +68,75 @@ public class OMParser extends AbstractParser {
 	}
 	
 	@Override
-	public OMBinding parse(InputStream input, String mimeType, String schema) {	
-		if (!validateInput(mimeType,schema) ){
+	public OMBinding parse(InputStream stream, String mimeType, String schema) {	
+		if (!validateInput(mimeType,schema,stream) ){
 			return null;
 		}
-		// TODO Implement
+		FileOutputStream fos = null;
+		File tempFile;
+		try {
+			tempFile = File.createTempFile("wps", "tmp");
+			finalizeFiles.add(tempFile); // mark for final delete
+			fos = new FileOutputStream(tempFile);
+			int i = stream.read();
+			while (i != -1) {
+				fos.write(i);
+				i = stream.read();
+			}
+			fos.flush();
+			fos.close();
+		} catch (IOException e) {
+			LOGGER.error("Problems while reading stream and write to tmp file. Exception thrown!", e);
+		} finally {
+			if (fos != null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					LOGGER.error("Could not close FileOutputStream. Exception thrown!", e);
+				}
+			}
+		}
+		
+		GenericXMLDataBinding xmlData = new GenericXMLDataParser().parse(stream, mimeType, schema);
+		
+		if (xmlData == null || xmlData.getPayload() == null) {
+			LOGGER.error("Input stream could not be parsed to generic XML.");
+			return null;
+		}
+		
+		if (xmlData.getPayload() instanceof OMObservationType || 
+				xmlData.getPayload() instanceof NamedValuePropertyType) {
+			try {
+				Object parsedObject = new OmDecoderv20().decode(xmlData.getPayload());
+				if (parsedObject instanceof OmObservation) {
+					return new OMObservationBinding((OmObservation) parsedObject);
+				}
+				if (parsedObject instanceof NamedValue<?>) {
+					return new OMNamedValueBinding((NamedValue<?>) parsedObject);
+				}
+				// should be a Set<NamedValue<?>>, but this is not possible
+				if (parsedObject instanceof Set<?>) { 
+					return new OMNamedValueBinding((Set<?>)parsedObject);
+				}
+				LOGGER.error("O&M decoder output not supported. Type received: '{}'.", parsedObject.getClass().getName());
+				
+			} catch (OwsExceptionReport e) {
+				LOGGER.error("O&M data could not be parsed. Exception thrown!", e);
+				return null;
+			}
+		}
+		
 		return null;
 	}
 
-	private boolean validateInput(String mimeType, String schema) {
+	private boolean validateInput(String mimeType, String schema, InputStream stream) {
 		if (mimeType != null && 
 				!mimeType.isEmpty() &&
 				mimeType.equals(MediaTypes.APPLICATION_OM_20.toString()) &&
 				schema != null &&
-				!schema.isEmpty() & 
-				schema.equals(OmConstants.NS_OM_2)) {
+				!schema.isEmpty() && 
+				schema.equals(OmConstants.NS_OM_2) &&
+				stream != null) {
 			return true;
 		}
 		LOGGER.debug("Input not valid: Mimetype: '{}', Schema: '{}'",
