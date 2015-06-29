@@ -266,11 +266,6 @@
 		    </dependency>
 		    <dependency>
 		    	<groupId>${n52.sos.group}</groupId>
-		    	<artifactId>core</artifactId>
-		    	<version>${n52.sos.version}</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>${n52.sos.group}</groupId>
 		    	<artifactId>third-party-ncname-resolver</artifactId>
 		    	<version>${n52.sos.version}</version>
 		    </dependency>

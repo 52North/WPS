@@ -148,11 +148,7 @@
 			<groupId>${n52.sos.group}</groupId>
 			<artifactId>coding-sos-v20</artifactId>
 		</dependency>
-				<dependency>
-			<groupId>${n52.sos.group}</groupId>
-			<artifactId>core</artifactId>
-		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>${n52.sos.group}</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
 		</dependency>
