@@ -32,16 +32,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.OmDecoderv20;
-import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
-import org.n52.wps.io.data.binding.complex.OMBinding;
 import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +61,11 @@ public class OMParser extends AbstractParser {
 
 	public OMParser(){
 		super();
-		supportedIDataTypes.add(OMBinding.class);
+		supportedIDataTypes.add(OMObservationBinding.class);
 	}
 	
 	@Override
-	public OMBinding parse(InputStream stream, String mimeType, String schema) {	
+	public OMObservationBinding parse(InputStream stream, String mimeType, String schema) {	
 		if (!validateInput(mimeType,schema,stream) ){
 			return null;
 		}
@@ -110,13 +107,6 @@ public class OMParser extends AbstractParser {
 				Object parsedObject = new OmDecoderv20().decode(xmlData.getPayload());
 				if (parsedObject instanceof OmObservation) {
 					return new OMObservationBinding((OmObservation) parsedObject);
-				}
-				if (parsedObject instanceof NamedValue<?>) {
-					return new OMNamedValueBinding((NamedValue<?>) parsedObject);
-				}
-				// should be a Set<NamedValue<?>>, but this is not possible
-				if (parsedObject instanceof Set<?>) { 
-					return new OMNamedValueBinding((Set<?>)parsedObject);
 				}
 				LOGGER.error("O&M decoder output not supported. Type received: '{}'.", parsedObject.getClass().getName());
 				

@@ -28,7 +28,6 @@
  */
 package org.n52.wps.io.data.binding.complex;
 
-import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.wps.io.data.IComplexData;
 
@@ -41,11 +40,26 @@ import org.n52.wps.io.data.IComplexData;
  *
  * @since 4.0.0
  */
-public abstract class OMBinding implements IComplexData {
+public class OMObservationBinding implements IComplexData {
 
 	private static final long serialVersionUID = 1L;
+	protected OmObservation payload;
+	
+	public OMObservationBinding(OmObservation observation) {
+		this.payload = observation;
+	}
 
 	@Override
 	public void dispose() {}
+
+	@Override
+	public Object getPayload() {
+		return payload;
+	}
+
+	@Override
+	public Class<?> getSupportedClass() {
+		return OmObservation.class;
+	}
 
 }
