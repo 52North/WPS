@@ -123,7 +123,7 @@ public class OMParser extends AbstractParser {
 	private boolean validateInput(String mimeType, String schema, InputStream stream) {
 		if (mimeType != null && 
 				!mimeType.isEmpty() &&
-				mimeType.equals(MediaTypes.APPLICATION_OM_20.toString()) &&
+				mimeType.equals(MediaTypes.APPLICTION_OM_20.toString()) &&
 				schema != null &&
 				!schema.isEmpty() && 
 				schema.equals(OmConstants.NS_OM_2) &&
