@@ -9,13 +9,13 @@
 	<div class="form-group">
 		<div class="col-lg-4">
 			<label>Username</label>
-			<input type="text" class="col-lg-2 form-control" name="j_username" placeholder="Username..." />
+			<input type="text" class="col-lg-2 form-control" name="username" placeholder="Username..." />
 		</div>
 	</div>
 	<div class="form-group">
 		<div class="col-lg-4">
 			<label>Password</label>
-			<input type="password" class="form-control" name="j_password" class="form-control" placeholder="Password..." />
+			<input type="password" class="form-control" name="password" class="form-control" placeholder="Password..." />
 		</div>
 	</div>
 	<div class="checkbox">
@@ -24,5 +24,6 @@
 			Remember Me
 		</label>
 	</div>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
 	<button type="submit" class="btn btn-default">Login</button>
 </form>

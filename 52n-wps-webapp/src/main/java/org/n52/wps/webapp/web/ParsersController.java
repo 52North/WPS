@@ -59,7 +59,7 @@ public class ParsersController extends BaseConfigurationsController {
 		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
 				.getConfigurationModulesByCategory(category);
 		model.addAttribute("configurations", configurations);
-		LOGGER.info("Reterived '{}' configurations.", category);
+		LOGGER.info("Retrived '{}' configurations.", category);
 		return "parsers";
 	}
 	

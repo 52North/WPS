@@ -59,7 +59,7 @@ public class OMParserCM extends ClassKnowingModule{
 	
 	@Override
 	public String getModuleName() {
-		return "GenericXMLDataParser";
+		return "O&M 2.0 Parser";
 	}
 
 	@Override
