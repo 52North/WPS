@@ -231,6 +231,7 @@
 <!-- 		<module>52n-wps-mc</module> -->
 	</modules>
 	<properties>
+		<wps.name>52n-wps-webapp</wps.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
