@@ -115,6 +115,7 @@ public class OMParser extends AbstractParser {
 				return null;
 			}
 		}
+		LOGGER.error("XML document type not supported: '{}'.", xmlData.getPayload().getClass().getName());
 		
 		return null;
 	}
