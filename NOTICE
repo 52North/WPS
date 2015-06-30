@@ -227,7 +227,7 @@ This project includes:
   Tiles Request - Velocity support under The Apache Software License, Version 2.0
   Tiles Request - Wildcard file loading in Servlets under The Apache Software License, Version 2.0
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
-  vecmath under Sun Binary Code License Agreement
+  vecmath under GPL 2.0 license w/ CPE
   VelocityTools under The Apache Software License, Version 2.0
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
