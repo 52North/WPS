@@ -29,7 +29,7 @@
 package org.n52.wps.io.modules.parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.n52.wps.io.datahandler.parser.GenericFileParser;
@@ -79,8 +79,7 @@ public class GenericFileParserCM extends ClassKnowingModule{
 
 	@Override
 	public List<AlgorithmEntry> getAlgorithmEntries() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override
