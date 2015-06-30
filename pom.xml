@@ -264,6 +264,10 @@
 						<artifactId>hsqldb</artifactId>
 						<groupId>hsqldb</groupId>
 					</exclusion>
+					<exclusion>
+			            <groupId>org.geotools</groupId>
+			            <artifactId>gt-epsg-hsql</artifactId>
+					</exclusion>
 			</exclusions>
 		    </dependency>
 		    <dependency>

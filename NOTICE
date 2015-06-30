@@ -82,7 +82,6 @@ This project includes:
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   ecore under Eclipse Public License (EPL)
   enforcement under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   EPSG Authority Service using WKT file under Lesser General Public License (LGPL)
   Feature Based Graphs and Networks under Lesser General Public License (LGPL)
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
