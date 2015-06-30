@@ -269,6 +269,22 @@
 		    	<artifactId>third-party-ncname-resolver</artifactId>
 		    	<version>${n52.sos.version}</version>
 		    </dependency>
+		    <dependency>
+		    	<groupId>org.n52.sensorweb</groupId>
+		    	<artifactId>52n-xml-om-v20</artifactId>
+		    	<version>2.1.0</version>
+		    </dependency>
+		    <dependency>
+		    	<groupId>com.google.guava</groupId>
+		    	<artifactId>guava</artifactId>
+		    	<version>13.0.1</version>
+		    </dependency>
+		    <dependency>
+		    	<groupId>org.apache.xmlbeans</groupId>
+		    	<artifactId>xmlbeans</artifactId>
+		    	<version>2.4.0</version>
+		    </dependency>
+		    <!-- END O&M Parser -->
 		    <!-- testing -->
 			<dependency>
 				<groupId>junit</groupId>
