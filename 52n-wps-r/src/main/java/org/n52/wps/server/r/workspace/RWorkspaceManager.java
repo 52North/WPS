@@ -203,19 +203,7 @@ public class RWorkspaceManager {
 
                 inputValuesWithValues.add(entry.getKey());
             }
-            catch (RserveException e) {
-                log.error("Error parsing input value {}", entry, e);
-                throw new ExceptionReport("Error parsing input value: " + entry,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE,
-                                          e);
-            }
-            catch (REXPMismatchException e) {
-                log.error("Error parsing input value {}", entry, e);
-                throw new ExceptionReport("Error parsing input value: " + entry,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE,
-                                          e);
-            }
-            catch (IOException e) {
+            catch (RserveException | REXPMismatchException | IOException e) {
                 log.error("Error parsing input value {}", entry, e);
                 throw new ExceptionReport("Error parsing input value: " + entry,
                                           ExceptionReport.INVALID_PARAMETER_VALUE,
