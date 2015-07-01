@@ -50,6 +50,6 @@
 
 	<root level="INFO">
 		<appender-ref ref="wpsfile" />
-		<!--<appender-ref ref="wpsconsole" />-->
+		<appender-ref ref="wpsconsole" />
 	</root>
 </configuration>

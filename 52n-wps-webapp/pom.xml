@@ -318,7 +318,8 @@
 	</properties>
 
 	<build>
-		<finalName>${wps.name}##${project.version}</finalName>
+<!-- 	 Is not working atm. -->
+<!-- 		<finalName>${wps.name}##${project.version}</finalName> -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
