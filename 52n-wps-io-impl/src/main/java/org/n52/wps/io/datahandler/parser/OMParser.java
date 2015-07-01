@@ -28,11 +28,9 @@
  */
 package org.n52.wps.io.datahandler.parser;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.http.MediaTypes;
@@ -43,8 +41,7 @@ import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.opengis.om.x20.NamedValuePropertyType;
-import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.OMObservationDocument;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -69,31 +66,6 @@ public class OMParser extends AbstractParser {
 		if (!validateInput(mimeType,schema,stream) ){
 			return null;
 		}
-		FileOutputStream fos = null;
-		File tempFile;
-		try {
-			tempFile = File.createTempFile("wps", "tmp");
-			finalizeFiles.add(tempFile); // mark for final delete
-			fos = new FileOutputStream(tempFile);
-			int i = stream.read();
-			while (i != -1) {
-				fos.write(i);
-				i = stream.read();
-			}
-			fos.flush();
-			fos.close();
-		} catch (IOException e) {
-			LOGGER.error("Problems while reading stream and write to tmp file. Exception thrown!", e);
-		} finally {
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					LOGGER.error("Could not close FileOutputStream. Exception thrown!", e);
-				}
-			}
-		}
-		
 		GenericXMLDataBinding xmlData = new GenericXMLDataParser().parse(stream, mimeType, schema);
 		
 		if (xmlData == null || xmlData.getPayload() == null) {
@@ -101,10 +73,11 @@ public class OMParser extends AbstractParser {
 			return null;
 		}
 		
-		if (xmlData.getPayload() instanceof OMObservationType || 
-				xmlData.getPayload() instanceof NamedValuePropertyType) {
+		final XmlObject payload = xmlData.getPayload();
+		if (payload instanceof OMObservationDocument) {
 			try {
-				Object parsedObject = new OmDecoderv20().decode(xmlData.getPayload());
+				OMObservationDocument xmlOmObservation = (OMObservationDocument) payload;
+				Object parsedObject = new OmDecoderv20().decode(xmlOmObservation.getOMObservation());
 				if (parsedObject instanceof OmObservation) {
 					return new OMObservationBinding((OmObservation) parsedObject);
 				}
@@ -115,7 +88,7 @@ public class OMParser extends AbstractParser {
 				return null;
 			}
 		}
-		LOGGER.error("XML document type not supported: '{}'.", xmlData.getPayload().getClass().getName());
+		LOGGER.error("XML document type not supported: '{}'.", payload.getClass().getName());
 		
 		return null;
 	}
@@ -123,7 +96,7 @@ public class OMParser extends AbstractParser {
 	private boolean validateInput(String mimeType, String schema, InputStream stream) {
 		if (mimeType != null && 
 				!mimeType.isEmpty() &&
-				mimeType.equals(MediaTypes.APPLICTION_OM_20.toString()) &&
+				mimeType.equals(MediaTypes.APPLICATION_OM_20.toString()) &&
 				schema != null &&
 				!schema.isEmpty() && 
 				schema.equals(OmConstants.NS_OM_2) &&
