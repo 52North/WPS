@@ -10,5 +10,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 
 	<import resource="spring/spring-db-config.xml" />
 	<import resource="spring/spring-security-config.xml" />
+	
+	<import resource="classpath*:**/wps-config-*.xml" />
 
 </beans>
