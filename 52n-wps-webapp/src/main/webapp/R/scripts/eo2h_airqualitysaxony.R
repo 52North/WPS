@@ -91,6 +91,8 @@ myLog("measurements (", length(vector.measurements), "):		",
 #
 # change function to return the output object from writeRaster
 #
+# FIXME function "layerNames" is used by one of the functions stored in AirQualitMapping.RData, which must be updated since it is no longer included in package "raster", just use "names".
+#
 getPollutantConcentrationAsGeoTiff <- function(.vector.stations,
 		.vector.measurements, .chr.pollutant, .chr.file) {
 	#calculate raster

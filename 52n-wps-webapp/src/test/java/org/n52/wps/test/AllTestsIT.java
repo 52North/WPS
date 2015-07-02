@@ -91,6 +91,10 @@ public class AllTestsIT {
         return "http://" + getHost() + ":" + getPort() + getContext();
     }
 
+    public static String getWebappURL() {
+        return "http://" + getHost() + ":" + getPort() + getContext().replace("/" + WPSConfig.SERVLET_PATH, "");
+    }
+
     public static Document parseXML(String xmlString) throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         StringReader inStream = new StringReader(xmlString);
@@ -360,6 +364,7 @@ public class AllTestsIT {
     		try {
 				stream.close();
 			} catch (IOException e) {
+                //
 			}
 		}
     	

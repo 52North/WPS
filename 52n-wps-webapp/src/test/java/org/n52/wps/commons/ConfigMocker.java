@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,26 +26,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.r;
+package org.n52.wps.commons;
 
-import java.util.List;
 
-import org.junit.Test;
-import org.n52.wps.server.r.info.RProcessInfo;
+/**
+ * 
+ * @author Daniel Nüst
+ *
+ */
+public class ConfigMocker {
 
-public class ProcessInfo {
-
-    @Test
-    public void dummy()
-    {
-        List<RProcessInfo> rProcessInfoList = RProcessInfo.getRProcessInfoList();
-        for (RProcessInfo rProcessInfo : rProcessInfoList) {
-            rProcessInfo.getWkn();
-            rProcessInfo.isAvailable();
-            rProcessInfo.isValid();
-            rProcessInfo.getLastException().getMessage();
-            rProcessInfo.getScriptURL();
-        }
+    public static void setConfig(WPSConfig config) {
+        WPSConfig.setInstance(config);
     }
 
 }

@@ -58,6 +58,8 @@ public class RAnnotation {
 
     private HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
 
+    private RDataTypeRegistry dataTypeRegistry;
+
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotation.class);
 
     /**
@@ -68,13 +70,15 @@ public class RAnnotation {
      *         if AttributHash is not valid for any cause
      * @throws RAnnotationException
      */
-    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash) throws IOException,
+    public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash, RDataTypeRegistry registry) throws
             RAnnotationException {
         super();
         this.type = type;
         this.attributeHash.putAll(attributeHash);
         this.type.validateDescription(this);
-        LOGGER.debug("NEW " + toString());
+        this.dataTypeRegistry = registry;
+
+        LOGGER.debug("NEW {}", toString());
     }
 
     public RAnnotationType getType() {
@@ -163,8 +167,8 @@ public class RAnnotation {
      * @return null or supported IData class for rClass - string
      * @throws RAnnotationException
      */
-    public static Class< ? extends IData> getDataClass(String rClass) throws RAnnotationException {
-        RTypeDefinition rType = RDataTypeRegistry.getInstance().getType(rClass);
+    public Class< ? extends IData> getDataClass(String rClass) throws RAnnotationException {
+        RTypeDefinition rType = dataTypeRegistry.getType(rClass);
         return rType.getIDataClass();
     }
 
@@ -175,17 +179,14 @@ public class RAnnotation {
 
     /**
      * Checks if the type - argument of an annotation refers to complex data
-     * 
-     * @return
-     * @throws RAnnotationException
      */
-    public static boolean isComplex(String rClass) throws RAnnotationException {
-        return RDataTypeRegistry.getInstance().getType(rClass).isComplex();
+    public boolean isComplex(String rClass) throws RAnnotationException {
+        return dataTypeRegistry.getType(rClass).isComplex();
 
     }
 
     public RTypeDefinition getRDataType() throws RAnnotationException {
-        return RDataTypeRegistry.getInstance().getType(getStringValue(RAttribute.TYPE));
+        return dataTypeRegistry.getType(getStringValue(RAttribute.TYPE));
     }
 
     /**
@@ -203,9 +204,9 @@ public class RAnnotation {
      */
     public String getProcessDescriptionType() throws RAnnotationException {
         String type = getStringValue(RAttribute.TYPE);
-        RTypeDefinition rdt = RDataTypeRegistry.getInstance().getType(type);
+        RTypeDefinition rdt = dataTypeRegistry.getType(type);
         if (rdt != null)
-            return rdt.getProcessKey();
+            return rdt.getMimeType();
 
         return null;
     }

@@ -50,13 +50,13 @@ resource_url_report_file <- "N/A"
 if(exists("wpsServer") && wpsServer) {
 	myLog("Running in a WPS...")
 	# get metadata when running in the server
-	# cat(wpsResourceURL, "\n")
+	# cat(wpsResourceEndpoint, "\n")
 	# cat(wpsProcessDescription, "\n")
 	process_description_url <- wpsProcessDescription
-	resource_url_report_file <- paste0(wpsResourceURL, "/", report_file)
+	resource_url_report_file <- paste0(wpsResourceEndpoint, "/", report_file)
 	
 	myLog("wps.description: ", wpsProcessDescription,
-				" | wps.resource: ", wpsResourceURL)
+				" | wps.resource: ", wpsResourceEndpoint)
 }
 else {
 	myLog("NOT RUNNING ON SERVER!")

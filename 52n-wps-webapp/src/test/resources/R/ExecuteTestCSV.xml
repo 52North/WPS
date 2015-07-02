@@ -16,7 +16,7 @@
 	<wps:ResponseForm>
 		<wps:ResponseDocument storeExecuteResponse="false">
 			<wps:Output asReference="@@@ref@@@">
-				<ows:Identifier>data</ows:Identifier>
+				<ows:Identifier>dataTable</ows:Identifier>
 			</wps:Output>
 		</wps:ResponseDocument>
 	</wps:ResponseForm>

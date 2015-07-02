@@ -42,7 +42,7 @@ public interface RTypeDefinition {
      * 
      * @return Type-expression used in the processDescription
      */
-    public abstract String getProcessKey();
+    public abstract String getMimeType();
 
     public abstract boolean isComplex();
 

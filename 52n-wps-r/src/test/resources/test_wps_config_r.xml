@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WPSConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://n52.org/wps schema_v2.xsd" xmlns="http://n52.org/wps">
+	<AlgorithmRepositoryList>
+		<Repository name="RAlgorithmRepository"
+			className="org.n52.wps.server.spring.SpringWrapperAlgorithmRepository"
+			active="true">
+			<Property active="true" name="wrappeeName">org.n52.wps.server.r.LocalRAlgorithmRepository
+			</Property>
+		</Repository>
+		<Repository name="LocalRAlgorithmRepository"
+			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
+			<Property name="R_enableBatchStart" active="true">true</Property>
+			<Property name="R_datatypeConfig" active="true">R/R_Datatype.conf
+			</Property>
+			<Property name="R_wdStrategy" active="true">default</Property>
+			<Property name="R_wdName" active="false">myName</Property>
+			<Property name="R_resourceDirectory" active="true">R/resources
+			</Property>
+			<Property name="R_RserveHost" active="true">localhost</Property>
+			<Property name="R_RservePort" active="true">6311</Property>
+			<Property name="R_RserveUser" active="false">NA</Property>
+			<Property name="R_RservePassword" active="false">NA</Property>
+			<Property name="R_scriptDirectory" active="true">R/scripts
+			</Property>
+			<Property name="R_utilsScriptDirectory" active="true">R/utils;org/n52/wps/R/unzipRenameFile.R;org/n52/wps/R/wpsStatus.R
+			</Property>
+			<Property name="R_cacheProcesses" active="true">true</Property>
+			<Property name="R_session_memoryLimit" active="true">1000
+			</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator
+			</Property>
+		</Repository>
+		<Repository name="ServiceLoaderAlgorithmRepository"
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository"
+			active="true">
+		</Repository>
+	</AlgorithmRepositoryList>
+
+	<Server hostname="localhost" hostport="8080"
+		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
+		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+		<!-- Setting to 'true' will enable filtering of responses documents. Any 
+			server URL in the response document will be replaced with the server URL 
+			used in the HTTP request. -->
+		<Property name="responseURLFilterEnabled" active="true">false
+		</Property>
+		<Database>
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase 
+				(the default) -->
+			<!-- enable database wiping base on values below -->
+			<Property name="wipe.enabled" active="true">true</Property>
+			<!-- scans database every 1 hour -->
+			<Property name="wipe.period" active="true">PT1H</Property>
+			<!-- deletes files older than 7 days -->
+			<Property name="wipe.threshold" active="true">P7D</Property>
+			<!-- save complex values gzipped -->
+			<Property name="complex.gzip" active="true">true</Property>
+		</Database>
+	</Server>
+</WPSConfiguration>

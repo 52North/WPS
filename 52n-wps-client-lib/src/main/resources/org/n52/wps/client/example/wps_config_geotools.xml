@@ -110,6 +110,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -154,6 +155,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -437,6 +439,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 			</Generator>			
 			<Generator name="GenericFileDataWithGTGenerator"
 				className="org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator"
@@ -486,6 +489,7 @@
 				<Format mimetype="text/html" />
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
@@ -594,7 +598,9 @@
 			</Generator>
 		</GeneratorList>
 	</Datahandlers>
-	<AlgorithmRepositoryList>
+		<AlgorithmRepositoryList><Repository name="RAlgorithmRepository" className="org.n52.wps.server.spring.SpringWrapperAlgorithmRepository" active="false">
+	     	<Property active="true" name="wrappeeName">org.n52.wps.server.r.LocalRAlgorithmRepository</Property>
+		</Repository>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
 			<Property name="R_enableBatchStart" active="true">true</Property>
@@ -607,8 +613,13 @@
 			<Property name="R_RserveUser" active="false">NA</Property>
 			<Property name="R_RservePassword" active="false">NA</Property>
 			<Property name="R_scriptDirectory" active="true">R/scripts</Property>
+			<Property name="R_utilsScriptDirectory" active="true">R/utils;org/n52/wps/R/unzipRenameFile.R;org/n52/wps/R/wpsStatus.R</Property>
 			<Property name="R_cacheProcesses" active="true">true</Property>
 			<Property name="R_session_memoryLimit" active="true">1000</Property>
+			<Property name="R_enableResourceDownload" active="true">true</Property>
+			<Property name="R_enableImportDownload" active="true">true</Property>
+			<Property name="R_enableScriptDownload" active="true">true</Property>
+			<Property name="R_enableSessionInfoDownload" active="true">false</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"

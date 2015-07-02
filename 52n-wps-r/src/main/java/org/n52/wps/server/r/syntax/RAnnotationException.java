@@ -26,29 +26,58 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.syntax;
 
+import org.slf4j.helpers.MessageFormatter;
+
+/**
+ * 
+ * @author Daniel Nüst
+ *
+ */
 public class RAnnotationException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -537308272628145782L;
 
     public RAnnotationException() {
-        // TODO Auto-generated constructor stub
+        super();
     }
 
     public RAnnotationException(String message) {
         super(message);
-        // TODO Auto-generated constructor stub
     }
 
     public RAnnotationException(Throwable cause) {
         super(cause);
-        // TODO Auto-generated constructor stub
     }
 
     public RAnnotationException(String message, Throwable cause) {
         super(message, cause);
-        // TODO Auto-generated constructor stub
+    }
+
+    public RAnnotationException(String message, Object arg) {
+        super(MessageFormatter.format(message, arg).getMessage());
+    }
+
+    public RAnnotationException(String message, Throwable cause, Object arg) {
+        super(MessageFormatter.format(message, arg).getMessage(), cause);
+    }
+
+    public RAnnotationException(String message, Object arg1, Object arg2) {
+        super(MessageFormatter.format(message, arg1, arg2).getMessage());
+    }
+
+    public RAnnotationException(String message, Throwable cause, Object arg1, Object arg2) {
+        super(MessageFormatter.format(message, arg1, arg2).getMessage(), cause);
+    }
+
+    public RAnnotationException(String messagePattern, Object[] argArray) {
+        super(MessageFormatter.arrayFormat(messagePattern, argArray).getMessage());
+    }
+
+    public RAnnotationException(String messagePattern, Throwable cause, Object[] argArray) {
+        super(MessageFormatter.arrayFormat(messagePattern, argArray).getMessage(), cause);
     }
 
 }
