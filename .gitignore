@@ -10,3 +10,4 @@ nb-configuration*.xml
 .Rhistory
 52n-wps-webapp/logs/52n-wps.log
 52n-wps-webapp/src/main/webapp/META-INF/context.xml
+52n-wps-webapp/logs/
