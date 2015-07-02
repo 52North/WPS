@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -64,8 +65,8 @@ public class Wps4rResourceIT {
     @Test
     public void resourcesCanBeRequested() throws ExceptionReport, IOException {
         URL resourceURL = RResource.getResourceURL(new R_Resource("org.n52.wps.server.r.test.resources",
-                                                                "test/dummy1.txt",
-                                                                true));
+                                                                  "test/dummy1.txt",
+                                                                  true));
 
         String response = GetClient.sendRequest(resourceURL.toExternalForm());
         assertNotNull(response);

@@ -214,6 +214,19 @@ public class RResource {
         log.debug("NEW {}", this);
     }
 
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE + CHARSET_STRING)
+    public ResponseEntity<String> index() {
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("R endpoints: \n");
+        sb.append(SESSION_INFO_PATH).append("\n");
+        sb.append(RESOURCE_PATH_PARAMS).append("\n");
+        sb.append(IMPORT_PATH_PARAMS).append("\n");
+        sb.append(SCRIPT_PATH_PARAMS).append("\n");
+        ResponseEntity<String> entity = new ResponseEntity<String>(sb.toString(), HttpStatus.ACCEPTED);
+        return entity;
+    }
+
     @RequestMapping(value = RESOURCE_PATH_PARAMS, method = RequestMethod.GET)
     public ResponseEntity<Resource> getResource(@PathVariable(REQUEST_PARAM_SCRIPTID) String scriptId,
                                                 @PathVariable(REQUEST_PARAM_RESOURCEID) String resourceId) throws ExceptionReport {
@@ -274,7 +287,7 @@ public class RResource {
     public ResponseEntity<Resource> getScript(@PathVariable(REQUEST_PARAM_SCRIPTID) String id) throws ExceptionReport,
             IOException {
         if ( !config.isScriptDownloadEnabled())
-            return new ResponseEntity<Resource>(new ByteArrayResource(new String("Access forbidden.").getBytes()),
+            return new ResponseEntity<Resource>(new ByteArrayResource(new String("Access to resources forbidden for all processes.").getBytes()),
                                                 HttpStatus.FORBIDDEN);
 
         HttpHeaders headers = new HttpHeaders();
