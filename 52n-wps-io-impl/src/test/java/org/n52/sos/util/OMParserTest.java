@@ -109,7 +109,7 @@ public class OMParserTest extends AbstractTestCase<OMParser> {
 			"	<om:featureOfInterest>" + 
 			"		<sams:SF_SpatialSamplingFeature gml:id=\"ssf_test_feature_9\"> " + 
 			"			<gml:identifier codeSpace=\"\">http://www.52north.org/test/featureOfInterest/9</gml:identifier> " + 
-			"			<gml:name>52°North</gml:name>" + 
+			"			<gml:name>52North</gml:name>" + 
 			"			<sf:type xlink:href=\"http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint\"/> " + 
 			"			<sf:sampledFeature xlink:href=\"http://www.52north.org/test/featureOfInterest/1\"/> " + 
 			"			<sams:shape> " + 
