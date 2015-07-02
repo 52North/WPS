@@ -71,7 +71,7 @@ public class VersionAnnotation {
 
     @BeforeClass
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
 
         mockR_Config = Mockito.spy(new R_Config());
         mockR_Config.setWknPrefix("test.");

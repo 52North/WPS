@@ -71,7 +71,7 @@ public class AnnotationParser {
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
         config = Util.getConfig();
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
     }
 
     @Before

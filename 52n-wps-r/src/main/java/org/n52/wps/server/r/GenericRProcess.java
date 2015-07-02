@@ -45,6 +45,7 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
@@ -124,7 +125,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     @Override
-    protected ProcessDescriptionType initializeDescription() {
+    protected ProcessDescription initializeDescription() {
         String wkn = getWellKnownName();
         log.debug("Loading file for {}", wkn);
 
@@ -160,7 +161,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 type.set(doc);
                 log.debug("Created process description for {}:\n{}", wkn, outerDoc.xmlText());
             }
-            return doc;
+
+            ProcessDescription processDescription = new ProcessDescription();
+            processDescription.addProcessDescriptionForVersion(doc, "1.0.0");
+            return processDescription;
         }
         catch (RAnnotationException | IOException | ExceptionReport e) {
             log.error("Error initializing description for script '{}'", wkn, e);

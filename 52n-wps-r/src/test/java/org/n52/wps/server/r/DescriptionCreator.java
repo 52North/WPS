@@ -74,7 +74,7 @@ public class DescriptionCreator {
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
         config = new R_Config();
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
     }
 
     @Before

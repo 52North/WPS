@@ -96,8 +96,9 @@ public class Server implements ConfigurationModule {
         //
     }
 
-    public Server(String hostname, int hostport, String webappPath) {
+    public Server(String protocol, String hostname, int hostport, String webappPath) {
         super();
+        this.protocol = protocol;
         this.hostname = hostname;
         this.hostport = hostport;
         this.webappPath = webappPath;

@@ -29,6 +29,7 @@
 
 package org.n52.wps.server.r;
 
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -52,6 +53,8 @@ import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
@@ -70,41 +73,77 @@ public class ImportAnnotation {
 
     private static String scriptDir = "/annotations/import";
 
-    private static LocalRAlgorithmRepository repo;
+    private static LocalRAlgorithmRepository openRepo;
 
     private static String scriptId = "import";
 
-    private static R_Config mockR_Config;
+    private static R_Config openMockR_Config;
+
+    private static R_Config closedMockR_Config;
+
+    private static LocalRAlgorithmRepository closedRepo;
 
     @BeforeClass
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
 
-        mockR_Config = Mockito.spy(new R_Config());
-        mockR_Config.setWknPrefix("test.");
-        Mockito.when(mockR_Config.getEnableBatchStart()).thenReturn(true);
+        openMockR_Config = Mockito.spy(new R_Config());
+        openMockR_Config.setWknPrefix("test.");
+        Mockito.when(openMockR_Config.getEnableBatchStart()).thenReturn(true);
         Path p = Files.createTempDirectory("wps4r-it-").toAbsolutePath();
-        Mockito.when(mockR_Config.getBaseDir()).thenReturn(p);
+        Mockito.when(openMockR_Config.getBaseDir()).thenReturn(p);
+        openMockR_Config.setConfigVariable(RWPSConfigVariables.R_WORK_DIR_NAME, p.toString());
+        Mockito.when(openMockR_Config.isImportDownloadEnabled()).thenReturn(true);
+        Mockito.when(openMockR_Config.isResourceDownloadEnabled()).thenReturn(true);
+        Mockito.when(openMockR_Config.isScriptDownloadEnabled()).thenReturn(true);
+        Mockito.when(openMockR_Config.isSessionInfoLinkEnabled()).thenReturn(true);
+
+        closedMockR_Config = Mockito.spy(new R_Config());
+        closedMockR_Config.setWknPrefix("test.");
+        Mockito.when(closedMockR_Config.getEnableBatchStart()).thenReturn(true);
+        Mockito.when(closedMockR_Config.getBaseDir()).thenReturn(p);
+        Mockito.when(closedMockR_Config.isImportDownloadEnabled()).thenReturn(false);
+        Mockito.when(closedMockR_Config.isResourceDownloadEnabled()).thenReturn(false);
+        Mockito.when(closedMockR_Config.isScriptDownloadEnabled()).thenReturn(false);
+        Mockito.when(closedMockR_Config.isSessionInfoLinkEnabled()).thenReturn(false);
 
         parser = new RAnnotationParser();
-        ReflectionTestUtils.setField(parser, "config", mockR_Config);
+        ReflectionTestUtils.setField(parser, "config", openMockR_Config);
         ReflectionTestUtils.setField(parser, "dataTypeRegistry", new RDataTypeRegistry());
         sr = new ScriptFileRepository();
         ReflectionTestUtils.setField(sr, "annotationParser", parser);
-        ReflectionTestUtils.setField(sr, "config", mockR_Config);
-
+        ReflectionTestUtils.setField(sr, "config", openMockR_Config);
         sr.registerScripts(Util.loadFile(scriptDir));
-        repo = new LocalRAlgorithmRepository();
-        ReflectionTestUtils.setField(repo, "scriptRepo", sr);
-        ReflectionTestUtils.setField(repo, "parser", parser);
-        ReflectionTestUtils.setField(repo, "config", mockR_Config);
 
-        repo.addAlgorithm(mockR_Config.getWknPrefix() + scriptId);
+        ResourceFileRepository rr = new ResourceFileRepository();
+
+        openRepo = new LocalRAlgorithmRepository();
+        ReflectionTestUtils.setField(openRepo, "config", openMockR_Config);
+        ReflectionTestUtils.setField(openRepo, "scriptRepo", sr);
+        ReflectionTestUtils.setField(openRepo, "resourceRepo", rr);
+        ReflectionTestUtils.setField(openRepo, "parser", parser);
+        openRepo.addAlgorithm(openMockR_Config.getWknPrefix() + scriptId);
+
+        closedRepo = new LocalRAlgorithmRepository();
+        ReflectionTestUtils.setField(closedRepo, "config", closedMockR_Config);
+        ReflectionTestUtils.setField(closedRepo, "scriptRepo", sr);
+        ReflectionTestUtils.setField(closedRepo, "resourceRepo", rr);
+        ReflectionTestUtils.setField(closedRepo, "parser", parser);
+        closedRepo.addAlgorithm(closedMockR_Config.getWknPrefix() + scriptId);
     }
 
     @Test
-    public void importedFunctionIsAvailable() throws IOException, RAnnotationException, ExceptionReport {
-        IAlgorithm algorithm = repo.getAlgorithm(mockR_Config.getWknPrefix() + scriptId);
+    public void importedFunctionIsAvailableInRSession() throws IOException, RAnnotationException, ExceptionReport {
+        // Trying to connect to Rserve
+        try {
+            RConnection testcon = openMockR_Config.openRConnection();
+            testcon.close();
+        }
+        catch (RserveException e) {
+            return;
+        }
+
+        IAlgorithm algorithm = openRepo.getAlgorithm(openMockR_Config.getWknPrefix() + scriptId);
         Map<String, List<IData>> inputData = Maps.newHashMap();
         List<IData> inputlist = Lists.newArrayList();
         inputlist.add(new LiteralIntBinding(Integer.valueOf(17)));
@@ -120,19 +159,35 @@ public class ImportAnnotation {
     
     @Test
     public void importedScriptIsListedInProcessDescription() {
-        IAlgorithm algorithm = repo.getAlgorithm(mockR_Config.getWknPrefix() + scriptId);
-        String description = algorithm.getDescription().xmlText();
-        System.out.println(description);
+        IAlgorithm algorithm = openRepo.getAlgorithm(openMockR_Config.getWknPrefix() + scriptId);
+        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
+        // System.out.println(description);
 
-        assertThat("imported script title is in description",
+        assertThat("imported script name is listed as resource in description",
                    description,
-                   containsString("title=\"Resource: imported.R\""));
+                   containsString("title=\"Import: imported.R\""));
         assertThat("imported script link is in description",
                    description,
-                   containsString("resource/test.import/imported.R"));
-        assertThat("imported script title is in description",
+                   containsString("import/test.import/imported.R"));
+        assertThat("second imported script title is listed as resource in description",
                    description,
-                   containsString("title=\"Resource: dir/alsoImported.R\""));
+                   containsString("title=\"Import: dir/alsoImported.R\""));
+        // assertThat("second import script link is in description", description,
+        // containsString(RResource.getImportURL(resource)))
     }
     
+    @Test
+    public void importedScriptAreNotListedInProcessDescription() {
+        IAlgorithm algorithm = closedRepo.getAlgorithm(closedMockR_Config.getWknPrefix() + scriptId);
+        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
+        // System.out.println(description);
+
+        assertThat("imported script name is not listed as resource in description",
+                   description,
+                   not(containsString("imported.R\"")));
+        assertThat("imported script link is not in description",
+                   description,
+                   not(containsString("resource/test.import/imported.R")));
+    }
+
 }

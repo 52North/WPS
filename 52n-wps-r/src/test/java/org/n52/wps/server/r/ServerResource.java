@@ -55,7 +55,7 @@ public class ServerResource {
 
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
     }
 
     @Test

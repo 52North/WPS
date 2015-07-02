@@ -77,7 +77,7 @@ public class MetadataAnnotation {
 
     @BeforeClass
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
-        Util.forceInitializeWPSConfig();
+        Util.mockGenericWPSConfig();
 
         mockR_Config = Mockito.spy(new R_Config());
         mockR_Config.setWknPrefix("test.");
@@ -149,7 +149,7 @@ public class MetadataAnnotation {
     @Test
     public void metadataLinksAreListedInProcessDescription() {
         IAlgorithm algorithm = repo.getAlgorithm(mockR_Config.getWknPrefix() + scriptId);
-        String description = algorithm.getDescription().xmlText();
+        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
 
         assertThat("metadata 1 title is in description", description, containsString("title=\"detailed manual\""));
         assertThat("metadata 2 title is in description",
@@ -167,7 +167,7 @@ public class MetadataAnnotation {
     @Test
     public void invalidMetadataLinksAreNotListedInProcessDescription() {
         IAlgorithm algorithm = repo.getAlgorithm(mockR_Config.getWknPrefix() + "invalid-title");
-        String description = algorithm.getDescription().xmlText();
+        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
 
         assertThat("metadata 1 title is NOT in description", description, not(containsString("detailed manual")));
         assertThat("metadata 1 link is NOT in description",

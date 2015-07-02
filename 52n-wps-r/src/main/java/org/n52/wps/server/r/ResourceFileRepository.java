@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.syntax.ImportAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
@@ -54,6 +55,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Management class to store and retrieve resources used by scripts.
@@ -182,8 +184,60 @@ public class ResourceFileRepository {
                 }
 
                 if ( !foundResourceInDir) {
-                    LOGGER.warn("Could not find resource {} in any of the configuredd directories: {}",
+                    LOGGER.warn("Could not find resource {} in any of the configured directories: {}",
                                 res,
+                                resourceDirectories);
+                    allRegistered = false;
+                }
+            }
+        }
+
+        return allRegistered;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean registerImport(RAnnotation rAnnotation, Path scriptDirectory) {
+        if ( ! (rAnnotation instanceof ImportAnnotation))
+            return false;
+
+        Collection<R_Resource> imports = null;
+        try {
+            imports = (Collection<R_Resource>) rAnnotation.getObjectValue(RAttribute.NAMED_LIST);
+        }
+        catch (RAnnotationException e) {
+            LOGGER.error("Could not get resoure list from annotation {}", rAnnotation);
+            return false;
+        }
+
+        boolean allRegistered = true;
+        for (R_Resource imprts : imports) {
+            if (resourcePaths.containsKey(imprts))
+                LOGGER.debug("Import already registered, (quietly) not doing it again: {}", imprts);
+            else {
+                // look in both the resource directories and the directory of the current file
+                Set<Path> currentLookInDirectories = Sets.newHashSet(resourceDirectories);
+                currentLookInDirectories.add(scriptDirectory);
+                
+                LOGGER.debug("Registering import {} as resource based on directories {}",
+                             imprts,
+                             Arrays.toString(currentLookInDirectories.toArray()));
+
+                // see if resource is contained in one of the directories
+                Path resourcePath = Paths.get(imprts.getResourceValue());
+
+                boolean foundResourceInDir = false;
+                for (Path resourceDirs : currentLookInDirectories) {
+                    Path fullPath = resourceDirs.resolve(resourcePath);
+
+                    if (Files.exists(fullPath)) {
+                        foundResourceInDir = addResource(imprts, resourceDirs, fullPath);
+                        break;
+                    }
+                }
+
+                if ( !foundResourceInDir) {
+                    LOGGER.warn("Could not find resource {} in any of the configured directories: {}",
+                                imprts,
                                 resourceDirectories);
                     allRegistered = false;
                 }

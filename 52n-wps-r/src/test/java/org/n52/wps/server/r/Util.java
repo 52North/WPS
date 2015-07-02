@@ -26,13 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -46,14 +45,15 @@ import org.n52.wps.webapp.service.ConfigurationService;
 
 public class Util {
 
-    public static final Server testserver = new Server("testhost", 42, "wps");
+    public static final Server testserver = new Server("http", "testhost", 42, "wps");
 
     public static File loadFile(String filePath) {
         URL r = Util.class.getResource(filePath);
         File f;
         try {
             f = new File(r.toURI());
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             Assert.fail("Invalid file path (not URI): " + e.getMessage());
             return null;
         }
@@ -73,17 +73,15 @@ public class Util {
         return new R_Config();
     }
 
-    public static void forceInitializeWPSConfig() throws FileNotFoundException, IOException, XmlException {
-        try (InputStream is = new FileInputStream(Util.loadFile("/test_wps_config_r.xml"))) {
-            WPSConfig.forceInitialization(is);
+    public static void mockGenericWPSConfig() throws FileNotFoundException, IOException, XmlException {
+        // mockup configuration service to return a valid URL
+        ConfigurationService service = Mockito.mock(ConfigurationService.class);
+        Mockito.when(service.getConfigurationModule(Server.class.getName())).thenReturn(testserver);
+        // add more fields needed in the tests here
 
-            // mockup configuration service to return a valid URL
-            ConfigurationService service = Mockito.mock(ConfigurationService.class);
-            Mockito.when(service.getConfigurationModule(Server.class.getName())).thenReturn(testserver);
-            ConfigurationManager manager = Mockito.mock(ConfigurationManager.class);
-            Mockito.when(manager.getConfigurationServices()).thenReturn(service);
-            WPSConfig.getInstance().setConfigurationManager(manager);
-        }
+        ConfigurationManager manager = Mockito.mock(ConfigurationManager.class);
+        Mockito.when(manager.getConfigurationServices()).thenReturn(service);
+        WPSConfig.getInstance().setConfigurationManager(manager);
     }
 
 }

@@ -39,7 +39,6 @@ import java.net.URL;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.n52.wps.commons.ConfigMocker;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RResource;
@@ -59,7 +58,7 @@ public class Wps4rResourceIT {
         wpsWebappUrl = AllTestsIT.getWebappURL();
         WPSConfig config = Mockito.mock(WPSConfig.class);
         Mockito.when(config.getServiceBaseUrl()).thenReturn(wpsWebappUrl);
-        ConfigMocker.setConfig(config);
+        // ConfigMocker.setConfig(config);
     }
 
     @Test

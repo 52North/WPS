@@ -22,15 +22,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubject{
 
@@ -59,6 +58,18 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 		this.description = initializeDescription();
 	}
 	
+    /**
+     * 
+     * @param wellKnownName
+     * @param initializeDescription
+     *        set this to false if you want to initialize the description in an extending class
+     */
+    public AbstractObservableAlgorithm(String wellKnownName, boolean initializeDescription) {
+        this.wkName = wellKnownName;
+        if (initializeDescription)
+            this.description = initializeDescription();
+    }
+
 	/** 
 	 * This method should be overwritten, in case you want to have a way of initializing.
 	 * 
@@ -68,8 +79,8 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
 	 */
 	protected ProcessDescription initializeDescription() {
 		String className = this.getClass().getName().replace(".", "/");
-		InputStream xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");
-		try {
+
+        try (InputStream xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");) {
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();
 			ProcessDescriptionsDocument doc = ProcessDescriptionsDocument.Factory.parse(xmlDesc, option);

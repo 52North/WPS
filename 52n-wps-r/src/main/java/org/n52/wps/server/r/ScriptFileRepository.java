@@ -35,8 +35,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.info.RProcessInfo;
@@ -60,13 +63,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ScriptFileRepository {
 
+    private static final String DEFAULT_VERSION = "1";
+
     private static Logger LOGGER = LoggerFactory.getLogger(ScriptFileRepository.class);
 
     /** Maps current R-script files to identifiers **/
-    private HashMap<File, String> fileToWknMap = new HashMap<File, String>();
+    private Map<File, String> fileToWknMap = new HashMap<File, String>();
 
-    /** Maps each identifier to an R script file **/
-    private HashMap<String, File> wknToFileMap = new HashMap<String, File>();
+    /** Maps each identifier to (multiple versioned) R script file **/
+    private Map<String, Map<Integer, File>> wknToFileMap = new HashMap<>();
 
     @Autowired
     private RAnnotationParser annotationParser;
@@ -79,7 +84,8 @@ public class ScriptFileRepository {
     }
 
     public File getScriptFileForWKN(String wkn) throws ExceptionReport {
-        File out = wknToFileMap.get(wkn);
+        File out = wknToFileMap.get(wkn).values().iterator().next();
+
         if (out != null && out.exists() && out.isFile() && out.canRead()) {
             return out;
         }
@@ -101,6 +107,10 @@ public class ScriptFileRepository {
         }
 
         throw new ExceptionReport(message.toString(), ExceptionReport.NO_APPLICABLE_CODE);
+    }
+
+    public Map<Integer, File> getScriptFileVersionsForWKN(String id) {
+        return wknToFileMap.get(id);
     }
 
     public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
@@ -169,7 +179,31 @@ public class ScriptFileRepository {
                     }
                     else {
                         String process_id = descriptionAnnotation.getStringValue(RAttribute.IDENTIFIER);
+                        String versionString = descriptionAnnotation.getStringValue(RAttribute.VERSION);
+                        if (versionString == null)
+                            versionString = DEFAULT_VERSION;
+
                         String wkn = config.getPublicScriptId(process_id);
+
+                        Integer version = null;
+                        try {
+                            version = Integer.parseInt(versionString);
+                        }
+                        catch (NumberFormatException e) {
+                            String message = String.format("Version '%s' cannot be parsed to integer! Process: '%s', file: '%s'",
+                                                           versionString,
+                                                           wkn,
+                                                           file.getAbsoluteFile());
+                            LOGGER.error(message);
+                            throw new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE, e);
+                        }
+                        LOGGER.debug("Adding script based on description annotation: id = {}, version = {}, wkn = {}",
+                                     process_id,
+                                     version,
+                                     wkn);
+
+                        boolean identifierConflict = false;
+                        String identifierMessage = null;
 
                         if (fileToWknMap.containsValue(wkn)) {
                             File conflictFile = getScriptFileForWKN(wkn);
@@ -180,19 +214,40 @@ public class ScriptFileRepository {
                                             file.getName());
                             }
                             else if ( !file.equals(conflictFile)) {
-                                String message = String.format("Conflicting identifier '%s' detected for R scripts '%s' and '%s'",
-                                                               wkn,
-                                                               file.getAbsoluteFile(),
-                                                               conflictFile.getAbsoluteFile());
-                                ExceptionReport e = new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
-                                LOGGER.error(message);
-                                throw e;
+                                identifierMessage = String.format("Conflicting identifier '%s' detected for R scripts '%s' and '%s'",
+                                                                  wkn,
+                                                                  file.getAbsoluteFile(),
+                                                                  conflictFile.getAbsoluteFile());
+                                LOGGER.warn(identifierMessage);
+                                identifierConflict = true; // could still be different versions!
                             }
                         }
 
-                        fileToWknMap.put(file.getAbsoluteFile(), wkn);
-                        wknToFileMap.put(wkn, file.getAbsoluteFile());
+                        if (identifierConflict && wknToFileMap.containsKey(wkn)
+                                && wknToFileMap.get(wkn).containsKey(version)) {
+                            // same version with the same identifier, throw identifier message
+                            throw new ExceptionReport(identifierMessage, ExceptionReport.NO_APPLICABLE_CODE);
+                        }
 
+                        if ( !wknToFileMap.containsKey(wkn)) {
+                            wknToFileMap.put(wkn, new TreeMap<Integer, File>(Collections.reverseOrder()));
+                        }
+
+                        // check conflicting versions
+                        Map<Integer, File> files = wknToFileMap.get(wkn);
+                        if (files.containsKey(version)) {
+                            String message = String.format("Conflicting version '%s' detected for algorithm '%s':\nFiles: %s \nTo be added: '%s'",
+                                                           version,
+                                                           wkn,
+                                                           Arrays.deepToString(files.entrySet().toArray()),
+                                                           file);
+                            LOGGER.error(message);
+                            throw new ExceptionReport(message, ExceptionReport.NO_APPLICABLE_CODE);
+                        }
+
+                        // actually "register"
+                        fileToWknMap.put(file.getAbsoluteFile(), wkn);
+                        files.put(version, file.getAbsoluteFile());
                         registered = true;
                     }
                 }
@@ -208,6 +263,8 @@ public class ScriptFileRepository {
     /**
      * For testing purposes only! Register all scripts in the given directory, returns true only if all
      * scripts could be registered and does not provide information about which script failed.
+     * 
+     * @throws ExceptionReport
      */
     public boolean registerScripts(File directory) {
         if ( !directory.isDirectory()) {
@@ -227,7 +284,7 @@ public class ScriptFileRepository {
                     LOGGER.debug("Could not register script based on file {}", file);
                     allRegistered = false;
                 }
-                LOGGER.debug("Registered script in scripte file {} into {}", file, this);
+                LOGGER.debug("Registered script in file {} into {}", file, this);
 
             }
             catch (RAnnotationException | ExceptionReport e) {
@@ -238,7 +295,7 @@ public class ScriptFileRepository {
 
         return allRegistered;
     }
-    
+
     public void reset() {
         LOGGER.info("Resetting {}", this);
 

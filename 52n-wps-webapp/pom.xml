@@ -715,10 +715,10 @@
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-algorithm-geotools</artifactId>
 				</dependency>
-<!-- 				<dependency> -->
-<!-- 					<groupId>${project.groupId}</groupId> -->
-<!-- 					<artifactId>52n-wps-r</artifactId> -->
-<!-- 				</dependency> -->
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>52n-wps-r</artifactId>
+				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-grass</artifactId>

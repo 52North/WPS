@@ -19,14 +19,8 @@ package org.n52.wps.commons;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,12 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
 
-import org.apache.xmlbeans.XmlException;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -49,9 +39,6 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 
 /**
  * 
@@ -118,7 +105,7 @@ public class WPSConfig implements Serializable {
      * @param listener
      */
     public void addPropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-        
+        // FIXME remove property change mechanism
     }
 
     /**
@@ -128,15 +115,18 @@ public class WPSConfig implements Serializable {
      * @param listener
      */
     public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
-        
+        // FIXME remove property change mechanism
     }
 
     /**
      * returns an instance of the WPSConfig class. WPSConfig is a single. If there is need for
      * reinstantitation, use forceInitialization().
      *
+     * @deprecated if possible use ConfigurationModules
+     *
      * @return WPSConfig object representing the wps_config.xml from the classpath or webapps folder
      */
+    @Deprecated
     public static WPSConfig getInstance() {
         if (wpsConfig == null) {
         	wpsConfig = new WPSConfig();

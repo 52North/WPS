@@ -6,8 +6,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
 	<context:annotation-config />
 
-	<bean class="java.lang.String" id="testbean">
-		<constructor-arg type="String" value="justatest"/>
+	<bean class="org.n52.wps.server.r.LocalRAlgorithmRepository" id="RAlgorithmRepository">
 	</bean>
 
 </beans>

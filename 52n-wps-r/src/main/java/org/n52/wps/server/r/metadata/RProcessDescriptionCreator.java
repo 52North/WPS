@@ -48,7 +48,6 @@ import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
 import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
 import net.opengis.wps.x100.SupportedComplexDataType;
 
-import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.IGenerator;
 import org.n52.wps.io.IOHandler;
@@ -63,6 +62,7 @@ import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.webapp.api.FormatEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -517,9 +517,9 @@ public class RProcessDescriptionCreator {
         ComplexDataCombinationsType supported = complex.addNewSupported();
         for (int i = 0; i < foundGenerators.size(); i++) {
             IGenerator generator = foundGenerators.get(i);
-            Format[] fullFormats = generator.getSupportedFullFormats();
+            List<FormatEntry> fullFormats = generator.getSupportedFullFormats();// getSupportedFullFormats();
 
-            for (Format format : fullFormats) {
+            for (FormatEntry format : fullFormats) {
                 ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
                 String encoding = format.getEncoding();
                 if (encoding != null)
@@ -527,7 +527,7 @@ public class RProcessDescriptionCreator {
                 else
                     newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
 
-                newSupportedFormat.setMimeType(format.getMimetype());
+                newSupportedFormat.setMimeType(format.getMimeType());
                 String schema = format.getSchema();
                 if (schema != null)
                     newSupportedFormat.setSchema(schema);
@@ -563,15 +563,15 @@ public class RProcessDescriptionCreator {
         ComplexDataCombinationsType supported = complex.addNewSupported();
         for (int i = 0; i < foundParsers.size(); i++) {
             IParser parser = foundParsers.get(i);
-            Format[] fullFormats = parser.getSupportedFullFormats();
-            for (Format format : fullFormats) {
+            List<FormatEntry> fullFormats = parser.getSupportedFullFormats();
+            for (FormatEntry format : fullFormats) {
                 ComplexDataDescriptionType newSupportedFormat = supported.addNewFormat();
                 String encoding = format.getEncoding();
                 if (encoding != null)
                     newSupportedFormat.setEncoding(encoding);
                 else
                     newSupportedFormat.setEncoding(IOHandler.DEFAULT_ENCODING);
-                newSupportedFormat.setMimeType(format.getMimetype());
+                newSupportedFormat.setMimeType(format.getMimeType());
                 String schema = format.getSchema();
                 if (schema != null)
                     newSupportedFormat.setSchema(schema);

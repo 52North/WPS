@@ -37,7 +37,7 @@ import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class LocalRAlgorithmRepositoryCM implements ConfigurationModule{
+public class LocalRAlgorithmRepositoryCM implements ConfigurationModule {
 
 	private boolean isActive = true;
 
@@ -60,7 +60,7 @@ public class LocalRAlgorithmRepositoryCM implements ConfigurationModule{
 	
 	@Override
 	public String getModuleName() {
-		return "LocalRAlgorithmRepository Configuration Module";
+        return "Local*R*AlgorithmRepository Configuration Module";
 	}
 
 	@Override

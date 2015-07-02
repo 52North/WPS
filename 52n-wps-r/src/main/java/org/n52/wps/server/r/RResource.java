@@ -166,7 +166,7 @@ public class RResource {
 
     public static final String RESOURCE_PATH = "/resource";
 
-    public static final String IMPORT_PATH = "/importResource";
+    public static final String IMPORT_PATH = "/import";
 
     private static final String RESOURCE_PATH_PARAMS = RESOURCE_PATH + "/{" + REQUEST_PARAM_SCRIPTID + ":.+}" + "/{"
             + REQUEST_PARAM_RESOURCEID + ":.+}";
