@@ -78,14 +78,11 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     public static final String COMPONENT_NAME = "RAlgorithmRepository";
 
-    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>(); // if set to
-                                                                                              // true an error
-                                                                                              // during one
-                                                                                              // algorithm
-                                                                                              // load stops
-                                                                                              // subsequent
-                                                                                              // algorithms to
-                                                                                              // be loaded
+    private Map<String, GenericRProcess> algorithms = new HashMap<String, GenericRProcess>();
+
+    /*
+     * if set to true an error during one algorithm load stops subsequent algorithms to be loaded
+     */
     private boolean exceptionOnAlgorithmLoad = false;
 
     @Autowired

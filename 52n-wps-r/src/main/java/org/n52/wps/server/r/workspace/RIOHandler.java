@@ -359,7 +359,7 @@ public class RIOHandler {
 
         String filename = new File(result.asString()).getName();
 
-        if (iClass.equals(GenericFileDataBinding.class)) {
+        if (iClass.equals(GenericFileDataBinding.class) || iClass.equals(GenericFileDataWithGTBinding.class)) {
             log.debug("Creating output with GenericFileDataBinding for file {}", filename);
 
             File resultFile = new File(filename);
@@ -372,7 +372,7 @@ public class RIOHandler {
             if (resultFile.exists())
                 log.debug("Found file at {}", resultFile);
             else
-                log.warn("Result file does not exists at {}", resultFile);
+                log.warn("Result file does not exist at {}", resultFile);
 
             // Transfer file from R workdir to WPS workdir
             File outputFile = null;
@@ -394,45 +394,66 @@ public class RIOHandler {
             RTypeDefinition dataType = currentAnnotation.getRDataType();
             File outputFile;
 
-            if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2) && !wpsWorkDirIsRWorkDir) {
-                String zip = "";
-                REXP ev = connection.eval("zipShp(\"" + filename + "\")");
+            if (dataType.equals(RDataType.SHAPE) || dataType.equals(RDataType.SHAPE_ZIP2)) {
+                if (wpsWorkDirIsRWorkDir) {
+                    // vector data binding needs "main" shapefile
+                    String shpFileName = filename;
+                    if ( !shpFileName.endsWith(".shp"))
+                        shpFileName = filename + ".shp";
 
-                // filname = baseName (+ suffix)
-                String baseName = null;
-
-                if (filename.endsWith(".shp"))
-                    baseName = filename.substring(0, filename.length() - ".shp".length());
-                else
-                    baseName = filename;
-
-                // zip all -- stream --> unzip all or stream each file?
-                if ( !ev.isNull()) {
-                    zip = ev.asString();
-                    File zipfile = streamFromRserveToWPS(connection, zip, wpsWorkDir);
-                    outputFile = IOUtils.unzip(zipfile, "shp").get(0);
+                    outputFile = new File(shpFileName);
+                    if ( !outputFile.isAbsolute())
+                        // relative path names are alway relative to R work directory
+                        outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
                 }
                 else {
-                    log.info("R call to zip() does not work, streaming of shapefile without zipping");
-                    String[] dir = connection.eval("dir()").asStrings();
-                    for (String f : dir) {
-                        if (f.startsWith(baseName) && !f.equals(filename))
-                            streamFromRserveToWPS(connection, f, wpsWorkDir);
-                    }
+                    // if it is a shapefile and the r workdir is remote, I need to zip, trnasfer, and unzip it
+                    String baseName = null;
+                    if (filename.endsWith(".shp"))
+                        baseName = filename.substring(0, filename.length() - ".shp".length());
+                    else
+                        baseName = filename;
 
-                    outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
+                    log.debug("Zipping output '{}' as shapefile with base '{}' with R util function: {}",
+                              result_id,
+                              baseName);
+                    REXP ev = connection.eval("zipShp(\"" + baseName + "\")");
+
+                    if ( !ev.isNull()) {
+                        String zipfileName = ev.asString();
+
+                        // stream to WPS4R workdir, then the binding needs the files unzipped and the .shp
+                        // file as
+                        // the "main" file
+                        File zipfile = streamFromRserveToWPS(connection, zipfileName, wpsWorkDir);
+                        outputFile = IOUtils.unzip(zipfile, "shp").get(0);
+                    }
+                    else {
+                        log.info("R call to zipShp() did not work, streaming of shapefile without zipping");
+                        String[] dir = connection.eval("dir()").asStrings();
+                        for (String f : dir) {
+                            if (f.startsWith(baseName) && !f.equals(filename))
+                                streamFromRserveToWPS(connection, f, wpsWorkDir);
+                        }
+
+                        outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
+                    }
                 }
             }
             else {
                 if (wpsWorkDirIsRWorkDir) {
                     outputFile = new File(filename);
                     if ( !outputFile.isAbsolute())
-                        // relative path names are alway relative to R work directory
+                        // relative path names are always relative to R work directory
                         outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
                 }
                 else
                     outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
             }
+
+            if ( !outputFile.exists())
+                throw new ExceptionReport("Output file does not exist: " + outputFile,
+                                          ExceptionReport.NO_APPLICABLE_CODE);
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             String mimeType = dataTypeRegistry.getType(rType).getMimeType();
@@ -492,7 +513,7 @@ public class RIOHandler {
             }
         }
 
-        String message = "R_Proccess: Unsuported Output Data Class declared for id " + result_id + ":" + iClass;
+        String message = "R_Proccess: Unsuported Output Data Class declared for id '" + result_id + "':" + iClass;
         log.error(message);
 
         throw new RuntimeException(message);

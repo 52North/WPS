@@ -18,8 +18,9 @@
 package org.n52.wps.commons;
 
 /**
+ * mimeType helper class for detecting file extensions and file suffices
  * 
- * @author tkunicki
+ * @author tkunicki, nuest
  */
 public class MIMEUtil {
 
