@@ -53,7 +53,7 @@ public class OMObservationBinding implements IComplexData {
 	public void dispose() {}
 
 	@Override
-	public Object getPayload() {
+	public OmObservation getPayload() {
 		return payload;
 	}
 

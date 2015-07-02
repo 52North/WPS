@@ -146,6 +146,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${n52.sos.group}</groupId>
+			<artifactId>api</artifactId>
+			<type>test-jar</type>
+		</dependency>
+		<dependency>
+			<groupId>${n52.sos.group}</groupId>
 			<artifactId>coding-sos-v20</artifactId>
 		</dependency>
 		<dependency>
@@ -163,6 +168,11 @@
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-om-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
