@@ -61,6 +61,7 @@ import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * A repository to retrieve the available algorithms.
@@ -68,7 +69,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Matthias Hinz, Daniel Nüst
  * 
  */
-// @Component(LocalRAlgorithmRepository.COMPONENT_NAME)
+@Component(LocalRAlgorithmRepository.COMPONENT_NAME)
 public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     private static Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);

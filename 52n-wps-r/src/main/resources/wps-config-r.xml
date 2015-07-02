@@ -6,7 +6,9 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 
 	<context:annotation-config />
 
-	<bean class="org.n52.wps.server.r.LocalRAlgorithmRepository" id="RAlgorithmRepository">
-	</bean>
-
+<!-- 	<bean class="org.n52.wps.server.r.R_Config" id="RConfig" scope="singleton"></bean> -->
+<!-- 	<bean class="org.n52.wps.server.r.ScriptFileRepository" id="RScriptRepository" scope="singleton"></bean> -->
+<!-- 	<bean class="org.n52.wps.server.r.metadata.RAnnotationParser" id="RAnnotationParser"></bean> -->
+<!-- 	<bean class="org.n52.wps.server.r.LocalRAlgorithmRepository" id="RAlgorithmRepository"></bean> -->
+	
 </beans>
