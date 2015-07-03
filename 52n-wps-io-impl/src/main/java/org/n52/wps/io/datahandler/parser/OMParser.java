@@ -45,13 +45,17 @@ import org.slf4j.LoggerFactory;
 import net.opengis.om.x20.OMObservationDocument;
 
 /**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * This parser parses OM_Observations from XML streams. Currently, *Document
+ * is expected. Uses {@link GenericXMLDataParser}. 
+ * 
+ * TODO remove return null and throw exceptions
  * 
  * @since 4.0.0
  * 
- * TODO add javadoc
- * TODO remove return null and throw exceptions
- *
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
+ * 
+ * @see GenericXMLDataParser
+ * 
  */
 public class OMParser extends AbstractParser {
 
