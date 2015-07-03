@@ -60,7 +60,6 @@ public class OMParser extends AbstractParser {
 	public OMParser(){
 		super();
 		supportedIDataTypes.add(OMObservationBinding.class);
-		SosConfiguration.init();
 	}
 	
 	@Override
@@ -79,6 +78,7 @@ public class OMParser extends AbstractParser {
 		if (payload instanceof OMObservationDocument) {
 			try {
 				OMObservationDocument xmlOmObservation = (OMObservationDocument) payload;
+				SosConfiguration.init();
 				Object parsedObject = new OmDecoderv20().decode(xmlOmObservation.getOMObservation());
 				if (parsedObject instanceof OmObservation) {
 					return new OMObservationBinding((OmObservation) parsedObject);

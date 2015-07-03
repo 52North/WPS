@@ -61,7 +61,6 @@ public class OMGenerator extends AbstractGenerator {
 	public OMGenerator() {
 		super();
 		supportedIDataTypes.add(OMObservationBinding.class);
-		SosConfiguration.init();
 	}
 
 	@Override
@@ -73,6 +72,7 @@ public class OMGenerator extends AbstractGenerator {
 		OmObservation omObservation = (OmObservation) data.getPayload();
 
 		try {
+			SosConfiguration.init();
 			XmlObject encode = new OmEncoderv20().encode(omObservation, Collections.singletonMap(OWSConstants.HelperValues.DOCUMENT, "42"));
 
 			return new GenericXMLDataGenerator().generateStream(new GenericXMLDataBinding(encode), mimeType, schema);
