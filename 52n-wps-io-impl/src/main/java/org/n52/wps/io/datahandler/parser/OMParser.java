@@ -36,6 +36,7 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.decode.OmDecoderv20;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.util.SosConfiguration;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.slf4j.Logger;
@@ -59,6 +60,7 @@ public class OMParser extends AbstractParser {
 	public OMParser(){
 		super();
 		supportedIDataTypes.add(OMObservationBinding.class);
+		SosConfiguration.init();
 	}
 	
 	@Override

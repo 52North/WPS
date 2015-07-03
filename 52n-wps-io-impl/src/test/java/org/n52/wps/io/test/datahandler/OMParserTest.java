@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.util;
+package org.n52.wps.io.test.datahandler;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
@@ -36,13 +36,10 @@ import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.util.SosHelper.Configuration;
 import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.n52.wps.io.datahandler.parser.OMParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -55,11 +52,6 @@ public class OMParserTest extends AbstractTestCase<OMParser> {
 	private static final String SCHEMA = "http://www.opengis.net/om/2.0";
 	private static final String MIME_TYPE = "application/om+xml; version=2.0";
 	
-	@BeforeClass
-    public static void setUpConfiguration() {
-        SosHelper.setConfiguration(new OMParserTest.ConfigurationSeam());
-    }
-
 	@Test
 	public void shouldReturnNullIfInputIsWrong() {
 		OMObservationBinding result = dataHandler.parse(null, null, null);
@@ -132,19 +124,4 @@ public class OMParserTest extends AbstractTestCase<OMParser> {
 		dataHandler = new OMParser();
 	}
 	
-	protected static class ConfigurationSeam extends Configuration {
-
-		@Override
-		protected String getSrsNamePrefix() {
-			return "urn:ogc:def:crs:EPSG::";
-		}
-
-		@Override
-		protected String getSrsNamePrefixSosV2() {
-			return "http://www.opengis.net/def/crs/EPSG/0/";
-		}
-		
-		
-	}
-
 }

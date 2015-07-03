@@ -39,6 +39,7 @@ import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.encode.OmEncoderv20;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.util.SosConfiguration;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 import org.n52.wps.io.data.binding.complex.OMObservationBinding;
@@ -60,6 +61,7 @@ public class OMGenerator extends AbstractGenerator {
 	public OMGenerator() {
 		super();
 		supportedIDataTypes.add(OMObservationBinding.class);
+		SosConfiguration.init();
 	}
 
 	@Override

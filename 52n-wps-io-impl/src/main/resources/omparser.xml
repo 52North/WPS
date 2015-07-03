@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 	
-    <!-- Beans required by OMParser -->
+    <!-- Beans required by OMParser/Generator -->
 	<bean id="xmlOptionsHelper"		class="org.n52.sos.util.XmlOptionsHelper" />
 	<bean id="sosHelper"			class="org.n52.sos.util.SosHelper" />
 	<bean id="postprocessor"		class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor"/>
@@ -16,5 +16,13 @@
     <bean id="omDecoderv20"			class="org.n52.sos.decode.OmDecoderv20"/>
     <bean id="samplingDecoderv20"	class="org.n52.sos.decode.SamplingDecoderv20"/>
     <bean id="xlinkDecoderv1999"	class="org.n52.sos.decode.XlinkDecoderv1999"/>
+    <bean id="omEncoderv20"			class="org.n52.sos.encode.OmEncoderv20"/>
+    <bean id="gmlEncoderv321" 		class="org.n52.sos.encode.GmlEncoderv321"/>
+    <bean id="sweCommonEncoderV20" 	class="org.n52.sos.encode.SweCommonEncoderv20"/>
+    <bean id="samplingEncoderv20"	class="org.n52.sos.encode.SamplingEncoderv20"/>
+    <bean id="xlinkEncoderv1999"	class="org.n52.sos.encode.XlinkEncoderv1999"/>
+    <bean id="profileHandler"		class="org.n52.sos.service.profile.DefaultProfileHandler"/> 
+    <bean id="jtsHelper"			class="org.n52.sos.util.JTSHelper"/>
+    <bean id="serviceConfiguration" class="org.n52.iceland.service.ServiceConfiguration"/>
 
 </beans>

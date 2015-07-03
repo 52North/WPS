@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.util;
+package org.n52.wps.io.test.datahandler;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
@@ -43,23 +43,16 @@ import static org.n52.sos.util.builder.SamplingFeatureBuilder.aSamplingFeature;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.util.SosHelper.Configuration;
 import org.n52.wps.io.data.binding.complex.OMObservationBinding;
 import org.n52.wps.io.datahandler.generator.OMGenerator;
 import org.n52.wps.io.datahandler.parser.OMParser;
-import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 import com.vividsolutions.jts.geom.Point;
 
@@ -74,18 +67,6 @@ public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
 	private static final String SCHEMA = "http://www.opengis.net/om/2.0";
 	private static final String MIME_TYPE = "application/om+xml; version=2.0";
 	
-	@BeforeClass
-    public static void setUpConfiguration() {
-        SosHelper.setConfiguration(new OMGeneratorTest.ConfigurationSeam());
-    }
-	
-	@SuppressWarnings("deprecation")
-	@Before
-	public void setServiceConfiguration(){
-        ServiceConfiguration.getInstance().setSrsNamePrefixForSosV2("http://www.opengis.net/def/crs/EPSG/0/");
-        ServiceConfiguration.getInstance().setSrsNamePrefixForSosV1("urn:ogc:def:crs:EPSG::");
-	}
-
 	@Test
 	public void shouldReturnNullIfInputIsWrong() throws IOException {
 		InputStream result = dataHandler.generateStream(null, null, null);
@@ -185,19 +166,4 @@ public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
 		dataHandler = new OMGenerator();
 	}
 	
-	protected static class ConfigurationSeam extends Configuration {
-
-		@Override
-		protected String getSrsNamePrefix() {
-			return "urn:ogc:def:crs:EPSG::";
-		}
-
-		@Override
-		protected String getSrsNamePrefixSosV2() {
-			return "http://www.opengis.net/def/crs/EPSG/0/";
-		}
-		
-		
-	}
-
 }

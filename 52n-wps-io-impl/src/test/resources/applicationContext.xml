@@ -12,7 +12,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 	<import resource="spring/spring-db-config.xml" />
 	<import resource="spring/spring-security-config.xml" />
 		
-	<!-- Required by OMParser test (module 52n-wps-io-impl -->
+	<!-- Required by OMParser/Generator test (module 52n-wps-io-impl -->
 	<bean id="xmlOptionsHelper"		class="org.n52.sos.util.XmlOptionsHelper" />
 	<bean id="sosHelper"			class="org.n52.sos.util.SosHelper" />
 	<bean id="postprocessor"		class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor"/>
