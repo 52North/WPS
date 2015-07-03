@@ -6,7 +6,8 @@
 <title><tiles:getAsString name="title" /></title>
 <link href="<c:url value="/static/css/bootstrap.css" />" rel="stylesheet" type="text/css" />
 <link href="<c:url value="/static/css/bootstrap-glyphicons.css" />" rel="stylesheet" type="text/css" />
-<link rel="shortcut icon" href="<c:url value="/static/favicon.ico" />" />
+<!--[if IE]><link rel="shortcut icon" href="<c:url value="/static/favicon.ico" />"><![endif]-->
+<link rel="icon" href="<c:url value="/static/favicon.ico" />">
 </head>
 <body>
 	<script src="<c:url value="/static/js/library/jquery-1.10.1.js" />"></script>
