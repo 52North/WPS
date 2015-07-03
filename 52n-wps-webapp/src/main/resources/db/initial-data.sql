@@ -792,6 +792,7 @@ INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.Server',TRUE
 INSERT INTO CONFIGURATIONENTRY VALUES('hostport','org.n52.wps.webapp.entities.Server','8080');
 
 --
--- O&M Parser Configuration
+-- O&M Parser/Generator Configuration
 --
 INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
+INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.generator.OMGeneratorCM', TRUE);
