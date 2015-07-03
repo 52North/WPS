@@ -70,13 +70,13 @@ public class Versions {
 
     private static ScriptFileRepository sr;
 
-    private static String scriptDirMultiple = "/versions/multiple";
+    private static final String scriptDirMultiple = "/versions/multiple";
 
-    private static String scriptDirSpread = "/versions/multiple-spread";
+    private static final String scriptDirSpread = "/versions/multiple-spread";
 
     private static LocalRAlgorithmRepository repo;
 
-    private static String scriptId = "version";
+    private static final String scriptId = "version";
 
     private static R_Config mockR_Config;
 

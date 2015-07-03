@@ -9,3 +9,4 @@ nb-configuration*.xml
 .classpath
 .Rhistory
 *.log
+52n-wps-webapp/src/main/webapp/META-INF/context.xml
