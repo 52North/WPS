@@ -1,6 +1,8 @@
 language: java
 script: "mvn clean install -Pintegration-test"
 jdk:
+  - openjdk7
+  - oraclejdk7 
   - oraclejdk8
 notifications:
   irc:
