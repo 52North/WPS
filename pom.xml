@@ -191,7 +191,7 @@
 				<configuration>
 					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
 					<licenseMapping>
-						<param>http://52north.github.io/cdn/licenses/license-mappings.xml</param>
+						<param>misc/licenses/license-mappings.xml</param>
 					</licenseMapping>
 					<generateChildNotices>false</generateChildNotices>
 				</configuration>
