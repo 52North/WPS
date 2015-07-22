@@ -19,8 +19,6 @@ package com.github.autermann.wps.matlab.transform;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.value.MatlabScalar;
 import com.github.autermann.matlab.value.MatlabValue;

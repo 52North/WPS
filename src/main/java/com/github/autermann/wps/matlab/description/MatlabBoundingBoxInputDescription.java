@@ -17,29 +17,38 @@
  */
 package com.github.autermann.wps.matlab.description;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 
-public class MatlabBoundingBoxInputDescription extends MatlabInputDescripton {
-    private LinkedHashSet<String> crs;
+import com.github.autermann.matlab.value.MatlabType;
+import com.github.autermann.wps.commons.description.impl.AbstractBoundingBoxInputDescriptionBuilder;
+import com.github.autermann.wps.commons.description.impl.BoundingBoxInputDescriptionImpl;
+
+public class MatlabBoundingBoxInputDescription extends BoundingBoxInputDescriptionImpl
+        implements MatlabProcessInputDescription {
+
+    public MatlabBoundingBoxInputDescription(AbstractBoundingBoxInputDescriptionBuilder<?, ?> builder) {
+        super(builder);
+    }
+
+    @Override
+    public MatlabType getMatlabType() {
+        return MatlabType.MATRIX;
+    }
 
     @Override
     public Class<? extends IData> getBindingClass() {
         return BoundingBoxData.class;
     }
 
-    public Set<String> getCRS() {
-        return crs;
+    public static AbstractBoundingBoxInputDescriptionBuilder<?, ?> builder() {
+        return new BuilderImpl();
     }
 
-    public void setCRS(Set<String> crs) {
-        this.crs = new LinkedHashSet<String>(crs);
-    }
-
-    public boolean hasCRS() {
-        return this.crs != null && !this.crs.isEmpty();
+    private static class BuilderImpl extends AbstractBoundingBoxInputDescriptionBuilder<MatlabBoundingBoxInputDescription, BuilderImpl> {
+        @Override
+        public MatlabBoundingBoxInputDescription build() {
+            return new MatlabBoundingBoxInputDescription(this);
+        }
     }
 }

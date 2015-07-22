@@ -18,6 +18,7 @@
 package com.github.autermann.wps.matlab.transform;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.n52.wps.io.data.IData;
@@ -34,15 +35,15 @@ import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.wps.matlab.MatlabFileBinding;
 import com.github.autermann.wps.matlab.description.MatlabBoundingBoxOutputDescription;
 import com.github.autermann.wps.matlab.description.MatlabComplexOutputDescription;
-import com.github.autermann.wps.matlab.description.MatlabInputDescripton;
 import com.github.autermann.wps.matlab.description.MatlabLiteralInputDescription;
 import com.github.autermann.wps.matlab.description.MatlabLiteralOutputDescription;
-import com.github.autermann.wps.matlab.description.MatlabOutputDescription;
+import com.github.autermann.wps.matlab.description.MatlabProcessInputDescription;
+import com.github.autermann.wps.matlab.description.MatlabProcessOutputDescription;
 import com.google.common.collect.Lists;
 
 public class MatlabValueTransformer {
 
-    public MatlabValue transform(MatlabInputDescripton desc,
+    public MatlabValue transform(MatlabProcessInputDescription desc,
                                  List<? extends IData> data) throws
             ExceptionReport {
         if (desc == null) {
@@ -54,8 +55,7 @@ public class MatlabValueTransformer {
                     .format("No data to convert for input %s", desc.getId()),
                                       ExceptionReport.NO_APPLICABLE_CODE);
         }
-        if (data.size() < desc.getMinOccurs() ||
-            data.size() > desc.getMaxOccurs()) {
+        if (!desc.getOccurence().isInBounds(BigInteger.valueOf(data.size()))) {
             throw new ExceptionReport(String
                     .format("Invalid occurence of input %s", desc.getId()),
                                       ExceptionReport.INVALID_PARAMETER_VALUE);
@@ -67,7 +67,7 @@ public class MatlabValueTransformer {
         } else {
             MatlabCell cell = transformMultiInput(desc, data);
             if (desc instanceof MatlabLiteralInputDescription &&
-                ((MatlabLiteralInputDescription) desc).getType().isNumber()) {
+                ((MatlabLiteralInputDescription) desc).getLiteralType().isNumber()) {
 
                 int i = 0;
                 double[] values = new double[data.size()];
@@ -81,7 +81,7 @@ public class MatlabValueTransformer {
         }
     }
 
-    private MatlabCell transformMultiInput(MatlabInputDescripton definition,
+    private MatlabCell transformMultiInput(MatlabProcessInputDescription definition,
                                            List<? extends IData> data)
             throws ExceptionReport {
         List<MatlabValue> values = Lists.newLinkedList();
@@ -91,13 +91,13 @@ public class MatlabValueTransformer {
         return new MatlabCell(values);
     }
 
-    private MatlabValue transformSingleInput(MatlabInputDescripton definition,
+    private MatlabValue transformSingleInput(MatlabProcessInputDescription definition,
                                              IData data) throws ExceptionReport {
         if (definition instanceof MatlabLiteralInputDescription) {
             MatlabLiteralInputDescription name
                     = (MatlabLiteralInputDescription) definition;
             try {
-                return name.getType().getTransformation().transformInput(data);
+                return name.getLiteralType().getTransformation().transformInput(data);
             } catch (IllegalArgumentException e) {
                 throw new ExceptionReport(String
                         .format("Can not convert %s for input %s", data, definition
@@ -120,7 +120,7 @@ public class MatlabValueTransformer {
         }
     }
 
-    public IData transform(MatlabOutputDescription definition,
+    public IData transform(MatlabProcessOutputDescription definition,
                            MatlabValue value)
             throws ExceptionReport {
         if (definition == null) {
@@ -129,10 +129,9 @@ public class MatlabValueTransformer {
         }
 
         if (value == null) {
-            throw new ExceptionReport(String
-                    .format("No data to convert for output %s",
-                            definition.getId()),
-                                      ExceptionReport.NO_APPLICABLE_CODE);
+            throw new ExceptionReport(
+                    String.format("No data to convert for output %s", definition.getId()),
+                    ExceptionReport.NO_APPLICABLE_CODE);
         }
 
         if (definition instanceof MatlabComplexOutputDescription) {
@@ -144,15 +143,12 @@ public class MatlabValueTransformer {
         }
     }
 
-    private IData transformLiteralOutput(MatlabOutputDescription definition,
+    private IData transformLiteralOutput(MatlabProcessOutputDescription definition,
                                          MatlabValue value)
             throws ExceptionReport {
         try {
-            MatlabLiteralOutputDescription literalDefinition
-                    = (MatlabLiteralOutputDescription) definition;
-            return literalDefinition.getType()
-                    .getTransformation()
-                    .transformOutput(value);
+            MatlabLiteralOutputDescription literalDefinition = (MatlabLiteralOutputDescription) definition;
+            return literalDefinition.getLiteralType().getTransformation().transformOutput(value);
         } catch (IllegalArgumentException e) {
             throw new ExceptionReport(String
                     .format("Can not convert %s for output %s", value, definition
@@ -160,7 +156,7 @@ public class MatlabValueTransformer {
         }
     }
 
-    private IData transformBoundingBoxOutput(MatlabOutputDescription definition,
+    private IData transformBoundingBoxOutput(MatlabProcessOutputDescription definition,
                                              MatlabValue value)
             throws ExceptionReport {
         if (value.isMatrix()) {
@@ -174,25 +170,25 @@ public class MatlabValueTransformer {
         }
     }
 
-    private IData transformComplexOutput(MatlabOutputDescription definition,
+    private IData transformComplexOutput(MatlabProcessOutputDescription definition,
                                          MatlabValue value)
             throws ExceptionReport {
         MatlabComplexOutputDescription complexDefinition
                 = (MatlabComplexOutputDescription) definition;
-        if (value.isFile()) {
-            try {
-                return new MatlabFileBinding(value.asFile().getContent(),
-                                             complexDefinition.getMimeType(),
-                                             complexDefinition.getSchema());
-            } catch (IOException ex) {
-                throw new ExceptionReport(String.format(
-                        "Error loading file for output %s", definition
-                        .getId()), ExceptionReport.NO_APPLICABLE_CODE);
-            }
-        } else {
+        if (!value.isFile()) {
             throw new ExceptionReport(String
                     .format("Can not convert %s for output %s", value, definition
                             .getId()), ExceptionReport.NO_APPLICABLE_CODE);
+        } else {
+            try {
+                return new MatlabFileBinding(value.asFile().getContent(),
+                        complexDefinition.getDefaultFormat().getMimeType().orElse(null),
+                        complexDefinition.getDefaultFormat().getSchema().orElse(null));
+            } catch (IOException ex) {
+                throw new ExceptionReport(String.format(
+                        "Error loading file for output %s", definition
+                                .getId()), ExceptionReport.NO_APPLICABLE_CODE);
+            }
         }
     }
 }

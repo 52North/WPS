@@ -18,45 +18,44 @@
 package com.github.autermann.wps.matlab.description;
 
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.FileDataBinding;
 
-import com.github.autermann.wps.matlab.MatlabFileBinding;
+import com.github.autermann.matlab.value.MatlabType;
+import com.github.autermann.wps.commons.description.impl.AbstractComplexOutputDescriptionBuilder;
+import com.github.autermann.wps.commons.description.impl.ComplexOutputDescriptionImpl;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class MatlabComplexOutputDescription extends MatlabOutputDescription {
-    private String schema;
-    private String mimeType;
-    private String encoding;
+public class MatlabComplexOutputDescription extends ComplexOutputDescriptionImpl
+        implements MatlabProcessOutputDescription {
 
-    public String getSchema() {
-        return schema;
+    public MatlabComplexOutputDescription(
+            AbstractComplexOutputDescriptionBuilder<?, ?> builder) {
+        super(builder);
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
+    @Override
+    public MatlabType getMatlabType() {
+        return MatlabType.FILE;
     }
 
     @Override
     public Class<? extends IData> getBindingClass() {
-        return MatlabFileBinding.class;
+        return FileDataBinding.class;
     }
+
+    public static AbstractComplexOutputDescriptionBuilder<?, ?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends AbstractComplexOutputDescriptionBuilder<MatlabComplexOutputDescription, BuilderImpl> {
+        @Override
+        public MatlabComplexOutputDescription build() {
+            return new MatlabComplexOutputDescription(this);
+        }
+    }
+
 }

@@ -52,11 +52,13 @@ public class MatlabFileHandler implements IParser, IGenerator {
                 .decodingStream(new InputStreamReader(input)), mimeType, schema);
     }
 
+    @Override
     public InputStream generateStream(IData data, String mimeType, String schema)
             throws IOException {
         return new ByteArrayInputStream(((MatlabFileBinding) data).getPayload());
     }
 
+    @Override
     public InputStream generateBase64Stream(IData data, String mimeType,
                                             String schema) throws IOException {
         return new ByteArrayInputStream(BaseEncoding.base64()

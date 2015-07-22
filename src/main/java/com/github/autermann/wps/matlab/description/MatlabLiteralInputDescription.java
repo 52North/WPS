@@ -17,10 +17,10 @@
  */
 package com.github.autermann.wps.matlab.description;
 
-import java.util.List;
-
 import org.n52.wps.io.data.IData;
 
+import com.github.autermann.matlab.value.MatlabType;
+import com.github.autermann.wps.commons.description.impl.LiteralInputDescriptionImpl;
 import com.github.autermann.wps.matlab.transform.LiteralType;
 
 /**
@@ -28,58 +28,39 @@ import com.github.autermann.wps.matlab.transform.LiteralType;
  *
  * @author Christian Autermann
  */
-public class MatlabLiteralInputDescription extends MatlabInputDescripton {
-    private LiteralType type;
-    private String defaultValue;
-    private List<String> allowedValues;
-    private String unit;
+public class MatlabLiteralInputDescription extends LiteralInputDescriptionImpl
+        implements MatlabProcessInputDescription, MatlabLiteralTyped {
+    private final LiteralType type;
 
-    public LiteralType getType() {
+    public MatlabLiteralInputDescription(AbstractMatlabLiteralInputDescriptionBuilder<?, ?> builder) {
+        super(builder);
+        this.type = builder.getType();
+    }
+
+    @Override
+    public LiteralType getLiteralType() {
         return type;
     }
 
-    public void setType(LiteralType type) {
-        this.type = type;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public boolean hasDefaultValue() {
-        return this.defaultValue != null;
-    }
-
-    public List<String> getAllowedValues() {
-        return allowedValues;
-    }
-
-    public void setAllowedValues(List<String> allowedValues) {
-        this.allowedValues = allowedValues;
-    }
-
-    public boolean hasAllowedValues() {
-        return this.allowedValues != null;
+    @Override
+    public MatlabType getMatlabType() {
+        return this.type.getMatlabType();
     }
 
     @Override
     public Class<? extends IData> getBindingClass() {
-        return getType().getBindingClass();
+        return this.type.getBindingClass();
     }
 
-    public String getUnit() {
-        return unit;
+    public static AbstractMatlabLiteralInputDescriptionBuilder<?, ?> builder() {
+        return new BuilderImpl();
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    private static class BuilderImpl extends AbstractMatlabLiteralInputDescriptionBuilder<MatlabLiteralInputDescription, BuilderImpl> {
+        @Override
+        public MatlabLiteralInputDescription build() {
+            return new MatlabLiteralInputDescription(this);
+        }
     }
 
-    public boolean hasUnit() {
-        return this.unit != null && !this.unit.isEmpty();
-    }
 }

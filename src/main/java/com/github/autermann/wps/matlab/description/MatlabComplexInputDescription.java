@@ -18,45 +18,42 @@
 package com.github.autermann.wps.matlab.description;
 
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.FileDataBinding;
 
-import com.github.autermann.wps.matlab.MatlabFileBinding;
+import com.github.autermann.matlab.value.MatlabType;
+import com.github.autermann.wps.commons.description.impl.AbstractComplexInputDescriptionBuilder;
+import com.github.autermann.wps.commons.description.impl.ComplexInputDescriptionImpl;
 
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class MatlabComplexInputDescription extends MatlabInputDescripton {
-    private String schema;
-    private String mimeType;
-    private String encoding;
+public class MatlabComplexInputDescription extends ComplexInputDescriptionImpl
+        implements MatlabProcessInputDescription {
 
-    public String getSchema() {
-        return schema;
+    public MatlabComplexInputDescription(AbstractComplexInputDescriptionBuilder<?, ?> builder) {
+        super(builder);
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public String getMimeType() {
-        return mimeType;
-    }
-
-    public void setMimeType(String mimeType) {
-        this.mimeType = mimeType;
-    }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
+    @Override
+    public MatlabType getMatlabType() {
+        return MatlabType.FILE;
     }
 
     @Override
     public Class<? extends IData> getBindingClass() {
-        return MatlabFileBinding.class;
+        return FileDataBinding.class;
+    }
+
+    public static AbstractComplexInputDescriptionBuilder<?, ?> builder() {
+        return new BuilderImpl();
+    }
+
+    private static class BuilderImpl extends AbstractComplexInputDescriptionBuilder<MatlabComplexInputDescription, BuilderImpl> {
+        @Override
+        public MatlabComplexInputDescription build() {
+            return new MatlabComplexInputDescription(this);
+        }
     }
 }

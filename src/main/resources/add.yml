@@ -2,6 +2,7 @@
 title: add
 function: add
 abstract: adds two values
+version: 1.0.0
 identifier: com.github.autermann.wps.matlab.add
 inputs:
     - identifier: a
@@ -17,11 +18,11 @@ outputs:
       title: the result
       abstract: the result of the addition
       type: double
-connection:
-    host: localhost
-    port: 7000
-    attempts: 5
-    timeout: 10000
+connection: file:///home/autermann/Source/wps/matlab-wps/src/main/resources
+#host: localhost
+#port: 7000
+#attempts: 5
+#timeout: 10000
 ...
 #    ssl:
 #        keyFile: /home/auti/ssl/client/key.pem

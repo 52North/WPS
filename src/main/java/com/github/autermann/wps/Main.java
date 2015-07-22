@@ -17,21 +17,32 @@
  */
 package com.github.autermann.wps;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import com.github.autermann.wps.commons.WPS;
 import com.github.autermann.wps.matlab.MatlabAlgorithmRepository;
 import com.github.autermann.wps.matlab.MatlabFileHandler;
-import com.google.common.collect.ImmutableMultimap;
+
 
 public class Main {
 
     public static void main(String[] args)
             throws Exception {
+        Map<String, List<String>> properties = new HashMap<>();
+        List<String> configs = properties.computeIfAbsent(MatlabAlgorithmRepository.CONFIG_PROPERTY, k -> new LinkedList<>());
+
+        configs.add("classpath:add.yml");
+        configs.add("classpath:org/asdf/asdf.yml");
+
         new WPS("localhost", 12121)
-                .addAlgorithmRepository(MatlabAlgorithmRepository.class, ImmutableMultimap
-                        .of(MatlabAlgorithmRepository.CONFIG_PROPERTY,
-                            "/home/auti/Source/Lake-Analyzer/WPS/lakeAnalyzer.yaml"))
+                .addAlgorithmRepository(MatlabAlgorithmRepository.class, properties)
                 .addGenerator(MatlabFileHandler.class)
                 .addParser(MatlabFileHandler.class)
                 .start();
+
+
     }
 }

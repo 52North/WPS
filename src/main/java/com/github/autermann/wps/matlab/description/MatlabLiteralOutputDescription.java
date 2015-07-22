@@ -19,6 +19,8 @@ package com.github.autermann.wps.matlab.description;
 
 import org.n52.wps.io.data.IData;
 
+import com.github.autermann.matlab.value.MatlabType;
+import com.github.autermann.wps.commons.description.impl.LiteralOutputDescriptionImpl;
 import com.github.autermann.wps.matlab.transform.LiteralType;
 
 /**
@@ -26,32 +28,39 @@ import com.github.autermann.wps.matlab.transform.LiteralType;
  *
  * @author Christian Autermann
  */
-public class MatlabLiteralOutputDescription extends MatlabOutputDescription {
-    private LiteralType type;
-    private String unit;
+public class MatlabLiteralOutputDescription extends LiteralOutputDescriptionImpl
+        implements MatlabProcessOutputDescription, MatlabLiteralTyped {
+    private final LiteralType type;
 
-    public LiteralType getType() {
+    public MatlabLiteralOutputDescription(AbstractMatlabLiteralOutputDescriptionBuilder<?, ?> builder) {
+        super(builder);
+        this.type = builder.getType();
+    }
+
+    @Override
+    public LiteralType getLiteralType() {
         return type;
     }
 
-    public void setType(LiteralType type) {
-        this.type = type;
+    @Override
+    public MatlabType getMatlabType() {
+        return this.type.getMatlabType();
     }
 
     @Override
     public Class<? extends IData> getBindingClass() {
-        return getType().getBindingClass();
+        return this.type.getBindingClass();
     }
 
-    public String getUnit() {
-        return unit;
+    public static AbstractMatlabLiteralOutputDescriptionBuilder<?, ?> builder() {
+        return new BuilderImpl();
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    private static class BuilderImpl extends AbstractMatlabLiteralOutputDescriptionBuilder<MatlabLiteralOutputDescription, BuilderImpl> {
+        @Override
+        public MatlabLiteralOutputDescription build() {
+            return new MatlabLiteralOutputDescription(this);
+        }
     }
 
-    public boolean hasUnit() {
-        return this.unit != null && !this.unit.isEmpty();
-    }
 }

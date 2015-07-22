@@ -21,10 +21,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.joda.time.DateTime;
+
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralDateTimeBinding;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.value.MatlabDateTime;
 import com.github.autermann.matlab.value.MatlabValue;
@@ -53,8 +52,7 @@ public class DateTimeTransformation extends LiteralTransformation {
 
     @Override
     protected IData fromScalar(double value) {
-        return new LiteralDateTimeBinding(new Date(Double.valueOf(value)
-                .longValue()));
+        return new LiteralDateTimeBinding(new Date(Double.valueOf(value).longValue()));
     }
 
     @Override

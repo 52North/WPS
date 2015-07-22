@@ -24,28 +24,31 @@ import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.MatlabException;
 import com.github.autermann.matlab.MatlabRequest;
 import com.github.autermann.matlab.MatlabResult;
 import com.github.autermann.matlab.client.MatlabClient;
 import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.wps.matlab.description.MatlabInputDescripton;
-import com.github.autermann.wps.matlab.description.MatlabOutputDescription;
+import com.github.autermann.matlab.value.MatlabValue;
+import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.matlab.description.MatlabProcessDescription;
+import com.github.autermann.wps.matlab.description.MatlabProcessInputDescription;
 import com.github.autermann.wps.matlab.transform.MatlabValueTransformer;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 public class MatlabAlgorithm implements IAlgorithm {
-    private static final Logger LOG = LoggerFactory.getLogger(MatlabAlgorithm.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(MatlabAlgorithm.class);
     private final MatlabProcessDescription description;
-    
+
     public MatlabAlgorithm(MatlabProcessDescription description) {
         this.description = Preconditions.checkNotNull(description);
     }
@@ -57,22 +60,22 @@ public class MatlabAlgorithm implements IAlgorithm {
 
     @Override
     public ProcessDescriptionType getDescription() {
-        return description.getProcessDescription();
+        return this.description.getProcessDescription();
     }
 
     @Override
     public String getWellKnownName() {
-        return description.getId();
+        return this.description.getId().getValue();
     }
 
     @Override
     public Class<? extends IData> getInputDataType(String id) {
-        return description.getInput(id).getBindingClass();
+        return this.description.getInput(new OwsCodeType(id)).getBindingClass();
     }
 
     @Override
     public Class<? extends IData> getOutputDataType(String id) {
-        return description.getOutput(id).getBindingClass();
+        return this.description.getOutput(new OwsCodeType(id)).getBindingClass();
     }
 
     @Override
@@ -87,19 +90,13 @@ public class MatlabAlgorithm implements IAlgorithm {
             MatlabRequest request = fromInputData(inputData);
             LOG.info("Executing Matlab request: {}", request);
             MatlabClient client = this.description.getClientProvider().get();
-            MatlabResult result = client.exec(request);
+            MatlabResult result = client.execSync(request);
             LOG.info("Matlab result: {}", result);
             return toOutputData(result);
-        } catch (IOException ex) {
+        } catch (IOException | MatlabException ex) {
             throw new ExceptionReport(ex.getMessage(),
-                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
-                                      ex);
-        } catch (MatlabException ex) {
-            throw new ExceptionReport(ex.getMessage(),
-                                      ExceptionReport.REMOTE_COMPUTATION_ERROR,
-                                      ex);
+                    ExceptionReport.REMOTE_COMPUTATION_ERROR, ex);
         }
-
     }
 
     private MatlabRequest fromInputData(Map<String, List<IData>> inputs)
@@ -109,28 +106,32 @@ public class MatlabAlgorithm implements IAlgorithm {
 
         MatlabValueTransformer t = new MatlabValueTransformer();
 
-        for (MatlabInputDescripton in : description.getInputs()) {
-            if (inputs.containsKey(in.getId())) {
-                req.addParameter(t.transform(in, inputs.get(in.getId())));
-            } else if (in.getMinOccurs() > 0) {
+        for (MatlabProcessInputDescription in : description.getInputDescriptions()) {
+            String id = in.getId().getValue();
+            if (inputs.containsKey(id)) {
+                req.addParameter(t.transform(in, inputs.get(id)));
+            } else if (in.getOccurence().isRequired()) {
                 throw new ExceptionReport("missing input " + in.getId(),
                                           ExceptionReport.MISSING_PARAMETER_VALUE);
             } else {
                 req.addParameter(new MatlabScalar(Double.NaN));
             }
         }
-
-        for (MatlabOutputDescription out : description.getOutputs()) {
-            req.addResult(out.getId(), out.getMatlabType());
-        }
+        description.getOutputDescriptions().stream().forEach(out ->
+            req.addResult(out.getId().getValue(), out.getMatlabType())
+        );
         return req;
     }
 
-    private Map<String, IData> toOutputData(MatlabResult result) throws ExceptionReport {
-        Map<String,IData> map = Maps.newHashMap();
+    private Map<String, IData> toOutputData(MatlabResult result)
+            throws ExceptionReport {
+        Map<String, IData> map = Maps.newHashMap();
         MatlabValueTransformer t = new MatlabValueTransformer();
         for (String id : result.getResults().keySet()) {
-            map.put(id, t.transform(description.getOutput(id), result.getResult(id)));
+            MatlabValue value = result.getResult(id);
+            OwsCodeType codeType = new OwsCodeType(id);
+            IData data = t.transform(description.getOutput(codeType), value);
+            map.put(id, data);
         }
         return map;
     }

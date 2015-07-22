@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+
 import org.n52.wps.io.data.IData;
 
 import com.github.autermann.matlab.value.MatlabArray;
@@ -45,38 +46,47 @@ public abstract class LiteralTransformation {
 
     public final IData transformOutput(MatlabValue value) {
         return value.accept(new ReturningMatlabValueVisitor<IData>() {
+            @Override
             public IData visit(MatlabArray array) {
                 return fromArray(array.value());
             }
 
+            @Override
             public IData visit(MatlabBoolean bool) {
                 return fromBoolean(bool.value());
             }
 
+            @Override
             public IData visit(MatlabCell cell) {
                 return fromCell(cell.value());
             }
 
+            @Override
             public IData visit(MatlabMatrix matrix) {
                 return fromMatrix(matrix.value());
             }
 
+            @Override
             public IData visit(MatlabScalar scalar) {
                 return fromScalar(scalar.value());
             }
 
+            @Override
             public IData visit(MatlabString string) {
                 return fromString(string.value());
             }
 
+            @Override
             public IData visit(MatlabStruct struct) {
                 return fromStruct(struct.value());
             }
 
+            @Override
             public IData visit(MatlabFile file) {
                 throw new IllegalArgumentException();
             }
 
+            @Override
             public IData visit(MatlabDateTime time) {
                 return fromDateTime(time.value());
             }

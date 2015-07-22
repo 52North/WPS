@@ -23,8 +23,6 @@ import java.net.URL;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralAnyURIBinding;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.autermann.matlab.value.MatlabString;
 import com.github.autermann.matlab.value.MatlabValue;

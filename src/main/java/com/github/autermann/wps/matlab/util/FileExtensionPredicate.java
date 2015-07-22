@@ -17,43 +17,43 @@
  */
 package com.github.autermann.wps.matlab.util;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
-
-public class FileExtensionPredicate implements Predicate<File> {
-
+public class FileExtensionPredicate implements Predicate<Path> {
     private final Set<String> extensions;
 
-    public FileExtensionPredicate(Iterable<? extends String> extensions) {
-        Preconditions.checkNotNull(extensions);
-        this.extensions = Sets.newHashSet(extensions);
+    public FileExtensionPredicate(Iterable<String> extensions) {
+        Objects.requireNonNull(extensions);
+        this.extensions = StreamSupport.stream(extensions.spliterator(), false)
+                .collect(Collectors.toSet());
     }
 
-    public boolean apply(File file) {
-        return extensions.contains(Files.getFileExtension(file.getName()));
-    }
-
-    public static Predicate<File> of(String... extensions) {
-        return of(Arrays.asList(extensions));
-    }
-
-    public static Predicate<File> of(Iterable<? extends String> extensions) {
-        return new FileExtensionPredicate(extensions);
+    @Override
+    public boolean test(Path file) {
+        String fileName = file.getFileName().toString();
+        int idx = fileName.lastIndexOf('.');
+        String ext = (idx < 0) ? "" : fileName.substring(idx + 1);
+        return extensions.contains(ext);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("FileExtensionPredicate.of(" );
-        Joiner.on(", ").appendTo(sb, extensions);
-        return sb.append(")").toString();
+        return this.extensions.stream().collect(Collectors
+                .joining(", ", "FileExtensionPredicate.of(", ")"));
+    }
+
+    public static Predicate<Path> of(String... extensions) {
+        return of(Arrays.asList(extensions));
+    }
+
+    public static Predicate<Path> of(Iterable<String> extensions) {
+        return new FileExtensionPredicate(extensions);
     }
 
 }
