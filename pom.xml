@@ -254,6 +254,12 @@
 			    <groupId>org.n52.iceland</groupId>
 			    <artifactId>iceland</artifactId>
                 <version>${n52.iceland.version}</version>
+                <exclusions>
+				    <exclusion>
+					    <artifactId>servlet-api</artifactId>
+					    <groupId>javax.servlet</groupId>
+				    </exclusion>
+			    </exclusions>
 		    </dependency>
 		    <!--  O&M Parser -->
 		    <dependency>
