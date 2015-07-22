@@ -11,6 +11,8 @@
 
 	<!-- No security for static resources -->
 	<http pattern="/static/**" security="none" />
+	<!-- No security currently for requests to the WPS-->
+	<http pattern="/WebProcessingService" security="none" />
 
 	<http use-expressions="true">
 		<form-login login-processing-url="/j_spring_security_check" login-page="/login" authentication-failure-url="/login?login_error=t" />
