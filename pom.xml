@@ -259,6 +259,10 @@
 					    <artifactId>servlet-api</artifactId>
 					    <groupId>javax.servlet</groupId>
 				    </exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
 			    </exclusions>
 		    </dependency>
 		    <!--  O&M Parser -->
@@ -274,6 +278,10 @@
 					<exclusion>
 			            <groupId>org.geotools</groupId>
 			            <artifactId>gt-epsg-hsql</artifactId>
+					</exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
 					</exclusion>
 				</exclusions>
 		    </dependency>
