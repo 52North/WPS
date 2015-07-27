@@ -30,14 +30,27 @@ package org.n52.wps.webapp.web;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.SystemUtils;
+import org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.WPSConfigurationException;
@@ -206,7 +219,7 @@ public class UploadController {
 
 		// base directory
 		StringBuilder directoryPath = new StringBuilder(
-				resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes/uploaded"));
+				resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes"));
 
 		// try to get the package name from the file, read line by line
 		File tempFile = new File(java.getOriginalFilename());
@@ -215,10 +228,13 @@ public class UploadController {
 		FileUtils.writeByteArrayToFile(tempFile, java.getBytes());
 		List<String> lines = FileUtils.readLines(tempFile);
 
+		String fullyQualifiedName = tempFile.getName().replace(".java", "");
+		
 		// find the first line with the word package at it's beginning
 		for (String line : lines) {
 			if (line.indexOf("package") == 0) {
 				packageName = line.replace("package", "").replace(";", "").trim();
+				fullyQualifiedName = packageName + "." + fullyQualifiedName;
 				break;
 			}
 		}
@@ -234,9 +250,81 @@ public class UploadController {
 		// copy the file to the final directory
 		FileUtils.copyFileToDirectory(tempFile, new File(directoryPath.toString()));
 		LOGGER.info("Uploaded file saved in '{}'.", directoryPath.toString());
+		
+		String fileName = directoryPath.toString().endsWith(File.separator) ? directoryPath.toString() + tempFile.getName() : directoryPath.toString() + File.separator + tempFile.getName();
+		
+		compile(fileName);
+		
+		configurationManager.getConfigurationServices().addAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), fullyQualifiedName);
+		
 		tempFile.delete();
 		return directoryPath.toString();
 	}
+	
+    public void compile(String fileName)
+    {
+        ClassLoader cl = this.getClass().getClassLoader();
+        List<URL> classpath = new ArrayList<URL>();
+        if (cl instanceof URLClassLoader) {
+            URLClassLoader cl2 = (URLClassLoader) cl;
+            for (URL jar : cl2.getURLs()) {
+                classpath.add(jar);
+            }
+            try {
+				cl2.close();
+			} catch (IOException e) { 
+				LOGGER.error(e.getMessage(), e);
+			}
+        }
+        String classPath = System.getProperty("java.class.path");
+        for (String path : classPath.split(File.pathSeparator)) {
+            try {
+                classpath.add(new URL("file:" + path));
+            } catch (MalformedURLException e) {
+                System.err.println("Wrong url: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        StringBuffer sb = new StringBuffer();
+        for (URL jar : classpath) {
+            if (SystemUtils.IS_OS_WINDOWS == false) {
+                sb.append(jar.getPath());
+                sb.append(File.pathSeparatorChar);
+            } else {
+                sb.append(jar.getPath().substring(1));
+                sb.append(File.pathSeparatorChar);
+            }
+        }
+        String ops[] = new String[] { "-classpath", sb.toString() };
+
+        List<String> opsIter = new ArrayList<String>();
+        try {
+            for (String s : ops) {
+                ((ArrayList<String>) opsIter).add(URLDecoder.decode(s, Charset.forName("UTF-8").toString()));
+            }
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+
+        File[] files1 = new File[1];
+        files1[0] = new File(fileName);
+
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+        Iterable<? extends JavaFileObject> compilationUnits1 = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files1));
+
+        compiler.getTask(null, fileManager, null, opsIter, null, compilationUnits1).call();
+
+        try {
+            fileManager.close();
+        } catch (IOException e) { 
+        	LOGGER.error(e.getMessage(), e);
+        }
+
+    }
+
 
 	/*
 	 * Write & save the XML file
