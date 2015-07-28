@@ -59,15 +59,10 @@ public class JavaProcessCompiler {
         ClassLoader cl = JavaProcessCompiler.class.getClassLoader();
         List<URL> classpath = new ArrayList<URL>();
         if (cl instanceof URLClassLoader) {
-            URLClassLoader cl2 = (URLClassLoader) cl;
-            for (URL jar : cl2.getURLs()) {
+            for (URL jar : ((URLClassLoader)cl).getURLs()) {
                 classpath.add(jar);
+                LOGGER.debug("Using " + jar.toString());
             }
-            try {
-				cl2.close();
-			} catch (IOException e) { 
-				LOGGER.error("Could not close URLClassLoader", e);
-			}
         }
         String classPath = System.getProperty("java.class.path");
         for (String path : classPath.split(File.pathSeparator)) {
