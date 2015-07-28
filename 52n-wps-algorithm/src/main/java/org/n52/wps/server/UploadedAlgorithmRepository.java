@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.n52.wps.algorithm.annotation.Algorithm;
+import org.n52.wps.algorithm.util.CustomClassLoader;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
@@ -110,10 +111,8 @@ public class UploadedAlgorithmRepository implements
 
 	private IAlgorithm loadAlgorithm(String algorithmClassName)
 			throws Exception {
-//		IAlgorithm algorithm = (IAlgorithm) UploadedAlgorithmRepository.class.getClassLoader().loadClass(algorithmClassName).newInstance();
-		Class<?> algorithmClass = UploadedAlgorithmRepository.class.getClassLoader().loadClass(algorithmClassName);
 		
-//		Class<?> algorithmClass = new UploadedProcessClassLoader().loadClass(algorithmClassName);
+		Class<?> algorithmClass = new CustomClassLoader("/uploaded").loadClass(algorithmClassName);
 		IAlgorithm algorithm = null;
 		if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
 			algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());
@@ -175,73 +174,4 @@ public class UploadedAlgorithmRepository implements
 	@Override
 	public void shutdown() {}
 	
-	class UploadedProcessClassLoader extends ClassLoader {
-
-	    /**
-	     * The HashMap where the classes will be cached
-	     */
-	    private Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-
-	    @Override
-	    public String toString() {
-	        return UploadedProcessClassLoader.class.getName();
-	    }
-
-	    @Override
-	    protected Class<?> findClass(String name) throws ClassNotFoundException {
-
-	        if (classes.containsKey(name)) {
-	            return classes.get(name);
-	        }
-
-	        byte[] classData;
-
-	        try {
-	            classData = loadClassData(name);
-	        } catch (IOException e) {
-	            throw new ClassNotFoundException("Class [" + name
-	                    + "] could not be found", e);
-	        }
-
-	        Class<?> c = defineClass(name, classData, 0, classData.length);
-	        resolveClass(c);
-	        classes.put(name, c);
-
-	        return c;
-	    }
-
-	    /**
-	     * Load the class file into byte array
-	     * 
-	     * @param name
-	     *            The name of the process class, "uploaded" will be added to the path
-	     * @return The class file as byte array
-	     * @throws IOException
-	     */
-	    private byte[] loadClassData(String name) throws IOException {
-	    	
-	    	InputStream classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream("uploaded/" + name.replace(".", "/")
-                    + ".class");
-	    	
-	    	if(classBytesStream == null){
-	    		classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(name.replace(".", "/")
-	                    + ".class");
-	    	}
-	    	
-	        BufferedInputStream in = new BufferedInputStream(classBytesStream);
-	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        int i;
-
-	        while ((i = in.read()) != -1) {
-	            out.write(i);
-	        }
-
-	        in.close();
-	        byte[] classData = out.toByteArray();
-	        out.close();
-
-	        return classData;
-	    }
-	}
-
 }
