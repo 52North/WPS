@@ -318,6 +318,8 @@
 	</properties>
 
 	<build>
+<!-- 	 Is not working atm. -->
+<!-- 		<finalName>${wps.name}##${project.version}</finalName> -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -675,12 +677,6 @@
 					</plugin>
 				</plugins>
 			</build>
-			<dependencies>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-io-geotools</artifactId>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>with-geotools</id>

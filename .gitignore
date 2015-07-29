@@ -1,11 +1,34 @@
-target/
+#
+#	Maven
+#
 **/target/
+#
+#	Netbeans
+#
 nbactions*.xml
 **/nbactions*.xml
 nb-configuration*.xml
 **/nb-configuration*.xml
+#
+# 	Eclipse
+#
 .settings
 .project
 .classpath
+*.jpage
+52n-wps-algorithm-impl/.externalToolBuilders/
+52n-wps-algorithm/.externalToolBuilders/
+52n-wps-client-lib/.externalToolBuilders/
+52n-wps-commons/.externalToolBuilders/
+52n-wps-configuration-api/.externalToolBuilders/
+52n-wps-database/.externalToolBuilders/
+52n-wps-io-impl/.externalToolBuilders/
+52n-wps-io/.externalToolBuilders/
+52n-wps-server/.externalToolBuilders/
+52n-wps-webapp/.externalToolBuilders/
+#
+#	Other
+#
 .Rhistory
 *.log
+52n-wps-webapp/src/main/webapp/META-INF/context.xml

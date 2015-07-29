@@ -40,9 +40,6 @@ import org.n52.wps.io.data.IComplexData;
  */
 public class GenericXMLDataBinding implements IComplexData {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -6875103125533078664L;
 
 	private XmlObject payload;

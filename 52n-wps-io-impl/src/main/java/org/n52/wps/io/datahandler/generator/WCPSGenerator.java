@@ -36,8 +36,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.ArrayDataBinding;
 
@@ -48,8 +46,6 @@ import org.n52.wps.io.data.binding.complex.ArrayDataBinding;
  */
 public class WCPSGenerator extends AbstractGenerator {
 	
-	private static Logger LOGGER = LoggerFactory.getLogger(WCPSGenerator.class);
-
 	public WCPSGenerator(){
 		super();
 		supportedIDataTypes.add(ArrayDataBinding.class);
@@ -81,9 +77,5 @@ public class WCPSGenerator extends AbstractGenerator {
 		return stream;
 	}
 
-	public void writeToStream(IData outputData, OutputStream outputStream) {
-		
-		
-	}
-	
+	public void writeToStream(IData outputData, OutputStream outputStream) {}	
 }

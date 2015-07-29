@@ -220,5 +220,40 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- O&M Parser -->
+		<dependency>
+			<groupId>${n52.sos.group}</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${n52.sos.group}</groupId>
+			<artifactId>api</artifactId>
+			<type>test-jar</type>
+		</dependency>
+		<dependency>
+			<groupId>${n52.sos.group}</groupId>
+			<artifactId>coding-sos-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${n52.sos.group}</groupId>
+			<artifactId>third-party-ncname-resolver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb</groupId>
+			<artifactId>52n-xml-om-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-library</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

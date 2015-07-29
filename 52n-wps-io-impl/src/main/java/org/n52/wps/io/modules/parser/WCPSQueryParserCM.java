@@ -29,6 +29,7 @@
 package org.n52.wps.io.modules.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.n52.wps.io.datahandler.parser.WCPSQueryParser;
@@ -78,7 +79,7 @@ public class WCPSQueryParserCM extends ClassKnowingModule{
 
 	@Override
 	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
+		return Collections.emptyList();
 	}
 
 	@Override

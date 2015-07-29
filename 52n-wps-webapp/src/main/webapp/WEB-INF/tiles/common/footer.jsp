@@ -32,33 +32,19 @@
 				<div>
 					<h5>Affiliations</h5>
 					<p>The 52&deg;North affiliations:</p>
-					<a href="http://www.opengeospatial.org/" target="_blank" title="OGC Associate Members"> <img border="0" alt=""
-						src="http://52north.org/images/logos/ogc.gif" /></a> <br /> <a href="http://www.sensorweb-alliance.org/"
-						target="_blank" title="Sensor Web Alliance"> <img border="0" alt=""
-						src="http://52north.org/images/logos/swa.gif" /></a>
+					<ul><li><a href="http://www.opengeospatial.org/" target="_blank" title="OGC Associate Members">OGC Associate Members</a></li></ul>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="pull-left">
 					<h5>Cooperation partners</h5>
 					<p>The 52&deg;North principal cooperation partners</p>
-					<table>
-						<tbody>
-							<tr>
-								<td><a href="http://ifgi.uni-muenster.de/" target="_blank" title="Institute for Geoinformatics"><img
-										height="40" border="0" width="117" alt="" src="http://52north.org/images/logos/ifgi.gif" /></a></td>
-								<td><a href="http://www.conterra.de/" target="_blank" title="con terra GmbH"><img height="40"
-										border="0" width="81" alt="" src="http://52north.org/images/logos/conterra_new.png" /></a></td>
-							</tr>
-							<tr>
-								<td><a href="http://www.esri.com/" target="_blank" title="ESRI"><img height="40" border="0" width="110"
-										alt="" src="http://52north.org/images/logos/esri_new.gif" /></a></td>
-								<td><a href="http://www.itc.nl/" target="_blank"
-									title="International Institute for Geo-Information  Science and Earth    Observation"><img height="40"
-										border="0" width="34" alt="" src="http://52north.org/images/logos/itc.gif" /></a></td>
-							</tr>
-						</tbody>
-					</table>
+					<ul>
+						<li><a href="http://ifgi.uni-muenster.de/" target="_blank" title="Institute for Geoinformatics">IfGI</a></li>
+						<li><a href="http://www.conterra.de/" target="_blank" title="con terra GmbH">con terra GmbH</a></li>
+						<li><a href="http://www.esri.com/" target="_blank" title="esri">esri</a></li>
+						<li><a href="http://www.itc.nl/" target="_blank" title="International Institute for Geo-Information  Science and Earth Observation">ITC</a></li>
+					</ul>
 				</div>
 			</div>
 		</div>
@@ -70,10 +56,7 @@
 				</small>
 			</div>
 			<div class="col-lg-3">
-				<ul>
-					<li><a href="http://52north.org/about/contact">Contact</a></li>
-					<li><a href="http://52north.org/about/52north/disclaimer">Disclaimer</a></li>
-				</ul>
+				<a href="http://52north.org/about/contact">Contact</a>&nbsp;|&nbsp;<a href="http://52north.org/about/imprint">Imprint</a>
 			</div>
 		</div>
 

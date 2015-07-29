@@ -135,5 +135,9 @@
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.n52.iceland</groupId>
+			<artifactId>iceland</artifactId>
+		</dependency>
 	</dependencies>
 </project>
