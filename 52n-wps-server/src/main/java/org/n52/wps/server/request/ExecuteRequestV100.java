@@ -563,8 +563,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 								&& input.getData().getLiteralData() != null) {
 							// then check if the desription is also of type literal
 							if (inputDesc.getLiteralData() == null) {
-								throw new ExceptionReport(
-										"Inputtype LiteralData is not supported",
+                                throw new ExceptionReport("Inputtype LiteralData is not supported for input"
+                                                                  + inputDesc.getIdentifier().getStringValue(),
 										ExceptionReport.INVALID_PARAMETER_VALUE);
 							}
 							// literalValue.getDataType ist optional

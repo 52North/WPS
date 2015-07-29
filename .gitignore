@@ -31,3 +31,4 @@ nb-configuration*.xml
 #
 .Rhistory
 *.log
+52n-wps-webapp/src/main/webapp/META-INF/context.xml
