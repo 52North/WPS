@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>3.3.2-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-webapp</artifactId>
@@ -324,6 +324,8 @@
 	</properties>
 
 	<build>
+<!-- 	 Is not working atm. -->
+<!-- 		<finalName>${wps.name}##${project.version}</finalName> -->
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -682,12 +684,6 @@
 					</plugin>
 				</plugins>
 			</build>
-			<dependencies>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-io-geotools</artifactId>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>with-geotools</id>

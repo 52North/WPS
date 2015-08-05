@@ -46,7 +46,7 @@ public class PlainStringBinding implements IComplexData {
         return payload;
     }
 
-    public Class< ? > getSupportedClass() {
+	public Class<?> getSupportedClass() {
         return String.class;
     }
 

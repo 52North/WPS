@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
-		<version>3.3.2-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-io-impl</artifactId>
@@ -134,6 +134,10 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.iceland</groupId>
+			<artifactId>iceland</artifactId>
 		</dependency>
 	</dependencies>
 </project>

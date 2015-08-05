@@ -35,6 +35,7 @@ import org.n52.wps.io.data.IComplexData;
 
 public class GeotiffBinding implements IComplexData{
 
+	private static final long serialVersionUID = 1L;
 	protected File geotiff;
 	protected String mimeType;
 	
@@ -49,7 +50,7 @@ public class GeotiffBinding implements IComplexData{
 	}
 
 	@Override
-	public Class getSupportedClass() {
+	public Class<?> getSupportedClass() {
 		return File.class;
 	}
 
