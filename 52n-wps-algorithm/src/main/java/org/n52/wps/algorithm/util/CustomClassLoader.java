@@ -19,6 +19,7 @@ package org.n52.wps.algorithm.util;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -81,7 +82,7 @@ public class CustomClassLoader extends ClassLoader {
                     + "] could not be found", e);
         }
 
-        Class<?> c = defineClass(name, classData, 0, classData.length);
+        Class<?> c = defineClass(null, classData, 0, classData.length);
         resolveClass(c);
         classes.put(name, c);
 
@@ -98,8 +99,19 @@ public class CustomClassLoader extends ClassLoader {
      */
     private byte[] loadClassData(String name) throws IOException {
     	
-    	InputStream classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream((baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/")
-                + ".class");
+        String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/") + ".class"; 
+        
+        InputStream classBytesStream = null;
+        
+        File classFile = new File(pathToClassFile);
+        
+        if(classFile.isAbsolute()){
+            //absolute file path was passed, so try to load file
+            classBytesStream = new FileInputStream(classFile);
+        }else{
+            //relative path was passed, so try to get resource as stream 
+            classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(pathToClassFile);
+        }
     	
         BufferedInputStream in = new BufferedInputStream(classBytesStream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
