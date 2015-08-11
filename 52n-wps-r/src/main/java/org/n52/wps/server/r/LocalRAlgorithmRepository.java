@@ -56,6 +56,8 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
@@ -104,7 +106,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
 
-    private LocalRAlgorithmRepositoryCM configModule;
+    private ConfigurationModule configModule;
 
     public LocalRAlgorithmRepository() {
         LOGGER.info("NEW {}", this);
@@ -114,9 +116,11 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     public void init() {
         LOGGER.info("Initializing Local*R*AlgorithmRepository..");
 
-        configModule = new LocalRAlgorithmRepositoryCM();
+        configModule = WPSConfig.getInstance()
+				.getConfigurationModuleForClass(this.getClass().getName(),
+						ConfigurationCategory.REPOSITORY);
 
-        if (configModule.isActive()) {
+        if (configModule != null && configModule.isActive()) {
             boolean rServeIsAvailable = checkRServe();
             LOGGER.debug("R serve is available: {}", rServeIsAvailable);
 

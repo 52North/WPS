@@ -35,6 +35,8 @@ import org.apache.commons.io.FileUtils;
 import org.n52.wps.io.data.IComplexData;
 
 public class FileDataBinding implements IComplexData {
+	
+	private static final long serialVersionUID = 1L;
 	protected File file;
 
 	public FileDataBinding(File file) {
@@ -51,13 +53,13 @@ public class FileDataBinding implements IComplexData {
 		return File.class;
 	}
 	
-	private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
-	{
+	private synchronized void writeObject(java.io.ObjectOutputStream oos)
+			throws IOException {
 		throw new RuntimeException("Serialization of 'FileDataBinding' data type not implemented yet.");
 	}
 	
-	private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
-	{
+	private synchronized void readObject(java.io.ObjectInputStream oos)
+			throws IOException, ClassNotFoundException {
 		throw new RuntimeException("Deserialization of 'FileDataBinding' data type not implemented yet.");
 	}
 	

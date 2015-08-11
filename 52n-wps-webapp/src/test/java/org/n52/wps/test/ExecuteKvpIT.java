@@ -31,6 +31,7 @@ package org.n52.wps.test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -101,7 +102,7 @@ public class ExecuteKvpIT {
     	String response = GetClient.sendRequest(getURL);
 
     	assertThat(response, response, not(containsString(exceptionReport)));
-    	assertThat(response, response, containsString("Polygon"));
+    	assertTrue((response.contains("Polygon") || response.contains("POLYGON")));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class ExecuteKvpIT {
     	String response = GetClient.sendRequest(getURL);
 
     	assertThat(response, response, not(containsString(exceptionReport)));
-    	assertThat(response, response, containsString("Polygon"));
+    	assertTrue((response.contains("Polygon") || response.contains("POLYGON")));
     }
 
     @Test

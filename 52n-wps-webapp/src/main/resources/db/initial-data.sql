@@ -7,6 +7,8 @@ INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiRefere
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.EchoProcess','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.r.LocalRAlgorithmRepositoryCM', FALSE);
+
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM', FALSE);
 
 INSERT INTO ALGORITHMENTRY VALUES('i.atcorr','org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM',TRUE);
@@ -790,3 +792,9 @@ DELETE FROM CONFIGURATIONMODULE WHERE MODULE_CLASS_NAME='org.n52.wps.server.data
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.database.PostgresDatabaseConfigurationModule',FALSE);
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.webapp.entities.Server',TRUE);
 INSERT INTO CONFIGURATIONENTRY VALUES('hostport','org.n52.wps.webapp.entities.Server','8080');
+
+--
+-- O&M Parser/Generator Configuration
+--
+INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.parser.OMParserCM', TRUE);
+INSERT INTO FORMATENTRY VALUES('application/om+xml; version=2.0', 'http://schemas.opengis.net/om/2.0/observation.xsd', '' , 'org.n52.wps.io.modules.generator.OMGeneratorCM', TRUE);

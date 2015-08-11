@@ -144,6 +144,14 @@
 		<license>GNU General Public License (GPL), version 2, with the CLASSPATH exception</license>
 	</artifact>
 
+	<!-- http://download.java.net/media/java3d/builds/release/1.5.2/LICENSE-Java3D-v1_5_2.txt --><!-- http://download.java.net/media/java3d/builds/release/1.5.2/LICENSE-GPLv2.txt -->
+	<artifact>
+		<groupId>java3d</groupId>
+		<artifactId>vecmath</artifactId>
+		<version>1.5.2</version>
+		<license>GPL 2.0 license w/ CPE</license>
+	</artifact>
+
 	<!--  -->
 	<!-- http://en.wikipedia.org/wiki/Java_Media_Framework#Versions_and_licensing -->
 	<!-- https://www.hamm.de/ASWeb/help/lizenzen/jdl/jdl-jai.pdf -->
@@ -165,6 +173,15 @@
 		<artifactId>jai_imageio</artifactId>
 		<version>1.1</version>
 		<license>Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt</license>
+	</artifact>
+	
+	<!-- http://stackoverflow.com/questions/16343572/license-for-glassfish-javax-servlet-servlet-api-version-2-5 --><!-- https://glassfish.java.net/nonav/public/CDDL+GPL.html -->
+	<artifact>
+		<groupId>javax.servlet</groupId>
+		<artifactId>servlet-api</artifactId>
+		<version>2.0</version>
+		<version>2.5</version>
+		<license>CDDL 1.1 or GPL2 w/ CPE</license>
 	</artifact>
 
 	<!-- http://stackoverflow.com/questions/16343572/license-for-glassfish-javax-servlet-servlet-api-version-2-5 -->

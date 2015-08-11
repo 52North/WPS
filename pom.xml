@@ -9,7 +9,7 @@
 	<artifactId>52n-wps-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>52North Web Processing Service</name>
-	<version>3.3.2-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
 	<description>
 		52 North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
@@ -231,21 +231,100 @@
 <!-- 		<module>52n-wps-mc</module> -->
 	</modules>
 	<properties>
+		<wps.name>52n-wps-webapp</wps.name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
 		<geotools.version>8.7</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
-		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
-		<org.spring-security.version>3.1.7.RELEASE</org.spring-security.version>
+		<jackson.version>2.1.2</jackson.version>
+		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
+		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
 		<currentYear>2014</currentYear> <!-- manual setting -->
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
+        <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
+        <n52.sos.version>5.0.0-SNAPSHOT</n52.sos.version>
+        <n52.iceland.version>1.0.0-SNAPSHOT</n52.iceland.version>
 	</properties>
 	<dependencyManagement>
-		<dependencies>
-			<!-- testing -->
+        <dependencies>
+		    <dependency>
+			    <groupId>org.n52.iceland</groupId>
+			    <artifactId>iceland</artifactId>
+                <version>${n52.iceland.version}</version>
+                <exclusions>
+				    <exclusion>
+					    <artifactId>servlet-api</artifactId>
+					    <groupId>javax.servlet</groupId>
+				    </exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
+			    </exclusions>
+		    </dependency>
+		    <!--  O&M Parser -->
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>api</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    	<exclusions>
+					<exclusion>
+						<artifactId>hsqldb</artifactId>
+						<groupId>hsqldb</groupId>
+					</exclusion>
+					<exclusion>
+			            <groupId>org.geotools</groupId>
+			            <artifactId>gt-epsg-hsql</artifactId>
+					</exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
+				</exclusions>
+		    </dependency>
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>api</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    	<type>test-jar</type>
+		    	<scope>test</scope>
+ 			    <exclusions>
+					<exclusion>
+						<artifactId>hsqldb</artifactId>
+						<groupId>hsqldb</groupId>
+					</exclusion>
+					<exclusion>
+			            <groupId>org.geotools</groupId>
+			            <artifactId>gt-epsg-hsql</artifactId>
+					</exclusion>
+				</exclusions>
+		    </dependency>
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>coding-sos-v20</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    </dependency>
+		    <dependency>
+		    	<groupId>${n52.sos.group}</groupId>
+		    	<artifactId>third-party-ncname-resolver</artifactId>
+		    	<version>${n52.sos.version}</version>
+		    </dependency>
+		    <dependency>
+		    	<groupId>org.n52.sensorweb</groupId>
+		    	<artifactId>52n-xml-om-v20</artifactId>
+		    	<version>2.1.0</version>
+		    </dependency>
+    		<dependency>
+				<groupId>org.hamcrest</groupId>
+				<artifactId>hamcrest-library</artifactId>
+				<version>1.3</version>
+				<scope>test</scope>
+			</dependency>
+		    <!-- END O&M Parser -->
+		    <!-- testing -->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -374,6 +453,17 @@
 				<groupId>org.geotools</groupId>
 				<artifactId>gt-epsg-wkt</artifactId>
 				<version>${geotools.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>java3d</groupId>
+						<artifactId>vecmath</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>java3d</groupId>
+				<artifactId>vecmath</artifactId>
+				<version>1.5.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
@@ -423,7 +513,7 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>13.0.1</version>
+				<version>18.0</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-collections</groupId>
@@ -730,12 +820,12 @@
 		    <dependency>
 		    	<groupId>com.fasterxml.jackson.core</groupId>
 		    	<artifactId>jackson-core</artifactId>
-		    	<version>2.0.4</version>
+		    	<version>${jackson.version}</version>
 		    </dependency>
 		    <dependency>
 		    	<groupId>com.fasterxml.jackson.core</groupId>
 		    	<artifactId>jackson-databind</artifactId>
-		    	<version>2.0.4</version>
+		    	<version>${jackson.version}</version>
 		    </dependency>
 		    <dependency>
 		    	<groupId>org.mockito</groupId>
