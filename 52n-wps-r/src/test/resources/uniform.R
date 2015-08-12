@@ -1,4 +1,4 @@
-# wps.des: id = R_andom, title = Random number generator, version = 42,
+# wps.des: id = uniform, title = Random number generator, version = 42,
 #	author = MC++,
 # 	abstract = Generates random numbers with uniform distribution; 
 
@@ -12,4 +12,8 @@ x = runif(n, min=min, max=max)
 output = "random_out"
 write.table(x, output)
 
-# wps.res: test.file.txt;
+# wps.res: test.file.txt, uniform.xml;
+
+# wps.res: dir/folder;
+
+# wps.import: annotations/import/imported.R;

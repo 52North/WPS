@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>org.n52.wps</groupId>
 		<artifactId>52n-wps-parent</artifactId>
@@ -53,28 +54,6 @@
 		</developer>
 	</developers>
 
-<!--	<build>
-
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>
-							org/n52/wps/server/**
-						</include>
-						<include>
-							org/n52/wps/util/**
-						</include>
-						<include>
-							org/n52/wps/r-project/**
-						</include>
-					</includes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>-->
 	<build>
 		<plugins>
 			<plugin>
@@ -98,15 +77,24 @@
 	</build>
 
 	<profiles>
-		<!-- Here some profiles for specific environments Naming convention: env-[environmentname]
-		means you can simple activate the profile by adding -Denv=[environmentname]
-		at the commandline. -->
 		<profile>
-
 		</profile>
 	</profiles>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -118,9 +106,13 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -132,7 +124,7 @@
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-io-geotools</artifactId>
 		</dependency>
@@ -140,18 +132,17 @@
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-server</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.rosuda</groupId>
+			<groupId>org.nuiton.thirdparty</groupId>
 			<artifactId>REngine</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>RserveEngine</artifactId>
+			<groupId>org.nuiton.thirdparty</groupId>
+			<artifactId>Rserve</artifactId>
 		</dependency>
 
 	</dependencies>

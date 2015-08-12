@@ -277,8 +277,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
             String documentString = writer.toString();
 
             // Perform URL decoding, if necessary
-            // if ("application/x-www-form-urlencoded".equals(contentType)) {
-            if ( (contentType).startsWith("application/x-www-form-urlencoded")) {
+            if (contentType != null && contentType.startsWith("application/x-www-form-urlencoded")) {
                 if (documentString.startsWith(SPECIAL_XML_POST_VARIABLE + "=")) {
                     // This is a hack to permit xml to be easily submitted via a form POST.
                     // By convention, we are allowing users to post xml if they name it

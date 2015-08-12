@@ -33,3 +33,7 @@ save(meuse, file=meuse.rdata)
 #wps.out: workspace, rdata;
 workspace="workspace.RData"
 save.image(workspace)
+
+# you can also directly execute this request and load the whole workspace in R via a GET request:
+#con <- url("http://localhost:8080/wps/WebProcessingService?Request=Execute&Service=WPS&version=1.0.0&identifier=org.n52.wps.server.r.demo.meuse.rdata&DataInputs=filename%3D42&RawDataOutput=workspace")
+#load(con)

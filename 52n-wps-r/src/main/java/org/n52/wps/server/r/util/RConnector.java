@@ -89,28 +89,29 @@ public class RConnector {
             con = new FilteredRConnection(host, port);
         }
         catch (RserveException rse) {
-            log.error("Could not connect to RServe.", rse);
+            log.debug("Could not connect to RServe, maybe it is not started yet? Exception messag is '{}'",
+                      rse.getMessage());
 
             if (rse.getMessage().startsWith("Cannot connect") && enableBatchStart) {
-                log.info("Attempting to start RServe.");
-
                 try {
                     con = attemptStarts(host, port);
                 }
-                catch (Exception e) {
+                catch (RuntimeException | InterruptedException | IOException e) {
                     log.error("Attempted to start Rserve and establish a connection failed", e);
 
                     // Throwable#addSuppressed() only supported by Java 1.7+
                     // rse.addSuppressed(e);
                 }
             }
-            else
+            else {
+                log.trace("Batch start is disabled!");
                 throw rse;
+            }
         }
 
         if (con == null)
             throw new RserveException(null,
-                                      "Cannot connect with Rserve, connection is null. Is Rserve configured for remote connections? It is not by default. See http://www.rforge.net/Rserve/doc.html");
+                                      "Cannot start or connect with Rserve. Is Rserve installed and configured for remote connections? It is not by default. See http://www.rforge.net/Rserve/doc.html");
 
         return con;
     }
@@ -118,26 +119,28 @@ public class RConnector {
     private FilteredRConnection attemptStarts(String host, int port) throws InterruptedException,
             IOException,
             RserveException {
-        this.starter.startR();
+        log.info("Attempting to start RServe.");
 
         int attempt = 1;
         FilteredRConnection con = null;
         while (attempt <= START_ATTEMP_COUNT) {
+            this.starter.startR();
+
             try {
                 Thread.sleep(START_ATTEMPT_SLEEP); // wait for R to startup,
                                                    // then establish connection
                 con = new FilteredRConnection(host, port);
+                log.info("Started R, connection is {}", con);
                 break;
             }
             catch (RserveException rse) {
-                if (attempt >= 5) {
+                if (attempt >= START_ATTEMP_COUNT) {
                     throw rse;
                 }
-
-                attempt++;
             }
+            attempt++;
         }
-        return con;
+        log.info("Started R, connection is {}", con);        return con;
     }
 
 }

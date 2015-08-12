@@ -40,15 +40,20 @@ import java.util.List;
 import java.util.Map;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractObservableAlgorithm;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
+import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.metadata.RProcessDescriptionCreator;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
+import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
 import org.n52.wps.server.r.workspace.RIOHandler;
@@ -59,12 +64,12 @@ import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private static Logger log = LoggerFactory.getLogger(GenericRProcess.class);
 
-    // private variables holding process information - initialization in
-    // constructor
     private List<RAnnotation> annotations;
 
     private R_Config config;
@@ -73,18 +78,36 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private RExecutor executor = new RExecutor();
 
-    private RIOHandler iohandler = new RIOHandler();
+    private RIOHandler iohandler;
 
     private RAnnotationParser parser;
 
-    private File scriptFile = null;
-
     private boolean shutdownRServerAfterRun = false;
 
-    public GenericRProcess(String wellKnownName) {
-        super(wellKnownName);
+    private ScriptFileRepository scriptFileRepository;
+
+    private ResourceFileRepository resourceRepository;
+
+    public GenericRProcess(String wellKnownName,
+                           R_Config config,
+                           RAnnotationParser parser,
+                           ScriptFileRepository scriptRepo,
+                           ResourceFileRepository resourceRepo,
+                           RDataTypeRegistry dataTypeRegistry) {
+        super(wellKnownName, false);
+        this.config = config;
+        this.parser = parser;
+        this.scriptFileRepository = scriptRepo;
+        this.resourceRepository = resourceRepo;
+        this.iohandler = new RIOHandler(dataTypeRegistry);
+
+        this.description = initializeDescription();
 
         log.debug("NEW {}", this);
+    }
+
+    public List<RAnnotation> getAnnotations() {
+        return annotations;
     }
 
     public List<String> getErrors() {
@@ -102,62 +125,51 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     }
 
     @Override
-    protected ProcessDescriptionType initializeDescription() {
-        this.config = R_Config.getInstance(); // call here because method is invoked by super constructor
+    protected ProcessDescription initializeDescription() {
+        String wkn = getWellKnownName();
+        log.debug("Loading file for {}", wkn);
 
         // Reading process information from script annotations:
-        InputStream rScriptStream = null;
+        File scriptFile = null;
         try {
-            String wkn = getWellKnownName();
-            log.debug("Loading file for {}", wkn);
-
-            this.scriptFile = config.getScriptFileForWKN(wkn);
-            log.debug("File loaded: {}", this.scriptFile.getAbsolutePath());
-
-            log.info("Initializing description for {}", this.toString());
-
-            if (this.scriptFile == null) {
-                log.warn("Loaded script file is {}", this.scriptFile);
-                throw new ExceptionReport("Cannot create process description because R script fill is null",
-                                          ExceptionReport.NO_APPLICABLE_CODE);
-            }
-
-            rScriptStream = new FileInputStream(this.scriptFile);
-            if (this.parser == null)
-                this.parser = new RAnnotationParser(this.config); // prevent NullpointerException
-            this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
-
-            // submits annotation with process informations to
-            // ProcessdescriptionCreator:
-            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(this.config);
-            ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
-                                                                           wkn,
-                                                                           config.getScriptURL(wkn),
-                                                                           config.getSessionInfoURL());
-
-            log.debug("Created process description for {}:\n{}", wkn, doc.xmlText());
-            return doc;
-        }
-        catch (RAnnotationException rae) {
-            log.error(rae.getMessage());
-            throw new RuntimeException("Annotation error while parsing process description: " + rae.getMessage(), rae);
-        }
-        catch (IOException ioe) {
-            log.error("I/O error while parsing process description: " + ioe.getMessage());
-            throw new RuntimeException("I/O error while parsing process description: " + ioe.getMessage(), ioe);
+            scriptFile = scriptFileRepository.getScriptFileForWKN(wkn);
         }
         catch (ExceptionReport e) {
-            log.error(e.getMessage(), e);
+            log.warn("Could not load sript file for {}", wkn, e);
             throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
         }
-        finally {
-            try {
-                if (rScriptStream != null)
-                    rScriptStream.close();
+        log.debug("Script file loaded: {}", scriptFile.getAbsolutePath());
+
+        try (InputStream rScriptStream = new FileInputStream(scriptFile);) {
+            log.info("Initializing description for {}", this.toString());
+            this.annotations = this.parser.parseAnnotationsfromScript(rScriptStream);
+
+            // submits annotation with process informations to ProcessdescriptionCreator:
+            RProcessDescriptionCreator creator = new RProcessDescriptionCreator(wkn,
+                                                                                config.isResourceDownloadEnabled(),
+                                                                                config.isImportDownloadEnabled(),
+                                                                                config.isScriptDownloadEnabled(),
+                                                                                config.isSessionInfoLinkEnabled());
+            ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
+                                                                           wkn,
+                                                                           RResource.getScriptURL(wkn),
+                                                                           RResource.getSessionInfoURL());
+
+            if (log.isDebugEnabled()) {
+                ProcessDescriptionsDocument outerDoc = ProcessDescriptionsDocument.Factory.newInstance();
+                ProcessDescriptionType type = outerDoc.addNewProcessDescriptions().addNewProcessDescription();
+                type.set(doc);
+                log.debug("Created process description for {}:\n{}", wkn, outerDoc.xmlText());
             }
-            catch (IOException e) {
-                log.error("Error closing script stream.", e);
-            }
+
+            ProcessDescription processDescription = new ProcessDescription();
+            processDescription.addProcessDescriptionForVersion(doc, "1.0.0");
+            return processDescription;
+        }
+        catch (RAnnotationException | IOException | ExceptionReport e) {
+            log.error("Error initializing description for script '{}'", wkn, e);
+            throw new RuntimeException("Error while parsing script file or creating process description of script '"
+                    + wkn + "': " + e.getMessage(), e);
         }
     }
 
@@ -174,7 +186,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RSessionManager session = new RSessionManager(rCon, config);
             session.configureSession(getWellKnownName(), executor);
 
-            RWorkspaceManager workspace = new RWorkspaceManager(rCon, this.iohandler, config);
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config, resourceRepository);
             String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
             List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
@@ -183,13 +195,31 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             List<RAnnotation> inAnnotations = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.INPUT);
             workspace.loadInputValues(inputData, inAnnotations);
 
+            List<RAnnotation> importAnnotations = RAnnotation.filterAnnotations(this.annotations,
+                                                                                RAnnotationType.IMPORT);
+            List<File> imports = Lists.newArrayList();
+            for (RAnnotation rAnnotation : importAnnotations) {
+                @SuppressWarnings("unchecked")
+                List<R_Resource> importList = (List<R_Resource>) rAnnotation.getObjectValue(RAttribute.NAMED_LIST);
+                for (R_Resource importedScript : importList) {
+                    String value = importedScript.getResourceValue();
+                    File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
+                    imports.add(f);
+                    log.debug("Got imported file {} based on import resource {}", f, importList);
+                }
+            }
+            session.loadImportedScripts(executor, imports);
+
             if (log.isDebugEnabled())
                 workspace.saveImage("preExecution");
 
-            File scriptFile = config.getScriptFileForWKN(getWellKnownName());
+            File scriptFile = scriptFileRepository.getScriptFileForWKN(getWellKnownName());
+
+            boolean success = executor.executeScript(scriptFile, rCon);
+            if (log.isDebugEnabled())
+                workspace.saveImage("afterExecution");
 
             HashMap<String, IData> result = null;
-            boolean success = executor.executeScript(scriptFile, rCon);
             if (success) {
                 List<RAnnotation> outAnnotations = RAnnotation.filterAnnotations(this.annotations,
                                                                                  RAnnotationType.OUTPUT);
@@ -202,8 +232,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 throw new ExceptionReport(msg, getClass().getName());
             }
 
-            if (log.isDebugEnabled())
-                workspace.saveImage("afterExecution");
             log.debug("RESULT: " + Arrays.toString(result.entrySet().toArray()));
 
             session.cleanUp();
@@ -212,7 +240,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
             return result;
         }
-        catch (IOException e) {
+        catch (IOException | RuntimeException e) {
             String message = "Attempt to run R script file failed:\n" + e.getClass() + " - " + e.getLocalizedMessage()
                     + "\n" + e.getCause();
             log.error(message, e);
@@ -259,8 +287,19 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("GenericRProcess [script = ");
-        sb.append(this.scriptFile);
+        sb.append("GenericRProcess [wkn = ");
+        sb.append(this.wkName);
+        if (this.scriptFileRepository != null) {
+            sb.append(", script file = ");
+            try {
+                sb.append(this.scriptFileRepository.getScriptFileForWKN(this.wkName));
+            }
+            catch (ExceptionReport e) {
+                sb.append("Error: '");
+                sb.append(e.getMessage());
+                sb.append("'");
+            }
+        }
         if (this.annotations != null) {
             sb.append(", annotations = ");
             sb.append(Arrays.toString(this.annotations.toArray()));

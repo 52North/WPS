@@ -47,6 +47,8 @@
 	<logger name="org.apache.http.wire" level="ERROR" />
 	<logger name="org.apache.http.headers" level="ERROR" />
 	<logger name="org.springframework" level="INFO" />
+	<!-- log all bean creations -->
+	<logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="wpsfile" />

@@ -39,6 +39,7 @@ This project includes:
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
+  52North WPS R Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Web Application under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -125,6 +126,8 @@ This project includes:
   jcommon under GNU Lesser General Public Licence
   jdom under JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
   jep under GNU General Public License, version 2
+  jersey-core under CDDL 1.1 or GPL2 w/ CPE
+  jersey-server under CDDL 1.1 or GPL2 w/ CPE
   jfreechart under GNU Lesser General Public Licence
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
@@ -174,6 +177,8 @@ This project includes:
   precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL or The New BSD License
+  REngine under GNU Lesser General Public License
+  Rserve under GNU Lesser General Public License
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   sextante under GPL 2.0 license
   sextante_algorithms under GPL 2.0 license
@@ -242,6 +247,7 @@ This project includes:
   xml-schema under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   xml-secconfig under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   XmlBeans under The Apache Software License, Version 2.0
+  XMLUnit for Java under BSD License
   xsd under Eclipse Public License (EPL)
   ZonalStats operator under Simplified BSD
 

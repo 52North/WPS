@@ -21,7 +21,11 @@
 		<button id="clearBtn" type="reset" class="btn btn-primary">Clear</button>
 	</div>
 </form>
-<pre><textarea name="request" id="responseTextarea"></textarea></pre>
+<div class="form-horizontal">
+	<div class="form-group">
+		<pre><textarea name="request" id="responseTextarea"></textarea></pre>
+	</div>
+</div>
 
 <script src="static/js/codemirror/codemirror.js" type="text/javascript"></script>
 
@@ -80,20 +84,23 @@
 				requests[309] = datafolder + "v.hull_request_out_shp.xml";
 				requests[310] = datafolder + "v.to.rast_request.xml";
 
-				requests[400] = datafolder + "R_Sum.xml";
-				requests[401] = datafolder + "R_highlight.xml";
-				requests[402] = datafolder + "R_SosPlot.xml";
-				requests[403] = datafolder + "R_pegel-report.xml";
-				requests[404] = datafolder + "R_pegel-report_pdf.xml";
-				requests[405] = datafolder + "R_sweave-foo.xml";
-				requests[406] = datafolder + "R_sweave-foo_pdf.xml";
-				requests[407] = datafolder + "R_Idw.xml";
-				requests[408] = datafolder + "R_image.xml";
-				requests[409] = datafolder + "R_Make_Realizations.xml";
-				requests[410] = datafolder + "R_uniform.xml";
-				requests[411] = datafolder + "R_meuse.xml";
-				requests[412] = datafolder + "R_meuse2.xml";
-				requests[413] = datafolder + "R_EO2H_AirQualitySaxony.xml";
+				var rs = 400;
+				requests[rs] = datafolder + "R_echo.xml";
+				requests[rs + 1] = datafolder + "R_debug.xml";
+				requests[rs + 2] = datafolder + "R_SessionVariables.xml";
+				requests[rs + 3] = datafolder + "R_pegel-report.xml";
+				requests[rs + 4] = datafolder + "R_pegel-report_pdf.xml";
+				requests[rs + 5] = datafolder + "R_sweave-foo.xml";
+				requests[rs + 6] = datafolder + "R_sweave-foo_pdf.xml";
+				requests[rs + 7] = datafolder + "R_Idw.xml";
+				requests[rs + 8] = datafolder + "R_image.xml";
+				requests[rs + 10] = datafolder + "R_uniform.xml";
+				requests[rs + 11] = datafolder + "R_meuse.xml";
+				requests[rs + 12] = datafolder + "R_meuse2.xml";
+				requests[rs + 13] = datafolder + "R_EO2H_AirQualitySaxony.xml";
+				requests[rs + 14] = datafolder + "R_enviroCar_mapMatching.xml";
+				requests[rs + 20] = datafolder + "R_SosPlot.xml";
+				requests[rs + 20] = datafolder + "R_validateScript.xml";
 
 				var mcs = 500;
 				requests[mcs] = datafolder + "mc_echo.xml";

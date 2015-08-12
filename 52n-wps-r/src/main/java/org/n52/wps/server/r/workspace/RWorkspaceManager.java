@@ -44,12 +44,15 @@ import java.util.Set;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
+import org.n52.wps.server.r.RConstants;
 import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.ResourceFileRepository;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
@@ -69,8 +72,6 @@ public class RWorkspaceManager {
 
     private static Logger log = LoggerFactory.getLogger(RWorkspaceManager.class);
 
-    private static final String RDATA_FILE_EXTENSION = "RData";
-
     private R_Config config;
 
     private FilteredRConnection connection;
@@ -86,12 +87,18 @@ public class RWorkspaceManager {
 
     private RWorkspace workspace;
 
-    public RWorkspaceManager(FilteredRConnection connection, RIOHandler iohandler, R_Config config) {
+    private ResourceFileRepository fileRepo;
+
+    public RWorkspaceManager(FilteredRConnection connection,
+                             RIOHandler iohandler,
+                             R_Config config,
+                             ResourceFileRepository fileRepo) {
         this.connection = connection;
-        this.workspace = new RWorkspace();
+        this.workspace = new RWorkspace(config.getBaseDir());
         this.executor = new RExecutor();
         this.iohandler = iohandler;
         this.config = config;
+        this.fileRepo = fileRepo;
 
         log.debug("NEW {}", this);
     }
@@ -137,7 +144,7 @@ public class RWorkspaceManager {
                              this.workspace.listFiles());
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             log.error("Problem deleting the wps work directory.", e);
         }
     }
@@ -196,19 +203,7 @@ public class RWorkspaceManager {
 
                 inputValuesWithValues.add(entry.getKey());
             }
-            catch (RserveException e) {
-                log.error("Error parsing input value {}", entry, e);
-                throw new ExceptionReport("Error parsing input value: " + entry,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE,
-                                          e);
-            }
-            catch (REXPMismatchException e) {
-                log.error("Error parsing input value {}", entry, e);
-                throw new ExceptionReport("Error parsing input value: " + entry,
-                                          ExceptionReport.INVALID_PARAMETER_VALUE,
-                                          e);
-            }
-            catch (IOException e) {
+            catch (RserveException | REXPMismatchException | IOException e) {
                 log.error("Error parsing input value {}", entry, e);
                 throw new ExceptionReport("Error parsing input value: " + entry,
                                           ExceptionReport.INVALID_PARAMETER_VALUE,
@@ -278,11 +273,17 @@ public class RWorkspaceManager {
         log.debug("Saving resources in session: {}", resources);
 
         String wpsScriptResources = null;
-        // Assign and concatenate lists of resources given by the ressource annotations
+
+        // Assign and concatenate list of resources given by the ressource annotations
         wpsScriptResources = "list()";
+        // empty list:
         connection.filteredEval(RWPSSessionVariables.SCRIPT_RESOURCES + " <- " + wpsScriptResources);
         for (RAnnotation annotation : resources) {
+            if ( !annotation.getType().equals(RAnnotationType.RESOURCE)) // skip non-resource annoations
+                continue;
+
             wpsScriptResources = annotation.getStringValue(RAttribute.NAMED_LIST_R_SYNTAX);
+            // concatenate:
             connection.filteredEval(RWPSSessionVariables.SCRIPT_RESOURCES + " <- " + "append("
                     + RWPSSessionVariables.SCRIPT_RESOURCES + ", " + wpsScriptResources + ")");
         }
@@ -318,11 +319,13 @@ public class RWorkspaceManager {
                     continue;
                 }
 
-                File resourceFile = resource.getFullResourcePath(this.config);
+                // File resourceFile = resource.getFullResourcePath(this.config);
+                File resourceFile = fileRepo.getResource(resource).toFile();
                 if (resourceFile == null || !resourceFile.exists()) {
                     throw new ExceptionReport("Resource does not exist: " + resourceAnnotation,
                                               ExceptionReport.NO_APPLICABLE_CODE);
                 }
+
                 log.debug("Loading resource {} from file {} (directory: {})",
                           resource,
                           resourceFile,
@@ -364,6 +367,7 @@ public class RWorkspaceManager {
                       RWPSConfigVariables.R_WORK_DIR_NAME,
                       strategy,
                       e);
+            throw e;
         }
 
         this.workspace.setWorkingDirectory(this.connection,
@@ -379,7 +383,7 @@ public class RWorkspaceManager {
      * saves an image to the working directory that may help debugging R scripts
      */
     public boolean saveImage(String name) {
-        String filename = name + "." + RDATA_FILE_EXTENSION;
+        String filename = name + "." + RConstants.RDATA_FILE_EXTENSION;
         try {
             REXP result = connection.eval("save.image(file=\"" + filename + "\")");
             log.debug("Saved image to {} with result {}", filename, result);
@@ -426,16 +430,7 @@ public class RWorkspaceManager {
 
                 log.debug("Output for {} is {} with payload {}", resultId, output, output.getPayload());
             }
-            catch (ExceptionReport e) {
-                throw e;
-            }
-            catch (RserveException e) {
-                log.error("Could not create output for {}", resultId, e);
-            }
-            catch (IOException e) {
-                log.error("Could not create output for {}", resultId, e);
-            }
-            catch (REXPMismatchException e) {
+            catch (RserveException | IOException | REXPMismatchException e) {
                 log.error("Could not create output for {}", resultId, e);
             }
         }

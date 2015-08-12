@@ -26,13 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.syntax;
 
 /**
- * Separators used in Annotations
+ * Separators used in annotations
  * 
+ * @author Matthias Hinz
  */
 public enum RSeperator {
+
     STARTKEY_SEPARATOR(":"), ATTRIBUTE_SEPARATOR(","), ATTRIBUTE_VALUE_SEPARATOR("="), ANNOTATION_END(";");
 
     private String key;
@@ -41,13 +44,12 @@ public enum RSeperator {
         this.key = key.toLowerCase();
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return this.key;
     }
 
-    public String toString()
-    {
+    @Override
+    public String toString() {
         return getKey();
     }
 

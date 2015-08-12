@@ -31,8 +31,9 @@ package org.n52.wps.server.r;
 
 public enum RWPSConfigVariables {
 
-    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM_PROPERTY_NAME, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG, R_WORK_DIR_STRATEGY, R_WORK_DIR_NAME, R_CACHE_PROCESSES, R_SESSION_MEMORY_LIMIT;
+    SCRIPT_DIR, RESOURCE_DIR, ALGORITHM_PROPERTY_NAME, ENABLE_BATCH_START, RSERVE_HOST, RSERVE_PORT, RSERVE_USER, RSERVE_PASSWORD, R_DATATYPE_CONFIG, R_WORK_DIR_STRATEGY, R_WORK_DIR_NAME, R_CACHE_PROCESSES, R_SESSION_MEMORY_LIMIT, R_CLEAN_UP_WORK_DIR, R_UTILS_DIR, R_ENABLE_RESOURCE_DOWNLOAD, R_ENABLE_IMPORT_DOWNLOAD, R_ENABLE_SCRIPT_DOWNLOAD, R_ENABLE_SESSION_INFO_DOWNLOAD;
 
+    @Override
     public String toString() {
         switch (this) {
         case R_WORK_DIR_STRATEGY:
@@ -61,9 +62,19 @@ public enum RWPSConfigVariables {
             return "R_cacheDescriptions";
         case R_SESSION_MEMORY_LIMIT:
             return "R_session_memoryLimit";
+        case R_UTILS_DIR:
+            return "R_utilsScriptDirectory";
+        case R_ENABLE_RESOURCE_DOWNLOAD:
+            return "R_enableResourceDownload";
+        case R_ENABLE_IMPORT_DOWNLOAD:
+            return "R_enableImportDownload";
+        case R_ENABLE_SCRIPT_DOWNLOAD:
+            return "R_enableScriptDownload";
+        case R_ENABLE_SESSION_INFO_DOWNLOAD:
+            return "R_enableSessionInfoDownload";
         default:
             return "NO STRING REPRESENTATION DEFINED FOR ENUM CONSTANT!";
         }
 
-    };
+    }
 }
