@@ -21,6 +21,7 @@
 						<label for="javaFile">Algorithm class</label>
 						<input type="text" name="algorithmName" id="algorithmName">
 						<input id="hiddenModuleName" type="hidden" />
+					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<p class="help-block">Please specify the fully qualified class name of the algorithm.</p>
 					</div>
 					<div class="form-group">
@@ -52,6 +53,7 @@
 						<input type="file" name="xmlFile" id="xmlFile">
 						<p class="help-block">The associated ProcessDescription.xml file (optional).</p>
 					</div>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div class="form-group">
 						<button type="submit" class="btn btn-primary">Upload</button>
 					</div>
@@ -87,6 +89,7 @@
 							<p class="help-block">An annotated R script</p>
 						</div>
 					</div>
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 					<div class="form-group">
 						<div class="col-lg-7">
 							<button type="submit" class="btn btn-primary">Upload</button>
@@ -145,6 +148,7 @@
 			dataType : 'text',
 			processData : false,
 			contentType : false,
+			headers: { 'X-CSRF-TOKEN': $("#addAlgorithm input[name=${_csrf.parameterName}]").val() },
 			type : 'POST',
 			success : function(xhr) {
 				// success alert

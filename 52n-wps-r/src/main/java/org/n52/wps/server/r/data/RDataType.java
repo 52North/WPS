@@ -38,13 +38,12 @@ import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
-import org.slf4j.LoggerFactory;
 
 /**
  * Data types which are supported by scripts Note that every IData class must be parsed from an to are to be
  * handled successful --> GenericRProcess TODO: restructure dependent classes & methods for new attributes
  * 
- * FIXME use either this class or the fiel R_Datatype.conf, potentially refactor the format of the file.
+ * FIXME use either this class or the file R_Datatype.conf, potentially refactor the format of the file.
  */
 public enum RDataType implements RTypeDefinition {
 
@@ -74,15 +73,15 @@ public enum RDataType implements RTypeDefinition {
             "kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataWithGTBinding.class, true, null, "UTF-8"),
 
     // graphical data
-    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, null),
+    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, "base64"),
 
-    JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, null),
+    JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
 
-    JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, null),
+    JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
 
-    PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class, true, null, null),
+    PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class, true, null, "base64"),
 
-    TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, null),
+    TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, "base64"),
 
     // file data and xml:
     TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class, true), TEXT_XML(
@@ -121,36 +120,20 @@ public enum RDataType implements RTypeDefinition {
         this.isComplex = isComplex;
         this.schema = schema;
         this.encoding = encoding;
-        setKey(key);
-        setKey(processKey);
     }
 
-    private RDataType(String key, String processKey, Class< ? extends IData> iDataClass, boolean isComplex) {
+    private RDataType(String key, String mimeType, Class< ? extends IData> iDataClass, boolean isComplex) {
         this.key = key;
-        this.processKey = processKey;
+        this.processKey = mimeType;
         this.iDataClass = iDataClass;
         this.isComplex = isComplex;
-        setKey(key);
-        setKey(processKey);
     }
 
-    private RDataType(String key, String processKey, Class< ? extends IData> iDataClass) {
+    private RDataType(String key, String mimeType, Class< ? extends IData> iDataClass) {
         this.key = key;
-        this.processKey = processKey;
+        this.processKey = mimeType;
         this.iDataClass = iDataClass;
         this.isComplex = false;
-        setKey(key);
-        setKey(processKey);
-    }
-
-    private void setKey(String key) {
-        RDataTypeRegistry reg = RDataTypeRegistry.getInstance();
-        if ( !reg.containsKey(key))
-            reg.register(this);
-        else
-            LoggerFactory.getLogger(RDataType.class).warn("Doubled definition of data type-key for notation '{}'. Only the first definition will be used for this key.",
-                                                          key);
-
     }
 
     @Override
@@ -159,7 +142,7 @@ public enum RDataType implements RTypeDefinition {
     }
 
     @Override
-    public String getProcessKey() {
+    public String getMimeType() {
         return this.processKey;
     }
 

@@ -22,7 +22,7 @@
 						<a href="#" class="btn btn-primary btn-small navbar-btn dropdown-toggle" data-toggle="dropdown"><security:authentication
 								property="principal.username" /> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
-							<li><a href="change_password">Change Password</a></li>
+							<li><a href="<c:url value="/" />change_password">Change Password</a></li>
 							<li><a href="j_spring_security_logout">Logout</a></li>
 						</ul>
 					</div>

@@ -7,6 +7,8 @@ INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiRefere
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.EchoProcess','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.r.LocalRAlgorithmRepositoryCM', FALSE);
+
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM', FALSE);
 
 INSERT INTO ALGORITHMENTRY VALUES('i.atcorr','org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM',TRUE);

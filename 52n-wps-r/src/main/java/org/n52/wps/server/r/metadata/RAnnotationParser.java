@@ -33,9 +33,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,9 +46,12 @@ import java.util.StringTokenizer;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
+import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.syntax.ImportAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
@@ -54,69 +60,185 @@ import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RAnnotationParser {
 
     private static final String ANNOTATION_CHARACTER = "#";
 
     private static final String COMMENTED_ANNOTATION_CHARACTER = "##";
 
+    private static final boolean DEFAULT_RESOURCE_VISIBILITY = true;
+
+    private static final boolean DEFAULT_IMPORT_VISIBILITY = true;
+
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotationParser.class);
 
+    @Autowired
+    private RDataTypeRegistry dataTypeRegistry;
+
+    @Autowired
     private R_Config config;
 
-    public RAnnotationParser(R_Config config) {
-        this.config = config;
+    public RAnnotationParser() {
         LOGGER.debug("New {}", this);
+    }
+
+    public RAnnotationParser(RDataTypeRegistry dataTypeRegistry, R_Config config) {
+        this.dataTypeRegistry = dataTypeRegistry;
+        this.config = config;
+        LOGGER.debug("New {} and set registry and config manually to\n\t{}\n\t{}",
+                     this,
+                     this.dataTypeRegistry,
+                     this.config);
     }
 
     /**
      * 
      * @param script
+     *        the script to validate
+     * @param identifier
+     *        the script id to use for generating a test-process description
+     * @return false if the process description is invalid
      * @throws RAnnotationException
-     *         if script is invalid
+     * @throws RAnnotationExcep
      * @throws IOException
      * @throws ExceptionReport
      */
-    public boolean validateScript(InputStream script, String identifier) throws RAnnotationException,
-            IOException,
-            ExceptionReport {
-        // TODO: improve this method to something more useful
+    public boolean validateScript(InputStream script, String identifier) throws RAnnotationException {
+        return validateScriptWithErrors(script, identifier).isEmpty();
+    }
+
+    /**
+     * 
+     * @param script
+     * @param identifier
+     * @return a list of the XML validation errors or the exceptions during validation
+     * @throws RAnnotationException
+     */
+    public Collection<Object> validateScriptWithErrors(InputStream script, String identifier) throws RAnnotationException {
+        ArrayList<Object> validationErrors = new ArrayList<Object>();
+        XmlOptions validationOptions = new XmlOptions();
+        validationOptions.setErrorListener(validationErrors);
 
         // try to parse annotations:
-        List<RAnnotation> annotations = parseAnnotationsfromScript(script);
-        // try to create process description:
-        RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(this.config);
-
-        // TODO: WPS.des and WPS.res should only occur once or not at all
+        List<RAnnotation> annotations = null;
         try {
+            annotations = parse(script, true);
+        }
+        catch (RAnnotationException e) {
+            LOGGER.error("Error parsing annotations during validation", e);
+            validationErrors.add(e);
+        }
+
+        if (annotations != null) {
+            if (annotations.isEmpty()) {
+                validationErrors.add(new RAnnotationException("No annotations found"));
+            }
+
+            else {
+                // check for exactly one description
+                hasOneDescription(identifier, validationErrors, validationOptions, annotations);
+
+                validateMetadataAnnotations(validationErrors, annotations, identifier);
+            }
+        }
+
+        return validationErrors;
+    }
+
+    @SuppressWarnings("unused")
+    private void validateMetadataAnnotations(ArrayList<Object> validationErrors,
+                                             List<RAnnotation> annotations,
+                                             String scriptId) throws RAnnotationException {
+        List<RAnnotation> metadata = RAnnotation.filterAnnotations(annotations, RAnnotationType.METADATA);
+        for (RAnnotation annotation : metadata) {
+            if (annotation.getType().equals(RAnnotationType.METADATA)) {
+                LOGGER.trace("Validating metadata annotation: {}", annotation);
+
+                // title is set
+                String title = annotation.getStringValue(RAttribute.TITLE);
+                if (title == null || title.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
+                    sb.append(RAttribute.TITLE).append(" must be set in ").append(annotation).append("\n");
+                    validationErrors.add(sb.toString());
+                }
+
+                // href is set and valid URL
+                String href = annotation.getStringValue(RAttribute.HREF);
+                if (href == null || href.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
+                    sb.append(RAttribute.HREF).append(" must be set, but annotation is ").append(annotation).append("\n");
+                    validationErrors.add(sb.toString());
+                }
+                try {
+                    URL url = new URL(href);
+                    url.toURI();
+                }
+                catch (MalformedURLException | URISyntaxException e) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
+                    sb.append(RAttribute.HREF).append(" must be a well-formed URL, but annotation is ").append(annotation).append("\n");
+                    validationErrors.add(sb.toString());
+                }
+            }
+        }
+    }
+
+    private void hasOneDescription(String identifier,
+                                   ArrayList<Object> validationErrors,
+                                   XmlOptions validationOptions,
+                                   List<RAnnotation> annotations) throws RAnnotationException {
+        List<RAnnotation> descriptions = RAnnotation.filterAnnotations(annotations, RAnnotationType.DESCRIPTION);
+        if (descriptions.size() != 1)
+            validationErrors.add(new RAnnotationException("Exactly one description annotation required, but found "
+                    + descriptions.size()));
+
+        try {
+            // try to create process description from annotations
+            RProcessDescriptionCreator descriptionCreator = new RProcessDescriptionCreator(identifier,
+                                                                                           config.isResourceDownloadEnabled(),
+                                                                                           config.isImportDownloadEnabled(),
+                                                                                           config.isScriptDownloadEnabled(),
+                                                                                           config.isSessionInfoLinkEnabled());
             ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
                                                                                               identifier,
                                                                                               new URL("http://some.valid.url/"),
                                                                                               new URL("http://some.valid.url/"));
 
-            boolean valid = processType.validate();
-            if (valid == false)
-                throw new ExceptionReport("Invalid R algorithm. The process description created from the script is not valid.",
-                                          ExceptionReport.NO_APPLICABLE_CODE);
-            return valid;
+            boolean valid = processType.validate(validationOptions);
+            if ( !valid) {
+                LOGGER.warn("Invalid R algorithm '{}'. The process description created from the script is not valid. Validation errors: \n{}",
+                            identifier,
+                            Arrays.toString(validationErrors.toArray()));
+
+                // save process description in output errors
+                StringBuilder sb = new StringBuilder();
+                validationErrors.add(sb.append("\nErrorenous XML Process Description, so the script '" + identifier
+                        + "' is not valid:\n").append(processType.xmlText()).append("\n").toString());
+            }
 
         }
-        catch (ExceptionReport e) {
-            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
-            LOGGER.error(message, e);
-            throw e;
-        }
-        catch (RAnnotationException e) {
-            String message = "Invalid R algorithm. Script validation failed when executing process description creator.";
-            LOGGER.error(message, e);
-            throw e;
+        catch (ExceptionReport | RAnnotationException | MalformedURLException e) {
+            LOGGER.error("Invalid R algorithm '{}'. Script validation failed when executing process description creator.",
+                         identifier,
+                         e);
+            validationErrors.add(e);
         }
     }
 
-    public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException {
+    public List<RAnnotation> parseAnnotationsfromScript(InputStream inputScript) throws RAnnotationException,
+            IOException {
         LOGGER.debug("Starting to parse annotations from script " + inputScript);
 
+        return parse(inputScript, false);
+    }
+
+    private ArrayList<RAnnotation> parse(InputStream inputScript, boolean validationOnly) throws RAnnotationException {
         try {
             BufferedReader lineReader = new BufferedReader(new InputStreamReader(inputScript));
             int lineCounter = 0;
@@ -124,6 +246,7 @@ public class RAnnotationParser {
             StringBuilder annotationString = null;
             RAnnotationType annotationType = null;
             ArrayList<RAnnotation> annotations = new ArrayList<RAnnotation>();
+            String scriptId = null;
 
             while (lineReader.ready()) {
                 String line = lineReader.readLine();
@@ -168,20 +291,21 @@ public class RAnnotationParser {
                             if ( !isCurrentlyParsingAnnotation) {
                                 RAnnotation newAnnotation = null;
                                 if (annotationType.equals(RAnnotationType.RESOURCE)) {
-                                    newAnnotation = createResourceAnnotation(annotationString.toString());
+                                    newAnnotation = createResourceAnnotation(scriptId, annotationString.toString());
+                                }
+                                else if (annotationType.equals(RAnnotationType.IMPORT)) {
+                                    newAnnotation = createImportAnnotation(scriptId, annotationString.toString());
                                 }
                                 else {
                                     HashMap<RAttribute, Object> attrHash = hashAttributes(annotationType,
                                                                                           annotationString.toString());
-                                    newAnnotation = new RAnnotation(annotationType, attrHash);
-
+                                    newAnnotation = new RAnnotation(annotationType, attrHash, dataTypeRegistry);
+                                    if (scriptId == null && annotationType.equals(RAnnotationType.DESCRIPTION)) {
+                                        scriptId = (String) newAnnotation.getObjectValue(RAttribute.IDENTIFIER);
+                                    }
                                 }
-
+                                LOGGER.debug("Done parsing annotation {} for script {}", newAnnotation, scriptId);
                                 annotations.add(newAnnotation);
-
-                                LOGGER.debug("Done parsing annotation {} > contains: ",
-                                             newAnnotation,
-                                             annotationString.toString());
                             }
                         }
                     }
@@ -189,6 +313,7 @@ public class RAnnotationParser {
                         LOGGER.error("Invalid R script with wrong annotation in Line {}: {}",
                                      lineCounter,
                                      e.getMessage());
+                        throw e;
                     }
                 }
             }
@@ -200,7 +325,7 @@ public class RAnnotationParser {
             return annotations;
 
         }
-        catch (Exception e) {
+        catch (RuntimeException | IOException e) {
             LOGGER.error("Error parsing annotations.", e);
             throw new RAnnotationException("Error parsing annotations.", e);
         }
@@ -275,7 +400,27 @@ public class RAnnotationParser {
         return attrHash;
     }
 
-    private RAnnotation createResourceAnnotation(String attributeString) throws IOException, RAnnotationException {
+    private RAnnotation createResourceAnnotation(String scriptId, String attributeString) throws IOException,
+            RAnnotationException {
+        List<R_Resource> resources = getResourcesFromAnnotation(scriptId, attributeString, DEFAULT_RESOURCE_VISIBILITY);
+
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(resources, dataTypeRegistry);
+
+        return resourceAnnotation;
+    }
+
+    private RAnnotation createImportAnnotation(String scriptId, String attributeString) throws IOException,
+            RAnnotationException {
+        List<R_Resource> resources = getResourcesFromAnnotation(scriptId, attributeString, DEFAULT_IMPORT_VISIBILITY);
+
+        ImportAnnotation importAnnotation = new ImportAnnotation(resources, dataTypeRegistry);
+
+        return importAnnotation;
+    }
+
+    private List<R_Resource> getResourcesFromAnnotation(String scriptId,
+                                                        String attributeString,
+                                                        boolean defaultVisibility) {
         List<R_Resource> resources = new ArrayList<R_Resource>();
 
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
@@ -283,19 +428,12 @@ public class RAnnotationParser {
 
         while (attrValueTokenizer.hasMoreElements()) {
             String resourceValue = attrValueTokenizer.nextToken().trim();
-            R_Resource r_resource = new R_Resource(resourceValue);
+            R_Resource r_resource = new R_Resource(config.getPublicScriptId(scriptId), resourceValue, defaultVisibility);
             resources.add(r_resource);
 
             LOGGER.debug("Found new resource in annotation: {}", r_resource);
         }
-
-        // add empty hasmap for now
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
-        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(attributeHash,
-                                                                       resources,
-                                                                       config.getResourceDirURL());
-
-        return resourceAnnotation;
+        return resources;
     }
 
 }

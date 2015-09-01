@@ -19,10 +19,14 @@ servername <- wpsServerName
 #wps.out: servername, type = string, title = server name,
 # abstract = a name for the executing server of this process;
 
-resourceurl <- wpsResourceURL
+resourceurl <- wpsResourceEndpoint
 #wps.out: resourceurl, type = string, title = resource base url,
 # abstract = the base URL to access the resources of this process;
 
 resources <- toString(wpsScriptResources)
 #wps.out: resources, type = string, title = list of resources,
 # abstract = a string listing the resources of this process;
+
+scripturl <- wpsScriptUrl
+#wps.out: scripturl, type = string, title = script url,
+# abstract = the URL to access the original script of this process;

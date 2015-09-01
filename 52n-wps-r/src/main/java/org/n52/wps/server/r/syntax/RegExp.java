@@ -29,7 +29,7 @@
 package org.n52.wps.server.r.syntax;
 
 /**
- * Contains of Regular expressions used by WPS4R
+ * Contains regular expressions used by WPS4R
  * 
  * @author Matthias Hinz
  * 

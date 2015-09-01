@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WPSConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://n52.org/wps schema_v2.xsd" xmlns="http://n52.org/wps">
+	<Datahandlers>
+		<ParserList>
+			<Parser name="WCPSQueryParser"
+				className="org.n52.wps.io.datahandler.parser.WCPSQueryParser"
+				active="true">
+				<Format mimetype="text/plain"
+					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
+			</Parser>
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.parser.WKTParser"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Parser>
+			<Parser name="GenericXMLDataParser"
+				className="org.n52.wps.io.datahandler.parser.GenericXMLDataParser"
+				active="true">
+				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
+			</Parser>
+			<Parser name="GenericFileParser"
+				className="org.n52.wps.io.datahandler.parser.GenericFileParser"
+				active="true">
+				<Format mimetype="application/x-zipped-shp" />
+				<Format mimetype="application/img" />
+				<Format mimetype="image/tiff" />
+				<Format mimetype="image/geotiff" />
+				<Format mimetype="application/geotiff" />
+				<Format mimetype="application/dbase" />
+				<Format mimetype="application/remap" />
+				<Format mimetype="application/x-erdas-hfa" />
+				<Format mimetype="application/x-netcdf" />
+				<Format mimetype="application/dgn" />
+				<Format mimetype="image/jpeg" />
+				<Format mimetype="image/png" />
+				<Format mimetype="application/x-geotiff" />
+				<Format mimetype="application/hdf4-eos" />
+				<Format mimetype="text/plain" />
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
+
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
+				<Format mimetype="application/x-zipped-shp" encoding="base64" />
+				<Format mimetype="application/img" encoding="base64" />
+				<Format mimetype="image/tiff" encoding="base64" />
+				<Format mimetype="application/geotiff" encoding="base64" />
+				<Format mimetype="application/dbase" encoding="base64" />
+				<Format mimetype="application/remap" encoding="base64" />
+				<Format mimetype="application/x-erdas-hfa" encoding="base64" />
+				<Format mimetype="application/x-netcdf" encoding="base64" />
+				<Format mimetype="application/dgn" encoding="base64" />
+				<Format mimetype="image/jpeg" encoding="base64" />
+				<Format mimetype="image/png" encoding="base64" />
+				<Format mimetype="application/x-geotiff" encoding="base64" />
+				<Format mimetype="application/hdf4-eos" encoding="base64" />
+				<Format mimetype="text/plain" encoding="base64" />
+			</Parser>
+		</ParserList>
+		<GeneratorList>			
+			<Generator name="WKTGenerator"
+				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
+				active="true">
+				<Format mimetype="application/wkt"/>
+			</Generator>
+			<Generator name="GenericXMLDataGenerator"
+				className="org.n52.wps.io.datahandler.generator.GenericXMLDataGenerator"
+				active="true">
+				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
+			</Generator>
+			<Generator name="GenericFileGenerator"
+				className="org.n52.wps.io.datahandler.generator.GenericFileGenerator"
+				active="true">
+				<Format mimetype="application/x-zipped-shp" encoding="base64" />
+				<Format mimetype="application/shp" encoding="base64" />
+				<Format mimetype="application/img" encoding="base64" />
+				<Format mimetype="image/tiff" encoding="base64" />
+				<Format mimetype="image/geotiff" encoding="base64" />
+				<Format mimetype="application/geotiff" encoding="base64" />
+				<Format mimetype="application/dbase" encoding="base64" />
+				<Format mimetype="application/remap" encoding="base64" />
+				<Format mimetype="application/x-erdas-hfa" encoding="base64" />
+				<Format mimetype="application/x-netcdf" encoding="base64" />
+				<Format mimetype="application/netcdf" encoding="base64" />
+				<Format mimetype="application/dgn" encoding="base64" />
+				<Format mimetype="image/jpeg" encoding="base64" />
+				<Format mimetype="image/png" encoding="base64" />
+				<Format mimetype="application/x-geotiff" encoding="base64" />
+				<Format mimetype="text/plain" encoding="base64" />
+				<Format mimetype="application/x-zipped-shp" encoding="base64" />
+				<Format mimetype="application/rData" encoding="base64" />
+				<Format mimetype="application/rData+Spatial" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
+				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
+				
+				<Format mimetype="application/rData" />
+				<Format mimetype="application/rData+Spatial" />
+				<Format mimetype="application/rData+SpatialPoints" />
+				<Format mimetype="application/rData+SpatialPolygons" />
+				<Format mimetype="application/x-zipped-shp" />
+				<Format mimetype="application/shp" />
+				<Format mimetype="application/img" />
+				<Format mimetype="image/tiff" />
+				<Format mimetype="image/geotiff" />
+				<Format mimetype="application/geotiff" />
+				<Format mimetype="application/dbase" />
+				<Format mimetype="application/remap" />
+				<Format mimetype="application/x-erdas-hfa" />
+				<Format mimetype="application/x-netcdf" />
+				<Format mimetype="application/netcdf" />
+				<Format mimetype="application/dgn" />
+				<Format mimetype="image/jpeg" />
+				<Format mimetype="image/png" />
+				<Format mimetype="application/x-geotiff" />
+				<Format mimetype="text/plain" />
+				<Format mimetype="application/pdf" />
+				<Format mimetype="application/zip" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
+				<Format mimetype="text/x-markdown" />
+			</Generator>
+		</GeneratorList>
+	</Datahandlers>
+	<AlgorithmRepositoryList>
+		<Repository name="LocalAlgorithmRepository"
+			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.JTSConvexHullAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.EchoProcess</Property>
+		</Repository>
+		<Repository name="UploadedAlgorithmRepository"
+			className="org.n52.wps.server.UploadedAlgorithmRepository" active="false">
+		</Repository>
+		<Repository name="ServiceLoaderAlgorithmRepository"
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
+		</Repository>
+  </AlgorithmRepositoryList>
+	<RemoteRepositoryList />
+
+	<Server hostname="localhost" hostport="8080"
+		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
+		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
+             the response document will be replaced with the server URL used in the HTTP request. -->
+        <Property name="responseURLFilterEnabled" active="true">false</Property>
+		<Database>
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
+			<!-- enable database wiping base on values below -->
+			<Property name="wipe.enabled" active="true">true</Property>
+			<!-- scans database every 1 hour -->
+			<Property name="wipe.period" active="true">PT1H</Property>
+			<!-- deletes files older than 7 days -->
+			<Property name="wipe.threshold" active="true">P7D</Property>
+		</Database>
+
+        <!--
+            POSTGRES Connector
+            ==================
+
+            Ensure that the postgres driver is available to the server during
+            launch. The server will fail to start if Postgres is active but the
+            driver is missing. However, if the driver exists and the database
+            cannot be connected to (unavailable, username/pass issue, etc), the
+            framework will fail-over to the Flatfile Database
+
+            jndiName or username/password: If jndiName exists, username
+            and password are not used.
+
+            saveResultsToDb: Setting to false will save results output to file
+            and put the URI link to the file in the database. Setting to true
+            stores the actual result output in the database (You probably don't
+            want this if you have large results).
+
+            JNDI Configuration:
+            <Database>
+                <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
+                <Property active="true" name="jndiName">jndiname</Property>
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+
+            Direct connection configuration:
+            <Database>
+                Alternative connection method
+                <Property active="true" name="databaseName">postgres</Property>
+                <Property active="true" name="databasePath">//localhost:5432</Property>
+                <Property active="true" name="username">username</Property>
+                <Property active="true" name="password">password</Property>
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+-->
+
+	</Server>
+</WPSConfiguration>

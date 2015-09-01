@@ -32,6 +32,7 @@ package org.n52.wps.server.r.workspace;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class RWorkspace {
     public enum CreationStrategy {
         DEFAULT, MANUAL, MANUALBASEDIR, PRESET, TEMPORARY;
 
+        @Override
         public String toString() {
             return this.name().toLowerCase();
         }
@@ -98,6 +100,12 @@ public class RWorkspace {
 
     private boolean wpsWorkDirIsRWorkDir = true;
 
+    private Path basedir;
+
+    public RWorkspace(Path basedir) {
+        this.basedir = basedir;
+    }
+
     private REXP createAndSetNewWorkspaceDirectory(File directory, RConnection connection) throws RserveException {
         boolean b = directory.mkdir();
         if (b) {
@@ -105,10 +113,8 @@ public class RWorkspace {
             String wd = directory.getAbsolutePath();
             return setwd(connection, wd);
         }
-        else {
-            log.error("Could not create new temp workspace directory at {}", directory);
-            return null;
-        }
+        log.error("Could not create new temp workspace directory at {}", directory);
+        return null;
     }
 
     private REXP createAndSetNewWorkspaceDirectoryInRTempdir(RConnection connection) throws RserveException {
@@ -171,8 +177,8 @@ public class RWorkspace {
                             return true;
                         return false;
                     }
-                    else
-                        this.temporarilyPreventingRWorkingDirectoryFromDelete = false;
+
+                    this.temporarilyPreventingRWorkingDirectoryFromDelete = false;
                 }
                 else
                     log.warn("Unexpected R workdirectory at end of R session, check the R sript for unwanted workdirectory changes.");
@@ -214,6 +220,7 @@ public class RWorkspace {
      * @param workDirName
      * 
      * @return the new working directory, which is already set.
+     * @throws org.rosuda.REngine.REXPMismatchException
      */
     public String setWorkingDirectory(RConnection connection,
                                       String currentWorkDir,
@@ -230,12 +237,41 @@ public class RWorkspace {
         REXP oldWorkdir = null;
         log.debug("Working on localhost: {}", isRserveOnLocalhost);
 
+        CreationStrategy strategy = null;
         if (strategyName == null || strategyName.equals("")) {
-            log.error("Strategy is not defined: {}. Returning current work directory.", strategyName);
-            return currentWorkDir;
+            log.error("Strategy is not defined: {}. Falling back to default: {}", DEFAULT_STRATEGY);
+            strategy = DEFAULT_STRATEGY;
         }
+        else
+            strategy = CreationStrategy.valueOf(strategyName.trim().toUpperCase());
 
-        CreationStrategy strategy = CreationStrategy.valueOf(strategyName.trim().toUpperCase());
+
+        // if one of these strategies is used, then Java must be able to write in the folder and we need the
+        // full path
+        String workDirNameFullPath = null;
+        if (strategy.equals(CreationStrategy.MANUALBASEDIR) || strategy.equals(CreationStrategy.MANUAL)) {
+            try {
+                if (workDirName == null)
+                    throw new ExceptionReport("Error setting working directory with strategy '" + strategy +  "': workDirName is 'null'!", "Inconsistent property");
+
+                File testFile = new File(workDirName);
+                if ( !testFile.isAbsolute()) {
+                    testFile = basedir.resolve(path).toFile();
+                }
+                if ( !testFile.exists())
+                    throw new ExceptionReport("Invalid work dir name \"" + workDirName + "\" and full path \""
+                            + testFile.getPath() + "\". It denotes a non-existent path.", "Inconsistent property");
+
+                workDirNameFullPath = testFile.getAbsolutePath();
+                log.debug("Manually set work dir name resolved to the full path '{}'", workDirNameFullPath);
+            }
+            catch (ExceptionReport e) {
+                log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
+                          RWPSConfigVariables.R_WORK_DIR_NAME,
+                          strategy,
+                          e);
+            }
+        }
 
         if (strategy.equals(DEFAULT_STRATEGY)) {
             // Default behaviour: R work directory is the same as temporary WPS work directory if R runs
@@ -346,26 +382,25 @@ public class RWorkspace {
     }
 
     public Collection<File> listFiles() {
-        File f = new File(this.path);
-        ArrayList<File> files = new ArrayList<File>(Arrays.asList(f.listFiles()));
+        ArrayList<File> files = new ArrayList<File>();
+        if (this.path != null) {
+            File f = new File(this.path);
+            files.addAll(Arrays.asList(f.listFiles()));
+        }
+        else
+            log.error("The path to the workspace is null, cannot create file list");
         return files;
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("RWorkspace [");
-        if (path != null) {
-            builder.append("path=");
-            builder.append(path);
-            builder.append(", ");
-        }
-        builder.append("deleteRWorkDirectory=");
-        builder.append(deleteRWorkDirectory);
-        builder.append(", temporarilyPreventingRWorkingDirectoryFromDelete=");
-        builder.append(temporarilyPreventingRWorkingDirectoryFromDelete);
-        builder.append(", wpsWorkDirIsRWorkDir=");
-        builder.append(wpsWorkDirIsRWorkDir);
+        builder.append("RWorkspace [deleteRWorkDirectory=").append(deleteRWorkDirectory).append(", ");
+        if (path != null)
+            builder.append("path=").append(path).append(", ");
+        builder.append("temporarilyPreventingRWorkingDirectoryFromDelete=").append(temporarilyPreventingRWorkingDirectoryFromDelete).append(", wpsWorkDirIsRWorkDir=").append(wpsWorkDirIsRWorkDir).append(", ");
+        if (basedir != null)
+            builder.append("basedir=").append(basedir);
         builder.append("]");
         return builder.toString();
     }

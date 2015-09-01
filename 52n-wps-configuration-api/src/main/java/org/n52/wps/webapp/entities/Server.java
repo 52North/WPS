@@ -92,7 +92,19 @@ public class Server implements ConfigurationModule {
 	private int keepAliveSeconds;
 	private int maxQueuedTasks;
 
-	@Override
+    public Server() {
+        //
+    }
+
+    public Server(String protocol, String hostname, int hostport, String webappPath) {
+        super();
+        this.protocol = protocol;
+        this.hostname = hostname;
+        this.hostport = hostport;
+        this.webappPath = webappPath;
+    }
+
+    @Override
 	public String getModuleName() {
 		return "Server Configuration";
 	}

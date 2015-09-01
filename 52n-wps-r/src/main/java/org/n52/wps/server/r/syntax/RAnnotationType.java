@@ -26,6 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
+
 package org.n52.wps.server.r.syntax;
 
 import java.io.IOException;
@@ -35,19 +36,37 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Describes each annotation type considering attributes, their order and
- * behavior
+ * Describes each annotation type considering attributes, their order and behavior
  * 
  */
 public enum RAnnotationType {
 
-    INPUT(Arrays.asList(RAttribute.INPUT_START, RAttribute.IDENTIFIER, RAttribute.TYPE, RAttribute.TITLE, RAttribute.ABSTRACT, RAttribute.DEFAULT_VALUE, RAttribute.MIN_OCCURS, RAttribute.MAX_OCCURS)),
+    INPUT(Arrays.asList(RAttribute.INPUT_START,
+                        RAttribute.IDENTIFIER,
+                        RAttribute.TYPE,
+                        RAttribute.TITLE,
+                        RAttribute.ABSTRACT,
+                        RAttribute.DEFAULT_VALUE,
+                        RAttribute.MIN_OCCURS,
+                        RAttribute.MAX_OCCURS)),
 
-    OUTPUT(Arrays.asList(RAttribute.OUTPUT_START, RAttribute.IDENTIFIER, RAttribute.TYPE, RAttribute.TITLE, RAttribute.ABSTRACT)),
+    OUTPUT(Arrays.asList(RAttribute.OUTPUT_START,
+                         RAttribute.IDENTIFIER,
+                         RAttribute.TYPE,
+                         RAttribute.TITLE,
+                         RAttribute.ABSTRACT)),
 
-    DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START, RAttribute.IDENTIFIER, RAttribute.TITLE, RAttribute.VERSION, RAttribute.ABSTRACT, RAttribute.AUTHOR)),
+    DESCRIPTION(Arrays.asList(RAttribute.DESCRIPTION_START,
+                              RAttribute.IDENTIFIER,
+                              RAttribute.TITLE,
+                              RAttribute.VERSION,
+                              RAttribute.ABSTRACT,
+                              RAttribute.AUTHOR)),
 
-    RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST));
+    RESOURCE(Arrays.asList(RAttribute.RESOURCE_START, RAttribute.NAMED_LIST)),
+
+    IMPORT(Arrays.asList(RAttribute.IMPORT_START, RAttribute.NAMED_LIST)), METADATA(
+            Arrays.asList(RAttribute.METADATA_START, RAttribute.TITLE, RAttribute.HREF));
 
     private HashMap<String, RAttribute> attributeLut = new HashMap<String, RAttribute>();
 
@@ -61,7 +80,7 @@ public enum RAnnotationType {
         this.startKey = attributeSequence.get(0);
         this.attributeSequence = attributeSequence;
 
-        for (RAttribute attribute : attributeSequence) {
+        for (RAttribute attribute : this.attributeSequence) {
             this.attributeLut.put(attribute.getKey(), attribute);
             if (attribute.isMandatory()) {
                 this.mandatory.add(attribute);
@@ -69,13 +88,11 @@ public enum RAnnotationType {
         }
     }
 
-    public RAttribute getStartKey()
-    {
+    public RAttribute getStartKey() {
         return this.startKey;
     }
 
-    public RAttribute getAttribute(String key) throws RAnnotationException
-    {
+    public RAttribute getAttribute(String key) throws RAnnotationException {
         String k = key.toLowerCase();
         if (this.attributeLut.containsKey(k))
             return this.attributeLut.get(k);
@@ -84,33 +101,33 @@ public enum RAnnotationType {
                 + " ...) cannot contain a parameter named '" + key + "'.");
     }
 
-    public Iterable<RAttribute> getAttributeSequence()
-    {
+    public Iterable<RAttribute> getAttributeSequence() {
         return this.attributeSequence;
 
     }
 
     /**
-     * Checks if Annotation content is valid for process description and adds
-     * attributes / standard values if necessary
+     * Checks if Annotation content is valid for process description and adds attributes / standard values if
+     * necessary
      * 
      * @param key
-     *            / value pairs given in the annotation from RSkript
+     *        / value pairs given in the annotation from RSkript
      * @return key / value pairs ready for process description
      * @throws IOException
      */
-    public void validateDescription(RAnnotation rAnnotation) throws RAnnotationException
-    {
+    public void validateDescription(RAnnotation rAnnotation) throws RAnnotationException {
         // check minOccurs Attribute and default value:
         try {
             if (rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
                 Integer min = Integer.parseInt(rAnnotation.getStringValue(RAttribute.MIN_OCCURS));
                 if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !min.equals(0))
-                    throw new RAnnotationException("");
+                    throw new RAnnotationException("Default value found but minimum required number of occurrences is not '0' in annotation "
+                            + this);
             }
-        } catch (NumberFormatException e) {
-            throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), " + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey()
-                    + e.getMessage());
+        }
+        catch (NumberFormatException e) {
+            throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), "
+                    + "unable to parse Integer value from attribute " + RAttribute.MIN_OCCURS.getKey() + e.getMessage());
         }
 
         if (rAnnotation.containsKey(RAttribute.DEFAULT_VALUE) && !rAnnotation.containsKey(RAttribute.MIN_OCCURS)) {
@@ -122,9 +139,22 @@ public enum RAnnotationType {
             if (rAnnotation.containsKey(RAttribute.MAX_OCCURS)) {
                 Integer.parseInt(rAnnotation.getStringValue(RAttribute.MAX_OCCURS));
             }
-        } catch (NumberFormatException e) {
-            throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), " + "unable to parse Integer value from attribute " + RAttribute.MAX_OCCURS.getKey());
         }
+        catch (NumberFormatException e) {
+            throw new RAnnotationException("Syntax Error in Annotation " + this + " (" + this.startKey + " ...), "
+                    + "unable to parse Integer value from attribute " + RAttribute.MAX_OCCURS.getKey());
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("RAnnotationType [startKey = ");
+        sb.append(this.startKey);
+        // sb.append(", attributes = ");
+        // sb.append(Arrays.toString(this.attributeSequence.toArray()));
+        sb.append("]");
+        return sb.toString();
     }
 
 }

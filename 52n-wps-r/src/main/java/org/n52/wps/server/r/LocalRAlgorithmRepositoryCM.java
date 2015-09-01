@@ -32,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public class LocalRAlgorithmRepositoryCM implements ConfigurationModule{
+public class LocalRAlgorithmRepositoryCM extends ClassKnowingModule {
 
 	private boolean isActive = true;
 
@@ -60,7 +60,7 @@ public class LocalRAlgorithmRepositoryCM implements ConfigurationModule{
 	
 	@Override
 	public String getModuleName() {
-		return "LocalRAlgorithmRepository Configuration Module";
+        return "Local*R*AlgorithmRepository Configuration Module";
 	}
 
 	@Override
@@ -92,6 +92,11 @@ public class LocalRAlgorithmRepositoryCM implements ConfigurationModule{
 	public List<FormatEntry> getFormatEntries() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getClassName() {
+		return LocalRAlgorithmRepository.class.getName();
 	}
 
 }

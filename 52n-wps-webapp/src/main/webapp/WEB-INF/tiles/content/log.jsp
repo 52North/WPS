@@ -43,7 +43,7 @@
 				<c:forEach var="logger" items="${logConfigurations.loggers}">
 					<tr>
 						<td>${logger.key}</td>
-						<td><form:select class="form-control" path="loggers['${logger.key}']">
+						<td><form:select class="form-control" path="loggers['${logger.key}']" style="width:100px">
 								<form:option value="DEBUG">DEBUG</form:option>
 								<form:option value="INFO">INFO</form:option>
 								<form:option value="WARN">WARN</form:option>
