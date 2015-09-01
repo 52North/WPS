@@ -193,6 +193,7 @@
 			dataType : 'text',
 			processData : false,
 			contentType : false,
+			headers: { 'X-CSRF-TOKEN': $("#uploadProcess input[name=${_csrf.parameterName}]").val() },
 			type : 'POST',
 			success : function(xhr) {
 				// success alert
