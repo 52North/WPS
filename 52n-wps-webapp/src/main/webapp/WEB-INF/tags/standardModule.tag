@@ -121,9 +121,14 @@
 							</tbody>
 						</table>
 						<!--button type="submit" class="btn btn-primary" id="addAlgorithmButton" onClick="buttonClick('${fullClassName}')">Add algorithm</button-->						
-						<a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
-					</c:if>
-					
+                        <a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
+					</c:if>											
+					<c:if test="${fullClassName == 'org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM'}">
+						<a data-toggle="modal" href="#uploadProcess" class="btn btn-primary btn-lg">Upload Process</a>
+				    </c:if>
+					<c:if test="${fullClassName == 'org.n52.wps.server.r.LocalRAlgorithmRepositoryCM'}">
+						<a data-toggle="modal" href="#uploadRScript" class="btn btn-primary btn-lg">Upload R Script</a>
+				    </c:if>
 					<%-- Display the formats table if the module has any --%>
 					<c:if test="${not empty configurationModule.value.formatEntries}">
 

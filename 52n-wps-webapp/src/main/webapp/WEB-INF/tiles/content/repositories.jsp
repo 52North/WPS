@@ -4,8 +4,8 @@
 <module:standardModule configurations="${configurations}" baseUrl="repositories" />
 
 <!-- Start of upload code -->
-<a data-toggle="modal" href="#uploadProcess" class="btn btn-primary btn-lg">Upload Process</a>
-<a data-toggle="modal" href="#uploadRScript" class="btn btn-primary btn-lg">Upload R Script</a>
+<!-- <a data-toggle="modal" href="#uploadProcess" class="btn btn-primary btn-lg">Upload Process</a> -->
+<!-- <a data-toggle="modal" href="#uploadRScript" class="btn btn-primary btn-lg">Upload R Script</a> -->
 
 <!-- Add algorithm -->
 <div class="modal fade" id="addAlgorithm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
