@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.n52.wps.algorithm.util.JavaProcessCompiler;
+import org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.n52.wps.webapp.api.WPSConfigurationException;
@@ -215,10 +217,13 @@ public class UploadController {
 		FileUtils.writeByteArrayToFile(tempFile, java.getBytes());
 		List<String> lines = FileUtils.readLines(tempFile);
 
+		String fullyQualifiedName = tempFile.getName().replace(".java", "");
+		
 		// find the first line with the word package at it's beginning
 		for (String line : lines) {
 			if (line.indexOf("package") == 0) {
 				packageName = line.replace("package", "").replace(";", "").trim();
+				fullyQualifiedName = packageName + "." + fullyQualifiedName;
 				break;
 			}
 		}
@@ -234,6 +239,14 @@ public class UploadController {
 		// copy the file to the final directory
 		FileUtils.copyFileToDirectory(tempFile, new File(directoryPath.toString()));
 		LOGGER.info("Uploaded file saved in '{}'.", directoryPath.toString());
+		
+		String fileName = directoryPath.toString().endsWith(File.separator) ? directoryPath.toString() + tempFile.getName() : directoryPath.toString() + File.separator + tempFile.getName();
+		
+		//TODO: inform user about possible compile errors
+		JavaProcessCompiler.compile(fileName);
+		
+		configurationManager.getConfigurationServices().addAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), fullyQualifiedName);
+		
 		tempFile.delete();
 		return directoryPath.toString();
 	}

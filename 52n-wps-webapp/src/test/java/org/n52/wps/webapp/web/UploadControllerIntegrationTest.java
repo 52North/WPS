@@ -39,6 +39,8 @@ import java.io.FileInputStream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,10 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
+
+	@Autowired
+	private ConfigurationManager configurationManager;
+
 
 	@Before
 	public void setup() {
@@ -95,6 +101,7 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 
 		// Clean up
 		deleteFolder(new File(uploadDirectory));
+		configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
 	}
 
 	@Test
@@ -114,6 +121,7 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 
 		// Clean up
 		deleteFolder(new File(uploadDirectory));
+		configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
 	}
 
 	@Test
@@ -135,7 +143,7 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 	}
 
 	@Test
-	public void uploadProcess_invalidJaveFile_noUpload() throws Exception {
+	public void uploadProcess_invalidJavaFile_noUpload() throws Exception {
 		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
 		MultipartFile javaFile = getInvalidJavaFile();
 		multiRequest.addFile(javaFile);

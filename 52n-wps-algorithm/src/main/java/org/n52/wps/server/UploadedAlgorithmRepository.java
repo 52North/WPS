@@ -16,12 +16,18 @@
  */
 package org.n52.wps.server;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.n52.wps.algorithm.annotation.Algorithm;
+import org.n52.wps.algorithm.util.CustomClassLoader;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
@@ -77,8 +83,7 @@ public class UploadedAlgorithmRepository implements
 		try {
 			return loadAlgorithm(algorithmMap.get(className));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -91,9 +96,7 @@ public class UploadedAlgorithmRepository implements
 						.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
+			LOGGER.error(e.getMessage());
 		}
 		return resultList;
 	}
@@ -108,8 +111,22 @@ public class UploadedAlgorithmRepository implements
 
 	private IAlgorithm loadAlgorithm(String algorithmClassName)
 			throws Exception {
-		IAlgorithm algorithm = (IAlgorithm) LocalAlgorithmRepository.class
-				.getClassLoader().loadClass(algorithmClassName).newInstance();
+		
+		Class<?> algorithmClass = new CustomClassLoader("/uploaded").loadClass(algorithmClassName);
+		IAlgorithm algorithm = null;
+		if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
+			algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());
+		} else if (algorithmClass.isAnnotationPresent(Algorithm.class)) {
+			// we have an annotated algorithm that doesn't implement IAlgorithm
+			// wrap it in a proxy class
+			algorithm = new AbstractAnnotatedAlgorithm.Proxy(algorithmClass);
+		} else {
+			throw new Exception(
+					"Could not load algorithm "
+							+ algorithmClassName
+							+ " does not implement IAlgorithm or have a Algorithm annotation.");
+		}
+		
 		
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
             
@@ -155,9 +172,6 @@ public class UploadedAlgorithmRepository implements
 	}
 
 	@Override
-	public void shutdown() {
-		// TODO Auto-generated method stub
-
-	}
-
+	public void shutdown() {}
+	
 }
