@@ -193,14 +193,14 @@ public class MCProcessRepository implements IAlgorithmRepository {
 					catch (Exception e) {
 						// catch any unexpected error; if we get here this is probably an indication for a
 						// bug/flaw in mc-runtime ...
-						LOGGER.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+						LOGGER.error("Error loading repository: " + property.getName() + " - "
 								+ property.getStringValue());
 					}
 
 				}
 			}
 
-			// for each remote repository: add to RepoManager
+			// for each local repository: add to RepoManager
 			for (Property property : propertyArray) {
 				if (property.getName().equalsIgnoreCase(LOCAL_ZIP_REPO_PARAM) && property.getActive()) {
 					// identify Folder, check and register
@@ -213,7 +213,7 @@ public class MCProcessRepository implements IAlgorithmRepository {
 					catch (Exception e) {
 						// catch any unexpected error; if we get here this is probably an indication for a
 						// bug/flaw in mc-runtime ...
-						LOGGER.error("Error invoking MovingCode Runtime for feed URL : " + property.getName() + " - "
+						LOGGER.error("Error loading repository: " + property.getName() + " - "
 								+ property.getStringValue());
 						e.printStackTrace();
 					}
