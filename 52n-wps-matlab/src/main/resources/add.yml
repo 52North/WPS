@@ -1,0 +1,40 @@
+---
+title: add
+function: add
+abstract: adds two values
+version: 1.0.0
+identifier: com.github.autermann.wps.matlab.add
+inputs:
+    - identifier: a
+      title: first operand
+      abstract: first operand
+      type: double
+    - identifier: b
+      title: second operand
+      abstract: second operand
+      type: double
+outputs:
+    - identifier: result
+      title: the result
+      abstract: the result of the addition
+      type: double
+connection: file:///home/autermann/Source/wps/matlab-wps/src/main/resources
+#host: localhost
+#port: 7000
+#attempts: 5
+#timeout: 10000
+...
+#    ssl:
+#        keyFile: /home/auti/ssl/client/key.pem
+#        certFile: /home/auti/ssl/client/key.pem
+#        trustFile: /home/auti/ssl/client/key.pem
+#    ssl:
+#        keyStore:
+#            path: /home/auti/ssl/client/keystore
+#            pass: "*****"
+#            type: jks
+#        trustStore:
+#            path: /home/auti/ssl/client/trustore
+#            pass: "****"
+#            type: jks
+#
