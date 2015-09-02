@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,27 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab.description;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public class MatlabConfigurationException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
+
+    public MatlabConfigurationException(String message, Object... param) {
+        super(String.format(message, param));
+    }
+
+    public MatlabConfigurationException(Throwable cause, String message,
+                                        Object... param) {
+        super(String.format(message, param), cause);
+    }
+
+    public MatlabConfigurationException(Throwable cause) {
+        super(cause);
+    }
+
 }
