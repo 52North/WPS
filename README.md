@@ -4,7 +4,7 @@ Extension for the [52°North WPS](https://github.com/52North/WPS) to offer [Matl
 
 ## Dependencies
 
-* Matlab (R2013b was tested)
+* Matlab (R2013b and R2015a were tested)
 * [matlab-connector](https://github.com/autermann/matlab-connector)
 
 ## Usage
