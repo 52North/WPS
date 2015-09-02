@@ -26,41 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.data.binding.complex;
+package org.n52.wps.server.database.connection;
 
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import org.n52.wps.io.data.IComplexData;
+/**
+ * @author abramhall (Arthur Bramhall, USGS)
+ */
+public interface ConnectionHandler {
 
-public class PlainStringBinding implements IComplexData {
-
-    private static final long serialVersionUID = -2102127552780241607L;
-
-    protected transient String payload;
-
-    public PlainStringBinding(String string) {
-        payload = string;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-	public Class<?> getSupportedClass() {
-        return String.class;
-    }
-
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(payload);
-    }
-
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = (String) oos.readObject();
-    }
-
-    @Override
-    public void dispose() {
-        //
-    }
-
+	public Connection getConnection() throws SQLException;
 }

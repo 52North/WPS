@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2009 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@
 //
 
 
-package org.n52.wps.server.feed.movingcode;
+package org.n52.wps.ags.algorithmpackage;
 
 import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;

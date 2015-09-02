@@ -180,7 +180,11 @@ public class AnnotatedAlgorithmIntrospector {
                 }
             }
         }
-        
+
+        if(this.executeMethodBinding == null) {
+            throw new RuntimeException("No execute method binding for class " + this.algorithmClass.getCanonicalName());
+        }
+
         for (InputBinding<?,?> inputBinding : inputBindingMap.values()) {
             algorithmBuilder.addInputDescriptor(inputBinding.getDescriptor());
         }

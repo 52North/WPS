@@ -348,7 +348,8 @@ public abstract class AbstractDatabase implements IDatabase{
 		return null;
 	}
 
-	/** Returns the path to the database.
+	/** 
+	 * Returns the path to the database.
 	 * 
 	 * @note The path has no file separator in the end of the file.
 	 */
@@ -374,10 +375,6 @@ public abstract class AbstractDatabase implements IDatabase{
 		return dbPath;
 	}
 	
-	/**
-	 * @throws Exception 
-	 * 
-	 */
     @Override
 	public void shutdown() {
 		try {
@@ -416,19 +413,16 @@ public abstract class AbstractDatabase implements IDatabase{
 	
     @Override
 	public boolean deleteStoredResponse(String id) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
     @Override
 	public File lookupRequestAsFile(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
     @Override
 	public File lookupResponseAsFile(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
