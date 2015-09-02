@@ -26,41 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.data.binding.complex;
+package org.n52.wps.server.database;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.wps.io.data.IComplexData;
+/**
+ * After calling close on this InputStream, will attempt to delete the
+ * underlying file
+ *
+ * @author isuftin (Ivan Suftin, USGS)
+ */
+public class SelfCleaningFileInputStream extends FileInputStream {
 
-public class PlainStringBinding implements IComplexData {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SelfCleaningFileInputStream.class);
+	private File file;
 
-    private static final long serialVersionUID = -2102127552780241607L;
+	public SelfCleaningFileInputStream(File file) throws FileNotFoundException {
+		super(file);
+	}
 
-    protected transient String payload;
-
-    public PlainStringBinding(String string) {
-        payload = string;
-    }
-
-    public String getPayload() {
-        return payload;
-    }
-
-	public Class<?> getSupportedClass() {
-        return String.class;
-    }
-
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(payload);
-    }
-
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = (String) oos.readObject();
-    }
-
-    @Override
-    public void dispose() {
-        //
-    }
-
+	@Override
+	public void close() throws IOException {
+		super.close();
+		
+		String path = file.getAbsolutePath();
+		if (!file.exists()) {
+			LOGGER.debug("File at {} does not exist", path);
+		} else if (!file.isFile()) {
+			LOGGER.debug("File at {} is not a file", path);
+		} else if (!file.canWrite()) {
+			LOGGER.debug("File at {} can not be written to", path);
+		} else {
+			FileUtils.deleteQuietly(file);
+		}
+	}
 }
