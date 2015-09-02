@@ -22,6 +22,7 @@ $('form#standardModule').submit(
 			$.ajax({
 				type : form.attr('method'),
 				url : form.attr('action'),
+				headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 				data : form.serialize(),
 				success : function() {
 					form.addClass("has-success");
@@ -55,6 +56,7 @@ $('a#moduleStatusButton').click(function(event) {
 	$.ajax({
 		type : "POST",
 		url : url,
+		headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 		success : function() {
 			var currentStatus = url.substring(url.lastIndexOf('/') + 1);
 			var trgetStatus = currentStatus == 'true' ? 'false' : 'true';

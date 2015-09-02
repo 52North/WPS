@@ -8,6 +8,7 @@
 <link href="<c:url value="/static/css/bootstrap-glyphicons.css" />" rel="stylesheet" type="text/css" />
 <!--[if IE]><link rel="shortcut icon" href="<c:url value="/static/favicon.ico" />"><![endif]-->
 <link rel="icon" href="<c:url value="/static/favicon.ico" />">
+<meta name="csrf_token" content="${_csrf.token}">
 </head>
 <body>
 	<script src="<c:url value="/static/js/library/jquery-1.10.1.js" />"></script>

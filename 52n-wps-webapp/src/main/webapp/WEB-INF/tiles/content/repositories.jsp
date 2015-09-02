@@ -230,6 +230,7 @@
 		$.ajax({
 			type : "POST",
 			url : url,
+			headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 			success : function() {
 				var currentStatus = url.substring(url.lastIndexOf('/') + 1);
 				var trgetStatus = currentStatus == 'true' ? 'false' : 'true';

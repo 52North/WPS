@@ -184,6 +184,7 @@ $('input#hiddenModuleName').val(moduleName);
 		$.ajax({
 			type : "POST",
 			url : url,
+			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
 			success : function() {
 				(row).remove();
 				alertMessage("", "Algorithm deleted", "alert alert-success", a);
@@ -202,6 +203,7 @@ $('input#hiddenModuleName').val(moduleName);
 		$.ajax({
 			type : "POST",
 			url : url,
+			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
 			success : function() {
 				(row).remove();
 				alertMessage("", "Format deleted", "alert alert-success", a);
@@ -219,6 +221,7 @@ $('input#hiddenModuleName').val(moduleName);
 		$.ajax({
 			type : "POST",
 			url : url,
+			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
 			success : function() {
 				var currentStatus = url.substring(url.lastIndexOf('/') + 1);
 				var trgetStatus = currentStatus == 'true' ? 'false' : 'true';
