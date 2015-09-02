@@ -28,6 +28,8 @@
  */
 package org.n52.wps.server.database;
 
+import static org.n52.wps.server.database.AbstractDatabase.getDatabaseProperties;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,16 +63,17 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.wps.commons.PropertyUtil;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.entities.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 /**
- *
+ *Uses the Postgres database to store and retrieve data.
  * @author isuftin (Ivan Suftin, USGS)
  */
 public class PostgresDatabase extends AbstractDatabase {
@@ -112,17 +115,17 @@ public class PostgresDatabase extends AbstractDatabase {
 
             // Create lock object
             storeResponseSerialNumberLock = new Object();
-            
+
             PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
-        	
+
         	Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
             baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
                     server.getHostname(), server.getHostport(), server.getWebappPath());
-        	
+
             PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
-            
-            // Create database wiper task 
+
+            // Create database wiper task
             if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
                 long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
                 long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
@@ -474,7 +477,7 @@ public class PostgresDatabase extends AbstractDatabase {
 
         return result;
     }
-    
+
     private class WipeTimerTask extends TimerTask {
 
         public final long thresholdMillis;
@@ -506,15 +509,15 @@ public class PostgresDatabase extends AbstractDatabase {
                     }
                 }
 
-                // Clean up records in database 
+                // Clean up records in database
                 Integer recordsDeleted = deleteRecords(oldRecords);
                 LOGGER.info("Cleaned {} records from database", recordsDeleted);
-                
+
             }
         }
 
         private Boolean deleteFileOnDisk(String id) {
-            Boolean deleted = false; 
+            Boolean deleted = false;
 
             File fileToDelete = new File(BASE_DIRECTORY, id);
 

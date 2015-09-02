@@ -41,12 +41,11 @@ import java.util.UUID;
 import net.opengis.wps.x100.ProcessDescriptionType;
 
 import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.ags.algorithmpackage.AlgorithmPackage;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.ProcessDescription;
-import org.n52.wps.server.feed.FeedRepository;
-import org.n52.wps.server.feed.movingcode.MovingCodeObject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,60 +54,59 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ArcToolboxProcessRepository implements IAlgorithmRepository{
-	
+
 	private static Logger LOGGER = LoggerFactory.getLogger(ArcToolboxProcessRepository.class);
-	
+
 	private static final String PROPERTY_PROCESS_INVENTORY_DIR = "PROCESS_INVENTORY_DIR";
 	private static final String PROPERTY_CONTAINER_URN = "CONTAINER_URN";
 	private static final String PROPERTY_BACKEND_URN = "BACKEND_URN";
 	private static final String PROPERTY_WORKSPACEBASE = "WORKSPACEBASE";
-	
-	private HashMap<String, MovingCodeObject> registeredAlgorithms;
+
+	private HashMap<String, AlgorithmPackage> registeredAlgorithms;
 	private URI[] supportedContainers;
 	private URI[] supportedBackends;
 	private File workspaceBase = null;
 	private File inventoryDir = null;
-	
-	
-	
+
+
+
 	public ArcToolboxProcessRepository() {
-		
+
 		LOGGER.info("Initializing ArcToolbox Process Repository ...");
-		
+
 		//initialize local variables
-		registeredAlgorithms = new HashMap<String, MovingCodeObject>();
+		registeredAlgorithms = new HashMap<String, AlgorithmPackage>();
 		try{
 			loadConfiguration();
 			loadLocalProcesses();
-			loadFeedProcesses();
 		} catch (Exception e){
 			LOGGER.error("Could not initialize ArcToolbox Process Repository.");
 		}
-		
+
 		// check if workspaceBase is specified
 		if (workspaceBase == null){
 			LOGGER.error("Workspace base is missing: Clearing my Process Inventory");
-			registeredAlgorithms = new HashMap<String, MovingCodeObject>();
+			registeredAlgorithms = new HashMap<String, AlgorithmPackage>();
 		}
-		
+
 		// log active Processes ...
 		LOGGER.info("Algorithms loaded by ArcToolbox Process Repository:");
 		for (String currentKey : registeredAlgorithms.keySet()){
 			LOGGER.info(currentKey);
 		}
-		
+
 		// ... or state that there arent't any
 		if (registeredAlgorithms.size()==0){
 			LOGGER.info("No applicable algorithms fond");
 		}
-		
+
 	}
-	
+
 	private void loadConfiguration() throws Exception{
 		Property[] props = WPSConfig.getInstance().getPropertiesForRepositoryClass(this.getClass().getCanonicalName());
 		ArrayList<URI> containerList = new ArrayList<URI>();
 		ArrayList<URI> backendList = new ArrayList<URI>();
-		
+
 		for(Property currentProp : props){
 			try{
 				if (currentProp.getActive()){
@@ -130,27 +128,27 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 				LOGGER.error("Invalid container or backend URN - offending item is " + currentProp.getStringValue());
 			}
 		}
-		
+
 		supportedContainers = containerList.toArray(new URI[0]);
 		supportedBackends = backendList.toArray(new URI[0]);
 		containerList = null;
 		backendList = null;
-		
+
 	}
-	
+
 	private void loadLocalProcesses(){
-		
+
 		// abort loading if inventoryDir is empty
 		if (inventoryDir == null){
 			return;
 		}
-		
+
 		String[] describeProcessFiles = retrieveProcessDescriptions(inventoryDir);
-		
+
 		// create new MovingCodeObjects
 		for (String currentFileName : describeProcessFiles){
 			File currentFile = new File (inventoryDir.getAbsolutePath() + File.separator + currentFileName);
-			MovingCodeObject currentMCO = new MovingCodeObject(currentFile, inventoryDir);
+			AlgorithmPackage currentMCO = new AlgorithmPackage(currentFile, inventoryDir);
 			if (isSupportedScript(currentMCO)){
 				registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
 			} else {
@@ -159,17 +157,8 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 			}
 		}
 	}
-	
-	private void loadFeedProcesses(){
-		// retrieve supported MCOs from the feed
-		MovingCodeObject[] feedMCOs = FeedRepository.getInstance().getMovingCodeObjects(supportedContainers, supportedBackends);
-		for (MovingCodeObject currentMCO : feedMCOs){
-			// add those algorithms to this Repository
-			registeredAlgorithms.put(currentMCO.getProcessID(), currentMCO);
-		}
-	}
-	
-	private boolean isSupportedScript(MovingCodeObject mco){
+
+	private boolean isSupportedScript(AlgorithmPackage mco){
 		boolean rightContainer = false;
 		boolean rightBackends = false;
 		for (URI currentContainer : supportedContainers){
@@ -177,14 +166,14 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 				rightContainer = true;
 			}
 		}
-		
+
 		if (mco.isSufficientRuntimeEnvironment(supportedBackends)){
 			rightBackends = true;
 		}
-		
+
 		return (rightContainer && rightBackends);
 	}
-	
+
 	private static String[] retrieveProcessDescriptions(File directory){
 		String[] describeProcessFiles = directory.list(new FilenameFilter() {
 		    public boolean accept(File d, String name) {
@@ -193,9 +182,9 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		});
 		return describeProcessFiles;
 	}
-	
+
 	/**
-	 * Checks if a given processID exists 
+	 * Checks if a given processID exists
 	 * @param processID
 	 * @return
 	*/
@@ -205,7 +194,7 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns an IAlgorithm through GenericAGSProcessDelegator
 	 * @param processID
@@ -225,11 +214,11 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 			return null;
 		}
 	}
-	
+
 	public Collection<String> getAlgorithmNames() {
 		return registeredAlgorithms.keySet();
 	}
-	
+
 	public ProcessDescription getProcessDescription(String processID) {
 		return registeredAlgorithms.get(processID).getProcessDescription();
 	}
@@ -237,10 +226,10 @@ public class ArcToolboxProcessRepository implements IAlgorithmRepository{
 	@Override
 	public void shutdown() {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
 
 
-	
+
+
 }

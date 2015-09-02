@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2009 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,41 +26,55 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.io.data.binding.complex;
+package org.n52.wps.ags.algorithmpackage;
 
-import java.io.IOException;
+import java.util.LinkedList;
 
-import org.n52.wps.io.data.IComplexData;
+/**
+ * @author Matthias Mueller, TU Dresden
+ *
+ */
+public class CommandLineParameter {
 
-public class PlainStringBinding implements IComplexData {
+	private String prefix;
+	private String suffix;
+	private String separator;
 
-    private static final long serialVersionUID = -2102127552780241607L;
+	private LinkedList<String> values;
 
-    protected transient String payload;
+	public CommandLineParameter (String prefixString, String suffixString, String separatorString){
+		prefix = prefixString;
+		suffix = suffixString;
+		separator = separatorString;
 
-    public PlainStringBinding(String string) {
-        payload = string;
-    }
+		values = new LinkedList<String>();
 
-    public String getPayload() {
-        return payload;
-    }
+	}
 
-	public Class<?> getSupportedClass() {
-        return String.class;
-    }
+	public void addValue(String value){
+		values.add(value);
+	}
 
-    private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException {
-        oos.writeObject(payload);
-    }
+	public String getAsCommandString(){
+		String str = prefix;
 
-    private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException {
-        payload = (String) oos.readObject();
-    }
+		boolean firstrun = true;
+		for (String currentValue : values){
+			if (!firstrun){
+				str = str + separator + currentValue;
+			} else {
+				str = str + currentValue;
+				firstrun = false;
+			}
+		}
 
-    @Override
-    public void dispose() {
-        //
-    }
+		str = str + suffix;
+		return str;
+	}
+
+	public String getAsPlainString(){
+		return values.get(0);
+	}
+
 
 }

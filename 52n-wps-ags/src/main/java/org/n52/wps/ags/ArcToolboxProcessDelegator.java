@@ -49,6 +49,7 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 import org.n52.wps.server.IAlgorithm;
+
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.feed.movingcode.AlgorithmParameterType;
 import org.n52.wps.server.feed.movingcode.CommandLineParameter;
@@ -67,13 +68,13 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 	private final File toolWorkspace;
 	private final File workspaceBase;
 
-	private MovingCodeObject mco;
+	private AlgorithmPackage mco;
 	protected List<String> errors;
 
 	private String[] toolParameters;
 
 
-	protected ArcToolboxProcessDelegator(MovingCodeObject templateMCO, File workspaceBase) throws IOException{
+	protected ArcToolboxProcessDelegator(AlgorithmPackage templateMCO, File workspaceBase) throws IOException{
 		this.workspaceBase = workspaceBase;
 		errors = new ArrayList<String>();
 		mco = templateMCO.createChild(workspaceBase);
@@ -118,7 +119,7 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 					while (it.hasNext()){
 						IData currentItem = it.next();
 						// load as file and add to CommanLineParameter
-						cmdParam.addValue((MovingCodeUtils.loadSingleDataItem(currentItem, toolWorkspace)));
+						cmdParam.addValue((PackageUtils.loadSingleDataItem(currentItem, toolWorkspace)));
 					}
 				}
 			} else if (!wpsOutputID.equalsIgnoreCase("")){ // output only parameters !!ONLY SINGLE OUTPUT ITEMS SUPPORTED BY WPS!!
@@ -202,11 +203,11 @@ public class ArcToolboxProcessDelegator implements IAlgorithm{
 	}
 
 	public Class<?> getInputDataType(String id) {
-		return MovingCodeUtils.getInputDataType(mco, id);
+		return PackageUtils.getInputDataType(mco, id);
 	}
 
 	public Class<?> getOutputDataType(String id) {
-		return MovingCodeUtils.getOutputDataType(mco, id);
+		return PackageUtils.getOutputDataType(mco, id);
 	}
 
 	//delete the current workspace
