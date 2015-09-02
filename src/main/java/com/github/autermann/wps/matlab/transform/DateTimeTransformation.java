@@ -22,11 +22,11 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 
+import org.n52.matlab.connector.value.MatlabDateTime;
+import org.n52.matlab.connector.value.MatlabValue;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralDateTimeBinding;
 
-import com.github.autermann.matlab.value.MatlabDateTime;
-import com.github.autermann.matlab.value.MatlabValue;
 
 /**
  * TODO JavaDoc

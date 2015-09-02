@@ -26,11 +26,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.LinkedHashSet;
 
-import com.github.autermann.matlab.MatlabException;
-import com.github.autermann.matlab.client.MatlabClient;
-import com.github.autermann.matlab.client.MatlabClientConfiguration;
-import com.github.autermann.matlab.server.MatlabInstanceConfiguration;
-import com.github.autermann.matlab.server.MatlabInstancePoolConfiguration;
+import org.n52.matlab.connector.MatlabException;
+import org.n52.matlab.connector.client.MatlabClient;
+import org.n52.matlab.connector.client.MatlabClientConfiguration;
+import org.n52.matlab.connector.server.MatlabInstanceConfiguration;
+import org.n52.matlab.connector.server.MatlabInstancePoolConfiguration;
+
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.InputOccurence;
 import com.github.autermann.wps.commons.description.ProcessInputDescription;

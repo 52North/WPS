@@ -20,6 +20,7 @@ package com.github.autermann.wps.matlab.transform;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.matlab.connector.value.MatlabType;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralAnyURIBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -32,7 +33,6 @@ import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
-import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.wps.matlab.YamlConstants;
 import com.google.common.collect.Sets;
 

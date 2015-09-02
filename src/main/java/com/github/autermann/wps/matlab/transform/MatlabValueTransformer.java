@@ -21,17 +21,17 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.n52.matlab.connector.value.MatlabArray;
+import org.n52.matlab.connector.value.MatlabCell;
+import org.n52.matlab.connector.value.MatlabFile;
+import org.n52.matlab.connector.value.MatlabMatrix;
+import org.n52.matlab.connector.value.MatlabString;
+import org.n52.matlab.connector.value.MatlabStruct;
+import org.n52.matlab.connector.value.MatlabValue;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.ExceptionReport;
 
-import com.github.autermann.matlab.value.MatlabArray;
-import com.github.autermann.matlab.value.MatlabCell;
-import com.github.autermann.matlab.value.MatlabFile;
-import com.github.autermann.matlab.value.MatlabMatrix;
-import com.github.autermann.matlab.value.MatlabString;
-import com.github.autermann.matlab.value.MatlabStruct;
-import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.wps.matlab.MatlabFileBinding;
 import com.github.autermann.wps.matlab.description.MatlabBoundingBoxOutputDescription;
 import com.github.autermann.wps.matlab.description.MatlabComplexOutputDescription;

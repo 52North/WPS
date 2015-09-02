@@ -17,10 +17,10 @@
  */
 package com.github.autermann.wps.matlab.description;
 
+import org.n52.matlab.connector.value.MatlabType;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 
-import com.github.autermann.matlab.value.MatlabType;
 import com.github.autermann.wps.commons.description.impl.AbstractBoundingBoxInputDescriptionBuilder;
 import com.github.autermann.wps.commons.description.impl.BoundingBoxInputDescriptionImpl;
 

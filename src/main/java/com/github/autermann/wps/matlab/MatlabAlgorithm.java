@@ -27,16 +27,16 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.matlab.connector.MatlabException;
+import org.n52.matlab.connector.MatlabRequest;
+import org.n52.matlab.connector.MatlabResult;
+import org.n52.matlab.connector.client.MatlabClient;
+import org.n52.matlab.connector.value.MatlabScalar;
+import org.n52.matlab.connector.value.MatlabValue;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 
-import com.github.autermann.matlab.MatlabException;
-import com.github.autermann.matlab.MatlabRequest;
-import com.github.autermann.matlab.MatlabResult;
-import com.github.autermann.matlab.client.MatlabClient;
-import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.value.MatlabValue;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.matlab.description.MatlabProcessDescription;
 import com.github.autermann.wps.matlab.description.MatlabProcessInputDescription;

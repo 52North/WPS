@@ -22,19 +22,19 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import org.n52.matlab.connector.value.MatlabArray;
+import org.n52.matlab.connector.value.MatlabBoolean;
+import org.n52.matlab.connector.value.MatlabCell;
+import org.n52.matlab.connector.value.MatlabDateTime;
+import org.n52.matlab.connector.value.MatlabFile;
+import org.n52.matlab.connector.value.MatlabMatrix;
+import org.n52.matlab.connector.value.MatlabScalar;
+import org.n52.matlab.connector.value.MatlabString;
+import org.n52.matlab.connector.value.MatlabStruct;
+import org.n52.matlab.connector.value.MatlabValue;
+import org.n52.matlab.connector.value.ReturningMatlabValueVisitor;
 import org.n52.wps.io.data.IData;
 
-import com.github.autermann.matlab.value.MatlabArray;
-import com.github.autermann.matlab.value.MatlabBoolean;
-import com.github.autermann.matlab.value.MatlabCell;
-import com.github.autermann.matlab.value.MatlabDateTime;
-import com.github.autermann.matlab.value.MatlabFile;
-import com.github.autermann.matlab.value.MatlabMatrix;
-import com.github.autermann.matlab.value.MatlabScalar;
-import com.github.autermann.matlab.value.MatlabString;
-import com.github.autermann.matlab.value.MatlabStruct;
-import com.github.autermann.matlab.value.MatlabValue;
-import com.github.autermann.matlab.value.ReturningMatlabValueVisitor;
 
 /**
  * TODO JavaDoc

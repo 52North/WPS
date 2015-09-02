@@ -53,17 +53,17 @@
             <version>18.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.autermann</groupId>
+            <groupId>org.n52.matlab</groupId>
             <artifactId>matlab-connector-client</artifactId>
             <version>${matlab-connector-version}</version>
         </dependency>
          <dependency>
-            <groupId>com.github.autermann</groupId>
+            <groupId>org.n52.matlab</groupId>
             <artifactId>matlab-connector-common</artifactId>
             <version>${matlab-connector-version}</version>
         </dependency>
          <dependency>
-            <groupId>com.github.autermann</groupId>
+            <groupId>org.n52.matlab</groupId>
             <artifactId>matlab-connector-server</artifactId>
             <version>${matlab-connector-version}</version>
         </dependency>

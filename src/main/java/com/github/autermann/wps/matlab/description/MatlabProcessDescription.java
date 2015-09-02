@@ -22,7 +22,8 @@ import java.util.Collection;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
 
-import com.github.autermann.matlab.client.MatlabClient;
+import org.n52.matlab.connector.client.MatlabClient;
+
 import com.github.autermann.wps.commons.description.impl.ProcessDescriptionImpl;
 import com.github.autermann.wps.commons.description.ows.OwsCodeType;
 import com.github.autermann.wps.commons.description.xml.ProcessDescriptionEncoder;

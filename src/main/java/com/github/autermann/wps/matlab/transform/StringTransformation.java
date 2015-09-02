@@ -17,11 +17,11 @@
  */
 package com.github.autermann.wps.matlab.transform;
 
+import org.n52.matlab.connector.value.MatlabString;
+import org.n52.matlab.connector.value.MatlabValue;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
-import com.github.autermann.matlab.value.MatlabString;
-import com.github.autermann.matlab.value.MatlabValue;
 
 /**
  *

@@ -1,6 +1,7 @@
 package com.github.autermann.wps.matlab.description;
 
-import com.github.autermann.matlab.client.MatlabClient;
+import org.n52.matlab.connector.client.MatlabClient;
+
 import com.github.autermann.wps.commons.description.ProcessDescriptionBuilder;
 import com.google.common.base.Supplier;
 
