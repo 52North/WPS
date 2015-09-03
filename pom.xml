@@ -40,7 +40,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <wps-version>3.3.2-SNAPSHOT</wps-version>
-        <matlab-connector-version>2.0.0-SNAPSHOT</matlab-connector-version>
+        <matlab-connector-version>2.0.0</matlab-connector-version>
         <slf4j-version>1.7.5</slf4j-version>
         <xml-version>1.2.1</xml-version>
         <java-version>1.8</java-version>
