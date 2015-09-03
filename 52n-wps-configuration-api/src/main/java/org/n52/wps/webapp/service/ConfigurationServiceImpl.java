@@ -607,4 +607,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
                 "Algorithm '{}' of module '{}' has been renamed to '{}' and saved to the database.",
                 oldAlgorithmName, moduleClassName, newAlgorithmName);
     }
+
+    @Override
+    public void updateFormatEntry(String moduleClassName,
+            String oldMimeType,
+            String oldSchema,
+            String oldEncoding,
+            String newMimeType,
+            String newSchema,
+            String newEncoding) {
+        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
+        
+    }
 }

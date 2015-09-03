@@ -55,7 +55,7 @@ public class GeneratorsController extends BaseConfigurationsController {
 	 * @return The generators view
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String displayRepositories(Model model) {
+	public String displayGenerators(Model model) {
 		ConfigurationCategory category = ConfigurationCategory.GENERATOR;
 		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
 				.getConfigurationModulesByCategory(category);
@@ -65,13 +65,16 @@ public class GeneratorsController extends BaseConfigurationsController {
 	}
 	
 	/**
-	 * TODO update
-	 * Add a new algorithm to the repository
+	 * Add a new format to the module
 	 * 
 	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithmName
-	 *            The algorithm name
+	 *            The fully qualified name of the module holding the format
+         * @param mimeType
+         *            The format mimeType
+         * @param schema
+         *            The format schema
+         * @param encoding
+         *            The format encoding
 	 */
 	@RequestMapping(value = "formats/add_format", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
@@ -80,18 +83,21 @@ public class GeneratorsController extends BaseConfigurationsController {
 		LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
 	}
 	
-	/**
-	 * TODO update
-	 * Delete an algorithm from the repository
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithmName
-	 *            The algorithm name
-	 */
+        /**
+         * Delete a format from the module
+         * 
+         * @param moduleClassName
+         *            The fully qualified name of the module holding the format
+         * @param mimeType
+         *            The format mimeType
+         * @param schema
+         *            The format schema
+         * @param encoding
+         *            The format encoding
+         */
 	@RequestMapping(value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void deleteFormat2(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
+	public void deleteFormat(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
 		mimeType = mimeType.replace("forwardslash", "/");
 		
 		if(schema.equals("null")){
@@ -106,19 +112,22 @@ public class GeneratorsController extends BaseConfigurationsController {
 	}
 
 	/**
-	 * TODO: update parameters
-	 * Set the status of a configuration format to active/inactive
+	 * Set the status of a format to active/inactive
 	 * 
 	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithm
-	 *            The algorithm name
+	 *            The fully qualified name of the module holding the format
+	 * @param mimeType
+	 *            The format mimeType
+	 * @param schema
+	 *            The format schema
+	 * @param encoding
+	 *            The format encoding
 	 * @param status
 	 *            The new status
 	 */
 	@RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
+	public void toggleFormatStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
 			@PathVariable boolean status) {
 		
 		mimeType = mimeType.replace("forwardslash", "/");
@@ -133,4 +142,29 @@ public class GeneratorsController extends BaseConfigurationsController {
 		configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
 //		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
 	}
+	       
+        /**
+         * Update a format
+         * 
+         * @param moduleClassName
+         *            The fully qualified name of the module holding the format
+         * @param oldMimeType
+         *            The old format mimeType
+         * @param oldSchema
+         *            The old format schema
+         * @param oldEncoding
+         *            The old format encoding
+         * @param newMimeType
+         *            The new format mimeType
+         * @param newSchema
+         *            The new format schema
+         * @param newEncoding
+         *            The new format encoding
+         */
+        @RequestMapping(value = "formats/edit_format", method = RequestMethod.POST)
+        @ResponseStatus(value = HttpStatus.OK)
+        public void editFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("old_mimeType") String oldMimeType, @RequestParam("old_schema") String oldSchema, @RequestParam("old_encoding") String oldEncoding, @RequestParam("new_mimeType") String newMimeType, @RequestParam("new_schema") String newSchema, @RequestParam("new_encoding") String newEncoding) {
+                configurationManager.getConfigurationServices().updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
+                LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been changed to '{}', '{}', '{}'", oldMimeType, oldSchema, oldEncoding, moduleClassName, newMimeType, newSchema, newEncoding);
+        }
 }

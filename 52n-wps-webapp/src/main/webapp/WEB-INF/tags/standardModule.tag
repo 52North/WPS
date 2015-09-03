@@ -108,11 +108,13 @@
 						</c:forEach>
 
 						<%-- Save button --%>
-						<div class="form-group">
-							<div class="col-lg-offset-3 col-lg-8">
-								<button type="submit" class="btn btn-primary">Save</button>
+						<c:if test="${not empty configurationModule.value.configurationEntries}.">
+							<div class="form-group">
+								<div class="col-lg-offset-3 col-lg-8">
+									<button type="submit" class="btn btn-primary">Save</button>
+								</div>
 							</div>
-						</div>
+						</c:if>
 					</form>
 
 					<%-- Display the algorithms table if the module has any --%>
@@ -190,7 +192,7 @@
 										<td><a id="formatStatusButton" class="${formatStatusClass}"
 											href="<c:url value="/${baseUrl}/formats/activate/${fullClassName}/${fn:replace(formatEntry.mimeType, '/', 'forwardslash')}/${formatEntry.schema == '' ? 'null' : formatEntry.schema}/${formatEntry.encoding == '' ? 'null' : formatEntry.encoding}/${targetFormatStatus}" />"><c:out
 													value="${formatStatusText}" /></a></td>
-										<td><a id="editFormat" class="btn btn-default btn-mini" href="<c:url value="/parsers/formats/{fullClassName}/{formatEntry.mimeType}/{formatEntry.schema}/{formatEntry.encoding}/edit" />">Edit</a>
+										<td><a data-toggle="modal" href="#editFormat" class="btn btn-default btn-mini" onClick="setParametersForFormatUpdate('${fullClassName}', '${formatEntry.mimeType}', '${formatEntry.schema == '' ? '' : formatEntry.schema}', '${formatEntry.encoding == '' ? '' : formatEntry.encoding}')">Edit</a>
 										</td>
 										<td><a id="deleteFormat" class="btn btn-danger btn-mini" href="<c:url value="/parsers/formats/${fullClassName}/${fn:replace(formatEntry.mimeType, '/', 'forwardslash')}/${formatEntry.schema == '' ? 'null' : formatEntry.schema}/${formatEntry.encoding == '' ? 'null' : formatEntry.encoding}/delete" />">Delete</a>
 										<!--td><a id="deleteFormat" class="btn btn-danger btn-mini" onClick="ajaxDeleteFormat('${fullClassName}', '${formatEntry.mimeType}', '${(formatEntry.schema == ' ') ? 'null' : formatEntry.schema}', '${formatEntry.encoding == ' ' ? 'nullo' : formatEntry.encoding}')">Delete</a-->
@@ -209,81 +211,117 @@
 </div>
 <script src="<c:url value="/static/js/standard.module.js" />"></script>
 <script type="text/javascript">
-function setHiddenModuleName(moduleName) {
-$('input#hiddenModuleName').val(moduleName);
-// reset and clear errors and alerts
-$('#fieldError').remove();
-$('#alert').remove();
-$('#result').html('');
-}
-function setParametersForAlgorithmUpdate(moduleName, oldAlgorithmname) {
-$('input#hiddenModuleName').val(moduleName);
-$('input#newAlgorithmName').val(oldAlgorithmname);
-$('input#hiddenOldAlgorithmName').val(oldAlgorithmname);
-// reset and clear errors and alerts
-$('#fieldError').remove();
-$('#alert').remove();
-$('#result').html('');
-}
-	$('a#deleteAlgorithm').click(function(event) {
-		event.preventDefault();
-		var a = $(this);
-		var row = a.parents("tr");
-		var url = a.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
-			success : function() {
-				(row).remove();
-				alertMessage("", "Algorithm deleted", "alert alert-success", a);
-			},
-			error : function(textStatus, errorThrown) {
-				alertMessage("Error: ", "Unable to delete algorithm", "alert alert-danger", a);
-			}
-		});
-	});
 
-	$('a#deleteFormat').click(function(event) {
-		event.preventDefault();
-		var a = $(this);
-		var row = a.parents("tr");
-		var url = a.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
-			success : function() {
-				(row).remove();
-				alertMessage("", "Format deleted", "alert alert-success", a);
-			},
-			error : function(textStatus, errorThrown) {
-				alertMessage("Error: ", "Unable to delete format", "alert alert-danger", a);
-			}
-		});
-	});
+	function setHiddenModuleName(moduleName) {
+		$('input#hiddenModuleName').val(moduleName);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	function setParametersForAlgorithmUpdate(moduleName, oldAlgorithmname) {
+		$('input#hiddenModuleName').val(moduleName);
+		$('input#newAlgorithmName').val(oldAlgorithmname);
+		$('input#hiddenOldAlgorithmName').val(oldAlgorithmname);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	function setParametersForFormatUpdate(moduleName, oldMimetype, oldSchema, oldEncoding) {
+		$('input#hiddenModuleName').val(moduleName);
+		$('input#newMimetype').val(oldMimetype);
+		$('input#newSchema').val(oldSchema);
+		$('input#newEncoding').val(oldEncoding);
+		$('input#hiddenOldMimetype').val(oldMimetype);
+		$('input#hiddenOldSchema').val(oldSchema);
+		$('input#hiddenOldEncoding').val(oldEncoding);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	$('a#deleteAlgorithm').click(
+			function(event) {
+				event.preventDefault();
+				var a = $(this);
+				var row = a.parents("tr");
+				var url = a.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						(row).remove();
+						alertMessage("", "Algorithm deleted",
+								"alert alert-success", a);
+					},
+					error : function(textStatus, errorThrown) {
+						alertMessage("Error: ", "Unable to delete algorithm",
+								"alert alert-danger", a);
+					}
+				});
+			});
 
-	$('a#formatStatusButton').click(function(event) {
-		event.preventDefault();
-		var button = $(this);
-		var url = button.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			headers: { 'X-CSRF-TOKEN': "${_csrf.token}" },
-			success : function() {
-				var currentStatus = url.substring(url.lastIndexOf('/') + 1);
-				var trgetStatus = currentStatus == 'true' ? 'false' : 'true';
-				// remove the last false or true and replace it with the new target status for toggling
-				url = url.substr(0, url.lastIndexOf('/') + 1) + trgetStatus;
-				button.attr('href', url);
-				button.toggleClass("btn-success btn-danger").text(button.text() == 'Active' ? "Inactive" : "Active");
-				$("<span class='text-success'>	Status updated</span>").insertAfter(button).fadeOut(3000);
-			},
-			error : function(textStatus, errorThrown) {
-				$("<span class='text-danger'>	Error</span>").insertAfter(button).fadeOut(3000);
-				alertMessage("Error: ", "unable to update algorithm status", "alert alert-danger");
-			}
-		});
-	});
+	$('a#deleteFormat').click(
+			function(event) {
+				event.preventDefault();
+				var a = $(this);
+				var row = a.parents("tr");
+				var url = a.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						(row).remove();
+						alertMessage("", "Format deleted",
+								"alert alert-success", a);
+					},
+					error : function(textStatus, errorThrown) {
+						alertMessage("Error: ", "Unable to delete format",
+								"alert alert-danger", a);
+					}
+				});
+			});
+
+	$('a#formatStatusButton').click(
+			function(event) {
+				event.preventDefault();
+				var button = $(this);
+				var url = button.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						var currentStatus = url
+								.substring(url.lastIndexOf('/') + 1);
+						var trgetStatus = currentStatus == 'true' ? 'false'
+								: 'true';
+						// remove the last false or true and replace it with the new target status for toggling
+						url = url.substr(0, url.lastIndexOf('/') + 1)
+								+ trgetStatus;
+						button.attr('href', url);
+						button.toggleClass("btn-success btn-danger").text(
+								button.text() == 'Active' ? "Inactive"
+										: "Active");
+						$("<span class='text-success'>	Status updated</span>")
+								.insertAfter(button).fadeOut(3000);
+					},
+					error : function(textStatus, errorThrown) {
+						$("<span class='text-danger'>	Error</span>")
+								.insertAfter(button).fadeOut(3000);
+						alertMessage("Error: ",
+								"unable to update algorithm status",
+								"alert alert-danger");
+					}
+				});
+			});
 </script>
