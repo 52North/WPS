@@ -391,4 +391,18 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 						parameters);
 		
 	}
+
+
+    @Override
+    public void updateAlgorithmEntry(String moduleClassName,
+            String newAlgorithmName,
+            String oldAlgorithmName) {
+        LOGGER.debug("Updating algorithm entry '{}' in configuration module '{}' to new entry '{}' in the database.", oldAlgorithmName, moduleClassName, newAlgorithmName);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("new_algorithm_name", newAlgorithmName);
+        parameters.put("old_algorithm_name", oldAlgorithmName);
+        parameters.put("configuration_module", moduleClassName);
+        namedParameterJdbcTemplate.update("UPDATE algorithmentry SET algorithm_name = :new_algorithm_name " + "WHERE algorithm_name = :old_algorithm_name AND configuration_module = :configuration_module", parameters);
+
+    }
 }

@@ -586,4 +586,25 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			}
 		}
 	}
+
+    @Override
+    public void updateAlgorithmEntry(String moduleClassName,
+            String newAlgorithmName,
+            String oldAlgorithmName) {
+        ConfigurationModule module = getConfigurationModule(moduleClassName);
+        Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();      
+        while (algorithmEntryIterator.hasNext()) {
+            AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator
+                            .next();
+            if(algorithmEntry.getAlgorithm().equals(oldAlgorithmName)){
+                    algorithmEntryIterator.remove();
+                    break;
+            }
+        }
+        configurationDAO.updateAlgorithmEntry(moduleClassName, newAlgorithmName, oldAlgorithmName);
+        syncConfigurationModuleAlgorithmEntries(module);
+        LOGGER.debug(
+                "Algorithm '{}' of module '{}' has been renamed to '{}' and saved to the database.",
+                oldAlgorithmName, moduleClassName, newAlgorithmName);
+    }
 }

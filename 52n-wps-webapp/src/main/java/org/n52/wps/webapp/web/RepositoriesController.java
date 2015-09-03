@@ -97,6 +97,22 @@ public class RepositoriesController extends BaseConfigurationsController {
 	}
 	
 	/**
+	 * TODO: update javadoc
+	 * Add a new algorithm to the repository
+	 * 
+	 * @param moduleClassName
+	 *            The fully qualified name of the module holding the algorithm
+	 * @param algorithmName
+	 *            The algorithm name
+	 */
+	@RequestMapping(value = "algorithms/edit_algorithm", method = RequestMethod.POST)
+	@ResponseStatus(value = HttpStatus.OK)
+	public void editAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("oldAlgorithmName") String oldAlgorithmName, @RequestParam("algorithmName") String algorithmName) {
+	    configurationManager.getConfigurationServices().updateAlgorithmEntry(moduleClassName, algorithmName, oldAlgorithmName);
+	    LOGGER.info("Algorithm '{}' has been updated in module '{}'", algorithmName, moduleClassName);
+	}
+	
+	/**
 	 * Delete an algorithm from the repository
 	 * 
 	 * @param moduleClassName

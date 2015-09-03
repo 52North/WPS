@@ -112,7 +112,8 @@
 										<td><a id="algorithmStatusButton" class="${algorithmStatusClass}"
 											href="<c:url value="/${baseUrl}/algorithms/activate/${fullClassName}/${algorithmEntry.algorithm}/${targetAlgorithmStatus}" />"><c:out
 													value="${algorithmStatusText}" /></a></td>
-										<td><a id="editAlgorithm" class="btn btn-default btn-mini" href="<c:url value="/repositories/algorithms/${fullClassName}/${algorithmEntry.algorithm}/edit" />">Edit</a>
+										<td>
+										<a data-toggle="modal" href="#editAlgorithm" class="btn btn-default btn-mini" onClick="setParametersForAlgorithmUpdate('${fullClassName}', '${algorithmEntry.algorithm}')">Edit</a>
 										</td>
 										<td><a id="deleteAlgorithm" class="btn btn-danger btn-mini" href="<c:url value="/repositories/algorithms/${fullClassName}/${algorithmEntry.algorithm}/delete" />">Delete</a>
 										</td>
@@ -180,6 +181,19 @@
 <script type="text/javascript">
 function setHiddenModuleName(moduleName) {
 $('input#hiddenModuleName').val(moduleName);
+// reset and clear errors and alerts
+$('#fieldError').remove();
+$('#alert').remove();
+$('#result').html('');
+}
+function setParametersForAlgorithmUpdate(moduleName, oldAlgorithmname) {
+$('input#hiddenModuleName').val(moduleName);
+$('input#newAlgorithmName').val(oldAlgorithmname);
+$('input#hiddenOldAlgorithmName').val(oldAlgorithmname);
+// reset and clear errors and alerts
+$('#fieldError').remove();
+$('#alert').remove();
+$('#result').html('');
 }
 	$('a#deleteAlgorithm').click(function(event) {
 		event.preventDefault();
