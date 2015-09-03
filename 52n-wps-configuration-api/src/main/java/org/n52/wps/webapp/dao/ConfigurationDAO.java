@@ -205,4 +205,13 @@ public interface ConfigurationDAO {
 	 *            the format to be deleted	 
 	 */
 	void deleteFormatEntry(String moduleClassName, String mimeType, String schema, String encoding);
+
+    /**
+     * @param moduleClassName
+     * @param newAlgorithmName
+     * @param oldAlgorithmName
+     */
+    void updateAlgorithmEntry(String moduleClassName,
+            String newAlgorithmName,
+            String oldAlgorithmName);
 }

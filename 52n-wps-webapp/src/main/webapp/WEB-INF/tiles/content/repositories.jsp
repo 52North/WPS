@@ -18,7 +18,7 @@
 			<div class="modal-body">
 				<form id="addAlgorithm" method="POST" action="repositories/algorithms/add_algorithm">
 					<div class="form-group">
-						<label for="javaFile">Algorithm class</label>
+						<label for="algorithmName">Algorithm class</label>
 						<input type="text" name="algorithmName" id="algorithmName">
 						<input id="hiddenModuleName" type="hidden" />
 					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
@@ -26,6 +26,33 @@
 					</div>
 					<div class="form-group">
 						<button type="submit" class="btn btn-primary">Add</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Edit algorithm -->
+<div class="modal fade" id="editAlgorithm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" id="editAlgorithm-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit an algorithm class name</h4>
+			</div>
+			<div class="modal-body">
+				<form id="editAlgorithm" method="POST">
+					<div class="form-group">
+						<label for="algorithmName">Algorithm class</label>
+						<input type="text" name="newAlgorithmName" id="newAlgorithmName" style="width:260px">
+						<input id="hiddenModuleName" type="hidden" />
+						<input id="hiddenOldAlgorithmName" type="hidden" />
+					    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+						<p class="help-block">Please edit the fully qualified class name of the algorithm.</p>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Update</button>
 					</div>
 				</form>
 			</div>
@@ -132,8 +159,25 @@
 		formData.append("algorithmName", $('#algorithmName').fieldValue()[0]);
 		formData.append("moduleClassName", $('input#hiddenModuleName').val());
 		ajaxAddAlgorithm(formData, form);
+		$('#addAlgorithm').on('hidden.bs.modal', function(e) { 
+			reloadPage();
+		});
 	});
 
+	$('form#editAlgorithm').submit(function(event) {
+		event.preventDefault();
+		$('#result').html('');
+		var form = $(this);
+		var formData = new FormData();
+		formData.append("algorithmName", $('#newAlgorithmName').fieldValue()[0]);
+		formData.append("moduleClassName", $('input#hiddenModuleName').val());
+		formData.append("oldAlgorithmName", $('input#hiddenOldAlgorithmName').val());
+		ajaxUpdateAlgorithm(formData, form);
+		$('#editAlgorithm').on('hidden.bs.modal', function(e) { 
+			reloadPage();
+		});
+	});
+	
 	function ajaxAddAlgorithm(formData, form) {
 		// reset and clear errors and alerts
 		$('#fieldError').remove();
@@ -179,6 +223,52 @@
 		});
 	}
 
+	function ajaxUpdateAlgorithm(formData, form) {
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$(".form-group").each(function() {
+			$(this).removeClass("has-error");
+		});
+		
+		$.ajax({
+			url : 'repositories/algorithms/edit_algorithm',
+			data : formData,
+			dataType : 'text',
+			processData : false,
+			contentType : false,
+			headers: { 'X-CSRF-TOKEN': $("#editAlgorithm input[name=${_csrf.parameterName}]").val() },
+			type : 'POST',
+			success : function(xhr) {
+				// success alert
+				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-success'>Upload successful</div>");
+				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
+				closeBtn.appendTo(alertDiv).text("x");
+				alertDiv.insertBefore(form);
+				//hideModalDialog("editAlgorithm");
+			},
+			error : function(xhr) {
+				// error alert
+				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-danger'>Upload error</div>");
+				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
+				closeBtn.appendTo(alertDiv).text("x");
+				alertDiv.insertBefore(form);
+
+				var json = JSON.parse(xhr.responseText);
+				var errors = json.errorMessageList;
+				for ( var i = 0; i < errors.length; i++) {
+					var item = errors[i];
+
+					//display the error after the field
+					var field = $('#' + item.field);
+					field.parents(".form-group").addClass("has-error");
+					$("<div id='fieldError' class='text-danger'>" + item.defaultMessage + "</div>").insertAfter(field);
+				}
+			}
+
+		});
+	}
+	
 	function ajaxUpload(formData, form) {
 		// reset and clear errors and alerts
 		$('#fieldError').remove();
@@ -246,4 +336,14 @@
 			}
 		});
 	});
+	//other possible way to show updated/added processes
+	function hideModalDialog(id){		
+        setTimeout(function(){
+        	$("#"+id).modal('hide');
+        	location.reload();
+       }, 1000);
+	}
+	function reloadPage(){
+        location.reload();	
+	}
 </script>

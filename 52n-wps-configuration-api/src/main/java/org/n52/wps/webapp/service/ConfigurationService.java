@@ -225,4 +225,13 @@ public interface ConfigurationService {
 	 *            the encoding of the format entry
 	 */
 	void deleteFormatEntry(String moduleClassName, String mimeType, String schema, String encoding);
+
+    /**
+     * @param moduleClassName
+     * @param algorithmName
+     * @param oldAlgorithmName
+     */
+    void updateAlgorithmEntry(String moduleClassName,
+            String algorithmName,
+            String oldAlgorithmName);
 }
