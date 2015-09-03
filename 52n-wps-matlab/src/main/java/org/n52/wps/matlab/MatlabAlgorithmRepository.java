@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,8 @@ public class MatlabAlgorithmRepository implements IAlgorithmRepository {
     }
 
     private Map<OwsCodeType, MatlabAlgorithm> getAlgorithms(Map<String, List<String>> properties) {
-        return getAlgorithms(properties.get(CONFIG_PROPERTY));
+        return getAlgorithms(Optional.ofNullable(properties.get(CONFIG_PROPERTY))
+                    .orElseGet(Collections::emptyList));
     }
 
     private Map<OwsCodeType, MatlabAlgorithm> getAlgorithms(List<String> properties) {
