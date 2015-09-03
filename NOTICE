@@ -189,13 +189,13 @@ This project includes:
   OGC Filter schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
