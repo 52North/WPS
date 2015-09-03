@@ -20,7 +20,7 @@
         </developer>
     </developers>
     <properties>
-        <matlab-connector-version>2.0.0-SNAPSHOT</matlab-connector-version>
+        <matlab-connector-version>2.0.0</matlab-connector-version>
         <java-version>1.8</java-version>
     </properties>
     <dependencies>
