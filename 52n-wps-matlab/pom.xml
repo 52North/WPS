@@ -52,6 +52,12 @@
             <groupId>com.github.autermann</groupId>
             <artifactId>wps-commons</artifactId>
             <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.n52.sensorweb</groupId>
+                    <artifactId>52n-xml-wps-v100</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.n52.wps</groupId>
