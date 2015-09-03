@@ -71,6 +71,10 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm-impl</artifactId>
 		</dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-matlab</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-database</artifactId>
@@ -80,7 +84,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-webadmin</artifactId>
 		</dependency>
-
+        
 		<dependency>
 			<groupId>net.sourceforge.pjl-comp-filter</groupId>
 			<artifactId>pjl-comp-filter</artifactId>
@@ -443,7 +447,7 @@
 					<plugin>
 						<groupId>org.eclipse.jetty</groupId>
 						<artifactId>jetty-maven-plugin</artifactId>
-						<version>9.1.2.v20140210</version>
+						<version>9.3.2.v20150730</version>
 						<configuration>
 							<httpConnector>
 								<port>${jetty.http.port}</port>

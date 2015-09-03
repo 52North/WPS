@@ -41,6 +41,7 @@ This project includes:
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
+  52North WPS MATLAB Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Moving Code Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS R Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -53,6 +54,9 @@ This project includes:
   Apache Commons Lang under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
+  ASM Commons under BSD
+  ASM Core under BSD
+  ASM Tree under BSD
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   authn-web under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Axiom API under The Apache Software License, Version 2.0
@@ -61,6 +65,7 @@ This project includes:
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)
+  Common WPS classes under GNU General Public License (GPL) v2
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JXPath under The Apache Software License, Version 2.0
@@ -91,6 +96,7 @@ This project includes:
   GML3 XML Support under Lesser General Public License (LGPL)
   gmlpacket-2.0 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   Grid Coverage module under Lesser General Public License (LGPL)
+  Gson under The Apache Software License, Version 2.0
   Guava (Google Common Libraries) Annotations under The Apache Software License, Version 2.0
   Guava (Google Common Libraries) Base under The Apache Software License, Version 2.0
   Guava (Google Common Libraries) Collections under The Apache Software License, Version 2.0
@@ -121,15 +127,36 @@ This project includes:
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Servlet API under CDDL + GPLv2 with classpath exception
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail 1.4 under The Apache Software License, Version 2.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
+  javax.annotation API under CDDL + GPLv2 with classpath exception
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JCL 1.1.1 implemented over SLF4J under MIT License
+  JCommander under The Apache Software License, Version 2.0
   jcommon under GNU Lesser General Public Licence
   jdom under JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
   jep under GNU General Public License, version 2
+  Jetty :: Http Utility under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: IO Utility under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: JNDI Naming under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Plus under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Security under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Server Core under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Servlet Annotations under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Servlet Handling under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Utilities under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Webapp Application Support under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: API under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: Client under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: javax.websocket.server :: Server Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: Server under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: Websocket :: Servlet Interface under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
+  Jetty :: XML utilities under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
@@ -153,10 +180,14 @@ This project includes:
   Lucene Core under Apache 2
   Main module under Lesser General Public License (LGPL)
   mapscript under MapServer License (MIT license)
+  MATLAB Connector Client under GNU General Public License (GPL) v3
+  MATLAB Connector Common under GNU General Public License (GPL) v3
+  MATLAB Connector Server under GNU General Public License (GPL) v3
+  MATLAB Control under BSD 3-clause
   Metadata under Lesser General Public License (LGPL)
   Moving Code Runtime under Apache License, Version 2.0
   Moving Code XML Schema under Apache License, Version 2.0
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
@@ -176,6 +207,7 @@ This project includes:
   Shapefile module under Lesser General Public License (LGPL)
   SLF4J API Module under MIT License
   SLF4J Simple Binding under MIT License
+  SnakeYAML under Apache License Version 2.0
   Spring Framework: Beans under The Apache Software License, Version 2.0
   Spring Framework: Context under The Apache Software License, Version 2.0
   Spring Framework: Core under The Apache Software License, Version 2.0
@@ -187,8 +219,9 @@ This project includes:
   support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
   vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
-  W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Web Feature Service Model under Lesser General Public License (LGPL)
+  WebSocket server API under Dual license consisting of the CDDL v1.1 and GPL v2
   WFS XML Support under Lesser General Public License (LGPL)
   Woodstox under The Apache Software License, Version 2.0
   WPS-Config under The Apache Software License, Version 2.0
@@ -205,5 +238,6 @@ This project includes:
   XmlBeans under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License
   xsd under Eclipse Public License (EPL)
+  YAML API under Apache License, Version 2.0
   ZonalStats operator under Simplified BSD
 
