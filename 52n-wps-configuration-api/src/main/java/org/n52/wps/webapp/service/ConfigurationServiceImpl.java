@@ -523,9 +523,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		boolean status = true;
 		configurationDAO.insertAlgorithmEntry(moduleClassName, algorithmName,
 				status);
-		AlgorithmEntry algorithmEntry = new AlgorithmEntry(algorithmName, status);		
-		ConfigurationModule module = getConfigurationModule(moduleClassName);		
-		module.getAlgorithmEntries().add(algorithmEntry);		
+	        syncConfigurationModuleAlgorithmEntries(getConfigurationModule(moduleClassName));
 		LOGGER.debug(
 				"Algorithm '{}' with status '{}' has been added to module '{}' and saved to the database.",
 				algorithmName, status, moduleClassName);
