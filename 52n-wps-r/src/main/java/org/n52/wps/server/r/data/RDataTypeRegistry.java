@@ -48,6 +48,7 @@ public class RDataTypeRegistry {
 
     private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
 
+    @Deprecated
     public RDataTypeRegistry() {
         // register types from enum
         RDataType[] values = RDataType.values();
