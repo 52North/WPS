@@ -54,9 +54,6 @@ This project includes:
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
-  ASM Commons under BSD
-  ASM Core under BSD
-  ASM Tree under BSD
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   authn-web under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Autotag - Core runtime under The Apache Software License, Version 2.0
@@ -126,35 +123,21 @@ This project includes:
   Java Servlet API under Commons Development and Distribution License, Version 1.0
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
-  javax.annotation API under CDDL + GPLv2 with classpath exception
   javax.inject under The Apache Software License, Version 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
-  JCommander under The Apache Software License, Version 2.0
   jcommon under GNU Lesser General Public Licence
   jdom under JDOM license, https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
   jep under GNU General Public License, version 2
   jersey-core under CDDL 1.1 or GPL2 w/ CPE
   jersey-server under CDDL 1.1 or GPL2 w/ CPE
-  Jetty :: Http Utility under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: IO Utility under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: JNDI Naming under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Plus under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Security under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Server Core under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Servlet Annotations under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Servlet Handling under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Utilities under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Webapp Application Support under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: API under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: Client under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Websocket :: javax.websocket.server :: Server Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Websocket :: Server under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: Websocket :: Servlet Interface under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
-  Jetty :: XML utilities under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
@@ -178,7 +161,6 @@ This project includes:
   mapscript under MapServer License (MIT license)
   MATLAB Connector Client under GNU General Public License (GPL) v3
   MATLAB Connector Common under GNU General Public License (GPL) v3
-  MATLAB Connector Server under GNU General Public License (GPL) v3
   MATLAB Control under BSD 3-clause
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
