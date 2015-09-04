@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab.description;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+import org.n52.matlab.connector.client.MatlabClient;
+
+import com.github.autermann.wps.commons.description.ProcessDescriptionBuilder;
+import com.google.common.base.Supplier;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public interface MatlabProcessDescriptionBuilder<T extends MatlabProcessDescription, B extends MatlabProcessDescriptionBuilder<T, B>>
+        extends ProcessDescriptionBuilder<T, B> {
+
+    B withClientProvider(Supplier<MatlabClient> clientProvider);
+
+    B withFunction(String function);
+
 }

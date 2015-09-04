@@ -63,8 +63,7 @@ public abstract class AbstractIOHandler implements IOHandler {
 	 * Returns an array having the supported formats (mimeTypes).
 	 */
 	public String[] getSupportedFormats() {
-		String[] resultArray = supportedFormats.toArray(new String[supportedFormats.size()]);
-		return resultArray;
+		return supportedFormats.toArray(new String[supportedFormats.size()]);
 	}
 	
 	
@@ -72,8 +71,7 @@ public abstract class AbstractIOHandler implements IOHandler {
 	 * Returns an array having the supported schemas.
 	 */
 	public String[] getSupportedSchemas() {
-		String[] resultArray = supportedSchemas.toArray(new String[supportedSchemas.size()]);
-		return resultArray;
+		return supportedSchemas.toArray(new String[supportedSchemas.size()]);
 	}
 
 
