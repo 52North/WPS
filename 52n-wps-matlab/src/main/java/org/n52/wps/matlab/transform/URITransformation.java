@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab.transform;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import org.n52.matlab.connector.value.MatlabString;
+import org.n52.matlab.connector.value.MatlabValue;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.LiteralAnyURIBinding;
+
+
+/**
+ * TODO JavaDoc
+ * @author Christian Autermann
+ */
+public class URITransformation extends LiteralTransformation {
+
+    @Override
+    public MatlabValue transformInput(IData data) {
+        if (data.getPayload() instanceof URI) {
+            return new MatlabString(((URI) data.getPayload()).toString());
+        } else if (data.getPayload() instanceof URL) {
+            return new MatlabString(((URL) data.getPayload()).toString());
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    protected IData fromString(String value) {
+        try {
+            return new LiteralAnyURIBinding(new URI(value));
+        } catch (URISyntaxException ex) {
+            throw new IllegalArgumentException(ex);
+        }
+    }
+
 }

@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,47 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+import java.util.Collections;
+import java.util.List;
+
+import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.webapp.api.FormatEntry;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public abstract class AbstractActivatableCM extends ClassKnowingModule {
+    private boolean active;
+
+    @Override
+    public boolean isActive() {
+        return this.active;
+    }
+
+    @Override
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return Collections.emptyList();
+    }
+
 }

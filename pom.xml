@@ -229,6 +229,7 @@
 <!-- 		<module>52n-wps-python</module> -->
 		<module>52n-wps-r</module>
 <!-- 		<module>52n-wps-mc</module> -->
+        <module>52n-wps-matlab</module>
 	</modules>
 	<properties>
 		<wps.name>52n-wps-webapp</wps.name>
@@ -963,6 +964,11 @@
 				<artifactId>52n-wps-configuration-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>52n-wps-matlab</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>

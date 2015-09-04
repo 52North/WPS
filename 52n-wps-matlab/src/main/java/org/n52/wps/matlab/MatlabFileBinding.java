@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+import org.n52.wps.io.data.IComplexData;
+
+import com.google.common.base.Preconditions;
+
+/**
+ * TODO JavaDoc
+ *
+ * @author Christian Autermann
+ */
+public class MatlabFileBinding implements IComplexData {
+    private static final long serialVersionUID = 1L;
+    private final String mimeType;
+    private final String schema;
+    private final byte[] payload;
+
+    public MatlabFileBinding(byte[] payload, String mimeType, String schema) {
+        this.mimeType = Preconditions.checkNotNull(mimeType);
+        this.payload = Preconditions.checkNotNull(payload);
+        this.schema = schema;
+    }
+
+    @Override
+    public void dispose() {
+    }
+
+    @Override
+    public byte[] getPayload() {
+        return this.payload;
+    }
+
+    @Override
+    public Class<?> getSupportedClass() {
+        return byte[].class;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
 }

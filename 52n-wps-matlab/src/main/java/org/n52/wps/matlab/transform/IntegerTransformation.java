@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2013 - 2014 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,9 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.webapp.api;
+package org.n52.wps.matlab.transform;
 
-public abstract class ClassKnowingModule implements ConfigurationModule {
-	
-	public abstract String getClassName();	
+import org.n52.matlab.connector.value.MatlabScalar;
+import org.n52.matlab.connector.value.MatlabValue;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
+
+
+/**
+ * TODO JavaDoc
+ * @author Christian Autermann
+ */
+public class IntegerTransformation extends LiteralTransformation {
+
+    @Override
+    public MatlabValue transformInput(IData value) {
+        if (value.getPayload() instanceof Integer) {
+            return new MatlabScalar((Integer) value.getPayload());
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    protected IData fromScalar(double value) {
+        Double v = Double.valueOf(value);
+        return new LiteralIntBinding(v.intValue());
+    }
+
 }
