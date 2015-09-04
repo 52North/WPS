@@ -51,7 +51,9 @@
 <c:set var="activeMenu" value="${requestScope['javax.servlet.forward.servlet_path']}" />
 <script type="text/javascript">
 	$(document).ready(function() {
-		className = '${activeMenu}'.replace('/', '.');
-		$(className).addClass('active');
+		if('${activeMenu}' != '/'){
+		    className = '${activeMenu}'.replace('/', '.');
+		    $(className).addClass('active');
+		}
 	});
 </script>
