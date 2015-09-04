@@ -40,8 +40,10 @@ import java.util.LinkedHashSet;
 import org.n52.matlab.connector.MatlabException;
 import org.n52.matlab.connector.client.MatlabClient;
 import org.n52.matlab.connector.client.MatlabClientConfiguration;
-import org.n52.matlab.connector.server.MatlabInstanceConfiguration;
-import org.n52.matlab.connector.server.MatlabInstancePoolConfiguration;
+import org.n52.matlab.connector.instance.MatlabInstanceConfiguration;
+import org.n52.matlab.connector.instance.MatlabInstancePoolConfiguration;
+import org.n52.wps.matlab.YamlConstants;
+import org.n52.wps.matlab.transform.LiteralType;
 
 import com.github.autermann.wps.commons.Format;
 import com.github.autermann.wps.commons.description.InputOccurence;
@@ -52,11 +54,6 @@ import com.github.autermann.wps.commons.description.ProcessOutputDescriptionBuil
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValue;
 import com.github.autermann.wps.commons.description.ows.OwsAllowedValues;
 import com.github.autermann.wps.commons.description.ows.OwsCRS;
-
-import org.n52.wps.matlab.YamlConstants;
-
-import org.n52.wps.matlab.transform.LiteralType;
-
 import com.github.autermann.yaml.YamlNode;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
