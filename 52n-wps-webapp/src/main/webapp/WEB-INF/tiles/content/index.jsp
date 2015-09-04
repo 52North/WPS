@@ -33,7 +33,7 @@
 	<li>To learn more about the specification visit the <a href="http://opengeospatial.org/standards/wps">OGC
 			website</a>.
 	</li>
-	<li>To learn more about this implementation visit the <a href="http://www.52north.org/wps">52&deg;North
+	<li>To learn more about this implementation visit the <a href="http://52north.org/wps">52&deg;North
 			Geoprocessing Community website</a>.
 	</li>
 </ul>

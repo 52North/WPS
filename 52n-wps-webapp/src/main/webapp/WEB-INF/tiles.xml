@@ -103,13 +103,6 @@
 		<put-attribute name="body" value="/WEB-INF/tiles/content/service_provider.jsp"></put-attribute>
 	</definition>
 
-	<definition name="get_capabilities" extends="base">
-		<put-attribute name="title" value="Get Capabilities Test - 52° North WPS" />
-		<put-attribute name="pageHeader" value="Get Capabilities Test" type="string" />
-		<put-attribute name="description" value="Test capabilities generated document" type="string" />
-		<put-attribute name="body" value="/WEB-INF/tiles/content/get_capabilities.jsp"></put-attribute>
-	</definition>
-
 	<definition name="test_client" extends="base">
 		<put-attribute name="title" value="Test Client - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Test Client" type="string" />

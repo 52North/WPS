@@ -13,10 +13,6 @@
 		<param-name>spring.profiles.default</param-name>
 		<param-value>production</param-value>
 	</context-param>
-    <context-param>
-        <param-name>wps.config.file</param-name>
-        <param-value>${wps.config.file}</param-value>
-    </context-param>
 
 	<listener>
 		<listener-class>org.n52.wps.webapp.util.WebAppPropertiesListener</listener-class>
