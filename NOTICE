@@ -26,7 +26,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
 Public License for more details.
 
 This project includes:
-  52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
   52North WPS Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -54,8 +53,6 @@ This project includes:
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
-  authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  authn-web under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Autotag - Core runtime under The Apache Software License, Version 2.0
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
@@ -75,17 +72,12 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils under The Apache Software License, Version 2.0
-  commons-httpclient-contrib-ssl under The Apache Software License, Version 2.0
-  config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  core under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  core under The Apache Software License, Version 2.0
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   DataStore Support under Lesser General Public License (LGPL)
-  decision under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Derby Engine under The Apache Software License, Version 2.0
-  dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   ecore under Eclipse Public License (EPL)
-  enforcement under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   EPSG Authority Service using WKT file under Lesser General Public License (LGPL)
   Feature Based Graphs and Networks under Lesser General Public License (LGPL)
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
@@ -121,10 +113,8 @@ This project includes:
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
-  Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
-  jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
@@ -187,7 +177,6 @@ This project includes:
   OWS XML Support under Lesser General Public License (LGPL)
   PicoContainer Core under BSD License
   PJL Compressing Filter under Apache Software License V2.0
-  precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL or The New BSD License
   REngine under GNU Lesser General Public License
@@ -223,7 +212,6 @@ This project includes:
   stax-utils under BSD
   Stax2 API under The BSD License
   Support and utility classes under Simplified BSD
-  support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Tiles - API under The Apache Software License, Version 2.0
   Tiles - Compatibility under The Apache Software License, Version 2.0
   Tiles - Core Library under The Apache Software License, Version 2.0
@@ -259,8 +247,6 @@ This project includes:
   XML Parsing under Lesser General Public License (LGPL)
   XML Parsing Support under Lesser General Public License (LGPL)
   XML Pull Parsing API under Public Domain
-  xml-schema under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  xml-secconfig under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   XmlBeans under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License
   xsd under Eclipse Public License (EPL)
