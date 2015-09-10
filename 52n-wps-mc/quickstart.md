@@ -60,7 +60,7 @@ Type the GetCapabilities request in your browser:
 http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS
 ```
 
-... or simply use curl in a linux shell:
+... or simply use the ``curl`` command in a linux shell:
 ```
 curl 'http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS'
 ```
