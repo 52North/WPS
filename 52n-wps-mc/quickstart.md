@@ -55,9 +55,14 @@ The WPS module will scan the folder every 20 seconds for updates, so just wait a
 ```
 
 ## 5. Check capabilities
-Type the GetCapabilities request in your browser: ``http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS``
+Type the GetCapabilities request in your browser:
+```
+http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS
+```
 
 ... or simply use curl in a linux shell:
-``curl 'http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS'``
+```
+curl 'http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS'
+```
 
 Check the response of your WPS server and look for ``de.tu-dresden.geo.gis.algorithms.test.echo``.
