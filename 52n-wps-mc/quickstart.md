@@ -38,7 +38,9 @@ Note: You can of course change these configuration from step (1.) any time you w
 
 ## 4. Deploy a sample package
 Copy a sample package from [here](https://raw.githubusercontent.com/52North/movingcode/master/mc-runtime/src/test/resources/testpackages/py_copy.zip) to your local folder (e.g. ``/home/someuser/mc-packages``).
-The WPS module will scan the folder every 20 seconds for updates, so just wait a few moments until your WPS instance is updated. You can easily observe this in your WPS logfile (``/var/log/tomcat8/52n-wps.log/52n-wps.log``):
+The WPS module will scan the folder every 20 seconds for updates, so just wait a few moments until your WPS instance is updated.
+
+You can easily observe this in your WPS logfile (``/var/log/tomcat8/52n-wps.log/52n-wps.log``):
 ```
 2015-09-10 15:01:57,943 [Thread-4] INFO  org.n52.movingcode.runtime.coderepository.AbstractRepository: Scanning directory: /home/someuser/mc-packages
 2015-09-10 15:01:57,966 [Thread-4] INFO  org.n52.wps.mc.MCProcessRepository: Moving Code repository content has changed. Capabilities update required.
