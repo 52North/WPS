@@ -56,7 +56,7 @@ You can easily observe this in your WPS logfile (``/var/log/tomcat8/52n-wps.log/
 2015-09-10 15:03:38,153 [Timer-0] INFO  org.n52.wps.server.WebProcessingService: org.n52.wps.server.WebProcessingService$1: Received Property Change Event: WPSCapabilitiesUpdate
 ```
 
-## 5. Check capabilities
+## 5. Check the WPS capabilities
 Type the GetCapabilities request in your browser:
 ```
 http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS
