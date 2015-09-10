@@ -32,7 +32,7 @@ Now compile your project with maven or export it with your IDE as a WAR file (e.
 e.g. ``/home/someuser/mc-packages`` on Linux or ``C:\MCPackages`` on Windows.
 
 ## 3. Deploy your WAR file (e.g. on a Tomcat application server)
-Simply copy it to the webapps folder of your application server, e.g. ``/var/lib/tomcat8/webapps/`` and wait until is loaded. Alternatively, you may also restart your application server (e.g. Tomcat)
+Simply copy it to the webapps folder of your application server, e.g. ``/var/lib/tomcat8/webapps/`` and wait until it is loaded. Alternatively, you may also restart your application server (e.g. Tomcat)
 
 Note: You can of course change these configuration from step (1.) any time you want by editing the configuration files. To be sure restart the application server to let the changes take effect.
 
