@@ -60,4 +60,4 @@ Type the GetCapabilities request in your browser: ``http://localhost:8080/52n-wp
 ... or simply use curl in a linux shell:
 ``curl 'http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS'``
 
-Check the response of your WPS server and look for ``de.tu-dresden.geo.gis.algorithms.test.echo``. If it is there, you are done.
+Check the response of your WPS server and look for ``de.tu-dresden.geo.gis.algorithms.test.echo``.
