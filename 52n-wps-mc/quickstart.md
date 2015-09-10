@@ -8,13 +8,17 @@ git clone https://github.com/52North/WPS.git
 git checkout dev 
 ```
 
-Edit ``.../WPS/52n-wps-webapp/src/main/resources/processors.json`` to match your system configuration. Most importantly, you want to set the temp folder at the end of the file, e.g. to:
+Edit ``.../WPS/52n-wps-webapp/src/main/resources/processors.json`` to match your system configuration. Most importantly, you want to set the temp folder at the end of the file, to e.g.:
 ```json
 "tempWorkspace" : "/tmp" 
 ```
-in a Linux environment.
+in a Linux environment or
+```json
+"tempWorkspace" : "C:\temp" 
+```
+on a Windows platform. Make sure these folders exist. If not, you should create them.
 
-Now edit ``.../WPS/52n-wps-webapp/config/wps_config.xml`` and ``wps_config_geotools.xml`` to enable the moving code module:
+Now edit ``.../WPS/52n-wps-webapp/config/wps_config.xml`` and ``wps_config_geotools.xml`` to enable the moving code module in WPS (it is commented out by default):
 ```xml
 <Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
   <Property name="LOCAL_REPOSITORY" active="true">/home/someuser/mc-packages</Property>
@@ -29,6 +33,8 @@ e.g. ``/home/someuser/mc-packages`` on Linux or ``C:\MCPackages`` on Windows.
 
 ## 3. Deploy your WAR file (e.g. on a Tomcat application server)
 Simply copy it to the webapps folder of your application server, e.g. ``/var/lib/tomcat8/webapps/`` and wait until is loaded. Alternatively, you may also restart your application server (e.g. Tomcat)
+
+Note: You can of course change these configuration from step (1.) any time you want by editing the configuration files. To be sure restart the application server to let the changes take effect.
 
 ## 4. Deploy a sample package
 Copy a sample package from [here](https://raw.githubusercontent.com/52North/movingcode/master/mc-runtime/src/test/resources/testpackages/py_copy.zip) to your local folder (e.g. ``/home/someuser/mc-packages``).
@@ -49,4 +55,9 @@ The WPS module will scan the folder every 20 seconds for updates, so just wait a
 ```
 
 ## 5. Check capabilities
-Check the capabilities of your WPS server and look for ``de.tu-dresden.geo.gis.algorithms.test.echo``. If it is there, you are done.
+Type the GetCapabilities request in your browser: ``http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS``
+
+... or simply use curl in a linux shell:
+``curl 'http://localhost:8080/52n-wps-webapp/WebProcessingService?Request=GetCapabilities&Service=WPS'``
+
+Check the response of your WPS server and look for ``de.tu-dresden.geo.gis.algorithms.test.echo``. If it is there, you are done.
