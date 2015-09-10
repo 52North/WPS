@@ -9,13 +9,13 @@ git checkout dev
 ```
 
 Edit ``.../WPS/52n-wps-webapp/src/main/resources/processors.json`` to match your system configuration. Most importantly, you want to set the temp folder at the end of the file, e.g. to:
-```
+```json
 "tempWorkspace" : "/tmp" 
 ```
 in a Linux environment.
 
 Now edit ``.../WPS/52n-wps-webapp/config/wps_config.xml`` and ``wps_config_geotools.xml`` to enable the moving code module:
-```
+```xml
 <Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
   <Property name="LOCAL_REPOSITORY" active="true">/home/someuser/mc-packages</Property>
 </Repository> 
