@@ -73,7 +73,7 @@ public class R_Config implements ServletContextAware {
 
     private static final String DIR_DELIMITER = ";";
     
-    private LocalRAlgorithmRepositoryCM configModule;
+    private RConfigurationModule configModule;
 
     private ArrayList<File> utilsFiles = null;
 
@@ -90,16 +90,16 @@ public class R_Config implements ServletContextAware {
     protected R_Config() {
         this.starter = new RStarter();
         this.connector = new RConnector(starter);
-        this.configModule = new LocalRAlgorithmRepositoryCM();
+        this.configModule = new RConfigurationModule();
 
         LOGGER.info("NEW {}", this);
     }
     
-    public void setConfigModule(LocalRAlgorithmRepositoryCM configModule) {
+    public void setConfigModule(RConfigurationModule configModule) {
     	this.configModule = configModule;
     }
 
-    public LocalRAlgorithmRepositoryCM getConfigModule() {
+    public RConfigurationModule getConfigModule() {
         return configModule;
     }
 

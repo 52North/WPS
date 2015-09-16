@@ -111,9 +111,9 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @PostConstruct
     public void init() {
-        LOGGER.info("Initializing Local*R*AlgorithmRepository..");
+        LOGGER.info("Initializing Local*R*ConfigurationModule..");
 
-        LocalRAlgorithmRepositoryCM configModule = (LocalRAlgorithmRepositoryCM) WPSConfig.getInstance()
+        RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
 
@@ -188,7 +188,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         return true;
     }
 
-    private void addAllAlgorithmsToRepository(LocalRAlgorithmRepositoryCM configModule) {
+    private void addAllAlgorithmsToRepository(RConfigurationModule configModule) {
         List<AlgorithmEntry> algorithmEntries = configModule.getAlgorithmEntries();
 
         LOGGER.debug("Adding algorithms for properties: {}", Arrays.deepToString(algorithmEntries.toArray()));

@@ -43,9 +43,9 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LocalRAlgorithmRepositoryCM extends ClassKnowingModule {
+public class RConfigurationModule extends ClassKnowingModule {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepositoryCM.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RConfigurationModule.class);
 
 	private boolean isActive = true;
 	
@@ -118,14 +118,14 @@ public class LocalRAlgorithmRepositoryCM extends ClassKnowingModule {
 			rServePasswordEntry,rServeUtilsScriptsDirectoryEntry,cacheProcessesEntry,sessionMemoryLimitEntry,resourceDownloadEnabledEntry,
 			importDownloadEnabledEntry,scriptDownloadEnabledEntry,sessionInfoDownloadEnabledEntry);
 	
-	public LocalRAlgorithmRepositoryCM() {
+	public RConfigurationModule() {
 		algorithmEntries = new ArrayList<>();
 //		algorithmEntries.addAll(Arrays.asList(algorithmEntry, algorithmEntry1, algorithmEntry2, algorithmEntry3, algorithmEntry4, algorithmEntry5, algorithmEntry6));
 	}
 	
 	@Override
 	public String getModuleName() {
-        return "Local*R*AlgorithmRepository Configuration Module";
+        return "R Configuration Module";
 	}
 
 	@Override
