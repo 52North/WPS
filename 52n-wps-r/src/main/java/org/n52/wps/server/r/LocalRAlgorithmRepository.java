@@ -40,8 +40,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
 import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
@@ -57,13 +55,14 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ConfigurationCategory;
-import org.n52.wps.webapp.api.ConfigurationModule;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 /**
  * A repository to retrieve the available algorithms.
@@ -106,8 +105,6 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
 
-    private ConfigurationModule configModule;
-
     public LocalRAlgorithmRepository() {
         LOGGER.info("NEW {}", this);
     }
@@ -116,11 +113,14 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     public void init() {
         LOGGER.info("Initializing Local*R*AlgorithmRepository..");
 
-        configModule = WPSConfig.getInstance()
+        LocalRAlgorithmRepositoryCM configModule = (LocalRAlgorithmRepositoryCM) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
 
         if (configModule != null && configModule.isActive()) {
+        	
+            config.setConfigModule(configModule);
+            
             boolean rServeIsAvailable = checkRServe();
             LOGGER.debug("R serve is available: {}", rServeIsAvailable);
 
@@ -131,7 +131,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                 }
 
                 // changeManager.updateRepositoryConfiguration(); // updates the config file
-                addAllAlgorithmsToRepository(); // add the algorithms based on the config file
+                addAllAlgorithmsToRepository(configModule); // add the algorithms based on the config file
 
                 LOGGER.info("Initialized Local*R*AlgorithmRepository");
             }
@@ -188,7 +188,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         return true;
     }
 
-    private void addAllAlgorithmsToRepository() {
+    private void addAllAlgorithmsToRepository(LocalRAlgorithmRepositoryCM configModule) {
         List<AlgorithmEntry> algorithmEntries = configModule.getAlgorithmEntries();
 
         LOGGER.debug("Adding algorithms for properties: {}", Arrays.deepToString(algorithmEntries.toArray()));

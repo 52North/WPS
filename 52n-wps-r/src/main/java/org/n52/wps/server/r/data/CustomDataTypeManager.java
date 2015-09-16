@@ -82,7 +82,7 @@ public class CustomDataTypeManager {
     }
 
     private void readConfig() throws IOException, ExceptionReport {
-        String file = config.getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG);
+        String file = config.resolveFullPath(config.getConfigModule().getDatatypeConfig());
         this.configFile = new File(file);
         if (getConfigFile() == null) {
             LOGGER.error("Config file not availailable at '{}'. Costum R data types cannot be registered.", file);

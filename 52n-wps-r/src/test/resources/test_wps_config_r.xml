@@ -28,8 +28,6 @@
 			<Property name="R_cacheProcesses" active="true">true</Property>
 			<Property name="R_session_memoryLimit" active="true">1000
 			</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator
-			</Property>
 		</Repository>
 		<Repository name="ServiceLoaderAlgorithmRepository"
 			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository"

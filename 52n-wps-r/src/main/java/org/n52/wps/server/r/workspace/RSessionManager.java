@@ -116,7 +116,7 @@ public class RSessionManager {
         // configure memory limit
         StringBuilder cmd = new StringBuilder();
 
-        String memoryLimit = config.getConfigVariable(RWPSConfigVariables.R_SESSION_MEMORY_LIMIT);
+        String memoryLimit = config.getConfigModule().getSessionMemoryLimit();
         cmd.append("memory.limit(");
         cmd.append(memoryLimit);
         cmd.append(")");

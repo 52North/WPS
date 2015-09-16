@@ -355,12 +355,12 @@ public class RWorkspaceManager {
         String originalWD = connection.eval("getwd()").asString();
 
         // Set R working directory according to configuration
-        String strategy = this.config.getConfigVariable(RWPSConfigVariables.R_WORK_DIR_STRATEGY);
+        String strategy = config.getConfigModule().getWdStrategy();
         boolean isRserveOnLocalhost = this.config.getRServeHost().equalsIgnoreCase("localhost");
         String workDirNameSetting = null;
 
         try {
-            workDirNameSetting = this.config.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR_NAME);
+            workDirNameSetting = config.resolveFullPath(config.getConfigModule().getWdName());
         }
         catch (ExceptionReport e) {
             log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",

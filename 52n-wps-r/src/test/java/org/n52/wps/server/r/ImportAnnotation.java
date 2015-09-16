@@ -87,12 +87,14 @@ public class ImportAnnotation {
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
         Util.mockGenericWPSConfig();
 
-        openMockR_Config = Mockito.spy(new R_Config());
+        R_Config config = new R_Config();
+        Path p = Files.createTempDirectory("wps4r-it-").toAbsolutePath();
+        config.getConfigModule().setWdName(p.toString());
+        openMockR_Config = Mockito.spy(config);
+        
         openMockR_Config.setWknPrefix("test.");
         Mockito.when(openMockR_Config.getEnableBatchStart()).thenReturn(true);
-        Path p = Files.createTempDirectory("wps4r-it-").toAbsolutePath();
         Mockito.when(openMockR_Config.getBaseDir()).thenReturn(p);
-        openMockR_Config.setConfigVariable(RWPSConfigVariables.R_WORK_DIR_NAME, p.toString());
         Mockito.when(openMockR_Config.isImportDownloadEnabled()).thenReturn(true);
         Mockito.when(openMockR_Config.isResourceDownloadEnabled()).thenReturn(true);
         Mockito.when(openMockR_Config.isScriptDownloadEnabled()).thenReturn(true);
