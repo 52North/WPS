@@ -29,8 +29,6 @@
 
 package org.n52.wps.server.r;
 
-import static org.n52.wps.server.r.RWPSConfigVariables.*;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -54,8 +52,6 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.util.RConnector;
 import org.n52.wps.server.r.util.RFileExtensionFilter;
 import org.n52.wps.server.r.util.RStarter;
-import org.n52.wps.webapp.api.ConfigurationModule;
-import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

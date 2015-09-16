@@ -46,7 +46,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RResource;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.R_Resource;

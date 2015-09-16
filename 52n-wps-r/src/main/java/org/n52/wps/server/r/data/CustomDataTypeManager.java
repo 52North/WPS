@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

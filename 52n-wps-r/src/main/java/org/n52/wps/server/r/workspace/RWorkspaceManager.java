@@ -45,7 +45,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RConstants;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.ResourceFileRepository;
@@ -363,8 +362,7 @@ public class RWorkspaceManager {
             workDirNameSetting = config.resolveFullPath(config.getConfigModule().getWdName());
         }
         catch (ExceptionReport e) {
-            log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
-                      RWPSConfigVariables.R_WORK_DIR_NAME,
+            log.error("R Working directory references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
                       strategy,
                       e);
             throw e;

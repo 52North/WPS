@@ -42,7 +42,6 @@ import java.util.UUID;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.util.RLogger;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
@@ -230,10 +229,7 @@ public class RWorkspace {
             RserveException,
             ExceptionReport {
         log.debug("Setting the R working directory... current work directory: {}", currentWorkDir);
-
-        log.debug("Try to set R work directory according to {} = {}",
-                  RWPSConfigVariables.R_WORK_DIR_STRATEGY,
-                  strategyName);
+        log.debug("Try to set R work directory according to strategy '{}'", strategyName);
         REXP oldWorkdir = null;
         log.debug("Working on localhost: {}", isRserveOnLocalhost);
 
@@ -266,8 +262,7 @@ public class RWorkspace {
                 log.debug("Manually set work dir name resolved to the full path '{}'", workDirNameFullPath);
             }
             catch (ExceptionReport e) {
-                log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
-                          RWPSConfigVariables.R_WORK_DIR_NAME,
+                log.error("Configured R working directory references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
                           strategy,
                           e);
             }
@@ -350,10 +345,8 @@ public class RWorkspace {
             }
 
             if (isInvalidPath) {
-                log.error("Invalid configurarion for work directory. | {}={} | {}={} | Falling back to '{}'.",
-                          RWPSConfigVariables.R_WORK_DIR_STRATEGY,
+                log.error("Invalid configuration for R working directory. | strategy={} | workingDir={} | Falling back to '{}'.",
                           strategy,
-                          RWPSConfigVariables.R_WORK_DIR_NAME,
                           workDirName,
                           DEFAULT_STRATEGY);
                 return setWorkingDirectory(connection,
