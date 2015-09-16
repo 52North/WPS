@@ -165,7 +165,7 @@ public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
 		assertThat(parsedObservation.getDescription(), is(description));
 		assertThat(parsedObservation.getIdentifier(), is(identifier));
 		assertThat(parsedObservation.getPhenomenonTime(), is((Time)time));
-		assertThat((double)parsedObservation.getValue().getValue().getValue(), is(new Double(value)));
+		assertThat((Double)parsedObservation.getValue().getValue().getValue(), is(new Double(value)));
 		assertThat(parsedObservation.getValue().getValue().getUnit(), is(unit));
 		assertThat(parsedObservation.getResultTime().isReferenced(), is(true));
 		assertThat(parsedObservation.getResultTime().getReference(), is("phenomenonTime"));
