@@ -28,6 +28,8 @@
  */
 package org.n52.wps.webapp.api;
 
+import java.util.Objects;
+
 /**
  * Used by repository {@link ConfigurationModule} implementations to create a list of algorithms they contain.
  */
@@ -55,4 +57,31 @@ public class AlgorithmEntry {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AlgorithmEntry other = (AlgorithmEntry) obj;
+        if (!Objects.equals(this.algorithm, other.algorithm)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "AlgorithmEntry{" + "algorithm=" + algorithm + ", active=" + active + '}';
+    }
+
 }

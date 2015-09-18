@@ -28,8 +28,10 @@
  */
 package org.n52.wps.webapp.api;
 
+import java.util.Objects;
+
 public class FormatEntry {
-	
+
 	private String mimeType;
 	private String schema;
 	private String encoding;
@@ -73,42 +75,58 @@ public class FormatEntry {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		
+
 		if(obj instanceof FormatEntry){
 			FormatEntry formatEntry = (FormatEntry)obj;
-			
+
 			boolean mimeTypesEqual = false;
 			boolean schemasEqual = false;
 			boolean encodingsEqual = false;
-			
+
 			if(mimeType != null){
 				mimeTypesEqual = mimeType.equals(formatEntry.getMimeType());
 				if(!mimeTypesEqual){
 					return false;
 				}
 			}
-			
+
 			if(schema != null){
 				schemasEqual = schema.equals(formatEntry.getSchema());
 				if(!schemasEqual){
 					return false;
 				}
 			}
-			
+
 			if(encoding != null){
 				encodingsEqual = encoding.equals(formatEntry.getEncoding());
 				if(!encodingsEqual){
 					return false;
 				}
 			}
-			
+
 			return true;
 		}
-		
+
 		return super.equals(obj);
 	}
-	
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.mimeType);
+        hash = 37 * hash + Objects.hashCode(this.schema);
+        hash = 37 * hash + Objects.hashCode(this.encoding);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "FormatEntry{" + "mimeType=" + mimeType + ", schema=" + schema + ", encoding=" + encoding + ", active=" + active + '}';
+    }
+
+
+
 }
