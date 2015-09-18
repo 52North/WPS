@@ -44,11 +44,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RConfigurationModule extends ClassKnowingModule {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(RConfigurationModule.class);
 
 	private boolean isActive = true;
-	
+
 	private static final String enableBatchStartKey = "R_enableBatchStart"; //RWPSConfigVariables.ENABLE_BATCH_START.toString();
 	private static final String datatypeConfigKey = "R_datatypeConfig"; //RWPSConfigVariables.R_DATATYPE_CONFIG.toString();
 	private static final String wdStrategyKey = "R_wdStrategy"; //RWPSConfigVariables.R_WORK_DIR_STRATEGY.toString();
@@ -66,7 +66,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private static final String importDownloadEnabledKey = "R_enableImportDownload";
 	private static final String scriptDownloadEnabledKey = "R_enableScriptDownload";
 	private static final String sessionInfoDownloadEnabledKey = "R_enableSessionInfoDownload";
-	
+
 	private ConfigurationEntry<Boolean> enableBatchStartEntry = new BooleanConfigurationEntry(enableBatchStartKey, "Enable Batch Start", "Try to start Rserve on the local machine", false, false);
 	private ConfigurationEntry<String> datatypeConfigEntry = new StringConfigurationEntry(datatypeConfigKey, "Custom data type mappings", "Location of a config file were you may add costum data types that WPS4R should handle (see below)", false, "R/R_Datatype.conf");
 	private ConfigurationEntry<String> wdStrategyEntry = new StringConfigurationEntry(wdStrategyKey, "Working Directory Strategy", "Influences WPS4R on choosing the R working directory for each process run", false, "default");
@@ -84,7 +84,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private ConfigurationEntry<Boolean> importDownloadEnabledEntry = new BooleanConfigurationEntry(importDownloadEnabledKey, "Enable imports download", "Allows to download R imports", false, true);
 	private ConfigurationEntry<Boolean> scriptDownloadEnabledEntry = new BooleanConfigurationEntry(scriptDownloadEnabledKey, "Enable script download", "Allows to download R scripts", false, true);
 	private ConfigurationEntry<Boolean> sessionInfoDownloadEnabledEntry = new BooleanConfigurationEntry(sessionInfoDownloadEnabledKey, "Enable session info download", "Allows to download R session info", false, true);
-	
+
 	private boolean enableBatchStart;
 	private String datatypeConfig;
 	private String wdStrategy;
@@ -102,7 +102,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private boolean importDownloadEnabled;
 	private boolean scriptDownloadEnabled;
 	private boolean sessionInfoDownloadEnabled;
-	
+
 //	private AlgorithmEntry algorithmEntry = new AlgorithmEntry("org.n52.wps.server.algorithm.JTSConvexHullAlgorithm", true);
 //	private AlgorithmEntry algorithmEntry1 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.DummyTestClass", true);
 //	private AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.LongRunningDummyTestClass", true);
@@ -117,12 +117,12 @@ public class RConfigurationModule extends ClassKnowingModule {
 			wdStrategyEntry,wdNameEntry,resourceDirectoryEntry,scriptDirectoryEntry,rServeHostEntry, rServePortEntry,rServeUserEntry,
 			rServePasswordEntry,rServeUtilsScriptsDirectoryEntry,cacheProcessesEntry,sessionMemoryLimitEntry,resourceDownloadEnabledEntry,
 			importDownloadEnabledEntry,scriptDownloadEnabledEntry,sessionInfoDownloadEnabledEntry);
-	
+
 	public RConfigurationModule() {
 		algorithmEntries = new ArrayList<>();
 //		algorithmEntries.addAll(Arrays.asList(algorithmEntry, algorithmEntry1, algorithmEntry2, algorithmEntry3, algorithmEntry4, algorithmEntry5, algorithmEntry6));
 	}
-	
+
 	@Override
 	public String getModuleName() {
         return "R Configuration Module";
@@ -167,14 +167,16 @@ public class RConfigurationModule extends ClassKnowingModule {
 	public boolean isEnableBatchStart() {
 		return enableBatchStart;
 	}
-	
+
 	@ConfigurationKey(key = enableBatchStartKey)
 	public void setEnableBatchStart(boolean enableBatchStart) {
 		this.enableBatchStart = enableBatchStart;
 	}
 
 	public String getDatatypeConfig() {
-		return isNotNullOrEmpty(datatypeConfig) ? datatypeConfig : datatypeConfigEntry.getValue();
+		return isNullOrEmpty(datatypeConfig, datatypeConfigEntry)
+                ? datatypeConfigEntry.getValue()
+                : datatypeConfig;
 	}
 
 	@ConfigurationKey(key = datatypeConfigKey)
@@ -183,7 +185,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getWdStrategy() {
-		return isNotNullOrEmpty(wdStrategy) ? wdStrategy : wdStrategyEntry.getValue();
+		return isNullOrEmpty(wdStrategy, wdStrategyEntry)
+                ? wdStrategyEntry.getValue()
+                : wdStrategy;
 	}
 
 	@ConfigurationKey(key = wdStrategyKey)
@@ -192,7 +196,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getWdName() {
-		return isNotNullOrEmpty(wdName) ? wdName : wdNameEntry.getValue();
+		return isNullOrEmpty(wdName, wdNameEntry)
+                ? wdNameEntry.getValue()
+                : wdName;
 	}
 
 	@ConfigurationKey(key = wdNameKey)
@@ -201,7 +207,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getResourceDirectory() {
-		return isNotNullOrEmpty(resourceDirectory) ? resourceDirectory : resourceDirectoryEntry.getValue();
+		return isNullOrEmpty(resourceDirectory, resourceDirectoryEntry)
+                ? resourceDirectoryEntry.getValue()
+                : resourceDirectory;
 	}
 
 	@ConfigurationKey(key = resourceDirectoryKey)
@@ -210,7 +218,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getScriptDirectory() {
-		return isNotNullOrEmpty(scriptDirectory) ? scriptDirectory : scriptDirectoryEntry.getValue();
+		return isNullOrEmpty(scriptDirectory, scriptDirectoryEntry)
+                ? scriptDirectoryEntry.getValue()
+                : scriptDirectory ;
 	}
 
 	@ConfigurationKey(key = scriptDirectoryKey)
@@ -219,7 +229,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getRServeHost() {
-		return isNotNullOrEmpty(rServeHost) ? rServeHost : rServeHostEntry.getValue();
+		return isNullOrEmpty(rServeHost, rServeHostEntry)
+                ? rServeHostEntry.getValue()
+                : rServeHost;
 	}
 
 	@ConfigurationKey(key = rServeHostKey)
@@ -230,7 +242,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getRServePort() {
-		return isNotNullOrEmpty(rServePort) ? rServePort : rServePortEntry.getValue();
+		return isNullOrEmpty(rServePort, rServePortEntry)
+                ? rServePortEntry.getValue()
+                : rServePort;
 	}
 
 	@ConfigurationKey(key = rServePortKey)
@@ -245,7 +259,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getRServeUser() {
-		return isNotNullOrEmpty(rServeUser) ? rServeUser : rServeUserEntry.getValue();
+		return isNullOrEmpty(rServeUser, rServeUserEntry)
+                ? rServeUserEntry.getValue()
+                : rServeUser;
 	}
 
 	@ConfigurationKey(key = rServeUserKey)
@@ -254,7 +270,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getrServePassword() {
-		return isNotNullOrEmpty(rServePassword) ? rServePassword : rServePasswordEntry.getValue();
+		return isNullOrEmpty(rServePassword, rServePasswordEntry)
+                ? rServePasswordEntry.getValue()
+                : rServePassword;
 	}
 
 	@ConfigurationKey(key = rServePasswordKey)
@@ -263,7 +281,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getRServeUtilsScriptsDirectory() {
-		return isNotNullOrEmpty(rServeUtilsScriptsDirectory) ? rServeUtilsScriptsDirectory : rServeUtilsScriptsDirectoryEntry.getValue();
+		return isNullOrEmpty(rServeUtilsScriptsDirectory, rServeUtilsScriptsDirectoryEntry)
+                ? rServeUtilsScriptsDirectoryEntry.getValue()
+                : rServeUtilsScriptsDirectory;
 	}
 
 	@ConfigurationKey(key = rServeUtilsScriptDirectoryKey)
@@ -281,7 +301,9 @@ public class RConfigurationModule extends ClassKnowingModule {
 	}
 
 	public String getSessionMemoryLimit() {
-		return isNotNullOrEmpty(sessionMemoryLimit) ? sessionMemoryLimit : sessionMemoryLimitEntry.getValue();
+		return isNullOrEmpty(sessionMemoryLimit, sessionMemoryLimitEntry)
+                ? sessionMemoryLimitEntry.getValue()
+                : sessionMemoryLimit;
 	}
 
 	@ConfigurationKey(key = sessionMemoryLimitKey)
@@ -325,8 +347,16 @@ public class RConfigurationModule extends ClassKnowingModule {
 		this.sessionInfoDownloadEnabled = sessionInfoDownloadEnabled;
 	}
 
-	private boolean isNotNullOrEmpty(String value) {
-		return value != null && !value.isEmpty();
+	private boolean isNullOrEmpty(String value, ConfigurationEntry<?> configEntry) {
+		boolean nullOrEmpty = value == null || value.isEmpty();
+        if (nullOrEmpty) {
+            if (configEntry.isRequired()) {
+                LOGGER.warn("Required config parameter '{}' is null or empty!", configEntry.getKey());
+            } else {
+                LOGGER.info("Config parameter '{}' is null or empty!", configEntry.getKey());
+            }
+        }
+        return nullOrEmpty;
 	}
-	
+
 }
