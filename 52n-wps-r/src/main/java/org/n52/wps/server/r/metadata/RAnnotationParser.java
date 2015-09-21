@@ -95,30 +95,27 @@ public class RAnnotationParser {
     }
 
     /**
-     * 
+     *
      * @param script
      *        the script to validate
      * @param identifier
      *        the script id to use for generating a test-process description
      * @return false if the process description is invalid
      * @throws RAnnotationException
-     * @throws RAnnotationExcep
-     * @throws IOException
-     * @throws ExceptionReport
      */
     public boolean validateScript(InputStream script, String identifier) throws RAnnotationException {
         return validateScriptWithErrors(script, identifier).isEmpty();
     }
 
     /**
-     * 
+     *
      * @param script
      * @param identifier
      * @return a list of the XML validation errors or the exceptions during validation
      * @throws RAnnotationException
      */
-    public Collection<Object> validateScriptWithErrors(InputStream script, String identifier) throws RAnnotationException {
-        ArrayList<Object> validationErrors = new ArrayList<Object>();
+    public Collection<Exception> validateScriptWithErrors(InputStream script, String identifier) throws RAnnotationException {
+        ArrayList<Exception> validationErrors = new ArrayList<>();
         XmlOptions validationOptions = new XmlOptions();
         validationOptions.setErrorListener(validationErrors);
 
@@ -149,7 +146,7 @@ public class RAnnotationParser {
     }
 
     @SuppressWarnings("unused")
-    private void validateMetadataAnnotations(ArrayList<Object> validationErrors,
+    private void validateMetadataAnnotations(ArrayList<Exception> validationErrors,
                                              List<RAnnotation> annotations,
                                              String scriptId) throws RAnnotationException {
         List<RAnnotation> metadata = RAnnotation.filterAnnotations(annotations, RAnnotationType.METADATA);
@@ -160,36 +157,54 @@ public class RAnnotationParser {
                 // title is set
                 String title = annotation.getStringValue(RAttribute.TITLE);
                 if (title == null || title.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
-                    sb.append(RAttribute.TITLE).append(" must be set in ").append(annotation).append("\n");
-                    validationErrors.add(sb.toString());
+                    StringBuilder sb = new StringBuilder()
+                            .append("Annotation of type '")
+                            .append(RAnnotationType.METADATA.getStartKey())
+                            .append("' in the script '")
+                            .append(scriptId)
+                            .append("' is not valid: ")
+                            .append(RAttribute.TITLE)
+                            .append(" must be set in ")
+                            .append(annotation);
+                    validationErrors.add(new Exception(sb.toString()));
                 }
 
                 // href is set and valid URL
                 String href = annotation.getStringValue(RAttribute.HREF);
                 if (href == null || href.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
-                    sb.append(RAttribute.HREF).append(" must be set, but annotation is ").append(annotation).append("\n");
-                    validationErrors.add(sb.toString());
+                    StringBuilder sb = new StringBuilder()
+                            .append("Annotation of type '")
+                            .append(RAnnotationType.METADATA.getStartKey())
+                            .append("' in the script '")
+                            .append(scriptId)
+                            .append("' is not valid: ")
+                            .append(RAttribute.HREF)
+                            .append(" must be set, but annotation is ")
+                            .append(annotation);
+                    validationErrors.add(new Exception(sb.toString()));
                 }
                 try {
                     URL url = new URL(href);
                     url.toURI();
                 }
                 catch (MalformedURLException | URISyntaxException e) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("\nAnnotation of type '").append(RAnnotationType.METADATA.getStartKey()).append("' in the script '").append(scriptId).append("' is not valid:\n");
-                    sb.append(RAttribute.HREF).append(" must be a well-formed URL, but annotation is ").append(annotation).append("\n");
-                    validationErrors.add(sb.toString());
+                    StringBuilder sb = new StringBuilder()
+                            .append("Annotation of type '")
+                            .append(RAnnotationType.METADATA.getStartKey())
+                            .append("' in the script '")
+                            .append(scriptId)
+                            .append("' is not valid: ")
+                            .append(RAttribute.HREF)
+                            .append(" must be a well-formed URL, but annotation is ")
+                            .append(annotation);
+                    validationErrors.add(new Exception(sb.toString()));
                 }
             }
         }
     }
 
     private void hasOneDescription(String identifier,
-                                   ArrayList<Object> validationErrors,
+                                   ArrayList<Exception> validationErrors,
                                    XmlOptions validationOptions,
                                    List<RAnnotation> annotations) throws RAnnotationException {
         List<RAnnotation> descriptions = RAnnotation.filterAnnotations(annotations, RAnnotationType.DESCRIPTION);
@@ -216,9 +231,12 @@ public class RAnnotationParser {
                             Arrays.toString(validationErrors.toArray()));
 
                 // save process description in output errors
-                StringBuilder sb = new StringBuilder();
-                validationErrors.add(sb.append("\nErrorenous XML Process Description, so the script '" + identifier
-                        + "' is not valid:\n").append(processType.xmlText()).append("\n").toString());
+                StringBuilder sb = new StringBuilder()
+                        .append("Errorenous XML Process Description, so the script '")
+                        .append(identifier)
+                        .append("' is not valid: ")
+                        .append(processType.xmlText());
+                validationErrors.add(new Exception(sb.toString())); // TODO name exception
             }
 
         }

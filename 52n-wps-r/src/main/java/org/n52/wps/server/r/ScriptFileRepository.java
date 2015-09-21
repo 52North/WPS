@@ -34,11 +34,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javax.servlet.ServletContext;
 
 import org.n52.wps.server.ExceptionReport;
@@ -155,7 +158,14 @@ public class ScriptFileRepository {
                 LOGGER.error("Script file not available/readable for process '{}'!", wkn);
                 return false;
             }
-            return annotationParser.validateScript(fis, wkn);
+            final boolean valid = annotationParser.validateScript(fis, wkn);
+            if ( !valid) {
+                final Collection<Exception> errors = annotationParser.validateScriptWithErrors(fis, wkn);
+                LOGGER.error("invalid script content: {}", errors.stream()
+                        .map(e -> e.getMessage())
+                        .collect(Collectors.joining(", \n")));
+            }
+            return valid;
         }
         catch (IOException e) {
             LOGGER.error("Script file unavailable for process '{}'.", wkn, e);
@@ -177,7 +187,7 @@ public class ScriptFileRepository {
 
         return fileToWknMap.get(file);
     }
-    
+
     /**
      * Register all scripts in the given directory, returns true only if all
      * scripts could be registered and does not provide information about which script failed.
@@ -199,7 +209,7 @@ public class ScriptFileRepository {
         LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
         return registerScriptFiles(Arrays.asList(scripts));
     }
-    
+
     public boolean registerScriptFiles(Iterable<File> files) {
         boolean allRegistered = true;
         for (File file : files) {
@@ -217,7 +227,7 @@ public class ScriptFileRepository {
         }
         return allRegistered;
     }
-        
+
     public boolean registerScriptFile(File file) throws RAnnotationException, ExceptionReport {
         boolean registered = false;
 

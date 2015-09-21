@@ -94,7 +94,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Autowired
     private ResourceFileRepository resourceRepo;
-    
+
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
 
@@ -112,7 +112,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             LOGGER.info("Local*R*AlgorithmRepository is INACTIVE.");
         } else {
             config.setConfigModule(configModule);
-            
+
             if ( !isRServeAvailable()) {
                 LOGGER.error("RServe is not available, not adding ANY algorithms!");
                 return;
@@ -163,8 +163,10 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             if ( !entry.isActive()) {
                 LOGGER.warn("Inactive algorithm not added: {}", entry.toString());
             } else{
-                LOGGER.debug("Adding algorithm: {}", entry.toString());
-                addAlgorithm(entry.getAlgorithm());
+                final String algorithm = entry.getAlgorithm();
+                String publicId = config.getPublicScriptId(algorithm);
+                LOGGER.debug("Adding algorithm: {} with publicId: {}", algorithm, publicId);
+                addAlgorithm(publicId);
             }
         });
     }
@@ -177,18 +179,18 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         }
         return initializeRProcess((String) processID);
     }
-    
+
     private boolean initializeRProcess(String processName) {
         try {
             LOGGER.debug("Initialize RProcess with name {}", processName);
             RProcessInfo processInfo = createRProcessInfo(processName);
             processInfos.put(processName, processInfo);
             LOGGER.trace("Added internal info: '{}'", processInfo);
-            
+
             GenericRProcess p = createRProcess(processName);
             rProcesses.put(processName, p);
             LOGGER.info("ADDED algorithm as generic R process under name '{}': {}", processName, p);
-            
+
             addResourcesForGenericRProcess(p);
             addImportsForGenericRProcess(p);
             return true;
@@ -200,7 +202,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return false;
         }
     }
-    
+
     private RProcessInfo createRProcessInfo(String wellKnownName) throws InvalidRScriptException {
         LOGGER.trace("Loading script for '{}'", wellKnownName);
         File f = scriptRepo.getValidatedScriptFile(wellKnownName);
@@ -211,11 +213,14 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
         GenericRProcess algorithm = new GenericRProcess(wellKnownName,
                                                         config,
+                                                        parser,
+                                                        scriptRepo,
+                                                        resourceRepo,
                                                         dataTypeRegistry);
         validateProcessDescription(algorithm);
         return algorithm;
     }
-    
+
     private void validateProcessDescription(GenericRProcess algorithm) {
         if ( !algorithm.processDescriptionIsValid(DESCRPTION_VERSION_FOR_VALIDATION)) {
             // collect the errors
@@ -261,7 +266,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                 });
 
     }
-    
+
     private List<RAnnotation> getResourceAnnotations(GenericRProcess process) {
         try {
             return RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.RESOURCE);
@@ -271,7 +276,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return Collections.emptyList();
         }
     }
-    
+
     private void addImportsForGenericRProcess(GenericRProcess process) {
         String algorithm_wkn = process.getWellKnownName();
         LOGGER.debug("Adding imports for algorithm {}", algorithm_wkn);
@@ -287,7 +292,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
                     }
                 });
     }
-    
+
     private List<RAnnotation> getImportAnnotations(GenericRProcess process) {
         try {
             return RAnnotation.filterAnnotations(process.getAnnotations(), RAnnotationType.IMPORT);
@@ -297,7 +302,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
             return Collections.emptyList();
         }
     }
-    
+
     @Override
     public IAlgorithm getAlgorithm(String algorithmName) {
         if ( !this.config.isCacheProcesses()) {

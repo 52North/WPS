@@ -135,19 +135,20 @@ public class R_Config implements ServletContextAware {
 
     public Collection<File> getScriptFiles() {
         String scriptDirConfigParam = getConfigModule().getScriptDirectory();
-        Collection<File> scriptDirectories = new ArrayList<>();
+        Collection<File> rScripts = new ArrayList<>();
 
         String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
         for (String s : scriptDirs) {
             File dir = new File(s);
-            if ( !dir.isAbsolute())
+            if ( !dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
-
-            scriptDirectories.add(dir);
-            LOGGER.debug("Found script directory: {}", dir);
+            }
+            for (File rScript : dir.listFiles(new RFileExtensionFilter())) {
+                rScripts.add(rScript);
+                LOGGER.debug("Registered script: {}", rScript.getAbsoluteFile());
+            }
         }
-
-        return scriptDirectories;
+        return rScripts;
     }
 
     public Collection<File> getScriptDirectories() {

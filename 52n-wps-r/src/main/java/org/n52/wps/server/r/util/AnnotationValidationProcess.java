@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.algorithm.annotation.Algorithm;
@@ -130,11 +131,11 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
 
         if ( !valid) {
             try (InputStream inputStream = IOUtils.toInputStream(script);) {
-                Collection<Object> errors = parser.validateScriptWithErrors(inputStream, VALIDATION_IDENTIFIER);
+                Collection<Exception> errors = parser.validateScriptWithErrors(inputStream, VALIDATION_IDENTIFIER);
                 LOGGER.debug("Found {} errors.", errors.size());
-                for (Object object : errors) {
-                    validation.append("\n").append(object.toString()).append("\n");
-                }
+                errors.stream()
+                        .map(e -> e.getMessage())
+                        .collect(Collectors.joining(", \n"));
             }
             catch (RAnnotationException | IOException e) {
                 validation.append(RESULT_ERROR);

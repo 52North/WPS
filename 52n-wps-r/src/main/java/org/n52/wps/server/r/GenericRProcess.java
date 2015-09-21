@@ -81,22 +81,25 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private final RIOHandler iohandler;
 
-    @Autowired
     private RAnnotationParser parser;
 
-    @Autowired
     private ScriptFileRepository scriptRepo;
 
-    @Autowired
     private ResourceFileRepository resourceRepo;
 
     private boolean shutdownRServerAfterRun = false;
 
     public GenericRProcess(String wellKnownName,
                            R_Config config,
+                           RAnnotationParser parser,
+                           ScriptFileRepository scriptRepo,
+                           ResourceFileRepository resourceRepo,
                            RDataTypeRegistry dataTypeRegistry) {
         super(wellKnownName, false);
         this.config = config;
+        this.parser = parser;
+        this.scriptRepo = scriptRepo;
+        this.resourceRepo = resourceRepo;
         this.iohandler = new RIOHandler(dataTypeRegistry);
 
         this.description = initializeDescription();
