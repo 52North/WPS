@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
@@ -81,25 +82,22 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private RIOHandler iohandler;
 
+    @Autowired
     private RAnnotationParser parser;
+
+    @Autowired
+    private ScriptFileRepository scriptRepo;
+
+    @Autowired
+    private ResourceFileRepository resourceRepo;
 
     private boolean shutdownRServerAfterRun = false;
 
-    private ScriptFileRepository scriptFileRepository;
-
-    private ResourceFileRepository resourceRepository;
-
     public GenericRProcess(String wellKnownName,
                            R_Config config,
-                           RAnnotationParser parser,
-                           ScriptFileRepository scriptRepo,
-                           ResourceFileRepository resourceRepo,
                            RDataTypeRegistry dataTypeRegistry) {
         super(wellKnownName, false);
         this.config = config;
-        this.parser = parser;
-        this.scriptFileRepository = scriptRepo;
-        this.resourceRepository = resourceRepo;
         this.iohandler = new RIOHandler(dataTypeRegistry);
 
         this.description = initializeDescription();
@@ -133,7 +131,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // Reading process information from script annotations:
         File scriptFile = null;
         try {
-            scriptFile = scriptFileRepository.validateScriptFile(scriptFileRepository.getScriptFile(wkn), wkn);
+            scriptFile = scriptRepo.getValidatedScriptFile(wkn);
         }
         catch (InvalidRScriptException e) {
             log.warn("Could not load sript file for {}", wkn, e);
@@ -188,7 +186,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RSessionManager session = new RSessionManager(rCon, config);
             session.configureSession(getWellKnownName(), executor);
 
-            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config, resourceRepository);
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config);
             String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
             List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
@@ -206,7 +204,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 for (R_Resource importedScript : importList) {
                     String value = importedScript.getResourceValue();
                     try {
-                        File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
+                        File f = scriptRepo.getImportedFileForWKN(getWellKnownName(), value);
                         imports.add(f);
                         log.debug("Got imported file {} based on import resource {}", f, importList);
                     }
@@ -221,8 +219,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             if (log.isDebugEnabled())
                 workspace.saveImage("preExecution");
 
-            File scriptFile = scriptFileRepository.getScriptFile(getWellKnownName());
-
+            File scriptFile = scriptRepo.getScriptFile(getWellKnownName());
             boolean success = executor.executeScript(scriptFile, rCon);
             if (log.isDebugEnabled())
                 workspace.saveImage("afterExecution");
@@ -297,9 +294,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         StringBuilder sb = new StringBuilder();
         sb.append("GenericRProcess [wkn = ");
         sb.append(this.wkName);
-        if (this.scriptFileRepository != null) {
+        if (scriptRepo != null) {
             sb.append(", script file = ");
-            sb.append(this.scriptFileRepository.getScriptFileName(this.wkName));
+            sb.append(scriptRepo.getScriptFileName(this.wkName));
         }
         if (this.annotations != null) {
             sb.append(", annotations = ");

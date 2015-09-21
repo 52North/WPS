@@ -206,7 +206,7 @@ public class R_Config implements ServletContextAware {
         }
     }
 
-    public boolean getCacheProcesses() {
+    public boolean isCacheProcesses() {
         return configModule.isCacheProcesses();
     }
 

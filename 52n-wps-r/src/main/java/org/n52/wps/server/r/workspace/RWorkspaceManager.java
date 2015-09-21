@@ -61,6 +61,7 @@ import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -86,18 +87,17 @@ public class RWorkspaceManager {
 
     private RWorkspace workspace;
 
-    private ResourceFileRepository fileRepo;
+    @Autowired
+    private ResourceFileRepository resourceRepo;
 
     public RWorkspaceManager(FilteredRConnection connection,
                              RIOHandler iohandler,
-                             R_Config config,
-                             ResourceFileRepository fileRepo) {
+                             R_Config config) {
         this.connection = connection;
         this.workspace = new RWorkspace(config.getBaseDir());
         this.executor = new RExecutor();
         this.iohandler = iohandler;
         this.config = config;
-        this.fileRepo = fileRepo;
 
         log.debug("NEW {}", this);
     }
@@ -319,7 +319,7 @@ public class RWorkspaceManager {
                 }
 
                 // File resourceFile = resource.getFullResourcePath(this.config);
-                File resourceFile = fileRepo.getResource(resource).toFile();
+                File resourceFile = resourceRepo.getResource(resource).toFile();
                 if (resourceFile == null || !resourceFile.exists()) {
                     throw new ExceptionReport("Resource does not exist: " + resourceAnnotation,
                                               ExceptionReport.NO_APPLICABLE_CODE);
