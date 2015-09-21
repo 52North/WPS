@@ -50,6 +50,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -107,10 +108,8 @@ public class Wps4rIT {
         return con;
     }
 
-    /*
-     * DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
-     */
-    // @Test
+    @Test
+    @Ignore("test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.")
     public void sessionInfoRetrievedFromWPSWebsite() throws MalformedURLException {
         String temp = wpsUrl.substring(0, wpsUrl.lastIndexOf("/"));
         URL urlSessionInfo = new URL(temp + "/rsessioninfoendpoint");
