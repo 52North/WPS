@@ -113,7 +113,7 @@ public class Versions {
 
     @Test
     public void algorithmIsAvailableInRepos() throws IOException, RAnnotationException, ExceptionReport {
-        sr.registerScripts(Util.loadFile(scriptDirMultiple));
+        sr.registerScriptFiles(Util.loadFile(scriptDirMultiple));
 
         String id = mockR_Config.getWknPrefix() + scriptId;
         repo.addAlgorithm(id);
@@ -135,26 +135,26 @@ public class Versions {
             RAnnotationException,
             IOException,
             ExceptionReport {
-        sr.registerScripts(Util.loadFile(scriptDirMultiple));
+        sr.registerScriptFiles(Util.loadFile(scriptDirMultiple));
         String id = mockR_Config.getWknPrefix() + scriptId;
         assertThat("latest version is public, not depending on file name order",
-                   sr.getScriptFileForWKN(id).getName(),
+                   sr.getScriptFile(id).getName(),
                    is(equalTo("scriptB.R")));
         assertThat("latest version is public, not depending on file name order",
-                   sr.getScriptFileForWKN(id).getName(),
+                   sr.getScriptFile(id).getName(),
                    not(is(equalTo("scriptA.R"))));
         assertThat("latest version is public, not depending on file name order",
-                   sr.getScriptFileForWKN(id).getName(),
+                   sr.getScriptFile(id).getName(),
                    not(is(equalTo("scriptC.R"))));
     }
 
     @Test
     public void scriptDirCanBeRegistered() throws ExceptionReport {
-        boolean registered = sr.registerScripts(Util.loadFile(scriptDirMultiple));
+        boolean registered = sr.registerScriptFiles(Util.loadFile(scriptDirMultiple));
         assertThat("all scripts are registered", registered, is(equalTo(true)));
 
         String id = mockR_Config.getWknPrefix() + scriptId;
-        File scriptFile = sr.getScriptFileForWKN(id);
+        File scriptFile = sr.getScriptFile(id);
 
         assertThat("latest script file is returned by script repo", scriptFile.getName(), is(equalTo("scriptB.R")));
 
@@ -169,11 +169,11 @@ public class Versions {
         File dir2 = Util.loadFile(scriptDirSpread + "/2");
         String id = mockR_Config.getWknPrefix() + scriptId;
 
-        assertThat("first script is registered", sr.registerScripts(dir1), is(equalTo(true)));
+        assertThat("first script is registered", sr.registerScriptFiles(dir1), is(equalTo(true)));
         File file1 = dir1.toPath().resolve("script.R").toFile();
         assertThat("wkn for first script file is correct", sr.getWKNForScriptFile(file1), is(equalTo(id)));
 
-        assertThat("second script is registered", sr.registerScripts(dir2), is(equalTo(true)));
+        assertThat("second script is registered", sr.registerScriptFiles(dir2), is(equalTo(true)));
         assertThat("wkn for second script file is correct",
                    sr.getWKNForScriptFile(dir2.toPath().resolve("script.R").toFile()),
                    is(equalTo(id)));
@@ -183,12 +183,12 @@ public class Versions {
 
     @Test
     public void invalidScriptVersionsAreNotRegistered() {
-        boolean registered = sr.registerScripts(Util.loadFile("/versions/invalid"));
+        boolean registered = sr.registerScriptFiles(Util.loadFile("/versions/invalid"));
         assertThat("not all scripts are registered", registered, is(equalTo(false)));
         assertThat("invalid version with characters is not available",
-                   sr.isScriptAvailable(scriptId),
+                   sr.hasReadableScriptFile(scriptId),
                    is(equalTo(false)));
-        assertThat("invalid version text is not available", sr.isScriptAvailable("version-invalid"), is(equalTo(false)));
+        assertThat("invalid version text is not available", sr.hasReadableScriptFile("version-invalid"), is(equalTo(false)));
     }
 
     @Test
@@ -196,7 +196,7 @@ public class Versions {
         thrown.expect(ExceptionReport.class);
         thrown.expectMessage(Matchers.containsString("integer"));
         thrown.expectMessage(Matchers.containsString("1.1-2"));
-        boolean registered = sr.registerScript(Util.loadFile("/versions/invalid/script-invalid1.R"));
+        boolean registered = sr.registerScriptFile(Util.loadFile("/versions/invalid/script-invalid1.R"));
         assertThat("invalid version with characters is not registered", registered, is(equalTo(false)));
     }
 
@@ -205,14 +205,14 @@ public class Versions {
         thrown.expect(ExceptionReport.class);
         thrown.expectMessage(Matchers.containsString("cannot be parsed"));
         thrown.expectMessage(Matchers.containsString("one"));
-        boolean registered = sr.registerScript(Util.loadFile("/versions/invalid/script-invalid2.R"));
+        boolean registered = sr.registerScriptFile(Util.loadFile("/versions/invalid/script-invalid2.R"));
         assertThat("invalid version text is not registered", registered, is(equalTo(false)));
     }
 
     @Test
     public void doubleRegistration() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
-        boolean registered_1 = sr.registerScript(Util.loadFile(scriptDirMultiple + "/scriptA.R"));
-        boolean registered_2 = sr.registerScript(Util.loadFile(scriptDirMultiple + "/scriptB.R"));
+        boolean registered_1 = sr.registerScriptFile(Util.loadFile(scriptDirMultiple + "/scriptA.R"));
+        boolean registered_2 = sr.registerScriptFile(Util.loadFile(scriptDirMultiple + "/scriptB.R"));
 
         assertThat("first register call returns true", registered_1, is(equalTo(true)));
         assertThat("second register call returns true", registered_2, is(equalTo(true)));
@@ -226,10 +226,10 @@ public class Versions {
         // thrown.expectMessage(Matchers.containsString("17"));
         String id = mockR_Config.getWknPrefix() + scriptId;
 
-        boolean registered = sr.registerScripts(Util.loadFile("/versions/conflict"));
+        boolean registered = sr.registerScriptFiles(Util.loadFile("/versions/conflict"));
         assertThat("not all scripts are registered", registered, is(equalTo(false)));
         assertThat("only one script file is registered", sr.getScriptFileVersionsForWKN(id).size(), is(equalTo(1)));
-        assertThat("the first file is registered", sr.getScriptFileForWKN(id).getName(), is(equalTo("scriptA.R")));
+        assertThat("the first file is registered", sr.getScriptFile(id).getName(), is(equalTo("scriptA.R")));
     }
 
 }

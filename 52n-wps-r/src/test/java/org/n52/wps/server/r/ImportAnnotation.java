@@ -115,7 +115,7 @@ public class ImportAnnotation {
         sr = new ScriptFileRepository();
         ReflectionTestUtils.setField(sr, "annotationParser", parser);
         ReflectionTestUtils.setField(sr, "config", openMockR_Config);
-        sr.registerScripts(Util.loadFile(scriptDir));
+        sr.registerScriptFiles(Util.loadFile(scriptDir));
 
         ResourceFileRepository rr = new ResourceFileRepository();
 

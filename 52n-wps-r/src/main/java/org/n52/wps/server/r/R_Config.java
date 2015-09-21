@@ -72,7 +72,7 @@ public class R_Config implements ServletContextAware {
     private String wknPrefix = "org.n52.wps.server.r.";
 
     private static final String DIR_DELIMITER = ";";
-    
+
     private RConfigurationModule configModule;
 
     private ArrayList<File> utilsFiles = null;
@@ -94,7 +94,7 @@ public class R_Config implements ServletContextAware {
 
         LOGGER.info("NEW {}", this);
     }
-    
+
     public void setConfigModule(RConfigurationModule configModule) {
     	this.configModule = configModule;
     }
@@ -103,20 +103,21 @@ public class R_Config implements ServletContextAware {
         return configModule;
     }
 
-    public String resolveFullPath(String pathToResolve) throws ExceptionReport {
+   public String resolveFullPath(String pathToResolve) throws ExceptionReport {
         File file = new File(pathToResolve);
         if ( !file.isAbsolute()) {
             file = getBaseDir().resolve(Paths.get(pathToResolve)).toFile();
         }
-        
+
         if ( !file.exists()) {
-            throw new ExceptionReport("'" + pathToResolve + "' denotes a non-existent path.", "Inconsistent property");
+            LOGGER.error("'" + pathToResolve + "' denotes a non-existent path.");
+            throw new ExceptionReport("Configuration Error!", "Inconsistent property");
         }
 
         return file.getAbsolutePath();
     }
 
-    public Collection<Path> getResourceDirectory() {
+    public Collection<Path> getResourceDirectories() {
         String resourceDirConfigParam = configModule.getResourceDirectory();
         Collection<Path> resourceDirectories = new ArrayList<Path>();
 
@@ -150,7 +151,7 @@ public class R_Config implements ServletContextAware {
         return scriptDirectories;
     }
 
-    public Collection<File> getScriptDir() {
+    public Collection<File> getScriptDirectories() {
         String scriptDirConfigParam = configModule.getScriptDirectory();
         Collection<File> scriptDirectories = new ArrayList<File>();
 
@@ -172,15 +173,15 @@ public class R_Config implements ServletContextAware {
                                                this.getRServePassword());
     }
 
-    public String getRServePassword() {
+    private String getRServePassword() {
         return configModule.getrServePassword();
     }
 
-    public String getRServeUser() {
+    private String getRServeUser() {
         return configModule.getRServeUser();
     }
 
-    public int getRServePort() {
+    private int getRServePort() {
         String port = configModule.getRServePort();
         return Integer.parseInt(port);
     }
@@ -235,7 +236,7 @@ public class R_Config implements ServletContextAware {
     /**
      * given a relative path, this method tries to locate the directory first within the webapp folder, then
      * within the resources directory.
-     * 
+     *
      * @param p
      * @param baseDir
      *        the full path to the webapp directory

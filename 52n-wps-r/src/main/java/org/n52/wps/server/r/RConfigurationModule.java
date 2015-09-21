@@ -252,7 +252,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 		try {
 			Integer.parseInt(rServePort);
 		} catch (NumberFormatException e) {
-            LOGGER.warn("Config variable {} does not contain a parseble integer. Using default port 6311.", rServePortKey);
+            LOGGER.warn("Config variable {} does not contain a parseble integer. Using default port 6311.", rServePortKey, e);
             rServePort = "6311";
         }
 		this.rServePort = rServePort;

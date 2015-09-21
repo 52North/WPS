@@ -65,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import org.n52.wps.server.r.util.InvalidRScriptException;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
@@ -132,9 +133,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // Reading process information from script annotations:
         File scriptFile = null;
         try {
-            scriptFile = scriptFileRepository.getScriptFileForWKN(wkn);
+            scriptFile = scriptFileRepository.validateScriptFile(scriptFileRepository.getScriptFile(wkn), wkn);
         }
-        catch (ExceptionReport e) {
+        catch (InvalidRScriptException e) {
             log.warn("Could not load sript file for {}", wkn, e);
             throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
         }
@@ -173,6 +174,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
     }
 
+    @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
         log.info("Running {} \n\tInput data: {}", this.toString(), Arrays.toString(inputData.entrySet().toArray()));
 
@@ -203,9 +205,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 List<R_Resource> importList = (List<R_Resource>) rAnnotation.getObjectValue(RAttribute.NAMED_LIST);
                 for (R_Resource importedScript : importList) {
                     String value = importedScript.getResourceValue();
-                    File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
-                    imports.add(f);
-                    log.debug("Got imported file {} based on import resource {}", f, importList);
+                    try {
+                        File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
+                        imports.add(f);
+                        log.debug("Got imported file {} based on import resource {}", f, importList);
+                    }
+                    catch (InvalidRScriptException e) {
+                        log.error("Failed resolving imported script for '{}'", getWellKnownName(), e);
+                        throw new ExceptionReport(e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE);
+                    }
                 }
             }
             session.loadImportedScripts(executor, imports);
@@ -213,7 +221,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             if (log.isDebugEnabled())
                 workspace.saveImage("preExecution");
 
-            File scriptFile = scriptFileRepository.getScriptFileForWKN(getWellKnownName());
+            File scriptFile = scriptFileRepository.getScriptFile(getWellKnownName());
 
             boolean success = executor.executeScript(scriptFile, rCon);
             if (log.isDebugEnabled())
@@ -291,14 +299,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         sb.append(this.wkName);
         if (this.scriptFileRepository != null) {
             sb.append(", script file = ");
-            try {
-                sb.append(this.scriptFileRepository.getScriptFileForWKN(this.wkName));
-            }
-            catch (ExceptionReport e) {
-                sb.append("Error: '");
-                sb.append(e.getMessage());
-                sb.append("'");
-            }
+            sb.append(this.scriptFileRepository.getScriptFileName(this.wkName));
         }
         if (this.annotations != null) {
             sb.append(", annotations = ");

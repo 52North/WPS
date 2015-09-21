@@ -49,6 +49,7 @@ import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.util.RFileExtensionFilter;
+import org.n52.wps.server.r.util.InvalidRScriptException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ import org.springframework.stereotype.Repository;
 
 /**
  * Management class to store and retrieve script files and their corresponding well known names.
- * 
+ *
  * @author Daniel Nüst
  *
  */
@@ -83,30 +84,80 @@ public class ScriptFileRepository {
         LOGGER.info("NEW {}", this);
     }
 
-    public File getScriptFileForWKN(String wkn) throws ExceptionReport {
-        File out = wknToFileMap.get(wkn).values().iterator().next();
+    public File getScriptFile(String wkn) {
+        return wknToFileMap.get(wkn).values().iterator().next();
+    }
 
-        if (out != null && out.exists() && out.isFile() && out.canRead()) {
-            return out;
+    public String getScriptFileName(String wkn) {
+        File file = getScriptFile(wkn);
+        return file == null ? "(unknown)" : file.getName();
+    }
+
+    public boolean hasReadableScriptFile(String wkn) {
+        File file = getScriptFile(wkn);
+        boolean readable = file != null
+                && file.exists()
+                && file.isFile()
+                && file.canRead();
+        return readable;
+    }
+
+    public boolean hasReadableScriptFile(RProcessInfo processInfo) {
+        if (processInfo != null) {
+            return hasReadableScriptFile(processInfo.getWkn());
         }
+        return false;
+    }
 
-        String fname = out == null ? "(unknown)" : out.getName();
+    public File getValidatedScriptFile(String wkn) throws InvalidRScriptException {
+        return validateScriptFile(getScriptFile(wkn), wkn);
+    }
+
+    public File validateScriptFile(File file, String wkn) throws InvalidRScriptException {
         StringBuilder message = new StringBuilder();
-        message.append("Error in Process: '").append(wkn).append("' with file '").append(fname).append("':");
-        if (out == null) {
-            message.append("File is null. ");
+        String fname = getScriptFileName(wkn);
+        if ( !hasReadableScriptFile(wkn)) {
+            message.append("Error in Process: '").append(wkn)
+                    .append("' with file '").append(fname).append("': ");
+            if (file == null) {
+                message.append("File is null. ");
+                throw new InvalidRScriptException(message.toString());
+            }
+            if ( !file.exists()) {
+                message.append("File does not exist. ");
+                throw new InvalidRScriptException(message.toString());
+            }
+            if ( !file.isFile()) {
+                message.append("Is not a file. ");
+                throw new InvalidRScriptException(message.toString());
+            }
+            if ( !file.canRead()) {
+                message.append("Cannot read file.");
+                throw new InvalidRScriptException(message.toString());
+            }
+        } else if ( !isValidScriptFile(wkn)) {
+            message.append("Invalid script content.");
+            throw new InvalidRScriptException(message.toString());
         }
-        if ( !out.exists()) {
-            message.append("File does not exist. ");
-        }
-        if ( !out.isFile()) {
-            message.append("Is not a file. ");
-        }
-        if ( !out.canRead()) {
-            message.append("Cannot read file.");
-        }
+        return file;
+    }
 
-        throw new ExceptionReport(message.toString(), ExceptionReport.NO_APPLICABLE_CODE);
+    public boolean isValidScriptFile(String wkn) {
+        if ( !hasReadableScriptFile(wkn)) {
+            LOGGER.error("Script file not available/readable for process '{}'!", wkn);
+            return false;
+        }
+        try (FileInputStream fis = new FileInputStream(getScriptFile(wkn));) {
+            return annotationParser.validateScript(fis, wkn);
+        }
+        catch (IOException e) {
+            LOGGER.error("Script file unavailable for process '{}'.", wkn, e);
+            return false;
+        }
+        catch (RuntimeException | RAnnotationException e) {
+            LOGGER.error("Validation of process '{}' failed.", wkn, e);
+            return false;
+        }
     }
 
     public Map<Integer, File> getScriptFileVersionsForWKN(String id) {
@@ -120,42 +171,7 @@ public class ScriptFileRepository {
         return fileToWknMap.get(file);
     }
 
-    public boolean isScriptAvailable(String identifier) {
-        try {
-            File f = getScriptFileForWKN(identifier);
-            boolean out = f.exists();
-            return out;
-        }
-        catch (RuntimeException | ExceptionReport e) {
-            LOGGER.error("Script file unavailable for process id " + identifier, e);
-            return false;
-        }
-    }
-
-    public boolean isScriptAvailable(RProcessInfo processInfo) {
-        if (processInfo != null)
-            return isScriptAvailable(processInfo.getWkn());
-        return false;
-    }
-
-    public boolean isScriptValid(String wkn) {
-        try (FileInputStream fis = new FileInputStream(getScriptFileForWKN(wkn));) {
-
-            boolean valid = annotationParser.validateScript(fis, wkn);
-
-            return valid;
-        }
-        catch (IOException e) {
-            LOGGER.error("Script file unavailable for process " + wkn + ".", e);
-            return false;
-        }
-        catch (RuntimeException | ExceptionReport | RAnnotationException e) {
-            LOGGER.error("Validation of process " + wkn + " failed.", e);
-            return false;
-        }
-    }
-
-    public boolean registerScript(File file) throws RAnnotationException, ExceptionReport {
+    public boolean registerScriptFile(File file) throws RAnnotationException, ExceptionReport {
         boolean registered = false;
 
         try (FileInputStream fis = new FileInputStream(file);) {
@@ -206,7 +222,7 @@ public class ScriptFileRepository {
                         String identifierMessage = null;
 
                         if (fileToWknMap.containsValue(wkn)) {
-                            File conflictFile = getScriptFileForWKN(wkn);
+                            File conflictFile = getScriptFile(wkn);
                             if ( !conflictFile.exists()) {
                                 LOGGER.info("Mapping for process '{}' with file '{}' replaced by file '{}'",
                                             wkn,
@@ -263,10 +279,11 @@ public class ScriptFileRepository {
     /**
      * For testing purposes only! Register all scripts in the given directory, returns true only if all
      * scripts could be registered and does not provide information about which script failed.
-     * 
-     * @throws ExceptionReport
+     *
+     * @param directory the script directory.
+     * @return <code>true</code> only if all scripts could be registered, <code>false</code> otherwise.
      */
-    public boolean registerScripts(File directory) {
+    public boolean registerScriptFiles(File directory) {
         if ( !directory.isDirectory()) {
             LOGGER.error("Provided file is not a directory, cannot load scripts: {}", directory);
             return false;
@@ -278,7 +295,7 @@ public class ScriptFileRepository {
         boolean allRegistered = true;
         for (File file : scripts) {
             try {
-                boolean registered = registerScript(file);
+                boolean registered = registerScriptFile(file);
 
                 if ( !registered) {
                     LOGGER.debug("Could not register script based on file {}", file);
@@ -303,18 +320,16 @@ public class ScriptFileRepository {
         this.fileToWknMap.clear();
     }
 
-    public File getImportedFileForWKN(String scriptId, String importId) throws ExceptionReport {
-        File basefile = getScriptFileForWKN(scriptId);
+    public File getImportedFileForWKN(String scriptId, String importId) throws InvalidRScriptException {
+        File basefile = getValidatedScriptFile(importId);
         Path basepath = basefile.toPath();
         Path importedFile = basepath.resolveSibling(importId);
 
-        if (importedFile.toFile().exists()) {
-            LOGGER.debug("Resolved imported '{}' for script with id '{}': {}", importId, scriptId, importedFile);
-            return importedFile.toFile();
-        }
+        LOGGER.debug("Resolved imported '{}' for script with id '{}': {}", importId, scriptId, importedFile);
+        return importedFile.toFile();
 
-        LOGGER.warn("Could not find import {} for {} at {}", importId, scriptId, importedFile);
-        throw new ExceptionReport("Imported script '" + importId + "' not found for script '" + scriptId + "'.",
-                                  ExceptionReport.NO_APPLICABLE_CODE);
+//        LOGGER.warn("Could not find import {} for {} at {}", importId, scriptId, importedFile);
+//        throw new ExceptionReport("Imported script '" + importId + "' not found for script '" + scriptId + "'.",
+//                                  ExceptionReport.NO_APPLICABLE_CODE);
     }
 }
