@@ -73,7 +73,7 @@ import org.n52.wps.server.r.util.InvalidRScriptException;
 @Component(LocalRAlgorithmRepository.COMPONENT_NAME)
 public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
 
     public static final String COMPONENT_NAME = "RAlgorithmRepository";
 
@@ -108,17 +108,16 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
-
         if (configModule == null || !configModule.isActive()) {
             LOGGER.info("Local*R*AlgorithmRepository is INACTIVE.");
         } else {
             config.setConfigModule(configModule);
-
+            
             if ( !isRServeAvailable()) {
                 LOGGER.error("RServe is not available, not adding ANY algorithms!");
                 return;
             }
-
+            scriptRepo.registerScriptFiles(config.getScriptFiles());
             initializeResourceDirectoriesRepository(configModule);
             intializeAvailableAlgorithms(configModule);
             LOGGER.info("Initialized Local*R*AlgorithmRepository");

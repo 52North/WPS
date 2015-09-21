@@ -62,7 +62,7 @@ import org.springframework.web.context.ServletContextAware;
 @Scope(value = "singleton")
 public class R_Config implements ServletContextAware {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
 
     public static final String SCRIPT_FILE_EXTENSION = "R";
 
@@ -76,15 +76,15 @@ public class R_Config implements ServletContextAware {
 
     private ArrayList<File> utilsFiles = null;
 
-    private RConnector connector;
+    private final RConnector connector;
 
-    private RStarter starter;
+    private final RStarter starter;
 
     private Path baseDir = null;
 
-    private static FileFilter rFileFilter = new RFileExtensionFilter();
+    private static final FileFilter rFileFilter = new RFileExtensionFilter();
 
-    private Map<Path, File> utilFileCache = new HashMap<Path, File>();
+    private final Map<Path, File> utilFileCache = new HashMap<>();
 
     protected R_Config() {
         this.starter = new RStarter();
@@ -118,7 +118,7 @@ public class R_Config implements ServletContextAware {
 
     public Collection<Path> getResourceDirectories() {
         String resourceDirConfigParam = configModule.getResourceDirectory();
-        Collection<Path> resourceDirectories = new ArrayList<Path>();
+        Collection<Path> resourceDirectories = new ArrayList<>();
 
         String[] dirs = resourceDirConfigParam.split(DIR_DELIMITER);
         for (String s : dirs) {
@@ -135,7 +135,7 @@ public class R_Config implements ServletContextAware {
 
     public Collection<File> getScriptFiles() {
         String scriptDirConfigParam = getConfigModule().getScriptDirectory();
-        Collection<File> scriptDirectories = new ArrayList<File>();
+        Collection<File> scriptDirectories = new ArrayList<>();
 
         String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
         for (String s : scriptDirs) {
@@ -249,7 +249,7 @@ public class R_Config implements ServletContextAware {
                                                      baseDir,
                                                      p));
 
-        ArrayList<File> foundFiles = new ArrayList<File>();
+        ArrayList<File> foundFiles = new ArrayList<>();
         File f = null;
 
         // try resource first

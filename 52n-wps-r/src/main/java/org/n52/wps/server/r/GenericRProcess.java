@@ -69,17 +69,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
-    private static Logger log = LoggerFactory.getLogger(GenericRProcess.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericRProcess.class);
 
     private List<RAnnotation> annotations;
 
-    private R_Config config;
+    private final R_Config config;
 
-    private List<String> errors = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<>();
 
-    private RExecutor executor = new RExecutor();
+    private final RExecutor executor = new RExecutor();
 
-    private RIOHandler iohandler;
+    private final RIOHandler iohandler;
 
     @Autowired
     private RAnnotationParser parser;
@@ -108,6 +108,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         return annotations;
     }
 
+    @Override
     public List<String> getErrors() {
         return this.errors;
     }

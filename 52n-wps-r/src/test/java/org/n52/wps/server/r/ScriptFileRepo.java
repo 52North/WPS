@@ -103,7 +103,7 @@ public class ScriptFileRepo {
     }
 
     @Test
-    public void scriptIsStored() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
+    public void scriptIsStored() throws URISyntaxException, RAnnotationException, InvalidRScriptException, ExceptionReport, IOException {
         File f = Util.loadFile(scriptFile);
 
         boolean registerScript = sr.registerScriptFile(f);

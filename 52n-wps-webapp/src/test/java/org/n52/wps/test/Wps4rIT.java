@@ -101,7 +101,7 @@ public class Wps4rIT {
 
     private static RConnection getNewConnection(String host, int port, String user, String password) throws RserveException {
         RConnection con = new RConnection(host, port);
-        if (con != null && con.needLogin())
+        if (con.needLogin())
             con.login(user, password);
 
         return con;
