@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.om.OmConstants;
@@ -77,6 +79,9 @@ public class OMGenerator extends AbstractGenerator {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(OMGenerator.class);
 	
+//	@Inject
+//	private OmEncoderv20 omDecoderv20;
+	
 	public OMGenerator() {
 		super();
 		supportedIDataTypes.add(OMObservationBinding.class);
@@ -92,7 +97,12 @@ public class OMGenerator extends AbstractGenerator {
 
 		try {
 			SosConfiguration.init();
-			XmlObject encode = new OmEncoderv20().encode(omObservation, Collections.singletonMap(OWSConstants.HelperValues.DOCUMENT, "42"));
+			
+			OmEncoderv20 omDecoderv20 = new OmEncoderv20();
+			
+			omDecoderv20.setXmlOptions(new SimpleXmlOptionsHelper());
+			
+			XmlObject encode = omDecoderv20.encode(omObservation, Collections.singletonMap(OWSConstants.HelperValues.DOCUMENT, "42"));
 
 			return new GenericXMLDataGenerator().generateStream(new GenericXMLDataBinding(encode), mimeType, schema);
 		} catch (OwsExceptionReport e) {
