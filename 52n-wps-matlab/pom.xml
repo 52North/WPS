@@ -21,7 +21,6 @@
     </developers>
     <properties>
         <matlab-connector-version>2.0.1</matlab-connector-version>
-        <java-version>1.8</java-version>
     </properties>
     <dependencies>
         <dependency>
