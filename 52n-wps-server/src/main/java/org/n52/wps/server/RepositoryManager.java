@@ -100,18 +100,14 @@ public class RepositoryManager implements ApplicationContextAware {
 		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance()
                 .getRegisteredAlgorithmRepositoryConfigModules();
 
-		for (ConfigurationModule repository : repositoryMap.values()) {
-			if(repository.isActive()==false){
-				continue;
-			}
-
-			if(repository instanceof ClassKnowingModule){
-				String repositoryClassName = ((ClassKnowingModule)repository).getClassName();
-				repositoryNames.add(repositoryClassName);
-				if(!repositories.containsKey(repositoryClassName)){
-					loadRepository(repository.getClass().getCanonicalName(), repositoryClassName, repositoryMap);
-				}
-			}
+		for (ConfigurationModule configModule : repositoryMap.values()) {
+			if(configModule.isActive() && configModule instanceof ClassKnowingModule) {
+                String repositoryClassName = ((ClassKnowingModule)configModule).getClassName();
+                repositoryNames.add(repositoryClassName);
+                if( !repositories.containsKey(repositoryClassName)){
+                    loadRepository(configModule.getClass().getCanonicalName(), (ClassKnowingModule) configModule);
+                }
+            }
 
 		}
 
@@ -124,49 +120,40 @@ public class RepositoryManager implements ApplicationContextAware {
 
         System.gc();
 
-		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance()
+		Map<String, ConfigurationModule> repositoryConfigModules = WPSConfig.getInstance()
                 .getRegisteredAlgorithmRepositoryConfigModules();
 
-		for (String repositoryName : repositoryMap.keySet()) {
+		for (String configModuleName : repositoryConfigModules.keySet()) {
 
-			ConfigurationModule repository = repositoryMap.get(repositoryName);
+			ConfigurationModule configModule = repositoryConfigModules.get(configModuleName);
 
-			if (repository instanceof ClassKnowingModule) {
-				String repositoryClassName = ((ClassKnowingModule) repository).getClassName();
-				 loadRepository(repositoryName, repositoryClassName, repositoryMap);
+			if (configModule instanceof ClassKnowingModule) {
+				loadRepository(configModuleName, (ClassKnowingModule) configModule);
 			} else {
-				LOGGER.warn("Repository {} not instanceof ClassKnowingModule. Will not load it.", repositoryName);
+				LOGGER.warn("ConfigModule {} not instanceof ClassKnowingModule. Will not load it.", configModuleName);
 			}
 		}
     }
 
-	private void loadRepository(String repositoryName, String repositoryClassName, Map<String, ConfigurationModule> repositoryMap) {
-		LOGGER.debug("Loading repository: {}", repositoryName);
-
-		if(repositoryMap == null){
-			repositoryMap = WPSConfig
-					.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
-		}
-
-		ConfigurationModule repository = repositoryMap.get(repositoryName);
-
-		if (repository.isActive() == false) {
-			LOGGER.warn("Repository {} not active. Will not load it.", repositoryName);
-			return;
-		}
-
-		//registerNewRepository(repositoryClassName);
-        registerRepository(repositoryName, repositoryClassName);
+	private void loadRepository(String configModuleName, ClassKnowingModule configModule) {
+		if (configModule.isActive()) {
+            LOGGER.debug("Loading module '{}'", configModuleName);
+            registerRepository(configModuleName, configModule);
+		} else {
+            LOGGER.warn("Won't load inactive module '{}'", configModuleName);
+        }
 	}
 
-    private void registerRepository(String name, String className) {
+    private void registerRepository(String configModuleName, ClassKnowingModule configModule) {
+        String repositoryClassName = configModule.getClassName();
         try {
-            repositories.put(className, applicationContext.getBean(name, IAlgorithmRepository.class));
+            // XXX configModuleName != COMPONENT_NAME of LocalRAlgorithmRepository
+            repositories.put(repositoryClassName, applicationContext.getBean(configModuleName, IAlgorithmRepository.class));
         } catch (NoSuchBeanDefinitionException e) {
-            LOGGER.warn("Try creating repository the old fashioned way.", className, name);
-            registerNewRepository(className);
+            LOGGER.info("Hard wiring '{}' for module '{}'.", repositoryClassName, configModuleName);
+            registerNewRepository(repositoryClassName);
         } catch (BeansException e) {
-            LOGGER.warn("Could not create algorithm repository for class '{}' and name '{}'", className, name, e);
+            LOGGER.warn("Could not create '{}' for module '{}'", repositoryClassName, configModuleName, e);
         }
     }
 

@@ -42,7 +42,9 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+//@Component("rActualConfigurationModule")
 public class RConfigurationModule extends ClassKnowingModule {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RConfigurationModule.class);
@@ -103,14 +105,6 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private boolean scriptDownloadEnabled;
 	private boolean sessionInfoDownloadEnabled;
 
-//	private AlgorithmEntry algorithmEntry = new AlgorithmEntry("org.n52.wps.server.algorithm.JTSConvexHullAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry1 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.DummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.LongRunningDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry3 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry4 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry5 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry6 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.EchoProcess", true);
-
 	private List<AlgorithmEntry> algorithmEntries;
 
 	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(enableBatchStartEntry,datatypeConfigEntry,
@@ -119,8 +113,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 			importDownloadEnabledEntry,scriptDownloadEnabledEntry,sessionInfoDownloadEnabledEntry);
 
 	public RConfigurationModule() {
-		algorithmEntries = new ArrayList<>();
-//		algorithmEntries.addAll(Arrays.asList(algorithmEntry, algorithmEntry1, algorithmEntry2, algorithmEntry3, algorithmEntry4, algorithmEntry5, algorithmEntry6));
+        algorithmEntries = new ArrayList<>();
 	}
 
 	@Override

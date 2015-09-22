@@ -19,6 +19,7 @@ INSERT INTO ALGORITHMENTRY VALUES('test.echo','org.n52.wps.server.r.RConfigurati
 INSERT INTO ALGORITHMENTRY VALUES('test.calculator','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('test.metadata','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('test.geo','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.image','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('test.wpsOff','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('test.session','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('geo.poly.attribute-sum','org.n52.wps.server.r.RConfigurationModule',TRUE);
@@ -661,7 +662,7 @@ INSERT INTO FORMATENTRY VALUES('application/x-geotiff', '', 'base64', 'org.n52.w
 INSERT INTO FORMATENTRY VALUES('application/hdf4-eos', '', 'base64', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', '', 'base64', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
-INSERT INTO FORMATENTRY VALUES('image/tiff', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE); 
+INSERT INTO FORMATENTRY VALUES('image/tiff', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('image/geotiff', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('application/geotiff', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
 INSERT INTO FORMATENTRY VALUES('application/dbase', '', '', 'org.n52.wps.io.modules.parser.GenericRasterFileParserCM', TRUE);
