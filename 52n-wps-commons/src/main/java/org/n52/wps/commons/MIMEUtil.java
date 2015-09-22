@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2006 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.n52.wps.commons;
 
 /**

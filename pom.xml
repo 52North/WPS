@@ -167,7 +167,8 @@
 					<aggregate>true</aggregate>
 					<properties>
 						<inceptionYear>${project.inceptionYear}</inceptionYear>
-						<latestYearOfContribution>${currentYear}</latestYearOfContribution>
+						<!--<latestYearOfContribution>${currentYear}</latestYearOfContribution>-->
+						 <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
@@ -242,7 +243,6 @@
 		<jackson.version>2.1.2</jackson.version>
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
-		<currentYear>2014</currentYear> <!-- manual setting -->
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
         <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
@@ -693,8 +693,8 @@
 				<artifactId>mc-schema</artifactId>
 				<version>1.1-SNAPSHOT</version>
 			</dependency>
-			
-			
+
+
 			<dependency>
 				<groupId>net.sourceforge.pjl-comp-filter</groupId>
 				<artifactId>pjl-comp-filter</artifactId>
