@@ -49,6 +49,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequestV100;
 import org.n52.wps.webapp.common.AbstractITClass;
@@ -76,6 +77,10 @@ public class ExecuteRequestTest extends AbstractITClass {
 
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
+
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
 
 	@Test
