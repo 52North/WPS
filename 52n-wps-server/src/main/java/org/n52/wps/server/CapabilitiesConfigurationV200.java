@@ -74,11 +74,11 @@ import com.google.common.base.Preconditions;
  * {@linkplain #getInstance(java.io.File) file}, {@linkplain #getInstance(java.net.URL) URL},
  * {@linkplain #getInstance(java.lang.String) path} or
  * {@linkplain #getInstance(net.opengis.wps.x200.CapabilitiesDocument) instance}.
- * 
+ *
  * @author foerster
  * @author Christian Autermann
  * @author Benjamin Pross
- * 
+ *
  */
 public class CapabilitiesConfigurationV200 {
     private static final Logger LOG = LoggerFactory.getLogger(CapabilitiesConfigurationV200.class);
@@ -90,8 +90,8 @@ public class CapabilitiesConfigurationV200 {
     private static CapabilitiesSkeletonLoadingStrategy loadingStrategy;
 
     private static ConfigurationManager configurationManager;
-    private static org.n52.wps.webapp.entities.ServiceIdentification serviceIdentificationConfigurationModule;	
-    private static org.n52.wps.webapp.entities.ServiceProvider serviceProviderConfigurationModule;	
+    private static org.n52.wps.webapp.entities.ServiceIdentification serviceIdentificationConfigurationModule;
+    private static org.n52.wps.webapp.entities.ServiceProvider serviceProviderConfigurationModule;
 
     private CapabilitiesConfigurationV200() {
         /* nothing here */
@@ -101,12 +101,12 @@ public class CapabilitiesConfigurationV200 {
      * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this file to obtain the skeleton.
-     * 
+     *
      * @param filePath
      *        the File pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -120,12 +120,12 @@ public class CapabilitiesConfigurationV200 {
      * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this file to obtain the skeleton.
-     * 
+     *
      * @param file
      *        the File pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -139,12 +139,12 @@ public class CapabilitiesConfigurationV200 {
      * Gets the WPS Capabilities using the specified URL to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this URL to obtain the skeleton.
-     * 
+     *
      * @param url
      *        the URL pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -157,12 +157,12 @@ public class CapabilitiesConfigurationV200 {
     /**
      * Gets the WPS Capabilities using the specified skeleton. All future calls to {@link #getInstance()} and
      * {@link #getInstance(boolean) } will use this skeleton.
-     * 
+     *
      * @param skel
      *        the skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -175,12 +175,12 @@ public class CapabilitiesConfigurationV200 {
     /**
      * Gets the WPS Capabilities using the specified strategy. All future calls to {@link #getInstance()} and
      * {@link #getInstance(boolean) } will use this strategy.
-     * 
+     *
      * @param strategy
      *        the strategy to load the skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -205,9 +205,9 @@ public class CapabilitiesConfigurationV200 {
     /**
      * Get the WPS Capabilities for this service. The capabilities are reloaded if caching is not enabled in
      * the WPS configuration.
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -220,12 +220,12 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Get the WPS Capabilities for this service and optionally force a reload.
-     * 
+     *
      * @param reload
      *        if the capabilities should be reloaded
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -235,11 +235,11 @@ public class CapabilitiesConfigurationV200 {
         lock.lock();
         try {
             if (capabilitiesDocumentObj == null || reload) {
-            	
+
             	if(loadingStrategy == null){
             		loadingStrategy = new CreateInstanceStrategy();
             	}
-            	
+
                 capabilitiesDocumentObj = loadingStrategy.loadSkeleton();
                 initSkeleton(capabilitiesDocumentObj);
             }
@@ -252,10 +252,10 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Enriches a capabilities skeleton by adding the endpoint URL and creating the process offerings.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
-     * 
+     *
      * @throws UnknownHostException
      *         if the local host name can not be obtained
      */
@@ -270,21 +270,21 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Enriches the capabilities skeleton by creating the process offerings.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
      */
     private static void initProcessOfferings(CapabilitiesDocument skel) {
         Contents contents = skel.getCapabilities()
                 .addNewContents();
-        for (String algorithmName : RepositoryManager.getInstance()
+        for (String algorithmName : RepositoryManagerSingletonWrapper.getInstance()
                 .getAlgorithms()) {
         	try {
-        		ProcessOffering offering = (ProcessOffering) RepositoryManager
+        		ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper
                         .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_200);
-        		
+
         		ProcessDescriptionType description = offering.getProcess();
-        		
+
                 if (description != null) {
                     ProcessSummaryType process = contents.addNewProcessSummary();
                     CodeType ct = process.addNewIdentifier();
@@ -292,21 +292,21 @@ public class CapabilitiesConfigurationV200 {
                     //a title is mandatory for a process offering
                     LanguageStringType title = null;
                     try {
-                        title = description.getTitleArray(0);						
+                        title = description.getTitleArray(0);
 					} catch (Exception e) {
 						throw new RuntimeException(String.format("Process offering for process '{}' not valid. No title specified.", algorithmName));
 					}
                     String processVersion = offering.getProcessVersion();
                     process.setProcessVersion(processVersion);
-                    
+
                     process.setJobControlOptions(offering.getJobControlOptions());
-                    
+
                     process.setOutputTransmission(offering.getOutputTransmission());
 
                     process.addNewTitle().setStringValue(title.getStringValue());
-                    
+
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
-                }	
+                }
         	}
         	catch (RuntimeException e) {
         		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
@@ -316,12 +316,12 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Enriches a capabilities skeleton by adding the endpoint URL to the operations meta data.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
      * @param endpointUrl
      *        the endpoint URL of the service
-     * 
+     *
      */
     private static void initOperationsMetadata(CapabilitiesDocument skel, String endpointUrl) {
         if (skel.getCapabilities().getOperationsMetadata() != null) {
@@ -342,9 +342,9 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Gets the endpoint URL of this service by checking the configuration file and the local host name.
-     * 
+     *
      * @return the endpoint URL
-     * 
+     *
      * @throws UnknownHostException
      *         if the local host name could not be resolved into an address
      */
@@ -354,7 +354,7 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Force a reload of the capabilities skeleton.
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -366,7 +366,7 @@ public class CapabilitiesConfigurationV200 {
 
     /**
      * Checks if the capabilities document is loaded.
-     * 
+     *
      * @return if the capabilities are ready.
      */
     public static boolean ready() {
@@ -378,7 +378,7 @@ public class CapabilitiesConfigurationV200 {
             lock.unlock();
         }
     }
-    
+
 	public static ConfigurationManager getConfigurationManager() {
 
 		if (configurationManager == null) {
@@ -396,7 +396,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Creates a new strategy using the specified URL.
-         * 
+         *
          * @param file
          *        the file
          */
@@ -426,7 +426,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Gets the URL of this strategy.
-         * 
+         *
          * @return the URL;
          */
         public URL getUrl() {
@@ -441,7 +441,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Creates a new strategy using the specified file.
-         * 
+         *
          * @param file
          *        the file
          */
@@ -451,7 +451,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Creates a new strategy using the specified file.
-         * 
+         *
          * @param file
          *        the path to the file
          */
@@ -469,7 +469,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Creates a new strategy using the specified instance.
-         * 
+         *
          * @param instance
          *        the instance
          */
@@ -498,7 +498,7 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Gets the instance of this strategy.
-         * 
+         *
          * @return the instance
          */
         public CapabilitiesDocument getInstance() {
@@ -514,100 +514,100 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Creates a new strategy using the specified instance.
-         * 
+         *
          * @param instance
          *        the instance
          */
         CreateInstanceStrategy() {
             this.instance = CapabilitiesDocument.Factory.newInstance();
-            
+
             serviceIdentificationConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceIdentification();
-            
+
             serviceProviderConfigurationModule = getConfigurationManager().getCapabilitiesServices().getServiceProvider();
-            
+
             WPSCapabilitiesType wpsCapabilities = instance.addNewCapabilities();
-            
+
             XmlCursor c = instance.newCursor();
             c.toFirstChild();
             c.toLastAttribute();
             c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
-            
+
             wpsCapabilities.addNewService().setStringValue("WPS");//Fixed to WPS TODO: put in WPSConfig or so
-            
+
             wpsCapabilities.setVersion(WPSConfig.VERSION_200);
-            
+
             ServiceProvider serviceProvider = wpsCapabilities.addNewServiceProvider();
-            
+
             serviceProvider.setProviderName(serviceProviderConfigurationModule.getProviderName() != null ? serviceProviderConfigurationModule.getProviderName() : "");
-            
+
             serviceProvider.addNewProviderSite().setHref(serviceProviderConfigurationModule.getProviderSite() != null ? serviceProviderConfigurationModule.getProviderSite() : "");
-                        
+
             ResponsiblePartySubsetType responsiblePartySubsetType = serviceProvider.addNewServiceContact();
-            
+
             responsiblePartySubsetType.setIndividualName(serviceProviderConfigurationModule.getIndividualName() != null ? serviceProviderConfigurationModule.getIndividualName() : "");
-            
+
             ContactType contactType = responsiblePartySubsetType.addNewContactInfo();
-            
+
             AddressType addressType = contactType.addNewAddress();
-            
+
             addressType.setAdministrativeArea(serviceProviderConfigurationModule.getAdministrativeArea() != null ? serviceProviderConfigurationModule.getAdministrativeArea() : "");
-            
+
             addressType.setCity(serviceProviderConfigurationModule.getCity() != null ? serviceProviderConfigurationModule.getCity() : "");
-            
+
             addressType.setCountry(serviceProviderConfigurationModule.getCountry() != null ? serviceProviderConfigurationModule.getCountry() : "");
-            
+
             addressType.setPostalCode(serviceProviderConfigurationModule.getPostalCode() != null ? serviceProviderConfigurationModule.getPostalCode() : "");
-     
+
             addressType.addDeliveryPoint(serviceProviderConfigurationModule.getDeliveryPoint() != null ? serviceProviderConfigurationModule.getDeliveryPoint() : "");
-            
+
             addressType.addElectronicMailAddress(serviceProviderConfigurationModule.getEmail() != null ? serviceProviderConfigurationModule.getEmail() : "");
-            
+
             ServiceIdentification serviceIdentification = wpsCapabilities.addNewServiceIdentification();
-            
+
             serviceIdentification.addNewTitle().setStringValue(serviceIdentificationConfigurationModule.getTitle() != null ? serviceIdentificationConfigurationModule.getTitle() : "");
-            
+
             serviceIdentification.addAccessConstraints(serviceIdentificationConfigurationModule.getAccessConstraints() != null ? serviceIdentificationConfigurationModule.getAccessConstraints() : "");
-            
+
             serviceIdentification.addNewAbstract().setStringValue(serviceIdentificationConfigurationModule.getServiceAbstract() != null ? serviceIdentificationConfigurationModule.getServiceAbstract() : "");
-            
+
             serviceIdentification.addNewServiceType().setStringValue("WPS");//Fixed to WPS
-            
-            String[] versionArray = serviceIdentificationConfigurationModule.getServiceTypeVersions().split(";");  
-            
+
+            String[] versionArray = serviceIdentificationConfigurationModule.getServiceTypeVersions().split(";");
+
             for (String version : versionArray) {
 				if(version.trim() != ""){
 					serviceIdentification.addNewServiceTypeVersion().setStringValue(version);
 				}
 			}
-            
+
             serviceIdentification.setFees(serviceIdentificationConfigurationModule.getFees() != null ? serviceIdentificationConfigurationModule.getFees() : "");
-            
-            String[] keywordArray = serviceIdentificationConfigurationModule.getKeywords().split(";");  
-            
+
+            String[] keywordArray = serviceIdentificationConfigurationModule.getKeywords().split(";");
+
             KeywordsType keywordsType = serviceIdentification.addNewKeywords();
-            
+
             for (String keyword : keywordArray) {
 				if(keyword.trim() != ""){
 					keywordsType.addNewKeyword().setStringValue(keyword);
 				}
 			}
-            
+
             OperationsMetadata operationsMetadata = wpsCapabilities.addNewOperationsMetadata();
-            
+
             String wpsWebappPath = WPSConfig.getInstance().getServiceBaseUrl();
-            
+
             String getHREF = wpsWebappPath.endsWith("/") ? wpsWebappPath.substring(0, wpsWebappPath.length()-1) : wpsWebappPath;
-            
+
             getHREF = getHREF.concat("?");
-            
+
             String postHREF = wpsWebappPath;
-            
+
             addOperation(operationsMetadata, "GetCapabilities", getHREF, postHREF);
             addOperation(operationsMetadata, "DescribeProcess", getHREF, postHREF);
             addOperation(operationsMetadata, "Execute", "", postHREF);
             addOperation(operationsMetadata, "GetStatus", getHREF, postHREF);
             addOperation(operationsMetadata, "GetResult", getHREF, postHREF);
-            
+
             wpsCapabilities.addNewLanguages().addLanguage("en-US");
         }
 
@@ -632,40 +632,40 @@ public class CapabilitiesConfigurationV200 {
 
         /**
          * Gets the instance of this strategy.
-         * 
+         *
          * @return the instance
          */
         public CapabilitiesDocument getInstance() {
             return instance;
         }
-        
+
         private void addOperation(OperationsMetadata operationsMetadata, String operationName, String getHREF, String postHREF){
-                 
+
             Operation operation = operationsMetadata.addNewOperation();
-            
+
             operation.setName(operationName);
-            
+
             HTTP http = operation.addNewDCP().addNewHTTP();
-            
+
             if(getHREF != null && !getHREF.equals("")){
-            	http.addNewGet().setHref(getHREF);            	            	
+            	http.addNewGet().setHref(getHREF);
             }
             if(postHREF != null && !postHREF.equals("")){
-            	http.addNewPost().setHref(postHREF);            	            	
+            	http.addNewPost().setHref(postHREF);
             }
-        	
+
         }
     }
-    
+
     /**
      * Strategy to load a capabilities skeleton.
      */
     private interface CapabilitiesSkeletonLoadingStrategy {
         /**
          * Loads a CapabilitiesDocument skeleton. Every call to this method should return another instance.
-         * 
+         *
          * @return the capabilities skeleton
-         * 
+         *
          * @throws XmlException
          *         if the Capabilities skeleton is not valid
          * @throws IOException

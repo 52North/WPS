@@ -49,6 +49,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManager;
@@ -76,22 +77,22 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 	private ProcessOffering description;
 	private ProcessDescription superDescription;
 	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilderV200.class);
-	
+
 	public static enum Status {
 		Accepted, Failed, Succeeded, Running
 	}
-	
+
 	public ExecuteResponseBuilderV200(ExecuteRequestV200 request) throws ExceptionReport{
 		this.request = request;
 		resultDoc = ResultDocument.Factory.newInstance();
 		resultDoc.addNewResult();
 		resultDoc.getResult().setJobID(request.getUniqueId().toString());
 		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetResult.xsd");
-		statusInfoDoc = StatusInfoDocument.Factory.newInstance();		
+		statusInfoDoc = StatusInfoDocument.Factory.newInstance();
 		statusInfoDoc.addNewStatusInfo();
 		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetStatus.xsd");
 		this.identifier = request.getAlgorithmIdentifier().trim();
-		superDescription = RepositoryManager.getInstance().getProcessDescription(this.identifier);
+		superDescription = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.identifier);
 		description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
@@ -123,9 +124,9 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						String mimeType = null;
 						String schema = null;
 						String encoding = null;
-						
+
 						LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
-						
+
 						DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
 						String reference = dataType != null ? dataType.getReference() : null;
 						generateLiteralDataOutput(id, resultDoc, true, reference, schema, mimeType, encoding, desc.getTitleArray(0));
@@ -148,16 +149,16 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						String mimeType = getMimeType(definition);
 						String schema = getSchema(definition);
 						String encoding = getEncoding(definition);
-						
+
 						generateComplexDataOutput(responseID, definition.getTransmission().equals(DataTransmissionModeType.REFERENCE), false,  schema, mimeType, encoding, desc.getTitleArray(0));
 					}
 					else if (desc.getDataDescription() instanceof LiteralDataType) {
 						String mimeType = null;
 						String schema = null;
 						String encoding = null;
-						
+
 						LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
-						
+
 						DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
 						String reference = dataType != null ? dataType.getReference() : null;
 						generateLiteralDataOutput(responseID, resultDoc, false, reference, schema, mimeType, encoding, desc.getTitleArray(0));
@@ -287,7 +288,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		if(request.isRawData() && rawDataHandler != null) {
 			return rawDataHandler.getAsStream();
 		}
-		
+
 		if(request.getExecute().getMode().equals(ExecuteRequestType.Mode.SYNC)){
 			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 		}else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
@@ -296,16 +297,16 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 					request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
 			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 		}
-		
+
 		return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 	}
 
 	public void setStatus(XmlObject statusObject) {
-		
+
 		if(statusObject instanceof StatusInfo){
-			
+
 			StatusInfo status = (StatusInfo)statusObject;
-			
+
 			statusInfoDoc.setStatusInfo(status);
 		}else{
 			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x20.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));

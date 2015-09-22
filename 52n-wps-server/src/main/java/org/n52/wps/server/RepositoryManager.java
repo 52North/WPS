@@ -40,102 +40,106 @@ import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Bastian Schaeffer, University of Muenster
  *
  */
-public class RepositoryManager {
-	
-	private static RepositoryManager instance;
+public class RepositoryManager implements ApplicationContextAware {
+
 	private static Logger LOGGER = LoggerFactory.getLogger(RepositoryManager.class);
-	private Map<String, IAlgorithmRepository> repositories;
-	private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
-	private UpdateThread updateThread;
-	
-	private RepositoryManager(){
-		
-		// clear registry
+
+    private ApplicationContext applicationContext;
+
+    private Map<String, IAlgorithmRepository> repositories = new HashMap<>();
+
+    private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
+
+    private UpdateThread updateThread;
+
+    public void init() {
+        RepositoryManagerSingletonWrapper.init(this);
+
 		globalProcessIDs.clearRegistry();
-		
-        // initialize all Repositories
         loadAllRepositories();
 
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
-        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
-            public void propertyChange(
-                    final PropertyChangeEvent propertyChangeEvent) {
-                                                                  LOGGER.info("Received Property Change Event: {}",
-                                                                              propertyChangeEvent.getPropertyName());
-                loadAllRepositories();
-            }
-        });
-        
+        WPSConfig.getInstance().addPropertyChangeListener(WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME,
+                (final PropertyChangeEvent propertyChangeEvent) -> {
+                    LOGGER.info("Received Property Change Event: {}",
+                            propertyChangeEvent.getPropertyName());
+                    loadAllRepositories();
+                });
+
         Double updateHours = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getRepoReloadInterval();
-        
         if (updateHours != 0){
             LOGGER.info("Setting repository update period to {} hours.", updateHours);
         	updateHours = updateHours * 3600 * 1000; // make milliseconds
             long updateInterval = updateHours.longValue();
-            this.updateThread = new UpdateThread(updateInterval);
+            this.updateThread = new UpdateThread(this, updateInterval);
         	updateThread.start();
         }
-        
-    	
-	}
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
 	private List<String> getRepositoryNames(){
-		
+
 		List<String> repositoryNames = new ArrayList<>();
-		
-		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
-		
+
+		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance()
+                .getRegisteredAlgorithmRepositoryConfigModules();
+
 		for (ConfigurationModule repository : repositoryMap.values()) {
-			
 			if(repository.isActive()==false){
 				continue;
 			}
-			
-			String repositoryClassName = "";
-			
+
 			if(repository instanceof ClassKnowingModule){
-				repositoryClassName = ((ClassKnowingModule)repository).getClassName();
+				String repositoryClassName = ((ClassKnowingModule)repository).getClassName();
 				repositoryNames.add(repositoryClassName);
 				if(!repositories.containsKey(repositoryClassName)){
 					loadRepository(repository.getClass().getCanonicalName(), repositoryClassName, repositoryMap);
 				}
 			}
-			
+
 		}
-		
+
 		return repositoryNames;
 	}
-	
+
     private void loadAllRepositories(){
         repositories = new HashMap<String, IAlgorithmRepository>();
         LOGGER.debug("Loading all repositories: {} (doing a gc beforehand...)", repositories);//FIXME not sure log statement makes a lot of sense
 
         System.gc();
 
-		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance().getRegisteredAlgorithmRepositoryConfigModules();
-			
+		Map<String, ConfigurationModule> repositoryMap = WPSConfig.getInstance()
+                .getRegisteredAlgorithmRepositoryConfigModules();
+
 		for (String repositoryName : repositoryMap.keySet()) {
 
 			ConfigurationModule repository = repositoryMap.get(repositoryName);
-			
-			String repositoryClassName = "";
 
 			if (repository instanceof ClassKnowingModule) {
-				repositoryClassName = ((ClassKnowingModule) repository)
-						.getClassName();				
+				String repositoryClassName = ((ClassKnowingModule) repository).getClassName();
 				 loadRepository(repositoryName, repositoryClassName, repositoryMap);
-			}else{
+			} else {
 				LOGGER.warn("Repository {} not instanceof ClassKnowingModule. Will not load it.", repositoryName);
 			}
 		}
     }
-	
+
 	private void loadRepository(String repositoryName, String repositoryClassName, Map<String, ConfigurationModule> repositoryMap) {
 		LOGGER.debug("Loading repository: {}", repositoryName);
 
@@ -151,57 +155,42 @@ public class RepositoryManager {
 			return;
 		}
 
-		try {
-			IAlgorithmRepository algorithmRepository = null;
+		//registerNewRepository(repositoryClassName);
+        registerRepository(repositoryName, repositoryClassName);
+	}
 
-			Class<?> repositoryClass = RepositoryManager.class.getClassLoader()
+    private void registerRepository(String name, String className) {
+        try {
+            repositories.put(className, applicationContext.getBean(name, IAlgorithmRepository.class));
+        } catch (NoSuchBeanDefinitionException e) {
+            LOGGER.warn("Try creating repository the old fashioned way.", className, name);
+            registerNewRepository(className);
+        } catch (BeansException e) {
+            LOGGER.warn("Could not create algorithm repository for class '{}' and name '{}'", className, name, e);
+        }
+    }
+
+    private void registerNewRepository(String repositoryClassName) {
+        try {
+			Class<?> repositoryClass = RepositoryManager.class
+                    .getClassLoader()
 					.loadClass(repositoryClassName);
-
-			algorithmRepository = (IAlgorithmRepository) repositoryClass
+			IAlgorithmRepository algorithmRepository = (IAlgorithmRepository) repositoryClass
 					.newInstance();
-			
-			LOGGER.info("Algorithm Repository {} initialized",
-					repositoryClassName);
+
+			LOGGER.info("Algorithm Repository {} initialized", repositoryClassName);
 			repositories.put(repositoryClassName, algorithmRepository);
-		} catch (InstantiationException e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			LOGGER.warn(
 					"An error occured while registering AlgorithmRepository: {}",
-					repositoryClassName);
-		} catch (IllegalAccessException e) {
-			// in case of an singleton
+					repositoryClassName, e);
+		} catch (ClassNotFoundException | IllegalArgumentException | SecurityException e) {
 			LOGGER.warn(
 					"An error occured while registering AlgorithmRepository: {}",
-					repositoryClassName);
-		} catch (ClassNotFoundException e) {
-			LOGGER.warn(
-					"An error occured while registering AlgorithmRepository: {}",
-					repositoryClassName, e.getMessage());
-		} catch (IllegalArgumentException e) {
-			LOGGER.warn(
-					"An error occured while registering AlgorithmRepository: {}",
-					repositoryClassName, e.getMessage());
-		} catch (SecurityException e) {
-			LOGGER.warn(
-					"An error occured while registering AlgorithmRepository: {}",
-					repositoryClassName, e.getMessage());
+					repositoryClassName, e);
 		}
-	}
-    
-	public static RepositoryManager getInstance(){
-		if(instance==null){
-			instance = new RepositoryManager();
-		}
-		return instance;
-	}
-	
-	/**
-	 * Allows to reInitialize the RepositoryManager... This should not be called to often.
-	 *
-	 */
-	public static void reInitialize() {
-		instance = new RepositoryManager();
-	}
-	
+    }
+
 	/**
 	 * Allows to reInitialize the Repositories
 	 *
@@ -209,7 +198,7 @@ public class RepositoryManager {
 	protected void reloadRepositories() {
 		loadAllRepositories();
 	}
-	
+
 	/**
 	 * Methods looks for Algorithm in all Repositories.
 	 * The first match is returned.
@@ -220,7 +209,7 @@ public class RepositoryManager {
 	 * @throws Exception
 	 */
 	public IAlgorithm getAlgorithm(String className){
-		
+
 		for (String repositoryClassName : getRepositoryNames()) {
 			IAlgorithmRepository repository = repositories.get(repositoryClassName);
 			if(repository.containsAlgorithm(className)){
@@ -229,9 +218,9 @@ public class RepositoryManager {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return allAlgorithms
 	 */
 	public List<String> getAlgorithms(){
@@ -241,7 +230,7 @@ public class RepositoryManager {
 			allAlgorithmNamesCollection.addAll(repository.getAlgorithmNames());
 		}
 		return allAlgorithmNamesCollection;
-		
+
 	}
 
 	public boolean containsAlgorithm(String algorithmName) {
@@ -253,7 +242,7 @@ public class RepositoryManager {
 		}
 		return false;
 	}
-	
+
 	public IAlgorithmRepository getRepositoryForAlgorithm(String algorithmName){
 		for (String repositoryClassName : getRepositoryNames()) {
 			IAlgorithmRepository repository = repositories.get(repositoryClassName);
@@ -263,33 +252,33 @@ public class RepositoryManager {
 		}
 		return null;
 	}
-	
+
 	public Class<?> getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getInputDataType(inputIdentifier);
-		
+
 	}
-	
+
 	public Class<?> getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getOutputDataType(inputIdentifier);
-		
+
 	}
-	
+
 	public boolean registerAlgorithm(String id, IAlgorithmRepository repository){
 		if (globalProcessIDs.addID(id)){
 			return true;
 		}
 		else return false;
 	}
-	
+
 	public boolean unregisterAlgorithm(String id){
 		if (globalProcessIDs.removeID(id)){
 			return true;
 		}
 		else return false;
 	}
-	
+
 	public IAlgorithmRepository getAlgorithmRepository(String name){
 		for (String repositoryClassName : getRepositoryNames()) {
 			IAlgorithmRepository repository = repositories.get(repositoryClassName);
@@ -310,7 +299,7 @@ public class RepositoryManager {
 		}
 		return null;
 	}
-	
+
 	public ProcessDescription getProcessDescription(String processClassName){
 		for (String repositoryClassName : getRepositoryNames()) {
 			IAlgorithmRepository repository = repositories.get(repositoryClassName);
@@ -320,20 +309,24 @@ public class RepositoryManager {
 		}
 		return new ProcessDescription();
 	}
-	
+
     static class UpdateThread extends Thread {
-        
+
     	private final long interval;
+
     	private boolean firstrun = true;
-    	
-    	public UpdateThread (long interval){
+
+        private final RepositoryManager repositoryManager;
+
+    	public UpdateThread (RepositoryManager repositoryManager, long interval){
+            this.repositoryManager = repositoryManager;
     		this.interval = interval;
     	}
-    	
+
         @Override
         public void run() {
         	LOGGER.debug("UpdateThread started");
-        	
+
         	try {
         		// never terminate the run method
         		while (true){
@@ -341,25 +334,26 @@ public class RepositoryManager {
         			if (!firstrun){
         				LOGGER.info("Reloading repositories - this might take a while ...");
             			long timestamp = System.currentTimeMillis();
-            			RepositoryManager.getInstance().reloadRepositories();
+            			repositoryManager.reloadRepositories();
                         LOGGER.info("Repositories reloaded - going to sleep. Took {} seconds.",
                                     (System.currentTimeMillis() - timestamp) / 1000);
         			} else {
         				firstrun = false;
         			}
-        			
+
         			// sleep for a given INTERVAL
-        			sleep(interval);
+        			Thread.sleep(interval);
         		}
 			} catch (InterruptedException e) {
 				LOGGER.debug("Interrupt received - Terminating the UpdateThread.");
 			}
         }
-       
+
     }
-    
+
     // shut down the update thread
-    public void finalize(){
+    public void finalize() throws Throwable {
+        super.finalize();
     	if (updateThread != null){
     		updateThread.interrupt();
     	}

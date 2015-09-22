@@ -50,6 +50,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManager;
@@ -97,7 +98,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 		this.identifier = request.getExecute().getIdentifier().getStringValue().trim();
 		ExecuteResponse responseElem = doc.getExecuteResponse();
 		responseElem.addNewProcess().addNewIdentifier().setStringValue(identifier);
-		superDescription = RepositoryManager.getInstance().getProcessDescription(this.identifier);
+		superDescription = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.identifier);
 		description = (ProcessDescriptionType) superDescription.getProcessDescriptionType(WPSConfig.VERSION_100);
 		if(description==null){
 			throw new RuntimeException("Error while accessing the process description for "+ identifier);
@@ -186,7 +187,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 
 				// THIS IS A WORKAROUND AND ACTUALLY NOT COMPLIANT TO THE SPEC.
 
-				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue()).getProcessDescriptionType(WPSConfig.VERSION_100);
+				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(request.getExecute().getIdentifier().getStringValue()).getProcessDescriptionType(WPSConfig.VERSION_100);
 				if(description==null){
 					throw new RuntimeException("Error while accessing the process description for "+ request.getExecute().getIdentifier().getStringValue());
 				}
@@ -378,12 +379,12 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
 	}
 
 	public void setStatus(XmlObject statusObject) {
-		
+
 		if(statusObject instanceof StatusType){
 			StatusType status = (StatusType)statusObject;
 			//workaround, should be generated either at the creation of the document or when the process has been finished.
 			status.setCreationTime(creationTime);
-			doc.getExecuteResponse().setStatus(status);		
+			doc.getExecuteResponse().setStatus(status);
 		}else{
 			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x100.StatusType\", but {}. Cannot not set status. ", statusObject.getClass()));
 		}

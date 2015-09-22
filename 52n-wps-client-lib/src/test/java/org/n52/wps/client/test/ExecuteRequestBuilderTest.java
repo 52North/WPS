@@ -61,28 +61,26 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class ExecuteRequestBuilderTest extends AbstractITClass{
 
-	private ProcessDescription processDescription;	
-	private ProcessDescriptionType processDescriptionType;	
+	private ProcessDescription processDescription;
+	private ProcessDescriptionType processDescriptionType;
 	private String inputID;
 	private String outputID;
 	private String url = "http://xyz.test.data";
 	private String complexDataString = "testString";
-	
+
 	@Before
 	public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));	
 		processDescription = new MultiReferenceBinaryInputAlgorithm().getDescription();
-		processDescriptionType = ((ProcessDescriptionType)processDescription.getProcessDescriptionType(WPSConfig.VERSION_100));	
+		processDescriptionType = ((ProcessDescriptionType)processDescription.getProcessDescriptionType(WPSConfig.VERSION_100));
 		inputID = processDescriptionType.getDataInputs().getInputArray(0).getIdentifier().getStringValue();
 		outputID = processDescriptionType.getProcessOutputs().getOutputArray(0).getIdentifier().getStringValue();
 	}
-	
+
     @Test
     public void addComplexDataInputByReference() {
 
         ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
-    	
+
     	addTestDataByReference(executeRequestBuilder);
 
         ExecuteDocument request = executeRequestBuilder.getExecute();
@@ -91,151 +89,151 @@ public class ExecuteRequestBuilderTest extends AbstractITClass{
         Assert.assertThat("generated doc contains input url", request.toString(), containsString(url));
         Assert.assertThat("document is valid", request.validate(), is(true));
     }
-    
+
     @Test
     public void addComplexDataInputString() {
-    	
+
     	ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
-    	
+
     	addTestDataString(executeRequestBuilder);
-    	
+
     	ExecuteDocument request = executeRequestBuilder.getExecute();
-    	
+
     	Assert.assertThat("generated doc contains input id", request.toString(), containsString(inputID));
     	Assert.assertThat("generated doc contains input string", request.toString(), containsString(complexDataString));
     	Assert.assertThat("document is valid", request.validate(), is(true));
     }
-    
+
     @Test
     public void setSupportedMimeTypeForOutput(){
         ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
-    	
+
     	addTestDataByReference(executeRequestBuilder);
-        
+
         String mimeType = getMimeType(processDescriptionType, false);
-        
+
         executeRequestBuilder.setMimeTypeForOutput(mimeType, outputID);
-        
+
         ExecuteDocument request = executeRequestBuilder.getExecute();
-        
+
         checkOutputIdentifier(request.getExecute(), outputID);
         checkOutputMimeType(request.getExecute(), mimeType);
         Assert.assertThat("document is valid", request.validate(), is(true));
-    	
+
     }
-    
+
     @Test
     public void setDefaultMimeTypeForOutput(){
     	ExecuteRequestBuilder executeRequestBuilder = new ExecuteRequestBuilder(processDescriptionType);
-    	
+
     	addTestDataByReference(executeRequestBuilder);
-    	
+
     	String mimeType = getMimeType(processDescriptionType, true);
-    			
+
     	ExecuteDocument request = executeRequestBuilder.getExecute();
-        
+
         executeRequestBuilder.setMimeTypeForOutput(mimeType, outputID);
-    	
+
         checkOutputIdentifier(request.getExecute(), outputID);
         checkOutputMimeType(request.getExecute(), mimeType);
     	Assert.assertThat("document is valid", request.validate(), is(true));
-    	
+
     }
-    
+
     private void addTestDataByReference(ExecuteRequestBuilder executeRequestBuilder){
-        
+
     	InputType inputType = InputType.Factory.newInstance();
 
         inputType.addNewIdentifier().setStringValue(inputID);
         inputType.addNewReference().setHref(url);
 
         executeRequestBuilder.addComplexData(inputType);
-    	
+
     }
-    
+
     private void addTestDataString(ExecuteRequestBuilder executeRequestBuilder){
-    	
+
     	try {
 			executeRequestBuilder.addComplexData(inputID, complexDataString, "", "", "text/plain");
 		} catch (WPSClientException e) {
 			e.printStackTrace();
 		}
-    	
+
     }
-    
+
     private String getMimeType(ProcessDescriptionType processDescriptionType, boolean isGetDefaultMimeType){
-    	
+
     	String result = "";
-    	
+
     	ProcessOutputs processOutputs = processDescriptionType.getProcessOutputs();
-    	
+
     	assertNotNull(processOutputs);
-    	
+
     	OutputDescriptionType outputDescriptionType = processOutputs.getOutputArray(0);
-    	
+
     	assertNotNull(outputDescriptionType);
-    	
+
     	SupportedComplexDataType complexDataType = outputDescriptionType.getComplexOutput();
-    	
+
     	assertNotNull(complexDataType);
-    	
+
     	if(isGetDefaultMimeType){
     		ComplexDataCombinationType defaultFormat = complexDataType.getDefault();
-    		
+
     		assertNotNull(defaultFormat);
-    		
+
     		ComplexDataDescriptionType format = defaultFormat.getFormat();
-    		
+
     		assertNotNull(format);
-    		
-    		result = format.getMimeType();    		
+
+    		result = format.getMimeType();
     	}else{
     		ComplexDataCombinationsType supportedFormats = complexDataType.getSupported();
-    		
+
     		assertNotNull(supportedFormats);
-    		
+
     		ComplexDataDescriptionType format = supportedFormats.getFormatArray(0);
-    		
+
     		assertNotNull(format);
-    		
-    		result = format.getMimeType();   
+
+    		result = format.getMimeType();
     	}
-    	
+
     	return result;
     }
 
     private void checkOutputMimeType(Execute execute, String mimeType){
-    	
+
     	DocumentOutputDefinitionType outputDefinitionType = getOutputDefinitionType(execute);
-    	
-    	assertTrue(outputDefinitionType.getMimeType() != null && outputDefinitionType.getMimeType().equals(mimeType)); 
-    	
+
+    	assertTrue(outputDefinitionType.getMimeType() != null && outputDefinitionType.getMimeType().equals(mimeType));
+
     }
-    
+
     private void checkOutputIdentifier(Execute execute, String identifier){
-    	
+
     	DocumentOutputDefinitionType outputDefinitionType = getOutputDefinitionType(execute);
-    	
-    	assertTrue(outputDefinitionType.getIdentifier() != null && outputDefinitionType.getIdentifier().getStringValue().equals(identifier)); 
-    	
+
+    	assertTrue(outputDefinitionType.getIdentifier() != null && outputDefinitionType.getIdentifier().getStringValue().equals(identifier));
+
     }
-    
+
     private DocumentOutputDefinitionType getOutputDefinitionType(Execute execute){
-    	
+
     	ResponseFormType responseFormType = execute.getResponseForm();
-    	
+
     	assertNotNull(responseFormType);
-    	
+
     	ResponseDocumentType responseDocumentType = responseFormType.getResponseDocument();
-    	
+
     	assertNotNull(responseDocumentType);
-    	
+
     	DocumentOutputDefinitionType outputDefinitionType = responseDocumentType.getOutputArray(0);
-    	
-    	assertNotNull(outputDefinitionType);  
-    	
+
+    	assertNotNull(outputDefinitionType);
+
     	return outputDefinitionType;
-    	
+
     }
-    
+
 }

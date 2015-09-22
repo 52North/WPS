@@ -57,7 +57,6 @@ public class RepositoriesControllerIntegrationTest extends AbstractITClassForCon
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test
