@@ -57,9 +57,4 @@ public class RepositoryManagerSingletonWrapper {
         }
         return instance;
     }
-
-    public static void reInitialize() {
-        RepositoryManager rm = getInstance();
-        rm.reInitialize();
-    }
 }
