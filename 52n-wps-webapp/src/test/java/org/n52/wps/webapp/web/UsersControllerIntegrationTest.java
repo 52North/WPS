@@ -61,7 +61,6 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

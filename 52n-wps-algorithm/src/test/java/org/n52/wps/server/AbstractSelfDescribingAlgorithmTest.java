@@ -33,14 +33,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @author tkunicki
  */
 public class AbstractSelfDescribingAlgorithmTest extends AbstractITClass {
-    
+
     public AbstractSelfDescribingAlgorithmTest() {
     }
 
     @Before
     public void setUp() throws Exception {
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @Test

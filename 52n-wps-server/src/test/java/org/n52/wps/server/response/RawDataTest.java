@@ -65,8 +65,6 @@ public class RawDataTest  extends AbstractITClass{
 
     @Before
     public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     	algorithm = new DummyTestClass();
     	processDescription = algorithm.getDescription();
     	identifier = algorithm.getWellKnownName();

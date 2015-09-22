@@ -45,6 +45,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
+import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.request.ExecuteRequestV100;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
@@ -75,8 +77,9 @@ public class ExecuteResponseBuilderTest extends AbstractITClass{
 
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(wac);
+        repositoryManager.init();
 	}
 
 	@Test

@@ -72,7 +72,6 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

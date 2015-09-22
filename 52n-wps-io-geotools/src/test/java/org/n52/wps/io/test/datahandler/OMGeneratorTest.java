@@ -79,36 +79,36 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  *
  */
 public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
-	
+
 	private static final String SCHEMA = "http://www.opengis.net/om/2.0";
 	private static final String MIME_TYPE = "application/om+xml; version=2.0";
-	
+
 	@Test
 	public void shouldReturnNullIfInputIsWrong() throws IOException {
 		InputStream result = dataHandler.generateStream(null, null, null);
 		assertThat(result, is(nullValue()));
-		
+
 		result = dataHandler.generateStream(null, "test", null);
 		assertThat(result, is(nullValue()));
-		
+
 		result = dataHandler.generateStream(null, MIME_TYPE, null);
 		assertThat(result, is(nullValue()));
-		
+
 		result = dataHandler.generateStream(null, MIME_TYPE, "test");
 		assertThat(result, is(nullValue()));
-		
+
 		result = dataHandler.generateStream(null, MIME_TYPE, SCHEMA);
 		assertThat(result, is(nullValue()));
-		
+
 		result = dataHandler.generateStream(new OMObservationBinding(null), MIME_TYPE, SCHEMA);
 		assertThat(result, is(nullValue()));
 	}
-	
+
 	@Test
 	@Ignore("no xmloptions injected yet")
 	public void shouldEncodeSingleOMObservationToXML() throws IOException {
@@ -158,7 +158,7 @@ public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
 		InputStream generatedStream = dataHandler.generateStream(dataToEncode, MIME_TYPE, SCHEMA);
 		assertThat(generatedStream, is(not(nullValue())));
 		assertThat(generatedStream, instanceOf(InputStream.class));
-		
+
 		OMObservationBinding parsedObservationBinding = new OMParser().parse(generatedStream, MIME_TYPE, SCHEMA);
 		assertThat(parsedObservationBinding, is(not(nullValue())));
 		OmObservation parsedObservation = parsedObservationBinding.getPayload();
@@ -187,5 +187,5 @@ public class OMGeneratorTest extends AbstractTestCase<OMGenerator> {
 	protected void initializeDataHandler() {
 		dataHandler = new OMGenerator();
 	}
-	
+
 }

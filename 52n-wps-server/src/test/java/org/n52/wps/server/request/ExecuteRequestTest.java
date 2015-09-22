@@ -76,7 +76,6 @@ public class ExecuteRequestTest extends AbstractITClass {
 
 		fac = DocumentBuilderFactory.newInstance();
 		fac.setNamespaceAware(true);
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 
 	@Test

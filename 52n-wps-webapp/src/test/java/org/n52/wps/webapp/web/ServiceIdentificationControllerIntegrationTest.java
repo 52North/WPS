@@ -54,19 +54,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 public class ServiceIdentificationControllerIntegrationTest extends AbstractITClassForControllerTests {
 
 	private MockMvc mockMvc;
-	
+
 	@Autowired
 	ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private JDomUtil jDomUtil;
-	
+
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractITCl
 	public void processPost_success() throws Exception {
 		String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
 		Document originalDoc = jDomUtil.parse(path);
-		
+
 		RequestBuilder request = post("/service_identification")
 				.param("title", "Posted Title")
 				.param("serviceAbstract", "Posted Service Abstract")
@@ -94,7 +93,7 @@ public class ServiceIdentificationControllerIntegrationTest extends AbstractITCl
 		result.andExpect(status().isOk());
 		ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices().getServiceIdentification();
 		assertEquals("Posted Title", serviceIdentification.getTitle());
-		
+
 		//reset document to original state
 		jDomUtil.write(originalDoc, path);
 	}

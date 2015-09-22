@@ -78,12 +78,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * @author BenjaminPross(bpross-52n)
- * 
+ *
  * This class is for testing the updateResponseForLiteralData() method of the class OutputDataItem.java.
  *
  */
 public class OutputDataItemTest extends AbstractITClass{
-	
+
 	private ProcessDescriptionType descriptionsType;
 	private ProcessDescription description;
 	private String processID = "org.n52.wps.server.response.OutputDataItemTest";
@@ -97,9 +97,6 @@ public class OutputDataItemTest extends AbstractITClass{
 
 	@Before
 	public void setUp() {
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
-
 		literalDataList = new ArrayList<ILiteralData>();
 
 		String url = "";
@@ -111,7 +108,7 @@ public class OutputDataItemTest extends AbstractITClass{
 		}
 
 		String uuid = UUID.randomUUID().toString();
-		
+
 		literalDataList.add(new LiteralBase64BinaryBinding(uuid.getBytes()));
 		literalDataList.add(new LiteralBooleanBinding(true));
 		literalDataList.add(new LiteralByteBinding((byte) 127));
@@ -205,7 +202,7 @@ public class OutputDataItemTest extends AbstractITClass{
 						.concat((int) bytes[i] + ", ");
 				}else{
 					bytesAsIntegerValues = bytesAsIntegerValues
-							.concat((int) bytes[i] + "]");					
+							.concat((int) bytes[i] + "]");
 				}
 			}
 			startText = startText.concat("" + bytesAsIntegerValues);
@@ -228,9 +225,9 @@ public class OutputDataItemTest extends AbstractITClass{
 		outputType.addNewDataType().setStringValue(dataTypeAsString);
 
 		description = new ProcessDescription();
-		
+
 		description.addProcessDescriptionForVersion(descriptionsType, WPSConfig.VERSION_100);
-		
+
 		OutputDataItem ouDI = new OutputDataItem(literalDataBinding, "output",
 				null, null, null, outputTitle, processID, description);
 

@@ -52,10 +52,9 @@ public class ServerControllerIntegrationTest extends AbstractITClassForControlle
 
 	@Autowired
 	private Server server;
-	
+
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

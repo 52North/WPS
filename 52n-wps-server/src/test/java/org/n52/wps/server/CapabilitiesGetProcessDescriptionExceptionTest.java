@@ -47,40 +47,41 @@ import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITClass {
-	
-	public static final String IDENTIFIER = "CatchMeIfYouCan";	
+
+	public static final String IDENTIFIER = "CatchMeIfYouCan";
 	public static boolean algorithmTriedToInstantiate;
 
 	@Before
     public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
-	
+
 	@Test
 	public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
 //		MockUtil.getMockConfig();
 		CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
-		
+
 		Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);
-		
+
 		boolean found = false;
 		for (ProcessBriefType pbt : caps.getCapabilities().getProcessOfferings().getProcessArray()) {
 			if (IDENTIFIER.equals(pbt.getIdentifier().getStringValue())) {
 				found = true;
 			}
 		}
-		
+
 		Assert.assertFalse("Algo found but was not expected!", found);
 	}
 
 	@Algorithm(version = "0.1", identifier = CapabilitiesGetProcessDescriptionExceptionTest.IDENTIFIER)
 	public static class InstantiationExceptionAlgorithm extends AbstractAnnotatedAlgorithm {
-		
+
 		public InstantiationExceptionAlgorithm() {
 			CapabilitiesGetProcessDescriptionExceptionTest.algorithmTriedToInstantiate = true;
 		}
-		
+
 		private String output;
 
 		@LiteralDataInput(identifier = "input")
@@ -95,12 +96,12 @@ public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITCl
 		public void thisMethodsWillNeverEverByCalled() {
 			this.output = "w0000t";
 		}
-		
+
 		@Override
 		public synchronized ProcessDescription getDescription() {
 			throw new RuntimeException("Gotcha!");
 		}
 
-		
+
 	}
 }

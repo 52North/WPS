@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Benjamin Pross, Daniel Nüst
  *
  */
@@ -66,19 +66,20 @@ public class WPSConfig implements Serializable {
 	public static final String VERSION_100 = "1.0.0";
 	public static final String VERSION_200 = "2.0.0";
 	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{VERSION_100, VERSION_200});
-	
+
 	public static final String JOB_CONTROL_OPTION_SYNC_EXECUTE = "sync-execute";
 	public static final String JOB_CONTROL_OPTION_ASYNC_EXECUTE = "async-execute";
-	
+
 	public static final String JOB_CONTROL_OPTIONS_SEPARATOR = " ";
-	
+
 	public static final String OUTPUT_TRANSMISSION_VALUE = "value";
 	public static final String OUTPUT_TRANSMISSION_REFERENCE = "reference";
-	
+
 	public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
-    
+
 	private ConfigurationManager configurationManager;
-    private Server serverConfigurationModule;	
+    
+    private Server serverConfigurationModule;
 
 	public Server getServerConfigurationModule() {
 
@@ -176,46 +177,46 @@ public class WPSConfig implements Serializable {
     }
 
 	public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForGeneratorClass(
-			String name) {	
+			String name) {
 		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
 		return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
 	}
 
-	public List<FormatEntry> getFormatEntriesForGeneratorClass(String name) {	
+	public List<FormatEntry> getFormatEntriesForGeneratorClass(String name) {
 		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
 		return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
 	}
 
 	public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForParserClass(
-			String name) {	
+			String name) {
 		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
 		return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
 	}
 
-	public List<FormatEntry> getFormatEntriesForParserClass(String name) {	
+	public List<FormatEntry> getFormatEntriesForParserClass(String name) {
 		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
 		return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
 	}
-	
+
 	public ConfigurationModule getConfigurationModuleForClass(String name, ConfigurationCategory moduleCategorie){
-		
+
 		Map<String, ConfigurationModule> activeModules = getActiveConfigurationModules(moduleCategorie);
-		
+
 		for (String moduleName : activeModules.keySet()) {
-			
+
 			ConfigurationModule tmpModule = activeModules.get(moduleName);
-			
+
 			if(!(tmpModule instanceof ClassKnowingModule)){
 				continue;
 			}
-			
+
 			if(((ClassKnowingModule)tmpModule).getClassName().equals(name)){
-				return tmpModule;				
-			}			
+				return tmpModule;
+			}
 		}
 		return null;
 	}
-	
+
 	private Map<String, ConfigurationModule> getActiveConfigurationModules(ConfigurationCategory moduleCategorie){
 		return configurationManager.getConfigurationServices().getActiveConfigurationModulesByCategory(moduleCategorie);
 	}

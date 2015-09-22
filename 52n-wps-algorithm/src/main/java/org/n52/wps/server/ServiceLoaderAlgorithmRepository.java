@@ -34,20 +34,20 @@ public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 	public ServiceLoaderAlgorithmRepository() {
 		this.currentAlgorithms = loadAlgorithms();
 	}
-	
+
 	private Map<String, Class<? extends IAlgorithm>> loadAlgorithms() {
 		Map<String, Class<? extends IAlgorithm>> result = new HashMap<String, Class<? extends IAlgorithm>>();
 		ServiceLoader<IAlgorithm> loader = ServiceLoader.load(IAlgorithm.class);
-		
+
 		for (IAlgorithm ia : loader) {
 			logger.debug("Adding algorithm with identifier {} and class {}",
 					ia.getWellKnownName(), ia.getClass().getCanonicalName());
 			result.put(ia.getWellKnownName(), ia.getClass());
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public Collection<String> getAlgorithmNames() {
 		return this.currentAlgorithms.keySet();

@@ -29,8 +29,6 @@
 package org.n52.wps.server;
 
 // FvK: added Property Change Listener support
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -92,11 +90,14 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
 
     private static String applicationBaseDir = null;
-    
+
     private ServletContext servletContext;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
+
+    @Autowired
+    private RepositoryManager repositoryManager;
 
     public WebProcessingService() {
         LOGGER.info("NEW {}", this);
@@ -142,13 +143,13 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
     public void init() {
         LOGGER.info("*** WebProcessingService initializing... ***");
         WPSConfig conf = WPSConfig.getInstance(servletContext);
-        
+
         WPSConfig.getInstance().setConfigurationManager(configurationManager);
-        
+
         // this is important to set the lon lat support for correct CRS transformation.
         // TODO: Might be changed to an additional configuration parameter.
         System.setProperty("org.geotools.referencing.forceXY", "true");
-        
+
         try {
             if (conf == null) {
                 LOGGER.error("Initialization failed! Please look at the properties file!");
@@ -172,8 +173,8 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         GeneratorFactory.initialize(generatorMap);
         LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
 
-        RepositoryManager repoManager = RepositoryManager.getInstance();
-        LOGGER.info("Initialized {}", repoManager);
+        repositoryManager.init();
+        LOGGER.info("Initialized {}", repositoryManager);
 
         IDatabase database = DatabaseFactory.getDatabase();
         LOGGER.info("Initialized {}", database);
@@ -191,7 +192,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         LOGGER.info("Service base url is {} | Service endpoint is {}",
                     conf.getServiceBaseUrl(),
                     conf.getServiceEndpoint());
-        
+
         LOGGER.info("*** WPS up and running! ***");
     }
 
@@ -207,7 +208,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
             OutputStream out = res.getOutputStream(); // closed by res.flushBuffer();
             RequestHandler handler = new RequestHandler(req.getParameterMap(), out);
             String mimeType = handler.getResponseMimeType();
-            requestedVersion = handler.getRequestedVersion();         
+            requestedVersion = handler.getRequestedVersion();
             res.setContentType(mimeType);
             handler.handle();
 
@@ -234,7 +235,7 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         BufferedReader reader = null;
 
         String requestedVersion = null;
-        
+
         try {
             String contentType = req.getContentType();
             String characterEncoding = req.getCharacterEncoding();
@@ -353,6 +354,6 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;		
+		this.servletContext = servletContext;
 	}
 }
