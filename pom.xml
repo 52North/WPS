@@ -167,8 +167,8 @@
 					<aggregate>true</aggregate>
 					<properties>
 						<inceptionYear>${project.inceptionYear}</inceptionYear>
-						<!--<latestYearOfContribution>${currentYear}</latestYearOfContribution>-->
-						 <latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>
+						<latestYearOfContribution>${currentYear}</latestYearOfContribution>
+						 <!--<latestYearOfContribution>${currentYearDynamic}</latestYearOfContribution>-->
 					</properties>
 					<includes>
 						<include>src/**/*.java</include>
@@ -244,7 +244,8 @@
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-        <currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>
+        <currentYear>2015</currentYear>
+        <!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>-->
         <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
         <n52.sos.version>5.0.0-SNAPSHOT</n52.sos.version>
         <n52.iceland.version>1.0.0-SNAPSHOT</n52.iceland.version>
