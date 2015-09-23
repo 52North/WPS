@@ -75,8 +75,16 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
 
-//    static final String COMPONENT_NAME = "RAlgorithmRepository";
+    /*
+     * instantiation is managed by IoC container (spring) and the RepositoryManager only
+     * has the name of the config module at hand to retrieve or instantiate (hard wiring
+     * via reflection) this instance.
+     *
+     * Using the repository's name instead of the config module everywhere would hinder
+     * the WPS to add configured algorithms to the config module though.
+     */
     static final String COMPONENT_NAME = "org.n52.wps.server.r.RConfigurationModule";
+//    static final String COMPONENT_NAME = "RAlgorithmRepository";
 
     private static final String DESCRPTION_VERSION_FOR_VALIDATION = WPSConfig.VERSION_100;
 
