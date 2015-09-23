@@ -10,34 +10,34 @@ INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.EchoProcess
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.r.RConfigurationModule', TRUE);
 
 INSERT INTO ALGORITHMENTRY VALUES('debug.session','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('highlight','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.rdata','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.resources','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.warnings','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.csv','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.echo','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.calculator','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.metadata','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.geo','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.image','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.wpsOff','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('test.session','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('geo.poly.attribute-sum','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('geo.poly.intersection','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('demo.idw','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('demo.image','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('demo.interpolation.jsclient','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('demo.meuse.rdata','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('demo.pegelReport','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('demo.sweaveFoo','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('demo.timeseriesPlot','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('demo.uniform.table','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('demo.uniform.simple','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('demo.idw','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('demo.meuse.rdata','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('demo.image','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('demo.sweaveFoo','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('uncertweb.make-realizations','org.n52.wps.server.r.RConfigurationModule',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('eo2hAirQuality','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('enviroCar_osmMatching','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('eo2hAirQuality','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('geo.poly.attribute-sum','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('geo.poly.intersection','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('highlight','org.n52.wps.server.r.RConfigurationModule',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('netCDF_aggregation','org.n52.wps.server.r.RConfigurationModule',TRUE);
-
+INSERT INTO ALGORITHMENTRY VALUES('test.calculator','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.csv','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.defaults','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.echo','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.geo','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.image','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.metadata','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.rdata','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.resources','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.warnings','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.wpsOff','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('test.session','org.n52.wps.server.r.RConfigurationModule',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('uncertweb.make-realizations','org.n52.wps.server.r.RConfigurationModule',TRUE);
 
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.grass.configurationmodule.GrassProcessRepositoryCM', FALSE);
 
