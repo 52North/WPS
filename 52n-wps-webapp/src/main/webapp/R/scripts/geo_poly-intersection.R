@@ -1,7 +1,7 @@
 # Author: Matthias Hinz
 ###############################################################################
 
-# wps.des: geo.poly.intersection;
+# wps.des: geo.poly.intersection, title = polygon intersection;
 # wps.in: r1, shp_x, Polygon1;
 # wps.in: r2, shp_x, Polygon2;
 library(rgeos); library(maptools); library(rgdal);
