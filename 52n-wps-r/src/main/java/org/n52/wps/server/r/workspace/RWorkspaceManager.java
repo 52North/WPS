@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
@@ -63,9 +64,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * 
+ *
  * @author Daniel Nüst
- * 
+ *
  */
 public class RWorkspaceManager {
 
@@ -86,13 +87,14 @@ public class RWorkspaceManager {
 
     private RWorkspace workspace;
 
-    @Autowired
     private ResourceFileRepository resourceRepo;
 
     public RWorkspaceManager(FilteredRConnection connection,
+                             ResourceFileRepository resourceRepo,
                              RIOHandler iohandler,
                              R_Config config) {
         this.connection = connection;
+        this.resourceRepo = resourceRepo;
         this.workspace = new RWorkspace(config.getBaseDir());
         this.executor = new RExecutor();
         this.iohandler = iohandler;
@@ -102,7 +104,7 @@ public class RWorkspaceManager {
     }
 
     /**
-     * 
+     *
      * @param originalWorkDir
      *        the working directory of R after the clean up is finished
      */
@@ -149,7 +151,7 @@ public class RWorkspaceManager {
 
     /**
      * Deletes File or Directory completely with its content
-     * 
+     *
      * @param in
      *        File or directory
      * @return true if all content could be deleted
@@ -361,10 +363,9 @@ public class RWorkspaceManager {
             workDirNameSetting = config.resolveFullPath(config.getConfigModule().getWdName());
         }
         catch (ExceptionReport e) {
-            log.error("R Working directory references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
+            log.warn("R Working directory does not exist. This will be an issue if the variable is used. The current strategy is '{}'.",
                       strategy,
                       e);
-            throw e;
         }
 
         this.workspace.setWorkingDirectory(this.connection,

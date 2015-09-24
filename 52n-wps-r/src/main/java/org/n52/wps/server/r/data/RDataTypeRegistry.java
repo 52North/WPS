@@ -31,6 +31,7 @@ package org.n52.wps.server.r.data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import javax.annotation.PostConstruct;
 
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
@@ -38,30 +39,30 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * 
+ *
  * @author Daniel Nüst
  *
  */
 @Component
 public class RDataTypeRegistry {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(CustomDataTypeManager.class);
-
-    public RDataTypeRegistry() {
-        // register types from enum
-        RDataType[] values = RDataType.values();
-        for (RDataType type : values) {
-            register(type);
-        }
-
-        LOGGER.info("NEW {}", this);
-    }
+    private static Logger LOGGER = LoggerFactory.getLogger(RDataTypeRegistry.class);
 
     private HashMap<String, RTypeDefinition> customDataTypes = new HashMap<String, RTypeDefinition>();
 
     private HashMap<String, RTypeDefinition> rDataTypeKeys = new HashMap<String, RTypeDefinition>();
 
     private HashMap<String, RTypeDefinition> rDataTypeAlias = new HashMap<String, RTypeDefinition>();
+
+    public RDataTypeRegistry() {
+        // register types from enum
+        LOGGER.info("NEW {}", this);
+        RDataType[] values = RDataType.values();
+        for (RDataType type : values) {
+            register(type);
+        }
+        logDataTypeTable();
+    }
 
     public void register(RDataType type) {
         this.rDataTypeKeys.put(type.getKey(), type);
@@ -84,7 +85,7 @@ public class RDataTypeRegistry {
 
     /**
      * This method is important for parsers to request the meaning of a specific key
-     * 
+     *
      * @param key
      *        process keys and self defined short keys are recognized as dataType keys
      * @return
@@ -113,64 +114,91 @@ public class RDataTypeRegistry {
         return this.customDataTypes.values();
     }
 
-    private static String addTabbs(String s, int nmax) {
-        int n = nmax - s.length();
-        String out = "";
-        for (int i = 0; i < n; i++) {
-            out += " ";
-        }
-        return out;
-    }
-
-    @Override
-    public String toString() {
-        String out = "RDataTypeRegistry:\nKey\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
-        out += "\n-------------------------------------------------------------------------------------------------";
-        out += "---------------------------";
-
-        Collection<RTypeDefinition> definitions = getDefinitions();
-        String complex = "";
-        String literal = "";
-
-        for (RTypeDefinition type : definitions) {
-            String temp = "";
-            temp += "\n";
-            String val = type.getKey();
-            temp += val + addTabbs("" + val, 20);
-
-            val = type.getMimeType();
-            temp += val + addTabbs("" + val, 40);
-
-            val = type.getSchema();
-            temp += val + addTabbs("" + val, 12);
-
-            val = type.getEncoding();
-            temp += val + addTabbs("" + val, 12);
-
-            val = "" + type.isComplex();
-            temp += val + addTabbs("" + val, 12);
-
-            val = type.getIDataClass().getSimpleName();
-            temp += val + addTabbs("" + val, 12);
-
-            if (type.isComplex())
-                complex += temp;
-            else
-                literal += temp;
-        }
-        return out + literal + complex;
-    }
-
-    public void register(CustomDataType type) {
-        this.customDataTypes.put(type.getKey(), type);
-        LOGGER.debug("New custom data type registered: {}", type);
-    }
-
     /**
      * Deletes all registered custom type definitions (Useful for instance, if the config file was changed)
      */
     public void clearCustomDataTypes() {
         this.customDataTypes.clear();
+    }
+
+    public void logDataTypeTable() {
+
+        int maxLengthKeys = "Key".length();
+        int maxLengthMimetype = "Mimetype".length();
+        int maxLengthSchema = "Schema".length();
+        int maxLengthEncoding = "Encoding".length();
+        int maxLengthComplex = "isComplex".length();
+        int maxLengthDataBinding = "DataBinding".length();
+
+        Collection<RTypeDefinition> definitions = getDefinitions();
+        for (RTypeDefinition definition : definitions) {
+            maxLengthKeys = Math.max(maxLengthKeys, getLengthOf(definition.getKey()));
+            maxLengthMimetype = Math.max(maxLengthMimetype, getLengthOf(definition.getMimeType()));
+            maxLengthSchema = Math.max(maxLengthSchema, getLengthOf(definition.getSchema()));
+            maxLengthEncoding = Math.max(maxLengthEncoding, getLengthOf(definition.getEncoding()));
+            maxLengthComplex = Math.max(maxLengthComplex, getLengthOf(Boolean.toString(definition.isComplex())));
+            maxLengthDataBinding = Math.max(maxLengthDataBinding, getLengthOf(definition.getClass().getSimpleName()));
+        }
+
+        StringBuilder sb = new StringBuilder("RDataTypeRegistry: \n");
+        sb.append("Key").append(getSpacesToFillGapFor("Key", maxLengthKeys));
+        sb.append("MimeType").append(getSpacesToFillGapFor("MimeType", maxLengthMimetype));
+        sb.append("Schema").append(getSpacesToFillGapFor("Schema", maxLengthSchema));
+        sb.append("Encoding").append(getSpacesToFillGapFor("Encoding", maxLengthEncoding));
+        sb.append("isComplex").append(getSpacesToFillGapFor("isComplex", maxLengthComplex));
+        sb.append("DataBinding").append(getSpacesToFillGapFor("DataBinding", maxLengthDataBinding));
+
+        sb.append("\n");
+        int tablewidth = sb.length();
+        for (int i = 0 ; i < tablewidth ; i++) {
+            sb.append("-"); // underlines header
+        }
+        sb.append("\n");
+
+        for (RTypeDefinition type : definitions) {
+            final String key = type.getKey();
+            final String mimeType = type.getMimeType();
+            final String schema = type.getSchema();
+            final String encoding = type.getEncoding();
+            final String complex = Boolean.toString(type.isComplex());
+            final String dataBinding = type.getClass().getSimpleName();
+
+            sb.append(key).append(getSpacesToFillGapFor(key, maxLengthKeys));
+            sb.append(mimeType).append(getSpacesToFillGapFor(mimeType, maxLengthMimetype));
+            sb.append(schema).append(getSpacesToFillGapFor(schema, maxLengthSchema));
+            sb.append(encoding).append(getSpacesToFillGapFor(encoding, maxLengthEncoding));
+            sb.append(complex).append(getSpacesToFillGapFor(complex, maxLengthComplex));
+            sb.append(dataBinding).append(getSpacesToFillGapFor(dataBinding, maxLengthDataBinding));
+            sb.append("\n");
+        }
+
+        LOGGER.info("R Data Type Mapping: {}", sb.toString());
+    }
+
+    private int getLengthOf(String text) {
+        return text != null ? text.length() : 4; // null -> 4 characters
+    }
+
+    private String getSpacesToFillGapFor(String text, int columnWidth) {
+        if (text == null) {
+            text = "null";
+        }
+        if (text.length() > columnWidth) {
+            throw new IllegalArgumentException("'" + text + "' does not fit into column of with " + columnWidth);
+        }
+
+        String spaces = "";
+        int countSpaces = columnWidth - text.length();
+        for (int i = 0 ; i < countSpaces ; i++) {
+            spaces += " ";
+        }
+        spaces += "  "; // separate columns
+        return spaces;
+    }
+
+    public void register(CustomDataType type) {
+        this.customDataTypes.put(type.getKey(), type);
+        LOGGER.debug("New custom data type registered: {}", type);
     }
 
 }

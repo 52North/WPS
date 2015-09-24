@@ -71,40 +71,40 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private static final Logger log = LoggerFactory.getLogger(GenericRProcess.class);
 
-    private List<RAnnotation> annotations;
-
-    private final R_Config config;
-
     private final List<String> errors = new ArrayList<>();
 
     private final RExecutor executor = new RExecutor();
 
     private final RIOHandler iohandler;
 
+    @Autowired
+    private R_Config config;
+
+    @Autowired
     private RAnnotationParser parser;
 
+    @Autowired
     private ScriptFileRepository scriptRepo;
 
+    @Autowired
     private ResourceFileRepository resourceRepo;
+
+    private List<RAnnotation> annotations;
 
     private boolean shutdownRServerAfterRun = false;
 
-    public GenericRProcess(String wellKnownName,
-                           R_Config config,
-                           RAnnotationParser parser,
-                           ScriptFileRepository scriptRepo,
-                           ResourceFileRepository resourceRepo,
-                           RDataTypeRegistry dataTypeRegistry) {
+    public GenericRProcess(String wellKnownName, RDataTypeRegistry dataTypeRegistry) {
         super(wellKnownName, false);
-        this.config = config;
-        this.parser = parser;
-        this.scriptRepo = scriptRepo;
-        this.resourceRepo = resourceRepo;
-        this.iohandler = new RIOHandler(dataTypeRegistry);
+        iohandler = new RIOHandler(dataTypeRegistry);
+        log.trace("NEW {}", this);
+    }
 
-        this.description = initializeDescription();
-
-        log.debug("NEW {}", this);
+    @Override
+    public ProcessDescription getDescription() {
+        if (description == null) {
+            description = initializeDescription();
+        }
+        return description;
     }
 
     public List<RAnnotation> getAnnotations() {
@@ -118,18 +118,18 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     @Override
     public Class< ? extends IData> getInputDataType(String id) {
-        return this.iohandler.getInputDataType(id, this.annotations);
+        return iohandler.getInputDataType(id, this.annotations);
     }
 
     @Override
     public Class< ? > getOutputDataType(String id) {
-        return this.iohandler.getOutputDataType(id, this.annotations);
+        return iohandler.getOutputDataType(id, this.annotations);
     }
 
     @Override
     protected ProcessDescription initializeDescription() {
         String wkn = getWellKnownName();
-        log.debug("Loading file for {}", wkn);
+        log.debug("Load and validate script for wkn {}", wkn);
 
         // Reading process information from script annotations:
         File scriptFile = null;
@@ -137,10 +137,10 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             scriptFile = scriptRepo.getValidatedScriptFile(wkn);
         }
         catch (InvalidRScriptException e) {
-            log.warn("Could not load sript file for {}", wkn, e);
-            throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
+            log.warn("Could not load script file for {}", wkn, e);
+            throw new IllegalStateException("Error creating process description: " + e.getMessage(), e);
         }
-        log.debug("Script file loaded: {}", scriptFile.getAbsolutePath());
+        log.debug("Loaded and valid: {}", scriptFile.getAbsolutePath());
 
         try (InputStream rScriptStream = new FileInputStream(scriptFile);) {
             log.info("Initializing description for {}", this.toString());
@@ -157,15 +157,16 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                            RResource.getScriptURL(wkn),
                                                                            RResource.getSessionInfoURL());
 
-            if (log.isDebugEnabled()) {
+            if (log.isTraceEnabled()) {
                 ProcessDescriptionsDocument outerDoc = ProcessDescriptionsDocument.Factory.newInstance();
                 ProcessDescriptionType type = outerDoc.addNewProcessDescriptions().addNewProcessDescription();
                 type.set(doc);
-                log.debug("Created process description for {}:\n{}", wkn, outerDoc.xmlText());
+                log.trace("Created process description for {}:\n{}", wkn, outerDoc.xmlText());
             }
 
             ProcessDescription processDescription = new ProcessDescription();
             processDescription.addProcessDescriptionForVersion(doc, "1.0.0");
+            description = processDescription;
             return processDescription;
         }
         catch (RAnnotationException | IOException | ExceptionReport e) {
@@ -189,7 +190,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RSessionManager session = new RSessionManager(rCon, config);
             session.configureSession(getWellKnownName(), executor);
 
-            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config);
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, resourceRepo, iohandler, config);
             String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
             List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);

@@ -14,7 +14,9 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 
     <bean id="webProcessingService" class="org.n52.wps.server.WebProcessingService" init-method="init" />
 
-    <bean id="repositoryManager" class="org.n52.wps.server.RepositoryManager" scope="singleton" />
+    <bean id="springIntegrationHelper" class="org.n52.wps.util.SpringIntegrationHelper" init-method="init" />
+
+    <bean id="repositoryManager" class="org.n52.wps.server.RepositoryManager" depends-on="springIntegrationHelper" />
 
 	<!-- landing page and admin web application -->
 <!-- 	<bean id="viewResolver" -->

@@ -62,7 +62,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.n52.wps.util.SpringIntegrationHelper;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * A repository to retrieve the available algorithms.
@@ -103,6 +106,9 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     @Autowired
     private ResourceFileRepository resourceRepo;
+
+    @Autowired
+    private CustomDataTypeManager customDataTypes;
 
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
@@ -220,12 +226,13 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     private GenericRProcess createRProcess(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
-        GenericRProcess algorithm = new GenericRProcess(wellKnownName,
-                                                        config,
-                                                        parser,
-                                                        scriptRepo,
-                                                        resourceRepo,
-                                                        dataTypeRegistry);
+        GenericRProcess algorithm = new GenericRProcess(wellKnownName, dataTypeRegistry);
+        SpringIntegrationHelper.autowireBean(algorithm);
+        /*
+         * weak inheritance implementation. When using injected singleton beans
+         * like R_Config we have to initialize description by hand
+         */
+        algorithm.initializeDescription();
         validateProcessDescription(algorithm);
         return algorithm;
     }
