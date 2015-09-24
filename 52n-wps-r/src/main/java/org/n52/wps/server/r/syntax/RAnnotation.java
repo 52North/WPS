@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Defines Syntax and Semantics for Annotations in R Skripts
- * 
+ *
  * Syntax in (raw) BNF: <RAnnotation> ::= <StartKey> <AttributeSequence> <EndKey> <StartKey> <Attributequence>
  * ::= <RAnnotationTypeInstance>.getStartKey() <RAnnotationTypeInstance>.getAttributeSequence() <EndKey> ::=
  * RSeparator.ANNOTATION_END.getKey() <AttributeSequence> ::= {<RAttributeInstance>.getKey()
  * ATRIBUTE_VALUE_SEPARATOR} <Attributevalue> {ATTRIBUTE_SEPARATOR <RAttributeSequence>}
- * 
+ *
  * @author Matthias Hinz
  */
 public class RAnnotation {
@@ -62,11 +62,10 @@ public class RAnnotation {
     private static Logger LOGGER = LoggerFactory.getLogger(RAnnotation.class);
 
     /**
-     * 
+     *
      * @param type
      * @param attributeHash
-     * @throws IOException
-     *         if AttributHash is not valid for any cause
+     * @param registry
      * @throws RAnnotationException
      */
     public RAnnotation(RAnnotationType type, HashMap<RAttribute, Object> attributeHash, RDataTypeRegistry registry) throws
@@ -77,7 +76,7 @@ public class RAnnotation {
         this.type.validateDescription(this);
         this.dataTypeRegistry = registry;
 
-        LOGGER.debug("NEW {}", toString());
+        LOGGER.trace("NEW {}", toString());
     }
 
     public RAnnotationType getType() {
@@ -85,7 +84,7 @@ public class RAnnotation {
     }
 
     /**
-     * 
+     *
      * @param attr
      * @return Returns Attribute value as Java Object in case it is more complex
      * @throws RAnnotationException
@@ -103,7 +102,7 @@ public class RAnnotation {
     }
 
     /**
-     * 
+     *
      * @param attr
      * @return Returns an attribute value as string. Suits for most literal data types
      * @throws RAnnotationException
@@ -160,7 +159,7 @@ public class RAnnotation {
     }
 
     /**
-     * 
+     *
      * @param rClass
      *        - value referring to RAttribute.TYPE
      * @return null or supported IData class for rClass - string
@@ -178,10 +177,12 @@ public class RAnnotation {
 
     /**
      * Checks if the type - argument of an annotation refers to complex data
+     * @param rClass the R type to check
+     * @return it given R type is complex
+     * @throws org.n52.wps.server.r.syntax.RAnnotationException
      */
     public boolean isComplex(String rClass) throws RAnnotationException {
         return dataTypeRegistry.getType(rClass).isComplex();
-
     }
 
     public RTypeDefinition getRDataType() throws RAnnotationException {
@@ -197,7 +198,7 @@ public class RAnnotation {
     }
 
     /**
-     * 
+     *
      * @return null or supported ProcessdescriptionType
      * @throws RAnnotationException
      */

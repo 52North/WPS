@@ -143,7 +143,7 @@ public class RIOHandler {
 
     /**
      * Searches annotations (class attribute) for Inputs / Outputs with a specific referring id
-     * 
+     *
      * @param ioType
      * @param id
      * @param annotations
@@ -193,15 +193,16 @@ public class RIOHandler {
     /**
      * parses iData values to string representations which can be evaluated by Rserve, complex data will be
      * preprocessed and handled here, uses parseLiteralInput for parsing literal Data
-     * 
+     *
      * @param input
      *        input value as databinding
-     * @param Rconnection
+     * @param connection
      *        (open)
      * @return String which could be evaluated by RConnection.eval(String)
      * @throws IOException
      * @throws RserveException
      * @throws REXPMismatchException
+     * @throws RAnnotationException
      * @throws ExceptionReport
      */
     public String parseInput(List<IData> input, RConnection connection) throws IOException,
@@ -521,7 +522,7 @@ public class RIOHandler {
     /**
      * Streams a File from R workdirectory to a temporal file in the WPS4R workdirectory
      * (R.Config.WORK_DIR/random folder)
-     * 
+     *
      * @param filename
      *        name or path of the file located in the R workdirectory
      * @param wpsWorkDir
@@ -554,7 +555,7 @@ public class RIOHandler {
 
     /**
      * Streams a file from WPS to Rserve workdirectory
-     * 
+     *
      * @param connection
      *        active RConnecion
      * @param is

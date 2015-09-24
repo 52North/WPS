@@ -277,13 +277,13 @@ public class RAnnotationParser {
                     if (line.isEmpty())
                         continue;
 
-                    LOGGER.debug("Parsing annotation line '{}'", line);
+                    LOGGER.trace("Parsing annotation line '{}'", line);
                     if ( !isCurrentlyParsingAnnotation)
                         // searches for startKey - expressions in a line
                         for (RAnnotationType anot : RAnnotationType.values()) {
                             String startKey = anot.getStartKey().getKey();
                             if (line.contains(startKey)) {
-                                LOGGER.debug("Parsing annotation of type {}", startKey);
+                                LOGGER.trace("Parsing annotation of type {}", startKey);
 
                                 // start parsing an annotation, which might
                                 // spread several lines
@@ -321,7 +321,7 @@ public class RAnnotationParser {
                                         scriptId = (String) newAnnotation.getObjectValue(RAttribute.IDENTIFIER);
                                     }
                                 }
-                                LOGGER.debug("Done parsing annotation {} for script {}", newAnnotation, scriptId);
+                                LOGGER.trace("Done parsing annotation {} for script {}", newAnnotation, scriptId);
                                 annotations.add(newAnnotation);
                             }
                         }
@@ -335,9 +335,8 @@ public class RAnnotationParser {
                 }
             }
 
-            LOGGER.debug("Finished parsing {} annotations from script {}:\n\t\t{}",
+            LOGGER.debug("Finished parsing {} annotations from script (set debug to TRACE to see details):\n\t\t{}",
                          annotations.size(),
-                         inputScript,
                          Arrays.deepToString(annotations.toArray()));
             return annotations;
 
@@ -448,7 +447,7 @@ public class RAnnotationParser {
             R_Resource r_resource = new R_Resource(config.getPublicScriptId(scriptId), resourceValue, defaultVisibility);
             resources.add(r_resource);
 
-            LOGGER.debug("Found new resource in annotation: {}", r_resource);
+            LOGGER.trace("Found new resource in annotation: {}", r_resource);
         }
         return resources;
     }

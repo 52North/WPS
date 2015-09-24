@@ -31,10 +31,10 @@
 			<pattern>%d{ISO8601} [%t] %-5p %c: %m%n</pattern>
 		</encoder>
 	</appender>
-	
+
 	<logger name="org.n52.wps" level="INFO" />
 	<logger name="org.n52.wps.server.WebProcessingService" level="DEBUG" />
-	<logger name="org.n52.wps.server.R" level="DEBUG" />
+	<logger name="org.n52.wps.server.r" level="DEBUG" />
 	<logger name="org.n52.wps.io.datahandler.parser.GeotiffParser" level="DEBUG" />
 	<logger name="org.n52.wps.grid" level="INFO" />
 	<logger name="org.codehaus.xfire.aegis.type" level="OFF" />
@@ -48,7 +48,7 @@
 	<logger name="org.apache.http.headers" level="ERROR" />
 	<logger name="org.springframework" level="INFO" />
 	<!-- log all bean creations -->
-	<logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="DEBUG" />
+	<logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
 
 	<root level="INFO">
 		<appender-ref ref="wpsfile" />
