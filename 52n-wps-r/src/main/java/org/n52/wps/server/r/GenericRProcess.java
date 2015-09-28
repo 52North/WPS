@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -65,28 +64,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
 
-    private static Logger log = LoggerFactory.getLogger(GenericRProcess.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericRProcess.class);
 
     private List<RAnnotation> annotations;
 
-    private R_Config config;
+    private final R_Config config;
 
-    private List<String> errors = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<>();
 
-    private RExecutor executor = new RExecutor();
+    private final RExecutor executor = new RExecutor();
 
-    private RIOHandler iohandler;
+    private final RIOHandler iohandler;
 
     private RAnnotationParser parser;
 
+    private ScriptFileRepository scriptRepo;
+
+    private ResourceFileRepository resourceRepo;
+
     private boolean shutdownRServerAfterRun = false;
-
-    private ScriptFileRepository scriptFileRepository;
-
-    private ResourceFileRepository resourceRepository;
 
     public GenericRProcess(String wellKnownName,
                            R_Config config,
@@ -97,8 +98,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         super(wellKnownName, false);
         this.config = config;
         this.parser = parser;
-        this.scriptFileRepository = scriptRepo;
-        this.resourceRepository = resourceRepo;
+        this.scriptRepo = scriptRepo;
+        this.resourceRepo = resourceRepo;
         this.iohandler = new RIOHandler(dataTypeRegistry);
 
         this.description = initializeDescription();
@@ -110,6 +111,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         return annotations;
     }
 
+    @Override
     public List<String> getErrors() {
         return this.errors;
     }
@@ -132,9 +134,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         // Reading process information from script annotations:
         File scriptFile = null;
         try {
-            scriptFile = scriptFileRepository.getScriptFileForWKN(wkn);
+            scriptFile = scriptRepo.getValidatedScriptFile(wkn);
         }
-        catch (ExceptionReport e) {
+        catch (InvalidRScriptException e) {
             log.warn("Could not load sript file for {}", wkn, e);
             throw new RuntimeException("Error creating process description: " + e.getMessage(), e);
         }
@@ -173,6 +175,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         }
     }
 
+    @Override
     public Map<String, IData> run(Map<String, List<IData>> inputData) throws ExceptionReport {
         log.info("Running {} \n\tInput data: {}", this.toString(), Arrays.toString(inputData.entrySet().toArray()));
 
@@ -186,7 +189,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             RSessionManager session = new RSessionManager(rCon, config);
             session.configureSession(getWellKnownName(), executor);
 
-            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config, resourceRepository);
+            RWorkspaceManager workspace = new RWorkspaceManager(rCon, iohandler, config);
             String originalWorkDir = workspace.prepareWorkspace(inputData, getWellKnownName());
 
             List<RAnnotation> resAnnotList = RAnnotation.filterAnnotations(this.annotations, RAnnotationType.RESOURCE);
@@ -203,9 +206,15 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                 List<R_Resource> importList = (List<R_Resource>) rAnnotation.getObjectValue(RAttribute.NAMED_LIST);
                 for (R_Resource importedScript : importList) {
                     String value = importedScript.getResourceValue();
-                    File f = scriptFileRepository.getImportedFileForWKN(getWellKnownName(), value);
-                    imports.add(f);
-                    log.debug("Got imported file {} based on import resource {}", f, importList);
+                    try {
+                        File f = scriptRepo.getImportedFileForWKN(getWellKnownName(), value);
+                        imports.add(f);
+                        log.debug("Got imported file {} based on import resource {}", f, importList);
+                    }
+                    catch (InvalidRScriptException e) {
+                        log.error("Failed resolving imported script for '{}'", getWellKnownName(), e);
+                        throw new ExceptionReport(e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE);
+                    }
                 }
             }
             session.loadImportedScripts(executor, imports);
@@ -213,8 +222,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
             if (log.isDebugEnabled())
                 workspace.saveImage("preExecution");
 
-            File scriptFile = scriptFileRepository.getScriptFileForWKN(getWellKnownName());
-
+            File scriptFile = scriptRepo.getScriptFile(getWellKnownName());
             boolean success = executor.executeScript(scriptFile, rCon);
             if (log.isDebugEnabled())
                 workspace.saveImage("afterExecution");
@@ -289,16 +297,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         StringBuilder sb = new StringBuilder();
         sb.append("GenericRProcess [wkn = ");
         sb.append(this.wkName);
-        if (this.scriptFileRepository != null) {
+        if (scriptRepo != null) {
             sb.append(", script file = ");
-            try {
-                sb.append(this.scriptFileRepository.getScriptFileForWKN(this.wkName));
-            }
-            catch (ExceptionReport e) {
-                sb.append("Error: '");
-                sb.append(e.getMessage());
-                sb.append("'");
-            }
+            sb.append(scriptRepo.getScriptFileName(this.wkName));
         }
         if (this.annotations != null) {
             sb.append(", annotations = ");

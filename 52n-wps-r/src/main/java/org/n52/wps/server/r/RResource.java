@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -59,18 +58,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.io.Files;
+import java.util.logging.Level;
+import org.n52.wps.server.r.util.InvalidRScriptException;
 
 /**
- * 
+ *
  * A class providing service endpoints to retrieve publicly available resources realted to R script-based
  * algorithms.
- * 
+ *
  * This class also provides URL building as static methods.
- * 
+ *
  * TODO: support multiple output formats (XML, JSON), see e.g.
  * http://springinpractice.com/2012/02/22/supporting
  * -xml-and-json-web-service-endpoints-in-spring-3-1-using-responsebody
- * 
+ *
  * @author Daniel Nüst
  *
  */
@@ -79,7 +80,7 @@ import com.google.common.io.Files;
 public class RResource {
 
     /**
-     * 
+     *
      * @param resource
      * @return a publicly available URL to retrieve the resource
      */
@@ -99,7 +100,7 @@ public class RResource {
     }
 
     /**
-     * 
+     *
      * @param wkn
      *        well-known name for a process
      * @return a publicly available URL to retrieve the process script
@@ -112,7 +113,7 @@ public class RResource {
     }
 
     /**
-     * 
+     *
      * @param wkn
      *        well-known name for a process
      * @return a publicly available URL to retrieve the imported script
@@ -294,12 +295,11 @@ public class RResource {
 
         File f = null;
         try {
-            f = scriptRepo.getScriptFileForWKN(id);
+            f = scriptRepo.validateScriptFile(scriptRepo.getScriptFile(id), id);
             log.trace("Serving script file for id {}: {}", id, f);
-        }
-        catch (ExceptionReport e) {
+        } catch (InvalidRScriptException e) {
             log.debug("Could not get script file for id '{}'", id);
-            throw e;
+            throw new ExceptionReport(e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE);
         }
 
         FileSystemResource fsr = new FileSystemResource(f);
@@ -327,9 +327,9 @@ public class RResource {
             f = scriptRepo.getImportedFileForWKN(scriptId, importId);
             log.trace("Serving imported script file '{}' for id '{}': {}", importId, scriptId, f);
         }
-        catch (ExceptionReport e) {
+        catch (InvalidRScriptException e) {
             log.debug("Could not get  imported script file '{}' for id '{}'", importId, scriptId);
-            throw e;
+            throw new ExceptionReport(e.getMessage(), ExceptionReport.NO_APPLICABLE_CODE);
         }
 
         FileSystemResource fsr = new FileSystemResource(f);

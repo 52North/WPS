@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.syntax;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -128,12 +127,12 @@ public class AnnotationParser {
     @Test
     public void resource() throws RAnnotationException {
         int resourceAnnotationCounter = 0;
-        Collection<String> foundResources = 
+        Collection<String> foundResources =
                 new ArrayList<String>();
         for (RAnnotation rAnnotation : this.annotations) {
             if (rAnnotation.getType().equals(RAnnotationType.RESOURCE)) {
                 resourceAnnotationCounter++;
-                
+
                 ResourceAnnotation resourceAnnotation = (ResourceAnnotation) rAnnotation;
                 Collection<R_Resource> resources = resourceAnnotation.getResources();
 
@@ -143,7 +142,7 @@ public class AnnotationParser {
                 }
             }
         }
-        
+
         assertThat("two resource annotations are found", resourceAnnotationCounter, is(equalTo(2)));
         assertThat("all resources are found",
                    foundResources,
@@ -171,7 +170,7 @@ public class AnnotationParser {
         File scriptFile = Util.loadFile("/uniform.R");
 
         try (FileInputStream fis = new FileInputStream(scriptFile);) {
-            Collection<Object> b = parser.validateScriptWithErrors(fis, "test.id.only");
+            Collection<Exception> b = parser.validateScriptWithErrors(fis, "test.id.only");
             assertThat("error list is empty", b, is(empty()));
         }
     }
@@ -194,7 +193,7 @@ public class AnnotationParser {
         String input = "# wps.d: nothing";
 
         try (InputStream is = IOUtils.toInputStream(input);) {
-            Collection<Object> errors = parser.validateScriptWithErrors(is, "test.id.only");
+            Collection<Exception> errors = parser.validateScriptWithErrors(is, "test.id.only");
             assertThat("error list is not empty", errors, is(not(empty())));
             assertThat("error list contains one message", errors.size(), is(equalTo(1)));
             assertThat("first error elements is an annotation exception",

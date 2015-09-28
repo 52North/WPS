@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -63,7 +62,7 @@ import org.springframework.web.context.ServletContextAware;
 @Scope(value = "singleton")
 public class R_Config implements ServletContextAware {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(R_Config.class);
 
     public static final String SCRIPT_FILE_EXTENSION = "R";
 
@@ -71,64 +70,55 @@ public class R_Config implements ServletContextAware {
 
     private String wknPrefix = "org.n52.wps.server.r.";
 
-    private static final String DEFAULT_RSERVE_HOST = "localhost";
-
-    private static final int DEFAULT_RSERVE_PORT = 6311;
-
-    private static final boolean DEFAULT_ENABLEBATCHSTART = false;
-
     private static final String DIR_DELIMITER = ";";
+
+    private RConfigurationModule configModule;
 
     private ArrayList<File> utilsFiles = null;
 
-    private HashMap<RWPSConfigVariables, String> configVariables = new HashMap<RWPSConfigVariables, String>();
+    private final RConnector connector;
 
-    private RConnector connector;
-
-    private RStarter starter;
+    private final RStarter starter;
 
     private Path baseDir = null;
 
-    private static FileFilter rFileFilter = new RFileExtensionFilter();
+    private static final FileFilter rFileFilter = new RFileExtensionFilter();
 
-    private Map<Path, File> utilFileCache = new HashMap<Path, File>();
+    private final Map<Path, File> utilFileCache = new HashMap<>();
 
     protected R_Config() {
         this.starter = new RStarter();
         this.connector = new RConnector(starter);
+        this.configModule = new RConfigurationModule();
 
         LOGGER.info("NEW {}", this);
     }
 
-    public void setConfigVariable(RWPSConfigVariables key, String value) {
-        this.configVariables.put(key, value);
+    public void setConfigModule(RConfigurationModule configModule) {
+    	this.configModule = configModule;
     }
 
-    public String getConfigVariable(RWPSConfigVariables key) {
-        return this.configVariables.get(key);
+    public RConfigurationModule getConfigModule() {
+        return configModule;
     }
 
-    public String getConfigVariableFullPath(RWPSConfigVariables key) throws ExceptionReport {
-        String path = getConfigVariable(key);
-        if (path == null)
-            throw new ExceptionReport("Config variable '" + key.toString() + "' is not set!",
-                                      "Inconsistent property",
-                                      key.name());
-
-        File file = new File(path);
+   public String resolveFullPath(String pathToResolve) throws ExceptionReport {
+        File file = new File(pathToResolve);
         if ( !file.isAbsolute()) {
-            file = getBaseDir().resolve(Paths.get(path)).toFile();
+            file = getBaseDir().resolve(Paths.get(pathToResolve)).toFile();
         }
-        if ( !file.exists())
-            throw new ExceptionReport("Invalid config property of name \"" + key + "\" and value \"" + path
-                    + "\". It denotes a non-existent path.", "Inconsistent property");
+
+        if ( !file.exists()) {
+            LOGGER.error("'" + pathToResolve + "' denotes a non-existent path.");
+            throw new ExceptionReport("Configuration Error!", "Inconsistent property");
+        }
 
         return file.getAbsolutePath();
     }
 
-    public Collection<Path> getResourceDirectory() {
-        String resourceDirConfigParam = getConfigVariable(RWPSConfigVariables.RESOURCE_DIR);
-        Collection<Path> resourceDirectories = new ArrayList<Path>();
+    public Collection<Path> getResourceDirectories() {
+        String resourceDirConfigParam = configModule.getResourceDirectory();
+        Collection<Path> resourceDirectories = new ArrayList<>();
 
         String[] dirs = resourceDirConfigParam.split(DIR_DELIMITER);
         for (String s : dirs) {
@@ -144,24 +134,25 @@ public class R_Config implements ServletContextAware {
     }
 
     public Collection<File> getScriptFiles() {
-        String scriptDirConfigParam = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
-        Collection<File> scriptDirectories = new ArrayList<File>();
+        String scriptDirConfigParam = getConfigModule().getScriptDirectory();
+        Collection<File> rScripts = new ArrayList<>();
 
         String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
         for (String s : scriptDirs) {
             File dir = new File(s);
-            if ( !dir.isAbsolute())
+            if ( !dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
-
-            scriptDirectories.add(dir);
-            LOGGER.debug("Found script directory: {}", dir);
+            }
+            for (File rScript : dir.listFiles(new RFileExtensionFilter())) {
+                rScripts.add(rScript);
+                LOGGER.debug("Registered script: {}", rScript.getAbsoluteFile());
+            }
         }
-
-        return scriptDirectories;
+        return rScripts;
     }
 
-    public Collection<File> getScriptDir() {
-        String scriptDirConfigParam = getConfigVariable(RWPSConfigVariables.SCRIPT_DIR);
+    public Collection<File> getScriptDirectories() {
+        String scriptDirConfigParam = configModule.getScriptDirectory();
         Collection<File> scriptDirectories = new ArrayList<File>();
 
         String[] scriptDirs = scriptDirConfigParam.split(DIR_DELIMITER);
@@ -182,54 +173,25 @@ public class R_Config implements ServletContextAware {
                                                this.getRServePassword());
     }
 
-    public String getRServePassword() {
-        return getConfigVariable(RWPSConfigVariables.RSERVE_PASSWORD);
+    private String getRServePassword() {
+        return configModule.getrServePassword();
     }
 
-    public String getRServeUser() {
-        return getConfigVariable(RWPSConfigVariables.RSERVE_USER);
+    private String getRServeUser() {
+        return configModule.getRServeUser();
     }
 
-    public int getRServePort() {
-        int port_number = DEFAULT_RSERVE_PORT;
-
-        String port = getConfigVariable(RWPSConfigVariables.RSERVE_PORT);
-        // try to retrieve config variable
-        if (port != null && !port.equals("")) {
-            try {
-                port_number = Integer.parseInt(port);
-            }
-            catch (NumberFormatException e) {
-                LOGGER.warn("Config variable " + RWPSConfigVariables.RSERVE_PORT
-                        + " does not contain a parseble integer. Using default port " + port_number);
-            }
-        }
-        return port_number;
+    private int getRServePort() {
+        String port = configModule.getRServePort();
+        return Integer.parseInt(port);
     }
 
     public String getRServeHost() {
-        String host = getConfigVariable(RWPSConfigVariables.RSERVE_HOST);
-        if (host == null || host.equals("")) {
-            host = DEFAULT_RSERVE_HOST;
-        }
-        return host;
+        return configModule.getRServeHost();
     }
 
     public boolean getEnableBatchStart() {
-        boolean isBatch = DEFAULT_ENABLEBATCHSTART;
-        // try to retrieve config variable
-        String batch_c = getConfigVariable(RWPSConfigVariables.ENABLE_BATCH_START);
-        if (batch_c != null && !batch_c.equals("")) {
-            try {
-                isBatch = Boolean.parseBoolean(batch_c);
-            }
-            catch (NumberFormatException e) {
-                LOGGER.warn("Config variable " + RWPSConfigVariables.RSERVE_PORT
-                        + " does not contain a parseble boolean. Using default port " + isBatch);
-            }
-        }
-
-        return isBatch;
+    	return configModule.isEnableBatchStart();
     }
 
     public URL getProcessDescriptionURL(String processWKN) {
@@ -244,16 +206,15 @@ public class R_Config implements ServletContextAware {
         }
     }
 
-    public boolean getCacheProcesses() {
-        String s = getConfigVariable(RWPSConfigVariables.R_CACHE_PROCESSES);
-        return Boolean.valueOf(s);
+    public boolean isCacheProcesses() {
+        return configModule.isCacheProcesses();
     }
 
     public Collection<File> getUtilsFiles() {
         if (this.utilsFiles == null) {
             this.utilsFiles = new ArrayList<File>();
             Path basedir = getBaseDir();
-            String configVariable = getConfigVariable(RWPSConfigVariables.R_UTILS_DIR);
+            String configVariable = configModule.getRServeUtilsScriptsDirectory();
             if (configVariable != null) {
                 String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
                 for (String s : configVariableDirs) {
@@ -275,7 +236,7 @@ public class R_Config implements ServletContextAware {
     /**
      * given a relative path, this method tries to locate the directory first within the webapp folder, then
      * within the resources directory.
-     * 
+     *
      * @param p
      * @param baseDir
      *        the full path to the webapp directory
@@ -289,7 +250,7 @@ public class R_Config implements ServletContextAware {
                                                      baseDir,
                                                      p));
 
-        ArrayList<File> foundFiles = new ArrayList<File>();
+        ArrayList<File> foundFiles = new ArrayList<>();
         File f = null;
 
         // try resource first
@@ -356,18 +317,18 @@ public class R_Config implements ServletContextAware {
     }
 
     public boolean isResourceDownloadEnabled() {
-        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_RESOURCE_DOWNLOAD));
+        return configModule.isResourceDownloadEnabled();
     }
 
     public boolean isImportDownloadEnabled() {
-        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_IMPORT_DOWNLOAD));
+        return configModule.isImportDownloadEnabled();
     }
 
     public boolean isScriptDownloadEnabled() {
-        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_SCRIPT_DOWNLOAD));
+        return configModule.isScriptDownloadEnabled();
     }
 
     public boolean isSessionInfoLinkEnabled() {
-        return Boolean.parseBoolean(getConfigVariable(RWPSConfigVariables.R_ENABLE_SESSION_INFO_DOWNLOAD));
+        return configModule.isSessionInfoDownloadEnabled();
     }
 }

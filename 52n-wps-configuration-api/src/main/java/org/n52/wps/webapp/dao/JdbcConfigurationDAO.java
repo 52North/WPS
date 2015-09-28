@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -168,16 +169,21 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 	@Override
 	public void insertConfigurationEntryValue(String moduleClassName, String entryKey, Object value) {
-		LOGGER.debug(
-				"Inserting value '{}' for configuration entry '{}' in configuration module '{}' into the database.",
-				value, entryKey, moduleClassName);
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("entry_key", entryKey);
-		parameters.put("configuration_module", moduleClassName);
-		parameters.put("configuration_value", value);
-		namedParameterJdbcTemplate.update(
-				"INSERT INTO configurationentry (entry_key, configuration_module, configuration_value)"
-						+ "VALUES(:entry_key, :configuration_module, :configuration_value)", parameters);
+		try {
+			LOGGER.debug(
+					"Inserting value '{}' for configuration entry '{}' in configuration module '{}' into the database.",
+					value, entryKey, moduleClassName);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put("entry_key", entryKey);
+			parameters.put("configuration_module", moduleClassName);
+			parameters.put("configuration_value", value);
+			namedParameterJdbcTemplate.update(
+					"INSERT INTO configurationentry (entry_key, configuration_module, configuration_value)"
+							+ "VALUES(:entry_key, :configuration_module, :configuration_value)", parameters);
+		} catch (DataAccessException e) {
+			String valueString = value != null ? value.toString() : null;
+			LOGGER.warn("{}: could not insert {}={}", moduleClassName, entryKey, valueString, e);
+		}
 	}
 
 	@Override

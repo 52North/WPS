@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,6 +49,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Assume;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
@@ -101,16 +101,14 @@ public class Wps4rIT {
 
     private static RConnection getNewConnection(String host, int port, String user, String password) throws RserveException {
         RConnection con = new RConnection(host, port);
-        if (con != null && con.needLogin())
+        if (con.needLogin())
             con.login(user, password);
 
         return con;
     }
 
-    /*
-     * DN: test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.
-     */
-    // @Test
+    @Test
+    @Ignore("test disabled, sessionInfo.jsp was deleted, service endpoint must be implemented.")
     public void sessionInfoRetrievedFromWPSWebsite() throws MalformedURLException {
         String temp = wpsUrl.substring(0, wpsUrl.lastIndexOf("/"));
         URL urlSessionInfo = new URL(temp + "/rsessioninfoendpoint");

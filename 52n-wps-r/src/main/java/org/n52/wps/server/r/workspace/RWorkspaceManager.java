@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.workspace;
 
 import java.io.File;
@@ -45,7 +44,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.FilteredRConnection;
 import org.n52.wps.server.r.RConstants;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.ResourceFileRepository;
@@ -62,6 +60,7 @@ import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
@@ -87,18 +86,17 @@ public class RWorkspaceManager {
 
     private RWorkspace workspace;
 
-    private ResourceFileRepository fileRepo;
+    @Autowired
+    private ResourceFileRepository resourceRepo;
 
     public RWorkspaceManager(FilteredRConnection connection,
                              RIOHandler iohandler,
-                             R_Config config,
-                             ResourceFileRepository fileRepo) {
+                             R_Config config) {
         this.connection = connection;
         this.workspace = new RWorkspace(config.getBaseDir());
         this.executor = new RExecutor();
         this.iohandler = iohandler;
         this.config = config;
-        this.fileRepo = fileRepo;
 
         log.debug("NEW {}", this);
     }
@@ -320,7 +318,7 @@ public class RWorkspaceManager {
                 }
 
                 // File resourceFile = resource.getFullResourcePath(this.config);
-                File resourceFile = fileRepo.getResource(resource).toFile();
+                File resourceFile = resourceRepo.getResource(resource).toFile();
                 if (resourceFile == null || !resourceFile.exists()) {
                     throw new ExceptionReport("Resource does not exist: " + resourceAnnotation,
                                               ExceptionReport.NO_APPLICABLE_CODE);
@@ -355,16 +353,15 @@ public class RWorkspaceManager {
         String originalWD = connection.eval("getwd()").asString();
 
         // Set R working directory according to configuration
-        String strategy = this.config.getConfigVariable(RWPSConfigVariables.R_WORK_DIR_STRATEGY);
+        String strategy = config.getConfigModule().getWdStrategy();
         boolean isRserveOnLocalhost = this.config.getRServeHost().equalsIgnoreCase("localhost");
         String workDirNameSetting = null;
 
         try {
-            workDirNameSetting = this.config.getConfigVariableFullPath(RWPSConfigVariables.R_WORK_DIR_NAME);
+            workDirNameSetting = config.resolveFullPath(config.getConfigModule().getWdName());
         }
         catch (ExceptionReport e) {
-            log.error("The config variable {} references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
-                      RWPSConfigVariables.R_WORK_DIR_NAME,
+            log.error("R Working directory references a non-existing directory. This will be an issue if the variable is used. The current strategy is '{}'.",
                       strategy,
                       e);
             throw e;

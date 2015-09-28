@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -92,7 +92,7 @@ public class MetadataAnnotation {
         ReflectionTestUtils.setField(sr, "annotationParser", parser);
         ReflectionTestUtils.setField(sr, "config", mockR_Config);
 
-        sr.registerScripts(Util.loadFile(scriptDir));
+        sr.registerScriptFiles(Util.loadFile(scriptDir));
         repo = new LocalRAlgorithmRepository();
         ReflectionTestUtils.setField(repo, "scriptRepo", sr);
         ReflectionTestUtils.setField(repo, "parser", parser);
@@ -130,19 +130,19 @@ public class MetadataAnnotation {
 
     @Test
     public void missingTitleGivesError() throws IOException, RAnnotationException, ExceptionReport {
-        boolean scriptValid = sr.isScriptValid(mockR_Config.getWknPrefix() + "invalid-title");
+        boolean scriptValid = sr.isValidScriptFile(mockR_Config.getWknPrefix() + "invalid-title");
         assertThat("repo says script is invalid", scriptValid, is(equalTo(false)));
     }
 
     @Test
     public void missingHrefGivesError() throws IOException, RAnnotationException, ExceptionReport {
-        boolean scriptValid = sr.isScriptValid(mockR_Config.getWknPrefix() + "invalid-href");
+        boolean scriptValid = sr.isValidScriptFile(mockR_Config.getWknPrefix() + "invalid-href");
         assertThat("repo says script is invalid", scriptValid, is(equalTo(false)));
     }
 
     @Test
     public void malformedHrefGivesError() throws IOException, RAnnotationException, ExceptionReport {
-        boolean scriptValid = sr.isScriptValid(mockR_Config.getWknPrefix() + "invalid-href-url");
+        boolean scriptValid = sr.isValidScriptFile(mockR_Config.getWknPrefix() + "invalid-href-url");
         assertThat("repo says script is invalid", scriptValid, is(equalTo(false)));
     }
 

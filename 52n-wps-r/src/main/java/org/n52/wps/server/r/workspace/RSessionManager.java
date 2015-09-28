@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.workspace;
 
 import java.io.ByteArrayInputStream;
@@ -46,7 +45,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.RResource;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.R_Resource;
@@ -116,7 +114,7 @@ public class RSessionManager {
         // configure memory limit
         StringBuilder cmd = new StringBuilder();
 
-        String memoryLimit = config.getConfigVariable(RWPSConfigVariables.R_SESSION_MEMORY_LIMIT);
+        String memoryLimit = config.getConfigModule().getSessionMemoryLimit();
         cmd.append("memory.limit(");
         cmd.append(memoryLimit);
         cmd.append(")");

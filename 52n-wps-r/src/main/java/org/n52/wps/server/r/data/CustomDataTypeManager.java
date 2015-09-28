@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.data;
 
 import java.io.BufferedReader;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RWPSConfigVariables;
 import org.n52.wps.server.r.R_Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +80,7 @@ public class CustomDataTypeManager {
     }
 
     private void readConfig() throws IOException, ExceptionReport {
-        String file = config.getConfigVariableFullPath(RWPSConfigVariables.R_DATATYPE_CONFIG);
+        String file = config.resolveFullPath(config.getConfigModule().getDatatypeConfig());
         this.configFile = new File(file);
         if (getConfigFile() == null) {
             LOGGER.error("Config file not availailable at '{}'. Costum R data types cannot be registered.", file);
