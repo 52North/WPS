@@ -108,7 +108,7 @@
 						</c:forEach>
 
 						<%-- Save button --%>
-						<c:if test="${not empty configurationModule.value.configurationEntries}.">
+						<c:if test="${not empty configurationModule.value.configurationEntries}">
 							<div class="form-group">
 								<div class="col-lg-offset-3 col-lg-8">
 									<button type="submit" class="btn btn-primary">Save</button>
