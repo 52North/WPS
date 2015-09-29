@@ -233,11 +233,24 @@ public class RepositoryManager implements ApplicationContextAware {
 		return false;
 	}
 
-    public boolean addAlgorithm(Object algorithm) {
+    /**
+     * Adds given algorithm item to the first (transactional) repository which
+     * {@link ITransactionalAlgorithmRepository#addAlgorithm(java.lang.Object)}
+     * returns <code>true</code>, whereas the implementation has to take care if
+     * it is capabable to handle giving item correctly.
+     *
+     * // XXX repo-implementations expect mostly a simple string which is certainly
+     *    not enough info to determine if repo is capable for the given item
+     * // TODO item should contain more infos for repositories to decide
+     *
+     * @param item the algorithm item to add.
+     * @return <code>true</code> if item could be added, <code>false</code> otherwise.
+     */
+    public boolean addAlgorithm(Object item) {
         for (IAlgorithmRepository repository : repositories.values()) {
             if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
                 ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
-                if (transactionalRepository.addAlgorithm(algorithm)) {
+                if (transactionalRepository.addAlgorithm(item)) {
                     return true;
                 }
             }

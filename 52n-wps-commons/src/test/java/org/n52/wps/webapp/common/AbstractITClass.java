@@ -29,9 +29,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml",
-		"classpath:dispatcher-servlet.xml"})
-@WebAppConfiguration
+@ContextConfiguration(locations = {"classpath*:applicationContext.xml",
+		"classpath*:dispatcher-servlet.xml"})
+@WebAppConfiguration(value = "src/test/webapp")
 @ActiveProfiles("test")
 public class AbstractITClass {
 	@Autowired

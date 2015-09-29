@@ -35,8 +35,8 @@ import org.springframework.web.context.WebApplicationContext;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml",
-		"classpath:dispatcher-servlet.xml"})
+@ContextConfiguration(locations = {"classpath*:applicationContext.xml",
+		"classpath*:dispatcher-servlet.xml"})
 @WebAppConfiguration
 @ActiveProfiles("controller-test")
 public class AbstractITClassForControllerTests {

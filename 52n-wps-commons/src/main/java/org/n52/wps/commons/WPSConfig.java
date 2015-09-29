@@ -39,6 +39,7 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.entities.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -77,8 +78,9 @@ public class WPSConfig implements Serializable {
 
 	public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
 
+    @Autowired // allow tests autowiring cm
 	private ConfigurationManager configurationManager;
-    
+
     private Server serverConfigurationModule;
 
 	public Server getServerConfigurationModule() {

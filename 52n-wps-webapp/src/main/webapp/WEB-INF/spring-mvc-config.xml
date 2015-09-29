@@ -12,11 +12,10 @@
 	<mvc:annotation-driven />
 	<mvc:resources mapping="/resources/**" location="/resources/" />
 	<mvc:resources mapping="/testData/**" location="/testData/" />
+
 	<mvc:view-controller path="/" view-name="index" />
 
 	<bean id="webProcessingServiceController" class="org.n52.wps.server.WebProcessingServiceController" init-method="init" destroy-method="destroy"/>
-
-<!-- 	<bean id="jdbcConfigurationDao" class="org.n52.wps.webapp.dao.JdbcConfigurationDAO" init-method="init"/> -->
 
 	<!-- Apache Tiles 3 -->
 	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
