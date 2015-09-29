@@ -114,8 +114,7 @@ public class RepositoryManager implements ApplicationContextAware {
 		return repositoryNames;
 	}
 
-    private void loadAllRepositories(){
-        repositories = new HashMap<String, IAlgorithmRepository>();
+    protected void loadAllRepositories(){
         LOGGER.debug("Loading all repositories: {} (doing a gc beforehand...)", repositories);//FIXME not sure log statement makes a lot of sense
 
         System.gc();
@@ -148,7 +147,7 @@ public class RepositoryManager implements ApplicationContextAware {
         String repositoryClassName = configModule.getClassName();
         try {
             // XXX configModuleName != COMPONENT_NAME of LocalRAlgorithmRepository
-            repositories.put(repositoryClassName, applicationContext.getBean(configModuleName, IAlgorithmRepository.class));
+            addRepository(repositoryClassName, applicationContext.getBean(configModuleName, IAlgorithmRepository.class));
         } catch (NoSuchBeanDefinitionException e) {
             LOGGER.info("Hard wiring '{}' for module '{}'.", repositoryClassName, configModuleName);
             registerNewRepository(repositoryClassName);
@@ -165,8 +164,7 @@ public class RepositoryManager implements ApplicationContextAware {
 			IAlgorithmRepository algorithmRepository = (IAlgorithmRepository) repositoryClass
 					.newInstance();
 
-			LOGGER.info("Algorithm Repository {} initialized", repositoryClassName);
-			repositories.put(repositoryClassName, algorithmRepository);
+			addRepository(repositoryClassName, algorithmRepository);
 		} catch (InstantiationException | IllegalAccessException e) {
 			LOGGER.warn(
 					"An error occured while registering AlgorithmRepository: {}",
@@ -176,6 +174,11 @@ public class RepositoryManager implements ApplicationContextAware {
 					"An error occured while registering AlgorithmRepository: {}",
 					repositoryClassName, e);
 		}
+    }
+
+    protected void addRepository(String name, IAlgorithmRepository repository) {
+        repositories.put(name, repository);
+        LOGGER.info("Algorithm Repository {} registered", name);
     }
 
 	/**
@@ -208,7 +211,7 @@ public class RepositoryManager implements ApplicationContextAware {
 
 	/**
 	 *
-	 * @return allAlgorithms
+	 * @return all algorithms
 	 */
 	public List<String> getAlgorithms(){
 		List<String> allAlgorithmNamesCollection = new ArrayList<String>();
@@ -230,6 +233,18 @@ public class RepositoryManager implements ApplicationContextAware {
 		return false;
 	}
 
+    public boolean addAlgorithm(Object algorithm) {
+        for (IAlgorithmRepository repository : repositories.values()) {
+            if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
+                ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
+                if (transactionalRepository.addAlgorithm(algorithm)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 	public IAlgorithmRepository getRepositoryForAlgorithm(String algorithmName){
 		for (String repositoryClassName : getRepositoryNames()) {
 			IAlgorithmRepository repository = repositories.get(repositoryClassName);
@@ -243,13 +258,11 @@ public class RepositoryManager implements ApplicationContextAware {
 	public Class<?> getInputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getInputDataType(inputIdentifier);
-
 	}
 
 	public Class<?> getOutputDataTypeForAlgorithm(String algorithmIdentifier, String inputIdentifier){
 		IAlgorithm algorithm = getAlgorithm(algorithmIdentifier);
 		return algorithm.getOutputDataType(inputIdentifier);
-
 	}
 
 	public boolean registerAlgorithm(String id, IAlgorithmRepository repository){
