@@ -28,6 +28,7 @@
  */
 package org.n52.wps.server.r;
 
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -218,8 +219,7 @@ public class R_Config implements ServletContextAware {
             if (configVariable != null) {
                 String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
                 for (String s : configVariableDirs) {
-                    Path dir = Paths.get(s);
-                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
+                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(s, basedir);
                     this.utilsFiles.addAll(files);
                     LOGGER.debug("Added {} files to the list of util files: {}",
                                  files.size(),
@@ -242,9 +242,10 @@ public class R_Config implements ServletContextAware {
      *        the full path to the webapp directory
      * @return
      */
-    private Collection<File> resolveFilesFromResourcesOrFromWebapp(Path p, Path baseDir) {
-        LOGGER.debug("Loading util files from {}", p);
+    private Collection<File> resolveFilesFromResourcesOrFromWebapp(String s, Path baseDir) {
+        LOGGER.debug("Loading util files from {}", s);
 
+        Path p = Paths.get(s);
         if ( !baseDir.isAbsolute())
             throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
                                                      baseDir,
@@ -254,7 +255,9 @@ public class R_Config implements ServletContextAware {
         File f = null;
 
         // try resource first
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(p.toString());) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(s);) {
+        //URL url = Resources.getResource(p.toString());
+        //try (InputStream input = Resources.asByteSource(url).openStream();) {
             if (input != null) {
                 if (this.utilFileCache.containsKey(p) && this.utilFileCache.get(p).exists()) {
                     f = this.utilFileCache.get(p);

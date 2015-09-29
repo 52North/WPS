@@ -107,8 +107,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Autowired
     private ResourceFileRepository resourceRepo;
 
-    @Autowired
-    private CustomDataTypeManager customDataTypes;
+    // needed to autowire before script registration starts
+    @Autowired private CustomDataTypeManager customDataTypes;
 
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
