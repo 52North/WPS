@@ -29,6 +29,7 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,9 +63,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.util.InvalidRScriptException;
-import org.n52.wps.util.SpringIntegrationHelper;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import org.springframework.context.annotation.DependsOn;
 
 /**
@@ -120,6 +124,10 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @PostConstruct
     public void init() {
         LOGGER.info("Initializing Local*R*ConfigurationModule..");
+
+         // TODO tests expect a configuration manager injected here
+        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
+        
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
@@ -187,12 +195,32 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     }
 
     @Override
-    public boolean addAlgorithm(Object processID) {
-        if ( !(processID instanceof String)) {
-            LOGGER.error("Unsupported process id {} of class {}", processID, processID.getClass());
+    public boolean addAlgorithm(Object item) {
+        if (item instanceof File) {
+            return initializeRProcess((File) item);
+        } else if (item instanceof String) {
+            return initializeRProcess((String) item);
+        } else {
+            LOGGER.error("Unsupported process id {} of class {}", item, item.getClass());
             return false;
         }
-        return initializeRProcess((String) processID);
+    }
+
+    private boolean initializeRProcess(File file) {
+        String extension = FilenameUtils.getExtension(file.getName());
+        if ( !"R".equalsIgnoreCase(extension)) {
+            return false;
+        } else {
+            boolean success = true;
+            try {
+                success &= scriptRepo.registerScriptFile(file);
+                scriptRepo.getWKNForScriptFile(file);
+                return success;
+            } catch (RAnnotationException | IOException | ExceptionReport e) {
+                LOGGER.error("Could not initialize R process.", e);
+            }
+        }
+        return false;
     }
 
     private boolean initializeRProcess(String processName) {

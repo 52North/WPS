@@ -53,10 +53,10 @@ public class ConfigurationManagerImpl implements ConfigurationManager {
 
 	@Autowired
 	private LogConfigurationsService logConfigurationsService;
-	
+
 	@Autowired
 	private BackupService backupService;
-	
+
 	@Override
 	public ConfigurationService getConfigurationServices() {
 		return configurationService;

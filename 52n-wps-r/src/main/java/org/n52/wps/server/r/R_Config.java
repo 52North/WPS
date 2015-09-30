@@ -34,6 +34,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -144,7 +145,12 @@ public class R_Config implements ServletContextAware {
             if ( !dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
             }
-            for (File rScript : dir.listFiles(new RFileExtensionFilter())) {
+            File[] files = dir.listFiles(new RFileExtensionFilter());
+            if (files == null) {
+                LOGGER.info("Configured script dir does not exist: {}", dir);
+                continue;
+            }
+            for (File rScript : files) {
                 rScripts.add(rScript);
                 LOGGER.debug("Registered script: {}", rScript.getAbsoluteFile());
             }
@@ -299,12 +305,24 @@ public class R_Config implements ServletContextAware {
     }
 
     public Path getBaseDir() {
-        return this.baseDir;
+//        return baseDir;
+        try {
+            return this.baseDir == null
+                    ? Paths.get(getClass().getResource("/").toURI())
+                    : baseDir;
+        } catch (URISyntaxException e) {
+            LOGGER.error("Could not determine fallback base dir!", e);
+            return Paths.get(""); // empty path
+        }
+    }
+
+    protected void setBaseDir(Path baseDir) {
+        this.baseDir = baseDir;
     }
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        this.baseDir = Paths.get(servletContext.getRealPath(""));
+        setBaseDir(Paths.get(servletContext.getRealPath("")));
     }
 
     public String getPublicScriptId(String s) {

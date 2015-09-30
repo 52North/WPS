@@ -57,7 +57,7 @@ public class RepositoryManager implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private Map<String, IAlgorithmRepository> repositories = new HashMap<>();
+    protected Map<String, IAlgorithmRepository> repositories = new HashMap<>();
 
     private ProcessIDRegistry globalProcessIDs = ProcessIDRegistry.getInstance();
 

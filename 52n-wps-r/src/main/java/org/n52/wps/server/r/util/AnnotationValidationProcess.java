@@ -28,7 +28,7 @@
  */
 package org.n52.wps.server.r.util;
 
-import org.n52.wps.util.SpringIntegrationHelper;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
