@@ -154,7 +154,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 
 	@Override
 	public String getClassName() {
-		return LocalRAlgorithmRepository.class.getName();
+		return RAlgorithmRepository.class.getName();
 	}
 
 	public boolean isEnableBatchStart() {

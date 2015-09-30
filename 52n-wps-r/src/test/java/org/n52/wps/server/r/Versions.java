@@ -73,7 +73,7 @@ public class Versions {
 
     private static final String scriptDirSpread = "/versions/multiple-spread";
 
-    private static LocalRAlgorithmRepository repo;
+    private static RAlgorithmRepository repo;
 
     private static final String scriptId = "version";
 
@@ -96,7 +96,7 @@ public class Versions {
         ReflectionTestUtils.setField(sr, "annotationParser", parser);
         ReflectionTestUtils.setField(sr, "config", mockR_Config);
 
-        repo = new LocalRAlgorithmRepository();
+        repo = new RAlgorithmRepository();
         ReflectionTestUtils.setField(repo, "scriptRepo", sr);
         ReflectionTestUtils.setField(repo, "parser", parser);
         ReflectionTestUtils.setField(repo, "config", mockR_Config);

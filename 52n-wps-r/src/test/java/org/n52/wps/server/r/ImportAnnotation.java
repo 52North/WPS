@@ -72,7 +72,7 @@ public class ImportAnnotation {
 
     private static String scriptDir = "/annotations/import";
 
-    private static LocalRAlgorithmRepository openRepo;
+    private static RAlgorithmRepository openRepo;
 
     private static String scriptId = "import";
 
@@ -80,7 +80,7 @@ public class ImportAnnotation {
 
     private static R_Config closedMockR_Config;
 
-    private static LocalRAlgorithmRepository closedRepo;
+    private static RAlgorithmRepository closedRepo;
 
     @BeforeClass
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
@@ -118,14 +118,14 @@ public class ImportAnnotation {
 
         ResourceFileRepository rr = new ResourceFileRepository();
 
-        openRepo = new LocalRAlgorithmRepository();
+        openRepo = new RAlgorithmRepository();
         ReflectionTestUtils.setField(openRepo, "config", openMockR_Config);
         ReflectionTestUtils.setField(openRepo, "scriptRepo", sr);
         ReflectionTestUtils.setField(openRepo, "resourceRepo", rr);
         ReflectionTestUtils.setField(openRepo, "parser", parser);
         openRepo.addAlgorithm(openMockR_Config.getWknPrefix() + scriptId);
 
-        closedRepo = new LocalRAlgorithmRepository();
+        closedRepo = new RAlgorithmRepository();
         ReflectionTestUtils.setField(closedRepo, "config", closedMockR_Config);
         ReflectionTestUtils.setField(closedRepo, "scriptRepo", sr);
         ReflectionTestUtils.setField(closedRepo, "resourceRepo", rr);

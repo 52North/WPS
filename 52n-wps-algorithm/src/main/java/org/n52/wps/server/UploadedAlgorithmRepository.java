@@ -18,6 +18,7 @@ package org.n52.wps.server;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,9 +38,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A static repository to retrieve the available algorithms.
- * 
+ *
  * @author foerster, Bastian Schaeffer, University of Muenster
- * 
+ *
  */
 public class UploadedAlgorithmRepository implements
 		ITransactionalAlgorithmRepository {
@@ -52,13 +53,13 @@ public class UploadedAlgorithmRepository implements
 	public UploadedAlgorithmRepository() {
 		algorithmMap = new HashMap<String, String>();
 		processDescriptionMap = new HashMap<String, ProcessDescription>();
-		
+
 		ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-		
+
 		// check if the repository is active
 		if(uploadedAlgorithmRepoConfigModule.isActive()){
-			List<AlgorithmEntry> algorithmEntries = uploadedAlgorithmRepoConfigModule.getAlgorithmEntries();			
-			
+			List<AlgorithmEntry> algorithmEntries = uploadedAlgorithmRepoConfigModule.getAlgorithmEntries();
+
 			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
 				if(algorithmEntry.isActive()){
 					addAlgorithm(algorithmEntry.getAlgorithm());
@@ -111,7 +112,7 @@ public class UploadedAlgorithmRepository implements
 
 	private IAlgorithm loadAlgorithm(String algorithmClassName)
 			throws Exception {
-		
+
 		Class<?> algorithmClass = new CustomClassLoader("/uploaded").loadClass(algorithmClassName);
 		IAlgorithm algorithm = null;
 		if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
@@ -126,10 +127,10 @@ public class UploadedAlgorithmRepository implements
 							+ algorithmClassName
 							+ " does not implement IAlgorithm or have a Algorithm annotation.");
 		}
-		
-		
+
+
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
-            
+
     		if(!algorithm.processDescriptionIsValid(supportedVersion)) {
     			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
     			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
@@ -138,11 +139,19 @@ public class UploadedAlgorithmRepository implements
 		return algorithm;
 	}
 
-	public boolean addAlgorithm(Object processID) {
-		if (!(processID instanceof String)) {
+    @Override
+	public boolean addAlgorithm(Object item) {
+		if ( !(item instanceof String || item instanceof Class<?>)) {
 			return false;
 		}
-		String algorithmClassName = (String) processID;
+        String algorithmClassName;
+        if (item instanceof String) {
+            algorithmClassName = (String) item;
+        } else {
+            // TODO to be tested as custom class loader is being used
+            // which scans in /uploaded folder only
+            algorithmClassName = ((Class<?>) item).getName();
+        }
 
 		algorithmMap.put(algorithmClassName, algorithmClassName);
 		LOGGER.info("Algorithm class registered: " + algorithmClassName);
@@ -173,5 +182,5 @@ public class UploadedAlgorithmRepository implements
 
 	@Override
 	public void shutdown() {}
-	
+
 }

@@ -48,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class RRepositoryTest extends AbstractITClass {
 
     @Autowired
-    private LocalRAlgorithmRepository rRepository;
+    private RAlgorithmRepository rRepository;
 
     @Mock
     private ITransactionalAlgorithmRepository tRepo;

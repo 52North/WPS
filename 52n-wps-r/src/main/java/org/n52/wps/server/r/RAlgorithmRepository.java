@@ -77,10 +77,10 @@ import org.springframework.context.annotation.DependsOn;
  * @author Matthias Hinz, Daniel Nüst
  *
  */
-@Component(LocalRAlgorithmRepository.COMPONENT_NAME)
-public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
+@Component(RAlgorithmRepository.COMPONENT_NAME)
+public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RAlgorithmRepository.class);
 
     /*
      * instantiation is managed by IoC container (spring) and the RepositoryManager only
@@ -117,7 +117,7 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
 
-    public LocalRAlgorithmRepository() {
+    public RAlgorithmRepository() {
         LOGGER.info("NEW {}", this);
     }
 

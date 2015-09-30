@@ -69,7 +69,7 @@ public class MetadataAnnotation {
 
     private static String scriptDir = "/annotations/metadata";
 
-    private static LocalRAlgorithmRepository repo;
+    private static RAlgorithmRepository repo;
 
     private static String scriptId = "metadata";
 
@@ -93,7 +93,7 @@ public class MetadataAnnotation {
         ReflectionTestUtils.setField(sr, "config", mockR_Config);
 
         sr.registerScriptFiles(Util.loadFile(scriptDir));
-        repo = new LocalRAlgorithmRepository();
+        repo = new RAlgorithmRepository();
         ReflectionTestUtils.setField(repo, "scriptRepo", sr);
         ReflectionTestUtils.setField(repo, "parser", parser);
         ReflectionTestUtils.setField(repo, "config", mockR_Config);
