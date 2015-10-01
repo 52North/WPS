@@ -84,7 +84,13 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-configuration-api</artifactId>
 		</dependency>
-        
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>52n-wps-git-algorithm-repository</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
