@@ -28,42 +28,47 @@
  */
 package org.n52.wps.server.r;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.apache.xmlbeans.XmlException;
-import org.junit.BeforeClass;
+import java.io.File;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.syntax.RAnnotationException;
-
+import org.n52.wps.webapp.common.AbstractITClass;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
- * 
- * @author Daniel
  *
+ * @author <a href="mailto:h.bredel@52north.org">Henning Bredel</a>
  */
-public class ServerResource {
+public class TransactionalRRepositoryTest extends AbstractITClass {
 
-    private String wkn = "wkn.42";
+    @Autowired
+    private RAlgorithmRepository rRepository;
 
-    @BeforeClass
-    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
-        Util.mockGenericWPSConfig();
+    @Autowired
+    private ScriptFileRepository scriptRepo;
+
+    @Test
+    public void falseWhenAddingNonExistingScript() {
+        Assert.assertFalse(rRepository.addAlgorithm(new File("does-not-exist.R")));
     }
 
     @Test
-    public void scriptUrlIsGenerated() throws RAnnotationException, ExceptionReport, MalformedURLException {
-        URL scriptURL = RResource.getScriptURL(wkn);
-
-        String expectedUrl = "http://" + Util.testserver.getHostname() + ":" + Util.testserver.getHostport() + "/"
-                + Util.testserver.getWebappPath() + RResource.R_ENDPOINT + RResource.SCRIPT_PATH + "/" + wkn;
-        assertThat("script url is correct", scriptURL.toString(), is(equalTo(expectedUrl)));
+    public void falseWhenAddingInvalidScript() {
+        Assert.assertFalse(rRepository.addAlgorithm(new File("just-two-kittens.R")));
     }
+
+    @Test
+    public void trueWhenAddingValidScript() {
+        final File file = TestUtil.loadFile("/uniform.R");
+        Assert.assertTrue(rRepository.addAlgorithm(file));
+    }
+
+    @Test
+    @Ignore("TODO Not implemented yet")
+    public void trueRemovingKnownScript() {
+        final File file = TestUtil.loadFile("/uniform.R");
+        Assert.assertTrue(rRepository.removeAlgorithm(file));
+        Assert.assertFalse(scriptRepo.isRegisteredScriptFile(file));
+    }
+
 
 }

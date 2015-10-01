@@ -64,7 +64,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
 
-public class DescriptionCreator {
+public class DescriptionCreatorTest {
 
     private static R_Config config;
     private List<RAnnotation> annotations;
@@ -73,12 +73,12 @@ public class DescriptionCreator {
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
         config = new R_Config();
-        Util.mockGenericWPSConfig();
+        TestUtil.mockGenericWPSConfig();
     }
 
     @Before
     public void loadAnnotations() throws IOException, RAnnotationException {
-        File scriptFile = Util.loadFile("/uniform.R");
+        File scriptFile = TestUtil.loadFile("/uniform.R");
 
         // GenericRProcess process = new GenericRProcess("R_andom");
         FileInputStream fis = new FileInputStream(scriptFile);
@@ -93,7 +93,7 @@ public class DescriptionCreator {
 
     @Test
     public void uniform() throws ExceptionReport, RAnnotationException, IOException, XmlException {
-        File descriptionFile = Util.loadFile("/uniform.xml");
+        File descriptionFile = TestUtil.loadFile("/uniform.xml");
 
         RProcessDescriptionCreator creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform",
                                                                             true,

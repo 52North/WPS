@@ -53,14 +53,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author Daniel Nüst
  *
  */
-public class ScriptFileRepo {
+public class ScriptFileRepoTest {
 
     private static R_Config config;
 
@@ -92,7 +96,7 @@ public class ScriptFileRepo {
 
     public String prepareMissingScriptFile() throws IOException, RAnnotationException, ExceptionReport {
         File temp = File.createTempFile("wps4rIT_", ".R");
-        Files.copy(Util.loadFile(scriptFile), temp);
+        Files.copy(TestUtil.loadFile(scriptFile), temp);
 
         boolean b = sr.registerScriptFile(temp);
         String missingWkn = sr.getWKNForScriptFile(temp);
@@ -104,7 +108,7 @@ public class ScriptFileRepo {
 
     @Test
     public void scriptIsStored() throws URISyntaxException, RAnnotationException, InvalidRScriptException, ExceptionReport, IOException {
-        File f = Util.loadFile(scriptFile);
+        File f = TestUtil.loadFile(scriptFile);
 
         boolean registerScript = sr.registerScriptFile(f);
         assertThat("script is registered", registerScript, is(equalTo(true)));
@@ -120,20 +124,20 @@ public class ScriptFileRepo {
 
     @Test
     public void registrationReturnValue() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
-        File f = Util.loadFile(scriptFile);
+        File f = TestUtil.loadFile(scriptFile);
         assertThat("registration method response is true", sr.registerScriptFile(f), is(equalTo(true)));
     }
 
     @Test
     public void wkn() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
-        File f = Util.loadFile(scriptFile);
+        File f = TestUtil.loadFile(scriptFile);
         sr.registerScriptFile(f);
         assertThat("script wkn is correct", sr.getWKNForScriptFile(f), is(equalTo(expectedWKN)));
     }
 
     @Test
     public void doubleRegistration() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
-        File f = Util.loadFile(scriptFile);
+        File f = TestUtil.loadFile(scriptFile);
         assertThat("first register call returns true", sr.registerScriptFile(f), is(equalTo(true)));
         assertThat("second register call returns false", sr.registerScriptFile(f), is(equalTo(false)));
     }
@@ -165,7 +169,7 @@ public class ScriptFileRepo {
 
     @Test
     public void importedScriptIsFound() throws IOException, RAnnotationException, ExceptionReport, InvalidRScriptException {
-        sr.registerScriptFile(Util.loadFile("/annotations/import/script.R"));
+        assertTrue(sr.registerScriptFile(TestUtil.loadFile("/annotations/import/script.R")));
 
         File file = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "imported.R");
         File fileInSubdir = sr.getImportedFileForWKN(config.getPublicScriptId("import"), "dir/alsoImported.R");
@@ -178,13 +182,13 @@ public class ScriptFileRepo {
 
     @Test
     public void errorOnSameIdentifier() throws FileNotFoundException, RAnnotationException, IOException, ExceptionReport {
-        boolean registered = sr.registerScriptFiles(Util.loadFile("/annotations/identifier"));
+        boolean registered = sr.registerScriptFiles(TestUtil.loadFile("/annotations/identifier"));
         assertThat("not all scripts registered", registered, is(equalTo(false)));
 
         thrown.expect(ExceptionReport.class);
         thrown.expectMessage(Matchers.containsString("Conflicting identifier"));
         thrown.expectMessage(Matchers.containsString("notunique"));
-        sr.registerScriptFile(Util.loadFile("/annotations/identifier/script2.R"));
+        sr.registerScriptFile(TestUtil.loadFile("/annotations/identifier/script2.R"));
     }
 
 }

@@ -126,8 +126,8 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
         LOGGER.info("Initializing Local*R*ConfigurationModule..");
 
          // TODO tests expect a configuration manager injected here
-        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
-        
+//        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
+
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
@@ -196,29 +196,38 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     @Override
     public boolean addAlgorithm(Object item) {
+        if ( !canHandleItem(item)) {
+            LOGGER.debug("Ignore unsupported item '{}' of class '{}'", item, item.getClass());
+            return false;
+        }
+
         if (item instanceof File) {
             return initializeRProcess((File) item);
-        } else if (item instanceof String) {
-            return initializeRProcess((String) item);
         } else {
-            LOGGER.error("Unsupported process id {} of class {}", item, item.getClass());
-            return false;
+            return initializeRProcess((String) item);
         }
     }
 
+    private boolean canHandleItem(Object item) {
+        if (item instanceof String) {
+            return true;
+        }
+        if (item instanceof File) {
+            File file = (File) item;
+            String extension = FilenameUtils.getExtension(file.getName());
+            return "R".equalsIgnoreCase(extension);
+        }
+        return false;
+    }
+
     private boolean initializeRProcess(File file) {
-        String extension = FilenameUtils.getExtension(file.getName());
-        if ( !"R".equalsIgnoreCase(extension)) {
-            return false;
-        } else {
-            boolean success = true;
-            try {
-                success &= scriptRepo.registerScriptFile(file);
-                scriptRepo.getWKNForScriptFile(file);
-                return success;
-            } catch (RAnnotationException | IOException | ExceptionReport e) {
-                LOGGER.error("Could not initialize R process.", e);
-            }
+        boolean success = true;
+        try {
+            success &= scriptRepo.registerScriptFile(file);
+            scriptRepo.getWKNForScriptFile(file);
+            return success;
+        } catch (RAnnotationException | IOException | ExceptionReport e) {
+            LOGGER.error("Could not initialize R process.", e);
         }
         return false;
     }
@@ -374,17 +383,25 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     }
 
     @Override
-    public boolean removeAlgorithm(Object processID) {
-        if ( ! (processID instanceof String)) {
-            LOGGER.debug("Could not remove algorithm with processID {}", processID);
+    public boolean removeAlgorithm(Object item) {
+        if ( !canHandleItem(item)) {
+            LOGGER.debug("Ignore removing of unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
+        if (item instanceof File) {
 
-        String id = (String) processID;
-        if (this.rProcesses.containsKey(id))
-            this.rProcesses.remove(id);
+            return false; // TODO
 
-        LOGGER.info("Removed algorithm: {}", id);
+        } else {
+            String id = (String) item;
+            if (this.rProcesses.containsKey(id)) {
+                this.rProcesses.remove(id);
+
+                // TODO remove scripts from script repo
+
+            }
+            LOGGER.info("Removed algorithm: {}", id);
+        }
         return true;
     }
 

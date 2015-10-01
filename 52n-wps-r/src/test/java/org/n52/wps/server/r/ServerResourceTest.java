@@ -28,51 +28,42 @@
  */
 package org.n52.wps.server.r;
 
-import java.io.File;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import java.io.FileNotFoundException;
-import jdk.Exported;
-import org.junit.Assert;
-import org.junit.Before;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import org.apache.xmlbeans.XmlException;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.n52.wps.server.IAlgorithmRepository;
-import org.n52.wps.server.ITransactionalAlgorithmRepository;
-import org.n52.wps.server.RepositoryManager;
-import org.n52.wps.webapp.common.AbstractITClass;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.syntax.RAnnotationException;
+
 /**
+ * 
+ * @author Daniel
  *
- * @author <a href="mailto:h.bredel@52north.org">Henning Bredel</a>
  */
-public class RRepositoryTest extends AbstractITClass {
+public class ServerResourceTest {
 
-    @Autowired
-    private RAlgorithmRepository rRepository;
+    private String wkn = "wkn.42";
 
-    @Mock
-    private ITransactionalAlgorithmRepository tRepo;
-
-    @Mock
-    private IAlgorithmRepository repo;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        RepositoryManager repositoryManager = new RepositoryManager();
-        repositoryManager.setApplicationContext(wac);
-        repositoryManager.init();
+    @BeforeClass
+    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
+        TestUtil.mockGenericWPSConfig();
     }
 
     @Test
-    public void falseWhenAddingNonExistingScript() {
-        Assert.assertFalse(rRepository.addAlgorithm(new File("does-not-exist.R")));
-    }
+    public void scriptUrlIsGenerated() throws RAnnotationException, ExceptionReport, MalformedURLException {
+        URL scriptURL = RResource.getScriptURL(wkn);
 
-    @Test
-    public void falseWhenAddingInvalidScriptContent() {
-        Assert.assertFalse(rRepository.addAlgorithm(new File("just-two-kittens.R")));
+        String expectedUrl = "http://" + TestUtil.testserver.getHostname() + ":" + TestUtil.testserver.getHostport() + "/"
+                + TestUtil.testserver.getWebappPath() + RResource.R_ENDPOINT + RResource.SCRIPT_PATH + "/" + wkn;
+        assertThat("script url is correct", scriptURL.toString(), is(equalTo(expectedUrl)));
     }
-
 
 }
