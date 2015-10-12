@@ -318,15 +318,16 @@ public class RequestHandler {
 		    }else if (localName.equals("GetCapabilities")){
 		    	req = new CapabilitiesRequest(doc);
 		    	this.responseMimeType = "text/xml";
-		    } else if (localName.equals("DescribeProcess")) {
-		    	req = new DescribeProcessRequestV200(doc);
-		    	this.responseMimeType = "text/xml";
-		    	
-		    }  else if(!localName.equals("Execute")){
-		    	throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
-		    			+ nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
-		    }
-		    else{
+	            } else if (localName.equals("DescribeProcess")) {
+	                req = new DescribeProcessRequestV200(doc);
+	                this.responseMimeType = "text/xml";
+                    } else if (localName.equals("GetStatus")) {
+                        req = new GetStatusRequestV200(doc);
+                    } else if (localName.equals("GetResult")) {
+                        req = new GetResultRequestV200(doc);
+                    } else if (!localName.equals("Execute")) {
+                        throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: " + nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
+                    } else {
 		    	throw new ExceptionReport("specified namespace is not supported: "
 		    			+ nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
 		    }

@@ -30,6 +30,7 @@ package org.n52.wps.server.request;
 
 import java.io.IOException;
 
+import net.opengis.wps.x20.GetResultDocument;
 import net.opengis.wps.x20.ResultDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
@@ -46,14 +47,27 @@ public class GetResultRequestV200 extends Request {
 	
 	private String jobID;
 	
+	private GetResultDocument getResultDocument;
+	
 	public GetResultRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
 		super(map);
 		jobID = getMapValue("jobid", true);		
 	}
 
 	public GetResultRequestV200(Document doc) throws ExceptionReport {
-		super(doc);		
-		jobID = getMapValue("jobid", true);	
+		super(doc);
+		
+                if(!validate()){
+                        throw new ExceptionReport("GetResultRequest not valid",
+                                        ExceptionReport.NO_APPLICABLE_CODE);
+                }
+                if(getResultDocument.getGetResult() != null){
+                        jobID = getResultDocument.getGetResult().getJobID();
+                }
+                if(jobID == null || jobID.equals("")){
+                        throw new ExceptionReport("JobID not valid",
+                                        ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+                }	
 	}
 
 	@Override
@@ -73,8 +87,13 @@ public class GetResultRequestV200 extends Request {
 	}
 
 	@Override
-	public boolean validate() throws ExceptionReport {		
-		return true;
+	public boolean validate() throws ExceptionReport {
+	           try {
+	               getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
+               } catch (XmlException e) {
+                       return false;
+               }
+               return getResultDocument != null;
 	}
 
 }
