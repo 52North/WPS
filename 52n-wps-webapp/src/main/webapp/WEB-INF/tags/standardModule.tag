@@ -319,7 +319,7 @@
 						$("<span class='text-danger'>	Error</span>")
 								.insertAfter(button).fadeOut(3000);
 						alertMessage("Error: ",
-								"unable to update algorithm status",
+								"unable to update format status",
 								"alert alert-danger");
 					}
 				});
