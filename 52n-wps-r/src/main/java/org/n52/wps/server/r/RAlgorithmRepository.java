@@ -224,9 +224,9 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
         boolean success = true;
         try {
             success &= scriptRepo.registerScriptFile(file);
-            scriptRepo.getWKNForScriptFile(file);
-            return success;
-        } catch (RAnnotationException | IOException | ExceptionReport e) {
+            String wkn = scriptRepo.getWKNForScriptFile(file);
+            return success && initializeRProcess(wkn);
+        } catch (RAnnotationException | ExceptionReport e) {
             LOGGER.error("Could not initialize R process.", e);
         }
         return false;
@@ -388,20 +388,26 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
             LOGGER.debug("Ignore removing of unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
+        
+        String id;
         if (item instanceof File) {
-
-            return false; // TODO
-
-        } else {
-            String id = (String) item;
-            if (this.rProcesses.containsKey(id)) {
-                this.rProcesses.remove(id);
-
-                // TODO remove scripts from script repo
-
+            File file = (File) item;
+            try {
+                id = scriptRepo.getWKNForScriptFile(file);
+            } catch (ExceptionReport | RAnnotationException e) {
+                LOGGER.error("Could remove R Algorithm '{}'", file.getAbsolutePath(), e);
+                return false;
             }
-            LOGGER.info("Removed algorithm: {}", id);
+        } else {
+            id = (String) item;
         }
+        if (this.rProcesses.containsKey(id)) {
+            this.rProcesses.remove(id);
+
+            // TODO remove scripts from script repo
+
+        }
+        LOGGER.info("Removed algorithm: {}", id);
         return true;
     }
 

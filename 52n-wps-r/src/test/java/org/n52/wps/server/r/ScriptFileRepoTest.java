@@ -94,7 +94,7 @@ public class ScriptFileRepoTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    public String prepareMissingScriptFile() throws IOException, RAnnotationException, ExceptionReport {
+    public String prepareMissingScriptFile() throws RAnnotationException, ExceptionReport, IOException {
         File temp = File.createTempFile("wps4rIT_", ".R");
         Files.copy(TestUtil.loadFile(scriptFile), temp);
 
@@ -107,7 +107,7 @@ public class ScriptFileRepoTest {
     }
 
     @Test
-    public void scriptIsStored() throws URISyntaxException, RAnnotationException, InvalidRScriptException, ExceptionReport, IOException {
+    public void scriptIsStored() throws URISyntaxException, RAnnotationException, InvalidRScriptException, ExceptionReport {
         File f = TestUtil.loadFile(scriptFile);
 
         boolean registerScript = sr.registerScriptFile(f);
@@ -129,7 +129,7 @@ public class ScriptFileRepoTest {
     }
 
     @Test
-    public void wkn() throws URISyntaxException, RAnnotationException, ExceptionReport, IOException {
+    public void wkn() throws URISyntaxException, RAnnotationException, ExceptionReport {
         File f = TestUtil.loadFile(scriptFile);
         sr.registerScriptFile(f);
         assertThat("script wkn is correct", sr.getWKNForScriptFile(f), is(equalTo(expectedWKN)));

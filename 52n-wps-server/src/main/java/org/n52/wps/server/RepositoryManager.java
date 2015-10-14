@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.NotImplementedException;
 
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ClassKnowingModule;
@@ -275,8 +276,12 @@ public class RepositoryManager implements ApplicationContextAware {
         for (IAlgorithmRepository repository : repositories.values()) {
             if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
                 ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
-                if (transactionalRepository.removeAlgorithm(item)) {
-                    return true;
+                try {
+                    if (transactionalRepository.removeAlgorithm(item)) {
+                        return true;
+                    }
+                } catch (NotImplementedException e) {
+                    continue;
                 }
             }
         }

@@ -199,10 +199,9 @@ public class ScriptFileRepository {
         return wknToFileMap.get(id);
     }
 
-    public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
-        if ( !file.exists())
-            throw new FileNotFoundException("File not found: " + file.getName());
-
+    public String getWKNForScriptFile(File file) throws RAnnotationException, ExceptionReport {
+//        if ( !file.exists())
+//            throw new FileNotFoundException("File not found: " + file.getName());
         return fileToWknMap.get(file);
     }
 

@@ -153,7 +153,7 @@ public class VersionsTest extends AbstractWps4RTest {
     }
 
     @Test
-    public void wknsForScriptFilesAreResolved() throws ExceptionReport, RAnnotationException, IOException {
+    public void wknsForScriptFilesAreResolved() throws ExceptionReport, RAnnotationException {
 
         final ScriptFileRepository sr = getScriptFileRepository();
 
