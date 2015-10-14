@@ -257,6 +257,31 @@ public class RepositoryManager implements ApplicationContextAware {
         }
         return false;
     }
+    
+    /**
+     * Removes given algorithm item from the first (transactional) repository which
+     * {@link ITransactionalAlgorithmRepository#addAlgorithm(java.lang.Object)}
+     * returns <code>true</code>, whereas the implementation has to take care if
+     * it is capabable to handle giving item correctly.
+     *
+     * // XXX repo-implementations expect mostly a simple string which is certainly
+     *    not enough info to determine if repo is capable for the given item
+     * // TODO item should contain more infos for repositories to decide
+     *
+     * @param item the algorithm item to remove.
+     * @return <code>true</code> if item could be removed, <code>false</code> otherwise.
+     */
+    public boolean removeAlgorithm(Object item) {
+        for (IAlgorithmRepository repository : repositories.values()) {
+            if (ITransactionalAlgorithmRepository.class.isAssignableFrom(repository.getClass())) {
+                ITransactionalAlgorithmRepository transactionalRepository = ITransactionalAlgorithmRepository.class.cast(repository);
+                if (transactionalRepository.removeAlgorithm(item)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 	public IAlgorithmRepository getRepositoryForAlgorithm(String algorithmName){
 		for (String repositoryClassName : getRepositoryNames()) {
