@@ -32,7 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml",
 		"classpath*:dispatcher-servlet.xml"})
 @WebAppConfiguration(value = "src/test/webapp")
-@ActiveProfiles("test")
+@ActiveProfiles(profiles = { "test", "common-test" })
 public class AbstractITClass {
 	@Autowired
 	protected WebApplicationContext wac;

@@ -19,10 +19,19 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
         <property name="maxUploadSize" value="1000000" />
     </bean>
 
-    <!-- Include test modules in the context for integration testing -->
-    <context:component-scan base-package="org.n52.wps">
-        <context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
-        <context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
-    </context:component-scan>
+    <beans profile="common-test">
+        <context:component-scan base-package="org.n52.wps">
+            <context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+            <context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+        </context:component-scan>
+    </beans>
+
+
+	<beans profile="controller-test">
+		<context:component-scan base-package="org.n52.wps">
+			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+		</context:component-scan>
+	</beans>
+
 
 </beans>

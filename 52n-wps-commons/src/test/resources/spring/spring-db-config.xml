@@ -18,12 +18,22 @@
 		<constructor-arg ref="dataSource" />
 	</bean>
 
-	<beans>
+	<beans profile="common-test">
 		<!-- In-memory database to be used during testing -->
 		<jdbc:embedded-database id="dataSource" type="HSQL">
 			<jdbc:script location="classpath:db/schema.sql" />
 			<jdbc:script location="classpath:test-data.sql" />
 		</jdbc:embedded-database>
 	</beans>
+
+
+	<beans profile="controller-test">
+		<!-- In-memory database to be used during testing -->
+		<jdbc:embedded-database id="dataSource" type="HSQL">
+			<jdbc:script location="classpath:db/schema.sql" />
+			<jdbc:script location="classpath:test-data-users.sql" />
+		</jdbc:embedded-database>
+	</beans>
+
 
 </beans>

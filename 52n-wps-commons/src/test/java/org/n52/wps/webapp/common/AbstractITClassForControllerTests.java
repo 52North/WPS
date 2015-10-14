@@ -38,7 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml",
 		"classpath*:dispatcher-servlet.xml"})
 @WebAppConfiguration
-@ActiveProfiles("controller-test")
+@ActiveProfiles(profiles = { "test", "controller-test" })
 public class AbstractITClassForControllerTests {
 	@Autowired
 	protected WebApplicationContext wac;

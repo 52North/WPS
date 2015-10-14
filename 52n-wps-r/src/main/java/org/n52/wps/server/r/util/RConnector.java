@@ -97,9 +97,6 @@ public class RConnector {
                 }
                 catch (RuntimeException | InterruptedException | IOException e) {
                     log.error("Attempted to start Rserve and establish a connection failed", e);
-
-                    // Throwable#addSuppressed() only supported by Java 1.7+
-                    // rse.addSuppressed(e);
                 }
             }
             else {

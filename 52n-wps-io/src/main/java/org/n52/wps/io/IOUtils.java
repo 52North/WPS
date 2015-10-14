@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.n52.wps.io;
 
 import static org.apache.commons.io.IOUtils.closeQuietly;

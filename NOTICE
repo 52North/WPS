@@ -36,6 +36,7 @@ This project includes:
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
+  52North WPS Git Algorithm Repository under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
@@ -121,6 +122,7 @@ This project includes:
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
+  JavaEWAH under Apache 2
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
@@ -138,10 +140,12 @@ This project includes:
   Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
+  JGit - Core under Eclipse Distribution License (New BSD License)
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
+  JSch under Revised BSD
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
