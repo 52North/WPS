@@ -409,6 +409,25 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         parameters.put("old_algorithm_name", oldAlgorithmName);
         parameters.put("configuration_module", moduleClassName);
         namedParameterJdbcTemplate.update("UPDATE algorithmentry SET algorithm_name = :new_algorithm_name " + "WHERE algorithm_name = :old_algorithm_name AND configuration_module = :configuration_module", parameters);
+    }
 
+    @Override
+    public void updateFormatEntry(String moduleClassName,
+            String oldMimeType,
+            String oldSchema,
+            String oldEncoding,
+            String newMimeType,
+            String newSchema,
+            String newEncoding) {
+        LOGGER.debug("Updating format entry '{}', '{}', '{}' in configuration module '{}' to entry '{}', '{}', '{}' in the database.", oldMimeType, oldSchema, oldEncoding, moduleClassName, newMimeType, newSchema, newEncoding);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("new_mimetype", newMimeType);
+        parameters.put("new_schema", newSchema);
+        parameters.put("new_encoding", newEncoding);
+        parameters.put("old_mimetype", oldMimeType);
+        parameters.put("old_schema", oldSchema);
+        parameters.put("old_encoding", oldEncoding);
+        parameters.put("configuration_module", moduleClassName);
+        namedParameterJdbcTemplate.update("UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding " + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding AND configuration_module = :configuration_module", parameters);        
     }
 }

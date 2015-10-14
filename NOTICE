@@ -26,7 +26,6 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
 Public License for more details.
 
 This project includes:
-  52n-security-licensing under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North Web Processing Service under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
   52North WPS Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -36,7 +35,6 @@ This project includes:
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
-  52North WPS Git Algorithm Repository under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
@@ -55,8 +53,6 @@ This project includes:
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
-  authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  authn-web under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Autotag - Core runtime under The Apache Software License, Version 2.0
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
@@ -76,22 +72,18 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils under The Apache Software License, Version 2.0
-  commons-httpclient-contrib-ssl under The Apache Software License, Version 2.0
-  config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  core under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  core under The Apache Software License, Version 2.0
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   DataStore Support under Lesser General Public License (LGPL)
-  decision under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Derby Engine under The Apache Software License, Version 2.0
-  dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   ecore under Eclipse Public License (EPL)
-  enforcement under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   EPSG Authority Service using WKT file under Lesser General Public License (LGPL)
   Feature Based Graphs and Networks under Lesser General Public License (LGPL)
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
   Filter XML Support under Lesser General Public License (LGPL)
+  FindBugs-Annotations under GNU Lesser Public License
   FreeMarker under BSD-style license
   GeoJSON Support under Lesser General Public License (LGPL)
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
@@ -121,11 +113,8 @@ This project includes:
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
-  Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
-  JavaEWAH under Apache 2
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
-  jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
@@ -140,12 +129,10 @@ This project includes:
   Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
-  JGit - Core under Eclipse Distribution License (New BSD License)
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
-  JSch under Revised BSD
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
@@ -190,7 +177,6 @@ This project includes:
   OWS XML Support under Lesser General Public License (LGPL)
   PicoContainer Core under BSD License
   PJL Compressing Filter under Apache Software License V2.0
-  precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL or The New BSD License
   REngine under GNU Lesser General Public License
@@ -223,11 +209,9 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   standard under The Apache Software License, Version 2.0
-  StAX API under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License
   Support and utility classes under Simplified BSD
-  support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Tiles - API under The Apache Software License, Version 2.0
   Tiles - Compatibility under The Apache Software License, Version 2.0
   Tiles - Core Library under The Apache Software License, Version 2.0
@@ -260,12 +244,9 @@ This project includes:
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
   Xlink Model under Lesser General Public License (LGPL)
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Parsing under Lesser General Public License (LGPL)
   XML Parsing Support under Lesser General Public License (LGPL)
   XML Pull Parsing API under Public Domain
-  xml-schema under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  xml-secconfig under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   XmlBeans under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License
   xsd under Eclipse Public License (EPL)

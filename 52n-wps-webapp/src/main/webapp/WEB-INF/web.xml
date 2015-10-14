@@ -2,7 +2,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
-	<display-name>52°North Web Processing Service, Git: ${git.revision} @ ${timestamp}</display-name>
+	<display-name>52°North Web Processing Service, Git: ${git.revision} built at ${timestamp}</display-name>
 	<description>A web processing framework supporting the OGC WPS 1.0.0 specification</description>
 
     <context-param>
@@ -13,10 +13,6 @@
 		<param-name>spring.profiles.default</param-name>
 		<param-value>production</param-value>
 	</context-param>
-    <context-param>
-        <param-name>wps.config.file</param-name>
-        <param-value>${wps.config.file}</param-value>
-    </context-param>
 
 	<listener>
 		<listener-class>org.n52.wps.webapp.util.WebAppPropertiesListener</listener-class>

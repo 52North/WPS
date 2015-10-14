@@ -47,7 +47,7 @@ public class MatlabAlgorithmRepositoryCM extends AbstractActivatableCM {
                     "MATLAB Process Descriptions",
                     "The folder containing MATLAB process descriptions encoded as YAML",
                     false,
-                    null);
+                    "");
 
     @Override
     public String getClassName() {

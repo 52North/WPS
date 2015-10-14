@@ -54,6 +54,7 @@ public class RDataTypeRegistry {
 
     private HashMap<String, RTypeDefinition> rDataTypeAlias = new HashMap<String, RTypeDefinition>();
 
+    @Deprecated
     public RDataTypeRegistry() {
         // register types from enum
         LOGGER.info("NEW {}", this);

@@ -523,9 +523,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		boolean status = true;
 		configurationDAO.insertAlgorithmEntry(moduleClassName, algorithmName,
 				status);
-		AlgorithmEntry algorithmEntry = new AlgorithmEntry(algorithmName, status);		
-		ConfigurationModule module = getConfigurationModule(moduleClassName);		
-		module.getAlgorithmEntries().add(algorithmEntry);		
+	        syncConfigurationModuleAlgorithmEntries(getConfigurationModule(moduleClassName));
 		LOGGER.debug(
 				"Algorithm '{}' with status '{}' has been added to module '{}' and saved to the database.",
 				algorithmName, status, moduleClassName);
@@ -608,5 +606,17 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         LOGGER.debug(
                 "Algorithm '{}' of module '{}' has been renamed to '{}' and saved to the database.",
                 oldAlgorithmName, moduleClassName, newAlgorithmName);
+    }
+
+    @Override
+    public void updateFormatEntry(String moduleClassName,
+            String oldMimeType,
+            String oldSchema,
+            String oldEncoding,
+            String newMimeType,
+            String newSchema,
+            String newEncoding) {
+        configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
+        
     }
 }
