@@ -83,7 +83,6 @@ This project includes:
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
   Filter XML Support under Lesser General Public License (LGPL)
-  FindBugs-Annotations under GNU Lesser Public License
   FreeMarker under BSD-style license
   GeoJSON Support under Lesser General Public License (LGPL)
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
@@ -209,6 +208,7 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   standard under The Apache Software License, Version 2.0
+  StAX API under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License
   Support and utility classes under Simplified BSD
@@ -244,6 +244,7 @@ This project includes:
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
   Xlink Model under Lesser General Public License (LGPL)
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Parsing under Lesser General Public License (LGPL)
   XML Parsing Support under Lesser General Public License (LGPL)
   XML Pull Parsing API under Public Domain
