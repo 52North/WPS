@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.jdom.Document;
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
@@ -46,14 +45,10 @@ import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class LogConfigurationsControllerIntegrationTest extends AbstractITClassForControllerTests {
-
-	private MockMvc mockMvc;
 
 	@Autowired
 	ConfigurationManager configurationManager;
@@ -64,14 +59,10 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
 
-	@Before
-	public void setup() {
-	}
-
 	@Test
 	public void display() throws Exception {
 		RequestBuilder builder = get("/log").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(builder);
+		ResultActions result = this.getMockedWebService().perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("log"))
 				.andExpect(model().attributeExists("logConfigurations"));
 	}
@@ -91,7 +82,7 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 		.param("consoleAppenderEnabled", "true")
 		.param("loggers['org.apache.axiom']", "ERROR")
 		.param("loggers['org.apache.http.wire']", "OFF");
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
 		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
@@ -103,7 +94,7 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 	@Test
 	public void processPost_failure() throws Exception {
 		RequestBuilder request = post("/log").param("wpsfileAppenderFileNamePattern", "");
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isBadRequest());
 	}
 }

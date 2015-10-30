@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM;
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -50,15 +49,11 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.mock.web.MockMultipartHttpServletRequest;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UploadControllerIntegrationTest extends AbstractITClassForControllerTests {
-
-	private MockMvc mockMvc;
 
 	@Autowired
 	private UploadController uploadController;
@@ -69,15 +64,10 @@ public class UploadControllerIntegrationTest extends AbstractITClassForControlle
 	@Autowired
 	private ConfigurationManager configurationManager;
 
-
-	@Before
-	public void setup() {
-	}
-
 	@Test
 	public void display() throws Exception {
 		RequestBuilder builder = get("/backup").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(builder);
+		ResultActions result = this.getMockedWebService().perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("backup"));
 	}
 

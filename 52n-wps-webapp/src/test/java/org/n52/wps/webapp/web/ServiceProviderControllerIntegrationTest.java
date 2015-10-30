@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.jdom.Document;
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
@@ -46,14 +45,10 @@ import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class ServiceProviderControllerIntegrationTest extends AbstractITClassForControllerTests {
-
-	private MockMvc mockMvc;
 
 	@Autowired
 	private ConfigurationManager configurationManager;
@@ -64,14 +59,10 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClassFor
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
 
-	@Before
-	public void setup() {
-	}
-
 	@Test
 	public void display() throws Exception {
 		RequestBuilder builder = get("/service_provider").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(builder);
+		ResultActions result = this.getMockedWebService().perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("service_provider"))
 				.andExpect(model().attributeExists("serviceProvider"));
 	}
@@ -94,7 +85,7 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClassFor
 				.param("administrativeArea", "administrativeArea")
 				.param("postalCode", "postalCode")
 				.param("country", "country");
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
 		assertEquals("providerName", serviceProvider.getProviderName());

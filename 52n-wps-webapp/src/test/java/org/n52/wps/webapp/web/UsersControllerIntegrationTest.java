@@ -39,7 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
@@ -48,32 +47,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class UsersControllerIntegrationTest extends AbstractITClassForControllerTests {
-	private MockMvc mockMvc;
 
 	@Autowired
 	ConfigurationManager configurationManager;
 
-	@Before
-	public void setup() {
-	}
-
 	@Test
 	public void getUsers() throws Exception {
 		RequestBuilder request = get("/users").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("users")).andExpect(model().attributeExists("users"));
 	}
 
 	@Test
 	public void getChangePasswordForm() throws Exception {
 		RequestBuilder request = get("/change_password").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("change_password"));
 	}
 
@@ -82,7 +74,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		Authentication user = new UsernamePasswordAuthenticationToken("testUser1", "testPassword");
 		RequestBuilder request = post("/change_password").param("currentPassword", "testPassword")
 				.param("newPassword", "newPassword").principal(user);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isMovedTemporarily()).andExpect(view().name("redirect:/"));
 	}
 
@@ -91,7 +83,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		Authentication user = new UsernamePasswordAuthenticationToken("testUser1", "testPassword");
 		RequestBuilder request = post("/change_password").param("currentPassword", "testPassword55")
 				.param("newPassword", "newPassword").principal(user);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("change_password"))
 				.andExpect(model().attributeExists("error"));
 	}
@@ -101,7 +93,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		Authentication user = new UsernamePasswordAuthenticationToken("testUser2", "testPassword");
 		RequestBuilder request = post("/change_password").param("currentPassword", "testPassword")
 				.param("newPassword", "").principal(user);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("change_password"))
 				.andExpect(model().attributeExists("newPasswordError"));
 	}
@@ -109,7 +101,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 	@Test
 	public void getEditUserForm() throws Exception {
 		RequestBuilder request = get("/users/{userId}/edit", 1).accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("edit_user"))
 				.andExpect(model().attribute("user", hasProperty("username", is("testUser1"))));
 	}
@@ -120,7 +112,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		assertEquals("ROLE_ADMIN", user.getRole());
 		RequestBuilder request = post("/users/{userId}/edit", user.getUserId()).param("password", user.getPassword())
 				.param("username", user.getUsername()).param("role", "ROLE_USER").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isMovedTemporarily()).andExpect(view().name("redirect:/users"));
 		user = configurationManager.getUserServices().getUser(1);
 		assertEquals("ROLE_USER", user.getRole());
@@ -131,7 +123,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		User user = configurationManager.getUserServices().getUser(1);
 		assertNotNull(user);
 		RequestBuilder request = post("/users/{userId}/delete", user.getUserId()).accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		user = configurationManager.getUserServices().getUser(1);
 		assertNull(user);
@@ -140,7 +132,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 	@Test
 	public void getAddUserForm() throws Exception {
 		RequestBuilder request = get("/users/add_user").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk()).andExpect(view().name("add_user")).andExpect(model().attributeExists("user"));
 	}
 
@@ -150,7 +142,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 		assertNull(user);
 		RequestBuilder request = post("/users/add_user").param("username", "testUser3")
 				.param("password", "testPassword3").param("role", "ROLE_USER");
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		user = configurationManager.getUserServices().getUser(3);
 		assertEquals(3, user.getUserId());
@@ -162,7 +154,7 @@ public class UsersControllerIntegrationTest extends AbstractITClassForController
 	public void processAddUserForm_failure() throws Exception {
 		RequestBuilder request = post("/users/add_user").param("username", "testUser3").param("password", "")
 				.param("role", "ROLE_USER");
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isBadRequest());
 	}
 }

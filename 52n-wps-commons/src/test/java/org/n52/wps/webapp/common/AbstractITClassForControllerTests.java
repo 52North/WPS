@@ -16,6 +16,7 @@
  */
 package org.n52.wps.webapp.common;
 
+import javax.servlet.annotation.WebInitParam;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.n52.wps.commons.WPSConfig;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -40,12 +42,20 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 @ActiveProfiles(profiles = { "test", "controller-test" })
 public class AbstractITClassForControllerTests {
+    
 	@Autowired
 	protected WebApplicationContext wac;
+    
+    private MockMvc mockMvc;
 
     @Before
     public void setup() {
-        MockMvcBuilders.webAppContextSetup(this.wac).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
+
+    protected MockMvc getMockedWebService() {
+        return mockMvc;
+    }
+    
 }
