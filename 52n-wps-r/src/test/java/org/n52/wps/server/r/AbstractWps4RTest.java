@@ -43,6 +43,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -80,7 +81,7 @@ public abstract class AbstractWps4RTest {
     }
 
     @Before
-    public void setup() throws ExceptionReport, IOException {
+    public void createWorkingDir() throws ExceptionReport, IOException {
         workingDir = Files.createTempDirectory("wps4r-it-").toAbsolutePath();
         config.getConfigModule().setWdName(workingDir.toString());
     }
@@ -98,6 +99,7 @@ public abstract class AbstractWps4RTest {
         ReflectionTestUtils.setField(scriptFileRepository, "annotationParser", parser);
         ReflectionTestUtils.setField(scriptFileRepository, "config", config);
         if (scriptDir != null) {
+            // TODO use RAlgorithmRepository#addAlgorithm(Object)
             scriptFileRepository.registerScriptFiles(TestUtil.loadFile(scriptDir));
         }
 
