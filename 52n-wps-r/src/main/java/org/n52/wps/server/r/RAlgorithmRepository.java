@@ -263,7 +263,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     private GenericRProcess createRProcess(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
-        GenericRProcess algorithm = new GenericRProcess(wellKnownName, dataTypeRegistry);
+        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry);
         SpringIntegrationHelper.autowireBean(algorithm);
         /*
          * weak inheritance implementation. When using injected singleton beans

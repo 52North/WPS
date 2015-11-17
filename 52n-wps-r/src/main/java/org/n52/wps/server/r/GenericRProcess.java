@@ -77,7 +77,6 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private final RIOHandler iohandler;
 
-    @Autowired
     private R_Config config;
 
     @Autowired
@@ -93,8 +92,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private boolean shutdownRServerAfterRun = false;
 
-    public GenericRProcess(String wellKnownName, RDataTypeRegistry dataTypeRegistry) {
+    public GenericRProcess(String wellKnownName, R_Config config, RDataTypeRegistry dataTypeRegistry) {
         super(wellKnownName, false);
+        this.config = config;
         iohandler = new RIOHandler(dataTypeRegistry);
         log.trace("NEW {}", this);
     }

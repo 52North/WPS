@@ -28,7 +28,6 @@
  */
 package org.n52.wps.server.r;
 
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -36,42 +35,30 @@ import static org.junit.Assert.assertThat;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.r.data.RDataTypeRegistry;
-import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.rosuda.REngine.Rserve.RConnection;
 import org.rosuda.REngine.Rserve.RserveException;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import javax.ws.rs.ApplicationPath;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author Daniel Nüst
  *
  */
-public class ImportAnnotationPublicScriptsTest extends AbstractWps4RTest {
+public class ImportAnnotationPublicScriptsIT extends AbstractWps4RTest {
 
     private final static String SCRIPT_DIR = "/annotations/import";
 
@@ -97,6 +84,7 @@ public class ImportAnnotationPublicScriptsTest extends AbstractWps4RTest {
     }
 
     @Test
+    // XXX to integration test
     public void importedFunctionIsAvailableInRSession() throws IOException, RAnnotationException, ExceptionReport {
         // Trying to connect to Rserve
         try {
@@ -122,7 +110,6 @@ public class ImportAnnotationPublicScriptsTest extends AbstractWps4RTest {
     }
 
     @Test
-    @Ignore("TODO: Imports are not listed ... Why!?")
     public void importedScriptIsListedInProcessDescription() {
         IAlgorithm algorithm = openRepo.getAlgorithm(openConfig.getPublicScriptId(SCRIPT_ID));
         String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
