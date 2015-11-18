@@ -57,6 +57,7 @@ import org.n52.wps.server.r.syntax.RAnnotationType;
 import org.n52.wps.server.r.syntax.RAttribute;
 import org.n52.wps.server.r.syntax.RSeperator;
 import org.n52.wps.server.r.syntax.ResourceAnnotation;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,14 +81,17 @@ public class RAnnotationParser {
 
     @Autowired
     private R_Config config;
+    
+    private ResourceUrlGenerator urlGenerator;
 
     public RAnnotationParser() {
         LOGGER.debug("New {}", this);
     }
 
-    public RAnnotationParser(RDataTypeRegistry dataTypeRegistry, R_Config config) {
+    public RAnnotationParser(RDataTypeRegistry dataTypeRegistry, R_Config config, ResourceUrlGenerator urlGenerator) {
         this.dataTypeRegistry = dataTypeRegistry;
         this.config = config;
+        this.urlGenerator = urlGenerator;
         LOGGER.debug("New {} and set registry and config manually to\n\t{}\n\t{}",
                      this,
                      this.dataTypeRegistry,
@@ -218,11 +222,10 @@ public class RAnnotationParser {
                                                                                            config.isResourceDownloadEnabled(),
                                                                                            config.isImportDownloadEnabled(),
                                                                                            config.isScriptDownloadEnabled(),
-                                                                                           config.isSessionInfoLinkEnabled());
+                                                                                           config.isSessionInfoLinkEnabled(),
+                                                                                           urlGenerator);
             ProcessDescriptionType processType = descriptionCreator.createDescribeProcessType(annotations,
-                                                                                              identifier,
-                                                                                              new URL("http://some.valid.url/"),
-                                                                                              new URL("http://some.valid.url/"));
+                                                                                              identifier);
 
             boolean valid = processType.validate(validationOptions);
             if ( !valid) {
@@ -240,7 +243,7 @@ public class RAnnotationParser {
             }
 
         }
-        catch (ExceptionReport | RAnnotationException | MalformedURLException e) {
+        catch (ExceptionReport | RAnnotationException e) {
             LOGGER.error("Invalid R algorithm '{}'. Script validation failed when executing process description creator.",
                          identifier,
                          e);
@@ -262,7 +265,7 @@ public class RAnnotationParser {
             boolean isCurrentlyParsingAnnotation = false;
             StringBuilder annotationString = null;
             RAnnotationType annotationType = null;
-            ArrayList<RAnnotation> annotations = new ArrayList<RAnnotation>();
+            ArrayList<RAnnotation> annotations = new ArrayList<>();
             String scriptId = null;
 
             while (lineReader.ready()) {
@@ -349,7 +352,7 @@ public class RAnnotationParser {
 
     private HashMap<RAttribute, Object> hashAttributes(RAnnotationType anotType, String attributeString) throws RAnnotationException {
 
-        HashMap<RAttribute, Object> attrHash = new HashMap<RAttribute, Object>();
+        HashMap<RAttribute, Object> attrHash = new HashMap<>();
         StringTokenizer attrValueTokenizer = new StringTokenizer(attributeString,
                                                                  RSeperator.ATTRIBUTE_SEPARATOR.getKey());
         boolean iterableOrder = true;
@@ -420,7 +423,7 @@ public class RAnnotationParser {
             RAnnotationException {
         List<R_Resource> resources = getResourcesFromAnnotation(scriptId, attributeString, DEFAULT_RESOURCE_VISIBILITY);
 
-        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(resources, dataTypeRegistry);
+        ResourceAnnotation resourceAnnotation = new ResourceAnnotation(resources, dataTypeRegistry, urlGenerator);
 
         return resourceAnnotation;
     }

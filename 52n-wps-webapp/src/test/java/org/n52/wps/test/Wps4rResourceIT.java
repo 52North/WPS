@@ -36,37 +36,30 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 
 /**
  *
  * @author Daniel Nüst
  *
  */
-@Ignore("TODO make resource IT work again")
 public class Wps4rResourceIT {
 
-    private static String wpsWebappUrl;
+    private static ResourceUrlGenerator urlGenerator;
 
     @BeforeClass
     public static void beforeClass() {
-        wpsWebappUrl = AllTestsIT.getWebappURL();
-        WPSConfig config = Mockito.mock(WPSConfig.class);
-        Mockito.when(config.getServiceBaseUrl()).thenReturn(wpsWebappUrl);
-        // ConfigMocker.setConfig(config);
+        urlGenerator = new ResourceUrlGenerator(AllTestsIT.getWebappURL());
     }
 
     @Test
     public void resourcesCanBeRequested() throws ExceptionReport, IOException {
-        URL resourceURL = RResource.getResourceURL(new R_Resource("org.n52.wps.server.r.test.resources",
-                                                                  "test/dummy1.txt",
-                                                                  true));
+        URL resourceURL = urlGenerator.getResourceURL(new R_Resource("org.n52.wps.server.r.test.resources",
+                "test/dummy1.txt",
+                true));
 
         String response = GetClient.sendRequest(resourceURL.toExternalForm());
         assertNotNull(response);
@@ -75,7 +68,7 @@ public class Wps4rResourceIT {
 
     @Test
     public void scriptFilesCanBeRequested() throws ExceptionReport, IOException {
-        URL scriptURL = RResource.getScriptURL("org.n52.wps.server.r.test.resources");
+        URL scriptURL = urlGenerator.getScriptURL("org.n52.wps.server.r.test.resources");
 
         String response = GetClient.sendRequest(scriptURL.toExternalForm());
         assertNotNull(response);
@@ -85,7 +78,7 @@ public class Wps4rResourceIT {
 
     @Test
     public void sessionInfoCanBeRequested() throws ExceptionReport, IOException {
-        URL sessionInfoURL = RResource.getSessionInfoURL();
+        URL sessionInfoURL = urlGenerator.getSessionInfoURL();
 
         String response = GetClient.sendRequest(sessionInfoURL.toExternalForm());
         assertNotNull(response);

@@ -36,9 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +49,17 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceAnnotation extends RAnnotation {
 
-    private static Logger log = LoggerFactory.getLogger(ResourceAnnotation.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceAnnotation.class);
 
-    private List<R_Resource> resources = new ArrayList<R_Resource>();
+    private List<R_Resource> resources = new ArrayList<>();
 
-    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry) throws IOException,
+    private final ResourceUrlGenerator urlGenerator;
+
+    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry, ResourceUrlGenerator urlGenerator) throws IOException,
             RAnnotationException {
-        super(RAnnotationType.RESOURCE, new HashMap<RAttribute, Object>(), dataTypeRegistry);
+        super(RAnnotationType.RESOURCE, new HashMap<>(), dataTypeRegistry);
         this.resources.addAll(resources);
+        this.urlGenerator = urlGenerator;
         log.trace("NEW {}", this);
     }
 
@@ -74,7 +77,7 @@ public class ResourceAnnotation extends RAnnotation {
                 // String fullResourceURL = resource.getFullResourceURL(this.resourceDirUrl).toExternalForm();
                 String fullResourceURL;
                 try {
-                    fullResourceURL = RResource.getResourceURL(resource).toExternalForm();
+                    fullResourceURL = urlGenerator.getResourceURL(resource).toExternalForm();
                 }
                 catch (ExceptionReport e) {
                     log.error("Could not create full resource URL for {}", resource);
@@ -110,7 +113,7 @@ public class ResourceAnnotation extends RAnnotation {
 
     protected Collection<R_Resource> getResources() {
         if (this.resources == null)
-            this.resources = new ArrayList<R_Resource>();
+            this.resources = new ArrayList<>();
 
         return this.resources;
     }

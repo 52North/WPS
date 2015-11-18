@@ -42,7 +42,6 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 //@Component("rActualConfigurationModule")
 public class RConfigurationModule extends ClassKnowingModule {
@@ -70,7 +69,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private static final String sessionInfoDownloadEnabledKey = "R_enableSessionInfoDownload";
 
 	private ConfigurationEntry<Boolean> enableBatchStartEntry = new BooleanConfigurationEntry(enableBatchStartKey, "Enable Batch Start", "Try to start Rserve on the local machine", false, true);
-    private ConfigurationEntry<String> datatypeConfigEntry = new StringConfigurationEntry(datatypeConfigKey, "Custom data type mappings", "Location of a config file were you may add costum data types that WPS4R should handle (see below)", false, "R/R_Datatype.conf");
+        private ConfigurationEntry<String> datatypeConfigEntry = new StringConfigurationEntry(datatypeConfigKey, "Custom data type mappings", "Location of a config file were you may add costum data types that WPS4R should handle (see below)", false, "R/R_Datatype.conf");
 	private ConfigurationEntry<String> wdStrategyEntry = new StringConfigurationEntry(wdStrategyKey, "Working Directory Strategy", "Influences WPS4R on choosing the R working directory for each process run", false, "default");
 	private ConfigurationEntry<String> wdNameEntry = new StringConfigurationEntry(wdNameKey, "Working Directory", "The path for the manually set work directory or base directory in conjuction with the strategy 'manualbasedir'", false, "wps4r_working_dir");
 	private ConfigurationEntry<String> resourceDirectoryEntry = new StringConfigurationEntry(resourceDirectoryKey, "Resource Directory", "The (relative) path to a directory with resources that can be requested in scripts (default: 'R/resources')", false, "R/resources");

@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericRProcess extends AbstractObservableAlgorithm {
@@ -90,11 +91,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
 
     private List<RAnnotation> annotations;
 
-    private boolean shutdownRServerAfterRun = false;
+    private final boolean shutdownRServerAfterRun = false;
 
-    public GenericRProcess(String wellKnownName, R_Config config, RDataTypeRegistry dataTypeRegistry) {
+    private final ResourceUrlGenerator urlGenerator;
+
+    public GenericRProcess(String wellKnownName, R_Config config, RDataTypeRegistry dataTypeRegistry, String baseUrl) {
         super(wellKnownName, false);
         this.config = config;
+        this.urlGenerator = new ResourceUrlGenerator(baseUrl);
         iohandler = new RIOHandler(dataTypeRegistry);
         log.trace("NEW {}", this);
     }
@@ -151,11 +155,9 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                                                                 config.isResourceDownloadEnabled(),
                                                                                 config.isImportDownloadEnabled(),
                                                                                 config.isScriptDownloadEnabled(),
-                                                                                config.isSessionInfoLinkEnabled());
-            ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations,
-                                                                           wkn,
-                                                                           RResource.getScriptURL(wkn),
-                                                                           RResource.getSessionInfoURL());
+                                                                                config.isSessionInfoLinkEnabled(),
+                                                                                urlGenerator);
+            ProcessDescriptionType doc = creator.createDescribeProcessType(this.annotations, wkn);
 
             if (log.isTraceEnabled()) {
                 ProcessDescriptionsDocument outerDoc = ProcessDescriptionsDocument.Factory.newInstance();
@@ -187,7 +189,7 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                                        "Running algorithm with input "
                                                + Arrays.deepToString(inputData.entrySet().toArray()));
 
-            RSessionManager session = new RSessionManager(rCon, config);
+            RSessionManager session = new RSessionManager(rCon, config, this.urlGenerator);
             session.configureSession(getWellKnownName(), executor);
 
             RWorkspaceManager workspace = new RWorkspaceManager(rCon, resourceRepo, iohandler, config);

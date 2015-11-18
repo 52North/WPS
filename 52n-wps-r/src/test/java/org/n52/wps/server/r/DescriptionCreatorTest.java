@@ -38,7 +38,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +62,7 @@ import org.n52.wps.server.r.syntax.RAttribute;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 
 public class DescriptionCreatorTest {
 
@@ -99,11 +99,10 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
         ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+                                                                            "R_andom");
         ProcessDescriptionsDocument testDoc = ProcessDescriptionsDocument.Factory.newInstance();
         testDoc.addNewProcessDescriptions().addNewProcessDescription().set(testType);
         // System.out.println(testDoc.xmlText());
@@ -140,11 +139,9 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -155,11 +152,9 @@ public class DescriptionCreatorTest {
                    titles,
                    hasItem(RProcessDescriptionCreator.SESSION_INFO_TITLE));
 
-        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, true, false);
-        testType = creator.createDescribeProcessType(this.annotations,
-                                                     "R_andom",
-                                                     new URL("http://my.url/myScript.R"),
-                                                     new URL("http://my.url/to_the_session_info"));
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, true, false,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         metadataArray = testType.getMetadataArray();
         titles = Lists.newArrayList();
@@ -177,11 +172,9 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -192,11 +185,9 @@ public class DescriptionCreatorTest {
                    titles,
                    hasItem(RProcessDescriptionCreator.SCRIPT_LINK_TITLE));
 
-        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, false, true);
-        testType = creator.createDescribeProcessType(this.annotations,
-                                                     "R_andom",
-                                                     new URL("http://my.url/myScript.R"),
-                                                     new URL("http://my.url/to_the_session_info"));
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, true, false, true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         metadataArray = testType.getMetadataArray();
         titles = Lists.newArrayList();
@@ -214,11 +205,9 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -227,11 +216,9 @@ public class DescriptionCreatorTest {
         }
         assertThat("resource link title in in the metadata elements", titles, hasItem("Resource: test.file.txt"));
 
-        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", false, true, true, true);
-        testType = creator.createDescribeProcessType(this.annotations,
-                                                     "R_andom",
-                                                     new URL("http://my.url/myScript.R"),
-                                                     new URL("http://my.url/to_the_session_info"));
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", false, true, true, true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         metadataArray = testType.getMetadataArray();
         titles = Lists.newArrayList();
@@ -251,11 +238,9 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -266,11 +251,9 @@ public class DescriptionCreatorTest {
                    titles,
                    hasItem("Import: annotations/import/imported.R"));
 
-        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, false, true, true);
-        testType = creator.createDescribeProcessType(this.annotations,
-                                                     "R_andom",
-                                                     new URL("http://my.url/myScript.R"),
-                                                     new URL("http://my.url/to_the_session_info"));
+        creator = new RProcessDescriptionCreator("org.n52.wps.server.r.uniform", true, false, true, true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        testType = creator.createDescribeProcessType(this.annotations, "R_andom");
 
         metadataArray = testType.getMetadataArray();
         titles = Lists.newArrayList();
@@ -290,19 +273,17 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<>();
         String t = "metadatatitle";
         String h = "http://url.to/metadata.doc";
         attributeHash.put(RAttribute.TITLE, t);
         attributeHash.put(RAttribute.HREF, h);
         testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
 
-        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
-                                                                            "R_andom",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations, "R_andom");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -323,19 +304,17 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<>();
         String t = "metadatatitle";
         String h = "http://url.to/metadata.doc";
         attributeHash.put(RAttribute.TITLE, t);
         // attributeHash.put(RAttribute.HREF, h);
         testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
 
-        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
-                                                                            "Meta",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations, "Meta");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();
@@ -356,19 +335,17 @@ public class DescriptionCreatorTest {
                                                                             true,
                                                                             true,
                                                                             true,
-                                                                            true);
-        ArrayList<RAnnotation> testAnnotations = new ArrayList<RAnnotation>(this.annotations);
-        HashMap<RAttribute, Object> attributeHash = new HashMap<RAttribute, Object>();
+                                                                            true,
+                                                                            new ResourceUrlGenerator("http://test.url"));
+        ArrayList<RAnnotation> testAnnotations = new ArrayList<>(this.annotations);
+        HashMap<RAttribute, Object> attributeHash = new HashMap<>();
         String t = "metadatatitle";
         String h = "http://url.to/metadata.doc";
         // attributeHash.put(RAttribute.TITLE, t);
         attributeHash.put(RAttribute.HREF, h);
         testAnnotations.add(new RAnnotation(RAnnotationType.METADATA, attributeHash, registry));
 
-        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations,
-                                                                            "Meta",
-                                                                            new URL("http://my.url/myScript.R"),
-                                                                            new URL("http://my.url/to_the_session_info"));
+        ProcessDescriptionType testType = creator.createDescribeProcessType(testAnnotations, "Meta");
 
         MetadataType[] metadataArray = testType.getMetadataArray();
         List<String> titles = Lists.newArrayList();

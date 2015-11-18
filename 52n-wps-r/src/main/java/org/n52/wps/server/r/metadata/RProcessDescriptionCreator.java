@@ -29,6 +29,7 @@
 package org.n52.wps.server.r.metadata;
 
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,11 +57,11 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.syntax.RAttribute;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.n52.wps.webapp.api.FormatEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,28 +78,32 @@ public class RProcessDescriptionCreator {
 
     private static final String DEFAULT_VERSION = "1";
 
-    private static Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
+    private static final Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
-    private String id;
+    private final String id;
 
-    private boolean resourceDownloadEnabled;
+    private final boolean resourceDownloadEnabled;
 
-    private boolean importDownloadEnabled;
+    private final boolean importDownloadEnabled;
 
-    private boolean scriptDownloadEnabled;
+    private final boolean scriptDownloadEnabled;
 
-    private boolean sessionInfoLinkEnabled;
+    private final boolean sessionInfoLinkEnabled;
+
+    private final ResourceUrlGenerator urlGenerator;
 
     public RProcessDescriptionCreator(String publicProcessId,
                                       boolean resourceDownload,
                                       boolean importDownload,
                                       boolean scriptDownload,
-                                      boolean sessionInfoLink) {
+                                      boolean sessionInfoLink,
+                                      ResourceUrlGenerator urlGenerator) {
         this.id = publicProcessId;
         this.resourceDownloadEnabled = resourceDownload;
         this.importDownloadEnabled = importDownload;
         this.scriptDownloadEnabled = scriptDownload;
         this.sessionInfoLinkEnabled = sessionInfoLink;
+        this.urlGenerator = urlGenerator;
 
         log.debug("NEW {}", this);
     }
@@ -115,11 +120,7 @@ public class RProcessDescriptionCreator {
      * @throws ExceptionReport
      * @throws RAnnotationException
      */
-    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations,
-                                                            String identifier,
-                                                            URL fileUrl,
-                                                            URL sessionInfoUrl) throws ExceptionReport,
-            RAnnotationException {
+    public ProcessDescriptionType createDescribeProcessType(List<RAnnotation> annotations, String identifier) throws ExceptionReport, RAnnotationException {
         log.debug("Creating Process Description for " + identifier);
 
         try {
@@ -128,12 +129,12 @@ public class RProcessDescriptionCreator {
             pdt.setStoreSupported(true);
 
             if (scriptDownloadEnabled)
-                addScriptLink(fileUrl, pdt);
+                addScriptLink(urlGenerator.getScriptURL(identifier), pdt);
             else
                 log.trace("Script download link disabled.");
 
             if (sessionInfoLinkEnabled)
-                addSessionInfoLink(sessionInfoUrl, pdt);
+                addSessionInfoLink(urlGenerator.getSessionInfoURL(), pdt);
             else
                 log.trace("Session info download link disabled.");
 
@@ -207,7 +208,7 @@ public class RProcessDescriptionCreator {
 
             return pdt;
         }
-        catch (RuntimeException e) {
+        catch (RuntimeException | MalformedURLException e) {
             log.error("Error creating process description.", e);
             throw new ExceptionReport("Error creating process description.",
                                       "NA",
@@ -285,7 +286,7 @@ public class RProcessDescriptionCreator {
                         mt.setTitle(RESOURCE_TITLE_PREFIX + resource.getResourceValue());
 
                         // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
-                        URL url = RResource.getResourceURL(resource);
+                        URL url = urlGenerator.getResourceURL(resource);
                         mt.setHref(url.toExternalForm());
                         log.trace("Added resource URL to metadata document: {}", url);
                     }
@@ -316,7 +317,7 @@ public class RProcessDescriptionCreator {
                         mt.setTitle(IMPORT_TITLE_PREFIX + resource.getResourceValue());
 
                         // URL url = resource.getFullResourceURL(this.config.getResourceDirURL());
-                        URL url = RResource.getImportURL(resource);
+                        URL url = urlGenerator.getImportURL(resource);
                         mt.setHref(url.toExternalForm());
                         log.trace("Added resource URL to metadata document: {}", url);
                     }
