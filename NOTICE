@@ -91,7 +91,6 @@ This project includes:
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
   Filter XML Support under Lesser General Public License (LGPL)
-  FindBugs-Annotations under GNU Lesser Public License
   FreeMarker under BSD-style license
   GeoJSON Support under Lesser General Public License (LGPL)
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
@@ -122,7 +121,7 @@ This project includes:
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
-  Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  Javassist under MPL 1.1
   javax.inject under The Apache Software License, Version 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
@@ -189,7 +188,6 @@ This project includes:
   PJL Compressing Filter under Apache Software License V2.0
   precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
-  Reflections under WTFPL or The New BSD License
   REngine under GNU Lesser General Public License
   Rserve under GNU Lesser General Public License
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
@@ -220,6 +218,7 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   standard under The Apache Software License, Version 2.0
+  StAX API under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License
   Support and utility classes under Simplified BSD
@@ -256,6 +255,7 @@ This project includes:
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
   Xlink Model under Lesser General Public License (LGPL)
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Parsing under Lesser General Public License (LGPL)
   XML Parsing Support under Lesser General Public License (LGPL)
   XML Pull Parsing API under Public Domain
