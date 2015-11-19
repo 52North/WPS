@@ -28,7 +28,6 @@
  */
 package org.n52.wps.server.r;
 
-import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
