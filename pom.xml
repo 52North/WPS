@@ -220,96 +220,9 @@
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
         <currentYear>2015</currentYear>
         <!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>-->
-        <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
-        <n52.sos.version>5.0.0-SNAPSHOT</n52.sos.version>
-        <n52.iceland.version>1.0.0</n52.iceland.version>
 	</properties>
 	<dependencyManagement>
         <dependencies>
-		    <dependency>
-			    <groupId>org.n52.iceland</groupId>
-			    <artifactId>iceland</artifactId>
-                <version>${n52.iceland.version}</version>
-                <exclusions>
-				    <exclusion>
-					    <artifactId>servlet-api</artifactId>
-					    <groupId>javax.servlet</groupId>
-				    </exclusion>
-					<exclusion>
-						<artifactId>stax-api</artifactId>
-						<groupId>stax</groupId>
-					</exclusion>
-			    </exclusions>
-		    </dependency>
-		    <!--  O&M Parser -->
-		    <dependency>
-		    	<groupId>${n52.sos.group}</groupId>
-		    	<artifactId>api</artifactId>
-		    	<version>${n52.sos.version}</version>
-		    	<exclusions>
-					<exclusion>
-						<artifactId>hsqldb</artifactId>
-						<groupId>hsqldb</groupId>
-					</exclusion>
-					<exclusion>
-			            <groupId>org.geotools</groupId>
-			            <artifactId>gt-epsg-hsql</artifactId>
-					</exclusion>
-					<exclusion>
-						<artifactId>stax-api</artifactId>
-						<groupId>stax</groupId>
-					</exclusion>
-				</exclusions>
-		    </dependency>
-		    <dependency>
-		    	<groupId>${n52.sos.group}</groupId>
-		    	<artifactId>api</artifactId>
-		    	<version>${n52.sos.version}</version>
-		    	<type>test-jar</type>
-		    	<scope>test</scope>
- 			    <exclusions>
-					<exclusion>
-						<artifactId>hsqldb</artifactId>
-						<groupId>hsqldb</groupId>
-					</exclusion>
-					<exclusion>
-			            <groupId>org.geotools</groupId>
-			            <artifactId>gt-epsg-hsql</artifactId>
-					</exclusion>
-					<exclusion>
-						<artifactId>stax-api</artifactId>
-						<groupId>stax</groupId>
-					</exclusion>
-				</exclusions>
-		    </dependency>
-		    <dependency>
-		    	<groupId>${n52.sos.group}</groupId>
-		    	<artifactId>coding-sos-v20</artifactId>
-		    	<version>${n52.sos.version}</version>
-		    	<exclusions>
-					<exclusion>
-						<artifactId>stax-api</artifactId>
-						<groupId>stax</groupId>
-					</exclusion>
-				</exclusions>
-		    </dependency>
-		    <dependency>
-		    	<groupId>${n52.sos.group}</groupId>
-		    	<artifactId>third-party-ncname-resolver</artifactId>
-		    	<version>${n52.sos.version}</version>
-		    </dependency>
-		    <dependency>
-		    	<groupId>org.n52.sensorweb</groupId>
-		    	<artifactId>52n-xml-om-v20</artifactId>
-		    	<version>2.1.0</version>
-		    </dependency>
-    		<dependency>
-				<groupId>org.hamcrest</groupId>
-				<artifactId>hamcrest-library</artifactId>
-				<version>1.3</version>
-				<scope>test</scope>
-			</dependency>
-		    <!-- END O&M Parser -->
 		    <!-- testing -->
 			<dependency>
 				<groupId>junit</groupId>
