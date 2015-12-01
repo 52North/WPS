@@ -222,7 +222,7 @@
         <!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>-->
         <n52.sos.group>org.n52.sensorweb.sos</n52.sos.group>
         <n52.sos.version>5.0.0-SNAPSHOT</n52.sos.version>
-        <n52.iceland.version>1.0.0-SNAPSHOT</n52.iceland.version>
+        <n52.iceland.version>1.0.0</n52.iceland.version>
 	</properties>
 	<dependencyManagement>
         <dependencies>
