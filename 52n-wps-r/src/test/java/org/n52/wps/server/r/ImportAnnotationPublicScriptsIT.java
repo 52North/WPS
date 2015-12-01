@@ -73,7 +73,7 @@ public class ImportAnnotationPublicScriptsIT extends AbstractWps4RTest {
 
         openConfig = getConfigSpy();
         openConfig.setWknPrefix("test.");
-        Mockito.when(openConfig.getEnableBatchStart()).thenReturn(true);
+        Mockito.when(openConfig.getEnableBatchStart()).thenReturn(false);
         Mockito.when(openConfig.isImportDownloadEnabled()).thenReturn(true);
         Mockito.when(openConfig.isResourceDownloadEnabled()).thenReturn(true);
         Mockito.when(openConfig.isScriptDownloadEnabled()).thenReturn(true);
