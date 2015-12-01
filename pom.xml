@@ -276,12 +276,22 @@
 			            <groupId>org.geotools</groupId>
 			            <artifactId>gt-epsg-hsql</artifactId>
 					</exclusion>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
 				</exclusions>
 		    </dependency>
 		    <dependency>
 		    	<groupId>${n52.sos.group}</groupId>
 		    	<artifactId>coding-sos-v20</artifactId>
 		    	<version>${n52.sos.version}</version>
+		    	<exclusions>
+					<exclusion>
+						<artifactId>stax-api</artifactId>
+						<groupId>stax</groupId>
+					</exclusion>
+				</exclusions>
 		    </dependency>
 		    <dependency>
 		    	<groupId>${n52.sos.group}</groupId>
@@ -635,11 +645,6 @@
 				<groupId>javax.xml.bind</groupId>
 				<artifactId>jsr173_api</artifactId>
 				<version>1.0</version>
-			</dependency>
-			<dependency>
-				<groupId>stax</groupId>
-				<artifactId>stax-api</artifactId>
-				<version>1.0.1</version>
 			</dependency>
 			<dependency>
 				<groupId>net.java.dev.stax-utils</groupId>
