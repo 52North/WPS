@@ -91,6 +91,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.google.common.primitives.Doubles;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -142,8 +143,8 @@ public class InputHandler {
 	 */
         private InputHandler(Builder builder) throws ExceptionReport {
 		this.algorithmIdentifier = builder.algorithmIdentifier;
-		this.processDesc = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier).getProcessDescriptionType(WPSConfig.VERSION_100);
-		this.processOffering = (ProcessOffering) RepositoryManager.getInstance().getProcessDescription(algorithmIdentifier).getProcessDescriptionType(WPSConfig.VERSION_200);
+		this.processDesc = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmIdentifier).getProcessDescriptionType(WPSConfig.VERSION_100);
+		this.processOffering = (ProcessOffering) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmIdentifier).getProcessDescriptionType(WPSConfig.VERSION_200);
 
 		if (processDesc == null) {
                     throw new ExceptionReport("Error while accessing the process description for " + algorithmIdentifier,
@@ -153,11 +154,11 @@ public class InputHandler {
 		Map<String, InterceptorInstance> inputInterceptors = resolveInputInterceptors(algorithmIdentifier);
 
 		InputType[] inputsV100 = builder.inputs.getInputsV100();
-		
+
 		DataInputType[] inputsV200 = builder.inputs.getInputsV200();
-		
+
 		if(inputsV100 != null){
-		
+
 		for (InputType input : inputsV100) {
 			String inputId = input.getIdentifier().getStringValue().trim();
 			if (inputInterceptors.containsKey(inputId)) {
@@ -190,7 +191,7 @@ public class InputHandler {
 			}
 		}
 		}else if(inputsV200 != null){
-			
+
 			for (DataInputType input : inputsV200) {
 				String inputId = input.getId().trim();
 				if (inputInterceptors.containsKey(inputId)) {
@@ -204,11 +205,11 @@ public class InputHandler {
 				}
 
 				if(input.getData() != null) {
-					
+
 					net.opengis.wps.x20.InputDescriptionType inputDescription = XMLBeansHelper.findInputByID(inputId, processOffering.getProcess());
-					
+
 					DataDescriptionType dataDesc = inputDescription.getDataDescription();
-					
+
 					if(dataDesc instanceof net.opengis.wps.x20.ComplexDataType) {
 						handleComplexData(input, inputId);
 					}
@@ -228,7 +229,7 @@ public class InputHandler {
 				}
 			}
 		}
-		
+
 	}
 
     Map<String, InterceptorInstance> resolveInputInterceptors(String algorithmClassName) {
@@ -554,7 +555,7 @@ public class InputHandler {
 					" mimeType: " + dataMimeType +
 					" encoding: " + formatEncoding);
 
-			Class<?> algorithmInput = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputId);
+			Class<?> algorithmInput = RepositoryManagerSingletonWrapper.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputId);
 			parser = ParserFactory.getInstance().getParser(formatSchema, dataMimeType, formatEncoding, algorithmInput);
 		} catch (RuntimeException e) {
 			throw new ExceptionReport("Error obtaining input data", ExceptionReport.NO_APPLICABLE_CODE, e);
@@ -610,11 +611,11 @@ public class InputHandler {
              return result;
          }
 
-         
+
 	/**
 	 * Handles the complexValue, which in this case should always include XML
 	 * which can be parsed into a FeatureCollection.
-	 * 
+	 *
 	 * @param input
 	 *            The client input
 	 * @param inputId
@@ -687,11 +688,11 @@ public class InputHandler {
 				formatSchema = format.getSchema();
 			}
 		} else {
-			
+
 			Format[] formatArray =  inputReferenceDesc.getDataDescription().getFormatArray();
-			
+
 			Format defaultFormat = getDefaultFormat(formatArray);
-			
+
 			// mimeType not in request
 			if (StringUtils.isBlank(dataMimeType) && !data.isSetEncoding()
 					&& !data.isSetSchema()) {
@@ -838,7 +839,7 @@ public class InputHandler {
 									 * NullPointerException if one of the
 									 * supported types is given by mimetype and
 									 * not by schema:
-									 * 
+									 *
 									 * old code:
 									 * if(tempFormat.getEncoding().equalsIgnoreCase
 									 * (data.getSchema())){
@@ -890,7 +891,7 @@ public class InputHandler {
 					+ formatSchema + " mimeType: " + dataMimeType
 					+ " encoding: " + formatEncoding);
 
-			Class<?> algorithmInput = RepositoryManager.getInstance()
+			Class<?> algorithmInput = RepositoryManagerSingletonWrapper.getInstance()
 					.getInputDataTypeForAlgorithm(this.algorithmIdentifier,
 							inputId);
 			parser = ParserFactory.getInstance().getParser(formatSchema,
@@ -917,10 +918,10 @@ public class InputHandler {
 		list.add(collection);
 		inputData.put(inputId, list);
 	}
-	
+
 	/**
 	 * Handles the ComplexValueReference
-	 * 
+	 *
 	 * @param input
 	 *            The client input
 	 * @throws ExceptionReport
@@ -1413,7 +1414,7 @@ public class InputHandler {
 
 		IParser parser = null;
 		try {
-			Class<?> algorithmInputClass = RepositoryManager.getInstance()
+			Class<?> algorithmInputClass = RepositoryManagerSingletonWrapper.getInstance()
 					.getInputDataTypeForAlgorithm(this.algorithmIdentifier,
 							inputID);
 			if (algorithmInputClass == null) {
@@ -1454,9 +1455,9 @@ public class InputHandler {
 		}
 
 	}
-	
+
 	private Format getDefaultFormat(Format[] formatArray){
-		
+
 		for (Format format : formatArray) {
 			if(format.isSetDefault()){
 				return format;
@@ -1465,17 +1466,17 @@ public class InputHandler {
 		//TODO throw RuntimeException, as there must be a default format?
 		return null;
 	}
-	
+
 	private Format findFormat(net.opengis.wps.x20.InputDescriptionType inputReferenceDesc,
 			String dataMimeType, String dataSchema, String dataEncoding,
 			String potentialFormatSchema, String potentialFormatEncoding) {
 		Format result = null;
 		boolean canUseDefault = false;
-		
+
 		Format[] formatArray =  inputReferenceDesc.getDataDescription().getFormatArray();
-		
+
 		Format defaultFormat = getDefaultFormat(formatArray);
-		
+
 		String defaultMimeType = defaultFormat.getMimeType();
 
 		if (defaultMimeType.equalsIgnoreCase(dataMimeType)) {
@@ -1509,7 +1510,7 @@ public class InputHandler {
 		}
 		return result;
 	}
-	
+
 	private Format getNonDefaultFormat(
 			net.opengis.wps.x20.InputDescriptionType inputRefDesc, String dataMimeType,
 			String dataSchema, String dataEncoding) {
@@ -1548,7 +1549,7 @@ public class InputHandler {
 		}
 		return null;
 	}
-	
+
          protected IData parseComplexValue(String formatEncoding, String complexValue, String dataMimeType, String formatSchema, IParser parser) throws ExceptionReport {
              IData idata;
              String complexValueCopy = complexValue.toString();
@@ -1700,13 +1701,13 @@ public class InputHandler {
 		}
 
 		net.opengis.wps.x20.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
-				
+
 		LiteralDataDomain literalDataDomain = ((LiteralDataType)inputDesc.getDataDescription()).getLiteralDataDomainArray(0);
-		
-		
+
+
 		net.opengis.ows.x20.DomainMetadataType dataType = literalDataDomain.getDataType();
 		String xmlDataType = dataType != null ? dataType.getReference() : null;
-		
+
 		//still null, assume string as default
 		if(xmlDataType == null) {
 			xmlDataType = BasicXMLTypeFactory.STRING_URI;
@@ -1767,7 +1768,7 @@ public class InputHandler {
 		}
 
 	}
-	
+
 	private boolean checkRange(IData parameterObj, RangeType allowedRange){
 
 		List<?> l = allowedRange.getRangeClosure();
@@ -1887,7 +1888,7 @@ public class InputHandler {
 
 		return false;
 	}
-	
+
 	/**
 	 * Handles the ComplexValueReference
 	 * @param input The client input
@@ -2270,7 +2271,7 @@ public class InputHandler {
 
 		IParser parser = null;
 		try {
-			Class<?> algorithmInputClass = RepositoryManager.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
+			Class<?> algorithmInputClass = RepositoryManagerSingletonWrapper.getInstance().getInputDataTypeForAlgorithm(this.algorithmIdentifier, inputID);
 			if(algorithmInputClass == null) {
 				throw new RuntimeException("Could not determine internal input class for input" + inputID);
 			}
@@ -2406,14 +2407,14 @@ public class InputHandler {
 	 */
     private void handleBBoxValue(DataInputType input)
             throws ExceptionReport {
-    	
+
     	net.opengis.ows.x20.BoundingBoxType boundingBoxType = null;
 		try {
 			boundingBoxType = net.opengis.ows.x20.BoundingBoxType.Factory.parse(input.getData().getDomNode());
 		} catch (XmlException e) {
 			LOGGER.error("XmlException occurred while trying to parse bounding box: " + (boundingBoxType == null ? null : boundingBoxType.toString()), e);
 		}
-    	
+
         IData envelope = parseBoundingBox(boundingBoxType);
 
         List<IData> resultList = inputData.get(input.getId());
@@ -2467,7 +2468,7 @@ public class InputHandler {
         }
         return new BoundingBoxData(lower, upper, bbt.getCrs());
     }
-    
+
     private double[] parseCoordinate(List<?> ordinates)
             throws NumberFormatException {
         List<Number> coordinate = new ArrayList<Number>(ordinates.size());

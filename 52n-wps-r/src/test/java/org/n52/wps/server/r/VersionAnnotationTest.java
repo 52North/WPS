@@ -63,7 +63,7 @@ import org.n52.wps.server.r.syntax.RAttribute;
  * @author Daniel Nüst
  *
  */
-public class VersionAnnotation {
+public class VersionAnnotationTest {
 
     private static RAnnotationParser parser;
 
@@ -71,7 +71,7 @@ public class VersionAnnotation {
 
     @BeforeClass
     public static void prepare() throws FileNotFoundException, IOException, XmlException, ExceptionReport {
-        Util.mockGenericWPSConfig();
+        TestUtil.mockGenericWPSConfig();
 
         mockR_Config = Mockito.spy(new R_Config());
         mockR_Config.setWknPrefix("test.");
@@ -86,7 +86,7 @@ public class VersionAnnotation {
     
     @Test
     public void versionIsParsed() throws FileNotFoundException, RAnnotationException, IOException {
-        try (FileInputStream fis = new FileInputStream(Util.loadFile("/annotations/version/script.R"));) {
+        try (FileInputStream fis = new FileInputStream(TestUtil.loadFile("/annotations/version/script.R"));) {
             List<RAnnotation> annotations = parser.parseAnnotationsfromScript(fis);
 
             RAnnotation annotation = RAnnotation.filterFirstMatchingAnnotation(annotations, RAnnotationType.DESCRIPTION);

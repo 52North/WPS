@@ -41,13 +41,18 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.entities.Server;
 import org.n52.wps.webapp.service.ConfigurationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Util {
+public class TestUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestUtil.class);
 
     public static final Server testserver = new Server("http", "testhost", 42, "wps");
 
     public static File loadFile(String filePath) {
-        URL r = Util.class.getResource(filePath);
+        LOGGER.debug("Loading file '{}'", filePath);
+        URL r = TestUtil.class.getResource(filePath);
         File f;
         try {
             f = new File(r.toURI());
@@ -56,16 +61,15 @@ public class Util {
             Assert.fail("Invalid file path (not URI): " + e.getMessage());
             return null;
         }
-
         return f;
     }
 
     /**
      * public constructor access for {@link R_Config}
-     * 
+     *
      * use helper method to instatiate the R_Config in this class, which is in the same package as R_Config
      * and therefore can call the protected constructur.
-     * 
+     *
      * @return
      */
     public static R_Config getConfig() {

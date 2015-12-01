@@ -72,6 +72,7 @@ import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
@@ -96,12 +97,12 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 	private ExecuteDocument execDom;
 	private Map<String, IData> returnResults;
 	private ExecuteResponseBuilderV100 execRespType;
-	
-	
+
+
 
 	/**
 	 * Creates an ExecuteRequest based on a Document (HTTP_POST)
-	 * 
+	 *
 	 * @param doc
 	 *            The clients submission
 	 * @throws ExceptionReport
@@ -127,7 +128,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
 		// create an initial response
 		execRespType = new ExecuteResponseBuilderV100(this);
-        
+
         storeRequest(execDom);
 	}
 
@@ -147,9 +148,9 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
         storeRequest(ciMap);
 	}
-	
+
 	public void getKVPDataInputs(){
-		
+
 	}
 
 	/**
@@ -164,7 +165,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		this.execDom = ExecuteDocument.Factory.newInstance();
 		Execute execute = execDom.addNewExecute();
 		String processID = getMapValue("Identifier", true);
-		if (!RepositoryManager.getInstance().containsAlgorithm(processID)) {
+		if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(processID)) {
 			throw new ExceptionReport("Process does not exist",
 					ExceptionReport.INVALID_PARAMETER_VALUE);
 		}
@@ -173,7 +174,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		String dataInputString = getMapValue("DataInputs", true);
 		dataInputString = dataInputString.replace("&amp;","&");
 		String[] inputs = dataInputString.split(";");
-		
+
 		// Handle data inputs
 		for (String inputString : inputs) {
 			int position = inputString.indexOf("=");
@@ -193,8 +194,8 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					value = inputString.substring(position + 1);
 				}
 			}
-			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
-			
+			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+
 			if (description == null) {
 				throw new ExceptionReport("Data Identifier not supported: "
 						+ key, ExceptionReport.MISSING_PARAMETER_VALUE);
@@ -239,7 +240,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					try {
 						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
-						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
 					}
 					if (attributeName.equalsIgnoreCase("encoding")) {
 						encodingAttribute = attributeValue;
@@ -281,9 +282,9 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					// Handling ComplexData
 					else {
 						ComplexDataType data = input.addNewData().addNewComplexData();
-						
+
 						InputStream stream = new ByteArrayInputStream(value.getBytes());
-						
+
 						try {
 							data.set(XmlObject.Factory.parse(stream));
 						} catch (Exception e) {
@@ -296,7 +297,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 										ExceptionReport.NO_APPLICABLE_CODE, e1);
 							}
 						}
-						
+
 						if (schemaAttribute != null) {
 							data.setSchema(schemaAttribute);
 						}
@@ -307,7 +308,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 							data.setEncoding(encodingAttribute);
 						}
 					}
-				
+
 			} else if (inputDesc.isSetLiteralData()) {
 				LiteralDataType data = input.addNewData().addNewLiteralData();
 				if (value == null) {
@@ -325,7 +326,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 			} else if (inputDesc.isSetBoundingBoxData()) {
 				BoundingBoxType data = input.addNewData().addNewBoundingBoxData();
 				String[] values = value.split(",");
-				
+
 				if(values.length<4){
 					throw new ExceptionReport("Invalid Number of BBOX Values: "
 							+ inputDesc.getIdentifier().getStringValue(),
@@ -335,16 +336,16 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 				lowerCorner.add(values[0]);
 				lowerCorner.add(values[1]);
 				data.setLowerCorner(lowerCorner);
-				
+
 				List<String> upperCorner = new ArrayList<String>();
 				upperCorner.add(values[2]);
 				upperCorner.add(values[3]);
 				data.setUpperCorner(upperCorner);
-				
+
 				if(values.length>4){
 					data.setCrs(values[4]);
 				}
-				
+
 				if(values.length>5){
 					data.setDimensions(BigInteger.valueOf(Long.valueOf(values[5])));
 				}
@@ -379,7 +380,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					outputDataInput = outputID;
 				}
 				outputDataInput = outputDataInput.replace("=", "");
-				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+				ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 				OutputDescriptionType outputDesc = XMLBeansHelper
 						.findOutputByID(outputDataInput, description.getProcessOutputs()
 								.getOutputArray());
@@ -407,7 +408,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					try{
 						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
-						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
 					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
@@ -429,9 +430,9 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 			} else {
 				rawDataInput = rawData;
 			}
-			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
+			ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(processID).getProcessDescriptionType(WPSConfig.VERSION_100);
 			OutputDescriptionType outputDesc = XMLBeansHelper.findOutputByID(
-					rawDataInput, 
+					rawDataInput,
 							description.getProcessOutputs().getOutputArray());
 			if (outputDesc == null) {
 				throw new ExceptionReport(
@@ -458,7 +459,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 					try{
 						attributeValue = URLDecoder.decode(attributeValue, "UTF-8");
 					} catch (UnsupportedEncodingException e) {
-						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);						
+						throw new ExceptionReport("Something went wrong while trying to decode value of " + attributeName, ExceptionReport.NO_APPLICABLE_CODE, e);
 					}
 					if (attributeName.equalsIgnoreCase("mimeType")) {
 						output.setMimeType(attributeValue);
@@ -482,14 +483,14 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
 	/**
 	 * Validates the client request
-	 * 
+	 *
 	 * @return True if the input is valid, False otherwise
 	 */
 	public boolean validate() throws ExceptionReport {
 		// Identifier must be specified.
 		/*
 		 * Only for HTTP_GET: String identifier = getMapValue("identifier");
-		 * 
+		 *
 		 * try{ // Specifies if all complex valued output(s) of this process
 		 * should be stored by process // as web-accessible resources store =
 		 * getMapValue("store").equals("true");
@@ -503,7 +504,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		 * 0) { throw new ExceptionReport("Incorrect number of arguments for
 		 * parameter dataInputs, please only a even number of parameter values",
 		 * ExceptionReport.INVALID_PARAMETER_VALUE); }
-		 * 
+		 *
 		 */
 		if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute().getVersion())) {
 			throw new ExceptionReport("Specified version is not supported.",
@@ -513,15 +514,15 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
 		//Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
 		String identifier = getAlgorithmIdentifier();
-		
+
 		if(identifier == null){
 			throw new ExceptionReport(
 					"No process identifier supplied.",
-					ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");			
+					ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");
 		}
-		
+
 		// check if the algorithm is in our repository
-		if (!RepositoryManager.getInstance().containsAlgorithm(
+		if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(
 				identifier)) {
 			throw new ExceptionReport(
 					"Specified process identifier does not exist",
@@ -530,7 +531,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		}
 
 		// validate if the process can be executed
-		ProcessDescriptionType desc = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_100);
+		ProcessDescriptionType desc = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(getAlgorithmIdentifier()).getProcessDescriptionType(WPSConfig.VERSION_100);
 		// We need a description of the inputs for the algorithm
 		if (desc == null) {
 			LOGGER.warn("desc == null");
@@ -538,17 +539,17 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		}
 
 		// Get the inputdescriptions of the algorithm
-		
+
 		if(desc.getDataInputs()!=null){
 			InputDescriptionType[] inputDescs = desc.getDataInputs().getInputArray();
-		
+
 		//prevent NullPointerException for zero input values in execute request (if only default values are used)
 		InputType[] inputs;
 		if(getExecute().getDataInputs()==null)
 				inputs=new InputType[0];
 		else
 			inputs = getExecute().getDataInputs().getInputArray();
-			
+
 			// For each input supplied by the client
 			for (InputType input : inputs) {
 				boolean identifierMatched = false;
@@ -631,7 +632,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
 	/**
 	 * Actually serves the Request.
-	 * 
+	 *
 	 * @throws ExceptionReport
 	 */
 	public Response call() throws ExceptionReport {
@@ -647,44 +648,44 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 			else {
 				context = new ExecutionContext();
 			}
-	
+
 				// register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
 			ExecutionContextFactory.registerContext(context);
-			
+
 			LOGGER.debug("started with execution");
-            
+
 			updateStatusStarted();
-            
+
 			// parse the input
 			InputType[] inputs = new InputType[0];
 			if( getExecute().getDataInputs()!=null){
 				inputs = getExecute().getDataInputs().getInputArray();
 			}
 			InputHandler parser = new InputHandler.Builder(new Input(inputs), getAlgorithmIdentifier()).build();
-			
+
 			// we got so far:
 			// get the algorithm, and run it with the clients input
-		
+
 			/*
 			 * IAlgorithm algorithm =
 			 * RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
 			 * returnResults = algorithm.run((Map)parser.getParsedInputLayers(),
 			 * (Map)parser.getParsedInputParameters());
 			 */
-			algorithm = RepositoryManager.getInstance().getAlgorithm(getAlgorithmIdentifier());
-			
+			algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(getAlgorithmIdentifier());
+
 			if(algorithm instanceof ISubject){
 				ISubject subject = (ISubject) algorithm;
 				subject.addObserver(this);
-				
+
 			}
-			
+
 			if(algorithm instanceof AbstractTransactionalAlgorithm){
 				returnResults = ((AbstractTransactionalAlgorithm)algorithm).run(execDom);
 			} else {
 				inputMap = parser.getParsedInputData();
 				returnResults = algorithm.run(inputMap);
-			} 
+			}
 
             List<String> errorList = algorithm.getErrors();
             if (errorList != null && !errorList.isEmpty()) {
@@ -739,15 +740,15 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                 }
             }
 		}
-		
+
 		ExecuteResponse response = new ExecuteResponse(this);
         return response;
 	}
-    
+
 
 	/**
 	 * Gets the identifier of the algorithm the client requested
-	 * 
+	 *
 	 * @return An identifier
 	 */
 	public String getAlgorithmIdentifier() {
@@ -757,10 +758,10 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the Execute that is associated with this Request
-	 * 
+	 *
 	 * @return The Execute
 	 */
 	public Execute getExecute() {
@@ -808,12 +809,12 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		}
 	}
 
-	
+
 	public void update(ISubject subject) {
 		Object state = subject.getState();
 		LOGGER.info("Update received from Subject, state changed to : " + state);
 		StatusType status = StatusType.Factory.newInstance();
-		
+
 		int percentage = 0;
 		if (state instanceof Integer) {
 			percentage = (Integer) state;
@@ -823,25 +824,25 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		}
 		updateStatus(status);
 	}
-    
+
 	public void updateStatusAccepted() {
 		StatusType status = StatusType.Factory.newInstance();
 		status.setProcessAccepted("Process Accepted");
 		updateStatus(status);
 	}
-	
+
 	public void updateStatusStarted() {
         StatusType status = StatusType.Factory.newInstance();
         status.addNewProcessStarted().setPercentCompleted(0);
         updateStatus(status);
     }
-	
+
     public void updateStatusSuccess() {
         StatusType status = StatusType.Factory.newInstance();
         status.setProcessSucceeded("Process successful");
         updateStatus(status);
-    }	
-    
+    }
+
     public void updateStatusError(String errorMessage) {
 		StatusType status = StatusType.Factory.newInstance();
 		net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport excRep = status
@@ -852,7 +853,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
 		updateStatus(status);
 	}
-	
+
 	private void updateStatus(StatusType status) {
 		getExecuteResponseBuilder().setStatus(status);
         try {
@@ -873,7 +874,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             throw new RuntimeException(e);
         }
 	}
-    
+
     private void storeRequest(ExecuteDocument executeDocument) {
         InputStream is = null;
         try {
@@ -886,9 +887,9 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             IOUtils.closeQuietly(is);
         }
     }
-    
+
     private void storeRequest(CaseInsensitiveMap map) {
-  
+
         BufferedWriter w = null;
         ByteArrayOutputStream os = null;
         ByteArrayInputStream is = null;
@@ -897,7 +898,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             w = new BufferedWriter(new OutputStreamWriter(os));
             for (Object key : map.keySet()) {
                 Object value = map.get(key);
-                String valueString = "";                
+                String valueString = "";
                 if(value instanceof String[]){
                 	valueString = ((String[])value)[0];
                 }else{

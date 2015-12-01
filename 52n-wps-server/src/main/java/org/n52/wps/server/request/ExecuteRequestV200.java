@@ -46,6 +46,7 @@ import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
@@ -73,7 +74,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	/**
 	 * Creates an ExecuteRequest based on a Document (HTTP_POST)
-	 * 
+	 *
 	 * @param doc
 	 *            The clients submission
 	 * @throws ExceptionReport
@@ -105,7 +106,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	/**
 	 * Validates the client request
-	 * 
+	 *
 	 * @return True if the input is valid, False otherwise
 	 */
 	public boolean validate() throws ExceptionReport {
@@ -126,7 +127,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		}
 
 		// check if the algorithm is in our repository
-		if (!RepositoryManager.getInstance().containsAlgorithm(identifier)) {
+		if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(identifier)) {
 			throw new ExceptionReport(
 					"Specified process identifier does not exist",
 					ExceptionReport.INVALID_PARAMETER_VALUE, "identifier="
@@ -134,7 +135,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		}
 
 		// validate if the process can be executed
-		ProcessOffering desc = (ProcessOffering) RepositoryManager
+		ProcessOffering desc = (ProcessOffering) RepositoryManagerSingletonWrapper
 				.getInstance().getProcessDescription(getAlgorithmIdentifier())
 				.getProcessDescriptionType(WPSConfig.VERSION_200);
 		// We need a description of the inputs for the algorithm
@@ -144,16 +145,16 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		}
 
 	    //TODO validate in-/outputs
-		
+
 		//TODO check for null
 		rawData = execDom.getExecute().getResponse().equals(ExecuteRequestType.Response.RAW);
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Gets the Execute that is associated with this Request
-	 * 
+	 *
 	 * @return The Execute
 	 */
 	public ExecuteRequestType getExecute() {
@@ -162,7 +163,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	/**
 	 * Actually serves the Request.
-	 * 
+	 *
 	 * @throws ExceptionReport
 	 */
 	public Response call() throws ExceptionReport {
@@ -171,7 +172,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		try {
 			//TODO add outputs to execution context
 			ExecutionContext context = new ExecutionContext();
-			
+
 			// register so that any function that calls
 			// ExecuteContextFactory.getContext() gets the instance registered
 			// with this thread
@@ -191,8 +192,8 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 			// we got so far:
 			// get the algorithm, and run it with the clients input
-			
-			algorithm = RepositoryManager.getInstance().getAlgorithm(
+
+			algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(
 					getAlgorithmIdentifier());
 
 			if (algorithm instanceof ISubject) {
@@ -201,7 +202,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 			}
 
 			inputMap = parser.getParsedInputData();
-			returnResults = algorithm.run(inputMap);			
+			returnResults = algorithm.run(inputMap);
 
 			List<String> errorList = algorithm.getErrors();
 			if (errorList != null && !errorList.isEmpty()) {
@@ -270,7 +271,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	/**
 	 * Gets the identifier of the algorithm the client requested
-	 * 
+	 *
 	 * @return An identifier
 	 */
 	public String getAlgorithmIdentifier() {
@@ -296,7 +297,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 	public void update(ISubject subject) {
 		Object state = subject.getState();
 		LOGGER.info("Update received from Subject, state changed to : " + state);
-		
+
 		StatusInfo status = StatusInfo.Factory.newInstance();
 
 		int percentage = 0;
@@ -308,25 +309,25 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		updateStatus(status);
 	}
 
-	public void updateStatusAccepted() {		
+	public void updateStatusAccepted() {
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Accepted.toString());
 		updateStatus(status);
 	}
 
-	public void updateStatusSuccess() {		
+	public void updateStatusSuccess() {
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Succeeded.toString());
 		updateStatus(status);
 	}
 
-	public void updateStatusFailed() {		
+	public void updateStatusFailed() {
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
 		updateStatus(status);
 	}
 
-	public void updateStatusStarted() {		
+	public void updateStatusStarted() {
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
 		status.setPercentCompleted(0);
@@ -374,6 +375,6 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	@Override
 	public void updateStatusError(String errorMessage) {
-		// TODO Auto-generated method stub		
+		// TODO Auto-generated method stub
 	}
 }

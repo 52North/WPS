@@ -1,34 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans profile="test" xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<mvc:annotation-driven />
-	<mvc:view-controller path="/" view-name="index" />
+    <mvc:annotation-driven />
 
-	<!-- static resource files -->
-	<mvc:resources mapping="/static/**" location="/static/" />
+    <mvc:view-controller path="/" view-name="index" />
 
-	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="1000000" />
-	</bean>
-	
-	<beans profile="production">
+    <!-- static resource files -->
+    <mvc:resources mapping="/static/**" location="/static/" />
+
+    <bean id="springIntegrationHelper" class="org.n52.wps.commons.SpringIntegrationHelper" init-method="init" />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1000000" />
+    </bean>
+
+    <beans profile="common-test">
+        <context:component-scan base-package="org.n52.wps">
+            <context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
+            <context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+        </context:component-scan>
+    </beans>
+
+
+	<beans profile="controller-test">
 		<context:component-scan base-package="org.n52.wps">
 			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
-			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
+            <context:exclude-filter type="regex" expression="org\.n52\.wps\.server\.r\..*" />
 		</context:component-scan>
+        
+        <!-- Apache Tiles 3 -->
+        <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+            <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+        </bean>
+
+        <bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+            <property name="definitions">
+                <value>/WEB-INF/tiles.xml</value>
+            </property>
+        </bean>
+        <!-- End of Apache Tiles 3 -->
 	</beans>
 
-	<beans profile="test">
-		<!-- Include test modules in the context for integration testing -->
-		<context:component-scan base-package="org.n52.wps">
-			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
-			<context:exclude-filter type="regex" expression="org\.n52\.wps\.webapp\.testmodules\..*" />
-		</context:component-scan>
-	</beans>
 
 </beans>

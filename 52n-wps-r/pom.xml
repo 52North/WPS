@@ -149,6 +149,18 @@
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-commons</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.wps</groupId>
+			<artifactId>52n-wps-configuration-api</artifactId>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.nuiton.thirdparty</groupId>
 			<artifactId>REngine</artifactId>
 		</dependency>

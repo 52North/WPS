@@ -29,6 +29,7 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,7 +63,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.util.InvalidRScriptException;
+import org.n52.wps.commons.SpringIntegrationHelper;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * A repository to retrieve the available algorithms.
@@ -70,12 +77,21 @@ import org.n52.wps.server.r.util.InvalidRScriptException;
  * @author Matthias Hinz, Daniel Nüst
  *
  */
-@Component(LocalRAlgorithmRepository.COMPONENT_NAME)
-public class LocalRAlgorithmRepository implements ITransactionalAlgorithmRepository {
+@Component(RAlgorithmRepository.COMPONENT_NAME)
+public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RAlgorithmRepository.class);
 
-    public static final String COMPONENT_NAME = "RAlgorithmRepository";
+    /*
+     * instantiation is managed by IoC container (spring) and the RepositoryManager only
+     * has the name of the config module at hand to retrieve or instantiate (hard wiring
+     * via reflection) this instance.
+     *
+     * Using the repository's name instead of the config module everywhere would hinder
+     * the WPS to add configured algorithms to the config module though.
+     */
+    static final String COMPONENT_NAME = "org.n52.wps.server.r.RConfigurationModule";
+//    static final String COMPONENT_NAME = "RAlgorithmRepository";
 
     private static final String DESCRPTION_VERSION_FOR_VALIDATION = WPSConfig.VERSION_100;
 
@@ -95,16 +111,23 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     @Autowired
     private ResourceFileRepository resourceRepo;
 
+    // needed to autowire before script registration starts
+    @Autowired private CustomDataTypeManager customDataTypes;
+
     @Autowired
     private RDataTypeRegistry dataTypeRegistry;
 
-    public LocalRAlgorithmRepository() {
+    public RAlgorithmRepository() {
         LOGGER.info("NEW {}", this);
     }
 
     @PostConstruct
     public void init() {
         LOGGER.info("Initializing Local*R*ConfigurationModule..");
+
+         // TODO tests expect a configuration manager injected here
+//        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
+
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
@@ -172,12 +195,41 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     }
 
     @Override
-    public boolean addAlgorithm(Object processID) {
-        if ( !(processID instanceof String)) {
-            LOGGER.error("Unsupported process id {} of class {}", processID, processID.getClass());
+    public boolean addAlgorithm(Object item) {
+        if ( !canHandleItem(item)) {
+            LOGGER.debug("Ignore unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
-        return initializeRProcess((String) processID);
+
+        if (item instanceof File) {
+            return initializeRProcess((File) item);
+        } else {
+            return initializeRProcess((String) item);
+        }
+    }
+
+    private boolean canHandleItem(Object item) {
+        if (item instanceof String) {
+            return true;
+        }
+        if (item instanceof File) {
+            File file = (File) item;
+            String extension = FilenameUtils.getExtension(file.getName());
+            return "R".equalsIgnoreCase(extension);
+        }
+        return false;
+    }
+
+    private boolean initializeRProcess(File file) {
+        boolean success = true;
+        try {
+            success &= scriptRepo.registerScriptFile(file);
+            String wkn = scriptRepo.getWKNForScriptFile(file);
+            return success && initializeRProcess(wkn);
+        } catch (RAnnotationException | ExceptionReport e) {
+            LOGGER.error("Could not initialize R process.", e);
+        }
+        return false;
     }
 
     private boolean initializeRProcess(String processName) {
@@ -211,12 +263,13 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     private GenericRProcess createRProcess(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
-        GenericRProcess algorithm = new GenericRProcess(wellKnownName,
-                                                        config,
-                                                        parser,
-                                                        scriptRepo,
-                                                        resourceRepo,
-                                                        dataTypeRegistry);
+        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry);
+        SpringIntegrationHelper.autowireBean(algorithm);
+        /*
+         * weak inheritance implementation. When using injected singleton beans
+         * like R_Config we have to initialize description by hand
+         */
+        algorithm.initializeDescription();
         validateProcessDescription(algorithm);
         return algorithm;
     }
@@ -330,16 +383,30 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
     }
 
     @Override
-    public boolean removeAlgorithm(Object processID) {
-        if ( ! (processID instanceof String)) {
-            LOGGER.debug("Could not remove algorithm with processID {}", processID);
+    public boolean removeAlgorithm(Object item) {
+        if ( !canHandleItem(item)) {
+            LOGGER.debug("Ignore removing of unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
-
-        String id = (String) processID;
-        if (this.rProcesses.containsKey(id))
+        
+        String id;
+        if (item instanceof File) {
+            File file = (File) item;
+            try {
+                id = scriptRepo.getWKNForScriptFile(file);
+            } catch (ExceptionReport | RAnnotationException e) {
+                LOGGER.error("Could remove R Algorithm '{}'", file.getAbsolutePath(), e);
+                return false;
+            }
+        } else {
+            id = (String) item;
+        }
+        if (this.rProcesses.containsKey(id)) {
             this.rProcesses.remove(id);
 
+            // TODO remove scripts from script repo
+
+        }
         LOGGER.info("Removed algorithm: {}", id);
         return true;
     }

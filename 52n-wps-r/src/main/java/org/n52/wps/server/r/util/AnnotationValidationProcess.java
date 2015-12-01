@@ -28,6 +28,7 @@
  */
 package org.n52.wps.server.r.util;
 
+import org.n52.wps.commons.SpringIntegrationHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -51,6 +52,7 @@ import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 @Algorithm(version = "1.0.0", identifier = "org.n52.wps.server.algorithm.r.AnnotationValidation", title = "R Annotation Validation", statusSupported = false, storeSupported = false, abstrakt = "Validate the annotations of a WPS4R script without deploying it")
 public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
@@ -67,15 +69,13 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
 
     private String validationResult;
 
-    private String annotationsString = null;
+    private String annotationsString;
 
-    private static RAnnotationParser parser = new RAnnotationParser(new RDataTypeRegistry(), new SimpleR_Config());
-
-    private static class SimpleR_Config extends R_Config {
-        //
-    }
+    private RAnnotationParser parser;
 
     public AnnotationValidationProcess() {
+        this.parser = new RAnnotationParser();
+        SpringIntegrationHelper.autowireBean(parser);
         LOGGER.debug("NEW {}", this);
     }
 

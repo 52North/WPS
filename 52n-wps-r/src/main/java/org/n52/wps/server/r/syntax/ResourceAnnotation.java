@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Matthias Hinz, Daniel Nüst
  *
  */
@@ -57,7 +57,7 @@ public class ResourceAnnotation extends RAnnotation {
             RAnnotationException {
         super(RAnnotationType.RESOURCE, new HashMap<RAttribute, Object>(), dataTypeRegistry);
         this.resources.addAll(resources);
-        log.debug("NEW {}", this);
+        log.trace("NEW {}", this);
     }
 
     @Override

@@ -3,16 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
 
 	<context:annotation-config />
 
-	<import resource="spring/spring-db-config.xml" />
-	<import resource="spring/spring-security-config.xml" />
-		
-	<!-- Required by OMParser/Generator test (module 52n-wps-io-impl -->
+    <!-- Required by OMParser/Generator test (module 52n-wps-io-impl -->
 	<bean id="xmlOptionsHelper"		class="org.n52.sos.util.XmlOptionsHelper" />
 	<bean id="sosHelper"			class="org.n52.sos.util.SosHelper" />
 	<bean id="postprocessor"		class="org.n52.iceland.config.spring.LifecycleBeanPostProcessor"/>
@@ -30,7 +27,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
     <bean id="sweCommonEncoderV20" 	class="org.n52.sos.encode.SweCommonEncoderv20"/>
     <bean id="samplingEncoderv20"	class="org.n52.sos.encode.SamplingEncoderv20"/>
     <bean id="xlinkEncoderv1999"	class="org.n52.sos.encode.XlinkEncoderv1999"/>
-    <bean id="profileHandler"		class="org.n52.sos.service.profile.DefaultProfileHandler"/> 
+    <bean id="profileHandler"		class="org.n52.sos.service.profile.DefaultProfileHandler"/>
     <bean id="jtsHelper"			class="org.n52.sos.util.JTSHelper"/>
     <bean id="serviceConfiguration" class="org.n52.iceland.service.ServiceConfiguration"/>
 
