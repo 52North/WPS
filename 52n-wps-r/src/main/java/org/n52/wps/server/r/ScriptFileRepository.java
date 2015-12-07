@@ -30,7 +30,6 @@ package org.n52.wps.server.r;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -39,12 +38,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import org.apache.commons.collections.set.UnmodifiableSortedSet;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.info.RProcessInfo;
@@ -71,7 +68,7 @@ public class ScriptFileRepository {
 
     private static final String DEFAULT_VERSION = "1";
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ScriptFileRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptFileRepository.class);
 
     /** Maps current R-script files to identifiers **/
     private final Map<File, String> fileToWknMap = new HashMap<>();
@@ -94,7 +91,7 @@ public class ScriptFileRepository {
             throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
         }
         final Map<Integer, File> versionedScriptFiles = getScriptFileVersionsForWKN(wkn);
-        SortedSet<Integer> versions = new TreeSet<Integer>(versionedScriptFiles.keySet());
+        SortedSet<Integer> versions = new TreeSet<>(versionedScriptFiles.keySet());
         return versionedScriptFiles.get(versions.first());
     }
 
