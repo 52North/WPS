@@ -74,7 +74,7 @@ public class ProcessDescription {
 		versionDescriptionTypeMap.put(version, processDescription);		
 	}
 	
-	public ProcessOffering createProcessDescriptionV200fromV100(ProcessDescriptionType processDescriptionV100){
+	public static ProcessOffering createProcessDescriptionV200fromV100(ProcessDescriptionType processDescriptionV100){
 		
 		ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 		
@@ -255,7 +255,7 @@ public class ProcessDescription {
 	    return processOffering;
     }
 
-	private void transformComplexDataFromV100ToV200(
+	private static void transformComplexDataFromV100ToV200(
 			ComplexDataType complexDataType,
 			XmlObject complexData) {
 		
@@ -301,7 +301,7 @@ public class ProcessDescription {
 		}
 	}
     
-    private void describeComplexDataFormat200(Format supportedFormatType,
+    private static void describeComplexDataFormat200(Format supportedFormatType,
     		String format,
     		String encoding,
     		String schema) {
