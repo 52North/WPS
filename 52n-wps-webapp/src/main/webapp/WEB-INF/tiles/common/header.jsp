@@ -64,7 +64,7 @@
 				</security:authorize>
 			</div>
 			<security:authorize access="isAnonymous()">
-				<form class="navbar-form pull-right" action="j_spring_security_check" method="POST">
+				<form class="navbar-form pull-right" action="<c:url value="/" />j_spring_security_check" method="POST">
 					<input type="text" name="username" class="form-control" style="width: 160px;" placeholder="Username..." />
 					<input type="password" name="password" class="form-control" style="width: 160px;" placeholder="Password..." />
 					<label class="checkbox-inline text-muted">
