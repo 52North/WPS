@@ -40,6 +40,7 @@ This project includes:
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
   52North WPS MATLAB Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Moving Code Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS R Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -50,17 +51,25 @@ This project includes:
   52°North SOS - SOS API Module under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
+  Abdera Bundle Jar under The Apache Software License, Version 2.0
+  Activation 1.1 under The Apache Software License, Version 2.0
   AOP alliance under Public Domain
+  Apache Commons Exec under Apache License, Version 2.0
+  Apache Commons Lang under The Apache Software License, Version 2.0
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   authn-web under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Autotag - Core runtime under The Apache Software License, Version 2.0
+  Axiom API under The Apache Software License, Version 2.0
+  Axiom Impl under The Apache Software License, Version 2.0
+  bcprov-jdk15 under Bouncycastle license, http://www.bouncycastle.org/licence.html (MIT-style license)
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   builder under Apache License 2.0
   ClassLoader leak prevention under Apache 2
+  ClassLoader Leak Prevention library under Apache 2
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)
@@ -77,6 +86,7 @@ This project includes:
   commons-beanutils under The Apache Software License, Version 2.0
   commons-httpclient-contrib-ssl under The Apache Software License, Version 2.0
   config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  Content Repository for Java Technology API under Day Specification License or Day Specification License addendum
   core under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
@@ -84,9 +94,11 @@ This project includes:
   decision under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Derby Engine under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
+  Dough Lea's util.concurrent package under Public domain, Sun Microsoystems
   ecore under Eclipse Public License (EPL)
   enforcement under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   EPSG Authority Service using WKT file under Lesser General Public License (LGPL)
+  ezmorph under The Apache Software License, Version 2.0
   Feature Based Graphs and Networks under Lesser General Public License (LGPL)
   Filter Encoding Specification Model under Lesser General Public License (LGPL)
   Filter Encoding Specification XML Support under Lesser General Public License (LGPL)
@@ -99,20 +111,32 @@ This project includes:
   gmlpacket-2.0 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   Grid Coverage module under Lesser General Public License (LGPL)
   Gson under The Apache Software License, Version 2.0
+  Guava (Google Common Libraries) Annotations under The Apache Software License, Version 2.0
+  Guava (Google Common Libraries) Base under The Apache Software License, Version 2.0
+  Guava (Google Common Libraries) Collections under The Apache Software License, Version 2.0
+  Guava (Google Common Libraries) Primitive Types under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest All under New BSD License
   Hamcrest Core under BSD style
   Hamcrest library under New BSD License
   Hibernate Validator Engine under Apache License, Version 2.0
+  htmlparser under The MIT License
   HttpClient under Apache License
   HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
+  ibatis-sqlmap under The Apache Software License, Version 2.0
   Image I/O-Extensions - Custom Streams under GNU Lesser General Public License, version 3 or later (LGPL)
   Image I/O-Extensions - Improved TIFF Plugin under BSD License
   Image I/O-Extensions - Pure java ArcGrid Plugin under GNU Lesser General Public License, version 3 or later (LGPL)
   Image I/O-Extensions - utilities classes and methods under GNU Lesser General Public License, version 3 or later (LGPL)
+  Jackrabbit API under The Apache Software License, Version 2.0
+  Jackrabbit Core under The Apache Software License, Version 2.0
+  Jackrabbit JCR Commons under The Apache Software License, Version 2.0
+  Jackrabbit SPI under The Apache Software License, Version 2.0
+  Jackrabbit SPI Commons under The Apache Software License, Version 2.0
+  Jackrabbit Text Extractors under The Apache Software License, Version 2.0
   Jackson under The Apache Software License, Version 2.0
-  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
@@ -121,6 +145,9 @@ This project includes:
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under Commons Development and Distribution License, Version 1.0
   Java UUID Generator under The Apache Software License, Version 2.0 or GNU Lesser General Public License v2.1
+  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
+  JavaMail 1.4 under The Apache Software License, Version 2.0
+  JavaMail API under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1
   javax.inject under The Apache Software License, Version 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
@@ -142,6 +169,7 @@ This project includes:
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
+  json-lib under The Apache Software License, Version 2.0
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
@@ -156,6 +184,7 @@ This project includes:
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logging under The Apache Software License, Version 2.0
+  Lucene Core under Apache 2
   Main module under Lesser General Public License (LGPL)
   mapscript under MapServer License (MIT license)
   MATLAB Connector Client under GNU General Public License (GPL) v3
@@ -163,6 +192,8 @@ This project includes:
   MATLAB Control under BSD 3-clause
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
+  Moving Code Runtime under Apache License, Version 2.0
+  Moving Code XML Schema under Apache License, Version 2.0
   mvel under The Apache Software License, Version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
@@ -188,9 +219,9 @@ This project includes:
   PJL Compressing Filter under Apache Software License V2.0
   precondition under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Referencing services under Lesser General Public License (LGPL)
-  REngine under GNU Lesser General Public License
+  REngine under GNU General Public License, version 2
   Rserve under GNU Lesser General Public License
-  servlet-api under CDDL 1.1 or GPL2 w/ CPE
+  RserveEngine under GNU General Public License, version 2
   sextante under GPL 2.0 license
   sextante_algorithms under GPL 2.0 license
   sextante_gt27_bindings under GPL 2.0 license
@@ -221,6 +252,7 @@ This project includes:
   StAX API under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License
+  Streaming API for XML (STAX API 1.0) under The Apache Software License, Version 2.0
   Support and utility classes under Simplified BSD
   support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Tiles - API under The Apache Software License, Version 2.0
