@@ -53,13 +53,18 @@
 								property="principal.username" /> <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li><a href="<c:url value="/" />change_password">Change Password</a></li>
-							<li><a href="j_spring_security_logout">Logout</a></li>
+							<li><c:url value="/logout" var="logoutUrl" />
+								<form action="${logoutUrl}" method="post">
+									<input type="submit" value="Logout" /> <input type="hidden"
+										name="${_csrf.parameterName}" value="${_csrf.token}" />
+								</form>
+							</li>
 						</ul>
 					</div>
 				</security:authorize>
 			</div>
 			<security:authorize access="isAnonymous()">
-				<form class="navbar-form pull-right" action="j_spring_security_check" method="POST">
+				<form class="navbar-form pull-right" action="<c:url value="/" />j_spring_security_check" method="POST">
 					<input type="text" name="username" class="form-control" style="width: 160px;" placeholder="Username..." />
 					<input type="password" name="password" class="form-control" style="width: 160px;" placeholder="Password..." />
 					<label class="checkbox-inline text-muted">

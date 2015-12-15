@@ -53,5 +53,6 @@
 			<div class="text-danger">${newPasswordError}</div>
 		</div>
 	</div>
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 	<button type="submit" class="btn btn-primary">Change</button>
 </form>
