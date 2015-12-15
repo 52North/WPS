@@ -60,8 +60,7 @@ public class AlgorithmEntry {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        return hash;
+        return algorithm.hashCode();
     }
 
     @Override
