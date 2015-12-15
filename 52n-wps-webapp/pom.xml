@@ -31,6 +31,13 @@
 
 	<!-- here are the dependencies of the project -->
 	<dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>52n-wps-git-algorithm-repository</artifactId>
+                    <version>${project.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-commons</artifactId>
