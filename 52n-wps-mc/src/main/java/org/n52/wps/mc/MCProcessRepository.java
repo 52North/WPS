@@ -1,83 +1,73 @@
-/**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
- *
- *       • Apache License, version 2.0
- *       • Apache Software License, version 1.0
- *       • GNU Lesser General Public License, version 3
- *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
- *       • Common Development and Distribution License (CDDL), version 1.0
- *
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- */
 package org.n52.wps.mc;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.movingcode.runtime.GlobalRepositoryManager;
 import org.n52.movingcode.runtime.codepackage.MovingCodePackage;
 import org.n52.movingcode.runtime.coderepository.MovingCodeRepository;
 import org.n52.movingcode.runtime.coderepository.RepositoryChangeListener;
 import org.n52.movingcode.runtime.processors.ProcessorFactory;
-import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.IAlgorithmRepository;
+import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.webapp.api.AlgorithmEntry;
+import org.n52.wps.webapp.api.ClassKnowingModule;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.FormatEntry;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.api.types.StringConfigurationEntry;
+import org.n52.wps.webapp.api.types.URIConfigurationEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.opengis.wps.x100.ProcessDescriptionType;
 
 /**
- * This class implements an {@link IAlgorithmRepository} for MovingCode Packages. This repository maintains a
- * {@link GlobalRepositoryManager} internally and fires notification events to {@link WPSConfig}.
+ * Module Configuration for {@link MCProcessRepository}.
  * 
- * This class will also load the basic configuration for the MC runtime subsystem (Available Processors,
- * Repository URLs and Folders)
- * 
- * @author Matthias Mueller, TU Dresden
- * 
+ * @author matthias
  */
-public class MCProcessRepository implements IAlgorithmRepository {
-
-	// static string definitions
-	private static final String REPO_FEED_REPO_PARAM = "REMOTE_REPOSITORY";
-	private static final String LOCAL_ZIP_REPO_PARAM = "LOCAL_REPOSITORY";
-	private static final String CACHED_REMOTE_REPO_PARAM = "CACHED_REMOTE_REPOSITORY";
-
+public class MCProcessRepository extends ClassKnowingModule implements IAlgorithmRepository{
+	
+	/**
+	 * Initial configuration options.
+	 * TODO: move to config file.
+	 */
+	static final String configFile = "mc-config.json";
+	static final String REPO_FEED_REPO_PARAM = "remote_repositories";
+	static final String LOCAL_ZIP_REPO_PARAM = "local_repositories";
+	
+	static final String LOCAL_REPO_KEY = "LOCAL_REPO";
+	static final String REMOTE_REPO_KEY = "REMOTE_REPO";
+	
+	private volatile boolean isActive = false;
+	private final List<? extends ConfigurationEntry<?>> configurationEntries = readConfig();
+	
+	private static Logger LOGGER = LoggerFactory.getLogger(MCProcessRepository.class);
+	
 	// use the GlobalRepoManager from mc-runtime for the process inventory
 	private GlobalRepositoryManager rm = GlobalRepositoryManager.getInstance();
 
 	// valid functionIDs
 	// needs to be volatile since this field may be updated by #updateContent()
 	private volatile Collection<String> supportedFunctionIDs = Collections.emptyList();
-
-	private static Logger LOGGER = LoggerFactory.getLogger(MCProcessRepository.class);
-
+	
 	public MCProcessRepository() {
 		super();
-
+		
 		// register a change listener with the GlobalRepositoryManager
 		// to listen for content updates
 		rm.addRepositoryChangeListener(new RepositoryChangeListener() {
@@ -86,29 +76,134 @@ public class MCProcessRepository implements IAlgorithmRepository {
 			public void onRepositoryUpdate(MovingCodeRepository updatedRepo) {
 				// trigger a content update of this repo
 				updateContent();
-				// and notify the WPS framework to trigger a Capabilities update
-				LOGGER.info("Moving Code repository content has changed. Capabilities update required.");
-				WPSConfig.getInstance().firePropertyChange(WPSConfig.WPSCAPABILITIES_SKELETON_PROPERTY_EVENT_NAME);
+				LOGGER.info("Moving Code repository content has changed. Content update finished.");
 			}
 		});
-
-		// check if the repository is active
-		if (WPSConfig.getInstance().isRepositoryActive(this.getClass().getCanonicalName())) {
-
-			// trigger remote repo init in separate thread
-			Thread tLoadRemote = new LoadRepoThread();
-			tLoadRemote.start();
-		}
-		else {
-			LOGGER.debug("MCProcessRepository is inactive.");
-		}
+		
+		// trigger remote repo init in separate thread
+		Thread tLoadRemote = new LoadRepoThread(this);
+		tLoadRemote.start();
+	}
+	
+	@Override
+	public String getModuleName() {
+		return "Moving Code Configuration Module";
 	}
 
 	@Override
-	public Collection<String> getAlgorithmNames() {
-		return supportedFunctionIDs;
+	public boolean isActive() {
+		return isActive;
 	}
 
+	@Override
+	public void setActive(boolean active) {
+		isActive = active;
+	}
+
+	@Override
+	public ConfigurationCategory getCategory() {
+		return ConfigurationCategory.REPOSITORY;
+	}
+
+	@Override
+	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+		return configurationEntries;
+	}
+
+	@Override
+	public List<AlgorithmEntry> getAlgorithmEntries() {
+		List<AlgorithmEntry> algos = new ArrayList<>();
+		for (String fid : supportedFunctionIDs){
+			algos.add(new AlgorithmEntry(fid, true));
+		}
+		return algos;
+	}
+
+	@Override
+	public List<FormatEntry> getFormatEntries() {
+		return null;
+	}
+
+	@Override
+	public String getClassName() {
+		return MCProcessRepository.class.getName();
+	}
+	
+	
+	/**
+	 * Properties reader
+	 * 
+	 * @return
+	 */
+	private static final List<? extends ConfigurationEntry<?>> readConfig(){
+		List<ConfigurationEntry<?>> configList = new ArrayList<>();
+		
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		InputStream is = classLoader.getResourceAsStream(configFile);
+		
+		int lineCnt = 0;
+		try(BufferedReader br = new BufferedReader(new InputStreamReader(is))){
+			{
+				String line;
+		        while((line = br.readLine()) != null) {
+		        	switch (getType(line)) {
+					case EMPTY:
+						break;
+					case COMMENT:
+						break;
+					case LOCAL:
+						configList.add(new StringConfigurationEntry(LOCAL_REPO_KEY, "Local Repository Folder", "Absolute path to a local repository folder", false, line.trim()));
+						break;
+					case REMOTE:
+						URI uri = toURI(line.trim());
+						if (uri != null) {
+							configList.add(new URIConfigurationEntry(REMOTE_REPO_KEY, "Remote Repository Feed", "URL of a remote feed repository", false, uri));
+						} else {
+							LOGGER.error("Invalid repository URL in line {}.", lineCnt);
+						}
+						break;
+					default:
+						break;
+					}
+		        	lineCnt++;
+		        }
+			}
+		} catch (IOException e) {
+			LOGGER.error("Could not parse repository configuration. There was an error in line {}", lineCnt);
+		}
+		
+		return configList;
+	}
+	
+	private static URI toURI(String s){
+		try {
+			return new URI(s);
+		} catch (URISyntaxException e) {
+			LOGGER.error("{} is not a valid URL", s);
+			return null;
+		}
+	}
+	
+	private static LineType getType(String line){
+		String s = line.trim();
+		if (s.length() == 0){
+			return LineType.EMPTY;
+		}else if (s.startsWith("#")){
+			return LineType.COMMENT;
+		} else if (s.startsWith("http://")){
+			return LineType.REMOTE;
+		} else if (s.startsWith("https://")){
+			return LineType.REMOTE;
+		} else {
+			return LineType.LOCAL;
+		}
+	}
+	
+	
+	private enum LineType {
+		COMMENT, REMOTE, LOCAL, EMPTY
+	}
+	
 	private synchronized void updateContent(){
 
 		// run this block if validFunctionIDs are not yet available
@@ -135,6 +230,77 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 		supportedFunctionIDs = exFIDs;
 	}
+	
+	/**
+	 * 
+	 * @author Matthias Mueller
+	 *
+	 */
+	private final class LoadRepoThread extends Thread {
+		
+		private final MCProcessRepository master;
+		
+		private LoadRepoThread(MCProcessRepository master){
+			this.master = master;
+		}
+		
+		@Override
+		public void run() {
+			
+			// for each remote repository: add to RepoManager
+			for (ConfigurationEntry<?> cEntry : master.configurationEntries) {
+				if (cEntry.getKey().equalsIgnoreCase(REMOTE_REPO_KEY)
+						&& cEntry.getValue() instanceof URI){
+					// convert value to URL, check and register
+					try {
+						URL repoURL = ((URI) cEntry.getValue()).toURL();
+						rm.addRepository(repoURL);
+						LOGGER.info("Added MovingCode Repository: " + REMOTE_REPO_KEY + " - "
+								+ repoURL.toString());
+					}
+					catch (MalformedURLException e) {
+						LOGGER.warn("MovingCode Repository is not a valid URL: " + REMOTE_REPO_KEY + " - "
+								+ cEntry.getValue().toString());
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						LOGGER.error("Error loading repository: " + REMOTE_REPO_KEY + " - "
+								+ cEntry.getValue().toString());
+					}
+				}
+			}
+
+			// for each local repository: add to RepoManager
+			for (ConfigurationEntry<?> cEntry : master.configurationEntries) {
+				if (cEntry.getKey().equalsIgnoreCase(LOCAL_REPO_KEY)
+						&& cEntry.getKey() instanceof String){
+					// identify Folder, check and register
+					try {
+						String repoFolder = (String) cEntry.getValue();
+						rm.addLocalZipPackageRepository(repoFolder);
+						LOGGER.info("Added MovingCode Repository: " + LOCAL_REPO_KEY + " - "
+								+ repoFolder);
+					}
+					catch (Exception e) {
+						// catch any unexpected error; if we get here this is probably an indication for a
+						// bug/flaw in mc-runtime ...
+						LOGGER.error("Error loading repository: " + LOCAL_REPO_KEY + " - "
+								+ cEntry.getValue().toString());
+						e.printStackTrace();
+					}
+				}
+			}
+
+
+			LOGGER.info("The following repositories have been loaded:\n{}", Arrays.toString(rm.getRegisteredRepositories()));
+		}
+	}
+
+	@Override
+	public Collection<String> getAlgorithmNames() {
+		return supportedFunctionIDs;
+	}
 
 	@Override
 	public IAlgorithm getAlgorithm(String processID) {
@@ -142,8 +308,12 @@ public class MCProcessRepository implements IAlgorithmRepository {
 	}
 
 	@Override
-	public ProcessDescriptionType getProcessDescription(String processID) {
-		return filterProcessDescription(rm.getProcessDescription(processID));
+	public ProcessDescription getProcessDescription(String processID) {
+		ProcessDescriptionType pdt =  filterProcessDescription(rm.getProcessDescription(processID));
+		ProcessDescription pd = new ProcessDescription();
+		pd.addProcessDescriptionForVersion(pdt, WPSConfig.VERSION_100);
+		pd.addProcessDescriptionForVersion(ProcessDescription.createProcessDescriptionV200fromV100(pdt), WPSConfig.VERSION_200);
+		return pd;
 	}
 
 	@Override
@@ -153,77 +323,12 @@ public class MCProcessRepository implements IAlgorithmRepository {
 
 	@Override
 	public void shutdown() {
-		// TODO Auto-generated method stub
 		// we probably do not need any logic here
 	}
-
+	
 	static ProcessDescriptionType filterProcessDescription(ProcessDescriptionType description){
 		description.setStatusSupported(true);
 		description.setStoreSupported(true);
 		return description;
 	}
-
-	/**
-	 * 
-	 * @author Matthias Mueller
-	 *
-	 */
-	private final class LoadRepoThread extends Thread {
-
-		@Override
-		public void run() {
-
-			// get properties to find out which remote repositories we shall invoke
-			Property[] propertyArray = WPSConfig.getInstance().getPropertiesForRepositoryClass(MCProcessRepository.class.getCanonicalName());
-
-			// for each remote repository: add to RepoManager
-			for (Property property : propertyArray) {
-				if (property.getName().equalsIgnoreCase(REPO_FEED_REPO_PARAM) && property.getActive()) {
-					// convert to URL, check and register
-					try {
-						URL repoURL = new URL(property.getStringValue());
-						rm.addRepository(repoURL);
-						LOGGER.info("Added MovingCode Repository: " + property.getName() + " - "
-								+ property.getStringValue());
-					}
-					catch (MalformedURLException e) {
-						LOGGER.warn("MovingCode Repository is not a valid URL: " + property.getName() + " - "
-								+ property.getStringValue());
-					}
-					catch (Exception e) {
-						// catch any unexpected error; if we get here this is probably an indication for a
-						// bug/flaw in mc-runtime ...
-						LOGGER.error("Error loading repository: " + property.getName() + " - "
-								+ property.getStringValue());
-					}
-
-				}
-			}
-
-			// for each local repository: add to RepoManager
-			for (Property property : propertyArray) {
-				if (property.getName().equalsIgnoreCase(LOCAL_ZIP_REPO_PARAM) && property.getActive()) {
-					// identify Folder, check and register
-					try {
-						String repoFolder = property.getStringValue();
-						rm.addLocalZipPackageRepository(repoFolder);
-						LOGGER.info("Added MovingCode Repository: " + property.getName() + " - "
-								+ property.getStringValue());
-					}
-					catch (Exception e) {
-						// catch any unexpected error; if we get here this is probably an indication for a
-						// bug/flaw in mc-runtime ...
-						LOGGER.error("Error loading repository: " + property.getName() + " - "
-								+ property.getStringValue());
-						e.printStackTrace();
-					}
-
-				}
-			}
-
-
-			LOGGER.info("The following repositories have been loaded:\n{}", Arrays.toString(rm.getRegisteredRepositories()));
-		}
-	}
-
 }

@@ -45,6 +45,7 @@ import org.n52.movingcode.runtime.iodata.IODataType;
 import org.n52.movingcode.runtime.iodata.MediaData;
 import org.n52.movingcode.runtime.processors.AbstractProcessor;
 import org.n52.movingcode.runtime.processors.ProcessorFactory;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.GenericFileData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
@@ -54,6 +55,7 @@ import org.n52.wps.io.data.binding.literal.LiteralFloatBinding;
 import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.IAlgorithm;
+import org.n52.wps.server.ProcessDescription;
 
 public class MCProcessDelegator implements IAlgorithm {
 
@@ -137,7 +139,7 @@ public class MCProcessDelegator implements IAlgorithm {
 		// MC packages for WPS should therefore have only *one* supported
 		// type per input or output
 
-		OutputDescriptionType[] wpsOutputs = this.getDescription().getProcessOutputs().getOutputArray();
+		OutputDescriptionType[] wpsOutputs = this.getDescriptionType().getProcessOutputs().getOutputArray();
 
 		for (IIOParameter param : processor.values()) {
 			// for all output-only parameters:
@@ -249,9 +251,8 @@ public class MCProcessDelegator implements IAlgorithm {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public ProcessDescriptionType getDescription() {
+	
+	private ProcessDescriptionType getDescriptionType() {
 		if (description == null) {
 			ProcessDescriptionType originalDescription = GlobalRepositoryManager.getInstance().getProcessDescription(identifier);
 			MCProcessRepository.filterProcessDescription(originalDescription);
@@ -263,17 +264,12 @@ public class MCProcessDelegator implements IAlgorithm {
 
 	@Override
 	public String getWellKnownName() {
-		return getDescription().getIdentifier().getStringValue();
-	}
-
-	@Override
-	public boolean processDescriptionIsValid() {
-		return getDescription().validate();
+		return getDescriptionType().getIdentifier().getStringValue();
 	}
 
 	@Override
 	public Class< ? > getInputDataType(String id) {
-		InputDescriptionType[] inputs = this.getDescription().getDataInputs().getInputArray();
+		InputDescriptionType[] inputs = this.getDescriptionType().getDataInputs().getInputArray();
 
 		for (InputDescriptionType input : inputs) {
 
@@ -311,7 +307,7 @@ public class MCProcessDelegator implements IAlgorithm {
 
 	@Override
 	public Class< ? > getOutputDataType(String id) {
-		OutputDescriptionType[] outputs = this.getDescription().getProcessOutputs().getOutputArray();
+		OutputDescriptionType[] outputs = this.getDescriptionType().getProcessOutputs().getOutputArray();
 
 		for (OutputDescriptionType output : outputs) {
 
@@ -375,6 +371,18 @@ public class MCProcessDelegator implements IAlgorithm {
 
 		// in case we do not find a matching type return null
 		return null;
+	}
+
+	@Override
+	public ProcessDescription getDescription() {
+		ProcessDescription pd = new ProcessDescription();
+		pd.addProcessDescriptionForVersion(getDescriptionType(), WPSConfig.VERSION_100);
+		return pd;
+	}
+
+	@Override
+	public boolean processDescriptionIsValid(String version) {
+		return getDescriptionType().validate();
 	}
 
 }
