@@ -71,15 +71,14 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 public class MCProcessRepository extends ClassKnowingModule implements IAlgorithmRepository{
 	
 	/**
-	 * Initial configuration options.
-	 * TODO: move to config file.
+	 * Configuration file name in the classpath.
 	 */
-	static final String configFile = "mc-config.json";
+	static final String configFile = "repositories.config";
 	static final String REPO_FEED_REPO_PARAM = "remote_repositories";
 	static final String LOCAL_ZIP_REPO_PARAM = "local_repositories";
 	
-	static final String LOCAL_REPO_KEY = "LOCAL_REPO";
-	static final String REMOTE_REPO_KEY = "REMOTE_REPO";
+	private static final String LOCAL_REPO_KEY = "LOCAL_REPO";
+	private static final String REMOTE_REPO_KEY = "REMOTE_REPO";
 	
 	private volatile boolean isActive = false;
 	private final List<? extends ConfigurationEntry<?>> configurationEntries = readConfig();
