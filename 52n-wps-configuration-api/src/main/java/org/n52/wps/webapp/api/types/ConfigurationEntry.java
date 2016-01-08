@@ -71,6 +71,7 @@ public abstract class ConfigurationEntry<T> {
 		return value;
 	}
 
+        @Deprecated // this setter makes it unclear if the value of the entry stores the actual value, or if I must save the value myself in a CM
 	public void setValue(T value) {
 		this.value = value;
 	}
