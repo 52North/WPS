@@ -35,6 +35,7 @@ package org.n52.wps.server;
  *
  * @author Henning Bredel <h.bredel@52north.org>
  */
+@Deprecated
 public class RepositoryManagerSingletonWrapper {
 
     private static RepositoryManager instance;
