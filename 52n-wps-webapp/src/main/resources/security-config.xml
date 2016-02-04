@@ -8,12 +8,12 @@
             <LoginModules>
                 <LoginModule class="org.n52.security.authentication.loginmodule.FileLoginModule" controlFlag="SUFFICIENT"> 
                 </LoginModule>
-                <LoginModule class="org.n52.security.authentication.loginmodule.SingleUserLoginModule" controlFlag="SUFFICIENT">
-                    <Property name="allowedUsername" value="wps"/>
-                    <Property name="allowedPassword" value="wps"/>
-                    <Property name="pwdEncAlg" value="plain"/>
-                    <Property name="userRoles" value="wps_admin"/>
-                </LoginModule>
+<!--                 <LoginModule class="org.n52.security.authentication.loginmodule.SingleUserLoginModule" controlFlag="SUFFICIENT"> -->
+<!--                     <Property name="allowedUsername" value="wps"/> -->
+<!--                     <Property name="allowedPassword" value="wps"/> -->
+<!--                     <Property name="pwdEncAlg" value="plain"/> -->
+<!--                     <Property name="userRoles" value="wps_admin"/> -->
+<!--                 </LoginModule> -->
             </LoginModules>
             <Property name="authenticationProcessorChain">
                 <Object class="org.n52.security.service.authentication.servlet.AuthenticationProcessorChainFactory">
