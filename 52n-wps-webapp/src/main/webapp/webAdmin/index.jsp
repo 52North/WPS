@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wps" uri="http://52north.org/communities/geoprocessing/wps/tags" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="org.n52.wps.webadmin.ConfigUploadBean"%>
@@ -757,7 +756,7 @@
 
 	<div style="height: 75px">
 		<img style="float: left" src="images/52northlogo_small.png" alt="52northlogo_small" />
-		<h1	style="padding-left: 3em; color: #4297d7; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 3em;">Web Admin Console</h1>
+		<h1	style="padding-left: 3em; color: #4297d7; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 3em;">WPS Web Admin Console</h1>
 	</div>
 	<div id="Tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 		<div id="tab-1">
