@@ -168,13 +168,13 @@ public class RProcessDescriptionCreator {
     }
 
     private void addMetadataLinks(URL fileUrl, URL sessionInfoUrl, ProcessDescriptionType pdt) {
-        // The "xlin:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
+        // The "xlink:type"-argument, i.e. mt.setType(TypeType.RESOURCE); was
         // not used for the resources
         // because validation fails with the cause:
-        // "cvc-complex-type.3.1: Value 'resource' of attribute 'xlin:type'
+        // "cvc-complex-type.3.1: Value 'resource' of attribute 'xlink:type'
         // of element 'ows:Metadata' is not valid
         // with respect to the corresponding attribute use. Attribute
-        // 'xlin:type' has a fixed value of 'simple'."
+        // 'xlink:type' has a fixed value of 'simple'."
         if (fileUrl != null) {
             MetadataType mt = pdt.addNewMetadata();
             mt.setTitle("R Script");
