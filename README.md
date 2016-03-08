@@ -146,4 +146,4 @@ This project consists of modules which are published under different licenses.
   * 52n-wps-webadmin
   * 52n-wps-webapp
   
-For details see the LICENSE and NOTICE files. Be aware that some modules contain their own LICENSE and NOTICE files.
+For details see the LICENSE and NOTICE files. Be aware that some modules contain their own LICENSE and NOTICE files.It should be noted that the WPS Framework uses a set of MIME types for labelling which are not mentioned in the legal set of MIME types.
