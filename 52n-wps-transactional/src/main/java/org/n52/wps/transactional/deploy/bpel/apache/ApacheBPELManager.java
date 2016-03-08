@@ -219,7 +219,7 @@ public class ApacheBPELManager extends AbstractProcessManager {
         
 //      serializedXML = serializedXML.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>","");
 //	serializedXML = serializedXML.replace("<Execute xmlns=\"http://www.opengis.net/wps/1.0.0\">","<Execute xmlns=\"http://www.opengis.net/wps/1.0.0\" version=\"1.0.0\" service=\"WPS\">");
-//	serializedXML = serializedXML.replace(" href"," xmlns:xlin=\"http://www.w3.org/1999/xlink\" xlin:href");
+//	serializedXML = serializedXML.replace(" href"," xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href");
         ServiceClient client = null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -550,10 +550,10 @@ public class ApacheBPELManager extends AbstractProcessManager {
 				// value.addChild(no);
 				OMElement reference = fac.createOMElement("Reference",
 						"http://www.opengis.net/wps/1.0.0", "wps");
-				OMNamespace xlin = fac.createOMNamespace(
-						"http://www.w3.org/1999/xlink", "xlin");
+				OMNamespace xlink = fac.createOMNamespace(
+						"http://www.w3.org/1999/xlink", "xlink");
 
-				OMAttribute attr = fac.createOMAttribute("href", xlin, input1
+				OMAttribute attr = fac.createOMAttribute("href", xlink, input1
 						.getReference().getHref());
 				reference.addAttribute(attr);
 				reference.addAttribute("schema", input1.getReference()
