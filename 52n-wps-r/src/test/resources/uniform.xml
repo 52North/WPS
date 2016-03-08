@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ows="http://www.opengis.net/ows/1.1"
-	xmlns:xlin="http://www.w3.org/1999/xlink"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd"
 	xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription statusSupported="true"
@@ -9,12 +9,12 @@
 		<ows:Identifier>org.n52.wps.server.r.uniform</ows:Identifier>
 		<ows:Title>Random number generator</ows:Title>
 		<ows:Abstract>Generates random numbers with uniform distribution</ows:Abstract>
-		<ows:Metadata xlin:title="R Script used for this process"
-			xlin:href="http://my.url/myScript.R" />
-		<ows:Metadata xlin:title="Resource Directory URL"
-			xlin:href="http://localhost:8080/wps/R/resources" />
-		<ows:Metadata xlin:title="R Session Info"
-			xlin:href="http://my.url/to_the_session_info" />
+		<ows:Metadata xlink:title="R Script used for this process"
+			xlink:href="http://my.url/myScript.R" />
+		<ows:Metadata xlink:title="Resource Directory URL"
+			xlink:href="http://localhost:8080/wps/R/resources" />
+		<ows:Metadata xlink:title="R Session Info"
+			xlink:href="http://my.url/to_the_session_info" />
 		<DataInputs>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>min</ows:Identifier>
