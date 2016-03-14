@@ -71,6 +71,8 @@ public class R_Config implements ServletContextAware {
 
     private String wknPrefix = "org.n52.wps.server.r.";
 
+    public static final String LOCK_SUFFIX = "lock";
+
     private static final String DIR_DELIMITER = ";";
 
     private RConfigurationModule configModule;
