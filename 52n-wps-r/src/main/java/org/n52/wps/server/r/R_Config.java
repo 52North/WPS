@@ -65,6 +65,8 @@ public class R_Config {
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
 
+    public static final String LOCK_SUFFIX = "lock";
+
     // TODO for resources to be downloadable the cannot be in WEB-INF, or this
     // must be handled with a
     // servlet, which is probably a better solution to keep track of files, see

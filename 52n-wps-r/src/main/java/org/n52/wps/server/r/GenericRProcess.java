@@ -32,7 +32,6 @@ package org.n52.wps.server.r;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -216,11 +215,11 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                         StringBuilder statusScriptString = new StringBuilder();
                         
                         statusScriptString.append("writelock = function() {\n  ");
-                        statusScriptString.append("file.create(paste0(tmpStatusFile, \"lock\"))\n");
+                        statusScriptString.append("file.create(paste0(tmpStatusFile, \"" + R_Config.LOCK_SUFFIX + "\"))\n");
                         statusScriptString.append("}\n  ");
                         
                         statusScriptString.append("removelock = function(i) {\n  ");
-                        statusScriptString.append("file.remove(paste0(tmpStatusFile, \"lock\"))\n");
+                        statusScriptString.append("file.remove(paste0(tmpStatusFile, \"" + R_Config.LOCK_SUFFIX + "\"))\n");
                         statusScriptString.append("}\n  ");
                         
                         statusScriptString.append("updateStatus = function(i) {\n  ");
@@ -337,13 +336,14 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                         break;
                     }
                     
-                    //lock exists, spleep a second and continue
-                    if(new File(tmpStatusFile.getAbsolutePath().concat("lock")).exists()){
-                        try {
-                            sleep(1000);
-                        } catch (InterruptedException e) {
-                            log.error("InterruptedException while trying to sleep WPS4R-update-thread.", e);
-                        }
+                    try {
+                        sleep(1000);
+                    } catch (InterruptedException e) {
+                        log.error("InterruptedException while trying to sleep WPS4R-update-thread.", e);
+                    }
+                    
+                    //lock exists continue
+                    if(new File(tmpStatusFile.getAbsolutePath().concat(R_Config.LOCK_SUFFIX)).exists()){
                         continue;
                     }
                     
@@ -357,16 +357,16 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
                         //try parsing status as integer and update process status if successful
                         try{
                             
-                            int percentage = Integer.parseInt(updateMessage.trim());
+                            Integer percentage = Integer.parseInt(updateMessage.trim());
                             
                             update(percentage);
                             
                         }catch(NumberFormatException e){
                             log.info("Status could not be parsed to integer: " + updateMessage);
+                            
+                            //update status with message (works only for WPS 1.0)
+                            update(updateMessage);
                         }
-                        
-                        //update status with message (works only for WPS 1.0)
-                        update(updateMessage);
                         
                     } catch (IOException e) {
                         log.error("Could not read status from file: " + tmpStatusFile.getAbsolutePath(), e);
@@ -387,6 +387,8 @@ public class GenericRProcess extends AbstractObservableAlgorithm {
         
         long statusFileModified = tmpStatusFile.lastModified();
                
+        log.debug("File modified: " + (statusFileModified > lastStatusUpdate));
+        
         if(lastStatusUpdate == 0 || statusFileModified > lastStatusUpdate){
             
             BufferedReader bufferedReader = new BufferedReader(new FileReader(tmpStatusFile));
