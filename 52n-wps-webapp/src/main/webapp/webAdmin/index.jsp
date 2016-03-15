@@ -785,18 +785,18 @@
 							<div id="Server_Settings">
 								<div id="editSave" style="float:right;"><img id="editImg" src="images/edit.png" onClick="editServerSettings()" style="cursor:pointer;" /></div>
 								<p>
-									<label for="Server-protocol">Server Protocol:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-protocol" value="testValue" readonly/>
+									<label for="Server-protocol">Server Protocol:</label>
+									<input type="text" name="Server-protocol" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
-									<label for="Server-hostname">Server Host Name:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-hostname" value="testValue" readonly/>
+									<label for="Server-hostname">Server Host Name:</label>
+									<input type="text" name="Server-hostname" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
-									<label for="Server-hostport">Server Host Port:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-hostport" value="testValue" readonly/>
+									<label for="Server-hostport">Server Host Port:</label>
+									<input type="text" name="Server-hostport" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
@@ -805,15 +805,15 @@
 								</p>
 								<p>
 									<label for="Server-computationTimeoutMilliSeconds">Computation Timeout:</label>
-									<input type="text" name="Server-computationTimeoutMilliSeconds" value="testValue" readonly/>
+									<input type="text" name="Server-computationTimeoutMilliSeconds" value="" readonly/>
 								</p>
 								<p>
 									<label for="Server-cacheCapabilites">Cache Capabilities:</label>
 									<input type="text" name="Server-cacheCapabilites" value="boolean" readonly/>
 								</p>
 								<p>
-									<label for="Server-webappPath">Web app Path:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-webappPath" value="testValue" readonly/>
+									<label for="Server-webappPath">Web app Path:</label>
+									<input type="text" name="Server-webappPath" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>

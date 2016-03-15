@@ -113,8 +113,6 @@ public final class FlatFileDatabase extends AbstractDatabase {
 
     protected final File baseDirectory;
 
-    protected final String baseResultURL;
-
     protected final boolean gzipComplexValues;
 
     protected final Object storeResponseSerialNumberLock;
@@ -128,11 +126,7 @@ public final class FlatFileDatabase extends AbstractDatabase {
         Server server = WPSConfig.getInstance().getWPSConfig().getServer();
         Database database = server.getDatabase();
         PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
-        
-        // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
-        baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
-                server.getHostname(), server.getHostport(), server.getWebappPath());
-        LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
+        LOGGER.info("Using \"{}\" as base URL for results", getBaseResultURL());
         
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         baseDirectory = new File(baseDirectoryPath);

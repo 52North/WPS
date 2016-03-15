@@ -37,12 +37,13 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.wps.ServerDocument;
+import javax.xml.ws.Response;
+
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
 * An anstract-layer to the databases. 
@@ -390,16 +391,7 @@ public abstract class AbstractDatabase implements IDatabase{
     
     public String getBaseResultURL() {
 
-        ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-
-        String hostName = server.getHostname();
-        String hostPort = server.getHostport();
-        String webAppPath = server.getWebappPath();
-
-        hostPort = (hostPort != null && !hostPort.isEmpty()) ? ":" + hostPort : "";
-        webAppPath = (webAppPath != null && !webAppPath.isEmpty()) ? "/" + webAppPath : "";
-
-        return String.format(server.getProtocol() + "://%s%s%s/RetrieveResultServlet?id=", hostName, hostPort, webAppPath);
+        return WPSConfig.getServerBaseURL() + "/RetrieveResultServlet?id=";
     }
 	
 }
