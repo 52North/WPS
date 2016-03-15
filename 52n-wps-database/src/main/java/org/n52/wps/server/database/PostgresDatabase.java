@@ -92,8 +92,6 @@ public class PostgresDatabase extends AbstractDatabase {
 	private static final String DEFAULT_BASE_DIRECTORY
 			= Joiner.on(File.separator).join(System.getProperty("java.io.tmpdir", "."), "Database", "Results");
 	private static final ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-	private static final String baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
-			server.getHostname(), server.getHostport(), server.getWebappPath());
 
 	private static final int SELECTION_STRING_REQUEST_ID_PARAM_INDEX = 1;
 	private static final int SELECTION_STRING_RESPONSE_COLUMN_INDEX = 1;
@@ -208,11 +206,6 @@ public class PostgresDatabase extends AbstractDatabase {
 
 	private ResultSet getTables(Connection connection) throws SQLException {
 		return connection.getMetaData().getTables(null, null, "results", new String[]{"TABLE"});
-	}
-
-	@Override
-	public String generateRetrieveResultURL(String id) {
-		return baseResultURL + id;
 	}
 
 	@Override
