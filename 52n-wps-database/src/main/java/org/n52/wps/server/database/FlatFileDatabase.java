@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -62,7 +63,7 @@ import com.google.common.base.Joiner;
  * @author tkunicki (Thomas Kunicki, USGS)
  *
  */
-public final class FlatFileDatabase implements IDatabase {
+public final class FlatFileDatabase extends AbstractDatabase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FlatFileDatabase.class);
 
@@ -157,11 +158,6 @@ public final class FlatFileDatabase implements IDatabase {
         gzipComplexValues = propertyUtil.extractBoolean(KEY_DATABASE_COMPLEX_GZIP, DEFAULT_DATABASE_COMPLEX_GZIP);
 
         storeResponseSerialNumberLock = new Object();
-    }
-
-    @Override
-    public String generateRetrieveResultURL(String id) {
-        return baseResultURL + id;
     }
 
     @Override
@@ -575,5 +571,15 @@ public final class FlatFileDatabase implements IDatabase {
             }
             file.delete();
         }
+    }
+
+    @Override
+    public Connection getConnection() {
+        return null;
+    }
+
+    @Override
+    public String getConnectionURL() {
+        return null;
     }
 }

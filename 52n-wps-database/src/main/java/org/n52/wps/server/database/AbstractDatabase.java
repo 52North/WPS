@@ -39,6 +39,7 @@ import java.util.Calendar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.wps.ServerDocument;
 import org.n52.wps.DatabaseDocument.Database;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
@@ -282,11 +283,7 @@ public abstract class AbstractDatabase implements IDatabase{
 	 */	
     @Override
 	public String generateRetrieveResultURL(String id) {
-		return WPSConfig.getInstance().getWPSConfig().getServer().getProtocol() + "://"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getHostname() + ":"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getHostport() + "/"
-                + WPSConfig.getInstance().getWPSConfig().getServer().getWebappPath() + "/"
-                + "RetrieveResultServlet?id=";   // TODO:  Parameterize this... Execution Context..?
+		return getBaseResultURL() + id;   // TODO:  Parameterize this... Execution Context..?
 	}
 	
 	public abstract Connection getConnection();
@@ -390,5 +387,19 @@ public abstract class AbstractDatabase implements IDatabase{
 	public File lookupResponseAsFile(String id) {
 		return null;
 	}
+    
+    public String getBaseResultURL() {
+
+        ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+
+        String hostName = server.getHostname();
+        String hostPort = server.getHostport();
+        String webAppPath = server.getWebappPath();
+
+        hostPort = (hostPort != null && !hostPort.isEmpty()) ? ":" + hostPort : "";
+        webAppPath = (webAppPath != null && !webAppPath.isEmpty()) ? "/" + webAppPath : "";
+
+        return String.format(server.getProtocol() + "://%s%s%s/RetrieveResultServlet?id=", hostName, hostPort, webAppPath);
+    }
 	
 }
