@@ -194,6 +194,8 @@ public class GrassProcessDescriptionCreator {
 			ProcessDescriptionType result = pDoc.getProcessDescriptions()
 					.getProcessDescriptionArray()[0];
 
+			result.setProcessVersion("1.0.0");
+			
 			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
 			
 			for (InputDescriptionType inputDescriptionType : inputs) {
