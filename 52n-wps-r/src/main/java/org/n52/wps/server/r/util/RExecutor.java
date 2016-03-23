@@ -125,9 +125,14 @@ public class RExecutor {
                 if (appendSwitchedOffCommandsAsComments)
                     line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
             }
-            else {
+            else {               
                 // not switched off:
-                if (line.trim().startsWith(COMMENT_CHARACTER)) {
+                if (line.trim().startsWith(COMMENT_CHARACTER) && line.contains("updateStatus")) {
+                    //remove comment in front of updateStatus call for execution
+                    line = line.replaceFirst("#", "").trim();
+                    scriptExecutionString.append(line);
+                    scriptExecutionString.append("\n");
+                }else if (line.trim().startsWith(COMMENT_CHARACTER)) {
                     if (appendComments)
                         scriptExecutionString.append(line);
                 }
