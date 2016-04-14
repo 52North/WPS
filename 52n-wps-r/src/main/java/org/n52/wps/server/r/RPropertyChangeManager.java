@@ -184,7 +184,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         if ( !algorithmPropertyHash.isEmpty())
             propertyChanged = true;
 
-        propertyChanged = checkPropertyOrder(oldPropertyArray, propertyChanged);
+        //Bugfix #222: Why is the order checked?
+        //This causes a second reload of the wps_config, even if no property was changed
+        //The properties are sorted anyway
+//        propertyChanged = checkPropertyOrder(oldPropertyArray, propertyChanged);
 
         if (propertyChanged) {
             Property[] newPropertyArray = newPropertyList.toArray(new Property[0]);
