@@ -10,7 +10,7 @@
 		</wps:Input>
 	</wps:DataInputs>
 	<wps:ResponseForm>
-		<wps:RawDataOutput mimeType="application/netcdf">
+		<wps:RawDataOutput mimeType="application/x-netcdf">
 			<ows:Identifier>output</ows:Identifier>
 		</wps:RawDataOutput>
 	</wps:ResponseForm>
