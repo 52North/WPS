@@ -81,8 +81,8 @@ This project includes:
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils under The Apache Software License, Version 2.0
-  core under The Apache Software License, Version 2.0
   Content Repository for Java Technology API under Day Specification License or Day Specification License addendum
+  core under The Apache Software License, Version 2.0
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   DataStore Support under Lesser General Public License (LGPL)
@@ -141,6 +141,7 @@ This project includes:
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1
   javax.inject under The Apache Software License, Version 2.0
+  jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
