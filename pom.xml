@@ -791,15 +791,15 @@
 			</dependency>
 			<!-- START R dependencies -->
 			<dependency>
-				<groupId>org.rosuda</groupId>
-				<artifactId>REngine</artifactId>
-				<version>0.6-8</version>
+				<groupId>org.rosuda.REngine</groupId>
+				<artifactId>Rserve</artifactId>
+				<version>1.8.1</version>
 			</dependency>
-			<dependency>
-				<groupId>org.rosuda</groupId>
-				<artifactId>RserveEngine</artifactId>
-				<version>0.6-8</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.rosuda</groupId> -->
+<!-- 				<artifactId>RserveEngine</artifactId> -->
+<!-- 				<version>0.6-8</version> -->
+<!-- 			</dependency> -->
 			<!-- END R dependencies -->
             <dependency>
                 <groupId>javax.servlet</groupId>

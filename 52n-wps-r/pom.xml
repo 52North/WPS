@@ -146,13 +146,17 @@
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>REngine</artifactId>
+			<groupId>org.rosuda.REngine</groupId>
+			<artifactId>Rserve</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>RserveEngine</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.rosuda.REngine</groupId> -->
+<!-- 			<artifactId>REngine</artifactId> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.rosuda</groupId> -->
+<!-- 			<artifactId>RserveEngine</artifactId> -->
+<!-- 		</dependency> -->
 
 	</dependencies>
 

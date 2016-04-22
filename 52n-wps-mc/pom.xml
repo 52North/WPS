@@ -92,18 +92,28 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>REngine</artifactId>
+			<groupId>org.rosuda.REngine</groupId>
+			<artifactId>Rserve</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>RserveEngine</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.rosuda</groupId> -->
+<!-- 			<artifactId>RserveEngine</artifactId> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>REngine</artifactId>
+					<groupId>org.rosuda</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>RserveEngine</artifactId>
+					<groupId>org.rosuda</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
