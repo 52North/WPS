@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,44 +26,52 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.r;
+package org.n52.wps.server;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.apache.xmlbeans.XmlException;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.syntax.RAnnotationException;
+import org.mockito.Mock;
+import static org.mockito.Mockito.verify;
+import org.mockito.MockitoAnnotations;
+import org.n52.wps.webapp.common.AbstractITClass;
 
 /**
- * 
- * @author Daniel
  *
+ * @author <a href="mailto:h.bredel@52north.org">Henning Bredel</a>
  */
-public class ServerResource {
+public class GeneralRepositoryManagerTest extends AbstractITClass {
 
-    private String wkn = "wkn.42";
+    private RepositoryManager repositoryManager;
 
-    @BeforeClass
-    public static void initConfig() throws FileNotFoundException, XmlException, IOException {
-        Util.mockGenericWPSConfig();
+    @Mock
+    private ITransactionalAlgorithmRepository tRepo;
+
+    @Mock
+    private IAlgorithmRepository repo;
+
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        repositoryManager = new RepositoryManagerSeam();
+        repositoryManager.setApplicationContext(wac);
+        repositoryManager.init();
     }
 
     @Test
-    public void scriptUrlIsGenerated() throws RAnnotationException, ExceptionReport, MalformedURLException {
-        URL scriptURL = RResource.getScriptURL(wkn);
+    public void shouldInvokeTransactionalRepository() {
+        Object item = new Object();
+        repositoryManager.addAlgorithm(item);
+        verify(tRepo).addAlgorithm(item);
+    }
 
-        String expectedUrl = "http://" + Util.testserver.getHostname() + ":" + Util.testserver.getHostport() + "/"
-                + Util.testserver.getWebappPath() + RResource.R_ENDPOINT + RResource.SCRIPT_PATH + "/" + wkn;
-        assertThat("script url is correct", scriptURL.toString(), is(equalTo(expectedUrl)));
+    private class RepositoryManagerSeam extends RepositoryManager {
+
+        @Override
+        protected void loadAllRepositories() {
+            addRepository("transactional", tRepo);
+            addRepository("non-transactional", repo);
+        }
+
     }
 
 }

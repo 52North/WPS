@@ -34,16 +34,14 @@ public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends Abs
 
 	protected T dataHandler;
 
-	public AbstractTestCase() {        	
+	public AbstractTestCase() {
 		 File f = new File(this.getClass().getProtectionDomain().getCodeSource()
 				 .getLocation().getFile());
 				 projectRoot = f.getParentFile().getParentFile().getParent();
     }
-	
+
 	@Before
 	public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));		
 		initializeDataHandler();
 	}
 

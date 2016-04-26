@@ -37,33 +37,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
 import org.n52.wps.webapp.testmodules.TestConfigurationModule1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class RepositoriesControllerIntegrationTest extends AbstractITClassForControllerTests {
-
-	private MockMvc mockMvc;
 
 	@Autowired
 	private TestConfigurationModule1 module1;
 
-	@Before
-	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
-
 	@Test
 	public void displayRepositories() throws Exception {
 		RequestBuilder builder = get("/repositories").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(builder);
+		ResultActions result = this.getMockedWebService().perform(builder);
 		result.andExpect(status().isOk()).andExpect(view().name("repositories"))
 				.andExpect(model().attributeExists("configurations"));
 	}
@@ -72,7 +62,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractITClassForCon
 	public void processPost_success() throws Exception {
 		RequestBuilder request = post("/repositories").param("key", "test.string.key")
 				.param("value", "new posted value").param("module", module1.getClass().getName());
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		assertEquals("new posted value", module1.getStringMember());
 		assertEquals("new posted value", module1.getConfigurationEntries().get(0).getValue());
@@ -82,7 +72,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractITClassForCon
 	public void processPost_failure() throws Exception {
 		RequestBuilder request = post("/repositories").param("key", "test.integer.key")
 				.param("value", "invalid integer").param("module", module1.getClass().getName());
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isBadRequest());
 	}
 
@@ -90,7 +80,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractITClassForCon
 	public void toggleModuleStatus() throws Exception {
 		assertTrue(module1.isActive());
 		RequestBuilder request = post("/repositories/activate/{moduleClassName}/false", module1.getClass().getName());
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		assertFalse(module1.isActive());
 	}
@@ -100,7 +90,7 @@ public class RepositoriesControllerIntegrationTest extends AbstractITClassForCon
 		assertTrue(module1.getAlgorithmEntries().get(0).isActive());
 		RequestBuilder request = post("/repositories/algorithms/activate/{moduleClassName}/{algorithm}/false",
 				module1.getClass().getName(), module1.getAlgorithmEntries().get(0).getAlgorithm());
-		ResultActions result = this.mockMvc.perform(request);
+		ResultActions result = this.getMockedWebService().perform(request);
 		result.andExpect(status().isOk());
 		assertFalse(module1.getAlgorithmEntries().get(0).isActive());
 	}

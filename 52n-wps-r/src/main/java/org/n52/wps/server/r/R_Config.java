@@ -28,11 +28,13 @@
  */
 package org.n52.wps.server.r;
 
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -143,7 +145,12 @@ public class R_Config implements ServletContextAware {
             if ( !dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
             }
-            for (File rScript : dir.listFiles(new RFileExtensionFilter())) {
+            File[] files = dir.listFiles(new RFileExtensionFilter());
+            if (files == null) {
+                LOGGER.info("Configured script dir does not exist: {}", dir);
+                continue;
+            }
+            for (File rScript : files) {
                 rScripts.add(rScript);
                 LOGGER.debug("Registered script: {}", rScript.getAbsoluteFile());
             }
@@ -218,8 +225,7 @@ public class R_Config implements ServletContextAware {
             if (configVariable != null) {
                 String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
                 for (String s : configVariableDirs) {
-                    Path dir = Paths.get(s);
-                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
+                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(s, basedir);
                     this.utilsFiles.addAll(files);
                     LOGGER.debug("Added {} files to the list of util files: {}",
                                  files.size(),
@@ -242,9 +248,10 @@ public class R_Config implements ServletContextAware {
      *        the full path to the webapp directory
      * @return
      */
-    private Collection<File> resolveFilesFromResourcesOrFromWebapp(Path p, Path baseDir) {
-        LOGGER.debug("Loading util files from {}", p);
+    private Collection<File> resolveFilesFromResourcesOrFromWebapp(String s, Path baseDir) {
+        LOGGER.debug("Loading util files from {}", s);
 
+        Path p = Paths.get(s);
         if ( !baseDir.isAbsolute())
             throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
                                                      baseDir,
@@ -254,7 +261,9 @@ public class R_Config implements ServletContextAware {
         File f = null;
 
         // try resource first
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(p.toString());) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(s);) {
+        //URL url = Resources.getResource(p.toString());
+        //try (InputStream input = Resources.asByteSource(url).openStream();) {
             if (input != null) {
                 if (this.utilFileCache.containsKey(p) && this.utilFileCache.get(p).exists()) {
                     f = this.utilFileCache.get(p);
@@ -296,12 +305,24 @@ public class R_Config implements ServletContextAware {
     }
 
     public Path getBaseDir() {
-        return this.baseDir;
+//        return baseDir;
+        try {
+            return this.baseDir == null
+                    ? Paths.get(getClass().getResource("/").toURI())
+                    : baseDir;
+        } catch (URISyntaxException e) {
+            LOGGER.error("Could not determine fallback base dir!", e);
+            return Paths.get(""); // empty path
+        }
+    }
+
+    protected void setBaseDir(Path baseDir) {
+        this.baseDir = baseDir;
     }
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        this.baseDir = Paths.get(servletContext.getRealPath(""));
+        setBaseDir(Paths.get(servletContext.getRealPath("")));
     }
 
     public String getPublicScriptId(String s) {

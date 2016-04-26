@@ -53,13 +53,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
-import org.n52.wps.server.r.Util;
+import org.n52.wps.server.r.TestUtil;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class AnnotationParser {
+public class AnnotationParserTest {
 
     private static R_Config config;
 
@@ -69,13 +69,13 @@ public class AnnotationParser {
 
     @BeforeClass
     public static void initConfig() throws FileNotFoundException, XmlException, IOException {
-        config = Util.getConfig();
-        Util.mockGenericWPSConfig();
+        config = TestUtil.getConfig();
+        TestUtil.mockGenericWPSConfig();
     }
 
     @Before
     public void loadAnnotations() throws IOException, RAnnotationException {
-        File scriptFile = Util.loadFile("/uniform.R");
+        File scriptFile = TestUtil.loadFile("/uniform.R");
 
         FileInputStream fis = new FileInputStream(scriptFile);
 
@@ -154,7 +154,7 @@ public class AnnotationParser {
             RAnnotationException,
             IOException,
             ExceptionReport {
-        File scriptFile = Util.loadFile("/uniform.R");
+        File scriptFile = TestUtil.loadFile("/uniform.R");
 
         try (FileInputStream fis = new FileInputStream(scriptFile);) {
             boolean b = parser.validateScript(fis, "test.id.only");
@@ -167,7 +167,7 @@ public class AnnotationParser {
             RAnnotationException,
             IOException,
             ExceptionReport {
-        File scriptFile = Util.loadFile("/uniform.R");
+        File scriptFile = TestUtil.loadFile("/uniform.R");
 
         try (FileInputStream fis = new FileInputStream(scriptFile);) {
             Collection<Exception> b = parser.validateScriptWithErrors(fis, "test.id.only");

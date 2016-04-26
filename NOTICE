@@ -35,6 +35,7 @@ This project includes:
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
+  52North WPS Git Algorithm Repository under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
@@ -44,12 +45,6 @@ This project includes:
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Web Application under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52°North Iceland under The Apache Software License, Version 2.0
-  52°North SOS - 2.0 XML Request Coding under GPLv2
-  52°North SOS - OWS 1.1.0 XML Request Coding under GPLv2
-  52°North SOS - SOS API Module under GPLv2
-  52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
-                License
   Abdera Bundle Jar under The Apache Software License, Version 2.0
   Activation 1.1 under The Apache Software License, Version 2.0
   AOP alliance under Public Domain
@@ -65,7 +60,6 @@ This project includes:
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   builder under Apache License 2.0
-  ClassLoader leak prevention under Apache 2
   ClassLoader Leak Prevention library under Apache 2
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
@@ -110,7 +104,7 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest All under New BSD License
   Hamcrest Core under BSD style
-  Hamcrest library under New BSD License
+  Hamcrest Library under BSD style
   Hibernate Validator Engine under Apache License, Version 2.0
   htmlparser under The MIT License
   HttpClient under Apache License
@@ -140,7 +134,6 @@ This project includes:
   JavaMail 1.4 under The Apache Software License, Version 2.0
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1
-  javax.inject under The Apache Software License, Version 2.0
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
@@ -156,6 +149,7 @@ This project includes:
   Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
+  JGit - Core under Eclipse Distribution License (New BSD License)
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
@@ -186,18 +180,9 @@ This project includes:
   Moving Code Runtime under Apache License, Version 2.0
   Moving Code XML Schema under Apache License, Version 2.0
   mvel under The Apache Software License, Version 2.0
-  OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
-  OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
   Objenesis under MIT License
-  OGC Filter schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
-  OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC SWECommon schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
@@ -239,7 +224,6 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   standard under The Apache Software License, Version 2.0
-  StAX API under The Apache Software License, Version 2.0
   stax-utils under BSD
   Stax2 API under The BSD License
   Streaming API for XML (STAX API 1.0) under The Apache Software License, Version 2.0
@@ -266,7 +250,6 @@ This project includes:
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
   vecmath under GPL 2.0 license w/ CPE
   VelocityTools under The Apache Software License, Version 2.0
-  W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Web Feature Service Model under Lesser General Public License (LGPL)
   WebSocket server API under Dual license consisting of the CDDL v1.1 and GPL v2
@@ -276,7 +259,6 @@ This project includes:
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
   Xlink Model under Lesser General Public License (LGPL)
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Parsing under Lesser General Public License (LGPL)
   XML Parsing Support under Lesser General Public License (LGPL)
   XML Pull Parsing API under Public Domain

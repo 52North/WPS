@@ -42,7 +42,9 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+//@Component("rActualConfigurationModule")
 public class RConfigurationModule extends ClassKnowingModule {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RConfigurationModule.class);
@@ -68,7 +70,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private static final String sessionInfoDownloadEnabledKey = "R_enableSessionInfoDownload";
 
 	private ConfigurationEntry<Boolean> enableBatchStartEntry = new BooleanConfigurationEntry(enableBatchStartKey, "Enable Batch Start", "Try to start Rserve on the local machine", false, false);
-	private ConfigurationEntry<String> datatypeConfigEntry = new StringConfigurationEntry(datatypeConfigKey, "Custom data type mappings", "Location of a config file were you may add costum data types that WPS4R should handle (see below)", false, "R/R_Datatype.conf");
+    private ConfigurationEntry<String> datatypeConfigEntry = new StringConfigurationEntry(datatypeConfigKey, "Custom data type mappings", "Location of a config file were you may add costum data types that WPS4R should handle (see below)", false, "R/R_Datatype.conf");
 	private ConfigurationEntry<String> wdStrategyEntry = new StringConfigurationEntry(wdStrategyKey, "Working Directory Strategy", "Influences WPS4R on choosing the R working directory for each process run", false, "default");
 	private ConfigurationEntry<String> wdNameEntry = new StringConfigurationEntry(wdNameKey, "Working Directory", "The path for the manually set work directory or base directory in conjuction with the strategy 'manualbasedir'", false, "wps4r_working_dir");
 	private ConfigurationEntry<String> resourceDirectoryEntry = new StringConfigurationEntry(resourceDirectoryKey, "Resource Directory", "The (relative) path to a directory with resources that can be requested in scripts (default: 'R/resources')", false, "R/resources");
@@ -85,7 +87,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private ConfigurationEntry<Boolean> scriptDownloadEnabledEntry = new BooleanConfigurationEntry(scriptDownloadEnabledKey, "Enable script download", "Allows to download R scripts", false, true);
 	private ConfigurationEntry<Boolean> sessionInfoDownloadEnabledEntry = new BooleanConfigurationEntry(sessionInfoDownloadEnabledKey, "Enable session info download", "Allows to download R session info", false, true);
 
-	private boolean enableBatchStart;
+	private Boolean enableBatchStart;
 	private String datatypeConfig;
 	private String wdStrategy;
 	private String wdName;
@@ -96,20 +98,12 @@ public class RConfigurationModule extends ClassKnowingModule {
 	private String rServeUser;
 	private String rServePassword;
 	private String rServeUtilsScriptsDirectory;
-	private boolean cacheProcesses;
+	private Boolean cacheProcesses;
 	private String sessionMemoryLimit;
 	private boolean resourceDownloadEnabled;
 	private boolean importDownloadEnabled;
 	private boolean scriptDownloadEnabled;
 	private boolean sessionInfoDownloadEnabled;
-
-//	private AlgorithmEntry algorithmEntry = new AlgorithmEntry("org.n52.wps.server.algorithm.JTSConvexHullAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry1 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.DummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry2 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.LongRunningDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry3 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass", true);
-//	private AlgorithmEntry algorithmEntry4 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry5 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm", true);
-//	private AlgorithmEntry algorithmEntry6 = new AlgorithmEntry("org.n52.wps.server.algorithm.test.EchoProcess", true);
 
 	private List<AlgorithmEntry> algorithmEntries;
 
@@ -119,8 +113,7 @@ public class RConfigurationModule extends ClassKnowingModule {
 			importDownloadEnabledEntry,scriptDownloadEnabledEntry,sessionInfoDownloadEnabledEntry);
 
 	public RConfigurationModule() {
-		algorithmEntries = new ArrayList<>();
-//		algorithmEntries.addAll(Arrays.asList(algorithmEntry, algorithmEntry1, algorithmEntry2, algorithmEntry3, algorithmEntry4, algorithmEntry5, algorithmEntry6));
+        algorithmEntries = new ArrayList<>();
 	}
 
 	@Override
@@ -161,11 +154,13 @@ public class RConfigurationModule extends ClassKnowingModule {
 
 	@Override
 	public String getClassName() {
-		return LocalRAlgorithmRepository.class.getName();
+		return RAlgorithmRepository.class.getName();
 	}
 
-	public boolean isEnableBatchStart() {
-		return enableBatchStart;
+	public Boolean isEnableBatchStart() {
+		return isNullOrEmpty(enableBatchStart, enableBatchStartEntry)
+                ? enableBatchStartEntry.getValue()
+                : enableBatchStart;
 	}
 
 	@ConfigurationKey(key = enableBatchStartKey)
@@ -291,8 +286,10 @@ public class RConfigurationModule extends ClassKnowingModule {
 		this.rServeUtilsScriptsDirectory = rServeUtilsScriptsDirectory;
 	}
 
-	public boolean isCacheProcesses() {
-		return cacheProcesses;
+	public Boolean isCacheProcesses() {
+		return isNullOrEmpty(cacheProcesses, cacheProcessesEntry)
+                ? cacheProcessesEntry.getValue()
+                : cacheProcesses;
 	}
 
 	@ConfigurationKey(key = cacheProcessesKey)
@@ -346,6 +343,10 @@ public class RConfigurationModule extends ClassKnowingModule {
 	public void setSessionInfoDownloadEnabled(boolean sessionInfoDownloadEnabled) {
 		this.sessionInfoDownloadEnabled = sessionInfoDownloadEnabled;
 	}
+
+    private boolean isNullOrEmpty(Object value, ConfigurationEntry<?> configEntry) {
+        return value == null; // TODO
+    }
 
 	private boolean isNullOrEmpty(String value, ConfigurationEntry<?> configEntry) {
 		boolean nullOrEmpty = value == null || value.isEmpty();

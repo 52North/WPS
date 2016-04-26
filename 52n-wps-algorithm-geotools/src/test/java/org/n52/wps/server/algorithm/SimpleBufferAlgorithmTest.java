@@ -87,8 +87,6 @@ public class SimpleBufferAlgorithmTest extends AbstractITClass{
 
     @Before
     public void setUp() {
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @After
