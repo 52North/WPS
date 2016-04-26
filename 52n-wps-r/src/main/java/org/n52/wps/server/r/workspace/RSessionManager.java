@@ -44,13 +44,13 @@ import org.n52.wps.io.data.GenericFileDataConstants;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.RWPSSessionVariables;
 import org.n52.wps.server.r.R_Config;
 import org.n52.wps.server.r.data.R_Resource;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.n52.wps.server.r.util.RExecutor;
 import org.n52.wps.server.r.util.RLogger;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -68,15 +68,18 @@ public class RSessionManager {
 
     private static final String WARNING_OUTPUT_NAME = "warnings";
 
-    private R_Config config;
+    private final R_Config config;
 
-    private RConnection connection;
+    private final RConnection connection;
 
-    private boolean cleanOnStartup = true;
+    private final boolean cleanOnStartup = true;
 
-    public RSessionManager(RConnection rCon, R_Config config) {
+    private final ResourceUrlGenerator urlGenerator;
+
+    public RSessionManager(RConnection rCon, R_Config config, ResourceUrlGenerator urlGenerator) {
         this.connection = rCon;
         this.config = config;
+        this.urlGenerator = urlGenerator;
 
         log.debug("NEW {}", this);
     }
@@ -182,12 +185,12 @@ public class RSessionManager {
             connection.eval(cmd);
             RLogger.logVariable(connection, RWPSSessionVariables.WPS_SERVER_NAME);
 
-            String resourceUrl = RResource.getResourceURL(new R_Resource(processWKN, "", true)).toExternalForm();
+            String resourceUrl = urlGenerator.getResourceURL(new R_Resource(processWKN, "", true)).toExternalForm();
             assignAndLog(RWPSSessionVariables.RESOURCES_ENDPOINT, resourceUrl);
 
             String scriptUrl;
             try {
-                scriptUrl = RResource.getScriptURL(processWKN).toExternalForm();
+                scriptUrl = urlGenerator.getScriptURL(processWKN).toExternalForm();
             }
             catch (MalformedURLException e) {
                 log.warn("Could not retrieve script URL", e);

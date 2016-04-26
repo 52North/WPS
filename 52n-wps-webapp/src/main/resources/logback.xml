@@ -34,7 +34,8 @@
 
 	<logger name="org.n52.wps" level="DEBUG" />
 	<logger name="org.n52.wps.server.WebProcessingService" level="DEBUG" />
-	<logger name="org.n52.wps.server.r" level="DEBUG" />
+	<logger name="org.n52.wps.server.r" level="TRACE" />
+	<logger name="org.n52.wps.repository.git" level="TRACE" />
 	<logger name="org.n52.wps.io.datahandler.parser.GeotiffParser" level="DEBUG" />
 	<logger name="org.n52.wps.grid" level="INFO" />
 	<logger name="org.codehaus.xfire.aegis.type" level="OFF" />

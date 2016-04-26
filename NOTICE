@@ -35,7 +35,6 @@ This project includes:
   52North WPS Database under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Geotools Algorithm Implementations under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
   52North WPS Geotools Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (with Exceptions to EPL Libraries)
-  52North WPS Git Algorithm Repository under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS GRASS Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Ouput Implementation under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Input/Output API under Apache License, Version 2.0
@@ -135,6 +134,7 @@ This project includes:
   JavaMail API under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1
   jaxen under jaxen license, http://jaxen.codehaus.org/license.html
+  jaxen under jaxen license, http://jaxen.codehaus.org/license.html
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
@@ -149,12 +149,10 @@ This project includes:
   Jetty :: Websocket :: Common under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   Jetty :: Websocket :: javax.websocket :: Client Implementation under Apache Software License - Version 2.0 or Eclipse Public License - Version 1.0
   jfreechart under GNU Lesser General Public Licence
-  JGit - Core under Eclipse Distribution License (New BSD License)
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
-  JSch under Revised BSD
   json-lib under The Apache Software License, Version 2.0
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)

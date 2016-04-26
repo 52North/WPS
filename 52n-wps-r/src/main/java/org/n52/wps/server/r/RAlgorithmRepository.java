@@ -29,7 +29,6 @@
 package org.n52.wps.server.r;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,13 +62,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.data.CustomDataTypeManager;
 import org.n52.wps.server.r.util.InvalidRScriptException;
 import org.n52.wps.commons.SpringIntegrationHelper;
-import org.springframework.context.annotation.DependsOn;
 
 /**
  * A repository to retrieve the available algorithms.
@@ -132,7 +129,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 				.getConfigurationModuleForClass(this.getClass().getName(),
 						ConfigurationCategory.REPOSITORY);
         if (configModule == null || !configModule.isActive()) {
-            LOGGER.info("Local*R*AlgorithmRepository is INACTIVE.");
+            LOGGER.info("*R*AlgorithmRepository is INACTIVE.");
         } else {
             config.setConfigModule(configModule);
 
@@ -143,7 +140,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
             scriptRepo.registerScriptFiles(config.getScriptFiles());
             initializeResourceDirectoriesRepository(configModule);
             intializeAvailableAlgorithms(configModule);
-            LOGGER.info("Initialized Local*R*AlgorithmRepository");
+            LOGGER.info("Initialized *R*AlgorithmRepository");
         }
     }
 
@@ -263,7 +260,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 
     private GenericRProcess createRProcess(String wellKnownName) {
         LOGGER.debug("Loading algorithm '{}'", wellKnownName);
-        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry);
+        GenericRProcess algorithm = new GenericRProcess(wellKnownName, config, dataTypeRegistry, WPSConfig.getInstance().getServiceBaseUrl());
         SpringIntegrationHelper.autowireBean(algorithm);
         /*
          * weak inheritance implementation. When using injected singleton beans
@@ -430,7 +427,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("LocalRAlgorithmRepository [");
+        builder.append("RAlgorithmRepository [");
         if (rProcesses != null)
             builder.append("algorithm count=").append(rProcesses.size()).append(", ");
         if (config != null)

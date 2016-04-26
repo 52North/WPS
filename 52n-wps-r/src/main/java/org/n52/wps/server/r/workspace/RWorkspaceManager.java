@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.io.FileUtils;
 
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
@@ -61,7 +60,6 @@ import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.Rserve.RserveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
