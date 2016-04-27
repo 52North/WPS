@@ -87,10 +87,10 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		resultDoc = ResultDocument.Factory.newInstance();
 		resultDoc.addNewResult();
 		resultDoc.getResult().setJobID(request.getUniqueId().toString());
-		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetResult.xsd");
+		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 		statusInfoDoc = StatusInfoDocument.Factory.newInstance();
 		statusInfoDoc.addNewStatusInfo();
-		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetStatus.xsd");
+		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 		this.identifier = request.getAlgorithmIdentifier().trim();
 		superDescription = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.identifier);
 		description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
