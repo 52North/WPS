@@ -64,29 +64,25 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Daniel Nüst
  *
  */
-public class ScriptFileRepoTest {
-
-    private static R_Config config;
-
-    private static RAnnotationParser parser;
+public class ScriptFileRepoTest extends AbstractWps4RTest{
 
     private ScriptFileRepository sr;
 
     private static String scriptFile = "/uniform.R";
 
     private String expectedWKN;
+    
+    @Autowired
+    private RAnnotationParser annotationParser;
 
-    @BeforeClass
-    public static void prepare() {
-        config = new R_Config();
-        parser = new RAnnotationParser();
-        ReflectionTestUtils.setField(parser, "config", config);
-    }
+    @Autowired
+    R_Config config;
 
     @Before
     public void prepareRepo() {
         sr = new ScriptFileRepository();
-        ReflectionTestUtils.setField(sr, "annotationParser", parser);
+        ReflectionTestUtils.setField(annotationParser, "config", config);
+        ReflectionTestUtils.setField(sr, "annotationParser", annotationParser);
         ReflectionTestUtils.setField(sr, "config", config);
         expectedWKN = config.getPublicScriptId("uniform");
     }
