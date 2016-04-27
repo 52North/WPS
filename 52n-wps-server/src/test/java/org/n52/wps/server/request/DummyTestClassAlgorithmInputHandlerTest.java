@@ -48,9 +48,10 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.webapp.common.AbstractITClass;
 
 import com.google.common.primitives.Doubles;
 
@@ -58,7 +59,7 @@ import com.google.common.primitives.Doubles;
  *
  * @author isuftin
  */
-public class DummyTestClassAlgorithmInputHandlerTest {
+public class DummyTestClassAlgorithmInputHandlerTest extends AbstractITClass {
 
     private static String sampleFileName = null;
     private static File sampleFile = null;
@@ -84,6 +85,10 @@ public class DummyTestClassAlgorithmInputHandlerTest {
 
         File f = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getFile());
         projectRoot = new File(f.getParentFile().getParentFile().getParent());
+
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
 
     @After
