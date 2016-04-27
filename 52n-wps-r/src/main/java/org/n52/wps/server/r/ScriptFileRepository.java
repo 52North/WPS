@@ -220,6 +220,9 @@ public class ScriptFileRepository {
         }
 
         File[] scripts = directory.listFiles(new RFileExtensionFilter());
+        
+        Arrays.sort(scripts);
+        
         LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
         return registerScriptFiles(Arrays.asList(scripts));
     }
