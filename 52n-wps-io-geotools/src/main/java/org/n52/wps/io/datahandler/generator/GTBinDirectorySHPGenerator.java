@@ -50,7 +50,9 @@ package org.n52.wps.io.datahandler.generator;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -60,6 +62,7 @@ import org.geotools.data.DataStoreFactorySpi;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.DefaultFeatureCollections;
@@ -100,7 +103,7 @@ public class GTBinDirectorySHPGenerator {
 	private FeatureCollection createCorrectFeatureCollection(
 			FeatureCollection fc) {
 		
-		FeatureCollection resultFeatureCollection = DefaultFeatureCollections.newCollection();
+		List<SimpleFeature> featureList = new ArrayList<>();
 		SimpleFeatureType featureType = null;
 		FeatureIterator iterator = fc.features();
 		String uuid = UUID.randomUUID().toString();
@@ -113,12 +116,12 @@ public class GTBinDirectorySHPGenerator {
 				QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
 				SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
 			}
-			Feature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
+			SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
 		
-			resultFeatureCollection.add(resultFeature);
+			featureList.add(resultFeature);
 			i++;
 		}
-		return resultFeatureCollection;
+		return GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
 		
 	}
 

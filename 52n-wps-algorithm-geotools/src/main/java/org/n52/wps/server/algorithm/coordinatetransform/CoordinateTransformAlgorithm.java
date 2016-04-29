@@ -205,7 +205,7 @@ public class CoordinateTransformAlgorithm extends
 		}
 		
 
-		FeatureCollection fOut = DefaultFeatureCollections.newCollection();
+		List<SimpleFeature> featureList = new ArrayList<>();
 
 		try {
 
@@ -231,10 +231,10 @@ public class CoordinateTransformAlgorithm extends
 				
 				Geometry newGeometry = JTS.transform(geometry, tx);
 
-				Feature newFeature = createFeature(feature.getID(),
+				SimpleFeature newFeature = createFeature(feature.getID(),
 						newGeometry, toCRS, feature.getProperties());
 
-				fOut.add(newFeature);
+				featureList.add(newFeature);
 			}
 						
 
@@ -244,11 +244,11 @@ public class CoordinateTransformAlgorithm extends
 
 		HashMap<String, IData> result = new HashMap<String, IData>();
 
-		result.put(outputIdentifierResult, new GTVectorDataBinding(fOut));
+		result.put(outputIdentifierResult, new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
 		return result;
 	}
 
-	private Feature createFeature(String id, Geometry geometry,
+	private SimpleFeature createFeature(String id, Geometry geometry,
 			CoordinateReferenceSystem crs, Collection<Property> properties) {
 		String uuid = UUID.randomUUID().toString();
 		
@@ -258,7 +258,7 @@ public class CoordinateTransformAlgorithm extends
 		GTHelper.createGML3SchemaForFeatureType(featureType);
 		}
 
-		Feature feature = GTHelper.createFeature(id, geometry, featureType,
+		SimpleFeature feature = GTHelper.createFeature(id, geometry, featureType,
 				properties);
 
 		return feature;

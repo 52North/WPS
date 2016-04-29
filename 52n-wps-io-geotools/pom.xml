@@ -114,6 +114,12 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-xml</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-commons-resolver</artifactId>
+					<groupId>org.apache.xml</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>

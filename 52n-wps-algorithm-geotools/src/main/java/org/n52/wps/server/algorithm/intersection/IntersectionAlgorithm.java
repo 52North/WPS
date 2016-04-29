@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.n52.wps.io.GTHelper;
@@ -121,13 +122,13 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 		System.out.println("polygons size = " + polygons.size());
 		System.out.println("lineStrings size = " + lineStrings.size());
 		
-		FeatureCollection featureCollection = DefaultFeatureCollections.newCollection();
+		List<SimpleFeature> featureList = new ArrayList<>();
 		
-		Iterator polygonIterator = polygons.iterator();
+		FeatureIterator<?> polygonIterator = polygons.features();
 		int j = 1;
 		while(polygonIterator.hasNext()){
 			SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
-			Iterator lineStringIterator = lineStrings.iterator();
+			FeatureIterator<?> lineStringIterator = lineStrings.features();
 			int i = 1;
 			System.out.println("Polygon = " + j +"/"+ polygons.size());
 			while(lineStringIterator.hasNext()){
@@ -143,11 +144,11 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 				try{
 					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
 					Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
-					Feature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
+					SimpleFeature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
 					if(resultFeature!=null){
 								
-						featureCollection.add(resultFeature);
-						System.out.println("result feature added. resultCollection = " + featureCollection.size());
+					    featureList.add(resultFeature);
+						System.out.println("result feature added. resultCollection = " + featureList.size());
 					}
 				}catch(Exception e){
 						e.printStackTrace();
@@ -161,13 +162,13 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
 		
 		
 		HashMap<String,IData> resulthash = new HashMap<String,IData>();
-		resulthash.put("intersection_result", new GTVectorDataBinding(featureCollection));
+		resulthash.put("intersection_result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
 		return resulthash;
 	}
 	
-	private Feature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
+	private SimpleFeature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
 		
-		Feature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
+	    SimpleFeature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
 
 		return feature;
 	}

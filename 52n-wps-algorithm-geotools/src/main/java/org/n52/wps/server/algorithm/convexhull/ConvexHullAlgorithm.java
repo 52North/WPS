@@ -148,25 +148,24 @@ public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 		
 		Geometry out = convexHull.getConvexHull();
 
-		Feature feature = createFeature(out, featureCollection.getSchema().getCoordinateReferenceSystem());
+		SimpleFeature feature = createFeature(out, featureCollection.getSchema().getCoordinateReferenceSystem());
 		
-		FeatureCollection fOut = DefaultFeatureCollections.newCollection();
-		
-		fOut.add(feature);
+		List<SimpleFeature> featureList = new ArrayList<>();
+		featureList.add(feature);
 
 		HashMap<String, IData> result = new HashMap<String, IData>();
 
 		result.put("RESULT",
-				new GTVectorDataBinding(fOut));
+				new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
 		return result;
 	}
 	
-	private Feature createFeature(Geometry geometry, CoordinateReferenceSystem crs) {
+	private SimpleFeature createFeature(Geometry geometry, CoordinateReferenceSystem crs) {
 		String uuid = UUID.randomUUID().toString();
 		SimpleFeatureType featureType = GTHelper.createFeatureType(geometry, uuid, crs);
 		GTHelper.createGML3SchemaForFeatureType(featureType);
 		
-		Feature feature = GTHelper.createFeature("0", geometry, featureType);
+		SimpleFeature feature = GTHelper.createFeature("0", geometry, featureType);
 		
 		return feature;
 	}	

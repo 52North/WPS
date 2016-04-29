@@ -53,11 +53,15 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
@@ -88,6 +92,8 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
 	private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
+	
+	private static final String GEOMETRY_NAME = "the_geom";
 	
 	public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
 		String namespace = "http://www.52north.org/"+uuid;
@@ -125,30 +131,30 @@ public class GTHelper {
 									   
 					
 					if(newGeometry.getClass().equals(Point.class) && (!name.equals("location"))){
-						typeBuilder.add("GEOMETRY", MultiPoint.class);
+						typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
 					}else if(newGeometry.getClass().equals(LineString.class) && (!name.equals("location"))){
 					
-						typeBuilder.add("GEOMETRY", MultiLineString.class);
+						typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
 					}else if( newGeometry.getClass().equals(Polygon.class) && (!name.equals("location"))){
 					
-						typeBuilder.add("GEOMETRY", MultiPolygon.class);
+						typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
 					}else if(!binding.equals(Object.class)){
-						typeBuilder.add("GEOMETRY", newGeometry.getClass());
+						typeBuilder.add(GEOMETRY_NAME, newGeometry.getClass());
 					}
 				}else{
 					if(!name.equals("location") && binding.equals(Object.class)){
 						try{
 							Geometry g = (Geometry)property.getValue();
 							if(g.getClass().equals(Point.class) && (!name.equals("location"))){
-								typeBuilder.add("GEOMETRY", MultiPoint.class);
+								typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
 							}else if(g.getClass().equals(LineString.class) && (!name.equals("location"))){
 							
-								typeBuilder.add("GEOMETRY", MultiLineString.class);
+								typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
 							}else if( g.getClass().equals(Polygon.class) && (!name.equals("location"))){
 							
-								typeBuilder.add("GEOMETRY", MultiPolygon.class);
+								typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
 							}else{
-								typeBuilder.add("GEOMETRY", g.getClass());
+								typeBuilder.add(GEOMETRY_NAME, g.getClass());
 							}
 							
 						}catch(ClassCastException e){
@@ -184,7 +190,7 @@ public class GTHelper {
 		Name nameType = new NameImpl(namespace, "Feature-"+uuid);
 		typeBuilder.setName(nameType);		
 					
-		typeBuilder.add("GEOMETRY", newGeometry.getClass());
+		typeBuilder.add(GEOMETRY_NAME, newGeometry.getClass());
 					
 		SimpleFeatureType featureType;
 		
@@ -246,7 +252,7 @@ public class GTHelper {
 			return feature;
 	}
 	
-	public static Feature createFeature(String id, Geometry geometry, SimpleFeatureType featureType) {
+	public static SimpleFeature createFeature(String id, Geometry geometry, SimpleFeatureType featureType) {
 		
 		if(geometry==null || geometry.isEmpty()){
 			return null;
@@ -325,7 +331,7 @@ public class GTHelper {
 					"<xs:extension base=\"gml:AbstractFeatureType\"> "+
 					"<xs:sequence> " +
 					//"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+					
-					"<xs:element name=\"GEOMETRY\" type=\"gml:"+geometryTypeName+"\"> "+
+					"<xs:element name=\"" + GEOMETRY_NAME + "\" type=\"gml:"+geometryTypeName+"\"> "+
 					"</xs:element> ";
 			
 			//add attributes
@@ -396,7 +402,7 @@ public class GTHelper {
 						"<xs:complexContent> " +
 						"<xs:extension base=\"gml:AbstractFeatureType\"> "+
 						"<xs:sequence> " +
-						"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
+						"<xs:element name=\"" + GEOMETRY_NAME + "\" type=\"gml:GeometryPropertyType\"> "+
 						"</xs:element> ";
 				
 				//add attributes
@@ -496,6 +502,14 @@ public class GTHelper {
 				LOGGER.error("Exception while decoding CRS EPSG:4326", e);
 			}
 			return null;
+		}
+		
+		public static SimpleFeatureCollection createSimpleFeatureCollectionFromSimpleFeatureList(List<SimpleFeature> featureList){
+		    
+		    if(featureList.size() > 0){
+		        return new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
+		    }
+		    return new DefaultFeatureCollection();		    
 		}
 
 }

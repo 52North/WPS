@@ -65,6 +65,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
@@ -80,6 +82,7 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
@@ -158,9 +161,11 @@ public class GML32BasicParser extends AbstractParser {
 			} else {
 				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
 				if (featureList != null){
-					for( SimpleFeature feature : featureList){
-						fc.add(feature);
-					}
+				        if(featureList.size() > 0){
+					    fc = new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
+				        }else{
+				            fc = new DefaultFeatureCollection();
+				        }
 				} else {
 					fc = (FeatureCollection) ((Map) parsedData).get("FeatureCollection");
 				}

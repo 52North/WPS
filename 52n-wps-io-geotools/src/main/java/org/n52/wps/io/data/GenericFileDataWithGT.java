@@ -55,6 +55,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -88,7 +90,7 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -208,7 +210,7 @@ public class GenericFileDataWithGT {
 		SimpleFeatureType type = null;
 		SimpleFeatureBuilder build = null;
 		FeatureIterator<?> iterator = collection.features();
-		FeatureCollection<SimpleFeatureType, SimpleFeature> modifiedFeatureCollection = null;
+		List<SimpleFeature> featureList = new ArrayList<>();
 		Transaction transaction = new DefaultTransaction("create");
 		FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
 		String uuid = UUID.randomUUID().toString();
@@ -240,6 +242,7 @@ public class GenericFileDataWithGT {
 				 */
 				Property geomProperty = sf.getDefaultGeometryProperty();
 
+				//TODO: check if that makes any sense at all
 				if(geomProperty.getType().getBinding().getSimpleName().equals("Geometry")){
 				Geometry g = (Geometry)geomProperty.getValue();
 				if(g!=null){
@@ -295,8 +298,6 @@ public class GenericFileDataWithGT {
 				store.setTransaction(transaction);
 
 				build = new SimpleFeatureBuilder(type);
-				modifiedFeatureCollection = new DefaultFeatureCollection("fc",
-						type);
 			}
 			for (AttributeType attributeType : type.getTypes()) {
 				build.add(sf.getProperty(attributeType.getName()).getValue());
@@ -305,11 +306,11 @@ public class GenericFileDataWithGT {
 			SimpleFeature newSf = build.buildFeature(sf.getIdentifier()
 					.getID());
 
-			modifiedFeatureCollection.add(newSf);
+			featureList.add(newSf);
 		}
 
 		try {
-			store.addFeatures(modifiedFeatureCollection);
+			store.addFeatures(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList));
 			transaction.commit();
 			return shp;
 		} catch (Exception e1) {

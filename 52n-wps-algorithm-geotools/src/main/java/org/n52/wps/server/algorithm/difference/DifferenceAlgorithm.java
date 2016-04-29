@@ -60,6 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
@@ -119,9 +120,9 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 		System.out.println("polygons size = " + polygons.size());
 		System.out.println("lineStrings size = " + lineStrings.size());
 		
-		FeatureCollection featureCollection = DefaultFeatureCollections.newCollection();
+		List<SimpleFeature> featureList = new ArrayList<>();
 		
-		Iterator polygonIterator = polygons.iterator();
+		FeatureIterator<?> polygonIterator = polygons.features();
 		int j = 1;
 		
 		String uuid = UUID.randomUUID().toString();
@@ -129,7 +130,7 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 			SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
 
 		
-			Iterator lineStringIterator = lineStrings.iterator();
+			FeatureIterator<?> lineStringIterator = lineStrings.features();
 			int i = 1;
 			System.out.println("Polygon = " + j +"/"+ polygons.size());
 			SimpleFeatureType featureType = null; 
@@ -148,11 +149,11 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 					}
 					
 				
-					Feature resultFeature = GTHelper.createFeature(""+j+"_"+i, intersection,featureType, polygon.getProperties());
+					SimpleFeature resultFeature = GTHelper.createFeature(""+j+"_"+i, intersection,featureType, polygon.getProperties());
 					if(resultFeature!=null){
 								
-						featureCollection.add(resultFeature);
-						System.out.println("result feature added. resultCollection = " + featureCollection.size());
+					    featureList.add(resultFeature);
+						System.out.println("result feature added. resultCollection = " + featureList.size());
 					}
 				}catch(Exception e){
 						e.printStackTrace();
@@ -168,7 +169,7 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
 		
 		
 		HashMap<String,IData> resulthash = new HashMap<String,IData>();
-		resulthash.put("result", new GTVectorDataBinding(featureCollection));
+		resulthash.put("result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
 		return resulthash;
 	}
 	

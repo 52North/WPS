@@ -56,8 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShapefileUtilities;
-import org.geotools.data.shapefile.ShpFiles;
 import org.geotools.feature.FeatureCollection;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.IOUtils;

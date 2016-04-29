@@ -237,7 +237,7 @@ public class RIOHandler {
         if (ivalue instanceof ILiteralData)
             return parseLiteralInput(iclass, ivalue.getPayload());
 
-        if (ivalue instanceof GenericFileDataWithGTBinding || ivalue instanceof GenericFileDataBinding) {
+        if (ivalue instanceof GenericFileDataWithGTBinding) {
             GenericFileDataWithGT value = (GenericFileDataWithGT) ivalue.getPayload();
 
             InputStream is = value.getDataStream();
@@ -371,7 +371,8 @@ public class RIOHandler {
         String filename = new File(result.asString()).getName();
 
         if (iClass.equals(GenericFileDataBinding.class) || iClass.equals(GenericFileDataWithGTBinding.class)) {
-            log.debug("Creating output with GenericFileDataBinding for file {}", filename);
+            log.debug("Creating output with {} for file {}", iClass.getName(), filename);
+            String mimeType = "application/unknown";
 
             File resultFile = new File(filename);
             log.debug("Loading file " + resultFile.getAbsolutePath());
@@ -396,42 +397,18 @@ public class RIOHandler {
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            String mimeType = dataTypeRegistry.getType(rType).getMimeType();
-            GenericFileData out = new GenericFileData(outputFile, mimeType);
+            mimeType = dataTypeRegistry.getType(rType).getMimeType();
+            
+            if(iClass.equals(GenericFileDataBinding.class)){                
+                GenericFileData out = new GenericFileData(outputFile, mimeType);
 
-            return new GenericFileDataBinding(out);
-        }
-        else if (iClass.equals(GenericFileDataWithGTBinding.class)) {
-            log.debug("Creating output with GenericFileDataWithGTBinding for file {}", filename);
-            String mimeType = "application/unknown";
+                return new GenericFileDataBinding(out);
+                
+            }else if(iClass.equals(GenericFileDataWithGTBinding.class)){
+                GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
 
-            File resultFile = new File(filename);
-            log.debug("Loading file " + resultFile.getAbsolutePath());
-
-            if ( !resultFile.isAbsolute())
-                // relative path names are relative to R work directory
-                resultFile = new File(connection.eval("getwd()").asString(), resultFile.getName());
-
-            if (resultFile.exists())
-                log.debug("Found file at {}", resultFile);
-            else
-                log.warn("Result file does not exists at {}", resultFile);
-
-            // Transfer file from R workdir to WPS workdir
-            File outputFile = null;
-            if (wpsWorkDirIsRWorkDir)
-                outputFile = resultFile;
-            else
-                outputFile = streamFromRserveToWPS(connection, resultFile.getAbsolutePath(), wpsWorkDir);
-
-            if ( !outputFile.exists())
-                throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
-
-            String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            mimeType = RDataTypeRegistry.getInstance().getType(rType).getProcessKey();
-            GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
-
-            return new GenericFileDataWithGTBinding(out);
+                return new GenericFileDataWithGTBinding(out);
+            }
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
             RTypeDefinition dataType = currentAnnotation.getRDataType();

@@ -211,7 +211,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
-		<geotools.version>8.7</geotools.version>
+		<geotools.version>13.5</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
 		<jackson.version>2.1.2</jackson.version>
@@ -873,11 +873,11 @@
 				<artifactId>ogckml2.2</artifactId>
 				<version>1.0.0</version>
 			</dependency>
-			<dependency>
-				<groupId>org.n52.wps</groupId>
-				<artifactId>52n-wps-ags-workspace</artifactId>
-				<version>10.0.2</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>org.n52.wps</groupId> -->
+<!-- 				<artifactId>52n-wps-ags-workspace</artifactId> -->
+<!-- 				<version>10.0.2</version> -->
+<!-- 			</dependency> -->
 			<dependency>
 				<groupId>org.n52.wps</groupId>
 				<artifactId>52n-xml-wps-v100</artifactId>
@@ -971,6 +971,12 @@
                 <groupId>com.thetransactioncompany</groupId>
                 <artifactId>cors-filter</artifactId>
                 <version>1.9.3</version>
+            </dependency>
+            <!-- new dependencies for GeoTools update -->
+            <dependency>
+                <groupId>jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>1.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
