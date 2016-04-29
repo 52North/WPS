@@ -17,7 +17,9 @@
 package org.n52.wps.io;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
@@ -32,18 +34,18 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
  */
 
 public abstract class AbstractIOHandler implements IOHandler {
-	protected List<String> supportedFormats;
-	protected List<String> supportedSchemas;
-	protected List<String> supportedEncodings;
-	protected List<Class<?>> supportedIDataTypes;
+	protected Set<String> supportedFormats;
+	protected Set<String> supportedSchemas;
+	protected Set<String> supportedEncodings;
+	protected Set<Class<?>> supportedIDataTypes;
 	protected List<? extends ConfigurationEntry<?>> properties;
 	protected List<FormatEntry> formats;
 	
 	public AbstractIOHandler(){
-		this.supportedFormats = new ArrayList<String>();
-		this.supportedSchemas = new ArrayList<String>();
-		this.supportedEncodings = new ArrayList<String>();
-		this.supportedIDataTypes = new ArrayList<Class<?>>();
+		this.supportedFormats = new HashSet<String>();
+		this.supportedSchemas = new HashSet<String>();
+		this.supportedEncodings = new HashSet<String>();
+		this.supportedIDataTypes = new HashSet<Class<?>>();
 	}
 	
 	/**
