@@ -90,7 +90,6 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 		statusInfoDoc = StatusInfoDocument.Factory.newInstance();
 		statusInfoDoc.addNewStatusInfo();
-		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 		this.identifier = request.getAlgorithmIdentifier().trim();
 		superDescription = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.identifier);
 		description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
@@ -293,11 +292,12 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 		}else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
 			//save last status info and return result document
+		        XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 			DatabaseFactory.getDatabase().insertResponse(
 					request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
 			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
-		}
-
+		}             
+		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 		return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
 	}
 
