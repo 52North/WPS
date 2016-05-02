@@ -202,8 +202,8 @@
 <!-- 		<module>52n-wps-ags</module> -->
 <!-- 		<module>52n-wps-python</module> -->
 		<module>52n-wps-r</module>
-		<module>52n-wps-mc</module>
-        <module>52n-wps-matlab</module>
+<!-- 		<module>52n-wps-mc</module> -->
+<!--         <module>52n-wps-matlab</module> -->
 	</modules>
 	<properties>
         <java-version>1.8</java-version>
@@ -847,21 +847,21 @@
 				<artifactId>52n-wps-r</artifactId>
 				<version>${project.version}</version>
 			</dependency>
- 			<dependency>
- 				<groupId>${project.groupId}</groupId>
- 				<artifactId>52n-wps-mc</artifactId>
- 				<version>${project.version}</version>
- 			</dependency>
+<!--  			<dependency> -->
+<!--  				<groupId>${project.groupId}</groupId> -->
+<!--  				<artifactId>52n-wps-mc</artifactId> -->
+<!--  				<version>${project.version}</version> -->
+<!--  			</dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>52n-wps-matlab</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+<!--             <dependency> -->
+<!--                 <groupId>${project.groupId}</groupId> -->
+<!--                 <artifactId>52n-wps-matlab</artifactId> -->
+<!--                 <version>${project.version}</version> -->
+<!--             </dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>
