@@ -6,7 +6,7 @@
 	<wps:DataInputs>
 	<wps:Input>
 			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">input</ows:Identifier>
-				<wps:Reference xlink:href="http://geoprocessing.demo.52north.org:8080/xyz/demGtiffGVSIG.tif" mimeType="image/tiff" />
+				<wps:Reference xlink:href="http://geoprocessing.demo.52north.org:8080/xyz/elev.tif" mimeType="image/tiff" />
 		</wps:Input>
 		<wps:Input>
 			<ows:Identifier>minlevel</ows:Identifier>

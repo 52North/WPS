@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2012 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,33 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.wps.server.feed.movingcode;
+package org.n52.wps.server.database.connection;
 
-import java.net.URI;
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 /**
- * @author Matthias Mueller, TU Dresden
- *
+ * @author abramhall (Arthur Bramhall, USGS)
  */
-public class AlgorithmURL {
+public class JNDIConnectionHandler implements ConnectionHandler {
 
-	private final URI uri;
-	private static final String SCHEME = "algorithm";
+	private final DataSource dataSource;
 
-	public AlgorithmURL (String str){
-		uri = URI.create(str);
+	/**
+	 * Create a new JNDI Connection Handler.
+	 *
+	 * @param jndiName the name used by the container to tie to the database
+	 * @throws NamingException
+	 */
+	public JNDIConnectionHandler(String jndiName) throws NamingException {
+		InitialContext context = new InitialContext();
+		dataSource = (DataSource) context.lookup("java:comp/env/jdbc/" + jndiName);
 	}
 
-	public boolean isValid(){
-		return uri.getScheme().equalsIgnoreCase(SCHEME);
+	/**
+	 * Gets a connection from the database. Attempts to retrieve a new
+	 * connection from the connection pool
+	 *
+	 * @return
+	 * @throws SQLException
+	 */
+	@Override
+	public Connection getConnection() throws SQLException {
+		Connection conn = dataSource.getConnection();
+		return conn;
 	}
-
-	public String getPublicPath(){
-		return uri.getPath();
-	}
-
-	public String getPrivatePath(){
-		return uri.getQuery();
-	}
-
 }

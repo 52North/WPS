@@ -59,12 +59,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.n52.wps</groupId>
-			<artifactId>52n-wps-io-geotools</artifactId>
+			<artifactId>52n-wps-io-impl</artifactId>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-server</artifactId>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-commons</artifactId>
@@ -92,28 +92,33 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>REngine</artifactId>
+			<groupId>org.rosuda.REngine</groupId>
+			<artifactId>Rserve</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.rosuda</groupId>
-			<artifactId>RserveEngine</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.n52.mc</groupId>
-			<artifactId>mc-schema</artifactId>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.rosuda</groupId> -->
+<!-- 			<artifactId>RserveEngine</artifactId> -->
+<!-- 		</dependency> -->
 
 		<dependency>
 			<groupId>org.n52.mc</groupId>
 			<artifactId>mc-runtime</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>REngine</artifactId>
+					<groupId>org.rosuda</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>RserveEngine</artifactId>
+					<groupId>org.rosuda</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.n52.mc</groupId>
-			<artifactId>mc-xml-processors</artifactId>
+			<artifactId>mc-schema</artifactId>
 		</dependency>
 
 	</dependencies>

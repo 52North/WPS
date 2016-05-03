@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,12 +26,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -239,7 +237,7 @@ public class CapabilitiesConfiguration {
      *         if the local host name can not be obtained
      */
     private static void initSkeleton(CapabilitiesDocument skel) throws UnknownHostException {
-        ENDPOINT_URL = getEndpointURL();
+        ENDPOINT_URL = WPSConfig.getServerBaseURL() + "/" + WebProcessingService.SERVLET_PATH;
         if (skel.getCapabilities() == null) {
             skel.addNewCapabilities();
         }
@@ -301,33 +299,6 @@ public class CapabilitiesConfiguration {
                 }
             }
         }
-    }
-
-    /**
-     * Gets the endpoint URL of this service by checking the configuration file and the local host name.
-     * 
-     * @return the endpoint URL
-     * 
-     * @throws UnknownHostException
-     *         if the local host name could not be resolved into an address
-     */
-    private static String getEndpointURL() throws UnknownHostException {
-        WPSConfig config = WPSConfig.getInstance();
-        String protocol = config.getWPSConfig().getServer().getProtocol();
-        String host = config.getWPSConfig().getServer().getHostname();
-        String port = config.getWPSConfig().getServer().getHostport();
-        if (host == null) {
-            host = InetAddress.getLocalHost().getCanonicalHostName();
-        }
-
-        StringBuilder url = new StringBuilder();
-        url.append(protocol).append("://").append(host);
-        url.append(':').append(port).append('/');
-        if (WebProcessingService.WEBAPP_PATH != null && !WebProcessingService.WEBAPP_PATH.isEmpty()) {
-            url.append(WebProcessingService.WEBAPP_PATH).append('/');
-        }
-        url.append(WebProcessingService.SERVLET_PATH);
-        return url.toString();
     }
 
     /**

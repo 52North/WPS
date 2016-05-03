@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2010 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.io.File;
@@ -40,7 +39,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.WebProcessingService;
@@ -64,6 +62,8 @@ public class R_Config {
     public static final String SCRIPT_FILE_SUFFIX = "." + SCRIPT_FILE_EXTENSION;
 
     public static final String WKN_PREFIX = "org.n52.wps.server.r.";
+
+    public static final String LOCK_SUFFIX = "lock";
 
     // TODO for resources to be downloadable the cannot be in WEB-INF, or this
     // must be handled with a
@@ -157,12 +157,12 @@ public class R_Config {
 
     public URL getSessionInfoURL() throws MalformedURLException {
         // FIXME implement service endpoint to retrieve r session information
-        return new URL(getUrlPathUpToWebapp() + "/not_supported");
+        return new URL(WPSConfig.getServerBaseURL() + "/not_supported");
     }
 
     // FIXME this should use generic WPS methods to get the URL
     public String getResourceDirURL() {
-        String webapp = getUrlPathUpToWebapp();
+        String webapp = WPSConfig.getServerBaseURL();
         String resourceDirectory = getResourceDirectory();
 
         // important: this url should be appendable with a resource name, i.e. either end in "/" or "id="
@@ -194,21 +194,12 @@ public class R_Config {
                 return null;
             }
             else {
-                URL url = new URL(getUrlPathUpToWebapp() + "/" + f.toString().replace("\\", "/"));
+                URL url = new URL(WPSConfig.getServerBaseURL() + "/" + f.toString().replace("\\", "/"));
                 return url;
             }
         }
 
         return null;
-    }
-
-    private String getUrlPathUpToWebapp() {
-        Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-        String host = server.getHostname();
-        String port = server.getHostport();
-        String webapppath = server.getWebappPath();
-
-        return "http://" + host + ":" + port + "/" + webapppath;
     }
 
     public URL getOutputFileURL(String currentWorkdir, String filename) throws IOException {
@@ -220,7 +211,7 @@ public class R_Config {
 
         // create URL
         path = path.substring(WebProcessingService.BASE_DIR.length() + 1, path.length());
-        String urlString = getUrlPathUpToWebapp() + "/" + path;
+        String urlString = WPSConfig.getServerBaseURL() + "/" + path;
 
         return new URL(urlString);
     }
@@ -469,7 +460,7 @@ public class R_Config {
     }
 
     public URL getProcessDescriptionURL(String processWKN) {
-        String s = getUrlPathUpToWebapp() + "/WebProcessingService?Request=DescribeProcess&identifier=" + processWKN;
+        String s = WPSConfig.getServerBaseURL() + "/WebProcessingService?Request=DescribeProcess&identifier=" + processWKN;
         try {
             return new URL(s);
         }

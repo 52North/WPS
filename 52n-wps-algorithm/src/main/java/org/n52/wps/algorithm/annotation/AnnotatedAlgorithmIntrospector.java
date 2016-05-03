@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -180,7 +180,11 @@ public class AnnotatedAlgorithmIntrospector {
                 }
             }
         }
-        
+
+        if(this.executeMethodBinding == null) {
+            throw new RuntimeException("No execute method binding for class " + this.algorithmClass.getCanonicalName());
+        }
+
         for (InputBinding<?,?> inputBinding : inputBindingMap.values()) {
             algorithmBuilder.addInputDescriptor(inputBinding.getDescriptor());
         }

@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2006 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2006 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,12 +38,12 @@ import javax.servlet.ServletConfig;
 import org.apache.xmlbeans.XmlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.wps.FormatDocument.Format;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.RepositoryDocument.Repository;
+import org.n52.wps.ServerDocument;
 import org.n52.wps.WPSConfigurationDocument;
 import org.n52.wps.impl.WPSConfigurationDocumentImpl.WPSConfigurationImpl;
 
@@ -424,6 +424,19 @@ public class WPSConfig implements Serializable {
     public static String getConfigDir() {
         String dir = getConfigPath();
         return dir.substring(0, dir.lastIndexOf(CONFIG_FILE_NAME));
+    }
+    
+    public static String getServerBaseURL(){
+        ServerDocument.Server server = WPSConfig.getInstance().getWPSConfig().getServer();
+
+        String hostName = server.getHostname();
+        String hostPort = server.getHostport();
+        String webAppPath = server.getWebappPath();
+
+        hostPort = (hostPort != null && !hostPort.isEmpty()) ? ":" + hostPort : "";
+        webAppPath = (webAppPath != null && !webAppPath.isEmpty()) ? "/" + webAppPath : "";
+
+        return String.format(server.getProtocol() + "://%s%s%s", hostName, hostPort, webAppPath);
     }
 
     public static abstract class WPSConfigFileStrategy {

@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wps" uri="http://52north.org/communities/geoprocessing/wps/tags" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="org.n52.wps.webadmin.ConfigUploadBean"%>
@@ -711,13 +710,13 @@
 			function setWPS4RValidityFlags(){
 				var rProcessInfos = new Array();
 
-                <c:forEach var="rProcessInfo" items="${org.n52.wps.server.r.info.RProcessInfo.getRProcessInfoList()}">
+                <c:forEach var="rProcessInfo" items="${org.n52.wps.server.r.info.RProcessInfo.getRProcessInfoList}">
                         rProcessInfos.push(new rProcessInfo({
-                            algorithmName: "${rProcessInfo.getWkn()}",
-                            isAvailable: "${rProcessInfo.isAvailable()}",
-                            isValid: "${rProcessInfo.isValid()}",
-                            scriptURL: "${rProcessInfo.getScriptURL()}",
-                            exception: "${ProcessInfo.getLastErrormessage()}";
+                            algorithmName: "${rProcessInfo.getWkn}",
+                            isAvailable: "${rProcessInfo.isAvailable}",
+                            isValid: "${rProcessInfo.isValid}",
+                            scriptURL: "${rProcessInfo.getScriptURL}",
+                            exception: "${ProcessInfo.getLastErrormessage}";
                         });
                 </c:forEach>
 
@@ -757,7 +756,7 @@
 
 	<div style="height: 75px">
 		<img style="float: left" src="images/52northlogo_small.png" alt="52northlogo_small" />
-		<h1	style="padding-left: 3em; color: #4297d7; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 3em;">Web Admin Console</h1>
+		<h1	style="padding-left: 3em; color: #4297d7; font-family: Lucida Grande, Lucida Sans, Arial, sans-serif; font-size: 3em;">WPS Web Admin Console</h1>
 	</div>
 	<div id="Tabs" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
 		<div id="tab-1">
@@ -786,18 +785,18 @@
 							<div id="Server_Settings">
 								<div id="editSave" style="float:right;"><img id="editImg" src="images/edit.png" onClick="editServerSettings()" style="cursor:pointer;" /></div>
 								<p>
-									<label for="Server-protocol">Server Protocol:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-protocol" value="testValue" readonly/>
+									<label for="Server-protocol">Server Protocol:</label>
+									<input type="text" name="Server-protocol" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
-									<label for="Server-hostname">Server Host Name:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-hostname" value="testValue" readonly/>
+									<label for="Server-hostname">Server Host Name:</label>
+									<input type="text" name="Server-hostname" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
-									<label for="Server-hostport">Server Host Port:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-hostport" value="testValue" readonly/>
+									<label for="Server-hostport">Server Host Port:</label>
+									<input type="text" name="Server-hostport" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
@@ -806,15 +805,15 @@
 								</p>
 								<p>
 									<label for="Server-computationTimeoutMilliSeconds">Computation Timeout:</label>
-									<input type="text" name="Server-computationTimeoutMilliSeconds" value="testValue" readonly/>
+									<input type="text" name="Server-computationTimeoutMilliSeconds" value="" readonly/>
 								</p>
 								<p>
 									<label for="Server-cacheCapabilites">Cache Capabilities:</label>
 									<input type="text" name="Server-cacheCapabilites" value="boolean" readonly/>
 								</p>
 								<p>
-									<label for="Server-webappPath">Web app Path:</label><div id="editWarn" style="float: left;display: none; padding-right: 10px;"><img src="images/warn.png" /> Changes only after restart</div>
-									<input type="text" name="Server-webappPath" value="testValue" readonly/>
+									<label for="Server-webappPath">Web app Path:</label>
+									<input type="text" name="Server-webappPath" value="" readonly/>
 									<br style="clear:left;" />
 								</p>
 								<p>
