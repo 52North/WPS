@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2010 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -131,7 +131,7 @@ public class RDataTypeRegistry {
 
     public String toString()
     {
-        String out = "Key\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
+        String out = "RDataTypeRegistry:\nKey\t\t    MimeType\t\t\t\t    Schema\tEncoding   isComplex\tDataBinding";
         out += "\n-------------------------------------------------------------------------------------------------";
         out += "---------------------------";
 
