@@ -1,0 +1,28 @@
+RELEASE NOTES
+
+ The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in a standardized way. 
+ It features a pluggable architecture for processes and data encodings. 
+ The implementation is based on the OpenGIS specification: 05-007r7.
+ 
+    Changes since last release
+==================================
+ 
+  --- New features ---
+  
+	  * Add mechanism to update the status of a WPS4R process 
+	  * Add a self-cleaning file input stream implementation for Postgres database
+	  * Raise an exception if an annotated Algorithm has no @Execute annotation
+	  * Empty port and webapp path allowed for WPS URL
+  
+  --- Changes ---
+
+	  * Use moving code packages version 1.1  
+	  * Removed outdated python module.
+	  * Switch to Rserve from maven central
+	  * GRASS backend works with current GRASS 7 release
+  
+  --- Fixed issues ---
+  
+	  * Issue #123: Admin console not working when using Tomcat 6
+	  * Issue #173: Databinding issue with WPS4R
+	  * Issue #222: Save configuration with active R backend results in duplicate algorithm entries
