@@ -51,19 +51,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.namespace.QName;
+
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
-import org.geotools.feature.IllegalAttributeException;
+import org.n52.wps.io.GTHelper;
+import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralDoubleBinding;
-import org.n52.wps.server.AbstractAlgorithm;
 import org.n52.wps.server.AbstractSelfDescribingAlgorithm;
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -76,6 +81,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 	Logger LOGGER = LoggerFactory.getLogger(DouglasPeuckerAlgorithm.class);
 	
 	private List<String> errors = new ArrayList<String>();
+	private Double percentage;
 	
 	public Map<String, IData> run(Map<String, List<IData>> inputData) {
 		if(inputData==null || !inputData.containsKey("FEATURES")){
@@ -87,8 +93,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 		}
 		IData firstInputData = dataList.get(0);
 				
-		FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
-		FeatureIterator iter = featureCollection.features();
+		FeatureCollection<?,?> featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 		
 		if( !inputData.containsKey("TOLERANCE")){
 			throw new RuntimeException("Error while allocating input parameters");
@@ -99,50 +104,49 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 		}
 		Double tolerance = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
 		
-		
-		while(iter.hasNext()) {
-			SimpleFeature f = (SimpleFeature) iter.next();
-			if(f.getDefaultGeometry() == null) {
-				LOGGER.debug("defaultGeometry is null in feature id:" + f.getID());
-				throw new NullPointerException("defaultGeometry is null in feature id: " + f.getID());
-			}
-			Map<Object, Object> userData = f.getUserData();
-			
-			try{
-				Geometry in = (Geometry) f.getDefaultGeometry();
-				Geometry out = DouglasPeuckerSimplifier.simplify(in, tolerance);
-                /*
-                 * THIS PASSAGE WAS CONTRIBUTED BY GOBE HOBONA.
-                 *The simplification of MultiPolygons produces Polygon geometries. This becomes inconsistent with the original schema (which was of MultiPolygons).
-                 *To ensure that the output geometries match that of the original schema we add the Polygon(from the simplication) to a MultiPolygon object
-                 *
-                 *This is issue is known to affect MultiPolygon geometries only, other geometries need to be tested to ensure conformance with the original (input) schema
-                 */  
-                if(in.getGeometryType().equals("MultiPolygon") && out.getGeometryType().equals("Polygon"))
-                {                   
-                    MultiPolygon mp = (MultiPolygon)in;                                               
-                    Polygon[] p = {(Polygon)out};
-                    mp = new MultiPolygon(p,mp.getFactory());                   
-                    f.setDefaultGeometry(mp);
-                }
-                else if(in.getGeometryType().equals("MultiLineString") && out.getGeometryType().equals("LineString")) {
-                	MultiLineString ml = (MultiLineString)in;
-                	LineString[] l = {(LineString)out};
-                    ml = new MultiLineString(l,ml.getFactory());                   
-                    f.setDefaultGeometry(ml);
-                }
-                else {
-                	f.setDefaultGeometry(out);
-                }
-				Geometry g = (Geometry) f.getDefaultGeometry();
-				g.setUserData(userData);
-			}
-			catch(IllegalAttributeException e) {
-				throw new RuntimeException("geometrytype of result is not matching", e);
-			}
-		}
+	        double i = 0;
+	        int totalNumberOfFeatures = featureCollection.size();
+	        String uuid = UUID.randomUUID().toString();
+	        List<SimpleFeature> featureList = new ArrayList<>();
+	        SimpleFeatureType featureType = null;
+	        LOGGER.debug("");
+	        for (FeatureIterator<?> ia = featureCollection.features(); ia.hasNext();) {
+	            /**
+	             * ******* How to publish percentage results ************
+	             */
+	            i = i + 1;
+	            percentage = (i / totalNumberOfFeatures) * 100;
+	            this.update(new Integer(percentage.intValue()));
+
+	            /**
+	             * ******************
+	             */
+	            SimpleFeature feature = (SimpleFeature) ia.next();
+	            Geometry geometry = (Geometry) feature.getDefaultGeometry();
+	            Geometry geometryBuffered = simplify(geometry, tolerance);
+
+	            if (i == 1) {
+	                CoordinateReferenceSystem crs = feature.getFeatureType().getCoordinateReferenceSystem();
+	                if (geometry.getUserData() instanceof CoordinateReferenceSystem) {
+	                    crs = ((CoordinateReferenceSystem) geometry.getUserData());
+	                }
+	                featureType = GTHelper.createFeatureType(feature.getProperties(), geometryBuffered, uuid, crs);
+	                QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
+	                SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
+
+	            }
+
+	            if (geometryBuffered != null) {
+	                SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(), geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
+	                feature.setDefaultGeometry(geometryBuffered);
+	                featureList.add(createdFeature);
+	            } else {
+	                LOGGER.warn("GeometryCollections are not supported, or result null. Original dataset will be returned");
+	            }
+	        }
+                FeatureCollection<?,?> resultCollection = new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
 		HashMap<String, IData> result = new HashMap<String, IData>();
-		result.put("SIMPLIFIED_FEATURES", new GTVectorDataBinding(featureCollection));
+		result.put("SIMPLIFIED_FEATURES", new GTVectorDataBinding(resultCollection));
 		return result;
 	}
 
@@ -151,7 +155,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 		return errors;
 	}
 
-	public Class getInputDataType(String id) {
+	public Class<?> getInputDataType(String id) {
 		if(id.equalsIgnoreCase("FEATURES")){
 			return GTVectorDataBinding.class;
 		}else if(id.equalsIgnoreCase("TOLERANCE")){
@@ -160,7 +164,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 		return null;
 	}
 
-	public Class getOutputDataType(String id) {
+	public Class<?> getOutputDataType(String id) {
 		if(id.equalsIgnoreCase("SIMPLIFIED_FEATURES")){
 			return GTVectorDataBinding.class;
 		}
@@ -181,5 +185,22 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
 		identifierList.add("SIMPLIFIED_FEATURES");
 		return identifierList;
 	}
+
+    private Geometry simplify(Geometry in,
+            Double tolerance) {
+        Geometry out = DouglasPeuckerSimplifier.simplify(in, tolerance);
+
+        if (in.getGeometryType().equals("MultiPolygon") && out.getGeometryType().equals("Polygon")) {
+            MultiPolygon mp = (MultiPolygon) in;
+            Polygon[] p = { (Polygon) out };
+            return new MultiPolygon(p, mp.getFactory());
+        } else if (in.getGeometryType().equals("MultiLineString") && out.getGeometryType().equals("LineString")) {
+            MultiLineString ml = (MultiLineString) in;
+            LineString[] l = { (LineString) out };
+            return new MultiLineString(l, ml.getFactory());
+        }
+
+        return out;
+    }
 
 }
