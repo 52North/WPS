@@ -43,6 +43,7 @@ import org.n52.wps.algorithm.annotation.AnnotationParser.LiteralDataOutputMethod
 import org.n52.wps.algorithm.annotation.AnnotationParser.OutputAnnotationParser;
 import org.n52.wps.algorithm.annotation.AnnotationParser.ExecuteAnnotationParser;
 import org.n52.wps.algorithm.descriptor.AlgorithmDescriptor;
+import org.n52.wps.algorithm.descriptor.MetadataDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,6 +146,8 @@ public class AnnotatedAlgorithmIntrospector {
         
         Algorithm algorithm = algorithmClass.getAnnotation(Algorithm.class);
         
+        Metadata[] metadataAnnnotations = algorithmClass.getAnnotationsByType(Metadata.class);
+        
         algorithmBuilder = AlgorithmDescriptor.builder(
                 algorithm.identifier().length() > 0 ?
                     algorithm.identifier() :
@@ -156,6 +159,12 @@ public class AnnotatedAlgorithmIntrospector {
                 version(algorithm.version()).
                 storeSupported(algorithm.storeSupported()).
                 statusSupported(algorithm.statusSupported());
+        
+        if(metadataAnnnotations != null && metadataAnnnotations.length > 0){
+            for (Metadata metadata : metadataAnnnotations) {
+                algorithmBuilder.addMetadataDescriptor(MetadataDescriptor.builder().href(metadata.href()).role(metadata.role()));
+            }
+        }
         
         parseElements(algorithmClass.getDeclaredMethods(),
                 INPUT_METHOD_PARSERS,

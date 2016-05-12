@@ -35,6 +35,7 @@ public class AlgorithmDescriptor extends Descriptor {
     private final boolean statusSupported;
     private final Map<String, InputDescriptor> inputDescriptorMap;
     private final Map<String, OutputDescriptor> outputDescriptorMap;
+    private final List<MetadataDescriptor> metadataDescriptors;
 
 	AlgorithmDescriptor(Builder<? extends Builder<?>> builder) {
         super(builder);
@@ -58,6 +59,8 @@ public class AlgorithmDescriptor extends Descriptor {
             oMap.put(oDescriptor.getIdentifier(), oDescriptor);
         }
         outputDescriptorMap = Collections.unmodifiableMap(oMap);
+        
+        metadataDescriptors = builder.metadataDescriptors;
     }
 
     public String getVersion() {
@@ -95,6 +98,10 @@ public class AlgorithmDescriptor extends Descriptor {
     public Collection<OutputDescriptor> getOutputDescriptors() {
         return outputDescriptorMap.values();
     }
+    
+    public List<MetadataDescriptor> getMetadataDescriptors() {
+        return metadataDescriptors;
+    }
 
     public static Builder<?> builder(String identifier) {
         return new BuilderTyped(identifier);
@@ -122,12 +129,14 @@ public class AlgorithmDescriptor extends Descriptor {
         private boolean statusSupported = true;
         private List<InputDescriptor> inputDescriptors;
         private List<OutputDescriptor> outputDescriptors;
+        private List<MetadataDescriptor> metadataDescriptors;
 
         protected Builder(String identifier) {
             super(identifier);
             title(identifier);
             inputDescriptors = new ArrayList<InputDescriptor>();
             outputDescriptors = new ArrayList<OutputDescriptor>();
+            metadataDescriptors = new ArrayList<>();
         }
 
         public B version(String version) {
@@ -142,6 +151,20 @@ public class AlgorithmDescriptor extends Descriptor {
 
         public B statusSupported(boolean statusSupported) {
             this.statusSupported = statusSupported;
+            return self();
+        }
+        
+        public B addMetadataDescriptor(MetadataDescriptor.Builder metadataDescriptorBuilder) {
+            return addMetadataDescriptor(metadataDescriptorBuilder.build());
+        }
+
+        public B addMetadataDescriptor(MetadataDescriptor metadataDescriptor) {
+            this.metadataDescriptors.add(metadataDescriptor);
+            return self();
+        }
+
+        public B addMetadataDescriptors(List<? extends MetadataDescriptor> metadataDescriptors) {
+            this.metadataDescriptors.addAll(metadataDescriptors);
             return self();
         }
 

@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
+import net.opengis.ows.x20.MetadataType;
 import net.opengis.ows.x20.ValueType;
 import net.opengis.wps.x100.ComplexDataCombinationType;
 import net.opengis.wps.x100.ComplexDataCombinationsType;
@@ -51,6 +52,7 @@ import org.n52.wps.algorithm.descriptor.ComplexDataOutputDescriptor;
 import org.n52.wps.algorithm.descriptor.InputDescriptor;
 import org.n52.wps.algorithm.descriptor.LiteralDataInputDescriptor;
 import org.n52.wps.algorithm.descriptor.LiteralDataOutputDescriptor;
+import org.n52.wps.algorithm.descriptor.MetadataDescriptor;
 import org.n52.wps.algorithm.descriptor.OutputDescriptor;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLUtil;
@@ -517,7 +519,15 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             if (algorithmDescriptor.hasAbstract()) {
                 processDescription.addNewAbstract().setStringValue(algorithmDescriptor.getAbstract());
             }
+            
+            Collection<MetadataDescriptor> metadataDescriptors = algorithmDescriptor.getMetadataDescriptors();
 
+            for (MetadataDescriptor metadataDescriptor : metadataDescriptors) {
+                MetadataType metadata = processDescription.addNewMetadata();                
+                metadata.setRole(metadataDescriptor.getRole());
+                metadata.setHref(metadataDescriptor.getHref());
+            }
+            
             // 2. Inputs
             Collection<InputDescriptor> inputDescriptors = algorithmDescriptor.getInputDescriptors();
             DataInputs dataInputs = null;
