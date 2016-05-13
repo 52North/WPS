@@ -26,8 +26,8 @@ import java.lang.annotation.Target;
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Metadata {
+@Target({ElementType.METHOD})
+public @interface ParameterMetadata {
     String role() default "";
     String href() default "";
 }

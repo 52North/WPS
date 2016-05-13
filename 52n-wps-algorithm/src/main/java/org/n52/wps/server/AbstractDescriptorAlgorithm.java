@@ -602,6 +602,18 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     
                     XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
                 }
+                
+                List<?> inputParameterMetadataDescriptors = inputDescriptor.getMetadataDescriptors();
+                
+                for (Object object : inputParameterMetadataDescriptors) {
+                    
+                    if(object instanceof MetadataDescriptor){
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;                        
+                        MetadataType metadata = dataInput.addNewMetadata();                
+                        metadata.setRole(metadataDescriptor.getRole());
+                        metadata.setHref(metadataDescriptor.getHref());
+                    }                    
+                }
             }
 
             // 3. Outputs
@@ -653,6 +665,18 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     dataOutput.setDataDescription(complexDataType);
                     
                     XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
+                }
+                
+                List<?> outputParameterMetadataDescriptors = outputDescriptor.getMetadataDescriptors();
+                
+                for (Object object : outputParameterMetadataDescriptors) {
+                    
+                    if(object instanceof MetadataDescriptor){
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;                        
+                        MetadataType metadata = dataOutput.addNewMetadata();                
+                        metadata.setRole(metadataDescriptor.getRole());
+                        metadata.setHref(metadataDescriptor.getHref());
+                    }                    
                 }
             }
         }
