@@ -28,6 +28,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface AlgorithmMetadata {
-    String role() default "";
-    String href() default "";
+    String[] roles() default "";
+    String[] hrefs() default "";
 }

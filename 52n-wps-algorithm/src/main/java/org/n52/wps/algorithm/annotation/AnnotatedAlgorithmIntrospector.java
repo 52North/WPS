@@ -146,7 +146,7 @@ public class AnnotatedAlgorithmIntrospector {
         
         Algorithm algorithm = algorithmClass.getAnnotation(Algorithm.class);
         
-        AlgorithmMetadata[] metadataAnnnotations = algorithmClass.getAnnotationsByType(AlgorithmMetadata.class);
+        AlgorithmMetadata metadataAnnnotation = algorithmClass.getAnnotation(AlgorithmMetadata.class);
         
         algorithmBuilder = AlgorithmDescriptor.builder(
                 algorithm.identifier().length() > 0 ?
@@ -160,9 +160,10 @@ public class AnnotatedAlgorithmIntrospector {
                 storeSupported(algorithm.storeSupported()).
                 statusSupported(algorithm.statusSupported());
         
-        if(metadataAnnnotations != null && metadataAnnnotations.length > 0){
-            for (AlgorithmMetadata metadata : metadataAnnnotations) {
-                algorithmBuilder.addMetadataDescriptor(MetadataDescriptor.builder().href(metadata.href()).role(metadata.role()));
+        if(metadataAnnnotation != null){
+            String[] roles = metadataAnnnotation.roles();
+            for (int i = 0; i < roles.length; i++) {
+                algorithmBuilder.addMetadataDescriptor(MetadataDescriptor.builder().href(metadataAnnnotation.hrefs()[i]).role(metadataAnnnotation.roles()[i]));
             }
         }
         

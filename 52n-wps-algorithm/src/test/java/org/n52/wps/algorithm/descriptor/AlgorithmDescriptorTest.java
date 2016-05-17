@@ -34,14 +34,24 @@ public class AlgorithmDescriptorTest extends TestCase {
     
     private List<InputDescriptor.Builder<?,?>> MOCK_INPUT_BUILDERS;
     private List<OutputDescriptor.Builder<?,?>> MOCK_OUTPUT_BUILDERS;    
-    private MetadataDescriptor MOCK_METADATA_BUILDER_1;
-    private MetadataDescriptor MOCK_METADATA_BUILDER_2;
-    private List<MetadataDescriptor> MOCK_METADATA_BUILDERS;
+    private MetadataDescriptor MOCK_PROCESS_METADATA_BUILDER_1;
+    private MetadataDescriptor MOCK_PROCESS_METADATA_BUILDER_2;
+    private List<MetadataDescriptor> MOCK_PROCESS_METADATA_BUILDERS;
     
-    private static final String ROLE_1 = "http://test.io";
-    private static final String HREF_1 = "http://example.io";
-    private static final String ROLE_2 = "http://example.io";
-    private static final String HREF_2 = "http://test.io";
+    private static final String PROCESS_ROLE_1 = "http://test.io";
+    private static final String PROCESS_HREF_1 = "http://example.io";
+    private static final String PROCESS_ROLE_2 = "http://example.io";
+    private static final String PROCESS_HREF_2 = "http://test.io";
+    
+    private static final String INPUT_PARAMETER_ROLE_1 = "http://inputParameter1test.io";
+    private static final String INPUT_PARAMETER_HREF_1 = "http://inputParameter1example.io";
+    private static final String INPUT_PARAMETER_ROLE_2 = "http://inputParameter2example.io";
+    private static final String INPUT_PARAMETER_HREF_2 = "http://inputParameter2test.io";
+    
+    private static final String OUTPUT_PARAMETER_ROLE_1 = "http://outputParameter1test.io";
+    private static final String OUTPUT_PARAMETER_HREF_1 = "http://outputParameter1example.io";
+    private static final String OUTPUT_PARAMETER_ROLE_2 = "http://outputParameter2example.io";
+    private static final String OUTPUT_PARAMETER_HREF_2 = "http://outputParameter2test.io";
     
     public AlgorithmDescriptorTest(String testName) {
         super(testName);
@@ -65,12 +75,12 @@ public class AlgorithmDescriptorTest extends TestCase {
         MOCK_OUTPUT_BUILDERS.add(ComplexDataOutputDescriptor.builder("mock_output4", MockBinding.class));
         MOCK_OUTPUT_BUILDERS = Collections.unmodifiableList(MOCK_OUTPUT_BUILDERS);
         
-        MOCK_METADATA_BUILDER_1 = MetadataDescriptor.builder().role(ROLE_1).href(HREF_1).build();
-        MOCK_METADATA_BUILDER_2 = MetadataDescriptor.builder().role(ROLE_2).href(HREF_2).build();
+        MOCK_PROCESS_METADATA_BUILDER_1 = MetadataDescriptor.builder().role(PROCESS_ROLE_1).href(PROCESS_HREF_1).build();
+        MOCK_PROCESS_METADATA_BUILDER_2 = MetadataDescriptor.builder().role(PROCESS_ROLE_2).href(PROCESS_HREF_2).build();
         
-        MOCK_METADATA_BUILDERS = new ArrayList<>();        
-        MOCK_METADATA_BUILDERS.add(MOCK_METADATA_BUILDER_1);
-        MOCK_METADATA_BUILDERS.add(MOCK_METADATA_BUILDER_2);
+        MOCK_PROCESS_METADATA_BUILDERS = new ArrayList<>();        
+        MOCK_PROCESS_METADATA_BUILDERS.add(MOCK_PROCESS_METADATA_BUILDER_1);
+        MOCK_PROCESS_METADATA_BUILDERS.add(MOCK_PROCESS_METADATA_BUILDER_2);
         
     }
     
@@ -175,18 +185,42 @@ public class AlgorithmDescriptorTest extends TestCase {
         
         assertTrue(descriptor.getMetadataDescriptors().size() == 1);
         assertTrue(descriptor.getMetadataDescriptors().size() > 0);
-        assertTrue(descriptor.getMetadataDescriptors().get(0).getRole().equals(ROLE_1));
-        assertTrue(descriptor.getMetadataDescriptors().get(0).getHref().equals(HREF_1));
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getRole().equals(PROCESS_ROLE_1));
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getHref().equals(PROCESS_HREF_1));
         
      // test process with a list of metadata descriptors
         descriptor = createAlgorithmDescriptorWithTwoMetadataDescriptors().build();
         
         for (MetadataDescriptor metadataDescriptor : descriptor.getMetadataDescriptors()) {
-            if(metadataDescriptor.getRole().equals(ROLE_1)){
-                assertTrue(metadataDescriptor.getHref().equals(HREF_1));                
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_1)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_1));                
             }
-            if(metadataDescriptor.getRole().equals(ROLE_2)){
-                assertTrue(metadataDescriptor.getHref().equals(HREF_2));                
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_2)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_2));                
+            }
+        }
+    }
+    
+    public void testParameterMetadata() {
+        AlgorithmDescriptor descriptor = null;
+        
+        // test process with one metadata descriptor
+        descriptor = createAlgorithmDescriptorWithMetadataDescriptor().build();
+        
+        assertTrue(descriptor.getMetadataDescriptors().size() == 1);
+        assertTrue(descriptor.getMetadataDescriptors().size() > 0);
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getRole().equals(PROCESS_ROLE_1));
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getHref().equals(PROCESS_HREF_1));
+        
+        // test process with a list of metadata descriptors
+        descriptor = createAlgorithmDescriptorWithTwoMetadataDescriptors().build();
+        
+        for (MetadataDescriptor metadataDescriptor : descriptor.getMetadataDescriptors()) {
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_1)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_1));                
+            }
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_2)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_2));                
             }
         }
     }
@@ -277,12 +311,12 @@ public class AlgorithmDescriptorTest extends TestCase {
     
     private AlgorithmDescriptor.Builder<?> createAlgorithmDescriptorWithMetadataDescriptor() {
         return AlgorithmDescriptor.builder("mock_identifier").
-                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptor(MOCK_METADATA_BUILDER_1);
+                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptor(MOCK_PROCESS_METADATA_BUILDER_1);
     }
     
     private AlgorithmDescriptor.Builder<?> createAlgorithmDescriptorWithTwoMetadataDescriptors() {
         return AlgorithmDescriptor.builder("mock_identifier").
-                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptors(MOCK_METADATA_BUILDERS);
+                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptors(MOCK_PROCESS_METADATA_BUILDERS);
     }
     
     private void validateInputDescriptors(AlgorithmDescriptor algorithmDescriptor) {

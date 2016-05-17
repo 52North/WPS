@@ -338,13 +338,14 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
     }
 
     public List<MetadataDescriptor> parseMetadata(M member) {
-        ParameterMetadata[] metadataAnnnotations = member.getDeclaredAnnotationsByType(ParameterMetadata.class);
+        ParameterMetadata metadataAnnnotation = member.getDeclaredAnnotation(ParameterMetadata.class);
         
         List<MetadataDescriptor> metadataDescriptors = new ArrayList<>();
         
-        if(metadataAnnnotations != null && metadataAnnnotations.length > 0){
-            for (ParameterMetadata metadata : metadataAnnnotations) {
-                metadataDescriptors.add(MetadataDescriptor.builder().href(metadata.href()).role(metadata.role()).build());
+        if(metadataAnnnotation != null){
+            String[] roles = metadataAnnnotation.roles();
+            for (int i = 0; i < roles.length; i++) {
+                metadataDescriptors.add(MetadataDescriptor.builder().href(metadataAnnnotation.hrefs()[i]).role(metadataAnnnotation.roles()[i]).build());
             }
         }
         
