@@ -76,7 +76,7 @@ public class RProcessDescriptionCreator {
 
     public static final String IMPORT_TITLE_PREFIX = "Import: ";
 
-    private static final String DEFAULT_VERSION = "1";
+    private static final String DEFAULT_VERSION = "1.0.0";
 
     private static final Logger log = LoggerFactory.getLogger(RProcessDescriptionCreator.class);
 
