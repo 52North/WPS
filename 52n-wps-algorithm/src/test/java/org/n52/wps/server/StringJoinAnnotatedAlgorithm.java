@@ -35,7 +35,7 @@ import org.n52.wps.algorithm.annotation.Execute;
     abstrakt="This is an example algorithm implementation described using annotations that joins strings using the specified delimiter.",
     statusSupported=false,
     storeSupported=false)
-@AlgorithmMetadata(role="http://example.io", href="http://test.io")
+@AlgorithmMetadata(roles={"http://example.io"}, hrefs={"http://test.io"})
 public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
 
     public enum Delimiter {
@@ -69,7 +69,7 @@ public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
         identifier="INPUT_DELIMITER",
         title="Delimiter",
         abstrakt="The value to use when joining strings")
-    @ParameterMetadata(role="http://inputParamater1Test.io", href="http://inputParamater1Example.io")
+    @ParameterMetadata(roles={"http://inputParamater1Test.io"}, hrefs={"http://inputParamater1Example.io"})
     public void setInputDelimiter(Delimiter inputDelimiter) {
         this.inputDelimiter = inputDelimiter;
     }
@@ -79,7 +79,7 @@ public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
         identifier="OUTPUT_STRING",
         title="Output String",
         abstrakt="The strings joined with the delimiter")
-    @ParameterMetadata(role="http://outputParamater1Test.io", href="http://outputParamater1Example.io")
+    @ParameterMetadata(roles={"http://outputParamater1Test.io"}, hrefs={"http://outputParamater1Example.io"})
     public String getOutputString() {
         return outputString;
     }
