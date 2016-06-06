@@ -17,16 +17,17 @@
 package org.n52.wps.server;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.algorithm.util.CustomClassLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 /**
  * This class has to be extended in order to be served through the WPS. 
@@ -69,7 +70,16 @@ public abstract class AbstractAlgorithm implements IAlgorithm
 	 */
 	protected ProcessDescription initializeDescription() {
 		String className = this.getClass().getName().replace(".", "/");
-		InputStream xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");
+		
+		InputStream xmlDesc; 
+		
+		if(this.getClass().getClassLoader() instanceof CustomClassLoader){
+		    String baseDir = ((CustomClassLoader)this.getClass().getClassLoader()).getBaseDir();
+		    xmlDesc = UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(baseDir + File.separator + className + ".xml");
+		}else{
+	            xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");		    
+		}
+		
 		try {
 			XmlOptions option = new XmlOptions();
 			option.setLoadTrimTextBuffer();

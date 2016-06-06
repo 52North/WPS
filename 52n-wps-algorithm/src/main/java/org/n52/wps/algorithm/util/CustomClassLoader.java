@@ -127,4 +127,8 @@ public class CustomClassLoader extends ClassLoader {
 
         return classData;
     }
+
+    public String getBaseDir() {
+        return baseDir;
+    }
 }
