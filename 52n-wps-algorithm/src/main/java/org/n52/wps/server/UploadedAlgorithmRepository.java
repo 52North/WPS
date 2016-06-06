@@ -113,7 +113,7 @@ public class UploadedAlgorithmRepository implements
 	private IAlgorithm loadAlgorithm(String algorithmClassName)
 			throws Exception {
 
-		Class<?> algorithmClass = new CustomClassLoader("/uploaded").loadClass(algorithmClassName);
+		Class<?> algorithmClass = new CustomClassLoader("uploaded").loadClass(algorithmClassName);
 		IAlgorithm algorithm = null;
 		if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
 			algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());

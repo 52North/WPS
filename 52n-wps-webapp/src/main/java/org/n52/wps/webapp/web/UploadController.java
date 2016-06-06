@@ -211,7 +211,9 @@ public class UploadController {
 				resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes/uploaded"));
 
 		// try to get the package name from the file, read line by line
-		File tempFile = new File(java.getOriginalFilename());
+		String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separatorChar + java.getOriginalFilename();
+		
+		File tempFile = new File(tmpFilePath);
 		String packageName = null;
 
 		FileUtils.writeByteArrayToFile(tempFile, java.getBytes());
