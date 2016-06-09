@@ -266,7 +266,28 @@ public class OutputDataItem extends ResponseData {
 
 	public void updateResponseForLiteralData(ResultDocument res,
 			String dataTypeReference) {
-		// TODO Auto-generated method stub
+            DataOutputType output = prepareOutput(res);
+            String processValue = BasicXMLTypeFactory.getStringRepresentation(dataTypeReference, obj);
+            Data literalData = output.addNewData();
+//            if (dataTypeReference != null) {
+//                    literalData.setDataType(dataTypeReference);
+//            }
+            try {
+                DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                Document document = builder.newDocument();
+                Node dataNode = document.createTextNode(processValue);
+                literalData.set(XmlObject.Factory.parse(dataNode));                
+            } catch (Exception e) {
+                LOGGER.error("Excepion while trying to write inline literal output.");
+                LOGGER.error(e.getMessage());
+            }
+//            literalData.setStringValue(processValue);
+//            if(obj instanceof AbstractLiteralDataBinding){
+//                    String uom = ((AbstractLiteralDataBinding)obj).getUnitOfMeasurement();
+//                    if(uom != null && !uom.equals("")){
+//                            literalData.setUom(uom);
+//                    }
+//            }
 		
 	}
 
