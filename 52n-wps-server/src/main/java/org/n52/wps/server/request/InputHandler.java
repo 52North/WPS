@@ -310,8 +310,18 @@ public class InputHandler {
     protected String getComplexValueNodeString(Node complexValueNode) {
         String complexValue;
         try {
-            complexValue = XMLUtil.nodeToString(complexValueNode);
-            complexValue = complexValue.substring(complexValue.indexOf(">") + 1, complexValue.lastIndexOf("</"));
+            //handle different contents of complexdata
+            if(complexValueNode.getChildNodes().getLength() > 1){
+                complexValue = complexValueNode.getChildNodes().item(1).getNodeValue();
+                if(complexValue == null){
+                    return XMLUtil.nodeToString(complexValueNode.getChildNodes().item(1));
+                }
+            }else{
+                complexValue = complexValueNode.getFirstChild().getNodeValue();
+            }
+            if(complexValue == null){
+                return XMLUtil.nodeToString(complexValueNode.getFirstChild());
+            }
         } catch (TransformerFactoryConfigurationError e1) {
             throw new TransformerFactoryConfigurationError("Could not parse inline data. Reason " + e1);
         } catch (TransformerException e1) {
@@ -320,6 +330,8 @@ public class InputHandler {
         return complexValue;
     }
 
+    
+    
 	/**
 	 * Handles the complexValue, which in this case should always include XML
 	 * which can be parsed into a FeatureCollection.
