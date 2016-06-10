@@ -165,20 +165,18 @@ public class InputHandlerTest extends AbstractITClass {
         assertThat(cddt, is(nullValue()));
     }
 
-    @Test
+    @Test//TODO check test, why is method getComplexValueNodeString used for bbox data?
     public void testInputHandlerGetComplexValueNodeString() throws ExceptionReport, XmlException, IOException {
         System.out.println("Testing testInputHandlerGetComplexValueNodeString...");
 
         InputHandler instance = new InputHandler.Builder(new Input(simpleBufferAlgorithmInputArray), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
-        String result = instance.getComplexValueNodeString(simpleBufferAlgorithmInputArray[0].getDomNode());
+        String result = instance.getComplexValueNodeString(simpleBufferAlgorithmInputArray[0].getData().getComplexData().getDomNode());
         assertThat(result, not(isEmptyOrNullString()));
-        assertThat(result, containsString("ows:Identifier"));
         assertThat(result, containsString("147.25674400000003 -42.778393 147.22018400000002 -42.824776 147.179596 -42.82143 147.11132800000001 -42.795731 147.057098 -42.741581 147.00347900000003 -42.704803 146.91909800000002 -42.622734 146.91053799999997 -42.610928 146.88998400000003 -42.585396 146.83844 -42.572792 146.78569 -42.539352 146.724335 -42.485966 146.695023 -42.469582 146.64987200000002 -42.450371 146.604965 -42.432274 146.578781 -42.408531 146.539307 -42.364208 146.525055 -42.30883 146.558044 -42.275948 146.57624800000002 -42.23777 146.58146699999998 -42.203426 146.490005 -42.180222 146.3797 -42.146332 146.33406100000002 -42.138741 146.270966 -42.165703 146.197296 -42.224072 146.167908 -42.244835 146.16493200000002 -42.245171 146.111023 -42.265202 146.03747600000003 -42.239738 145.981628 -42.187851 145.85391199999998 -42.133492 145.819611 -42.129154 145.72052000000002 -42.104084 145.61857600000002 -42.056023 145.541718 -42.027241 145.48628200000002 -41.983326 145.452744 -41.926544 145.494034 -41.896477 145.59173600000003 -41.860214 145.64211999999998 -41.838398 145.669449 -41.830734 145.680923 -41.795753 145.68296800000002 -41.743221 145.67515600000002 -41.710377 145.680115 -41.688908 145.70106500000003 -41.648228 145.71479799999997 -41.609509 145.62919599999998 -41.462051 145.64889499999998 -41.470337 145.633423 -41.420902 145.631866 -41.36528 145.640854 -41.301533 145.700424 -41.242611 145.77242999999999 -41.193897 145.80233800000002 -41.161488 145.856018 -41.08007"));
 
         instance = new InputHandler.Builder(new Input(dummyTestClassAlgorithmInputArray), "org.n52.wps.server.algorithm.test.DummyTestClass").build();
-        result = instance.getComplexValueNodeString(dummyTestClassAlgorithmInputArray[0].getDomNode());
+        result = instance.getComplexValueNodeString(dummyTestClassAlgorithmInputArray[0].getData().getBoundingBoxData().getDomNode());
         assertThat(result, not(isEmptyOrNullString()));
-        assertThat(result, containsString("ows:Identifier"));
         assertThat(result, containsString("46.75 13.05"));
 
     }
