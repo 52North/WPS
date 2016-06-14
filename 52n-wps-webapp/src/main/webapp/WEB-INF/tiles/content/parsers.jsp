@@ -78,7 +78,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Add a format</h4>
+				<h4 class="modal-title">Edit format</h4>
 			</div>
 			<div class="modal-body">
 				<form id="editFormat" method="POST"
@@ -121,11 +121,11 @@
 		$('#result').html('');
 		var form = $(this);
 		var formData = new FormData();
-		formData.append("mimeType", $('#mimeType').fieldValue()[0]);
-		formData.append("schema", $('#schema').fieldValue()[0]);
-		formData.append("encoding", $('#encoding').fieldValue()[0]);
+		formData.append("mimeType", $('#mimeType').val());
+		formData.append("schema", $('#schema').val());
+		formData.append("encoding", $('#encoding').val());
 		formData.append("moduleClassName", $('input#hiddenModuleName').val());
-		ajaxHandleFormat(formData, form, 'parsers/formats/add_format');
+		ajaxHandleFormat(formData, form, 'parsers', 'add');
 	});
 
 	$('form#editFormat').submit(function(event) {
@@ -133,58 +133,13 @@
 		$('#result').html('');
 		var form = $(this);
 		var formData = new FormData();
-		formData.append("new_mimetype", $('#newMimetype').fieldValue()[0]);
-		formData.append("new_schema", $('#newSchema').fieldValue()[0]);
-		formData.append("new_encoding", $('#newEncoding').fieldValue()[0]);
+		formData.append("new_mimetype", $('#newMimetype').val());
+		formData.append("new_schema", $('#newSchema').val());
+		formData.append("new_encoding", $('#newEncoding').val());
 		formData.append("old_mimetype", $('#hiddenOldMimetype').val());
 		formData.append("old_schema", $('#hiddenOldSchema').val());
 		formData.append("old_encoding", $('#hiddenOldEncoding').val());
 		formData.append("moduleClassName", $('input#hiddenModuleName').val());
-		ajaxHandleFormat(formData, form, 'parsers/formats/edit_format');
+		ajaxHandleFormat(formData, form, 'parsers', 'edit');
 	});
-	
-	function ajaxHandleFormat(formData, form, url) {
-		// reset and clear errors and alerts
-		$('#fieldError').remove();
-		$('#alert').remove();
-		$(".form-group").each(function() {
-			$(this).removeClass("has-error");
-		});
-		
-		$.ajax({
-			url : url,
-			data : formData,
-			dataType : 'text',
-			processData : false,
-			contentType : false,
-			headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
-			type : 'POST',
-			success : function(xhr) {
-				// success alert
-				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-success'>Upload successful</div>");
-				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
-				closeBtn.appendTo(alertDiv).text("x");
-				alertDiv.insertBefore(form);
-			},
-			error : function(xhr) {
-				// error alert
-				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-danger'>Upload error</div>");
-				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
-				closeBtn.appendTo(alertDiv).text("x");
-				alertDiv.insertBefore(form);
-
-				var json = JSON.parse(xhr.responseText);
-				var errors = json.errorMessageList;
-				for ( var i = 0; i < errors.length; i++) {
-					var item = errors[i];
-
-					//display the error after the field
-					var field = $('#' + item.field);
-					field.parents(".form-group").addClass("has-error");
-					$("<div id='fieldError' class='text-danger'>" + item.defaultMessage + "</div>").insertAfter(field);
-				}
-			}
-
-		});
-	}
 </script>

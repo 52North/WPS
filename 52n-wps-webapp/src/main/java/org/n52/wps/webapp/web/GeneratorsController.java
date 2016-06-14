@@ -142,20 +142,21 @@ public class GeneratorsController extends BaseConfigurationsController {
 		configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
 //		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
 	}
-	       
+
+        
         /**
          * Update a format
          * 
          * @param moduleClassName
          *            The fully qualified name of the module holding the format
-         * @param oldMimeType
-         *            The old format mimeType
+         * @param oldMimetype
+         *            The old format mimetype
          * @param oldSchema
          *            The old format schema
          * @param oldEncoding
          *            The old format encoding
-         * @param newMimeType
-         *            The new format mimeType
+         * @param newMimetype
+         *            The new format mimetype
          * @param newSchema
          *            The new format schema
          * @param newEncoding
@@ -163,8 +164,15 @@ public class GeneratorsController extends BaseConfigurationsController {
          */
         @RequestMapping(value = "formats/edit_format", method = RequestMethod.POST)
         @ResponseStatus(value = HttpStatus.OK)
-        public void editFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("old_mimeType") String oldMimeType, @RequestParam("old_schema") String oldSchema, @RequestParam("old_encoding") String oldEncoding, @RequestParam("new_mimeType") String newMimeType, @RequestParam("new_schema") String newSchema, @RequestParam("new_encoding") String newEncoding) {
-                configurationManager.getConfigurationServices().updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
-                LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been changed to '{}', '{}', '{}'", oldMimeType, oldSchema, oldEncoding, moduleClassName, newMimeType, newSchema, newEncoding);
+        public void editFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("old_mimetype") String oldMimetype, @RequestParam("old_schema") String oldSchema, @RequestParam("old_encoding") String oldEncoding, @RequestParam("new_mimetype") String newMimetype, @RequestParam("new_schema") String newSchema, @RequestParam("new_encoding") String newEncoding) {
+            
+            if(oldSchema.equals("undefined")){
+                oldSchema = "";
+            }
+            if(oldEncoding.equals("undefined")){
+                oldEncoding = "";
+            }
+            configurationManager.getConfigurationServices().updateFormatEntry(moduleClassName, oldMimetype, oldSchema, oldEncoding, newMimetype, newSchema, newEncoding);
+            LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been changed to '{}', '{}', '{}'", oldMimetype, oldSchema, oldEncoding, moduleClassName, newMimetype, newSchema, newEncoding);
         }
 }

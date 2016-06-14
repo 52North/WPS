@@ -28,6 +28,7 @@
     Public License for more details.
 
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="module" tagdir="/WEB-INF/tags/"%>
 
 <module:standardModule configurations="${configurations}" baseUrl="generators" />
@@ -71,6 +72,48 @@
 	</div>
 </div>
 
+<!-- Edit format -->
+<div class="modal fade" id="editFormat" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit format</h4>
+			</div>
+			<div class="modal-body">
+				<form id="editFormat" method="POST"
+					action="generators/formats/edit_format">
+					<div class="form-group">
+						<table>
+							<tbody>
+								<tr>
+									<td><label for="newMimetype">Mime type</label></td>
+									<td><input type="text" name="newMimetype" id="newMimetype"><br /></td>
+								</tr>
+								<tr>
+					                <td><label for="newSchema">Schema</label></td>
+								    <td><input type="text" name="newSchema" id="newSchema"><br /></td>
+								</tr>
+								    <tr><td><label for="newEncoding">Encoding</label></td>
+								    <td><input type="text" name="newEncoding" id="newEncoding"><br /></td>
+								</tr>					
+							</tbody>
+					</table>						
+						<input id="hiddenModuleName" type="hidden" />
+						<input id="hiddenOldMimetype" type="hidden" />
+						<input id="hiddenOldSchema" type="hidden" />
+						<input id="hiddenOldEncoding" type="hidden" />
+						<p class="help-block">Please update the mime type, schema and encoding of the format.</p>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Update</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script src="<c:url value="/static/js/library/jquery.form.js" />"></script>
 <script type="text/javascript">
 	$('form#addFormat').submit(function(event) {
@@ -78,55 +121,25 @@
 		$('#result').html('');
 		var form = $(this);
 		var formData = new FormData();
-		formData.append("mimeType", $('#mimeType').fieldValue()[0]);
-		formData.append("schema", $('#schema').fieldValue()[0]);
-		formData.append("encoding", $('#encoding').fieldValue()[0]);
+		formData.append("mimeType", $('#mimeType').val());
+		formData.append("schema", $('#schema').val());
+		formData.append("encoding", $('#encoding').val());
 		formData.append("moduleClassName", $('input#hiddenModuleName').val());
-		ajaxAddFormat(formData, form);
+		ajaxHandleFormat(formData, form, 'generators', 'add');
 	});
 
-	function ajaxAddFormat(formData, form) {
-		// reset and clear errors and alerts
-		$('#fieldError').remove();
-		$('#alert').remove();
-		$(".form-group").each(function() {
-			$(this).removeClass("has-error");
-		});
-		
-		$.ajax({
-			url : 'generators/formats/add_format',
-			data : formData,
-			dataType : 'text',
-			processData : false,
-			contentType : false,
-			headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
-			type : 'POST',
-			success : function(xhr) {
-				// success alert
-				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-success'>Upload successful</div>");
-				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
-				closeBtn.appendTo(alertDiv).text("x");
-				alertDiv.insertBefore(form);
-			},
-			error : function(xhr) {
-				// error alert
-				var alertDiv = $("<div id='alert' data-dismiss class='alert alert-danger'>Upload error</div>");
-				var closeBtn = $("<button>").addClass("close").attr("data-dismiss", "alert");
-				closeBtn.appendTo(alertDiv).text("x");
-				alertDiv.insertBefore(form);
-
-				var json = JSON.parse(xhr.responseText);
-				var errors = json.errorMessageList;
-				for ( var i = 0; i < errors.length; i++) {
-					var item = errors[i];
-
-					//display the error after the field
-					var field = $('#' + item.field);
-					field.parents(".form-group").addClass("has-error");
-					$("<div id='fieldError' class='text-danger'>" + item.defaultMessage + "</div>").insertAfter(field);
-				}
-			}
-
-		});
-	}
+	$('form#editFormat').submit(function(event) {
+		event.preventDefault();
+		$('#result').html('');
+		var form = $(this);
+		var formData = new FormData();
+		formData.append("new_mimetype", $('#newMimetype').val());
+		formData.append("new_schema", $('#newSchema').val());
+		formData.append("new_encoding", $('#newEncoding').val());
+		formData.append("old_mimetype", $('#hiddenOldMimetype').val());
+		formData.append("old_schema", $('#hiddenOldSchema').val());
+		formData.append("old_encoding", $('#hiddenOldEncoding').val());
+		formData.append("moduleClassName", $('input#hiddenModuleName').val());
+		ajaxHandleFormat(formData, form, 'generators', 'edit');
+	});
 </script>
