@@ -42,24 +42,6 @@ import java.util.UUID;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import net.opengis.ows.x11.BoundingBoxType;
-import net.opengis.ows.x11.DomainMetadataType;
-import net.opengis.ows.x11.RangeType;
-import net.opengis.ows.x11.ValueType;
-import net.opengis.wps.x100.ComplexDataDescriptionType;
-import net.opengis.wps.x100.ComplexDataType;
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.InputReferenceType;
-import net.opengis.wps.x100.InputType;
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x20.DataDescriptionType;
-import net.opengis.wps.x20.DataDocument.Data;
-import net.opengis.wps.x20.DataInputType;
-import net.opengis.wps.x20.FormatDocument.Format;
-import net.opengis.wps.x20.LiteralDataType;
-import net.opengis.wps.x20.LiteralDataType.LiteralDataDomain;
-import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
@@ -79,7 +61,7 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralLongBinding;
 import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.handler.DataInputInterceptors;
 import org.n52.wps.server.handler.DataInputInterceptors.DataInputInterceptorImplementations;
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
@@ -91,7 +73,26 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.google.common.primitives.Doubles;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
+
+import net.opengis.ows.x11.BoundingBoxType;
+import net.opengis.ows.x11.DomainMetadataType;
+import net.opengis.ows.x11.RangeType;
+import net.opengis.ows.x11.ValueType;
+import net.opengis.ows.x20.BoundingBoxDocument;
+import net.opengis.wps.x100.ComplexDataDescriptionType;
+import net.opengis.wps.x100.ComplexDataType;
+import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.InputReferenceType;
+import net.opengis.wps.x100.InputType;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x20.DataDescriptionType;
+import net.opengis.wps.x20.DataDocument.Data;
+import net.opengis.wps.x20.DataInputType;
+import net.opengis.wps.x20.FormatDocument.Format;
+import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.LiteralDataType.LiteralDataDomain;
+import net.opengis.wps.x20.LiteralValueDocument;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
 /**
  * Handles the input of the client and stores it into a Map.
@@ -103,6 +104,7 @@ public class InputHandler {
             = BigInteger.valueOf(Integer.MAX_VALUE);
     private static final BigInteger INT_MIN
             = BigInteger.valueOf(Integer.MIN_VALUE);
+    private static final Object LOCAL_NAME_LITERAL_VALUE = "LiteralValue";
 	private Map<String, List<IData>> inputData = new HashMap<String, List<IData>>();
 	private ProcessDescriptionType processDesc;
 	private ProcessOffering processOffering;
@@ -216,7 +218,7 @@ public class InputHandler {
 					else if(dataDesc instanceof LiteralDataType) {
 						handleLiteralData(input);
 					}
-					else if(dataDesc instanceof net.opengis.ows.x20.BoundingBoxType) {
+					else if(dataDesc instanceof net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData) {
 						handleBBoxValue(input);
 					}
 				}
@@ -1706,18 +1708,31 @@ public class InputHandler {
 	private void handleLiteralData(DataInputType input) throws ExceptionReport {
 		String inputID = input.getId();
 		String parameter = "";
-		try {
-			parameter = XMLUtil.nodeToString(input.getData().getDomNode().getFirstChild());
-		} catch (TransformerFactoryConfigurationError | TransformerException e1) {
-			LOGGER.error("Could not parse supposed LiteralData. " + input.toString(), e1);
-		}
+		LiteralValueDocument literalValueDocument = null;
+		
+		Node dataNode = input.getData().getDomNode();
+		
+		for (int i = 0; i < dataNode.getChildNodes().getLength(); i++) {
+		    Node childNode = dataNode.getChildNodes().item(i);
+		    String localName = childNode.getLocalName();
+                    if(childNode != null && localName!= null && localName.equals(LOCAL_NAME_LITERAL_VALUE)){
+                        try {
+                            literalValueDocument = LiteralValueDocument.Factory.parse(childNode);
+                            break;
+                        } catch (XmlException e) {
+                            LOGGER.error("Exception while trying to parse LiteralValue.", e);
+                        }
+                    }
+                }
+		    
+		parameter = literalValueDocument.getLiteralValue().getStringValue();
 
 		net.opengis.wps.x20.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
 
 		LiteralDataDomain literalDataDomain = ((LiteralDataType)inputDesc.getDataDescription()).getLiteralDataDomainArray(0);
 
-
 		net.opengis.ows.x20.DomainMetadataType dataType = literalDataDomain.getDataType();
+		
 		String xmlDataType = dataType != null ? dataType.getReference() : null;
 
 		//still null, assume string as default
@@ -2420,14 +2435,21 @@ public class InputHandler {
     private void handleBBoxValue(DataInputType input)
             throws ExceptionReport {
 
-    	net.opengis.ows.x20.BoundingBoxType boundingBoxType = null;
-		try {
-			boundingBoxType = net.opengis.ows.x20.BoundingBoxType.Factory.parse(input.getData().getDomNode());
-		} catch (XmlException e) {
-			LOGGER.error("XmlException occurred while trying to parse bounding box: " + (boundingBoxType == null ? null : boundingBoxType.toString()), e);
-		}
+    	BoundingBoxDocument boundingBoxDocument = null;    	
+    	
+    	Node dataNode = input.getData().getDomNode();
+    	
+        try {
+            if(dataNode.getChildNodes().getLength() > 1){
+                boundingBoxDocument = BoundingBoxDocument.Factory.parse(dataNode.getChildNodes().item(1));
+            }else{
+                boundingBoxDocument = BoundingBoxDocument.Factory.parse(input.getData().getDomNode());                
+            }
+        } catch (XmlException e) {
+            LOGGER.error("XmlException occurred while trying to parse bounding box: " + (boundingBoxDocument == null ? null : boundingBoxDocument.toString()), e);
+        }
 
-        IData envelope = parseBoundingBox(boundingBoxType);
+        IData envelope = parseBoundingBox(boundingBoxDocument.getBoundingBox());
 
         List<IData> resultList = inputData.get(input.getId());
         if (resultList == null) {

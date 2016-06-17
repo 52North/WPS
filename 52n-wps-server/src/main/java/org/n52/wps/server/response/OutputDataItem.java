@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,6 +40,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.ows.x20.BoundingBoxDocument;
 import net.opengis.wps.x100.ComplexDataType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.LiteralDataType;
@@ -46,6 +48,9 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputReferenceType;
 import net.opengis.wps.x20.DataDocument.Data;
 import net.opengis.wps.x20.DataOutputType;
+import net.opengis.wps.x20.LiteralDataDocument;
+import net.opengis.wps.x20.LiteralValueDocument;
+import net.opengis.wps.x20.LiteralValueDocument.LiteralValue;
 import net.opengis.wps.x20.ResultDocument;
 
 import org.apache.commons.io.IOUtils;
@@ -53,6 +58,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
+import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
@@ -272,11 +278,23 @@ public class OutputDataItem extends ResponseData {
 //            if (dataTypeReference != null) {
 //                    literalData.setDataType(dataTypeReference);
 //            }
+            LiteralValueDocument literalValueDocument = LiteralValueDocument.Factory.newInstance();
+            
+            LiteralValue literalValue = literalValueDocument.addNewLiteralValue();
+            
             try {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document document = builder.newDocument();
                 Node dataNode = document.createTextNode(processValue);
-                literalData.set(XmlObject.Factory.parse(dataNode));                
+                literalValue.set(XmlObject.Factory.parse(dataNode));
+                literalData.set(literalValue);
+                
+                QName literalValueDocumentName = LiteralValueDocument.type.getDocumentElementName();
+                
+                literalValueDocumentName = new QName(literalValueDocumentName.getNamespaceURI(), literalValueDocumentName.getLocalPart(), "wps");
+                
+                XMLUtil.qualifySubstitutionGroup(literalData, literalValueDocumentName, null);
+                
             } catch (Exception e) {
                 LOGGER.error("Excepion while trying to write inline literal output.");
                 LOGGER.error(e.getMessage());
@@ -411,8 +429,29 @@ public class OutputDataItem extends ResponseData {
 		
 	}
 
-	public void updateResponseForBBOXData(ResultDocument res, IBBOXData obj) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void updateResponseForBBOXData(ResultDocument res,
+            IBBOXData bbox) {
+        DataOutputType output = prepareOutput(res);
+        
+        BoundingBoxDocument bbBoxDocument = BoundingBoxDocument.Factory.newInstance();
+        
+        net.opengis.ows.x20.BoundingBoxType bbBoxType = bbBoxDocument.addNewBoundingBox();
+        
+        if (bbox.getCRS() != null) {
+            bbBoxType.setCrs(bbox.getCRS());
+        }
+        bbBoxType.setLowerCorner(Doubles.asList(bbox.getLowerCorner()));
+        bbBoxType.setUpperCorner(Doubles.asList(bbox.getUpperCorner()));
+        bbBoxType.setDimensions(BigInteger.valueOf(bbox.getDimension()));
+        
+        Data data = output.addNewData();
+        
+        data.set(bbBoxType);
+        
+        QName bboxDocumentName = BoundingBoxDocument.type.getDocumentElementName();
+        
+        bboxDocumentName = new QName(bboxDocumentName.getNamespaceURI(), bboxDocumentName.getLocalPart(), "wps");
+        
+        XMLUtil.qualifySubstitutionGroup(data, bboxDocumentName, null);
+    }
 }

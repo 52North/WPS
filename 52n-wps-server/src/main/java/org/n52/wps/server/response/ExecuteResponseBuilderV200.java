@@ -33,6 +33,7 @@ import java.io.InputStream;
 import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.DomainMetadataType;
 import net.opengis.ows.x20.LanguageStringType;
+import net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataTransmissionModeType;
 import net.opengis.wps.x20.ExecuteRequestType;
@@ -130,7 +131,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						String reference = dataType != null ? dataType.getReference() : null;
 						generateLiteralDataOutput(id, resultDoc, true, reference, schema, mimeType, encoding, desc.getTitleArray(0));
 					}
-					else if (desc.getDataDescription() instanceof BoundingBoxType) {
+					else if (desc.getDataDescription() instanceof BoundingBoxData) {
 						generateBBOXOutput(id, resultDoc, true, desc.getTitleArray(0));
 					}
 					return;
@@ -162,7 +163,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 						String reference = dataType != null ? dataType.getReference() : null;
 						generateLiteralDataOutput(responseID, resultDoc, false, reference, schema, mimeType, encoding, desc.getTitleArray(0));
 					}
-					else if (desc.getDataDescription() instanceof BoundingBoxType) {
+					else if (desc.getDataDescription() instanceof BoundingBoxData) {
 						generateBBOXOutput(responseID, resultDoc, false, desc.getTitleArray(0));
 					}
 					else{
