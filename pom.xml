@@ -748,9 +748,9 @@
 				<version>1.0.1</version>
 			</dependency>
 			<dependency>
-				<groupId>org.beanshell</groupId>
+				<groupId>org.apache-extras.beanshell</groupId>
 				<artifactId>bsh</artifactId>
-				<version>2.0b4</version>
+				<version>2.0b6</version>
 			</dependency>
 			<dependency>
 				<groupId>jfree</groupId>
