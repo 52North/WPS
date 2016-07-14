@@ -1,4 +1,4 @@
-Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
 Software GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,25 +14,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 This project includes:
-  52n-WPS-Config under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Algorithm API under Apache License, Version 2.0
-  52North WPS Commons under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Input/Output API under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  52North WPS Commons under Apache License, Version 2.0
+  52North WPS Input/Output API under Apache License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
-  Commons Lang under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
   Joda time under Apache 2
   JUnit under Common Public License Version 1.0
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
+  OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   SLF4J API Module under MIT License
   SLF4J Simple Binding under MIT License
   stax-utils under BSD
   Stax2 API under The BSD License
-  W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Woodstox under The Apache Software License, Version 2.0
+  WPS-Config under The Apache Software License, Version 2.0
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0
