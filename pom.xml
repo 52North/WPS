@@ -687,6 +687,12 @@
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-config</artifactId>
 				<version>1.2.1</version>
+				<exclusions>
+				    <exclusion>
+				        <groupId>org.n52.wps</groupId>
+				        <artifactId>52n-xml-wps-v100</artifactId>
+				    </exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.wps</groupId>
