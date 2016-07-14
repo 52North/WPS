@@ -156,8 +156,8 @@ This project includes:
   Metadata under Lesser General Public License (LGPL)
   Moving Code Runtime under Apache License, Version 2.0
   Moving Code XML Schema under Apache License, Version 2.0
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
+  OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Open Web Services Model under Lesser General Public License (LGPL)
@@ -187,7 +187,7 @@ This project includes:
   support-net under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
   vecmath under GNU General Public License (GPL), version 2, with the CLASSPATH exception
-  W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Web Feature Service Model under Lesser General Public License (LGPL)
   WFS XML Support under Lesser General Public License (LGPL)
   Woodstox under The Apache Software License, Version 2.0

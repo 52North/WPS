@@ -49,7 +49,7 @@
             <artifactId>52n-wps-io-geotools</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.n52.wps</groupId>
+			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
         <dependency>
