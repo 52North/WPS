@@ -9,6 +9,20 @@ RELEASE NOTES
  
   --- New features ---
   
+	  * Allow complex XML inputs to be wrapped in a CDATA-element
+  
+  --- Changes ---
+
+	  * 52n-wps-client-lib available under Apache 2 license
+  
+  --- Fixed issues ---
+  
+ 
+    Release WPS-3.4.0
+=====================================
+ 
+  --- New features ---
+  
 	  * Add mechanism to update the status of a WPS4R process 
 	  * Add a self-cleaning file input stream implementation for Postgres database
 	  * Raise an exception if an annotated Algorithm has no @Execute annotation
