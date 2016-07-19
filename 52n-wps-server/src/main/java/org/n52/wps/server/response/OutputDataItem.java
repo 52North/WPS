@@ -68,6 +68,7 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.database.IDatabase;
+import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -287,13 +288,7 @@ public class OutputDataItem extends ResponseData {
                 Document document = builder.newDocument();
                 Node dataNode = document.createTextNode(processValue);
                 literalValue.set(XmlObject.Factory.parse(dataNode));
-                literalData.set(literalValue);
-                
-                QName literalValueDocumentName = LiteralValueDocument.type.getDocumentElementName();
-                
-                literalValueDocumentName = new QName(literalValueDocumentName.getNamespaceURI(), literalValueDocumentName.getLocalPart(), "wps");
-                
-                XMLUtil.qualifySubstitutionGroup(literalData, literalValueDocumentName, null);
+                literalData.set(literalValueDocument);
                 
             } catch (Exception e) {
                 LOGGER.error("Excepion while trying to write inline literal output.");
@@ -446,12 +441,6 @@ public class OutputDataItem extends ResponseData {
         
         Data data = output.addNewData();
         
-        data.set(bbBoxType);
-        
-        QName bboxDocumentName = BoundingBoxDocument.type.getDocumentElementName();
-        
-        bboxDocumentName = new QName(bboxDocumentName.getNamespaceURI(), bboxDocumentName.getLocalPart(), "wps");
-        
-        XMLUtil.qualifySubstitutionGroup(data, bboxDocumentName, null);
+        data.set(bbBoxDocument);
     }
 }
