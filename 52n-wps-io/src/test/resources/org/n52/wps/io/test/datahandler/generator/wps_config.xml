@@ -25,6 +25,8 @@
 			</Parser>
 			<Parser name="GML32BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML32BasicParser" active="true">
+				<Property name="setParserNonStrict" active="true">true</Property>
+				<Property name="setBasicGMLConfiguration" active="true">false</Property>
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
