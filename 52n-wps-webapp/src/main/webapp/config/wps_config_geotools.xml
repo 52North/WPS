@@ -30,9 +30,9 @@
 				<Property name="setParserNonStrict" active="true">true</Property>
 				<Property name="setBasicGMLConfiguration" active="true">true</Property>
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="SimpleGMLParser"
 				className="org.n52.wps.io.datahandler.parser.SimpleGMLParser"
@@ -239,7 +239,7 @@
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -257,7 +257,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="GRASSKMLParser"
 				className="org.n52.wps.io.datahandler.parser.GRASSKMLParser" active="true">
@@ -312,7 +312,7 @@
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -330,7 +330,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
@@ -521,7 +521,7 @@
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -545,7 +545,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Generator>
 			<Generator name="WMSGenerator"
 				className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator"
