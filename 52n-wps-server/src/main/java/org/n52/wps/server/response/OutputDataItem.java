@@ -380,7 +380,7 @@ public class OutputDataItem extends ResponseData {
 				throw new ExceptionReport("Unable to generate encoding " + encoding, ExceptionReport.NO_APPLICABLE_CODE);
 			}
 			complexData = output.addNewData();
-			if(mimeType.contains("xml") || mimeType.contains("XML")){
+			if(mimeType.contains("xml") || mimeType.contains("XML") && !mimeType.contains("soap")){
 				complexData.set(XmlObject.Factory.parse(stream));
 				stream.close();
 			}else{

@@ -663,8 +663,9 @@ INSERT INTO FORMATENTRY VALUES('application/wkt', '', '', 'org.n52.wps.io.module
 INSERT INTO FORMATENTRY VALUES('application/vnd.geo+json', '', '', 'org.n52.wps.io.modules.parser.GeoJSONParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/vnd.geo+json', '', '', 'org.n52.wps.io.modules.generator.GeoJSONGeneratorCM',TRUE);
 
-INSERT INTO FORMATENTRY VALUES('text/plain', 'http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd', '', 'org.n52.wps.io.modules.parser.WCPSQueryParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', 'http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd', '', 'org.n52.wps.io.modules.generator.WCPSGeneratorCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('application/soap+xml', '', '', 'org.n52.wps.io.modules.parser.WCPSQueryParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('application/soap+xml', '', '', 'org.n52.wps.io.modules.generator.PlainStringGeneratorCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/xml; subtype=gml/2.1.2', 'http://schemas.opengis.net/gml/2.1.2/feature.xsd', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);

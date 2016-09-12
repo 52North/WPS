@@ -61,6 +61,7 @@ public class XMLUtil {
     static {
         xmlInputFactory = new WstxInputFactory();
         xmlOutputFactory = new WstxOutputFactory();
+        xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false);
     }
 
     public static XMLInputFactory getInputFactory() {
