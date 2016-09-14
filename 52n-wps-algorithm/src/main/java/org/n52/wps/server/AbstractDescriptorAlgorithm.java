@@ -150,13 +150,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             
             List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
             if (fullFormats != null && fullFormats.size() > 0) {
-                if (needDefault) {
+            	if (needDefault) {
                     needDefault = false;
                     describeComplexDataFormat(
                             defaultFormatType.addNewFormat(),
                             fullFormats.get(0));
                 }
-                for (int formatIndex = 1, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
+                for (int formatIndex = 0, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
                     describeComplexDataFormat(
                             supportedFormatType.addNewFormat(),
                             fullFormats.get(formatIndex));
@@ -272,13 +272,15 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     		
     		List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
     		if (fullFormats != null && fullFormats.size() > 0) {
+                int start = 0;
     			if (needDefault) {
     				needDefault = false;
     				describeComplexDataFormat200(
     						defaultFormatType,
     						fullFormats.get(0));
+    				start = 1;
     			}
-    			for (int formatIndex = 1, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
+    			for (int formatIndex = start, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
     				describeComplexDataFormat200(
     						complexDataType.addNewFormat(),
     						fullFormats.get(formatIndex));
