@@ -527,6 +527,9 @@ INSERT INTO FORMATENTRY VALUES('image/png', '', 'base64', 'org.n52.wps.io.module
 INSERT INTO FORMATENTRY VALUES('application/x-geotiff', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/hdf4-eos', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/x-script.phyton', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('application/x-openstreetmap+xml', '', '', 'org.n52.wps.io.modules.parser.GenericFileParserCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
@@ -570,6 +573,7 @@ INSERT INTO FORMATENTRY VALUES('image/png', '', 'base64', 'org.n52.wps.io.module
 INSERT INTO FORMATENTRY VALUES('application/x-geotiff', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/hdf4-eos', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('text/plain', '', 'base64', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.GenericFileDataWithGTParserCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('application/x-zipped-shp', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/img', '', '', 'org.n52.wps.io.modules.generator.GenericFileGeneratorCM',TRUE);
