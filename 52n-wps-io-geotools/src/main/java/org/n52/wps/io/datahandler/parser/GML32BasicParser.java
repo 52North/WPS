@@ -57,16 +57,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.feature.GeometryAttributeImpl;
@@ -77,8 +73,13 @@ import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.v3_2.GMLConfiguration;
 import org.geotools.xml.Configuration;
 import org.geotools.xml.Parser;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
+import org.n52.wps.io.modules.parser.GML32BasicParserCM;
+import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationModule;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -86,6 +87,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -99,11 +102,25 @@ public class GML32BasicParser extends AbstractParser {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(GML32BasicParser.class);
 	private Configuration configuration;
+	private boolean setBasicGMLConfiguration;
+	private boolean setParserNonStrict;
 
 
 	public GML32BasicParser() {
 		super();
 		supportedIDataTypes.add(GTVectorDataBinding.class);
+
+		ConfigurationModule configModule = WPSConfig.getInstance()
+				.getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.PARSER);
+		List<? extends ConfigurationEntry<?>> propertyArray = configModule.getConfigurationEntries();
+
+		for (ConfigurationEntry<?> property : propertyArray) {
+			if (property.getKey().equalsIgnoreCase(GML32BasicParserCM.setBasicGMLConfigurationKey)) {
+				setBasicGMLConfiguration = (Boolean) property.getValue();
+			} else if (property.getKey().equalsIgnoreCase(GML32BasicParserCM.setParserNonStrictKey)) {
+				setParserNonStrict = (Boolean) property.getValue();
+			}
+		}
 	}
 	
 	public void setConfiguration(Configuration config) {
@@ -126,7 +143,14 @@ public class GML32BasicParser extends AbstractParser {
 			fos.flush();
 			fos.close();
 
-			QName schematypeTuple = determineFeatureTypeSchema(tempFile);
+			QName schematypeTuple = null;
+			
+			try {
+				schematypeTuple = determineFeatureTypeSchema(tempFile);
+			} catch (Exception e) {
+				LOGGER.info("Could not determine feature type schema.");
+			}
+			
 			return parse(new FileInputStream(tempFile), schematypeTuple);
 		}
 		catch (IOException e) {
@@ -136,15 +160,21 @@ public class GML32BasicParser extends AbstractParser {
 	}
 
 	public GTVectorDataBinding parse(InputStream input, QName schematypeTuple) {
+	    
+	    if(!setBasicGMLConfiguration){
+	    
 		if (configuration == null) {
 			configuration = resolveConfiguration(schematypeTuple);
 		}
-
+	    }else{
+	        configuration = new GMLConfiguration();
+	    }
 		Parser parser = new Parser(configuration);
-		parser.setStrict(true);
+		
+		parser.setStrict(!setParserNonStrict);
 
 		//parse
-		FeatureCollection fc = resolveFeatureCollection(parser, input);
+		FeatureCollection<?, SimpleFeature> fc = resolveFeatureCollection(parser, input);
 
 		GTVectorDataBinding data = new GTVectorDataBinding(fc);
 
@@ -152,26 +182,30 @@ public class GML32BasicParser extends AbstractParser {
 	}
 	
 
-	private FeatureCollection resolveFeatureCollection(Parser parser, InputStream input) {
-		FeatureCollection fc = null;
+	private FeatureCollection<?, SimpleFeature> resolveFeatureCollection(Parser parser, InputStream input) {
+		FeatureCollection<?, SimpleFeature> fc = null;
+		List<SimpleFeature> simpleFeatureList = new ArrayList<>();
 		try {
 			Object parsedData = parser.parse(input);
 			if (parsedData instanceof FeatureCollection){
-				fc = (FeatureCollection) parsedData;
+				fc = (FeatureCollection<?, SimpleFeature>) parsedData;
 			} else {
-				List<SimpleFeature> featureList = ((ArrayList<SimpleFeature>)((HashMap) parsedData).get("featureMember"));
-				if (featureList != null){
-				        if(featureList.size() > 0){
-					    fc = new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
-				        }else{
-				            fc = new DefaultFeatureCollection();
-				        }
-				} else {
-					fc = (FeatureCollection) ((Map) parsedData).get("FeatureCollection");
+			    
+			    SimpleFeatureType featureType = null;
+				Object memberObject = ((HashMap<?, ?>) parsedData).get("member");
+				
+				if(memberObject instanceof List<?>){
+	                            simpleFeatureList = ((ArrayList<SimpleFeature>)((HashMap<?, ?>) parsedData).get("member"));
+	                            featureType = simpleFeatureList.get(0).getFeatureType();
+				}else if(memberObject instanceof SimpleFeature){
+				    SimpleFeature simpleFeature = (SimpleFeature)((HashMap<?, ?>) parsedData).get("member");
+				    simpleFeatureList.add(simpleFeature);
+				    featureType = simpleFeature.getFeatureType();
 				}
+				fc = new ListFeatureCollection(featureType, simpleFeatureList);
 			}
 
-			FeatureIterator featureIterator = fc.features();
+			FeatureIterator<SimpleFeature> featureIterator = fc.features();
 			while (featureIterator.hasNext()) {
 				SimpleFeature feature = (SimpleFeature) featureIterator.next();
 				
@@ -216,8 +250,7 @@ public class GML32BasicParser extends AbstractParser {
 		}
 		
 		return fc;
-	}
-	
+	}	
 
 	private Configuration resolveConfiguration(QName schematypeTuple) {
 		/*

@@ -48,26 +48,38 @@
 package org.n52.wps.io.modules.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.n52.wps.io.datahandler.parser.GML32BasicParser;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
+import org.n52.wps.webapp.api.ConfigurationKey;
 import org.n52.wps.webapp.api.FormatEntry;
+import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class GML32BasicParserCM extends ClassKnowingModule{
 
 	private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
+	public static final String setParserNonStrictKey = "set_parser_non_strict";
+	public static final String setBasicGMLConfigurationKey = "set_basic_gml_configuration";
+	
+	private ConfigurationEntry<Boolean> setParserNonStrictEntry = new BooleanConfigurationEntry(setParserNonStrictKey, "Set Parser non-strict", "Set GML32BasicParser non-strict",
+			true, true);	
+	private ConfigurationEntry<Boolean> setBasicGMLConfigurationEntry = new BooleanConfigurationEntry(setBasicGMLConfigurationKey, "Use Basic GML configuration", "Use Basic GML configuration for GML32BasicParser",
+			true, true);
+	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(setParserNonStrictEntry, setBasicGMLConfigurationEntry);
+
+	private boolean setBasicGMLConfiguration;
+	private boolean setParserNonStrict;
 	
 	private List<FormatEntry> formatEntries;
 	
 	public GML32BasicParserCM(){
 		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
 	}
 	
 	@Override
@@ -108,6 +120,24 @@ public class GML32BasicParserCM extends ClassKnowingModule{
 	@Override
 	public String getClassName() {
 		return GML32BasicParser.class.getName();
+	}
+
+	public boolean isSetBasicGMLConfiguration() {
+		return setBasicGMLConfiguration;
+	}
+	
+	@ConfigurationKey(key = setBasicGMLConfigurationKey)
+	public void setSetBasicGMLConfiguration(boolean setBasicGMLConfiguration) {
+		this.setBasicGMLConfiguration = setBasicGMLConfiguration;
+	}
+
+	public boolean isSetParserNonStrict() {
+		return setParserNonStrict;
+	}
+	
+	@ConfigurationKey(key = setParserNonStrictKey)
+	public void setSetParserNonStrict(boolean setParserNonStrict) {
+		this.setParserNonStrict = setParserNonStrict;
 	}
 
 }
