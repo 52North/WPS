@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.GeneratorDocument.Generator;
 import org.n52.wps.ParserDocument.Parser;
+import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GeneratorFactory;
 import org.n52.wps.io.ParserFactory;
@@ -77,6 +78,8 @@ public class WebProcessingService extends HttpServlet {
     public static String WPS_NAMESPACE = "http://www.opengis.net/wps/1.0.0";
     public static String DEFAULT_LANGUAGE = "en-US";
     protected static Logger LOGGER = LoggerFactory.getLogger(WebProcessingService.class);
+    
+    public final static String PROP_forceGeoToolsXYAxisOrder = "forceGeoToolsXYAxisOrder";
 
     /**
      *
@@ -116,10 +119,6 @@ public class WebProcessingService extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        
-        // this is important to set the lon lat support for correct CRS transformation.
-        // TODO: Might be changed to an additional configuration parameter.
-        System.setProperty("org.geotools.referencing.forceXY", "true");
 
         LOGGER.info("WebProcessingService initializing...");
 
@@ -135,6 +134,19 @@ public class WebProcessingService extends HttpServlet {
         }
         LOGGER.info("Initialization of wps properties successful!");
 
+        Property[] serverProps = WPSConfig.getInstance().getPropertiesForServer();
+        
+        for (Property property : serverProps) {
+			if(PROP_forceGeoToolsXYAxisOrder.equals(property.getName())){
+				if(Boolean.parseBoolean(property.getStringValue())){
+			        // this is important to set the lon lat support for correct CRS transformation.
+					System.setProperty("org.geotools.referencing.forceXY", "true");
+					LOGGER.info("Set org.geotools.referencing.forceXY to true.");
+				}
+				break;
+			}
+		}
+        
         BASE_DIR = this.getServletContext().getRealPath("");
 
         Parser[] parsers = WPSConfig.getInstance().getActiveRegisteredParser();

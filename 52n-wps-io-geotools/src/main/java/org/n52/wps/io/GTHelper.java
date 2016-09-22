@@ -59,6 +59,7 @@ import javax.xml.namespace.QName;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.gml2.SrsSyntax;
 import org.geotools.referencing.CRS;
 import org.n52.wps.commons.WPSConfig;
 import org.opengis.feature.Feature;
@@ -491,6 +492,10 @@ public class GTHelper {
 				LOGGER.error("Exception while decoding CRS EPSG:4326", e);
 			}
 			return null;
+		}
+		
+		public static SrsSyntax getSrsSyntaxFromString(String syntaxString){		    
+		    return SrsSyntax.valueOf(syntaxString);		    
 		}
 
 }
