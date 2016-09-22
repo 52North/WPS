@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WPSConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://n52.org/wps schema_v2.xsd" xmlns="http://n52.org/wps">
+	xsi:schemaLocation="http://n52.org/wps https://raw.githubusercontent.com/52North/wps-config/52n-wps-config-1.2.1/src/main/xsd/schema_v2.xsd" xmlns="http://n52.org/wps">
 	<Datahandlers>
 		<ParserList>
 			<Parser name="GML3BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser"
 				active="true">
+				<Format mimetype="text/xml; subtype=gml/3.1.1"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -26,11 +28,11 @@
 			<Parser name="GML32BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML32BasicParser" active="true">
 				<Property name="setParserNonStrict" active="true">true</Property>
-				<Property name="setBasicGMLConfiguration" active="true">false</Property>
+				<Property name="setBasicGMLConfiguration" active="true">true</Property>
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 			</Parser>
 			<Parser name="SimpleGMLParser"
 				className="org.n52.wps.io.datahandler.parser.SimpleGMLParser"
@@ -93,6 +95,7 @@
 				<Format mimetype="application/x-zipped-shp" />
 				<Format mimetype="application/img" />
 				<Format mimetype="image/tiff" />
+				<Format mimetype="image/geotiff" />
 				<Format mimetype="application/geotiff" />
 				<Format mimetype="application/dbase" />
 				<Format mimetype="application/remap" />
@@ -108,6 +111,9 @@
 				<Format mimetype="application/rData+Spatial" />
 				<Format mimetype="application/rData+SpatialPoints" />
 				<Format mimetype="application/rData+SpatialPolygons" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -149,6 +155,9 @@
 				<Format mimetype="application/rData+Spatial" />
 				<Format mimetype="application/rData+SpatialPoints" />
 				<Format mimetype="application/rData+SpatialPolygons" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 
 				<Format mimetype="application/rData" encoding="base64" />
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
@@ -230,7 +239,7 @@
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -248,7 +257,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 			</Parser>
 			<Parser name="GRASSKMLParser"
 				className="org.n52.wps.io.datahandler.parser.GRASSKMLParser" active="true">
@@ -264,7 +273,7 @@
 			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
+				<Format mimetype="application/x-zipped-wkt" encoding="base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -279,25 +288,15 @@
 				active="true">
 				<Format mimetype="application/wkt"/>
 			</Parser>
-			
-			<Parser name="GeoJSONParser"
-				className="org.n52.wps.io.datahandler.parser.GeoJSONParser"
-				active="true">
-				<Format mimetype="application/geojson"/>
-			</Parser>
 			<Parser name="GenericXMLDataParser"
 				className="org.n52.wps.io.datahandler.parser.GenericXMLDataParser"
 				active="true">
 				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
 			</Parser>
 		</ParserList>
 		<GeneratorList>
-			
-			<Generator name="GeoJSONGenerator"
-				className="org.n52.wps.io.datahandler.generator.GeoJSONGenerator"
-				active="true">
-				<Format mimetype="application/geojson"/>
-			</Generator>
 			
 			<Generator name="WKTGenerator"
 				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
@@ -313,7 +312,7 @@
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -331,7 +330,9 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+				<Format mimetype="text/xml; subtype=gml/3.1.1"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
 				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
 			</Generator>
@@ -405,6 +406,7 @@
 				<Format mimetype="application/remap" encoding="base64" />
 				<Format mimetype="application/x-erdas-hfa" encoding="base64" />
 				<Format mimetype="application/x-netcdf" encoding="base64" />
+				<Format mimetype="application/netcdf" encoding="base64" />
 				<Format mimetype="application/dgn" encoding="base64" />
 				<Format mimetype="image/jpeg" encoding="base64" />
 				<Format mimetype="image/png" encoding="base64" />
@@ -430,6 +432,7 @@
 				<Format mimetype="application/remap" />
 				<Format mimetype="application/x-erdas-hfa" />
 				<Format mimetype="application/x-netcdf" />
+				<Format mimetype="application/netcdf" />
 				<Format mimetype="application/dgn" />
 				<Format mimetype="image/jpeg" />
 				<Format mimetype="image/png" />
@@ -437,7 +440,10 @@
 				<Format mimetype="text/plain" />
 				<Format mimetype="application/pdf" />
 				<Format mimetype="application/zip" />
-			</Generator>
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
+			</Generator>			
 			<Generator name="GenericFileDataWithGTGenerator"
 				className="org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator"
 				active="true">
@@ -483,10 +489,15 @@
 				<Format mimetype="text/plain" />
 				<Format mimetype="application/pdf" />
 				<Format mimetype="application/zip" />
+				<Format mimetype="text/html" />
+				<Format mimetype="application/json" />
+				<Format mimetype="text/csv" />
 			</Generator>
 			<Generator name="GRASSXMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.GRASSXMLGenerator"
 				active="true">
+				<Format mimetype="text/xml"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -503,12 +514,14 @@
 					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/2.1.2.1"
 					schema="http://schemas.opengis.net/gml/2.1.2.1/feature.xsd" />
+				<Format mimetype="application/vnd.google-earth.kml+xml"
+					schema="http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd" />
 			</Generator>
 			<Generator name="ProxyGMLGenerator4Files"
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -532,7 +545,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
 			</Generator>
 			<Generator name="WMSGenerator"
 				className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator"
@@ -564,6 +577,13 @@
 				<Property name="Geoserver_host" active="true">localhost</Property>
 				<Property name="Geoserver_port" active="true">8181</Property>
 			</Generator>
+			<Generator name="MapserverWMSGenerator" className="org.n52.wps.io.datahandler.generator.MapserverWMSGenerator" active="false">
+				<Format mimetype="application/WMS"/>
+				<Property name="Mapserver_workspace" active="true">C:/ms4w/Apache/htdocs/52northWPS/</Property>
+				<Property name="Mapserver_mapfile" active="true">wps.map</Property>
+				<Property name="Mapserver_dataRepository" active="true">data/tmp/</Property>
+				<Property name="Mapserver_wmsUrl" active="true">http://localhost/cgi-bin/52northWPSWrapper.exe</Property>
+			</Generator>
 			<Generator name="KMLGenerator"
 				className="org.n52.wps.io.datahandler.generator.KMLGenerator"
 				active="true">
@@ -579,21 +599,27 @@
 				className="org.n52.wps.io.datahandler.generator.GenericXMLDataGenerator"
 				active="true">
 				<Format mimetype="text/xml" />
+				<Format mimetype="text/xml; subtype=gml/2.1.2"
+					schema="http://schemas.opengis.net/gml/2.1.2/feature.xsd" />
 			</Generator>
 		</GeneratorList>
 	</Datahandlers>
 	<AlgorithmRepositoryList>
 		<Repository name="LocalRAlgorithmRepository"
 			className="org.n52.wps.server.r.LocalRAlgorithmRepository" active="false">
-			<Property name="Script_Dir" active="true">R/scripts</Property>
-			<Property name="R_Datatype_Config" active="true">R/R_Datatype.conf</Property>
-			<Property name="Resource_Dir" active="true">R/resources</Property>
-			<Property name="R_Work_Dir" active="true">default</Property>
-			<Property name="Enable_Batch_Start" active="true">true</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.SosPlot</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.pegel-report</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.sweave-foo</Property>
-			<Property name="Algorithm" active="true">org.n52.wps.server.r.eo2h_airqualitysaxony.R</Property>
+			<Property name="R_enableBatchStart" active="true">true</Property>
+			<Property name="R_datatypeConfig" active="true">R/R_Datatype.conf</Property>
+			<Property name="R_wdStrategy" active="true">default</Property>
+			<Property name="R_wdName" active="false">myName</Property>
+			<Property name="R_resourceDirectory" active="true">R/resources</Property>
+			<Property name="R_RserveHost" active="true">localhost</Property>
+			<Property name="R_RservePort" active="true">6311</Property>
+			<Property name="R_RserveUser" active="false">NA</Property>
+			<Property name="R_RservePassword" active="false">NA</Property>
+			<Property name="R_scriptDirectory" active="true">R/scripts</Property>
+			<Property name="R_cacheProcesses" active="true">true</Property>
+			<Property name="R_session_memoryLimit" active="true">1000</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.r.test.calculator</Property>
 		</Repository>
 		<Repository name="LocalAlgorithmRepository"
 			className="org.n52.wps.server.LocalAlgorithmRepository" active="true">
@@ -607,6 +633,8 @@
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.IntersectsAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.spatialquery.TouchesAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.DummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.LongRunningDummyTestClass</Property>
+			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm</Property>
 			<Property name="Algorithm" active="true">org.n52.wps.server.algorithm.test.EchoProcess</Property>
@@ -1108,20 +1136,21 @@
 			<Property name="Algorithm" active="true">kerneldensity</Property>
 			<Property name="Algorithm" active="true">rgb2his</Property>
 		</Repository>
-		
-		<!-- 
-		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
-			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
-			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
-			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
+		<Repository name="ServiceLoaderAlgorithmRepository"
+			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
 		</Repository>
-		 -->
-		
+		<!--
+		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
+			<Property name="REMOTE_REPOSITORY" active="false">http://141.30.100.178/gpfeed2/gpfeed.xml</Property>
+			<Property name="LOCAL_REPOSITORY" active="true">D:\MCpackages</Property>
+		</Repository>
+		-->
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
-	<Server hostname="localhost" hostport="8080"
+	
+	<Server protocol="http" hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
-		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
+		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0" maxPoolSize="20" keepAliveSeconds="1000" maxQueuedTasks="100" minPoolSize="10">
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
@@ -1133,6 +1162,51 @@
 			<Property name="wipe.period" active="true">PT1H</Property>
 			<!-- deletes files older than 7 days -->
 			<Property name="wipe.threshold" active="true">P7D</Property>
+			<!-- save complex values gzipped -->
+			<Property name="complex.gzip" active="true">true</Property>
 		</Database>
+        
+        <!-- 
+            POSTGRES Connector 
+            ==================
+            
+            Ensure that the postgres driver is available to the server during 
+            launch. The server will fail to start if Postgres is active but the
+            driver is missing. However, if the driver exists and the database 
+            cannot be connected to (unavailable, username/pass issue, etc), the
+            framework will fail-over to the Flatfile Database
+
+            jndiName or username/password: If jndiName exists, username
+            and password are not used.
+             
+            saveResultsToDb: Setting to false will save results output to file
+            and put the URI link to the file in the database. Setting to true 
+            stores the actual result output in the database (You probably don't 
+            want this if you have large results).
+            
+            JNDI Configuration:
+            <Database>
+                <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
+                <Property active="true" name="jndiName">jndiname</Property> 
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+
+            Direct connection configuration:
+            <Database>
+                Alternative connection method    
+                <Property active="true" name="databaseName">postgres</Property>
+                <Property active="true" name="databasePath">//localhost:5432</Property>
+                <Property active="true" name="username">username</Property>
+                <Property active="true" name="password">password</Property>
+                <Property active="true" name="saveResultsToDb">false</Property>
+                <Property name="wipe.enabled" active="true">true</Property>
+                <Property name="wipe.period" active="true">PT1H</Property>
+                <Property name="wipe.threshold" active="true">P7D</Property>
+            </Database>
+-->
+
 	</Server>
 </WPSConfiguration>
