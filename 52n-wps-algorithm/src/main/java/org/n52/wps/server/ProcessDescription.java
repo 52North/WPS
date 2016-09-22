@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import net.opengis.ows.x11.MetadataType;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.ValueType;
@@ -102,6 +103,12 @@ public class ProcessDescription {
         		jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_ASYNC_EXECUTE);
         	}
         	
+        	for (MetadataType metadata : processDescriptionV100.getMetadataArray()) {
+        		net.opengis.ows.x20.MetadataType metadataTypev200 = processDescription.addNewMetadata();                
+        		metadataTypev200.setRole(metadata.getRole());
+        		metadataTypev200.setHref(metadata.getHref());
+			} 
+        	
         	processOffering.setJobControlOptions(jobControlOptions);
         	
         	List<String> outputTransmissionModes = new ArrayList<>();
@@ -134,6 +141,12 @@ public class ProcessDescription {
                 if (inputDescriptionType.getAbstract() != null) {
                     dataInput.addNewAbstract().setStringValue(inputDescriptionType.getAbstract().getStringValue());
                 }
+            	
+            	for (MetadataType metadata : inputDescriptionType.getMetadataArray()) {
+            		net.opengis.ows.x20.MetadataType metadataTypev200 = dataInput.addNewMetadata();                
+            		metadataTypev200.setRole(metadata.getRole());
+            		metadataTypev200.setHref(metadata.getHref());
+    			}
 
                 if (inputDescriptionType.getLiteralData() != null) {
                     LiteralInputType literalInputType = inputDescriptionType.getLiteralData();
@@ -236,6 +249,12 @@ public class ProcessDescription {
                 if (outputDescription.getAbstract() != null) {
                     dataOutput.addNewAbstract().setStringValue(outputDescription.getAbstract().getStringValue());
                 }
+            	
+            	for (MetadataType metadata : outputDescription.getMetadataArray()) {
+            		net.opengis.ows.x20.MetadataType metadataTypev200 = dataOutput.addNewMetadata();                
+            		metadataTypev200.setRole(metadata.getRole());
+            		metadataTypev200.setHref(metadata.getHref());
+    			}
 
                 if (outputDescription.getLiteralOutput() != null) {
                     LiteralOutputType literalOutputType = outputDescription.getLiteralOutput();
