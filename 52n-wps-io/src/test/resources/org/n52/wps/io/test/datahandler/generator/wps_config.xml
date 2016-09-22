@@ -334,6 +334,7 @@
 					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
 				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+				<Property name="srsSyntax" active="true">OGC_URN</Property>				
 			</Generator>
 			<Generator name="GML2BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML2BasicGenerator"

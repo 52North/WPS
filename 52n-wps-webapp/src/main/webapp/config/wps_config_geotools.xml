@@ -335,6 +335,8 @@
 					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
 				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+<!-- 				will be used to generate the SRS name, see http://docs.geotools.org/stable/javadocs/org/geotools/gml2/SrsSyntax.html leave empty to use default syntax-->
+				<Property name="srsSyntax" active="true">OGC_HTTP_URL</Property>
 			</Generator>
 			<Generator name="GML2BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML2BasicGenerator"
@@ -1154,6 +1156,7 @@
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
+        <Property name="forceGeoToolsXYAxisOrder" active="true">false</Property>
 		<Database>
 			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
 			<!-- enable database wiping base on values below -->
