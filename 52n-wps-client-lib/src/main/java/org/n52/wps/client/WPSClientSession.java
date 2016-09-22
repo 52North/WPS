@@ -231,11 +231,7 @@ public class WPSClientSession {
 			LOGGER.warn("serviceCaps are null, perhaps server does not exist");
 			return null;
 		}
-		ProcessBriefType[] processes = doc.getCapabilities().getProcessOfferings().getProcessArray();
-		String[] processIDs = new String[processes.length];
-		for(int i = 0; i < processIDs.length; i++) {
-			processIDs[i] = processes[i].getIdentifier().getStringValue();
-		}
+		String[] processIDs = new String[]{"all"};
 		return describeProcess(processIDs, url);
 		
 	}
