@@ -75,7 +75,8 @@ public class LocalRAlgorithmRepository implements ITransactionalAlgorithmReposit
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LocalRAlgorithmRepository.class);
 
-    public static final String COMPONENT_NAME = "RAlgorithmRepository";
+//    static final String COMPONENT_NAME = "RAlgorithmRepository";
+    static final String COMPONENT_NAME = "org.n52.wps.server.r.RConfigurationModule";
 
     private static final String DESCRPTION_VERSION_FOR_VALIDATION = WPSConfig.VERSION_100;
 

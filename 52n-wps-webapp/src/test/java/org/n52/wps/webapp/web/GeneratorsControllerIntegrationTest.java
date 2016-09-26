@@ -57,7 +57,6 @@ public class GeneratorsControllerIntegrationTest extends AbstractITClassForContr
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

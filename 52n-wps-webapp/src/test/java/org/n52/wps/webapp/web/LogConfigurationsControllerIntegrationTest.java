@@ -57,16 +57,15 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 
 	@Autowired
 	ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private JDomUtil jDomUtil;
-	
+
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
-	
+
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 	public void processPost_success() throws Exception {
 		String path = resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);
 		Document originalDoc = jDomUtil.parse(path);
-		
+
 		RequestBuilder request = post("/log")
 				.param("wpsfileAppenderFileNamePattern", "testFileAppenderFileNamePattern")
 		.param("wpsfileAppenderEncoderPattern", "testFileAppenderFileNamePattern")
@@ -96,7 +95,7 @@ public class LogConfigurationsControllerIntegrationTest extends AbstractITClassF
 		result.andExpect(status().isOk());
 		LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
 		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
-		
+
 		//reset document to original state
 		jDomUtil.write(originalDoc, path);
 	}

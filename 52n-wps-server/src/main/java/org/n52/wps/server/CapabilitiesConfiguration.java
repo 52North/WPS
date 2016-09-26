@@ -61,10 +61,10 @@ import com.google.common.base.Preconditions;
  * {@linkplain #getInstance(java.io.File) file}, {@linkplain #getInstance(java.net.URL) URL},
  * {@linkplain #getInstance(java.lang.String) path} or
  * {@linkplain #getInstance(net.opengis.wps.x100.CapabilitiesDocument) instance}.
- * 
+ *
  * @author foerster
  * @author Christian Autermann
- * 
+ *
  */
 public class CapabilitiesConfiguration {
     private static final Logger LOG = LoggerFactory.getLogger(CapabilitiesConfiguration.class);
@@ -87,12 +87,12 @@ public class CapabilitiesConfiguration {
      * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this file to obtain the skeleton.
-     * 
+     *
      * @param filePath
      *        the File pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -106,12 +106,12 @@ public class CapabilitiesConfiguration {
      * Gets the WPS Capabilities using the specified file to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this file to obtain the skeleton.
-     * 
+     *
      * @param file
      *        the File pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -125,12 +125,12 @@ public class CapabilitiesConfiguration {
      * Gets the WPS Capabilities using the specified URL to obtain the skeleton. All future calls to
      * {@link #getInstance()} and {@link #getInstance(boolean)
      * } will use this URL to obtain the skeleton.
-     * 
+     *
      * @param url
      *        the URL pointing to a skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -143,12 +143,12 @@ public class CapabilitiesConfiguration {
     /**
      * Gets the WPS Capabilities using the specified skeleton. All future calls to {@link #getInstance()} and
      * {@link #getInstance(boolean) } will use this skeleton.
-     * 
+     *
      * @param skel
      *        the skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -161,12 +161,12 @@ public class CapabilitiesConfiguration {
     /**
      * Gets the WPS Capabilities using the specified strategy. All future calls to {@link #getInstance()} and
      * {@link #getInstance(boolean) } will use this strategy.
-     * 
+     *
      * @param strategy
      *        the strategy to load the skeleton
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -191,9 +191,9 @@ public class CapabilitiesConfiguration {
     /**
      * Get the WPS Capabilities for this service. The capabilities are reloaded if caching is not enabled in
      * the WPS configuration.
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -206,12 +206,12 @@ public class CapabilitiesConfiguration {
 
     /**
      * Get the WPS Capabilities for this service and optionally force a reload.
-     * 
+     *
      * @param reload
      *        if the capabilities should be reloaded
-     * 
+     *
      * @return the capabilities document
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -233,10 +233,10 @@ public class CapabilitiesConfiguration {
 
     /**
      * Enriches a capabilities skeleton by adding the endpoint URL and creating the process offerings.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
-     * 
+     *
      * @throws UnknownHostException
      *         if the local host name can not be obtained
      */
@@ -251,21 +251,21 @@ public class CapabilitiesConfiguration {
 
     /**
      * Enriches the capabilities skeleton by creating the process offerings.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
      */
     private static void initProcessOfferings(CapabilitiesDocument skel) {
         ProcessOfferings processes = skel.getCapabilities()
                 .addNewProcessOfferings();
-        RepositoryManager rm = RepositoryManager.getInstance();
+        RepositoryManager rm = RepositoryManagerSingletonWrapper.getInstance();
         List<String> algorithms = rm.getAlgorithms();
         if (algorithms.isEmpty())
             LOG.warn("No algorithms found in repository manager.");
 
         for (String algorithmName : algorithms) {
         	try {
-        		ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManager
+        		ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
                         .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
                 if (description != null) {
                     ProcessBriefType process = processes.addNewProcess();
@@ -276,7 +276,7 @@ public class CapabilitiesConfiguration {
                     process.setProcessVersion(processVersion);
                     process.setTitle(title);
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
-                }	
+                }
         	}
         	catch (RuntimeException e) {
         		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
@@ -286,12 +286,12 @@ public class CapabilitiesConfiguration {
 
     /**
      * Enriches a capabilities skeleton by adding the endpoint URL to the operations meta data.
-     * 
+     *
      * @param skel
      *        the skeleton to enrich
      * @param endpointUrl
      *        the endpoint URL of the service
-     * 
+     *
      */
     private static void initOperationsMetadata(CapabilitiesDocument skel, String endpointUrl) {
         if (skel.getCapabilities().getOperationsMetadata() != null) {
@@ -312,9 +312,9 @@ public class CapabilitiesConfiguration {
 
     /**
      * Gets the endpoint URL of this service by checking the configuration file and the local host name.
-     * 
+     *
      * @return the endpoint URL
-     * 
+     *
      * @throws UnknownHostException
      *         if the local host name could not be resolved into an address
      */
@@ -325,7 +325,7 @@ public class CapabilitiesConfiguration {
 
     /**
      * Force a reload of the capabilities skeleton.
-     * 
+     *
      * @throws XmlException
      *         if the Capabilities skeleton is not valid
      * @throws IOException
@@ -337,7 +337,7 @@ public class CapabilitiesConfiguration {
 
     /**
      * Checks if the capabilities document is loaded.
-     * 
+     *
      * @return if the capabilities are ready.
      */
     public static boolean ready() {
@@ -349,7 +349,7 @@ public class CapabilitiesConfiguration {
             lock.unlock();
         }
     }
-    
+
 	public static Server getServerConfigurationModule() {
 
 		if (serverConfigurationModule == null) {
@@ -374,7 +374,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Creates a new strategy using the specified URL.
-         * 
+         *
          * @param file
          *        the file
          */
@@ -404,7 +404,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Gets the URL of this strategy.
-         * 
+         *
          * @return the URL;
          */
         public URL getUrl() {
@@ -419,7 +419,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Creates a new strategy using the specified file.
-         * 
+         *
          * @param file
          *        the file
          */
@@ -429,7 +429,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Creates a new strategy using the specified file.
-         * 
+         *
          * @param file
          *        the path to the file
          */
@@ -447,7 +447,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Creates a new strategy using the specified instance.
-         * 
+         *
          * @param instance
          *        the instance
          */
@@ -476,7 +476,7 @@ public class CapabilitiesConfiguration {
 
         /**
          * Gets the instance of this strategy.
-         * 
+         *
          * @return the instance
          */
         public CapabilitiesDocument getInstance() {
@@ -490,9 +490,9 @@ public class CapabilitiesConfiguration {
     private interface CapabilitiesSkeletonLoadingStrategy {
         /**
          * Loads a CapabilitiesDocument skeleton. Every call to this method should return another instance.
-         * 
+         *
          * @return the capabilities skeleton
-         * 
+         *
          * @throws XmlException
          *         if the Capabilities skeleton is not valid
          * @throws IOException

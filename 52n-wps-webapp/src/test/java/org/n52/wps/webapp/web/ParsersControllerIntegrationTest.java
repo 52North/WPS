@@ -57,7 +57,6 @@ public class ParsersControllerIntegrationTest extends AbstractITClassForControll
 
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test

@@ -57,16 +57,15 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClassFor
 
 	@Autowired
 	private ConfigurationManager configurationManager;
-	
+
 	@Autowired
 	private JDomUtil jDomUtil;
-	
+
 	@Autowired
 	private ResourcePathUtil resourcePathUtil;
-	
+
 	@Before
 	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClassFor
 	public void processPost_success() throws Exception {
 		String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
 		Document originalDoc = jDomUtil.parse(path);
-		
+
 		RequestBuilder request = post("/service_provider")
 				.param("providerName", "providerName")
 				.param("providerSite", "providerSite")
@@ -99,12 +98,12 @@ public class ServiceProviderControllerIntegrationTest extends AbstractITClassFor
 		result.andExpect(status().isOk());
 		ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
 		assertEquals("providerName", serviceProvider.getProviderName());
-		
+
 		//reset document to original state
 		jDomUtil.write(originalDoc, path);
 	}
 
-	//not needed anymore in this form, as all provider parameters are optional now 
+	//not needed anymore in this form, as all provider parameters are optional now
 //	@Test
 //	public void processPost_failure() throws Exception {
 //		RequestBuilder request = post("/service_provider")

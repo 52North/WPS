@@ -55,14 +55,16 @@ import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.util.XMLBeansHelper;
+import org.n52.wps.webapp.common.AbstractITClass;
 
 /**
  *
  * @author isuftin
  */
-public class InputHandlerTest {
+public class InputHandlerTest extends AbstractITClass {
 
     private static File simpleBufferAlgorithmFile = null;
     private static File dummyTestClassAlgorithmFile = null;
@@ -84,6 +86,10 @@ public class InputHandlerTest {
         dummyTestClassAlgorithmFile = new File("src/test/resources/DummyTestClass.xml");
         dummyTestClassAlgorithmExecDoc = ExecuteDocument.Factory.parse(dummyTestClassAlgorithmFile);
         dummyTestClassAlgorithmInputArray = dummyTestClassAlgorithmExecDoc.getExecute().getDataInputs().getInputArray();
+
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
 
     @After
@@ -116,9 +122,9 @@ public class InputHandlerTest {
         System.out.println("Testing testInputHandlerResolveInputDescriptionTypes...");
 
         new InputHandler.Builder(new Input(simpleBufferAlgorithmInputArray), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
-        
-        ProcessDescriptionType processDescriptionType = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription("org.n52.wps.server.algorithm.SimpleBufferAlgorithm").getProcessDescriptionType(WPSConfig.VERSION_100);
-                
+
+        ProcessDescriptionType processDescriptionType = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription("org.n52.wps.server.algorithm.SimpleBufferAlgorithm").getProcessDescriptionType(WPSConfig.VERSION_100);
+
         InputDescriptionType idt = XMLBeansHelper.findInputByID("data", processDescriptionType.getDataInputs());
         assertThat(idt, is(notNullValue()));
         assertThat(idt.getMaxOccurs().intValue(), equalTo(1));
@@ -126,8 +132,8 @@ public class InputHandlerTest {
 
         new InputHandler.Builder(new Input(dummyTestClassAlgorithmInputArray), "org.n52.wps.server.algorithm.test.DummyTestClass").build();
 
-        processDescriptionType = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription("org.n52.wps.server.algorithm.test.DummyTestClass").getProcessDescriptionType(WPSConfig.VERSION_100);
-                
+        processDescriptionType = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription("org.n52.wps.server.algorithm.test.DummyTestClass").getProcessDescriptionType(WPSConfig.VERSION_100);
+
         idt = XMLBeansHelper.findInputByID("BBOXInputData", processDescriptionType.getDataInputs());
         assertThat(idt, is(notNullValue()));
         assertThat(idt.getMaxOccurs().intValue(), equalTo(1));
@@ -139,8 +145,8 @@ public class InputHandlerTest {
         System.out.println("Testing testInputHandlerGetNonDefaultFormat...");
 
         InputHandler instance = new InputHandler.Builder(new Input(simpleBufferAlgorithmInputArray), "org.n52.wps.server.algorithm.SimpleBufferAlgorithm").build();
-        ProcessDescriptionType processDescriptionType = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription("org.n52.wps.server.algorithm.SimpleBufferAlgorithm").getProcessDescriptionType(WPSConfig.VERSION_100);
-        
+        ProcessDescriptionType processDescriptionType = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription("org.n52.wps.server.algorithm.SimpleBufferAlgorithm").getProcessDescriptionType(WPSConfig.VERSION_100);
+
         InputDescriptionType idt = XMLBeansHelper.findInputByID("data", processDescriptionType.getDataInputs());
         String dataMimeType = "text/xml; subtype=gml/3.1.0";
         String dataSchema = "http://schemas.opengis.net/gml/3.1.0/base/feature.xsd";
@@ -152,13 +158,13 @@ public class InputHandlerTest {
         assertThat(cddt.getSchema(), is(equalTo("http://schemas.opengis.net/gml/3.1.0/base/feature.xsd")));
 
         instance = new InputHandler.Builder(new Input(dummyTestClassAlgorithmInputArray), "org.n52.wps.server.algorithm.test.DummyTestClass").build();
-        processDescriptionType = (ProcessDescriptionType) RepositoryManager.getInstance().getProcessDescription("org.n52.wps.server.algorithm.test.DummyTestClass").getProcessDescriptionType(WPSConfig.VERSION_100);
-        
+        processDescriptionType = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription("org.n52.wps.server.algorithm.test.DummyTestClass").getProcessDescriptionType(WPSConfig.VERSION_100);
+
         idt = XMLBeansHelper.findInputByID("BBOXInputData", processDescriptionType.getDataInputs());
         cddt = instance.getNonDefaultFormat(idt, dataMimeType, dataSchema, dataEncoding);
         assertThat(cddt, is(nullValue()));
     }
-    
+
     @Test
     public void testInputHandlerGetComplexValueNodeString() throws ExceptionReport, XmlException, IOException {
         System.out.println("Testing testInputHandlerGetComplexValueNodeString...");
