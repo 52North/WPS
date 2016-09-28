@@ -65,9 +65,12 @@ import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
+import org.geotools.gml2.SrsSyntax;
 import org.geotools.gml3.ApplicationSchemaConfiguration;
 import org.geotools.gml3.GMLConfiguration;
 import org.geotools.xml.Configuration;
+import org.n52.wps.PropertyDocument.Property;
+import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
@@ -81,10 +84,22 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GML3BasicGenerator extends AbstractGenerator {
 	
 	private static Logger LOGGER = LoggerFactory.getLogger(GML3BasicGenerator.class);
-		
+	
+	private SrsSyntax srsSyntax = null;
+	
 	public GML3BasicGenerator(){
 		super();
 		supportedIDataTypes.add(GTVectorDataBinding.class);
+		Property[] properties = WPSConfig.getInstance().getPropertiesForGeneratorClass(this.getClass().getCanonicalName());
+		
+		for (Property property : properties) {
+                    if(property.getName().equals("srsSyntax")){
+                        String srsSyntaxString = property.getStringValue();
+                        if(srsSyntaxString != null && !srsSyntaxString.equals("")){
+                            srsSyntax = GTHelper.getSrsSyntaxFromString(srsSyntaxString);
+                        }
+                    }
+                }
 	}
 	
 	public void writeToStream(IData coll, OutputStream os) {
@@ -107,6 +122,10 @@ public class GML3BasicGenerator extends AbstractGenerator {
         	schemaLocation = "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd";
         	configuration = new GMLConfiguration();//new ApplicationSchemaConfiguration(namespace, schemaLocation);
             
+        	if(srsSyntax != null){
+                ((GMLConfiguration)configuration).setSrsSyntax(srsSyntax);
+        	}
+        	
             encoder = new org.geotools.xml.Encoder(configuration );
             encoder.setNamespaceAware(true);
             encoder.setSchemaLocation("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
@@ -114,7 +133,9 @@ public class GML3BasicGenerator extends AbstractGenerator {
         }else{
         	
         	configuration = new ApplicationSchemaConfiguration(namespace, schemaLocation);
-        	    
+        	if(srsSyntax != null){
+        	((org.geotools.gml3.ApplicationSchemaConfiguration)configuration).getDependency(org.geotools.gml3.GMLConfiguration.class).setSrsSyntax(srsSyntax);    
+        	}
             encoder = new org.geotools.xml.Encoder(configuration );
             encoder.setNamespaceAware(true);
             encoder.setSchemaLocation("http://www.opengis.net/gml http://schemas.opengis.net/gml/3.1.1/base/feature.xsd", namespace + " " + schemaLocation);
