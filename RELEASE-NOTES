@@ -8,6 +8,20 @@ RELEASE NOTES
 ==================================
  
   --- New features ---
+ 
+	  * Improved parsing of GML 3.2
+ 
+  --- Changes ---
+ 
+  --- Fixed issues --- 
+	  * #228 ExecutionContext.getTempDirectoryPath() misses to put an "/" after the java.io.tmpdir property
+	  * #235 Use connect URL in describeProcess
+	  * #236 Replace describeProcess identifier
+
+    Release WPS-3.5.0
+==================================
+ 
+  --- New features ---
   
 	  * Allow complex XML inputs to be wrapped in a CDATA-element
   

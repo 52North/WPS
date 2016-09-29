@@ -354,6 +354,11 @@ public class WPSConfig implements Serializable {
         return (Property[]) Array.newInstance(Property.class, 0);
 
     }
+    
+    public Property[] getPropertiesForServer() {
+    	return getWPSConfig().getServer().getPropertyArray();
+    	
+    }
 
     public Format[] getFormatsForParserClass(String className) {
         Parser[] parsers = wpsConfigXMLBeans.getDatahandlers().getParserList().getParserArray();

@@ -44,7 +44,7 @@ public class ExecutionContext {
 
     public String getTempDirectoryPath() {
 
-        return System.getProperty("java.io.tmpdir") + this.tempFolderName;
+        return System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + this.tempFolderName;
     }
 
     public List<OutputDefinitionType> getOutputs() {

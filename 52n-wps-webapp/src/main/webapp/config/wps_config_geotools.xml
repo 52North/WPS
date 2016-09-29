@@ -27,10 +27,12 @@
 			</Parser>
 			<Parser name="GML32BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML32BasicParser" active="true">
+				<Property name="setParserNonStrict" active="true">true</Property>
+				<Property name="setBasicGMLConfiguration" active="true">true</Property>
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="SimpleGMLParser"
 				className="org.n52.wps.io.datahandler.parser.SimpleGMLParser"
@@ -237,7 +239,7 @@
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -255,7 +257,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="GRASSKMLParser"
 				className="org.n52.wps.io.datahandler.parser.GRASSKMLParser" active="true">
@@ -310,7 +312,7 @@
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -328,11 +330,13 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
 				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+<!-- 				will be used to generate the SRS name, see http://docs.geotools.org/stable/javadocs/org/geotools/gml2/SrsSyntax.html leave empty to use default syntax-->
+				<Property name="srsSyntax" active="true">OGC_HTTP_URL</Property>
 			</Generator>
 			<Generator name="GML2BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML2BasicGenerator"
@@ -519,7 +523,7 @@
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -543,7 +547,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Generator>
 			<Generator name="WMSGenerator"
 				className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator"
@@ -1152,6 +1156,7 @@
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
+        <Property name="forceGeoToolsXYAxisOrder" active="true">false</Property>
 		<Database>
 			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
 			<!-- enable database wiping base on values below -->
