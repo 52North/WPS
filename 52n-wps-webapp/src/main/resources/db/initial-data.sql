@@ -669,6 +669,8 @@ INSERT INTO FORMATENTRY VALUES('application/vnd.geo+json', '', '', 'org.n52.wps.
 
 INSERT INTO FORMATENTRY VALUES('text/plain', 'http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd', '', 'org.n52.wps.io.modules.generator.WCPSGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/soap+xml', '', '', 'org.n52.wps.io.modules.parser.WCPSQueryParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.WCPSQueryParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.generator.PlainStringGeneratorCM',TRUE);
 INSERT INTO FORMATENTRY VALUES('application/soap+xml', '', '', 'org.n52.wps.io.modules.generator.PlainStringGeneratorCM',TRUE);
 
 INSERT INTO FORMATENTRY VALUES('text/xml', '', '', 'org.n52.wps.io.modules.parser.GenericXMLDataParserCM',TRUE);
