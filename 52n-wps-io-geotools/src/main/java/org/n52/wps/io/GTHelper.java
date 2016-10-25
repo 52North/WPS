@@ -162,6 +162,11 @@ public class GTHelper {
 						}
 						
 					}else if(!name.equals("location")){
+						if(binding.equals(Integer.class) || binding.equals(Double.class)){
+							typeBuilder.length(11);//limit decimal places
+						}else if(binding.equals(String.class)){
+							typeBuilder.length(65);//limit field length
+						}
 						typeBuilder.add(name, binding);
 					}
 				}
