@@ -149,15 +149,15 @@ public class GML3BasicParser extends AbstractParser {
 	public SimpleFeatureCollection parseFeatureCollection(File file){
 		QName schematypeTuple = determineFeatureTypeSchema(file);
 		
-		boolean schemaLocationIsRelative = false;
-		if (!(schematypeTuple.getLocalPart().contains("://") || schematypeTuple.getLocalPart().contains("file:"))) {
-			schemaLocationIsRelative = true;
-		}
+		Configuration configuration = new GMLConfiguration();
 		
-		Configuration configuration = null;
-		
-		boolean shouldSetParserStrict = true;
+		boolean shouldSetParserStrict = false;
 		if(schematypeTuple != null) {
+			
+			boolean schemaLocationIsRelative = false;
+			if (!(schematypeTuple.getLocalPart().contains("://") || schematypeTuple.getLocalPart().contains("file:"))) {
+				schemaLocationIsRelative = true;
+			}
 			
 			String schemaLocation =  schematypeTuple.getLocalPart();
 			
@@ -167,21 +167,16 @@ public class GML3BasicParser extends AbstractParser {
 			
 			if(schemaLocation.equals("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")){
 				configuration = new GMLConfiguration();
-				shouldSetParserStrict = false;
 			}else{			
 				if(schemaLocation!= null && schematypeTuple.getNamespaceURI()!=null){
 					SchemaRepository.registerSchemaLocation(schematypeTuple.getNamespaceURI(), schemaLocation);
 					configuration =  new ApplicationSchemaConfiguration(schematypeTuple.getNamespaceURI(), schemaLocation);
+					shouldSetParserStrict = true;
 				}else{
 					configuration = new GMLConfiguration();
-					shouldSetParserStrict = false;
 				}
 			}
 		}
-		
-		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(configuration);
-		
-		parser.setStrict(shouldSetParserStrict);
 		
 		//parse		
 		SimpleFeatureCollection fc = parseFeatureCollection(file, configuration, shouldSetParserStrict);
@@ -261,7 +256,15 @@ public class GML3BasicParser extends AbstractParser {
 		FeatureIterator<?> featureIterator = fc.features();
 		while(featureIterator.hasNext()){
 			SimpleFeature feature = (SimpleFeature) featureIterator.next();
-			if(feature.getDefaultGeometry()==null){
+			
+			Geometry geometry = null;
+			try {
+				geometry = (Geometry) feature.getDefaultGeometry();				
+			} catch (Exception e) {
+				LOGGER.info("feature.getDefaultGeometry() not of type com.vividsolutions.jts.geom.Geometry");
+			}
+			
+			if(geometry==null || geometry.isEmpty()){
 				Collection<org.opengis.feature.Property>properties = feature.getProperties();
 				for(org.opengis.feature.Property property : properties){
 					try{						
@@ -305,8 +308,8 @@ public class GML3BasicParser extends AbstractParser {
 			return new QName(namespaceURI,schemaUrl);
 			
 		} catch (Exception e) {
-			LOGGER.error("Exception while trying to determine schema of FeatureType.", e);
-			throw new IllegalArgumentException(e);
+			LOGGER.error("Could not determine schema of FeatureType.");
+			return null;
 		}
 	}
 
