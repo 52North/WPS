@@ -35,6 +35,7 @@ import net.opengis.wps.x20.ResultDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.response.GetResultResponseV200;
@@ -43,7 +44,7 @@ import org.w3c.dom.Document;
 
 public class GetResultRequestV200 extends Request {
 
-	private ResultDocument document;
+	private XmlObject document;
 	
 	private String jobID;
 	
@@ -78,7 +79,7 @@ public class GetResultRequestV200 extends Request {
 	@Override
 	public Response call() throws ExceptionReport {
 		try {
-			document = ResultDocument.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
+			document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
 		} catch (XmlException | IOException e) {
 			LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
 		}		

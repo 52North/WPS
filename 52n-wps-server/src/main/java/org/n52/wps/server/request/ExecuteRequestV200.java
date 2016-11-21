@@ -32,12 +32,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import net.opengis.wps.x20.DataInputType;
-import net.opengis.wps.x20.ExecuteDocument;
-import net.opengis.wps.x20.ExecuteRequestType;
-import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -46,10 +40,9 @@ import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
@@ -59,6 +52,14 @@ import org.n52.wps.server.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+
+import net.opengis.ows.x20.ExceptionReportDocument;
+import net.opengis.ows.x20.ExceptionType;
+import net.opengis.wps.x20.DataInputType;
+import net.opengis.wps.x20.ExecuteDocument;
+import net.opengis.wps.x20.ExecuteRequestType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
 
 /**
  * Handles an ExecuteRequest
@@ -209,7 +210,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 				String errorMessage = errorList.get(0);
 				LOGGER.error("Error reported while handling ExecuteRequest for "
 						+ getAlgorithmIdentifier() + ": " + errorMessage);
-//				updateStatusError(errorMessage);
+				updateStatusError(errorMessage);
 			} else {
 				updateStatusSuccess();
 			}
@@ -227,7 +228,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 			}
 			LOGGER.error("Exception/Error while executing ExecuteRequest for "
 					+ getAlgorithmIdentifier() + ": " + errorMessage);
-//			updateStatusError(errorMessage);
+			updateStatusError(errorMessage);
 			if (e instanceof Error) {
 				// This is required when catching Error
 				throw (Error) e;
@@ -321,12 +322,6 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 		updateStatus(status);
 	}
 
-	public void updateStatusFailed() {
-		StatusInfo status = StatusInfo.Factory.newInstance();
-		status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
-		updateStatus(status);
-	}
-
 	public void updateStatusStarted() {
 		StatusInfo status = StatusInfo.Factory.newInstance();
 		status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
@@ -375,6 +370,18 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
 	@Override
 	public void updateStatusError(String errorMessage) {
-		// TODO Auto-generated method stub
+		StatusInfo status = StatusInfo.Factory.newInstance();
+		status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
+		updateStatus(status);
+		
+		ExceptionReportDocument exceptionReportDocument = ExceptionReportDocument.Factory.newInstance();
+		
+		ExceptionReportDocument.ExceptionReport excRep = exceptionReportDocument.addNewExceptionReport();
+		excRep.setVersion("2.0.0");
+		ExceptionType excType = excRep.addNewException();
+		excType.addNewExceptionText().setStringValue(errorMessage);
+		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
+		//TODO update Result
+		DatabaseFactory.getDatabase().storeResponse(id.toString(), exceptionReportDocument.newInputStream());
 	}
 }

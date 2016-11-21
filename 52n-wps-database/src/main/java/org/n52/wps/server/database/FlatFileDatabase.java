@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.opengis.ows.x20.ExceptionReportDocument;
 import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 
@@ -512,7 +513,7 @@ public final class FlatFileDatabase implements IDatabase {
 
                 if (object instanceof StatusInfoDocument) {
                     return object.newInputStream();
-                } else if (object instanceof ResultDocument) {
+                } else if (object instanceof ResultDocument || object instanceof ExceptionReportDocument) {
 
                     LOGGER.info("Last response file not of type status info document.");
 

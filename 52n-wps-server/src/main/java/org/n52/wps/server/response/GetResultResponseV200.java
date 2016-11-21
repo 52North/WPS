@@ -30,8 +30,7 @@ package org.n52.wps.server.response;
 
 import java.io.InputStream;
 
-import net.opengis.wps.x20.ResultDocument;
-
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.GetResultRequestV200;
 
@@ -55,6 +54,6 @@ public class GetResultResponseV200 extends Response {
 	 * @throws ExceptionReport
 	 */
 	public InputStream getAsStream() throws ExceptionReport{
-		return ((ResultDocument)getRequest().getAttachedResult()).newInputStream();
+		return ((XmlObject)getRequest().getAttachedResult()).newInputStream();
 	}
 }
