@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,13 +32,15 @@ import es.unex.sextante.dataObjects.IVectorLayer;
 import es.unex.sextante.exceptions.UnsupportedOutputChannelException;
 import es.unex.sextante.geotools.GTOutputFactory;
 import es.unex.sextante.geotools.GTVectorLayer;
+import es.unex.sextante.gui.core.DefaultTaskMonitor;
 import es.unex.sextante.outputs.FileOutputChannel;
 import es.unex.sextante.outputs.IOutputChannel;
 
 public class N52OutputFactory extends GTOutputFactory{
-    
+
     public N52OutputFactory(){
         super();
+        new DefaultTaskMonitor(null, false, null);
     }
 
     @Override

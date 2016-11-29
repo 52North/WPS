@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,33 +54,33 @@ import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
 /*
  * A container, which allows the 52n WPS to recognize the sextante library.
  * Basic initialization is performed here.
- * 
+ *
  * Whenever a getcapabilities request comes in, the process names are extracted based on the available process description documents for sextante processes.
- * This should be changed in the future, when process descriptions should be generated automatically. When a execute process request comes in, a generic GenericSextanteProcessDelegator is created. 
+ * This should be changed in the future, when process descriptions should be generated automatically. When a execute process request comes in, a generic GenericSextanteProcessDelegator is created.
  */
 public class SextanteProcessRepository implements IAlgorithmRepository{
     private static Logger LOGGER = LoggerFactory.getLogger(SextanteProcessRepository.class);
     private Map<String, ProcessDescription> registeredProcesses;
     private ConfigurationModule sextanteAlgorithmRepoConfigModule;
-     
-    
+
+
     public SextanteProcessRepository(){
         LOGGER.info("Initializing Sextante Repository");
         registeredProcesses = new HashMap<String, ProcessDescription>();
-        
+
         /*
          * get properties of Repository
          *
          * check whether process is amongst them and active
-         * 
+         *
          * if properties are empty (not initialized yet)
          *         add all valid processes to WPSConfig
          */
-        
+
         sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-        
+
         Collection<String> processList = getAlgorithmNames();
-        
+
         Sextante.initialize();
         HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
         HashMap<String, GeoAlgorithm> algorithmMap = sextanteMap.get("SEXTANTE");
@@ -103,12 +103,12 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
                 LOGGER.warn("Could not add Sextante Process : " + key + ". Errors while creating describe Process");
                 continue;
             }
-        
+
             registeredProcesses.put(key, processDescription);
             LOGGER.info("Sextante Process " + key + " added.");
         }
-        
-        
+
+
         LOGGER.info("Initialization of Sextante Repository successfull");
     }
 
@@ -143,7 +143,7 @@ public class SextanteProcessRepository implements IAlgorithmRepository{
         //not implemented
         return false;
     }
-    
+
     @Override
     public ProcessDescription getProcessDescription(String processID) {
         if (getAlgorithmNames().contains(processID)) {

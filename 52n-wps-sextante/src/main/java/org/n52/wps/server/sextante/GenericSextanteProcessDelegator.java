@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -374,8 +374,10 @@ public class GenericSextanteProcessDelegator implements IAlgorithm, SextanteCons
 
         else if (type.equals("Fixed Table") && wpsInputParameters.size() == 1){
             boolean bIsNumberOfRowsFixed;
-            int iCols, iRows;
-            int iCol, iRow;
+            int iCols;
+            int iRows;
+            int iCol;
+            int iRow;
             int iToken = 0;
             FixedTableModel tableModel;
             IData param = wpsInputParameters.get(0);

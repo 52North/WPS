@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,17 +43,17 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
  *
  */
 public class SextanteProcessRepositoryCM extends ClassKnowingModule{
-    
+
     private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
-    
+
     private boolean isActive = true;
 
     private List<AlgorithmEntry> algorithmEntries;
-    
+
     public SextanteProcessRepositoryCM() {
         algorithmEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "SEXTANTE Algorithm Repository";

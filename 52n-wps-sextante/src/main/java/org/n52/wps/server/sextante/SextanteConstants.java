@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,5 +34,5 @@ public interface SextanteConstants{
     public static final String GRID_EXTENT_Y_MIN = "GRID_EXTENT_Y_MIN";
     public static final String GRID_EXTENT_Y_MAX = "GRID_EXTENT_Y_MAX";
     public static final String GRID_EXTENT_CELLSIZE = "GRID_EXTENT_CELLSIZE";
-    
+
 }

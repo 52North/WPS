@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -91,7 +91,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
             ProcessDescriptionType pdt = ProcessDescriptionType.Factory.newInstance();
             pdt.setStatusSupported(true);
             pdt.setStoreSupported(true);
-            
+
             pdt.addNewAbstract().setStringValue(algorithm.getName());
             pdt.addNewTitle().setStringValue(algorithm.getName());
             pdt.addNewIdentifier().setStringValue(algorithm.getCommandLineName());
@@ -119,11 +119,11 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
             }
 
             ProcessDescription processDescription = new ProcessDescription();
-            
+
             processDescription.addProcessDescriptionForVersion(pdt, "1.0.0");
-            
+
             return processDescription;
-        
+
 
     }
 
@@ -172,8 +172,8 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
             ComplexDataDescriptionType supportedFormat = complexOutput.addNewSupported().addNewFormat();
             supportedFormat.setMimeType("image/tiff");
             supportedFormat.setEncoding("base64");
-            
-            
+
+
         }
         else if (out instanceof OutputVectorLayer){
             SupportedComplexDataType complexOutput = output.addNewComplexOutput();
@@ -250,7 +250,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
                 input.setMinOccurs(BigInteger.valueOf(0));
             }
             input.setMaxOccurs(BigInteger.valueOf(1));
-            
+
             addVectorInputsFormats(complex);
 
         }
@@ -409,12 +409,12 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
                 if(clazz.equals(GTVectorDataBinding.class)){
                     foundParsers.add(parser);
                 }
-                
+
             }
         }
-        
+
         ComplexDataCombinationsType supportedInputFormat = complex.addNewSupported();
-        
+
         for (int i = 0; i < foundParsers.size(); i++) {
             IParser parser = foundParsers.get(i);
 
@@ -466,12 +466,12 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
                 }
             }
         }
-        
+
     }
 
     private void addVectorOutputFormats(SupportedComplexDataType complex){
-        
-                    
+
+
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for(IGenerator generator : generators) {
@@ -483,7 +483,7 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
             }
         }
         ComplexDataCombinationsType supporteOutputFormat = complex.addNewSupported();
-        
+
         for (int i = 0; i < foundGenerators.size(); i++) {
             IGenerator generator = foundGenerators.get(i);
 
@@ -535,17 +535,17 @@ public class SextanteProcessDescriptionCreator implements SextanteConstants{
                 }
             }
         }
-                    
-        
+
+
     }
-    
+
     //This class is thrown when there is any problem creating the XML
     //WPS file from a geoalgorithm, due to some yet unsupported feature
     //or parameter
     public class UnsupportedGeoAlgorithmException extends Exception{
 
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = 1017100163300095362L;
 
