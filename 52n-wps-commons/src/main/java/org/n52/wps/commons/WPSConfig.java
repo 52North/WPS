@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -104,8 +104,8 @@ public class WPSConfig implements Serializable {
     /**
      * Add an Listener to the wpsConfig
      *
-     * @param propertyName
-     * @param listener
+     * @param propertyName the property name
+     * @param listener the listener
      */
     public void addPropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
         // FIXME remove property change mechanism
@@ -114,8 +114,8 @@ public class WPSConfig implements Serializable {
     /**
      * remove a listener from the wpsConfig
      *
-     * @param propertyName
-     * @param listener
+     * @param propertyName the property name
+     * @param listener the listener
      */
     public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
         // FIXME remove property change mechanism

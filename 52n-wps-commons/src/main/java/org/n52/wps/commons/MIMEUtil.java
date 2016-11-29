@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -18,7 +18,7 @@ package org.n52.wps.commons;
 
 /**
  * mimeType helper class for detecting file extensions and file suffices
- * 
+ *
  * @author tkunicki, nuest
  */
 public class MIMEUtil {

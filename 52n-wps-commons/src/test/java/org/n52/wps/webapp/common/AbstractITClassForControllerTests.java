@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,10 +42,10 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 @ActiveProfiles(profiles = { "test", "controller-test" })
 public class AbstractITClassForControllerTests {
-    
+
     @Autowired
     protected WebApplicationContext wac;
-    
+
     private MockMvc mockMvc;
 
     @Before
@@ -57,5 +57,5 @@ public class AbstractITClassForControllerTests {
     protected MockMvc getMockedWebService() {
         return mockMvc;
     }
-    
+
 }

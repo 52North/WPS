@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,45 +55,45 @@ public class ExceptionReport extends Exception {
     public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
     /** An error occurs during remote and distributed computation process. */
     public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
-    
+
 
     /** A GetStatus request was send with a JobID of a synchronous job, or if the JobID doesn't exist at all. */
     public static final String NO_SUCH_JOB = "NoSuchJob";
-    
+
     protected String errorKey;
     protected String locator;
-    
+
     public ExceptionReport(String message, String errorKey) {
         super(message);
         this.errorKey = errorKey;
     }
-    
+
     public ExceptionReport(String message, String errorKey, Throwable e) {
         super(message, e);
         this.errorKey = errorKey;
     }
-    
+
     public ExceptionReport(String message, String errorKey, String locator) {
         this(message, errorKey);
         this.locator = locator;
     }
-    
+
     public ExceptionReport(String message, String errorKey, String locator, Throwable e) {
         this(message,errorKey, e);
         this.locator = locator;
     }
-    
+
     public XmlObject getExceptionDocument(String version) {
-        
-        if(version == null){            
-            return createExceptionReportV200();            
-        }        
-        switch (version) {        
-        case WPSConfig.VERSION_100:                
-            return createExceptionReportV100();            
-        case WPSConfig.VERSION_200:            
+
+        if(version == null){
             return createExceptionReportV200();
-        default:            
+        }
+        switch (version) {
+        case WPSConfig.VERSION_100:
+            return createExceptionReportV100();
+        case WPSConfig.VERSION_200:
+            return createExceptionReportV200();
+        default:
             return createExceptionReportV200();
         }
     }
@@ -106,9 +106,9 @@ public class ExceptionReport extends Exception {
         w.flush();
         return w.toString();
     }
-    
-    private net.opengis.ows.x20.ExceptionReportDocument createExceptionReportV200(){        
-        
+
+    private net.opengis.ows.x20.ExceptionReportDocument createExceptionReportV200(){
+
         // Printing service Exception
         net.opengis.ows.x20.ExceptionReportDocument reportV200 = net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
         net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 = reportV200.addNewExceptionReport();
@@ -132,9 +132,9 @@ public class ExceptionReport extends Exception {
         }
         return reportV200;
     }
-    
-    private ExceptionReportDocument createExceptionReportV100(){        
-        
+
+    private ExceptionReportDocument createExceptionReportV100(){
+
         // Printing service Exception
         ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
         net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
@@ -157,35 +157,35 @@ public class ExceptionReport extends Exception {
             ex.setLocator(locator);
         }
         return report;
-        
+
     }
-    
+
     public int getHTTPStatusCode(){
-        
+
         switch (errorKey) {
         case OPERATION_NOT_SUPPORTED:
             return HttpServletResponse.SC_NOT_IMPLEMENTED;
-            
+
         case MISSING_PARAMETER_VALUE:
             return HttpServletResponse.SC_BAD_REQUEST;
-            
+
         case INVALID_PARAMETER_VALUE:
             return HttpServletResponse.SC_BAD_REQUEST;
-            
+
         case VERSION_NEGOTIATION_FAILED:
             return HttpServletResponse.SC_BAD_REQUEST;
-            
+
         case INVALID_UPDATE_SEQUENCE:
             return HttpServletResponse.SC_BAD_REQUEST;
-            
+
         case NO_SUCH_JOB:
             return HttpServletResponse.SC_BAD_REQUEST;
-            
+
         case NO_APPLICABLE_CODE:
             return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-            
+
         default:
             return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        }        
+        }
     }
 }

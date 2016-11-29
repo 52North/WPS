@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,7 +50,7 @@ import com.ctc.wstx.stax.WstxInputFactory;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
 /**
- * 
+ *
  * @author tkunicki
  */
 public class XMLUtil {
@@ -146,7 +146,7 @@ public class XMLUtil {
 
         return stringWriter.toString();
     }
-    
+
     public static XmlObject qualifySubstitutionGroup(XmlObject xobj, QName newInstance, SchemaType newType) {
         XmlObject substitute = null;
         if (newType != null) {
@@ -156,13 +156,13 @@ public class XMLUtil {
                return substitute;
             }
         }
-        
+
          XmlCursor cursor = xobj.newCursor();
          cursor.setName(newInstance);
          QName qName = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
          cursor.removeAttribute(qName);
          cursor.dispose();
-         
+
          return null;
      }
 }

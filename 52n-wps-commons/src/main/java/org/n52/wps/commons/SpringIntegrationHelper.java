@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -24,7 +24,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 /**
  * A hacky utility class which provides mechanism to autowire fields of non-spring-managed beans.
  *
- * @author Henning Bredel <h.bredel@52north.org>
+ * @author Henning Bredel (contact: h.bredel@52north.org)
  *
  * @since 4.0.0
  */

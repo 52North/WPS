@@ -32,7 +32,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 			<context:include-filter type="assignable" expression="org.n52.wps.webapp.api.ConfigurationModule" />
             <context:exclude-filter type="regex" expression="org\.n52\.wps\.server\.r\..*" />
 		</context:component-scan>
-        
+
         <!-- Apache Tiles 3 -->
         <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
             <property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
