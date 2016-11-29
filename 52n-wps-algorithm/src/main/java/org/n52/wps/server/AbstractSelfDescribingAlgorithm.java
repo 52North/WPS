@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -63,38 +63,38 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
         processDescription.setStatusSupported(true);
         processDescription.setStoreSupported(true);
         processDescription.setProcessVersion("1.0.0");
-        
+
         //1. Identifier
         processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
         processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
-    
+
         //2. Inputs
         List<String> identifiers = this.getInputIdentifiers();
         DataInputs dataInputs = null;
         if(identifiers.size()>0){
             dataInputs = processDescription.addNewDataInputs();
         }
-        
+
         for(String identifier : identifiers){
             InputDescriptionType dataInput = dataInputs.addNewInput();
             dataInput.setMinOccurs(getMinOccurs(identifier));
             dataInput.setMaxOccurs(getMaxOccurs(identifier));
             dataInput.addNewIdentifier().setStringValue(identifier);
             dataInput.addNewTitle().setStringValue(identifier);
-            
+
             Class<?> inputDataTypeClass = this.getInputDataType(identifier);
             Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
-            
-            //we have to add this because of the new AbstractLiteralDataBinding class 
+
+            //we have to add this because of the new AbstractLiteralDataBinding class
             if(interfaces.length == 0){
                 interfaces = inputDataTypeClass.getSuperclass().getInterfaces();
             }
-            
+
             for(Class<?> implementedInterface : interfaces){
                 if(implementedInterface.equals(ILiteralData.class)){
                     LiteralInputType literalData = dataInput.addNewLiteralData();
                     String inputClassType = "";
-                    
+
                     Constructor<?>[] constructors = inputDataTypeClass.getConstructors();
                     for(Constructor<?> constructor : constructors){
                         Class<?>[] parameters = constructor.getParameterTypes();
@@ -102,11 +102,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                             inputClassType    = parameters[0].getSimpleName();
                         }
                     }
-                    
+
                     if(inputClassType.length()>0){
                         DomainMetadataType datatype = literalData.addNewDataType();
                         datatype.setReference("xs:"+inputClassType.toLowerCase());
-                        literalData.addNewAnyValue();        
+                        literalData.addNewAnyValue();
                     }
                 }else if(implementedInterface.equals(IBBOXData.class)){
                         SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
@@ -128,12 +128,12 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                                 }
                             }
                         }
-                        
-                        
-                        
-                                    
+
+
+
+
                 }else if(implementedInterface.equals(IComplexData.class)){
-                    SupportedComplexDataInputType complexData = dataInput.addNewComplexData();                    
+                    SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
                     List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
                     List<IParser> foundParsers = new ArrayList<IParser>();
                     for(IParser parser : parsers) {
@@ -142,41 +142,41 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                             if(clazz.equals(inputDataTypeClass)){
                                 foundParsers.add(parser);
                             }
-                            
+
                         }
                     }
-                    
-                    addInputFormats(complexData, foundParsers);                    
 
-                }        
+                    addInputFormats(complexData, foundParsers);
+
+                }
             }
         }
-        
+
         //3. Outputs
         ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
         List<String> outputIdentifiers = this.getOutputIdentifiers();
         for(String identifier : outputIdentifiers){
             OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
-            
-            
+
+
             dataOutput.addNewIdentifier().setStringValue(identifier);
             dataOutput.addNewTitle().setStringValue(identifier);
             dataOutput.addNewAbstract().setStringValue(identifier);
-            
+
             Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
             Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
-            
-            //we have to add this because of the new AbstractLiteralDataBinding class 
+
+            //we have to add this because of the new AbstractLiteralDataBinding class
             if(interfaces.length == 0){
                 interfaces = outputDataTypeClass.getSuperclass().getInterfaces();
             }
             for(Class<?> implementedInterface : interfaces){
-                    
-                
+
+
                 if(implementedInterface.equals(ILiteralData.class)){
                     LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
                     String outputClassType = "";
-                    
+
                     Constructor<?>[] constructors = outputDataTypeClass.getConstructors();
                     for(Constructor<?> constructor : constructors){
                         Class<?>[] parameters = constructor.getParameterTypes();
@@ -184,11 +184,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                             outputClassType    = parameters[0].getSimpleName();
                         }
                     }
-                    
+
                     if(outputClassType.length()>0){
                         literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
                     }
-                
+
                 }else if(implementedInterface.equals(IBBOXData.class)){
                     SupportedCRSsType bboxData = dataOutput.addNewBoundingBoxOutput();
                     String[] supportedCRSAray = getSupportedCRSForBBOXOutput(identifier);
@@ -209,11 +209,11 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                             }
                         }
                     }
-                    
+
                 }else if(implementedInterface.equals(IComplexData.class)){
-                    
+
                         SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
-                        
+
                         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
                         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
                         for(IGenerator generator : generators) {
@@ -222,53 +222,53 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
                                 if(clazz.equals(outputDataTypeClass)){
                                     foundGenerators.add(generator);
                                 }
-                                
+
                             }
                     }
-                    
+
                     addOutputFormats(complexData, foundGenerators);
 
-                }        
+                }
             }
         }
-        
+
         ProcessDescription superProcessDescription = new ProcessDescription();
-        
+
         superProcessDescription.addProcessDescriptionForVersion(document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
-        
+
         return superProcessDescription;
     }
-    
+
     /**
      * Override this class for BBOX input data to set supported mime types. The first one in the resulting array will be the default one.
      * @param identifier ID of the input BBOXType
-     * @return
+     * @return an array containing Strings representing the supported CRSs for inputs
      */
     public String[] getSupportedCRSForBBOXInput(String identifier){
         return new String[0];
     }
-    
+
     /**
      * Override this class for BBOX output data to set supported mime types. The first one in the resulting array will be the default one.
      * @param identifier ID of the input BBOXType
-     * @return
+     * @return an array containing Strings representing the supported CRSs for outputs
      */
     public String[] getSupportedCRSForBBOXOutput(String identifier){
         return new String[0];
     }
-    
+
     public BigInteger getMinOccurs(String identifier){
         return new BigInteger("1");
     }
     public BigInteger getMaxOccurs(String identifier){
         return new BigInteger("1");
     }
-    
+
     public abstract List<String> getInputIdentifiers();
     public abstract List<String> getOutputIdentifiers();
-    
 
-    
+
+
     private List<IObserver> observers = new ArrayList<IObserver>();
 
     private Object state = null;
@@ -297,14 +297,14 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
          o.update(this);
        }
      }
-     
+
      @Override
         public List<String> getErrors() {
             List<String> errors = new ArrayList<String>();
             return errors;
         }
-     
-     
+
+
     private void addInputFormats(SupportedComplexDataInputType complexData,
             List<IParser> foundParsers) {
         ComplexDataCombinationsType supportedInputFormat = complexData
@@ -362,7 +362,7 @@ public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm 
             }
         }
     }
-    
+
     private void addOutputFormats(SupportedComplexDataType complexData,
             List<IGenerator> foundGenerators) {
         ComplexDataCombinationsType supportedOutputFormat = complexData

@@ -37,7 +37,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.4</version>
 				<executions>
 					<execution>
 						<goals>
@@ -83,13 +82,24 @@
 			<groupId>org.n52.wps</groupId>
 		</dependency>
 		<dependency>
+			<artifactId>52n-xml-ows-v110</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-ows-v20</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-configuration-api</artifactId>
 		</dependency>
 		<dependency>
 			<artifactId>xmlbeans</artifactId>
 			<groupId>org.apache.xmlbeans</groupId>
-			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

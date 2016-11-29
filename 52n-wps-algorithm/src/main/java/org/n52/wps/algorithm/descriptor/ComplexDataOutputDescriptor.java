@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,7 +28,7 @@ public class ComplexDataOutputDescriptor<T extends Class<? extends IComplexData>
     private ComplexDataOutputDescriptor(Builder builder) {
         super(builder);
     }
-    
+
     public static <T extends Class<? extends IComplexData>> Builder<?,T> builder(String identifier, T binding) {
         return new BuilderTyped(identifier, binding);
     }
@@ -44,7 +44,7 @@ public class ComplexDataOutputDescriptor<T extends Class<? extends IComplexData>
     }
 
     public static abstract class Builder<B extends Builder<B,T>, T extends Class<? extends IComplexData>> extends OutputDescriptor.Builder<B,T> {
-        
+
         private Builder(String identifier, T binding) {
             super(identifier, binding);
         }

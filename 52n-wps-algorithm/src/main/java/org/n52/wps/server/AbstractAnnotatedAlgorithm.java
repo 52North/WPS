@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,35 +44,35 @@ public abstract class AbstractAnnotatedAlgorithm extends AbstractDescriptorAlgor
     @Override
     public Map<String, IData> run(Map<String, List<IData>> inputMap) {
         Object annotatedInstance = getAlgorithmInstance();
-        
+
         AnnotatedAlgorithmIntrospector introspector = getInstrospector(annotatedInstance.getClass());
-        
+
         for (Map.Entry<String, AnnotationBinding.InputBinding<?, ?>> iEntry : introspector.getInputBindingMap().entrySet()) {
             iEntry.getValue().set(annotatedInstance, inputMap.get(iEntry.getKey()));
         }
-        
+
         getInstrospector(annotatedInstance.getClass()).getExecuteMethodBinding().execute(annotatedInstance);
-        
+
         Map<String, IData> oMap = new HashMap<String, IData>();
         for (Map.Entry<String, AnnotationBinding.OutputBinding<?, ?>> oEntry : introspector.getOutputBindingMap().entrySet()) {
             oMap.put(oEntry.getKey(), oEntry.getValue().get(annotatedInstance));
         }
         return oMap;
     }
-    
+
     public Object getAlgorithmInstance() {
         return this;
     }
-    
+
     public Class<?> getAlgorithmClass() {
         return getClass();
     }
-    
+
     public static class Proxy extends AbstractAnnotatedAlgorithm {
-        
+
         final private Class<?> proxiedClass;
         final private Object proxiedInstance;
-        
+
         public Proxy(Class<?> proxiedClass) {
             this.proxiedClass = proxiedClass;
             try {

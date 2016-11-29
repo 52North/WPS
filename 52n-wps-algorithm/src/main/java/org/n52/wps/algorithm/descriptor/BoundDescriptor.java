@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,7 +55,7 @@ public abstract class BoundDescriptor<T extends Class<?>> extends Descriptor {
             this.binding = binding;
             metadataDescriptors = new ArrayList<>();
         }
-        
+
         public B addMetadataDescriptor(MetadataDescriptor.Builder metadataDescriptorBuilder) {
             return addMetadataDescriptor(metadataDescriptorBuilder.build());
         }

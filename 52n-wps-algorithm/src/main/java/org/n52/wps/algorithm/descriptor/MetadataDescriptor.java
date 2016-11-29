@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,11 +39,11 @@ public class MetadataDescriptor extends Descriptor {
     public String getHref() {
         return href;
     }
-    
+
     public static Builder<?> builder() {
         return new BuilderTyped();
     }
-    
+
     private static class BuilderTyped extends Builder<BuilderTyped> {
         public BuilderTyped() {
             super();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -102,7 +102,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
     public static Builder<?,Class<LiteralDateTimeBinding>> dateTimeBuilder(String identifier) {
         return builder(identifier, LiteralDateTimeBinding.class);
     }
-    
+
     public static Builder<?,Class<LiteralDoubleBinding>> doubleBuilder(String identifier) {
         return builder(identifier, LiteralDoubleBinding.class);
     }
@@ -142,7 +142,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
         private final String dataType;
         private String defaultValue;
         private List<String> allowedValues;
-        
+
         protected Builder(String identifier, T binding) {
             super(identifier, binding);
             this.dataType = Preconditions.checkNotNull(
@@ -162,7 +162,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
             for (Enum constant : constants) { names.add(constant.name()); }
             return allowedValues(names);
         }
-        
+
         public B allowedValues(String[] allowedValues) {
             return allowedValues(Arrays.asList(allowedValues));
         }

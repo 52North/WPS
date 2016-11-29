@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -24,17 +24,17 @@ import java.util.Collection;
  */
 public interface IAlgorithmRepository {
     Collection<String> getAlgorithmNames();
-    
+
     IAlgorithm getAlgorithm(String processID);
-    
+
     ProcessDescription getProcessDescription(String processID);
-    
+
     boolean containsAlgorithm(String processID);
 
     /**
      * use to free resources
      */
     public void shutdown();
-    
+
 
 }

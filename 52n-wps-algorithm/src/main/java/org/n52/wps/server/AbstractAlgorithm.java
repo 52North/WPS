@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,56 +30,57 @@ import org.slf4j.LoggerFactory;
 import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 /**
- * This class has to be extended in order to be served through the WPS. 
+ * This class has to be extended in order to be served through the WPS.
  * The class file should also include a description file of the algorithm. This file has to be
  * valid against the describeProcess.xsd. The file has to be placed in the folder of the class file and has
- * to be named the same as the Algorithm. 
- * 
+ * to be named the same as the Algorithm.
+ *
  * <p>If you want to apply a different initialization method, just override the initializeDescription() method.
- * 
- * NOTE: This class is an adapter and it is recommended to extend this. 
+ *
+ * NOTE: This class is an adapter and it is recommended to extend this.
  * @author foerster
  *
  */
-public abstract class AbstractAlgorithm implements IAlgorithm 
+public abstract class AbstractAlgorithm implements IAlgorithm
 {
     private ProcessDescription description; // private, force access through getter method for lazy loading.
     private final String wkName;
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
-    
-    /** 
+
+    /**
      * default constructor, calls the initializeDescription() Method
      */
     public AbstractAlgorithm() {
         this.wkName = this.getClass().getName();
     }
-    
-    /** 
+
+    /**
      * default constructor, calls the initializeDescription() Method
+     * @param wellKnownName the well know name of the algorithm
      */
     public AbstractAlgorithm(String wellKnownName) {
         this.wkName = wellKnownName;
     }
-    
-    /** 
+
+    /**
      * This method should be overwritten, in case you want to have a way of initializing.
-     * 
+     *
      * In detail it looks for a xml descfile, which is located in the same directory as the implementing class and has the same
      * name as the class, but with the extension XML.
-     * @return
+     * @return the process description
      */
     protected ProcessDescription initializeDescription() {
         String className = this.getClass().getName().replace(".", "/");
-        
-        InputStream xmlDesc; 
-        
+
+        InputStream xmlDesc;
+
         if(this.getClass().getClassLoader() instanceof CustomClassLoader){
             String baseDir = ((CustomClassLoader)this.getClass().getClassLoader()).getBaseDir();
             xmlDesc = UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(baseDir + File.separator + className + ".xml");
         }else{
-                xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");            
+                xmlDesc = this.getClass().getResourceAsStream("/" + className + ".xml");
         }
-        
+
         try {
             XmlOptions option = new XmlOptions();
             option.setLoadTrimTextBuffer();
@@ -88,18 +89,18 @@ public abstract class AbstractAlgorithm implements IAlgorithm
                 LOGGER.warn("ProcessDescription does not contain correct any description");
                 return null;
             }
-            
+
             // Checking that the process name (full class name or well-known name) matches the identifier.
             if(!doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getClass().getName()) &&
                     !doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getWellKnownName())) {
                 doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(this.getClass().getName());
                 LOGGER.warn("Identifier was not correct, was changed now temporary for server use to " + this.getClass().getName() + ". Please change it later in the description!");
             }
-            
+
             ProcessDescription processDescription = new ProcessDescription();
-            
+
             processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
-            
+
             return processDescription;
         }
         catch(IOException e) {
@@ -110,7 +111,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
         }
         return null;
     }
-    
+
     @Override
     public synchronized ProcessDescription getDescription()  {
         if (description == null) {
@@ -126,7 +127,7 @@ public abstract class AbstractAlgorithm implements IAlgorithm
         }
         return getDescription().getProcessDescriptionType(version).validate();
     }
-    
+
     @Override
     public String getWellKnownName() {
         return this.wkName;

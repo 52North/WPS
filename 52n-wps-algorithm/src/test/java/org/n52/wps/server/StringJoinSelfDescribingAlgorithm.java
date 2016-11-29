@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ public class StringJoinSelfDescribingAlgorithm extends AbstractDescriptorAlgorit
     public final static String INPUT_STRINGS = "INPUT_STRINGS";
     public final static String INPUT_DELIMITER = "INPUT_DELIMITER";
     public final static String OUTPUT_STRING = "OUTPUT_STRING";
-    
+
     public enum Delimiter {
         SPACE(' '),
         TAB('\t'),
@@ -108,14 +108,14 @@ public class StringJoinSelfDescribingAlgorithm extends AbstractDescriptorAlgorit
             }
             inputStringList.add(inputString);
         }
-        
+
         // unwrap input delimiter and error check
         List<IData> inputBoundDelimiterList = inputMap.get(INPUT_DELIMITER);
         if (inputBoundDelimiterList == null || inputBoundDelimiterList.size() != 1) {
             addError("Invalid parameter count for" + INPUT_DELIMITER);
             return null;
         }
-        
+
         IData inputBoundDelimiterData = inputBoundDelimiterList.get(0);
         if (inputBoundDelimiterData == null || !(inputBoundDelimiterData instanceof LiteralStringBinding)) {
             addError("Something wierd happened with the request parser!");
@@ -129,10 +129,10 @@ public class StringJoinSelfDescribingAlgorithm extends AbstractDescriptorAlgorit
             addError("invalid value encounterd for " + INPUT_DELIMITER + " parameter");
             return null;
         }
-        
+
         // do work
         String outputString = Joiner.on(inputDelimiter.value).join(inputStringList);
-        
+
         // wrap output
         Map<String, IData> outputMap = new HashMap<String, IData>();
         outputMap.put(OUTPUT_STRING, new LiteralStringBinding(outputString));

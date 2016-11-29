@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A static repository to retrieve the available algorithms.
- * 
+ *
  * @author foerster
  *
  */
@@ -143,9 +143,9 @@ public class LocalAlgorithmRepository implements
         String algorithmClassName = (String) processID;
 
         try {
-            
+
             IAlgorithm algorithm = loadAlgorithm(algorithmClassName);
-            
+
             processDescriptionMap.put(algorithmClassName,
                     algorithm.getDescription());
             algorithmMap.put(algorithmClassName, algorithm);

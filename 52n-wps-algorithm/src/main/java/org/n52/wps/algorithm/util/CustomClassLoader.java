@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This custom ClassLoader loads classes from specified paths.
- * 
+ *
  * @author Benjamin Pross
  *
  */
@@ -48,18 +48,18 @@ public class CustomClassLoader extends ClassLoader {
             .getLogger(CustomClassLoader.class);
 
     public CustomClassLoader(String baseDir){
-        this.baseDir = baseDir;    
+        this.baseDir = baseDir;
     }
-    
+
     @Override
     public String toString() {
         return CustomClassLoader.class.getName();
     }
-    
+
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {            
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         try {
-            return UploadedAlgorithmRepository.class.getClassLoader().loadClass(name);                
+            return UploadedAlgorithmRepository.class.getClassLoader().loadClass(name);
         } catch (ClassNotFoundException e) {
             LOGGER.info("Class not found: " + name + ". Trying custom class loader.");
             return findClass(name);
@@ -91,28 +91,28 @@ public class CustomClassLoader extends ClassLoader {
 
     /**
      * Load the class file into byte array
-     * 
+     *
      * @param name
      *            The name of the process class, it will be loaded from basedDir
      * @return The class file as byte array
      * @throws IOException
      */
     private byte[] loadClassData(String name) throws IOException {
-        
-        String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/") + ".class"; 
-        
+
+        String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/") + ".class";
+
         InputStream classBytesStream = null;
-        
+
         File classFile = new File(pathToClassFile);
-        
+
         if(classFile.isAbsolute()){
             //absolute file path was passed, so try to load file
             classBytesStream = new FileInputStream(classFile);
         }else{
-            //relative path was passed, so try to get resource as stream 
+            //relative path was passed, so try to get resource as stream
             classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(pathToClassFile);
         }
-        
+
         BufferedInputStream in = new BufferedInputStream(classBytesStream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int i;

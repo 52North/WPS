@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,12 +54,12 @@ public class ServiceLoaderAlgorithmTest {
         Assert.assertThat(repo.containsAlgorithm(identified), is(not(true)));
         Assert.assertThat(repo.getAlgorithm(identified), is(nullValue()));
     }
-    
+
     @Test
     public void shouldFindTwoRegisteredAlgorithms() {
         Assert.assertThat(this.repo.getAlgorithmNames().size(), is(2));
     }
-    
+
     @Test
     public void shouldResolveProcessDescription() {
         ProcessDescriptionType description = (ProcessDescriptionType) repo.getProcessDescription(DummyAnnotatedAlgorithm.class.getCanonicalName()).getProcessDescriptionType("1.0.0");//FIXME check other versions

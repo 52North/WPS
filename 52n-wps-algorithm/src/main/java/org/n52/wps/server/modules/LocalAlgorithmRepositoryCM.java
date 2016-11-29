@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,11 +33,11 @@ public class LocalAlgorithmRepositoryCM extends ClassKnowingModule{
     private List<AlgorithmEntry> algorithmEntries;
 
     private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
-    
+
     public LocalAlgorithmRepositoryCM() {
         algorithmEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "LocalAlgorithmRepository Configuration Module";

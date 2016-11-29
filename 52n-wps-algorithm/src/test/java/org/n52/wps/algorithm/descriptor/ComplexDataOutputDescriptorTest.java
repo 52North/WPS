@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -24,7 +24,7 @@ import org.n52.test.mock.MockBinding;
  * @author tkunicki
  */
 public class ComplexDataOutputDescriptorTest extends TestCase {
-    
+
     public ComplexDataOutputDescriptorTest(String testName) {
         super(testName);
     }
@@ -34,7 +34,7 @@ public class ComplexDataOutputDescriptorTest extends TestCase {
                 ComplexDataOutputDescriptor.builder("mock_identifier", MockBinding.class).build();
         assertEquals("mock_identifier", descriptor.getIdentifier());
         assertEquals(MockBinding.class, descriptor.getBinding());
-        
+
         boolean thrown = false;
         try {
             ComplexDataOutputDescriptor.builder(null, MockBinding.class);
@@ -43,7 +43,7 @@ public class ComplexDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             ComplexDataOutputDescriptor.builder("", MockBinding.class);
@@ -52,7 +52,7 @@ public class ComplexDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             ComplexDataOutputDescriptor.builder("mock_identifier", null);
@@ -61,7 +61,7 @@ public class ComplexDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
     }
-    
+
 }

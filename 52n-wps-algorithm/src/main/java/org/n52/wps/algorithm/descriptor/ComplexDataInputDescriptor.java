@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,11 +36,11 @@ public class ComplexDataInputDescriptor<T extends Class<? extends IComplexData>>
     public boolean hasMaximumMegaBytes() {
         return maximumMegaBytes != null && maximumMegaBytes.longValue() > 0;
     }
-    
+
     public BigInteger getMaximumMegaBytes() {
         return maximumMegaBytes;
     }
-    
+
     public static <T extends Class<? extends IComplexData>> Builder<?,T> builder(String identifier, T binding) {
         return new BuilderTyped(identifier, binding);
     }
@@ -58,7 +58,7 @@ public class ComplexDataInputDescriptor<T extends Class<? extends IComplexData>>
     public static abstract class Builder<B extends Builder<B,T>, T extends Class<? extends IComplexData>> extends InputDescriptor.Builder<B,T> {
 
         private BigInteger maximumMegaBytes;
-        
+
         private Builder(String identifier, T binding) {
             super(identifier, binding);
         }
@@ -66,7 +66,7 @@ public class ComplexDataInputDescriptor<T extends Class<? extends IComplexData>>
         public B maximumMegaBytes(int maximumMegaBytes) {
             return maximumMegaBytes(BigInteger.valueOf(maximumMegaBytes));
         }
-        
+
         public B maximumMegaBytes(BigInteger maximumMegaBytes) {
             Preconditions.checkArgument(maximumMegaBytes.longValue() >= 0, "maximumMegabytes must be >= 0");
             this.maximumMegaBytes = maximumMegaBytes;

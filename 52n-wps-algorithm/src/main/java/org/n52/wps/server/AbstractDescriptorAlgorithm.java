@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -73,10 +73,10 @@ import com.google.common.base.Strings;
 public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubject {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AbstractDescriptorAlgorithm.class);
-    
+
     private AlgorithmDescriptor descriptor;
     private ProcessDescription description;
-    
+
     public AbstractDescriptorAlgorithm() {
         super();
     }
@@ -99,11 +99,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         AlgorithmDescriptor algorithmDescriptor = getAlgorithmDescriptor();
 
         ProcessDescription superProcessDescription = new ProcessDescription();
-        
+
         superProcessDescription.addProcessDescriptionForVersion(createProcessDescription100(algorithmDescriptor), WPSConfig.VERSION_100);
-        
+
         superProcessDescription.addProcessDescriptionForVersion(createProcessDescription200(algorithmDescriptor), WPSConfig.VERSION_200);
-        
+
         return superProcessDescription;
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
         boolean needDefault = true;
         for (IOHandler handler : handlers) {
-            
+
             List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
             if (fullFormats != null && fullFormats.size() > 0) {
                 if (needDefault) {
@@ -162,9 +162,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                             fullFormats.get(formatIndex));
                 }
             } else {
-                
+
                 String[] formats = handler.getSupportedFormats();
-                
+
                 if (formats == null || formats.length == 0) {
                     LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
                             handler.getClass().getSimpleName(),
@@ -212,7 +212,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 format.getEncoding(),
                 format.getSchema());
     }
-    
+
     private void describeComplexDataFormat(ComplexDataDescriptionType description,
                                            String format,
                                            String encoding,
@@ -227,7 +227,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             description.setSchema(schema);
         }
     }
-    
+
     private void describeComplexDataInputType200(ComplexDataType complexDataType, Class dataTypeClass) {
         List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
         List<IParser> foundParsers = new ArrayList<IParser>();
@@ -242,9 +242,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
         describeComplexDataType200(complexDataType, foundParsers);
     }
-    
+
     private void describeComplexDataOutputType200(ComplexDataType complexData, Class dataTypeClass) {
-        
+
         List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
         List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
         for (IGenerator generator : generators) {
@@ -258,18 +258,18 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
         describeComplexDataType200(complexData, foundGenerators);
     }
-    
+
     private void describeComplexDataType200(
             ComplexDataType complexDataType,
             List<? extends IOHandler> handlers)
     {
         net.opengis.wps.x20.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
-        
+
         defaultFormatType.setDefault(true);
-        
+
         boolean needDefault = true;
         for (IOHandler handler : handlers) {
-            
+
             List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
             if (fullFormats != null && fullFormats.size() > 0) {
                 int start = 0;
@@ -286,9 +286,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                             fullFormats.get(formatIndex));
                 }
             } else {
-                
+
                 String[] formats = handler.getSupportedFormats();
-                
+
                 if (formats == null || formats.length == 0) {
                     LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
                             handler.getClass().getSimpleName(),
@@ -306,7 +306,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     if (schemas == null || schemas.length == 0) {
                         schemas = new String[] { null };
                     }
-                    
+
                     for (String format : formats) {
                         for (String encoding : encodings) {
                             for (String schema : schemas) {
@@ -326,7 +326,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             }
         }
     }
-    
+
     private void describeComplexDataFormat200(
             net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
             FormatEntry format)
@@ -336,7 +336,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                 format.getEncoding(),
                 format.getSchema());
     }
-    
+
     private void describeComplexDataFormat200(net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
             String format,
             String encoding,
@@ -375,11 +375,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
         return descriptor;
     }
-    
+
     protected abstract AlgorithmDescriptor createAlgorithmDescriptor();
-    
+
     private ProcessDescriptionType createProcessDescription100(AlgorithmDescriptor algorithmDescriptor){
-        
+
         ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
         ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
         ProcessDescriptionType processDescription = processDescriptions.addNewProcessDescription();
@@ -475,43 +475,43 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                }
             }
         }
-        
+
         return processDescription;
-        
+
     }
 
     private ProcessOffering createProcessDescription200(AlgorithmDescriptor algorithmDescriptor){
-        
+
         /*
-         * We need to use the ProcessOffering here, because it holds some information that will be 
+         * We need to use the ProcessOffering here, because it holds some information that will be
          * shown in the ProcessSummary of the Capabilities
          */
         ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 
         net.opengis.wps.x20.ProcessDescriptionType processDescription = processOffering.addNewProcess();
-        
+
         if (algorithmDescriptor == null) {
             throw new IllegalStateException("Instance must have an algorithm descriptor");
         } else {
 
             processOffering.setProcessVersion(algorithmDescriptor.getVersion());
-            
+
             //TODO check options
             List<String> jobControlOptions = new ArrayList<>();
-            
+
             jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_SYNC_EXECUTE);
-            
+
             if(algorithmDescriptor.getStatusSupported()){
                 jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_ASYNC_EXECUTE);
             }
-            
+
             processOffering.setJobControlOptions(jobControlOptions);
-            
+
             List<String> outputTransmissionModes = new ArrayList<>();
-            
+
             outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_VALUE);
             outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_REFERENCE);
-            
+
             processOffering.setOutputTransmission(outputTransmissionModes);
             // 1. Identifier
             processDescription.addNewIdentifier().setStringValue(algorithmDescriptor.getIdentifier());
@@ -521,15 +521,15 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             if (algorithmDescriptor.hasAbstract()) {
                 processDescription.addNewAbstract().setStringValue(algorithmDescriptor.getAbstract());
             }
-            
+
             Collection<MetadataDescriptor> metadataDescriptors = algorithmDescriptor.getMetadataDescriptors();
 
             for (MetadataDescriptor metadataDescriptor : metadataDescriptors) {
-                MetadataType metadata = processDescription.addNewMetadata();                
+                MetadataType metadata = processDescription.addNewMetadata();
                 metadata.setRole(metadataDescriptor.getRole());
                 metadata.setHref(metadataDescriptor.getHref());
             }
-            
+
             // 2. Inputs
             Collection<InputDescriptor> inputDescriptors = algorithmDescriptor.getInputDescriptors();
             DataInputs dataInputs = null;
@@ -551,27 +551,27 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     LiteralDataInputDescriptor<?> literalDescriptor = (LiteralDataInputDescriptor)inputDescriptor;
 
                     LiteralDataType literalData = LiteralDataType.Factory.newInstance();
-                    
+
                     net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
-                    
+
                     defaultFormat.setDefault(true);
-                    
+
                     defaultFormat.setMimeType("text/plain");
-                    
+
                     net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
-                    
+
                     textXMLFormat.setMimeType("text/xml");
-                    
+
                     LiteralDataDomainType literalDataDomainType = literalData.addNewLiteralDataDomain();
-                    
+
                     literalDataDomainType.addNewDataType().setReference(literalDescriptor.getDataType());
 
                     if (literalDescriptor.hasDefaultValue()) {
-                        
+
                         ValueType defaultValue = ValueType.Factory.newInstance();
-                        
+
                         defaultValue.setStringValue(literalDescriptor.getDefaultValue());
-                        
+
                         literalDataDomainType.setDefaultValue(defaultValue);
                     }
                     if (literalDescriptor.hasAllowedValues()) {
@@ -582,39 +582,39 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     } else {
                         literalDataDomainType.addNewAnyValue();
                     }
-                    
+
                     dataInput.setDataDescription(literalData);
-                    
+
                     XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
 
                 } else if (inputDescriptor instanceof ComplexDataInputDescriptor) {
-                    
-                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
-                    
+
+                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();
+
                     ComplexDataInputDescriptor complexInputDescriptor =
                             (ComplexDataInputDescriptor)inputDescriptor;
-                    
+
                     //TODO this is now defined per format..
 //                    if (complexInputDescriptor.hasMaximumMegaBytes()) {
 //                        dataInput.setMaximumMegabytes(complexInputDescriptor.getMaximumMegaBytes());
 //                    }
                     describeComplexDataInputType200(complexDataType, inputDescriptor.getBinding());
-                    
+
                     dataInput.setDataDescription(complexDataType);
-                    
+
                     XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
                 }
-                
+
                 List<?> inputParameterMetadataDescriptors = inputDescriptor.getMetadataDescriptors();
-                
+
                 for (Object object : inputParameterMetadataDescriptors) {
-                    
+
                     if(object instanceof MetadataDescriptor){
-                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;                        
-                        MetadataType metadata = dataInput.addNewMetadata();                
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;
+                        MetadataType metadata = dataInput.addNewMetadata();
                         metadata.setRole(metadataDescriptor.getRole());
                         metadata.setHref(metadataDescriptor.getHref());
-                    }                    
+                    }
                 }
             }
 
@@ -636,56 +636,56 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                 if (outputDescriptor instanceof LiteralDataOutputDescriptor) {
                     LiteralDataOutputDescriptor<?> literalDescriptor = (LiteralDataOutputDescriptor)outputDescriptor;
-                    
-                    LiteralDataType literalData = LiteralDataType.Factory.newInstance(); 
-                    
+
+                    LiteralDataType literalData = LiteralDataType.Factory.newInstance();
+
                     net.opengis.wps.x20.FormatDocument.Format defaultFormat =  literalData.addNewFormat();
-                    
+
                     defaultFormat.setDefault(true);
-                    
+
                     defaultFormat.setMimeType("text/plain");
-                    
+
                     net.opengis.wps.x20.FormatDocument.Format textXMLFormat =  literalData.addNewFormat();
-                    
+
                     textXMLFormat.setMimeType("text/xml");
-                    
+
                     LiteralDataDomainType literalDataDomainType = literalData.addNewLiteralDataDomain();
-                    
+
                     literalDataDomainType.addNewDataType().setReference(literalDescriptor.getDataType());
-                    
+
                     literalDataDomainType.addNewAnyValue();
-                    
+
                     dataOutput.setDataDescription(literalData);
-                    
+
                     XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
-                    
+
                 } else if (outputDescriptor instanceof ComplexDataOutputDescriptor) {
-                    
-                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
+
+                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();
                     describeComplexDataOutputType200(complexDataType, outputDescriptor.getBinding());
-                    
+
                     dataOutput.setDataDescription(complexDataType);
-                    
+
                     XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), ComplexDataDocument.type.getDocumentElementName(), null);
                 }
-                
+
                 List<?> outputParameterMetadataDescriptors = outputDescriptor.getMetadataDescriptors();
-                
+
                 for (Object object : outputParameterMetadataDescriptors) {
-                    
+
                     if(object instanceof MetadataDescriptor){
-                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;                        
-                        MetadataType metadata = dataOutput.addNewMetadata();                
+                        MetadataDescriptor metadataDescriptor = (MetadataDescriptor)object;
+                        MetadataType metadata = dataOutput.addNewMetadata();
                         metadata.setRole(metadataDescriptor.getRole());
                         metadata.setHref(metadataDescriptor.getHref());
-                    }                    
+                    }
                 }
             }
         }
-        
+
         return processOffering;
     }
-    
+
     @Override
     public Class<? extends IData> getInputDataType(String identifier) {
         AlgorithmDescriptor algorithmDescriptor = getAlgorithmDescriptor();

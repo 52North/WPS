@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,11 +50,11 @@ public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
             this.value = value;
         }
     }
-    
+
     private List<String> inputStrings;
     private Delimiter inputDelimiter;
     private String outputString;
-    
+
     @LiteralDataInput(
         identifier="INPUT_STRINGS",
         title="Input Strings",
@@ -64,7 +64,7 @@ public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
     public void setInputString(List<String> inputStrings) {
         this.inputStrings = inputStrings;
     }
-    
+
     @LiteralDataInput(
         identifier="INPUT_DELIMITER",
         title="Delimiter",
@@ -83,7 +83,7 @@ public class StringJoinAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm {
     public String getOutputString() {
         return outputString;
     }
-    
+
     @LiteralDataInput(identifier="yourMom")
     public String yourMom;
 

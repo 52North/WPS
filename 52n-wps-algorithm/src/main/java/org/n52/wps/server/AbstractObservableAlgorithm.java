@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,46 +36,48 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
     protected ProcessDescription description;
     protected final String wkName;
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractAlgorithm.class);
-    
-    /** 
+
+    /**
      * default constructor, calls the initializeDescription() Method
      */
     public AbstractObservableAlgorithm() {
         this.description = initializeDescription();
         this.wkName = "";
     }
-    
+
     public AbstractObservableAlgorithm(ProcessDescription description) {
         this.description = description;
         this.wkName = "";
     }
-    
-    /** 
+
+    /**
+     * @param wellKnownName the well known name of the algorithm
      * default constructor, calls the initializeDescription() Method
      */
     public AbstractObservableAlgorithm(String wellKnownName) {
-        this.wkName = wellKnownName; // Has to be initialized before the description. 
+        this.wkName = wellKnownName; // Has to be initialized before the description.
         this.description = initializeDescription();
     }
-    
+
     /**
-     * 
-     * @param wellKnownName
+     *
+     * @param wellKnownName the well known name of the algorithm
      * @param initializeDescription
      *        set this to false if you want to initialize the description in an extending class
      */
     public AbstractObservableAlgorithm(String wellKnownName, boolean initializeDescription) {
         this.wkName = wellKnownName;
-        if (initializeDescription)
+        if (initializeDescription){
             this.description = initializeDescription();
+        }
     }
 
-    /** 
+    /**
      * This method should be overwritten, in case you want to have a way of initializing.
-     * 
+     *
      * In detail it looks for a xml descfile, which is located in the same directory as the implementing class and has the same
      * name as the class, but with the extension XML.
-     * @return
+     * @return the process description
      */
     protected ProcessDescription initializeDescription() {
         String className = this.getClass().getName().replace(".", "/");
@@ -88,18 +90,18 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
                 LOGGER.warn("ProcessDescription does not contain correct any description");
                 return null;
             }
-            
+
             // Checking that the process name (full class name or well-known name) matches the identifier.
             if(!doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getClass().getName()) &&
                     !doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().getStringValue().equals(this.getWellKnownName())) {
                 doc.getProcessDescriptions().getProcessDescriptionArray(0).getIdentifier().setStringValue(this.getClass().getName());
                 LOGGER.warn("Identifier was not correct, was changed now temporary for server use to " + this.getClass().getName() + ". Please change it later in the description!");
             }
-            
+
             ProcessDescription processDescription = new ProcessDescription();
-            
+
             processDescription.addProcessDescriptionForVersion(doc.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
-            
+
             return processDescription;
         }
         catch(IOException e) {
@@ -110,7 +112,7 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
         }
         return null;
     }
-    
+
     public ProcessDescription getDescription()  {
         return description;
     }
@@ -118,11 +120,11 @@ public abstract class AbstractObservableAlgorithm implements IAlgorithm, ISubjec
     public boolean processDescriptionIsValid(String version) {
         return description.getProcessDescriptionType(version).validate();
     }
-    
+
     public String getWellKnownName() {
         return this.wkName;
     }
-    
+
     private List observers = new ArrayList();
 
     private Object state = null;

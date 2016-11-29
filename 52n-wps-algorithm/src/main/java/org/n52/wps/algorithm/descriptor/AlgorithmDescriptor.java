@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,7 +46,7 @@ public class AlgorithmDescriptor extends Descriptor {
         Preconditions.checkState(
                 builder.outputDescriptors.size() > 0,
                 "Need at minimum 1 output for algorithm.");
-        
+
         // LinkedHaskMap to preserve order
         Map<String, InputDescriptor> iMap = new LinkedHashMap<String, InputDescriptor>();
         for (InputDescriptor iDescriptor : builder.inputDescriptors) {
@@ -59,7 +59,7 @@ public class AlgorithmDescriptor extends Descriptor {
             oMap.put(oDescriptor.getIdentifier(), oDescriptor);
         }
         outputDescriptorMap = Collections.unmodifiableMap(oMap);
-        
+
         metadataDescriptors = builder.metadataDescriptors;
     }
 
@@ -98,7 +98,7 @@ public class AlgorithmDescriptor extends Descriptor {
     public Collection<OutputDescriptor> getOutputDescriptors() {
         return outputDescriptorMap.values();
     }
-    
+
     public List<MetadataDescriptor> getMetadataDescriptors() {
         return metadataDescriptors;
     }
@@ -153,7 +153,7 @@ public class AlgorithmDescriptor extends Descriptor {
             this.statusSupported = statusSupported;
             return self();
         }
-        
+
         public B addMetadataDescriptor(MetadataDescriptor.Builder metadataDescriptorBuilder) {
             return addMetadataDescriptor(metadataDescriptorBuilder.build());
         }
@@ -195,11 +195,11 @@ public class AlgorithmDescriptor extends Descriptor {
             this.outputDescriptors.addAll(outputDescriptors);
             return self();
         }
-        
+
         public AlgorithmDescriptor build() {
             return new AlgorithmDescriptor(this);
         }
 
     }
-    
+
 }

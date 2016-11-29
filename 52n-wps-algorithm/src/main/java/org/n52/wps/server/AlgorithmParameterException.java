@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -23,7 +23,7 @@ public class AlgorithmParameterException extends RuntimeException {
     public AlgorithmParameterException() {
         super();
     }
-    
+
     public AlgorithmParameterException(String message) {
         super(message);
     }
