@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -78,7 +78,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class CoordinateTransformAlgorithm extends
         AbstractSelfDescribingAlgorithm {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(CoordinateTransformAlgorithm.class);
 
     private final String inputIdentifierFeatures = "InputData";
@@ -116,7 +116,7 @@ public class CoordinateTransformAlgorithm extends
         }
         return null;
     }
-    
+
     @Override
     public Class<?> getOutputDataType(String id) {
         return GTVectorDataBinding.class;
@@ -130,7 +130,7 @@ public class CoordinateTransformAlgorithm extends
                 || !inputData.containsKey(inputIdentifierFeatures)
                 || !inputData.containsKey(inputIdentifierTargetReferenceSystem)) {
             LOGGER.error("Error while allocating input parameters");
-            throw new RuntimeException(                    
+            throw new RuntimeException(
                     "Error while allocating input parameters");
         }
 
@@ -147,7 +147,7 @@ public class CoordinateTransformAlgorithm extends
         FeatureIterator<?> featureIterator = featureCollection.features();
 
         List<IData> secondDataList = inputData
-                .get(inputIdentifierTargetReferenceSystem);        
+                .get(inputIdentifierTargetReferenceSystem);
         if (secondDataList == null || secondDataList.size() != 1) {
             throw new RuntimeException(
                     "Error while allocating input parameters");
@@ -174,14 +174,14 @@ public class CoordinateTransformAlgorithm extends
             throw new RuntimeException(
                     "Could not determine target CRS. Valid EPSG code needed.");
         }
-        
+
         List<IData> thirdDataList = inputData
                 .get(inputIdentifierSourceReferenceSystem);
         if (thirdDataList == null || thirdDataList.size() != 1) {
             throw new RuntimeException(
                     "Error while allocating input parameters");
         }
-        
+
         IData thirdInputData = thirdDataList.get(0);
 
         // crs in epsg code
@@ -203,7 +203,7 @@ public class CoordinateTransformAlgorithm extends
             throw new RuntimeException(
                     "Could not determine target CRS. Valid EPSG code needed.");
         }
-        
+
 
         List<SimpleFeature> featureList = new ArrayList<>();
 
@@ -212,7 +212,7 @@ public class CoordinateTransformAlgorithm extends
             MathTransform tx = CRS.findMathTransform(fromCRS, toCRS, true);
 
             int coordinates = 0;
-            
+
             while (featureIterator.hasNext()) {
 
                 SimpleFeature feature = (SimpleFeature) featureIterator.next();
@@ -220,15 +220,15 @@ public class CoordinateTransformAlgorithm extends
                 Geometry geometry = (Geometry) feature.getDefaultGeometry();
 
                 coordinates = coordinates + geometry.getCoordinates().length;
-                
+
                 Coordinate[] coords = geometry.getCoordinates();
-                
+
                 for (Coordinate coordinate : coords) {
                     Coordinate k = new Coordinate();
                     k = JTS.transform(coordinate, k, tx);
 //                    System.out.println(k);
                 }
-                
+
                 Geometry newGeometry = JTS.transform(geometry, tx);
 
                 SimpleFeature newFeature = createFeature(feature.getID(),
@@ -236,7 +236,7 @@ public class CoordinateTransformAlgorithm extends
 
                 featureList.add(newFeature);
             }
-                        
+
 
         } catch (Exception e) {
             throw new RuntimeException("Error while transforming", e);
@@ -251,7 +251,7 @@ public class CoordinateTransformAlgorithm extends
     private SimpleFeature createFeature(String id, Geometry geometry,
             CoordinateReferenceSystem crs, Collection<Property> properties) {
         String uuid = UUID.randomUUID().toString();
-        
+
         if(featureType == null){
         featureType = GTHelper.createFeatureType(properties,
                 geometry, uuid, crs);

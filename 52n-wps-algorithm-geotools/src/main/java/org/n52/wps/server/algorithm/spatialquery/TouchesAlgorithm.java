@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -65,7 +65,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * @author Benjamin Pross (bpross-52n) 
+ * @author Benjamin Pross (bpross-52n)
  *
  */
 public class TouchesAlgorithm extends AbstractSelfDescribingAlgorithm{
@@ -75,7 +75,7 @@ public class TouchesAlgorithm extends AbstractSelfDescribingAlgorithm{
     private final String inputID1 = "LAYER1";
     private final String inputID2 = "LAYER2";
     private final String outputID = "RESULT";
-    
+
     public List<String> getErrors() {
         return errors;
     }
@@ -108,7 +108,7 @@ public class TouchesAlgorithm extends AbstractSelfDescribingAlgorithm{
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = firstDataList.get(0);
-                
+
         FeatureCollection<?, ?> firstCollection = ((GTVectorDataBinding) firstInputData).getPayload();
 
         List<IData> secondDataList = inputData.get(inputID2);
@@ -116,28 +116,28 @@ public class TouchesAlgorithm extends AbstractSelfDescribingAlgorithm{
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData secondInputData = secondDataList.get(0);
-                
+
         FeatureCollection<?, ?> secondCollection = ((GTVectorDataBinding) secondInputData).getPayload();
-        
+
         FeatureIterator<?> firstIterator = firstCollection.features();
-        
+
         FeatureIterator<?> secondIterator = secondCollection.features();
-        
+
         if(!firstIterator.hasNext()){
             throw new RuntimeException("Error while iterating over features in layer 1");
         }
-        
+
         if(!secondIterator.hasNext()){
             throw new RuntimeException("Error while iterating over features in layer 2");
         }
-        
+
 
         SimpleFeature firstFeature = (SimpleFeature) firstIterator.next();
-        
+
         SimpleFeature secondFeature = (SimpleFeature) secondIterator.next();
-        
+
         boolean touches = ((Geometry)firstFeature.getDefaultGeometry()).touches((Geometry)secondFeature.getDefaultGeometry());
-            
+
         HashMap<String, IData> result = new HashMap<String, IData>();
 
         result.put(outputID,

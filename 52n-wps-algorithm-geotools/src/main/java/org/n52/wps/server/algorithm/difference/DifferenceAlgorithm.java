@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -75,9 +75,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 
 public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(DifferenceAlgorithm.class);
-    
+
     public DifferenceAlgorithm() {
         super();
     }
@@ -86,9 +86,9 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
     public List<String> getErrors() {
         return errors;
     }
-    
-    
-    
+
+
+
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         /*----------------------Polygons Input------------------------------------------*/
         if(inputData==null || !inputData.containsKey("Polygons1")){
@@ -99,9 +99,9 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = dataList.get(0);
-                
+
         FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
-        
+
         /*----------------------LineStrings Input------------------------------------------*/
         if(inputData==null || !inputData.containsKey("Polygons2")){
             throw new RuntimeException("Error while allocating input parameters");
@@ -111,35 +111,35 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData secondInputData = dataListLS.get(0);
-                
+
         FeatureCollection lineStrings = ((GTVectorDataBinding) secondInputData).getPayload();
-        
-        
+
+
         System.out.println("****************************************************************");
         System.out.println("difference algorithm started");
         System.out.println("polygons size = " + polygons.size());
         System.out.println("lineStrings size = " + lineStrings.size());
-        
+
         List<SimpleFeature> featureList = new ArrayList<>();
-        
+
         FeatureIterator<?> polygonIterator = polygons.features();
         int j = 1;
-        
+
         String uuid = UUID.randomUUID().toString();
         while(polygonIterator.hasNext()){
             SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
 
-        
+
             FeatureIterator<?> lineStringIterator = lineStrings.features();
             int i = 1;
             System.out.println("Polygon = " + j +"/"+ polygons.size());
-            SimpleFeatureType featureType = null; 
+            SimpleFeatureType featureType = null;
             while(lineStringIterator.hasNext()){
                 SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
                 Geometry lineStringGeometry = null;
                 lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
-                
-                try{    
+
+                try{
                     Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
                     Geometry intersection = polygonGeometry.difference(lineStringGeometry);
                     if(i==1){
@@ -147,18 +147,18 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
                          QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
                          SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
                     }
-                    
-                
+
+
                     SimpleFeature resultFeature = GTHelper.createFeature(""+j+"_"+i, intersection,featureType, polygon.getProperties());
                     if(resultFeature!=null){
-                                
+
                         featureList.add(resultFeature);
                         System.out.println("result feature added. resultCollection = " + featureList.size());
                     }
                 }catch(Exception e){
                         e.printStackTrace();
                     }
-                
+
                 i++;
             }
             j++;
@@ -166,26 +166,26 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
             //    break;
             //}
         }
-        
-        
+
+
         HashMap<String,IData> resulthash = new HashMap<String,IData>();
         resulthash.put("result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
         return resulthash;
     }
-    
 
-    
-    
-    
+
+
+
+
     public Class getInputDataType(String id) {
         return GTVectorDataBinding.class;
-    
+
     }
 
     public Class getOutputDataType(String id) {
         return GTVectorDataBinding.class;
     }
-    
+
     @Override
     public List<String> getInputIdentifiers() {
         List<String> identifierList =  new ArrayList<String>();
@@ -200,5 +200,5 @@ public class DifferenceAlgorithm extends AbstractSelfDescribingAlgorithm {
         identifierList.add("result");
         return identifierList;
     }
-    
+
 }

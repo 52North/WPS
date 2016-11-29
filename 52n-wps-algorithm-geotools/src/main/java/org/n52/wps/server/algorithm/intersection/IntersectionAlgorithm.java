@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -77,9 +77,9 @@ import com.vividsolutions.jts.geom.Polygon;
 
 
 public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(IntersectionAlgorithm.class);
-    
+
     public IntersectionAlgorithm() {
         super();
     }
@@ -88,9 +88,9 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
     public List<String> getErrors() {
         return errors;
     }
-    
-    
-    
+
+
+
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         /*----------------------Polygons Input------------------------------------------*/
         if(inputData==null || !inputData.containsKey("Polygon1")){
@@ -101,9 +101,9 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = dataList.get(0);
-                
+
         FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
-        
+
         /*----------------------LineStrings Input------------------------------------------*/
         if(inputData==null || !inputData.containsKey("Polygon2")){
             throw new RuntimeException("Error while allocating input parameters");
@@ -113,17 +113,17 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputDataLS = dataListLS.get(0);
-                
+
         FeatureCollection lineStrings = ((GTVectorDataBinding) firstInputDataLS).getPayload();
-        
-        
+
+
         System.out.println("****************************************************************");
         System.out.println("intersection started");
         System.out.println("polygons size = " + polygons.size());
         System.out.println("lineStrings size = " + lineStrings.size());
-        
+
         List<SimpleFeature> featureList = new ArrayList<>();
-        
+
         FeatureIterator<?> polygonIterator = polygons.features();
         int j = 1;
         while(polygonIterator.hasNext()){
@@ -133,7 +133,7 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
             System.out.println("Polygon = " + j +"/"+ polygons.size());
             while(lineStringIterator.hasNext()){
                 //System.out.println("Polygon = " + j + "LineString =" + i +"/"+lineStrings.size());
-                
+
                 SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
                 Geometry lineStringGeometry = null;
                 if(lineString.getDefaultGeometry()==null && lineString.getAttributeCount()>0 &&lineString.getAttribute(0) instanceof Geometry){
@@ -146,43 +146,43 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
                     Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
                     SimpleFeature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
                     if(resultFeature!=null){
-                                
+
                         featureList.add(resultFeature);
                         System.out.println("result feature added. resultCollection = " + featureList.size());
                     }
                 }catch(Exception e){
                         e.printStackTrace();
                     }
-                
+
                 i++;
             }
             j++;
-            
+
         }
-        
-        
+
+
         HashMap<String,IData> resulthash = new HashMap<String,IData>();
         resulthash.put("intersection_result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
         return resulthash;
     }
-    
+
     private SimpleFeature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
-        
+
         SimpleFeature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
 
         return feature;
     }
-    
-    
+
+
     public Class getInputDataType(String id) {
         return GTVectorDataBinding.class;
-    
+
     }
 
     public Class getOutputDataType(String id) {
         return GTVectorDataBinding.class;
     }
-    
+
     @Override
     public List<String> getInputIdentifiers() {
         List<String> identifierList =  new ArrayList<String>();
@@ -197,6 +197,6 @@ public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
         identifierList.add("intersection_result");
         return identifierList;
     }
-    
-    
+
+
 }

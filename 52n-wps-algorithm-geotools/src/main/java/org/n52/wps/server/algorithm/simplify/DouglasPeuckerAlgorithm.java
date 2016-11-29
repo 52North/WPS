@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -79,10 +79,10 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
 public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
     Logger LOGGER = LoggerFactory.getLogger(DouglasPeuckerAlgorithm.class);
-    
+
     private List<String> errors = new ArrayList<String>();
     private Double percentage;
-    
+
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
         if(inputData==null || !inputData.containsKey("FEATURES")){
             throw new RuntimeException("Error while allocating input parameters");
@@ -92,9 +92,9 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
             throw new RuntimeException("Error while allocating input parameters");
         }
         IData firstInputData = dataList.get(0);
-                
+
         FeatureCollection<?,?> featureCollection = ((GTVectorDataBinding) firstInputData).getPayload();
-        
+
         if( !inputData.containsKey("TOLERANCE")){
             throw new RuntimeException("Error while allocating input parameters");
         }
@@ -103,7 +103,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
             throw new RuntimeException("Error while allocating input parameters");
         }
         Double tolerance = ((LiteralDoubleBinding) widthDataList.get(0)).getPayload();
-        
+
             double i = 0;
             int totalNumberOfFeatures = featureCollection.size();
             String uuid = UUID.randomUUID().toString();
@@ -150,7 +150,7 @@ public class DouglasPeuckerAlgorithm extends AbstractSelfDescribingAlgorithm{
         return result;
     }
 
-    
+
     public List<String> getErrors() {
         return errors;
     }
