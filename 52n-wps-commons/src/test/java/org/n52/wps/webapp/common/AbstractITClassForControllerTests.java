@@ -16,7 +16,6 @@
  */
 package org.n52.wps.webapp.common;
 
-import javax.servlet.annotation.WebInitParam;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.n52.wps.commons.WPSConfig;

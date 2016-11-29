@@ -21,9 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 
-import javanet.staxutils.IndentingXMLStreamWriter;
-import javanet.staxutils.XMLStreamUtils;
-
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -48,6 +45,9 @@ import org.w3c.dom.Node;
 
 import com.ctc.wstx.stax.WstxInputFactory;
 import com.ctc.wstx.stax.WstxOutputFactory;
+
+import javanet.staxutils.IndentingXMLStreamWriter;
+import javanet.staxutils.XMLStreamUtils;
 
 /**
  *
