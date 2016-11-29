@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -109,7 +109,7 @@ public class RAnnotationParser {
      * @param identifier
      *        the script id to use for generating a test-process description
      * @return false if the process description is invalid
-     * @throws RAnnotationException
+     * @throws RAnnotationException if an exception occurred while validating
      */
     public boolean validateScript(InputStream script, String identifier) throws RAnnotationException {
         return validateScriptWithErrors(script, identifier).isEmpty();
@@ -118,9 +118,11 @@ public class RAnnotationParser {
     /**
      *
      * @param script
+     *        the script to validate
      * @param identifier
+     *        the script id to use for generating a test-process description
      * @return a list of the XML validation errors or the exceptions during validation
-     * @throws RAnnotationException
+     * @throws RAnnotationException if an exception occurred while validatin
      */
     public Collection<Exception> validateScriptWithErrors(InputStream script, String identifier) throws RAnnotationException {
         ArrayList<Exception> validationErrors = new ArrayList<>();

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -65,8 +65,9 @@ public class ResourceUrlGenerator {
 
     /**
      *
-     * @param resource
+     * @param resource the <code>R_Resource</code>
      * @return a publicly available URL to retrieve the resource
+     * @throws ExceptionReport if the resource URL could not be created
      */
     public URL getResourceURL(R_Resource resource) throws ExceptionReport {
         StringBuilder sb = new StringBuilder();
@@ -88,6 +89,8 @@ public class ResourceUrlGenerator {
      * @param wkn
      *        well-known name for a process
      * @return a publicly available URL to retrieve the process script
+     * @throws MalformedURLException if the URL was malformed
+     * @throws ExceptionReport if the script URL could not be created
      */
     public URL getScriptURL(String wkn) throws MalformedURLException, ExceptionReport {
         StringBuilder sb = new StringBuilder();
@@ -98,9 +101,10 @@ public class ResourceUrlGenerator {
 
     /**
      *
-     * @param wkn
-     *        well-known name for a process
+     * @param resource
+     *        the <code>R_Resource</code>
      * @return a publicly available URL to retrieve the imported script
+     * @throws ExceptionReport if the import URL could not be created
      */
     public URL getImportURL(R_Resource resource) throws ExceptionReport {
         StringBuilder sb = new StringBuilder();

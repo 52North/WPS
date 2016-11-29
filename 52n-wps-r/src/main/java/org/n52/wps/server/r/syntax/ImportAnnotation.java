@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,8 +68,9 @@ public class ImportAnnotation extends RAnnotation {
     }
 
     protected Collection<R_Resource> getResources() {
-        if (this.imports == null)
+        if (this.imports == null) {
             this.imports = new ArrayList<R_Resource>();
+        }
 
         return this.imports;
     }
@@ -78,10 +79,12 @@ public class ImportAnnotation extends RAnnotation {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ImportAnnotation [imports=");
-        if (this.imports != null)
+        if (this.imports != null) {
             builder.append(Arrays.toString(this.imports.toArray()));
-        else
+        }
+        else {
             builder.append("<null>");
+        }
         builder.append("]");
         return builder.toString();
     }

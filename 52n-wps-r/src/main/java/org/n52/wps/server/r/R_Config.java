@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -126,8 +126,9 @@ public class R_Config implements ServletContextAware {
         String[] dirs = resourceDirConfigParam.split(DIR_DELIMITER);
         for (String s : dirs) {
             Path dir = Paths.get(s);
-            if ( !dir.isAbsolute())
+            if ( !dir.isAbsolute()) {
                 dir = getBaseDir().resolve(s);
+            }
 
             resourceDirectories.add(dir);
             LOGGER.debug("Found resource directory configured in config variable: {}", dir);
@@ -233,8 +234,9 @@ public class R_Config implements ServletContextAware {
                                  Arrays.toString(files.toArray()));
                 }
             }
-            else
+            else {
                 LOGGER.error("Could not load utils directory variable from config, not loading any utils files!");
+            }
         }
 
         return utilsFiles;
@@ -253,10 +255,11 @@ public class R_Config implements ServletContextAware {
         LOGGER.debug("Loading util files from {}", s);
 
         Path p = Paths.get(s);
-        if ( !baseDir.isAbsolute())
+        if ( !baseDir.isAbsolute()) {
             throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
                                                      baseDir,
                                                      p));
+        }
 
         ArrayList<File> foundFiles = new ArrayList<>();
         File f = null;
@@ -296,8 +299,9 @@ public class R_Config implements ServletContextAware {
                 File[] files = f.listFiles(rFileFilter);
                 foundFiles.addAll(Arrays.asList(files));
             }
-            else
+            else {
                 LOGGER.warn("Configured utils directory does not exist: {}", p);
+            }
         }
 
         LOGGER.debug("Found {} util files in directory configured as '{}' at {}", foundFiles.size(), p, f);

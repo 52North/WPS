@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,9 +30,9 @@ package org.n52.wps.server.r.data;
 
 
 /**
- * 
+ *
  * POJO for a file system resource use by R scripts.
- * 
+ *
  * @author Matthias Hinz, Daniel Nüst
  *
  */
@@ -81,27 +81,35 @@ public class R_Resource {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         R_Resource other = (R_Resource) obj;
-        if (isPublic != other.isPublic)
+        if (isPublic != other.isPublic) {
             return false;
+        }
         if (resourceValue == null) {
-            if (other.resourceValue != null)
+            if (other.resourceValue != null) {
                 return false;
+            }
         }
-        else if ( !resourceValue.equals(other.resourceValue))
+        else if ( !resourceValue.equals(other.resourceValue)) {
             return false;
+        }
         if (processId == null) {
-            if (other.processId != null)
+            if (other.processId != null) {
                 return false;
+            }
         }
-        else if ( !processId.equals(other.processId))
+        else if ( !processId.equals(other.processId)) {
             return false;
+        }
         return true;
     }
 

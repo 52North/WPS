@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,9 +30,9 @@ package org.n52.wps.server.r.syntax;
 
 /**
  * attributes used in Annotations
- * 
+ *
  * @author Matthias Hinz
- * 
+ *
  */
 public enum RAttribute {
 

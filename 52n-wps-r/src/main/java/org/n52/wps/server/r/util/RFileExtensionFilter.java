@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,8 +39,9 @@ public class RFileExtensionFilter implements FileFilter {
     public boolean accept(File f) {
         if (f.isFile() && f.canRead()) {
             String name = f.getName();
-            if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX))
+            if (name.endsWith(R_Config.SCRIPT_FILE_SUFFIX)) {
                 return true;
+            }
         }
         return false;
     }

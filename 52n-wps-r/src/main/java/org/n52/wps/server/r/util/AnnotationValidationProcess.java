@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,7 +28,6 @@
  */
 package org.n52.wps.server.r.util;
 
-import org.n52.wps.commons.SpringIntegrationHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -41,18 +40,16 @@ import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.algorithm.annotation.LiteralDataOutput;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import org.n52.wps.io.data.binding.complex.PlainStringBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
-import org.n52.wps.server.r.R_Config;
-import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 @Algorithm(version = "1.0.0", identifier = "org.n52.wps.server.algorithm.r.AnnotationValidation", title = "R Annotation Validation", statusSupported = false, storeSupported = false, abstrakt = "Validate the annotations of a WPS4R script without deploying it")
 public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
@@ -146,8 +143,9 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
             }
         }
 
-        if (this.annotationsString != null && valid)
+        if (this.annotationsString != null && valid) {
             validation.append("\n").append(RESULT_OK).append("\n");
+        }
 
         this.validationResult = validation.toString();
     }

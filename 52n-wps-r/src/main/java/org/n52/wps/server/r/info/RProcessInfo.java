@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * POJO for extended information on R algorithm, i.e. the file and validation result
- * 
+ *
  * @author Daniel
  *
  */

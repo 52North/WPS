@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -84,10 +84,12 @@ public class ResourceAnnotation extends RAnnotation {
                     continue;
                 }
 
-                if (startloop)
+                if (startloop) {
                     startloop = false;
-                else
+                }
+                else {
                     namedList.append(", ");
+                }
 
                 String resourceName = resource.getResourceValue();
 
@@ -107,13 +109,15 @@ public class ResourceAnnotation extends RAnnotation {
             log.trace("Created resource list for usage in R: {}", namedList);
             return namedList.toString();
         }
-        else
+        else {
             throw new RAnnotationException("Attribute '{}' not defined for this annotation: {}", attr, this);
+        }
     }
 
     protected Collection<R_Resource> getResources() {
-        if (this.resources == null)
+        if (this.resources == null) {
             this.resources = new ArrayList<>();
+        }
 
         return this.resources;
     }
@@ -122,10 +126,12 @@ public class ResourceAnnotation extends RAnnotation {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ResourceAnnotation [resources=");
-        if (this.resources != null)
+        if (this.resources != null) {
             builder.append(Arrays.toString(this.resources.toArray()));
-        else
+        }
+        else {
             builder.append("<null>");
+        }
         builder.append("]");
         return builder.toString();
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -385,7 +385,7 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
             LOGGER.debug("Ignore removing of unsupported item '{}' of class '{}'", item, item.getClass());
             return false;
         }
-        
+
         String id;
         if (item instanceof File) {
             File file = (File) item;
@@ -428,10 +428,12 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("RAlgorithmRepository [");
-        if (rProcesses != null)
+        if (rProcesses != null) {
             builder.append("algorithm count=").append(rProcesses.size()).append(", ");
-        if (config != null)
+        }
+        if (config != null) {
             builder.append("config=").append(config).append(", ");
+        }
         // if (changeManager != null)
         // builder.append("changeManager=").append(changeManager).append(", ");
         // if (repo != null)

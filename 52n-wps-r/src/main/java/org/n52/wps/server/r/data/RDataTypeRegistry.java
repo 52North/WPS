@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,7 +31,6 @@ package org.n52.wps.server.r.data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import javax.annotation.PostConstruct;
 
 import org.n52.wps.server.r.syntax.RAnnotationException;
 import org.slf4j.Logger;
@@ -70,14 +69,15 @@ public class RDataTypeRegistry {
 
         // put process key, i.e. mimetype or xml-notation for literal type, as
         // alternative key (alias) into Hashmap:
-        if ( !containsKey(type.getMimeType()))
+        if ( !containsKey(type.getMimeType())) {
             this.rDataTypeAlias.put(type.getMimeType(), type);
-        else
+        } else {
             LOGGER.warn("Doubled definition of data type-key for notation: "
                     + type.getMimeType()
                     + "\n"
                     + "only the first definition will be used for this key.+"
                     + "(That might be the usual case if more than one annotation type key refer to one WPS-mimetype with different data handlers)");
+        }
     }
 
     public boolean containsKey(String key) {
@@ -89,17 +89,20 @@ public class RDataTypeRegistry {
      *
      * @param key
      *        process keys and self defined short keys are recognized as dataType keys
-     * @return
-     * @throws RAnnotationException
+     * @return the <code>RTypeDefinition</code> belonging to the key
+     * @throws RAnnotationException if an invalid key was passed
      */
     public RTypeDefinition getType(String key) throws RAnnotationException {
         RTypeDefinition out = this.rDataTypeKeys.get(key);
-        if (out == null)
+        if (out == null) {
             out = this.rDataTypeAlias.get(key);
-        if (out == null)
+        }
+        if (out == null) {
             out = this.customDataTypes.get(key);
-        if (out == null)
+        }
+        if (out == null) {
             throw new RAnnotationException("Invalid datatype key for R script annotations: " + key);
+        }
 
         return out;
     }

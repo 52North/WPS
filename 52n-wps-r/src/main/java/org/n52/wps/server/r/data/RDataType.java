@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,7 +40,7 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
 /**
  * Data types which are supported by scripts Note that every IData class must be parsed from an to are to be
- * handled successful --> GenericRProcess TODO: restructure dependent classes & methods for new attributes
+ * handled successful, see GenericRProcess. TODO: restructure dependent classes and methods for new attributes
  *
  * FIXME use either this class or the file R_Datatype.conf, potentially refactor the format of the file.
  */
@@ -141,8 +141,9 @@ public enum RDataType implements RTypeDefinition {
 
     @Override
     public String getEncoding() {
-        if (this.isComplex)
+        if (this.isComplex) {
             return this.encoding;
+        }
         return null;
     }
 

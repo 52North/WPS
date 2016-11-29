@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -83,7 +83,7 @@ public class VersionAnnotationTest {
         ReflectionTestUtils.setField(parser, "config", mockR_Config);
         ReflectionTestUtils.setField(parser, "dataTypeRegistry", new RDataTypeRegistry());
     }
-    
+
     @Test
     public void versionIsParsed() throws FileNotFoundException, RAnnotationException, IOException {
         try (FileInputStream fis = new FileInputStream(TestUtil.loadFile("/annotations/version/script.R"));) {

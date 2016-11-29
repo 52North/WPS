@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -220,9 +220,9 @@ public class ScriptFileRepository {
         }
 
         File[] scripts = directory.listFiles(new RFileExtensionFilter());
-        
+
         Arrays.sort(scripts);
-        
+
         LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
         return registerScriptFiles(Arrays.asList(scripts));
     }
@@ -250,8 +250,9 @@ public class ScriptFileRepository {
 
         try (FileInputStream fis = new FileInputStream(file);) {
 
-            if (fileToWknMap.containsKey(file.getAbsoluteFile()))
+            if (fileToWknMap.containsKey(file.getAbsoluteFile())) {
                 LOGGER.debug("File already registered, not doing it again: {}", file);
+            }
             else {
                 LOGGER.info("Registering script file {} from input {}", file, fis);
 

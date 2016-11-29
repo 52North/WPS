@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -71,7 +71,7 @@ public class ScriptFileRepoTest extends AbstractWps4RTest{
     private static String scriptFile = "/uniform.R";
 
     private String expectedWKN;
-    
+
     @Autowired
     private RAnnotationParser annotationParser;
 

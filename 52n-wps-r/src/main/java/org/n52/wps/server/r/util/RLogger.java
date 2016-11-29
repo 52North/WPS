@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -103,15 +103,15 @@ public class RLogger {
         appendPre(evalString);
         evalString.append("\"");
         evalString.append(", ");
-        
+
         evalString.append("\"");
         evalString.append(var);
         evalString.append(" =\", ");
-        
+
         evalString.append("toString(");
         evalString.append(var);
         evalString.append(")");
-        
+
         evalString.append(", \"");
         evalString.append("\\n\")");
         logIt(rCon, evalString);
