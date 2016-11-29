@@ -280,7 +280,7 @@
 				<Format mimetype="text/plain"
 					schema="http://schemas.opengis.net/wcps/1.0/wcpsAll.xsd" />
 			</Parser>
-			
+
 			<Parser name="WKTParser"
 				className="org.n52.wps.io.datahandler.parser.WKTParser"
 				active="true">
@@ -295,17 +295,17 @@
 			</Parser>
 		</ParserList>
 		<GeneratorList>
-			
+
 			<Generator name="WKTGenerator"
 				className="org.n52.wps.io.datahandler.generator.WKTGenerator"
 				active="true">
 				<Format mimetype="application/wkt"/>
 			</Generator>
-		
+
 			<Generator name="JSONGeometryGenerator" className="org.n52.wps.io.datahandler.generator.JSONGeometryGenerator" active="true">
 				<Format mimetype="application/x-jsongeometry" encoding="UTF-8" />
 			</Generator>
-			
+
 			<Generator name="GML3BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
@@ -413,7 +413,7 @@
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
 				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
 				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
-				
+
 				<Format mimetype="application/rData" />
 				<Format mimetype="application/rData+Spatial" />
 				<Format mimetype="application/rData+SpatialPoints" />
@@ -440,7 +440,7 @@
 				<Format mimetype="application/json" />
 				<Format mimetype="text/csv" />
 				<Format mimetype="text/x-markdown" />
-			</Generator>			
+			</Generator>
 			<Generator name="GenericFileDataWithGTGenerator"
 				className="org.n52.wps.io.datahandler.generator.GenericFileDataWithGTGenerator"
 				active="true">
@@ -464,7 +464,7 @@
 				<Format mimetype="application/rData+Spatial" encoding="base64" />
 				<Format mimetype="application/rData+SpatialPoints" encoding="base64" />
 				<Format mimetype="application/rData+SpatialPolygons" encoding="base64" />
-				
+
 				<Format mimetype="application/rData" />
 				<Format mimetype="application/rData+Spatial" />
 				<Format mimetype="application/rData+SpatialPoints" />
@@ -549,8 +549,8 @@
 				<Property name="Geoserver_password" active="true">geoserver</Property>
 				<Property name="Geoserver_host" active="true">localhost</Property>
 				<Property name="Geoserver_port" active="true">8181</Property>
-				<!--Property name="Geoserver_host" active="true">geoprocessing.demo.52north.org</Property> 
-					<Property name="Geoserver_port" active="true">8080</Property> <Property name="Geoserver_password" 
+				<!--Property name="Geoserver_host" active="true">geoprocessing.demo.52north.org</Property>
+					<Property name="Geoserver_port" active="true">8080</Property> <Property name="Geoserver_password"
 					active="true">geWosePrv5er</Property -->
 			</Generator>
 			<Generator name="WFSGenerator"
@@ -869,45 +869,45 @@
 			<Property name="Algorithm" active="true">v.vol.rst</Property>
 			<Property name="Algorithm" active="true">v.voronoi</Property>
 		</Repository>
-		<!-- <Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository" 
+		<!-- <Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository"
 			active="false"> </Repository> -->
-		<!-- <Repository name="OracleBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository" 
-			active="true"> <Property name="GenericAlgorithm" active="true">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property> 
-			<Property name="DeployManager" active="true">org.n52.wps.transactional.deploy.bpel.oracle.OracleBPELManager</Property> 
-			<Property name="WorkspaceLocationRoot"></Property> <Property name="supportedFormat" 
-			active="true">whatever.xsd</Property> <Property name="DeploymentProfileClass" 
-			active="true">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property> 
+		<!-- <Repository name="OracleBPELRepository" className="org.n52.wps.transactional.service.DefaultTransactionalProcessRepository"
+			active="true"> <Property name="GenericAlgorithm" active="true">org.n52.wps.transactional.algorithm.DefaultTransactionalAlgorithm</Property>
+			<Property name="DeployManager" active="true">org.n52.wps.transactional.deploy.bpel.oracle.OracleBPELManager</Property>
+			<Property name="WorkspaceLocationRoot"></Property> <Property name="supportedFormat"
+			active="true">whatever.xsd</Property> <Property name="DeploymentProfileClass"
+			active="true">org.n52.wps.transactional.deploymentprofiles.BPELDeploymentProfile</Property>
 			this should be created <SupportedDeploymentProfiles schema="" repositoyName="OracleBPELRepository"> -->
-		<!-- <Repository name="AGSProcessRepository" className="org.n52.wps.ags.AGSProcessRepository" 
-			active="true"> <Property name="IP" active="true">**</Property> <Property 
-			name="DOMAIN" active="true">**</Property> <Property name="USER" active="true">**</Property> 
-			<Property name="PASS" active="true">**</Property> <Property name="DCOM_NATIVE" 
-			active="true">FALSE</Property> <Property name="WORKSPACEBASE" active="true">**</Property> 
-			<Property name="ARCOBJECTSJAR" active="true">**</Property> <Property name="DESCRIBE_PROCESS_DIR" 
+		<!-- <Repository name="AGSProcessRepository" className="org.n52.wps.ags.AGSProcessRepository"
+			active="true"> <Property name="IP" active="true">**</Property> <Property
+			name="DOMAIN" active="true">**</Property> <Property name="USER" active="true">**</Property>
+			<Property name="PASS" active="true">**</Property> <Property name="DCOM_NATIVE"
+			active="true">FALSE</Property> <Property name="WORKSPACEBASE" active="true">**</Property>
+			<Property name="ARCOBJECTSJAR" active="true">**</Property> <Property name="DESCRIBE_PROCESS_DIR"
 			active="true">D:\development\xmlDescriptions</Property> </Repository> -->
-		<!-- <Repository name="ArcToolboxProcessRepository" className="org.n52.wps.ags.ArcToolboxProcessRepository" 
-			active="true"> <Property name="PROCESS_INVENTORY_DIR" active="true">D:\development\arctoolboxProcesses</Property> 
-			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property> 
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property> 
-			<Property name="CONTAINER_URN" active="true">urn:n52:esri:arctoolbox:10.0</Property> 
+		<!-- <Repository name="ArcToolboxProcessRepository" className="org.n52.wps.ags.ArcToolboxProcessRepository"
+			active="true"> <Property name="PROCESS_INVENTORY_DIR" active="true">D:\development\arctoolboxProcesses</Property>
+			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property>
+			<Property name="CONTAINER_URN" active="true">urn:n52:esri:arctoolbox:10.0</Property>
 			</Repository> -->
-		<!-- <Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository" 
-			active="true"> <Property name="IP" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property> 
-			<Property name="DOMAIN" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property> 
-			<Property name="USER" active="true">soknos-wps</Property> <Property name="PASS" 
-			active="true">soknos-52N</Property> <Property name="WORKSPACEBASE" active="true">C:\wpsworkspace</Property> 
-			<Property name="ARCOBJECTSJAR" active="true">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property> 
-			<Property name="DESCRIBE_PROCESS_DIR" active="true">C:\wps\xmlDescriptions</Property> 
+		<!-- <Repository name="AGSRepository" className="org.n52.wps.ags.AGSProcessRepository"
+			active="true"> <Property name="IP" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
+			<Property name="DOMAIN" active="true">vsoknos.geoinformatik.geo.uni-muenster.de</Property>
+			<Property name="USER" active="true">soknos-wps</Property> <Property name="PASS"
+			active="true">soknos-52N</Property> <Property name="WORKSPACEBASE" active="true">C:\wpsworkspace</Property>
+			<Property name="ARCOBJECTSJAR" active="true">C:\Programme\ArcGIS\java\lib\arcobjects.jar</Property>
+			<Property name="DESCRIBE_PROCESS_DIR" active="true">C:\wps\xmlDescriptions</Property>
 			</Repository> -->
-		<!-- <Repository name="PythonProcessRepository" className="org.n52.wps.python.PythonProcessRepository" 
-			active="true"> <Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\pythonProcesses</Property> 
-			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.5</Property> 
-			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.6</Property> 
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property> 
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3</Property> 
-			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property> 
-			<Property name="BACKEND_URN" active="true">urn:n52:gdal:1.8.0</Property> 
-			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property> 
+		<!-- <Repository name="PythonProcessRepository" className="org.n52.wps.python.PythonProcessRepository"
+			active="true"> <Property name="PROCESS_INVENTORY_DIR" active="false">D:\development\pythonProcesses</Property>
+			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.5</Property>
+			<Property name="CONTAINER_URN" active="true">urn:n52:python:2.6</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3.1</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:9.3</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:esri:arcgis:10.0</Property>
+			<Property name="BACKEND_URN" active="true">urn:n52:gdal:1.8.0</Property>
+			<Property name="WORKSPACEBASE" active="true">D:\development\wsBase</Property>
 			</Repository> -->
 		<Repository name="SextanteRepository"
 			className="org.n52.wps.server.sextante.SextanteProcessRepository"
@@ -1140,22 +1140,22 @@
 		<Repository name="ServiceLoaderAlgorithmRepository"
 			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
 		</Repository>
-		<!-- 
+		<!--
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
 			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
 			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
 			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
 		</Repository>
 		 -->
-		
+
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
-	
+
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
-             the response document will be replaced with the server URL used in the HTTP request. --> 
+             the response document will be replaced with the server URL used in the HTTP request. -->
         <Property name="responseURLFilterEnabled" active="true">false</Property>
 		<Database>
 			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
@@ -1168,29 +1168,29 @@
 			<!-- save complex values gzipped -->
 			<Property name="complex.gzip" active="true">true</Property>
 		</Database>
-        
-        <!-- 
-            POSTGRES Connector 
+
+        <!--
+            POSTGRES Connector
             ==================
-            
-            Ensure that the postgres driver is available to the server during 
+
+            Ensure that the postgres driver is available to the server during
             launch. The server will fail to start if Postgres is active but the
-            driver is missing. However, if the driver exists and the database 
+            driver is missing. However, if the driver exists and the database
             cannot be connected to (unavailable, username/pass issue, etc), the
             framework will fail-over to the Flatfile Database
 
             jndiName or username/password: If jndiName exists, username
             and password are not used.
-             
+
             saveResultsToDb: Setting to false will save results output to file
-            and put the URI link to the file in the database. Setting to true 
-            stores the actual result output in the database (You probably don't 
+            and put the URI link to the file in the database. Setting to true
+            stores the actual result output in the database (You probably don't
             want this if you have large results).
-            
+
             JNDI Configuration:
             <Database>
                 <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
-                <Property active="true" name="jndiName">jndiname</Property> 
+                <Property active="true" name="jndiName">jndiname</Property>
                 <Property active="true" name="saveResultsToDb">false</Property>
                 <Property name="wipe.enabled" active="true">true</Property>
                 <Property name="wipe.period" active="true">PT1H</Property>
@@ -1199,7 +1199,7 @@
 
             Direct connection configuration:
             <Database>
-                Alternative connection method    
+                Alternative connection method
                 <Property active="true" name="databaseName">postgres</Property>
                 <Property active="true" name="databasePath">//localhost:5432</Property>
                 <Property active="true" name="username">username</Property>

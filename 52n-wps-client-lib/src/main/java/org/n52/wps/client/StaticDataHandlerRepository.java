@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,16 +45,16 @@ public class StaticDataHandlerRepository {
 
     private static GeneratorFactory genFactory;
     private static ParserFactory parserFactory;
-    
+
     public static GeneratorFactory getGeneratorFactory() {
         if(genFactory == null) {
             Map<String, ConfigurationModule> generators = WPSConfig.getInstance().getActiveRegisteredGeneratorModules();
             GeneratorFactory.initialize(generators);
-            genFactory = GeneratorFactory.getInstance();            
+            genFactory = GeneratorFactory.getInstance();
         }
         return genFactory;
     }
-    
+
     public static ParserFactory getParserFactory() {
         if(parserFactory == null) {
             Map<String, ConfigurationModule> parsers = WPSConfig.getInstance().getActiveRegisteredParserModules();

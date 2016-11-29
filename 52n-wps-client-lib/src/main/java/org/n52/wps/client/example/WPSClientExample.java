@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -191,9 +191,9 @@ public class WPSClientExample {
     }
 
     public static void main(String[] args) {
-        
+
         //TODO find way to initialize parsers/generators
-        
+
         WPSClientExample client = new WPSClientExample();
         client.testExecute();
     }

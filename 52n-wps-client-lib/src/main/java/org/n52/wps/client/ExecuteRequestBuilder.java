@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -67,9 +67,9 @@ public class ExecuteRequestBuilder {
     ProcessDescriptionType processDesc;
     ExecuteDocument execute;
     String SUPPORTED_VERSION = "1.0.0";
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(ExecuteRequestBuilder.class);
-    
+
 
     public ExecuteRequestBuilder(ProcessDescriptionType processDesc) {
         this.processDesc = processDesc;
@@ -80,21 +80,21 @@ public class ExecuteRequestBuilder {
         ex.addNewIdentifier().setStringValue(processDesc.getIdentifier().getStringValue());
         ex.addNewDataInputs();
     }
-    
+
     public ExecuteRequestBuilder(ProcessDescriptionType processDesc, ExecuteDocument execute) {
         this.processDesc = processDesc;
         this.execute = execute;
     }
-    
+
     /**
      * add an input element. sets the data in the xml request
-     * 
+     *
      * @param parameterID the ID of the input (see process description)
      * @param value the actual value (for xml data xml for binary data is should be base64 encoded data)
      * @param schema schema if applicable otherwise null
      * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
      * @param mimeType mimetype of the data, has to be set
-     * @throws WPSClientException
+     * @throws WPSClientException if an exception occurred while adding the ComplexData
      */
     public void addComplexData(String parameterID, IData value, String schema, String encoding, String mimeType) throws WPSClientException {
         GeneratorFactory fac = StaticDataHandlerRepository.getGeneratorFactory();
@@ -103,23 +103,23 @@ public class ExecuteRequestBuilder {
             throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
         }
         if (inputDesc.getComplexData() == null) {
-            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);            
+            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);
         }
-        
-            
-        LOGGER.debug("Looking for matching Generator ..." + 
+
+
+        LOGGER.debug("Looking for matching Generator ..." +
                 " schema: " + schema +
                 " mimeType: " + mimeType +
                 " encoding: " + encoding);
-        
+
         IGenerator generator = fac.getGenerator(schema, mimeType, encoding, value.getClass());
-        
+
         if (generator == null) {
             // generator is still null
             throw new IllegalArgumentException("Could not find an appropriate generator for parameter: " + parameterID);
         }
-        
-        
+
+
         InputStream stream = null;
 
         InputType input = execute.getExecute().getDataInputs().addNewInput();
@@ -147,18 +147,18 @@ public class ExecuteRequestBuilder {
             throw new IllegalArgumentException(
                     "error reading generator output", e);
         }
-            
+
     }
 
     /**
      * add an input element. sets the data in the xml request
-     * 
+     *
      * @param parameterID the ID of the input (see process description)
      * @param value the actual value as String (for xml data xml for binary data is should be base64 encoded data)
      * @param schema schema if applicable otherwise null
      * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
      * @param mimeType mimetype of the data, has to be set
-     * @throws WPSClientException
+     * @throws WPSClientException if an exception occurred while adding the ComplexData
      */
     public void addComplexData(String parameterID, String value, String schema, String encoding, String mimeType) throws WPSClientException {
         InputDescriptionType inputDesc = getParameterDescription(parameterID);
@@ -166,30 +166,31 @@ public class ExecuteRequestBuilder {
             throw new IllegalArgumentException("inputDesription is null for: " + parameterID);
         }
         if (inputDesc.getComplexData() == null) {
-            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);            
-        }    
-                        
+            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);
+        }
+
         InputType input = execute.getExecute().getDataInputs().addNewInput();
         input.addNewIdentifier().setStringValue(inputDesc.getIdentifier().getStringValue());
-        
+
         ComplexDataType data = input.addNewData().addNewComplexData();
-        
+
         setComplexData(data, value, schema, mimeType, encoding);
-            
+
     }
-    
+
     /**
      * add an input element. sets the data in the xml request
-     * 
+     *
      * @param parameterID the ID of the input (see process description)
      * @param value the actual value as String (for xml data xml for binary data is should be base64 encoded data)
      * @param schema schema if applicable otherwise null
      * @param encoding encoding if not the default encoding (for default encoding set it to null) (i.e. binary data, use base64)
      * @param mimeType mimetype of the data, has to be set
-     * @throws WPSClientException
+     * @param asReference true if the data comes from an external source
+     * @throws WPSClientException if an exception occurred while adding the ComplexData
      */
     public void addComplexData(String parameterID, String value, String schema, String encoding, String mimeType, boolean asReference) throws WPSClientException {
-        
+
         if(asReference){
             addComplexDataReference(parameterID, value, schema, encoding, mimeType);
         } else {
@@ -214,43 +215,42 @@ public class ExecuteRequestBuilder {
 
             setComplexData(data, value, schema, mimeType, encoding);
         }
-            
+
     }
-    
+
     /**
      * add an input element. sets the data in the xml request
-     * 
-     * @param inputType
-     * @throws WPSClientException
+     *
+     * @param inputType an WPS <code>InputType</code>
      */
     public void addComplexData(InputType inputType) {
-        
+
         String parameterID = inputType.getIdentifier().getStringValue();
-        
+
         InputDescriptionType inputDesc = getParameterDescription(parameterID);
         if (inputDesc == null) {
             throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
         }
         if (inputDesc.getComplexData() == null) {
-            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);            
-        }    
-        
+            throw new IllegalArgumentException("inputDescription is not of type ComplexData: " + parameterID);
+        }
+
         InputType[] newInputTypeArray;
-        
+
         InputType[] currentInputTypeArray = execute.getExecute().getDataInputs().getInputArray();
-        
+
         if(currentInputTypeArray != null){
             newInputTypeArray = Arrays.copyOf(currentInputTypeArray, currentInputTypeArray.length + 1);
         }else{
             newInputTypeArray = new InputType[1];
         }
-        
+
         newInputTypeArray[newInputTypeArray.length - 1] = inputType;
-        
+
         execute.getExecute().getDataInputs().setInputArray(newInputTypeArray);
-            
+
     }
-    
+
     /**
      * Add literal data to the request
      * @param parameterID the ID of the input paramter according to the describe process
@@ -262,7 +262,7 @@ public class ExecuteRequestBuilder {
             throw new IllegalArgumentException("inputDescription is null for: " + parameterID);
         }
         if (inputDesc.getLiteralData() == null) {
-            throw new IllegalArgumentException("inputDescription is not of type literalData: " + parameterID);            
+            throw new IllegalArgumentException("inputDescription is not of type literalData: " + parameterID);
         }
         InputType input = execute.getExecute().getDataInputs().addNewInput();
         input.addNewIdentifier().setStringValue(parameterID);
@@ -273,15 +273,21 @@ public class ExecuteRequestBuilder {
         }
     }
 
-/**
- * Sets a reference to input data
- * 
- * @param parameterID ID of the input element
- * @param value reference URL
- * @param schema schema if applicable otherwise null
- * @param encoding encoding if applicable (typically not), otherwise null
- * @param mimetype mimetype of the input according to the process description. has to be set
- */
+    /**
+     * Sets a reference to input data
+     *
+     * @param parameterID
+     *            ID of the input element
+     * @param value
+     *            reference URL
+     * @param schema
+     *            schema if applicable otherwise null
+     * @param encoding
+     *            encoding if applicable (typically not), otherwise null
+     * @param mimetype
+     *            mimetype of the input according to the process description.
+     *            has to be set
+     */
     public void addComplexDataReference(String parameterID, String value, String schema, String encoding, String mimetype) {
         InputDescriptionType inputDesc = getParameterDescription(parameterID);
         if (inputDesc == null) {
@@ -290,7 +296,7 @@ public class ExecuteRequestBuilder {
         if (inputDesc.getComplexData() == null) {
             throw new IllegalArgumentException("inputDescription is not of type complexData: " + parameterID);
         }
-            
+
         InputType input = execute.getExecute().getDataInputs().addNewInput();
         input.addNewIdentifier().setStringValue(parameterID);
         input.addNewReference().setHref(value);
@@ -308,34 +314,37 @@ public class ExecuteRequestBuilder {
 
     /**
      * checks, if the execute, which has been build is valid according to the process description.
-     * @return
+     * @return always true
      */
     public boolean isExecuteValid() {
         return true;
     }
 
+
     /**
-     * this sets store for the specific output.
-     * @param parentInput
-     * @return
+     * this sets the storeExecuteResponse attribute for the specific output.
+     * TODO false name of method, should be setStoreExecuteResponse
+     * @param outputName the name of the output
+     * @param storeSupport the storeSupported attribute will be set to this boolean value
+     * @return always true
      */
     public boolean setStoreSupport(String outputName, boolean storeSupport) {
-//        DocumentOutputDefinitionType outputDef = null;        
-        
+//        DocumentOutputDefinitionType outputDef = null;
+
         if (!execute.getExecute().isSetResponseForm()) {
             execute.getExecute().addNewResponseForm();
         }
-        
+
         ResponseFormType responseForm = execute.getExecute().getResponseForm();
-        
+
         if (!responseForm.isSetResponseDocument()) {
             responseForm.addNewResponseDocument();
         }
-        
+
         ResponseDocumentType responseDocument = responseForm.getResponseDocument();
-        
+
         responseDocument.setStoreExecuteResponse(storeSupport);
-        
+
 //        for(DocumentOutputDefinitionType outputDefTemp: responseDocument.getOutputArray()) {
 //            if(outputDefTemp.getIdentifier().getStringValue().equals(outputName)) {
 //                outputDef = outputDefTemp;
@@ -345,14 +354,15 @@ public class ExecuteRequestBuilder {
 //        if (outputDef == null) {
 //            outputDef = responseDocument.addNewOutput();
 //        }
-        
+
         return true;
     }
-    
+
     /**
-     * this sets store for the specific output.
-     * @param parentInput
-     * @return
+     * this sets the asReference attribute for the specific output.
+     * @param outputName the name of the output
+     * @param asReference the asReference attribute will be set to this boolean value
+     * @return always true
      */
     public boolean setAsReference(String outputName, boolean asReference) {
         DocumentOutputDefinitionType outputDef = null;
@@ -381,33 +391,34 @@ public class ExecuteRequestBuilder {
     }
 
     /**
-     * this sets store for the specific output.
-     * @param parentInput
-     * @return
+     * this sets the status attribute for the specific output.
+     * @param outputName the name of the output
+     * @param status the asReference attribute will be set to this boolean value
+     * @return always true
      */
     public boolean setStatus(String outputName, boolean status) {
         if (!execute.getExecute().isSetResponseForm()) {
             execute.getExecute().addNewResponseForm();
         }
-        
+
         ResponseFormType responseForm = execute.getExecute().getResponseForm();
-        
+
         if (!responseForm.isSetResponseDocument()) {
             responseForm.addNewResponseDocument();
         }
-        
+
         ResponseDocumentType responseDocument = responseForm.getResponseDocument();
-        
+
         responseDocument.setStatus(status);
-        
+
         return true;
     }
-    
+
     /**
      * Set this if you want the data to a schema offered in the process description
-     * @param schema
-     * @param outputName
-     * @return
+     * @param schema the desired schema
+     * @param outputName the name of the output
+     * @return true if the schema is supported by the output, otherwise false
      */
     public boolean setSchemaForOutput(String schema, String outputName) {
         if (!execute.getExecute().isSetResponseForm()) {
@@ -448,7 +459,7 @@ public class ExecuteRequestBuilder {
      * sets the desired mimetype of the output. if not set, the default mimetype will be used as stated in the process description
      * @param mimeType the name of the mimetype as announced in the processdescription
      * @param outputName the Identifier of the output element
-     * @return success
+     * @return true if the mimetype is supported by the output, otherwise false
      */
     public boolean setMimeTypeForOutput(String mimeType, String outputName) {
         if (!execute.getExecute().isSetResponseForm()) {
@@ -491,7 +502,7 @@ public class ExecuteRequestBuilder {
      * sets the encoding. necessary if data should not be retrieved in the default encoding (i.e. binary data in XML responses not raw data responses)
      * @param encoding use base64
      * @param outputName ID of the output
-     * @return
+     * @return true if the encoding is supported by the output, otherwise false
      */
     public boolean setEncodingForOutput(String encoding, String outputName) {
         if (!execute.getExecute().isSetResponseForm()) {
@@ -554,7 +565,7 @@ public class ExecuteRequestBuilder {
     }
 
     public boolean setResponseDocument(String outputIdentifier, String schema, String encoding, String mimeType){
-        
+
         if (!execute.getExecute().isSetResponseForm()) {
             execute.getExecute().addNewResponseForm();
         }
@@ -567,7 +578,7 @@ public class ExecuteRequestBuilder {
             outputDef = execute.getExecute().getResponseForm()
                     .getResponseDocument().addNewOutput();
             outputDef.setIdentifier(outputDesc.getIdentifier());
-            
+
             if(schema != null){
                 outputDef.setSchema(schema);
             }
@@ -578,22 +589,23 @@ public class ExecuteRequestBuilder {
                 outputDef.setMimeType(mimeType);
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Asks for data as raw data, i.e. without WPS XML wrapping
+     * @param outputIdentifier the id of the output
      * @param schema if applicable otherwise null
      * @param encoding if default encoding = null, otherwise base64
      * @param mimeType requested mimetype of the output according to the process description. if not set, default mime type is used.
-     * @return
+     * @return always true
      */
     public boolean setRawData(String outputIdentifier, String schema, String encoding, String mimeType) {
-        
+
         OutputDefinitionType output = execute.getExecute().addNewResponseForm().addNewRawDataOutput();
         output.addNewIdentifier().setStringValue(outputIdentifier);
-        
+
         if (schema != null) {
             output.setSchema(schema);
         }
@@ -608,7 +620,7 @@ public class ExecuteRequestBuilder {
 
     /**
      * XML representation of the created request.
-     * @return
+     * @return the execute document created by this request builder
      */
     public ExecuteDocument getExecute() {
         return execute;
@@ -626,9 +638,9 @@ public class ExecuteRequestBuilder {
         InputType[] inputs = execute.getExecute().getDataInputs().getInputArray();
         int inputCounter = 0;
         for(InputType input : inputs){
-            
+
             request = request + input.getIdentifier().getStringValue();
-            
+
             if(input.isSetReference()){
                 //reference
                 InputReferenceType reference = input.getReference();
@@ -675,7 +687,7 @@ public class ExecuteRequestBuilder {
             if(inputCounter<inputs.length){
                 request = request + ";";
             }
-            
+
         }
         if(execute.getExecute().getResponseForm().getResponseDocument()==null){
             throw new RuntimeException("ResponseDocument missing");
@@ -707,7 +719,7 @@ public class ExecuteRequestBuilder {
                 request = request + ";";
             }
         }
-        
+
         if( execute.getExecute().getResponseForm().getResponseDocument().isSetStoreExecuteResponse()){
             request = request + "&storeExecuteResponse=true";
         }
@@ -717,14 +729,14 @@ public class ExecuteRequestBuilder {
         if( execute.getExecute().getResponseForm().getResponseDocument().isSetLineage()){
             request = request + "&lineage=true";
         }
-        
+
         return request;
     }
 
-    
+
     /**
-     * 
-     * @param id
+     *
+     * @param id the id of the input
      * @return the specified parameterdescription. if not available it returns null.
      */
     private InputDescriptionType getParameterDescription(String id) {
@@ -737,7 +749,7 @@ public class ExecuteRequestBuilder {
         }
         return null;
     }
-    
+
     private void setComplexData(ComplexDataType data, Object value,
             String schema, String mimeType, String encoding) {
 
