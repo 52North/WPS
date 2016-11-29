@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,29 +42,29 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
 
     @Test
     public void testParseGenerateXML(){
-        
+
         String mimeType = "text/xml";
-        
+
         String inputXMLString = "<testElement>testStringValue</testElement>";
-                    
+
         GenericXMLDataBinding xmlDataBinding = dataHandler.parse(new ByteArrayInputStream(inputXMLString.getBytes()), mimeType, "");
-            
+
         Assert.assertTrue(xmlDataBinding.getPayload() != null);
-        
+
         InputStream generatedStream = null;
-        
+
         try {
             generatedStream = new GenericXMLDataGenerator().generateStream(xmlDataBinding, mimeType, "");
-            
+
         } catch (IOException e) {
             System.err.println("Failed to generate result inputstream.");
             Assert.fail();
         }
-        
+
         String outputXMLString = "";
-        
+
         int bite = -1;
-        
+
         try {
             while ((bite = generatedStream.read()) != -1) {
                 outputXMLString = outputXMLString.concat(String.valueOf((char)bite));
@@ -73,23 +73,23 @@ public class GenericXMLParserGeneratorTest extends AbstractTestCase<GenericXMLDa
             System.err.println("Failed to read result inputstream.");
             Assert.fail();
         }
-        
+
         try {
             generatedStream.close();
         } catch (IOException e) {
             System.out.println("Failed to close generated stream containing result XML.");
         }
-        
+
         Assert.assertTrue(inputXMLString.equals(outputXMLString));
-        
+
         System.out.println("Generated XML      : " + outputXMLString);
-        
+
     }
-    
+
     @Override
     protected void initializeDataHandler() {
         dataHandler = new GenericXMLDataParser();
-        
+
     }
 
 }

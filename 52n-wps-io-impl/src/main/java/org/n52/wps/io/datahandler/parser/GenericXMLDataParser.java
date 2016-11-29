@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,35 +38,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GenericXMLDataParser extends AbstractParser {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GenericXMLDataParser.class);
 
     public GenericXMLDataParser(){
         super();
         supportedIDataTypes.add(GenericXMLDataBinding.class);
     }
-    
+
     @Override
     public boolean isSupportedSchema(String schema) {
         //no schema checks
         return true;
     }
-    
+
     @Override
-    public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {    
-        
+    public GenericXMLDataBinding parse(InputStream input, String mimeType, String schema) {
+
         XmlObject xmlData = XmlObject.Factory.newInstance();
-        
+
         try {
             xmlData = XmlObject.Factory.parse(input);
         } catch (XmlException e) {
             LOGGER.error("Could not parse inputstream as XMLObject.", e);
         } catch (IOException e) {
             LOGGER.error("Could not parse inputstream as XMLObject.", e);
-        }    
-        
+        }
+
         GenericXMLDataBinding xmlDataBinding = new GenericXMLDataBinding(xmlData);
-        
+
         return xmlDataBinding;
     }
 

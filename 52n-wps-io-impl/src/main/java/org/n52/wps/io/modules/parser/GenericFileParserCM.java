@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,16 +42,16 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 public class GenericFileParserCM extends ClassKnowingModule{
 
     private boolean isActive = true;
-    
+
     private List<? extends ConfigurationEntry<?>> configurationEntries;
-    
+
     private List<FormatEntry> formatEntries;
-    
+
     public GenericFileParserCM(){
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "GenericFileParser";
@@ -64,7 +64,7 @@ public class GenericFileParserCM extends ClassKnowingModule{
 
     @Override
     public void setActive(boolean active) {
-        this.isActive = active;        
+        this.isActive = active;
     }
 
     @Override

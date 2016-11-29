@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,7 +43,7 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
  *
  */
 public class WCPSQueryParser extends AbstractParser{
-    
+
     public WCPSQueryParser(){
         super();
         supportedIDataTypes.add(PlainStringBinding.class);
@@ -55,7 +55,7 @@ public class WCPSQueryParser extends AbstractParser{
         StringWriter sw;
         try {
             br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
-        
+
             sw=new StringWriter();
             int k;
             while((k=br.read())!=-1){

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,12 +38,12 @@ public class GeotiffBinding implements IComplexData{
     private static final long serialVersionUID = 1L;
     protected File geotiff;
     protected String mimeType;
-    
+
     public GeotiffBinding(File geotiff){
         this.geotiff = geotiff;
         mimeType = "image/tiff";
     }
-    
+
     @Override
     public File getPayload() {
         return geotiff;
@@ -57,7 +57,7 @@ public class GeotiffBinding implements IComplexData{
     public String getMimeType() {
         return mimeType;
     }
-    
+
     @Override
     public void dispose(){
         FileUtils.deleteQuietly(geotiff);

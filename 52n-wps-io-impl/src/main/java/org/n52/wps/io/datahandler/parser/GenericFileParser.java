@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,20 +41,20 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GenericFileParser extends AbstractParser{
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
-    
+
     public GenericFileParser() {
         super();
         supportedIDataTypes.add(GenericFileDataBinding.class);
     }
-    
+
     @Override
     public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
-        
+
         GenericFileData theData = new GenericFileData(input, mimeType);
         LOGGER.info("Found File Input " + mimeType);
-        
+
         return new GenericFileDataBinding(theData);
     }
 

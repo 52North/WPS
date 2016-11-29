@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,9 +32,9 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.io.data.IComplexData;
 
 /**
- * 
+ *
  * This class holds an XMLObject as payload. It is used by the GenericXMLDataParser and - Generator.
- * 
+ *
  * @author bpross-52n
  *
  */
@@ -43,11 +43,11 @@ public class GenericXMLDataBinding implements IComplexData {
     private static final long serialVersionUID = -6875103125533078664L;
 
     private XmlObject payload;
-    
+
     public GenericXMLDataBinding(XmlObject payload){
         this.payload = payload;
     }
-    
+
     @Override
     public XmlObject getPayload() {
         return payload;

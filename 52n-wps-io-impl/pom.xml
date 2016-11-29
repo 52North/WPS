@@ -11,21 +11,21 @@
 	<packaging>jar</packaging>
 	<name>52North WPS Input/Ouput Implementation</name>
 	<description>Implementation of the input/output API for WPS service</description>
-	<repositories>
-		<repository>
-			<id>osgeo</id>
-			<name>Open Source Geospatial Foundation Repository</name>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
-		</repository>
-		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>opengeo</id>
-			<name>OpenGeo Maven Repository</name>
-			<url>http://repo.opengeo.org</url>
-		</repository>
-	</repositories>
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<id>osgeo</id> -->
+<!-- 			<name>Open Source Geospatial Foundation Repository</name> -->
+<!-- 			<url>http://download.osgeo.org/webdav/geotools/</url> -->
+<!-- 		</repository> -->
+<!-- 		<repository> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 			<id>opengeo</id> -->
+<!-- 			<name>OpenGeo Maven Repository</name> -->
+<!-- 			<url>http://repo.opengeo.org</url> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
 	<build>
 		<plugins>
 			<plugin>
@@ -62,11 +62,6 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.n52.wps</groupId>
-			<artifactId>gmlpacket-2.0</artifactId>
-			<version>0.4</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
@@ -76,31 +71,19 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-commons</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ogckml2.2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>edu.umn.gis</groupId>
-			<artifactId>mapscript</artifactId>
+			<artifactId>52n-wps-configuration-api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
