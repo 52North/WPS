@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -16,7 +16,6 @@
  */
 package org.n52.wps.io;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +27,7 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 /**
  * Extending subclasses of AbstractGenerator shall provide functionality to
  * generate serviceable output data for the processes offered by the 52N WPS framework.
- * 
+ *
  * @author Matthias Mueller
  *
  */
@@ -40,17 +39,17 @@ public abstract class AbstractIOHandler implements IOHandler {
     protected Set<Class<?>> supportedIDataTypes;
     protected List<? extends ConfigurationEntry<?>> properties;
     protected List<FormatEntry> formats;
-    
+
     public AbstractIOHandler(){
         this.supportedFormats = new HashSet<String>();
         this.supportedSchemas = new HashSet<String>();
         this.supportedEncodings = new HashSet<String>();
         this.supportedIDataTypes = new HashSet<Class<?>>();
     }
-    
+
     /**
      * Returns true if the given format is supported, else false.
-     */ 
+     */
     public boolean isSupportedFormat(String format) {
         String[] sf = getSupportedFormats();
         for(String f : sf) {
@@ -60,15 +59,15 @@ public abstract class AbstractIOHandler implements IOHandler {
         }
         return false;
     }
-    
+
     /**
      * Returns an array having the supported formats (mimeTypes).
      */
     public String[] getSupportedFormats() {
         return supportedFormats.toArray(new String[supportedFormats.size()]);
     }
-    
-    
+
+
     /**
      * Returns an array having the supported schemas.
      */
@@ -90,12 +89,13 @@ public abstract class AbstractIOHandler implements IOHandler {
             return true;
         }
         for(String supportedSchema : supportedSchemas) {
-            if(supportedSchema.equalsIgnoreCase(schema))
+            if(supportedSchema.equalsIgnoreCase(schema)){
                 return true;
+            }
         }
         return false;
     }
-    
+
     public Class<?>[] getSupportedDataBindings() {
         return supportedIDataTypes.toArray(new Class<?>[supportedIDataTypes.size()]);
     }
@@ -109,17 +109,17 @@ public abstract class AbstractIOHandler implements IOHandler {
         }
         return false;
     }
-    
+
     public String[] getSupportedEncodings(){
         String[] resultArray = supportedEncodings.toArray(new String[supportedEncodings.size()]);
         return resultArray;
         //return IOHandler.SUPPORTED_ENCODINGS;
     }
-    
+
     public List<FormatEntry> getSupportedFullFormats(){
         return formats;
     }
-    
+
     public boolean isSupportedEncoding(String encoding){
         for (String currentEncoding : this.getSupportedEncodings()){
             if (currentEncoding.equalsIgnoreCase(encoding)){
@@ -128,23 +128,23 @@ public abstract class AbstractIOHandler implements IOHandler {
         }
         return false;
     }
-    
+
     protected boolean isSupportedGenerate (Class<?> binding, String mimeType, String schema){
-        
+
         if (!(this.isSupportedFormat(mimeType))){
             return false;
         }
-        
+
         if (!(this.isSupportedSchema(schema))){
             return false;
         }
-        
+
         if(!(this.isSupportedDataBinding(binding))){
             return false;
         }
-        
+
         return true;
     }
-    
+
 }
 

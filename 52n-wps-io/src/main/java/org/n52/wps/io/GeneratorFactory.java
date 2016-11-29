@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,16 +30,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GeneratorFactory {
-    
+
     public static String PROPERTY_NAME_REGISTERED_GENERATORS = "registeredGenerators";
     private static GeneratorFactory factory;
     private static Logger LOGGER = LoggerFactory.getLogger(GeneratorFactory.class);
-    
+
     private List<IGenerator> registeredGenerators;
-    
+
     /**
-     * This factory provides all available {@link Generators} to WPS.
-     * @param generators
+     * This factory provides all available Generator {@link ConfigurationModule}s to WPS.
+     * @param generatorMap a map of class names and generator configuration modules
      */
     public static void initialize(Map<String, ConfigurationModule> generatorMap) {
         if (factory == null) {
@@ -49,10 +49,10 @@ public class GeneratorFactory {
             LOGGER.warn("Factory already initialized");
         }
     }
-    
+
     private GeneratorFactory(Map<String, ConfigurationModule> generatorMap) {
         loadAllGenerators(generatorMap);
-        
+
         // FvK: added Property Change Listener support
         // creates listener and register it to the wpsConfig instance.
         org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
@@ -75,17 +75,17 @@ public class GeneratorFactory {
 //                if(currentGenerator.getPropertyArray()[i].getActive()){
 //                    activeProps.add(currentGenerator.getPropertyArray()[i]);
 //                }
-//            }            
+//            }
 //            currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
-                        
+
             ConfigurationModule currentGenerator = generatorMap.get(currentGeneratorName);
-            
+
             String generatorClass = "";
-            
+
             if(currentGenerator instanceof ClassKnowingModule){
                 generatorClass = ((ClassKnowingModule)currentGenerator).getClassName();
-            }            
-            
+            }
+
             IGenerator generator = null;
             try {
                  generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
@@ -113,14 +113,14 @@ public class GeneratorFactory {
         }
         return factory;
     }
-    
+
     public IGenerator getGenerator(String schema, String format, String encoding, Class<?> outputInternalClass) {
-        
+
         // dealing with NULL encoding
         if (encoding == null){
             encoding = IOHandler.DEFAULT_ENCODING;
         }
-        
+
         for(IGenerator generator : registeredGenerators) {
             Class<?>[] supportedBindings = generator.getSupportedDataBindings();
             for(Class<?> clazz : supportedBindings){
@@ -139,6 +139,6 @@ public class GeneratorFactory {
         return registeredGenerators;
     }
 
-    
-    
+
+
 }

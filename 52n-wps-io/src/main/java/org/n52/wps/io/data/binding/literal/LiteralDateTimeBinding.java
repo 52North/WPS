@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -23,7 +23,7 @@ import java.util.Date;
 
 public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4336688658437832346L;
     private transient Date date;
@@ -53,12 +53,12 @@ public class LiteralDateTimeBinding extends AbstractLiteralDataBinding {
     public Class<Date> getSupportedClass() {
         return Date.class;
     }
-    
+
     private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
     {
         oos.writeObject(new Long(date.getTime()).toString());
     }
-    
+
     private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
     {
         date = new Date( ((Long) oos.readObject()).longValue() );

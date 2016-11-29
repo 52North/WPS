@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class LiteralShortBinding extends AbstractLiteralDataBinding {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2767793107821138509L;
     private transient Short payload;
@@ -36,12 +36,12 @@ public class LiteralShortBinding extends AbstractLiteralDataBinding {
     public Class<Short> getSupportedClass() {
         return Short.class;
     }
-    
+
     private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
     {
         oos.writeObject(payload.toString());
     }
-    
+
     private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
     {
         payload = new Short((String) oos.readObject());

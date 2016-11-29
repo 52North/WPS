@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 
 public class LiteralAnyURIBinding extends AbstractLiteralDataBinding {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1148340565647119514L;
     private transient URI uri;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -21,40 +21,41 @@ import java.io.InputStream;
 
 import org.n52.wps.io.data.IData;
 
-/** 
+/**
  * Basic interface for all Generators.
- * 
+ *
  * @author Matthias Mueller, TU Dresden
- * 
+ *
  */
 public interface IGenerator extends IOHandler {
-    
+
     /**
-     * 
-     * @param data
-     * @param mimeType
-     * @param schema
-     * @return
-     * 
+     *
+     * @param data the data
+     * @param mimeType the mime type of the data
+     * @param schema the schema of the data
+     * @return an <code>InputStream</code> containing the data
+     * @throws IOException if the <code>InputStream</code> cannot be created
+     *
      * generates final output data produced by an IAlgorithm
      * and returns an InputStream for subsequent access.
-     * 
+     *
      */
-    
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException;
-    
-    
+
+
     /**
-     * 
-     * @param data
-     * @param mimeType
-     * @param schema
-     * @return
-     * 
+     *
+     * @param data the data
+     * @param mimeType the mime type of the data
+     * @param schema the schema of the data
+     * @return an <code>InputStream</code> containing the data encoded in base64
+     * @throws IOException if the <code>InputStream</code> cannot be created
+     *
      * generates final output data produced by an IAlgorithm, encodes it in Base64
      * and returns an InputStream for subsequent access.
-     * 
+     *
      */
     public InputStream generateBase64Stream(IData data, String mimeType, String schema) throws IOException;
-    
+
 }

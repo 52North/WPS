@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,22 +30,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * XMLParserFactory. Will be initialized within each Framework. 
+ * XMLParserFactory. Will be initialized within each Framework.
  * @author foerster
  *
  */
 
 public class ParserFactory {
-    
+
     public static String PROPERTY_NAME_REGISTERED_PARSERS = "registeredParsers";
     private static ParserFactory factory;
     private static Logger LOGGER = LoggerFactory.getLogger(ParserFactory.class);
-    
+
     private List<IParser> registeredParsers;
-    
+
     /**
      * This factory provides all available {@link IParser} to WPS.
-     * @param parsers
+     * @param parserMap a map containing parser class names and parser configuration modules
      */
     public static void initialize(Map<String, ConfigurationModule> parserMap) {
         if (factory == null) {
@@ -55,7 +55,7 @@ public class ParserFactory {
             LOGGER.warn("Factory already initialized");
         }
     }
-    
+
     private ParserFactory(Map<String, ConfigurationModule> parserMap) {
         loadAllParsers(parserMap);
 
@@ -69,29 +69,29 @@ public class ParserFactory {
             }
         });
     }
-    
+
     private void loadAllParsers(Map<String, ConfigurationModule> parserMap){
         registeredParsers = new ArrayList<IParser>();
         for(String currentParserName : parserMap.keySet()) {
-            
+
             ConfigurationModule currentParser = parserMap.get(currentParserName);
-            
+
 //            // remove inactive parser
 //            Property[] activeProperties = {};
 //            ArrayList<Property> activePars = new ArrayList<Property>();
 //            for(int i=0; i<currentParser.getPropertyArray().length; i++){
 //                if(currentParser.getPropertyArray()[i].getActive()){
-//                    activePars.add(currentParser.getPropertyArray()[i]);                    
+//                    activePars.add(currentParser.getPropertyArray()[i]);
 //                }
 //            }
 //            currentParser.setPropertyArray(activePars.toArray(activeProperties));
-            
+
             String parserClass = "";
-            
+
             if(currentParser instanceof ClassKnowingModule){
                 parserClass = ((ClassKnowingModule)currentParser).getClassName();
             }
-            
+
             IParser parser = null;
             try {
                  parser = (IParser) this.getClass().getClassLoader().loadClass(parserClass).newInstance();
@@ -108,7 +108,7 @@ public class ParserFactory {
             }
 
             if(parser != null) {
-                
+
                 LOGGER.info("Parser class registered: " + parserClass);
                 registeredParsers.add(parser);
             }
@@ -116,21 +116,21 @@ public class ParserFactory {
     }
 
     public static ParserFactory getInstance() {
-        if(factory == null){            
+        if(factory == null){
             Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
             initialize(parserMap);
         }
         return factory;
     }
-    
+
     public IParser getParser(String schema, String format, String encoding, Class<?> requiredInputClass) {
-        
+
         // dealing with NULL encoding
         if (encoding == null){
             encoding = IOHandler.DEFAULT_ENCODING;
         }
-        
-        //first, look if we can find a direct way        
+
+        //first, look if we can find a direct way
         for(IParser parser : registeredParsers) {
             Class<?>[] supportedClasses = parser.getSupportedDataBindings();
             for(Class<?> clazz : supportedClasses){
@@ -142,7 +142,7 @@ public class ParserFactory {
                 }
             }
         }
-        
+
         //no parser could be found
         //try an indirect way by creating all permutations and look if one matches
         //TODO

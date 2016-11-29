@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 public interface IData extends Serializable {
     public Object getPayload();
-    
+
     /*
      * Inheriting classes shall indicate which class they support.
      * For special cases like Grass, it is recommended to
