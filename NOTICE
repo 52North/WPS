@@ -134,9 +134,9 @@ This project includes:
   Mockito under The MIT License
   mvel under The Apache Software License, Version 2.0
   Objenesis under MIT License
-  OGC OWS schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC WPS schema (spec. v1.0.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  OGC WPS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   ogckml2.2 under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
@@ -201,7 +201,7 @@ This project includes:
   trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
   vecmath under GPL 2.0 license w/ CPE
   VelocityTools under The Apache Software License, Version 2.0
-  W3C xlink schema (spec. v1.1.0) under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Web Feature Service Model under Lesser General Public License (LGPL)
   WFS XML Support under Lesser General Public License (LGPL)
   Woodstox under The Apache Software License, Version 2.0
