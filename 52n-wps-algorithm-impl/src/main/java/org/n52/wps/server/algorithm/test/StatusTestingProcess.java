@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,7 +48,7 @@ public class StatusTestingProcess extends AbstractAnnotatedAlgorithm {
     @Execute
     public void echo() {
         log.debug("Running echo process");
-        
+
         for (int i = 0; i < 2; i++) {
             update("Status " + i);
             try {
@@ -57,7 +57,7 @@ public class StatusTestingProcess extends AbstractAnnotatedAlgorithm {
                 log.error(e.getMessage());
             }
         }
-        
+
         literalOutput = literalInput;
 
         log.debug("Finished echo process, literal output is '{}'. ", literalOutput);

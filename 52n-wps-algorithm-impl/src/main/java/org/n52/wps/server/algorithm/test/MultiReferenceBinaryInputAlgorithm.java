@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,10 +50,10 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
     public MultiReferenceBinaryInputAlgorithm() {
         super();
     }
-    
+
     private GenericFileData result;
     private List<GenericFileData> data;
-    
+
     @ComplexDataOutput(identifier = "result", binding = GenericFileDataBinding.class)
     public GenericFileData getResult() {
         return result;
@@ -66,22 +66,22 @@ public class MultiReferenceBinaryInputAlgorithm extends AbstractAnnotatedAlgorit
 
     @Execute
     public void runProcess() {
-        
+
         GenericFileData gfd = null;
-        
+
         File f = null;
-        
+
         for (GenericFileData genericFileData : data) {
-            
+
             gfd = genericFileData;
-            
+
             f = gfd.getBaseFile(false);
-            
+
             if(!f.exists()){
                 throw new RuntimeException("Input file does not exist for identifier data.");
             }
         }
-        
+
         try {
             result = new GenericFileData(f, gfd.getMimeType());
         } catch (IOException e) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -57,15 +57,17 @@ public class EchoProcess extends AbstractAnnotatedAlgorithm {
     public void echo() {
         log.debug("Running echo process");
 
-        if (complexInput != null && complexInput.size() > 0)
+        if (complexInput != null && complexInput.size() > 0){
             complexOutput = complexInput.get(0);
-        else
+        } else{
             log.debug("No complex inputs.");
+        }
 
-        if (literalInput != null && literalInput.size() > 0)
+        if (literalInput != null && literalInput.size() > 0){
             literalOutput = literalInput.get(0);
-        else
+        } else{
             log.debug("No literal input");
+        }
 
         log.debug("Finished echo process, literal output is '{}', complex output is : {}", literalOutput, complexOutput);
     }
