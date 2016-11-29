@@ -47,41 +47,41 @@ import org.springframework.test.web.servlet.ResultActions;
 
 public class ParsersControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	@Autowired
-	private TestConfigurationModule3 module;
+    @Autowired
+    private TestConfigurationModule3 module;
 
-	@Test
-	public void displayParsers() throws Exception {
-		RequestBuilder builder = get("/parsers").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.getMockedWebService().perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("parsers"))
-				.andExpect(model().attributeExists("configurations"));
-	}
+    @Test
+    public void displayParsers() throws Exception {
+        RequestBuilder builder = get("/parsers").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("parsers"))
+                .andExpect(model().attributeExists("configurations"));
+    }
 
-	@Test
-	public void processPost_success() throws Exception {
-		RequestBuilder request = post("/parsers").param("key", "test.string.key")
-				.param("value", "new posted value").param("module", module.getClass().getName());
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isOk());
-		assertEquals("new posted value", module.getStringMember());
-		assertEquals("new posted value", module.getConfigurationEntries().get(0).getValue());
-	}
+    @Test
+    public void processPost_success() throws Exception {
+        RequestBuilder request = post("/parsers").param("key", "test.string.key")
+                .param("value", "new posted value").param("module", module.getClass().getName());
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        assertEquals("new posted value", module.getStringMember());
+        assertEquals("new posted value", module.getConfigurationEntries().get(0).getValue());
+    }
 
-	@Test
-	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/parsers").param("key", "test.integer.key")
-				.param("value", "invalid integer").param("module", module.getClass().getName());
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isBadRequest());
-	}
+    @Test
+    public void processPost_failure() throws Exception {
+        RequestBuilder request = post("/parsers").param("key", "test.integer.key")
+                .param("value", "invalid integer").param("module", module.getClass().getName());
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isBadRequest());
+    }
 
-	@Test
-	public void toggleModuleStatus() throws Exception {
-		assertTrue(module.isActive());
-		RequestBuilder request = post("/parsers/activate/{moduleClassName}/false", module.getClass().getName());
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isOk());
-		assertFalse(module.isActive());
-	}
+    @Test
+    public void toggleModuleStatus() throws Exception {
+        assertTrue(module.isActive());
+        RequestBuilder request = post("/parsers/activate/{moduleClassName}/false", module.getClass().getName());
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        assertFalse(module.isActive());
+    }
 }

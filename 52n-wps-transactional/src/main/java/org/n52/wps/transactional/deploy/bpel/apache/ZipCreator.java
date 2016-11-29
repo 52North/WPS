@@ -136,12 +136,12 @@ public class ZipCreator {
 
     
     private static ByteArrayOutputStream createOutputStreamFromNode(Node node) throws ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
-		//System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "com.sun.org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-		Document tempDocument = documentBuilder.newDocument();
-		Node importedNode = tempDocument.importNode(node, true);
-		tempDocument.appendChild(importedNode);
+        //System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "com.sun.org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = factory.newDocumentBuilder();
+        Document tempDocument = documentBuilder.newDocument();
+        Node importedNode = tempDocument.importNode(node, true);
+        tempDocument.appendChild(importedNode);
         // Prepare the DOM document for writing
         Source source = new DOMSource(tempDocument);
 
@@ -153,44 +153,44 @@ public class ZipCreator {
         Transformer xformer = TransformerFactory.newInstance().newTransformer();
         xformer.transform(source, result);
         return outputStream;
-	}
+    }
     
-	private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
-		StringWriter stringWriter = new StringWriter();
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
-		
-		String s = stringWriter.toString();
-		
-		s = s.replaceAll("xmlns=\"\"", "");
-		
-		stringWriter = new StringWriter();
-		
-		stringWriter.append(s);
-		
-		ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-		
-		try {
-			bOut.write(s.getBytes());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return bOut;
-	}
+    private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+        StringWriter stringWriter = new StringWriter();
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.transform(new DOMSource(node), new StreamResult(stringWriter));
+        
+        String s = stringWriter.toString();
+        
+        s = s.replaceAll("xmlns=\"\"", "");
+        
+        stringWriter = new StringWriter();
+        
+        stringWriter.append(s);
+        
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        
+        try {
+            bOut.write(s.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return bOut;
+    }
     
-//	private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
-//		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-//		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//    private static ByteArrayOutputStream nodeToString(Node node) throws TransformerFactoryConfigurationError, TransformerException {
+//        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+//        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 //        
-//		// Prepare the output file
+//        // Prepare the output file
 //        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 //        Result result = new StreamResult(outputStream);
-//		
-//		transformer.transform(new DOMSource(node), result);
-//		
-//		return outputStream;
-//	}
+//        
+//        transformer.transform(new DOMSource(node), result);
+//        
+//        return outputStream;
+//    }
     
 }

@@ -47,76 +47,76 @@ import org.n52.wps.io.datahandler.parser.WKTParser;
  */
 public class WKTParserGeneratorTest extends AbstractTestCase<WKTGenerator> {
 
-	protected Logger LOGGER = LoggerFactory.getLogger(WKTParserGeneratorTest.class);
-	
-	@Test
-	public void testGenerator() {
-		
-		if(!isDataHandlerActive()){
-			return;
-		}
-		
-		String inputWKTPolygonString = "POLYGON ((30 10, 10 20, 20 40, 40 40, 30 10))";
-		
-		InputStream in = new ByteArrayInputStream(inputWKTPolygonString.getBytes());
-		
-		WKTParser theParser = new WKTParser();
+    protected Logger LOGGER = LoggerFactory.getLogger(WKTParserGeneratorTest.class);
+    
+    @Test
+    public void testGenerator() {
+        
+        if(!isDataHandlerActive()){
+            return;
+        }
+        
+        String inputWKTPolygonString = "POLYGON ((30 10, 10 20, 20 40, 40 40, 30 10))";
+        
+        InputStream in = new ByteArrayInputStream(inputWKTPolygonString.getBytes());
+        
+        WKTParser theParser = new WKTParser();
 
-		String mimetype = theParser.getSupportedFormats()[0];
-		
-		LOGGER.info("Trying to parse WKT: " + inputWKTPolygonString);
-		
-		JTSGeometryBinding theBinding = theParser.parse(in, mimetype,
-				null);
+        String mimetype = theParser.getSupportedFormats()[0];
+        
+        LOGGER.info("Trying to parse WKT: " + inputWKTPolygonString);
+        
+        JTSGeometryBinding theBinding = theParser.parse(in, mimetype,
+                null);
 
-		try {
-			in.close();
-		} catch (IOException e) {
-			LOGGER.warn("Failed to close ByteArrayInputStream containing input WKT.");
-		}
-		
-		Assert.assertTrue(theBinding.getPayload() != null);
-		
-		InputStream generatedStream = null;
-		
-		try {
-			generatedStream = dataHandler.generateStream(theBinding, mimetype, null);
-			
-		} catch (IOException e) {
-			LOGGER.error("Failed to generate result inputstream.");
-			Assert.fail();
-		}
-		
-		String outputWKTPolygonString = "";
-		
-		int bite = -1;
-		
-		try {
-			while ((bite = generatedStream.read()) != -1) {
-				outputWKTPolygonString = outputWKTPolygonString.concat(String.valueOf((char)bite));
-			}
-		} catch (IOException e) {
-			LOGGER.error("Failed to read result inputstream.");
-			Assert.fail();
-		}
-		
-		try {
-			generatedStream.close();
-		} catch (IOException e) {
-			LOGGER.warn("Failed to close generated stream containing result WKT.");
-		}
-		
-		Assert.assertTrue(inputWKTPolygonString.equals(outputWKTPolygonString));
-		
-		LOGGER.info("Generated WKT      : " + outputWKTPolygonString);
-		
-	}
+        try {
+            in.close();
+        } catch (IOException e) {
+            LOGGER.warn("Failed to close ByteArrayInputStream containing input WKT.");
+        }
+        
+        Assert.assertTrue(theBinding.getPayload() != null);
+        
+        InputStream generatedStream = null;
+        
+        try {
+            generatedStream = dataHandler.generateStream(theBinding, mimetype, null);
+            
+        } catch (IOException e) {
+            LOGGER.error("Failed to generate result inputstream.");
+            Assert.fail();
+        }
+        
+        String outputWKTPolygonString = "";
+        
+        int bite = -1;
+        
+        try {
+            while ((bite = generatedStream.read()) != -1) {
+                outputWKTPolygonString = outputWKTPolygonString.concat(String.valueOf((char)bite));
+            }
+        } catch (IOException e) {
+            LOGGER.error("Failed to read result inputstream.");
+            Assert.fail();
+        }
+        
+        try {
+            generatedStream.close();
+        } catch (IOException e) {
+            LOGGER.warn("Failed to close generated stream containing result WKT.");
+        }
+        
+        Assert.assertTrue(inputWKTPolygonString.equals(outputWKTPolygonString));
+        
+        LOGGER.info("Generated WKT      : " + outputWKTPolygonString);
+        
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new WKTGenerator();
-		
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new WKTGenerator();
+        
+    }
 
-	
+    
 }

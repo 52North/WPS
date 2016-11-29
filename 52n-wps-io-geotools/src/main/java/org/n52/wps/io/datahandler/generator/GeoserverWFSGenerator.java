@@ -69,100 +69,100 @@ import org.w3c.dom.Element;
 
 
 public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWFSGenerator.class);
-	
-	public GeoserverWFSGenerator() {		
-		super();
-		this.supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWFSGenerator.class);
+    
+    public GeoserverWFSGenerator() {        
+        super();
+        this.supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
 
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-	
-		InputStream stream = null;	
-		try {
-			Document doc = storeLayer(data);			
-			String xmlString = XMLUtil.nodeToString(doc);			
-			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
-	    } catch(TransformerException e){
-	    	LOGGER.error("Error generating WFS output. Reason: ", e);
-	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
-	    } catch (IOException e) {
-	    	LOGGER.error("Error generating WFS output. Reason: ", e);
-	    	throw new RuntimeException("Error generating WFS output. Reason: " + e);
-		} catch (ParserConfigurationException e) {
-	    	LOGGER.error("Error generating WFS output. Reason: ", e);
-			throw new RuntimeException("Error generating WFS output. Reason: " + e);
-		}	
-		return stream;
-	}
-	
-	private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
-		GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
-		File file = null;
-		try {
-			GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload());
-			file = fileData.getBaseFile(true);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
-		}
-		
-		//zip shp file
-		String path = file.getAbsolutePath();
-		String baseName = path.substring(0, path.length() - ".shp".length());
-		File shx = new File(baseName + ".shx");
-		File dbf = new File(baseName + ".dbf");
-		File prj = new File(baseName + ".prj");
-		File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+    
+        InputStream stream = null;    
+        try {
+            Document doc = storeLayer(data);            
+            String xmlString = XMLUtil.nodeToString(doc);            
+            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));            
+        } catch(TransformerException e){
+            LOGGER.error("Error generating WFS output. Reason: ", e);
+            throw new RuntimeException("Error generating WFS output. Reason: " + e);
+        } catch (IOException e) {
+            LOGGER.error("Error generating WFS output. Reason: ", e);
+            throw new RuntimeException("Error generating WFS output. Reason: " + e);
+        } catch (ParserConfigurationException e) {
+            LOGGER.error("Error generating WFS output. Reason: ", e);
+            throw new RuntimeException("Error generating WFS output. Reason: " + e);
+        }    
+        return stream;
+    }
+    
+    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
+        GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
+        File file = null;
+        try {
+            GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload());
+            file = fileData.getBaseFile(true);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            throw new RuntimeException("Error generating shp file for storage in WFS. Reason: " + e1);
+        }
+        
+        //zip shp file
+        String path = file.getAbsolutePath();
+        String baseName = path.substring(0, path.length() - ".shp".length());
+        File shx = new File(baseName + ".shx");
+        File dbf = new File(baseName + ".dbf");
+        File prj = new File(baseName + ".prj");
+        File zipped =org.n52.wps.io.IOUtils.zip(file, shx, dbf, prj);
 
-		
-		String layerName = zipped.getName();
-		layerName = layerName +"_" + UUID.randomUUID();
-		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
-		
-		String result = geoserverUploader.createWorkspace();		
-		LOGGER.debug(result);
-		result = geoserverUploader.uploadShp(zipped, layerName);		
-		LOGGER.debug(result);
-				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Request=GetCapabilities&Version=1.1.0";
-		//String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
-		
-		//delete shp files
-		zipped.delete();
-		file.delete();
-		shx.delete();
-		dbf.delete();
-		prj.delete();
-		Document doc = createXML("N52:"+file.getName().subSequence(0, file.getName().length()-4), capabilitiesLink);
-		return doc;
-	
-	}
-	
-	private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		Document doc = factory.newDocumentBuilder().newDocument();
-		
-		Element root = doc.createElement("OWSResponse");
-		root.setAttribute("type", "WFS");
-		
-		Element resourceIDElement = doc.createElement("ResourceID");
-		resourceIDElement.appendChild(doc.createTextNode(layerName));
-		root.appendChild(resourceIDElement);
-		
-		Element getCapabilitiesLinkElement = doc.createElement("GetCapabilitiesLink");
-		getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
-		root.appendChild(getCapabilitiesLinkElement);
-		/*
-		Element directResourceLinkElement = doc.createElement("DirectResourceLink");
-		directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
-		root.appendChild(directResourceLinkElement);
-		*/
-		doc.appendChild(root);
-		
-		return doc;
-	}
-	
+        
+        String layerName = zipped.getName();
+        layerName = layerName +"_" + UUID.randomUUID();
+        GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
+        
+        String result = geoserverUploader.createWorkspace();        
+        LOGGER.debug(result);
+        result = geoserverUploader.uploadShp(zipped, layerName);        
+        LOGGER.debug(result);
+                
+        String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Request=GetCapabilities&Version=1.1.0";
+        //String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
+        
+        //delete shp files
+        zipped.delete();
+        file.delete();
+        shx.delete();
+        dbf.delete();
+        prj.delete();
+        Document doc = createXML("N52:"+file.getName().subSequence(0, file.getName().length()-4), capabilitiesLink);
+        return doc;
+    
+    }
+    
+    private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = factory.newDocumentBuilder().newDocument();
+        
+        Element root = doc.createElement("OWSResponse");
+        root.setAttribute("type", "WFS");
+        
+        Element resourceIDElement = doc.createElement("ResourceID");
+        resourceIDElement.appendChild(doc.createTextNode(layerName));
+        root.appendChild(resourceIDElement);
+        
+        Element getCapabilitiesLinkElement = doc.createElement("GetCapabilitiesLink");
+        getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
+        root.appendChild(getCapabilitiesLinkElement);
+        /*
+        Element directResourceLinkElement = doc.createElement("DirectResourceLink");
+        directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
+        root.appendChild(directResourceLinkElement);
+        */
+        doc.appendChild(root);
+        
+        return doc;
+    }
+    
 }

@@ -76,58 +76,58 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
  */
 public class GTBinZippedWKT64ParserTest extends AbstractTestCase<GTBinZippedWKT64Parser> {
 
-	@Test
-	public void testParser(){
+    @Test
+    public void testParser(){
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/wktgeometries.base64.zip";
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/wktgeometries.base64.zip";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		String[] mimetypes = dataHandler.getSupportedFormats();
+        String[] mimetypes = dataHandler.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		for (String mimetype : mimetypes) {
+        for (String mimetype : mimetypes) {
 
-			try {
+            try {
 
-				input = new Base64InputStream(new FileInputStream(new File(testFilePath)));
-			} catch (FileNotFoundException e) {
-				Assert.fail(e.getMessage());
-			}
+                input = new Base64InputStream(new FileInputStream(new File(testFilePath)));
+            } catch (FileNotFoundException e) {
+                Assert.fail(e.getMessage());
+            }
 
-			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
+            GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 
-			Assert.assertNotNull(theBinding.getPayload());
-			Assert.assertTrue(!theBinding.getPayload().isEmpty());
+            Assert.assertNotNull(theBinding.getPayload());
+            Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-			FeatureCollection<?, ?> collection = theBinding.getPayload();
+            FeatureCollection<?, ?> collection = theBinding.getPayload();
 
-			FeatureIterator<?> featureIterator = collection.features();
+            FeatureIterator<?> featureIterator = collection.features();
 
-			while(featureIterator.hasNext()){
-				Feature f = featureIterator.next();
+            while(featureIterator.hasNext()){
+                Feature f = featureIterator.next();
 
-				System.out.println(f.getDefaultGeometryProperty());
-			}
+                System.out.println(f.getDefaultGeometryProperty());
+            }
 
-			Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+            Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GTBinZippedWKT64Parser();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GTBinZippedWKT64Parser();
+    }
 
 }

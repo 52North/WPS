@@ -45,8 +45,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaProcessCompiler {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(JavaProcessCompiler.class);
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(JavaProcessCompiler.class);
 
     /**
      * Static method for compiling source files
@@ -69,7 +69,7 @@ public class JavaProcessCompiler {
             try {
                 classpath.add(new URL("file:" + path));
             } catch (MalformedURLException e) {
-            	LOGGER.error("Wrong url: " + e.getMessage(), e);
+                LOGGER.error("Wrong url: " + e.getMessage(), e);
             }
         }
 
@@ -107,9 +107,9 @@ public class JavaProcessCompiler {
         try {
             fileManager.close();
         } catch (IOException e) { 
-        	LOGGER.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
     }
-	
+    
 }

@@ -42,43 +42,43 @@ import org.n52.wps.webapp.entities.ServiceIdentification;
 import org.n52.wps.webapp.entities.ServiceProvider;
 
 public class CapabilitiesServiceImplTest {
-	@InjectMocks
-	private CapabilitiesService capabilitiesService;
+    @InjectMocks
+    private CapabilitiesService capabilitiesService;
 
-	@Mock
-	private CapabilitiesDAO capabilitiesDAO;
+    @Mock
+    private CapabilitiesDAO capabilitiesDAO;
 
-	@Before
-	public void setup() {
-		capabilitiesService = new CapabilitiesServiceImpl();
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        capabilitiesService = new CapabilitiesServiceImpl();
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void testGetServiceIdentification() throws Exception {
-		when(capabilitiesDAO.getServiceIdentification()).thenReturn(new ServiceIdentification());
-		ServiceIdentification serviceIdentification = capabilitiesService.getServiceIdentification();
-		assertNotNull(serviceIdentification);
-	}
+    @Test
+    public void testGetServiceIdentification() throws Exception {
+        when(capabilitiesDAO.getServiceIdentification()).thenReturn(new ServiceIdentification());
+        ServiceIdentification serviceIdentification = capabilitiesService.getServiceIdentification();
+        assertNotNull(serviceIdentification);
+    }
 
-	@Test
-	public void testGetServiceProvider() throws Exception {
-		when(capabilitiesDAO.getServiceProvider()).thenReturn(new ServiceProvider());
-		ServiceProvider serviceProvider = capabilitiesService.getServiceProvider();
-		assertNotNull(serviceProvider);
-	}
+    @Test
+    public void testGetServiceProvider() throws Exception {
+        when(capabilitiesDAO.getServiceProvider()).thenReturn(new ServiceProvider());
+        ServiceProvider serviceProvider = capabilitiesService.getServiceProvider();
+        assertNotNull(serviceProvider);
+    }
 
-	@Test
-	public void testSaveServiceIdentification_validServiceIdentification() throws Exception {
-		ServiceIdentification serviceIdentification = new ServiceIdentification();
-		capabilitiesService.saveServiceIdentification(serviceIdentification);
-		verify(capabilitiesDAO).saveServiceIdentification(serviceIdentification);
-	}
+    @Test
+    public void testSaveServiceIdentification_validServiceIdentification() throws Exception {
+        ServiceIdentification serviceIdentification = new ServiceIdentification();
+        capabilitiesService.saveServiceIdentification(serviceIdentification);
+        verify(capabilitiesDAO).saveServiceIdentification(serviceIdentification);
+    }
 
-	@Test
-	public void testSaveServiceProvider_validServiceProvider() throws Exception {
-		ServiceProvider serviceProvider = new ServiceProvider();
-		capabilitiesService.saveServiceProvider(serviceProvider);
-		verify(capabilitiesDAO).saveServiceProvider(serviceProvider);
-	}
+    @Test
+    public void testSaveServiceProvider_validServiceProvider() throws Exception {
+        ServiceProvider serviceProvider = new ServiceProvider();
+        capabilitiesService.saveServiceProvider(serviceProvider);
+        verify(capabilitiesDAO).saveServiceProvider(serviceProvider);
+    }
 }

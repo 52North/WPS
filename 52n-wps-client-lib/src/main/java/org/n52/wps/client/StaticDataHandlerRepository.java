@@ -43,24 +43,24 @@ import org.n52.wps.webapp.api.ConfigurationModule;
  */
 public class StaticDataHandlerRepository {
 
-	private static GeneratorFactory genFactory;
-	private static ParserFactory parserFactory;
-	
-	public static GeneratorFactory getGeneratorFactory() {
-		if(genFactory == null) {
-			Map<String, ConfigurationModule> generators = WPSConfig.getInstance().getActiveRegisteredGeneratorModules();
-			GeneratorFactory.initialize(generators);
-			genFactory = GeneratorFactory.getInstance();			
-		}
-		return genFactory;
-	}
-	
-	public static ParserFactory getParserFactory() {
-		if(parserFactory == null) {
-			Map<String, ConfigurationModule> parsers = WPSConfig.getInstance().getActiveRegisteredParserModules();
-			ParserFactory.initialize(parsers);
-			parserFactory = ParserFactory.getInstance();
-		}
-		return parserFactory;
-	}
+    private static GeneratorFactory genFactory;
+    private static ParserFactory parserFactory;
+    
+    public static GeneratorFactory getGeneratorFactory() {
+        if(genFactory == null) {
+            Map<String, ConfigurationModule> generators = WPSConfig.getInstance().getActiveRegisteredGeneratorModules();
+            GeneratorFactory.initialize(generators);
+            genFactory = GeneratorFactory.getInstance();            
+        }
+        return genFactory;
+    }
+    
+    public static ParserFactory getParserFactory() {
+        if(parserFactory == null) {
+            Map<String, ConfigurationModule> parsers = WPSConfig.getInstance().getActiveRegisteredParserModules();
+            ParserFactory.initialize(parsers);
+            parserFactory = ParserFactory.getInstance();
+        }
+        return parserFactory;
+    }
 }

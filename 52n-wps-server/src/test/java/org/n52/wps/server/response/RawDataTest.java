@@ -55,9 +55,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  */
 public class RawDataTest  extends AbstractITClass{
 
-	IAlgorithm algorithm;
-	ProcessDescription processDescription;
-	String identifier;
+    IAlgorithm algorithm;
+    ProcessDescription processDescription;
+    String identifier;
 
     @BeforeClass
     public static void setUpClass() {
@@ -65,9 +65,9 @@ public class RawDataTest  extends AbstractITClass{
 
     @Before
     public void setUp(){
-    	algorithm = new DummyTestClass();
-    	processDescription = algorithm.getDescription();
-    	identifier = algorithm.getWellKnownName();
+        algorithm = new DummyTestClass();
+        processDescription = algorithm.getDescription();
+        identifier = algorithm.getWellKnownName();
     }
 
     @Test
@@ -77,45 +77,45 @@ public class RawDataTest  extends AbstractITClass{
                    new double[] { 46, 102 },
                    new double[] { 47, 103 }, "EPSG:4326");
 
-    	InputStream is;
+        InputStream is;
 
-    	try {
-			RawData bboxRawData = new RawData(envelope, "BBOXOutputData", null, null, null, identifier, processDescription);
+        try {
+            RawData bboxRawData = new RawData(envelope, "BBOXOutputData", null, null, null, identifier, processDescription);
 
-			is = bboxRawData.getAsStream();
+            is = bboxRawData.getAsStream();
 
-			XmlObject bboxXMLObject = XmlObject.Factory.parse(is);
+            XmlObject bboxXMLObject = XmlObject.Factory.parse(is);
 
-			assertTrue(bboxXMLObject != null);
+            assertTrue(bboxXMLObject != null);
 
-			assertTrue(bboxXMLObject.getDomNode().getFirstChild().getNodeName().equals("wps:BoundingBoxData"));
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+            assertTrue(bboxXMLObject.getDomNode().getFirstChild().getNodeName().equals("wps:BoundingBoxData"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
     public void testBBoxRawDataOutput(){
 
-    	   IData envelope = new BoundingBoxData(
+           IData envelope = new BoundingBoxData(
                    new double[] { 46, 102 },
                    new double[] { 47, 103 }, null);
 
-    	InputStream is;
+        InputStream is;
 
-    	try {
-			RawData bboxRawData = new RawData(envelope, "BBOXOutputData", null, null, null, identifier, processDescription);
+        try {
+            RawData bboxRawData = new RawData(envelope, "BBOXOutputData", null, null, null, identifier, processDescription);
 
-			is = bboxRawData.getAsStream();
+            is = bboxRawData.getAsStream();
 
-			XmlObject bboxXMLObject = XmlObject.Factory.parse(is);
+            XmlObject bboxXMLObject = XmlObject.Factory.parse(is);
 
-			assertTrue(bboxXMLObject != null);
+            assertTrue(bboxXMLObject != null);
 
-			assertTrue(bboxXMLObject.getDomNode().getFirstChild().getNodeName().equals("wps:BoundingBoxData"));
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+            assertTrue(bboxXMLObject.getDomNode().getFirstChild().getNodeName().equals("wps:BoundingBoxData"));
+        } catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
 }

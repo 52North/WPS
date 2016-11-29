@@ -30,82 +30,82 @@ import static org.hamcrest.CoreMatchers.*;
 
 public class ServiceLoaderAlgorithmTest {
 
-	private ServiceLoaderAlgorithmRepository repo;
+    private ServiceLoaderAlgorithmRepository repo;
 
-	@Before
-	public void init() {
-		this.repo = new ServiceLoaderAlgorithmRepository();
-		Assert.assertNotNull(this.repo);
-	}
+    @Before
+    public void init() {
+        this.repo = new ServiceLoaderAlgorithmRepository();
+        Assert.assertNotNull(this.repo);
+    }
 
-	@Test
-	public void shouldFindAlgorithms() {
-		String identified = "dummy-test-identifier";
-		Assert.assertThat(repo.containsAlgorithm(identified), is(true));
-		Assert.assertThat(repo.getAlgorithm(identified),
-				is(notNullValue()));
-		Assert.assertThat(repo.getAlgorithm(DummyAnnotatedAlgorithm.class
-				.getCanonicalName()), is(notNullValue()));
-	}
+    @Test
+    public void shouldFindAlgorithms() {
+        String identified = "dummy-test-identifier";
+        Assert.assertThat(repo.containsAlgorithm(identified), is(true));
+        Assert.assertThat(repo.getAlgorithm(identified),
+                is(notNullValue()));
+        Assert.assertThat(repo.getAlgorithm(DummyAnnotatedAlgorithm.class
+                .getCanonicalName()), is(notNullValue()));
+    }
 
-	@Test
-	public void shouldNotFindAlgorithm() {
-		String identified = "not-in-there";
-		Assert.assertThat(repo.containsAlgorithm(identified), is(not(true)));
-		Assert.assertThat(repo.getAlgorithm(identified), is(nullValue()));
-	}
-	
-	@Test
-	public void shouldFindTwoRegisteredAlgorithms() {
-		Assert.assertThat(this.repo.getAlgorithmNames().size(), is(2));
-	}
-	
-	@Test
-	public void shouldResolveProcessDescription() {
-		ProcessDescriptionType description = (ProcessDescriptionType) repo.getProcessDescription(DummyAnnotatedAlgorithm.class.getCanonicalName()).getProcessDescriptionType("1.0.0");//FIXME check other versions
-		Assert.assertThat(description, is(notNullValue()));
-		Assert.assertThat(description, is(instanceOf(ProcessDescriptionType.class)));
-	}
+    @Test
+    public void shouldNotFindAlgorithm() {
+        String identified = "not-in-there";
+        Assert.assertThat(repo.containsAlgorithm(identified), is(not(true)));
+        Assert.assertThat(repo.getAlgorithm(identified), is(nullValue()));
+    }
+    
+    @Test
+    public void shouldFindTwoRegisteredAlgorithms() {
+        Assert.assertThat(this.repo.getAlgorithmNames().size(), is(2));
+    }
+    
+    @Test
+    public void shouldResolveProcessDescription() {
+        ProcessDescriptionType description = (ProcessDescriptionType) repo.getProcessDescription(DummyAnnotatedAlgorithm.class.getCanonicalName()).getProcessDescriptionType("1.0.0");//FIXME check other versions
+        Assert.assertThat(description, is(notNullValue()));
+        Assert.assertThat(description, is(instanceOf(ProcessDescriptionType.class)));
+    }
 
-	@Algorithm(version = "0.1")
-	public static class DummyAnnotatedAlgorithm extends
-			AbstractAnnotatedAlgorithm {
+    @Algorithm(version = "0.1")
+    public static class DummyAnnotatedAlgorithm extends
+            AbstractAnnotatedAlgorithm {
 
-		private String output;
+        private String output;
 
-		@LiteralDataInput(identifier = "input")
-		public String input;
+        @LiteralDataInput(identifier = "input")
+        public String input;
 
-		@LiteralDataOutput(identifier = "output")
-		public String getOutput() {
-			return this.output;
-		}
+        @LiteralDataOutput(identifier = "output")
+        public String getOutput() {
+            return this.output;
+        }
 
-		@Execute
-		public void myRunMethodFollowingNoSyntaxNoArgumentsAllowed() {
-			this.output = "works like a charm.";
-		}
+        @Execute
+        public void myRunMethodFollowingNoSyntaxNoArgumentsAllowed() {
+            this.output = "works like a charm.";
+        }
 
-	}
+    }
 
-	@Algorithm(version = "0.1", identifier = "dummy-test-identifier")
-	public static class DummyIdentifiedAnnotatedAlgorithm extends
-			DummyAnnotatedAlgorithm {
+    @Algorithm(version = "0.1", identifier = "dummy-test-identifier")
+    public static class DummyIdentifiedAnnotatedAlgorithm extends
+            DummyAnnotatedAlgorithm {
 
-		private String output;
+        private String output;
 
-		@LiteralDataInput(identifier = "input")
-		public String input;
+        @LiteralDataInput(identifier = "input")
+        public String input;
 
-		@LiteralDataOutput(identifier = "output")
-		public String getOutput() {
-			return this.output;
-		}
+        @LiteralDataOutput(identifier = "output")
+        public String getOutput() {
+            return this.output;
+        }
 
-		@Execute
-		public void myRunMethodFollowingNoSyntaxNoArgumentsAllowed() {
-			this.output = "works like a charm.";
-		}
+        @Execute
+        public void myRunMethodFollowingNoSyntaxNoArgumentsAllowed() {
+            this.output = "works like a charm.";
+        }
 
-	}
+    }
 }

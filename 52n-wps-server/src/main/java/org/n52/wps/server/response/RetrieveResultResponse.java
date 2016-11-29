@@ -35,14 +35,14 @@ import org.n52.wps.server.request.RetrieveResultRequest;
 
 public class RetrieveResultResponse extends Response {
 
-	public RetrieveResultResponse(RetrieveResultRequest request) {
-		super(request);	
-	}
+    public RetrieveResultResponse(RetrieveResultRequest request) {
+        super(request);    
+    }
 
-	public InputStream getAsStream() throws ExceptionReport {
-		return (InputStream)request.getAttachedResult();		
-	}
+    public InputStream getAsStream() throws ExceptionReport {
+        return (InputStream)request.getAttachedResult();        
+    }
 
-	
+    
 
 }

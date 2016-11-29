@@ -70,87 +70,87 @@ import org.n52.wps.webapp.api.FormatEntry;
  *
  */
 public class SimpleGMLParserGeneratorTest extends
-		AbstractTestCase<SimpleGMLGenerator> {
+        AbstractTestCase<SimpleGMLGenerator> {
 
-	@Test
-	public void testDataHandler() {
+    @Test
+    public void testDataHandler() {
 
-		Assert.assertTrue(isDataHandlerActive());
+        Assert.assertTrue(isDataHandlerActive());
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/gmlpacket.xml";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/gmlpacket.xml";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		InputStream input = null;
+        InputStream input = null;
 
-		SimpleGMLParser parser = new SimpleGMLParser();
+        SimpleGMLParser parser = new SimpleGMLParser();
 
-		List<FormatEntry> formats = parser.getSupportedFullFormats();
+        List<FormatEntry> formats = parser.getSupportedFullFormats();
 
-		for (int i = 0; i < formats.size(); i++) {
+        for (int i = 0; i < formats.size(); i++) {
 
-			FormatEntry format = formats.get(i);
+            FormatEntry format = formats.get(i);
 
-			String mimeType = format.getMimeType();
-			String schema = format.getSchema();
+            String mimeType = format.getMimeType();
+            String schema = format.getSchema();
 
-			try {
-				input = new FileInputStream(new File(testFilePath));
-			} catch (FileNotFoundException e) {
-				Assert.fail(e.getMessage());
-			}
+            try {
+                input = new FileInputStream(new File(testFilePath));
+            } catch (FileNotFoundException e) {
+                Assert.fail(e.getMessage());
+            }
 
-			GTVectorDataBinding binding = parser.parse(input, mimeType, schema);
+            GTVectorDataBinding binding = parser.parse(input, mimeType, schema);
 
-			Assert.assertNotNull(binding.getPayload());
-			//TODO: seems, we can not generate shapefiles out of SimpleGML GTVectorDataBindings...
-//			assertTrue(binding.getPayloadAsShpFile().exists());
-			Assert.assertTrue(!binding.getPayload().isEmpty());
+            Assert.assertNotNull(binding.getPayload());
+            //TODO: seems, we can not generate shapefiles out of SimpleGML GTVectorDataBindings...
+//            assertTrue(binding.getPayloadAsShpFile().exists());
+            Assert.assertTrue(!binding.getPayload().isEmpty());
 
-			if (i == 0) {
+            if (i == 0) {
 
-				try {
-					InputStream resultStream = dataHandler.generateStream(
-							binding, mimeType, schema);
+                try {
+                    InputStream resultStream = dataHandler.generateStream(
+                            binding, mimeType, schema);
 
-					GTVectorDataBinding parsedGeneratedBinding = parser.parse(
-							resultStream, mimeType, schema);
+                    GTVectorDataBinding parsedGeneratedBinding = parser.parse(
+                            resultStream, mimeType, schema);
 
-					Assert.assertNotNull(parsedGeneratedBinding.getPayload());
-//					assertTrue(parsedGeneratedBinding.getPayloadAsShpFile()
-//							.exists());
-					Assert.assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
+                    Assert.assertNotNull(parsedGeneratedBinding.getPayload());
+//                    assertTrue(parsedGeneratedBinding.getPayloadAsShpFile()
+//                            .exists());
+                    Assert.assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 
-					InputStream resultStreamBase64 = dataHandler
-							.generateBase64Stream(binding, mimeType, schema);
+                    InputStream resultStreamBase64 = dataHandler
+                            .generateBase64Stream(binding, mimeType, schema);
 
-					GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) parser
-							.parseBase64(resultStreamBase64, mimeType, schema);
+                    GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) parser
+                            .parseBase64(resultStreamBase64, mimeType, schema);
 
-					Assert.assertNotNull(parsedGeneratedBindingBase64.getPayload());
-//					assertTrue(parsedGeneratedBindingBase64
-//							.getPayloadAsShpFile().exists());
-					Assert.assertTrue(!parsedGeneratedBindingBase64.getPayload()
-							.isEmpty());
+                    Assert.assertNotNull(parsedGeneratedBindingBase64.getPayload());
+//                    assertTrue(parsedGeneratedBindingBase64
+//                            .getPayloadAsShpFile().exists());
+                    Assert.assertTrue(!parsedGeneratedBindingBase64.getPayload()
+                            .isEmpty());
 
-				} catch (IOException e) {
-					System.err.println(e);
-					Assert.fail(e.getMessage());
-				}
-			}
+                } catch (IOException e) {
+                    System.err.println(e);
+                    Assert.fail(e.getMessage());
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new SimpleGMLGenerator();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new SimpleGMLGenerator();
+    }
 
 }

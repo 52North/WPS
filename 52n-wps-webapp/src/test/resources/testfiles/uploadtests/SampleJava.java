@@ -35,11 +35,11 @@ to the WPS version 0.4.0 (OGC 05-007r4).
  Copyright (C) 2006 by con terra GmbH
 
  Authors: 
-	Theodor Foerster, ITC, Enschede, the Netherlands
-	Carsten Priess, Institute for geoinformatics, University of
+    Theodor Foerster, ITC, Enschede, the Netherlands
+    Carsten Priess, Institute for geoinformatics, University of
 Muenster, Germany
-	Timon Ter Braak, University of Twente, the Netherlands,
-	Benjamin Pro�, Institute for geoinformatics, University of
+    Timon Ter Braak, University of Twente, the Netherlands,
+    Benjamin Pro�, Institute for geoinformatics, University of
 Muenster, Germany
 
 
@@ -92,110 +92,110 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 public class ConvexHullAlgorithm extends AbstractSelfDescribingAlgorithm {
 
-	Logger LOGGER = LoggerFactory.getLogger(ConvexHullAlgorithm.class);
-	private List<String> errors = new ArrayList<String>();
+    Logger LOGGER = LoggerFactory.getLogger(ConvexHullAlgorithm.class);
+    private List<String> errors = new ArrayList<String>();
 
-	public List<String> getErrors() {
-		return errors;
-	}
+    public List<String> getErrors() {
+        return errors;
+    }
 
-	public Class getInputDataType(String id) {
-		if (id.equalsIgnoreCase("FEATURES")) {
-			return GTVectorDataBinding.class;
-		}
-		return null;
-	}
+    public Class getInputDataType(String id) {
+        if (id.equalsIgnoreCase("FEATURES")) {
+            return GTVectorDataBinding.class;
+        }
+        return null;
+    }
 
-	public Class getOutputDataType(String id) {
-		return GTVectorDataBinding.class;
-	}
-	
-	public Map<String, IData> run(Map<String, List<IData>> inputData) {
+    public Class getOutputDataType(String id) {
+        return GTVectorDataBinding.class;
+    }
+    
+    public Map<String, IData> run(Map<String, List<IData>> inputData) {
 
-		if (inputData == null || !inputData.containsKey("FEATURES")) {
-			throw new RuntimeException(
-					"Error while allocating input parameters");
-		}
-		
-		List<IData> dataList = inputData.get("FEATURES");
-		if (dataList == null || dataList.size() != 1) {
-			throw new RuntimeException(
-					"Error while allocating input parameters");
-		}
-		
-		IData firstInputData = dataList.get(0);
-		FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData)
-				.getPayload();
+        if (inputData == null || !inputData.containsKey("FEATURES")) {
+            throw new RuntimeException(
+                    "Error while allocating input parameters");
+        }
+        
+        List<IData> dataList = inputData.get("FEATURES");
+        if (dataList == null || dataList.size() != 1) {
+            throw new RuntimeException(
+                    "Error while allocating input parameters");
+        }
+        
+        IData firstInputData = dataList.get(0);
+        FeatureCollection featureCollection = ((GTVectorDataBinding) firstInputData)
+                .getPayload();
 
-		FeatureIterator iter = featureCollection.features();
+        FeatureIterator iter = featureCollection.features();
 
-		List<Coordinate> coordinateList = new ArrayList<Coordinate>();
-		
-		int counter = 0;
-		
-		Geometry unifiedGeometry = null;
-		
-		while (iter.hasNext()) {
-			SimpleFeature  feature = (SimpleFeature) iter.next();
+        List<Coordinate> coordinateList = new ArrayList<Coordinate>();
+        
+        int counter = 0;
+        
+        Geometry unifiedGeometry = null;
+        
+        while (iter.hasNext()) {
+            SimpleFeature  feature = (SimpleFeature) iter.next();
 
-			if (feature.getDefaultGeometry() == null) {
-				throw new NullPointerException(
-						"defaultGeometry is null in feature id: "
-								+ feature.getID());
-			}
-			
-			Geometry geom = (Geometry) feature.getDefaultGeometry();
-			
-			Coordinate[] coordinateArray = geom.getCoordinates();
-			for(Coordinate coordinate : coordinateArray){
-				coordinateList.add(coordinate);
-			}
-			
-		}	
-		
-		Coordinate[] coordinateArray = new Coordinate[coordinateList.size()];
-		
-		for(int i = 0; i<coordinateList.size(); i++){
-			coordinateArray[i] = coordinateList.get(i);
-		}
-		ConvexHull convexHull = new ConvexHull(coordinateArray, new GeometryFactory());		
-		
-		Geometry out = convexHull.getConvexHull();
+            if (feature.getDefaultGeometry() == null) {
+                throw new NullPointerException(
+                        "defaultGeometry is null in feature id: "
+                                + feature.getID());
+            }
+            
+            Geometry geom = (Geometry) feature.getDefaultGeometry();
+            
+            Coordinate[] coordinateArray = geom.getCoordinates();
+            for(Coordinate coordinate : coordinateArray){
+                coordinateList.add(coordinate);
+            }
+            
+        }    
+        
+        Coordinate[] coordinateArray = new Coordinate[coordinateList.size()];
+        
+        for(int i = 0; i<coordinateList.size(); i++){
+            coordinateArray[i] = coordinateList.get(i);
+        }
+        ConvexHull convexHull = new ConvexHull(coordinateArray, new GeometryFactory());        
+        
+        Geometry out = convexHull.getConvexHull();
 
-		Feature feature = createFeature(out, featureCollection.getSchema().getCoordinateReferenceSystem());
-		
-		FeatureCollection fOut = DefaultFeatureCollections.newCollection();
-		
-		fOut.add(feature);
+        Feature feature = createFeature(out, featureCollection.getSchema().getCoordinateReferenceSystem());
+        
+        FeatureCollection fOut = DefaultFeatureCollections.newCollection();
+        
+        fOut.add(feature);
 
-		HashMap<String, IData> result = new HashMap<String, IData>();
+        HashMap<String, IData> result = new HashMap<String, IData>();
 
-		result.put("RESULT",
-				new GTVectorDataBinding(fOut));
-		return result;
-	}
-	
-	private Feature createFeature(Geometry geometry, CoordinateReferenceSystem crs) {
-		String uuid = UUID.randomUUID().toString();
-		SimpleFeatureType featureType = GTHelper.createFeatureType(geometry, uuid, crs);
-		GTHelper.createGML3SchemaForFeatureType(featureType);
-		
-		Feature feature = GTHelper.createFeature("0", geometry, featureType);
-		
-		return feature;
-	}	
-	
-	@Override
-	public List<String> getInputIdentifiers() {
-		List<String> identifierList =  new ArrayList<String>();
-		identifierList.add("FEATURES");
-		return identifierList;
-	}
+        result.put("RESULT",
+                new GTVectorDataBinding(fOut));
+        return result;
+    }
+    
+    private Feature createFeature(Geometry geometry, CoordinateReferenceSystem crs) {
+        String uuid = UUID.randomUUID().toString();
+        SimpleFeatureType featureType = GTHelper.createFeatureType(geometry, uuid, crs);
+        GTHelper.createGML3SchemaForFeatureType(featureType);
+        
+        Feature feature = GTHelper.createFeature("0", geometry, featureType);
+        
+        return feature;
+    }    
+    
+    @Override
+    public List<String> getInputIdentifiers() {
+        List<String> identifierList =  new ArrayList<String>();
+        identifierList.add("FEATURES");
+        return identifierList;
+    }
 
-	@Override
-	public List<String> getOutputIdentifiers() {
-		List<String> identifierList =  new ArrayList<String>();
-		identifierList.add("RESULT");
-		return identifierList;
-	}
+    @Override
+    public List<String> getOutputIdentifiers() {
+        List<String> identifierList =  new ArrayList<String>();
+        identifierList.add("RESULT");
+        return identifierList;
+    }
 }

@@ -39,21 +39,21 @@ import org.n52.wps.server.request.GetResultRequestV200;
  *
  */
 public class GetResultResponseV200 extends Response {
-		
-	/**
-	 * Serves the Request with a Response
-	 * @param request The GetCapabilities request
-	 */
-	public GetResultResponseV200(GetResultRequestV200 request){
-		super(request);
-	}
-	
-	/**
-	 * Save this Response to an OutputStream
-	 * @param os The OutputStream to save this Response to
-	 * @throws ExceptionReport
-	 */
-	public InputStream getAsStream() throws ExceptionReport{
-		return ((XmlObject)getRequest().getAttachedResult()).newInputStream();
-	}
+        
+    /**
+     * Serves the Request with a Response
+     * @param request The GetCapabilities request
+     */
+    public GetResultResponseV200(GetResultRequestV200 request){
+        super(request);
+    }
+    
+    /**
+     * Save this Response to an OutputStream
+     * @param os The OutputStream to save this Response to
+     * @throws ExceptionReport
+     */
+    public InputStream getAsStream() throws ExceptionReport{
+        return ((XmlObject)getRequest().getAttachedResult()).newInputStream();
+    }
 }

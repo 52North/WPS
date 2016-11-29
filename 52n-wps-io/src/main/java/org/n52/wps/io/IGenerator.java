@@ -28,33 +28,33 @@ import org.n52.wps.io.data.IData;
  * 
  */
 public interface IGenerator extends IOHandler {
-	
-	/**
-	 * 
-	 * @param data
-	 * @param mimeType
-	 * @param schema
-	 * @return
-	 * 
-	 * generates final output data produced by an IAlgorithm
-	 * and returns an InputStream for subsequent access.
-	 * 
-	 */
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException;
-	
-	
-	/**
-	 * 
-	 * @param data
-	 * @param mimeType
-	 * @param schema
-	 * @return
-	 * 
-	 * generates final output data produced by an IAlgorithm, encodes it in Base64
-	 * and returns an InputStream for subsequent access.
-	 * 
-	 */
-	public InputStream generateBase64Stream(IData data, String mimeType, String schema) throws IOException;
-	
+    
+    /**
+     * 
+     * @param data
+     * @param mimeType
+     * @param schema
+     * @return
+     * 
+     * generates final output data produced by an IAlgorithm
+     * and returns an InputStream for subsequent access.
+     * 
+     */
+    
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException;
+    
+    
+    /**
+     * 
+     * @param data
+     * @param mimeType
+     * @param schema
+     * @return
+     * 
+     * generates final output data produced by an IAlgorithm, encodes it in Base64
+     * and returns an InputStream for subsequent access.
+     * 
+     */
+    public InputStream generateBase64Stream(IData data, String mimeType, String schema) throws IOException;
+    
 }

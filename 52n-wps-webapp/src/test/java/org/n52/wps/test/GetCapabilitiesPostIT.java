@@ -127,7 +127,7 @@ public class GetCapabilitiesPostIT {
 
         try {
             PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue");
-		}
+        }
         catch (IOException e) {
             fail(e.getMessage());
         }
@@ -142,7 +142,7 @@ public class GetCapabilitiesPostIT {
 
         try {
             PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
-		}
+        }
         catch (IOException e) {
             fail(e.getMessage());
         }

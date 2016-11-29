@@ -30,10 +30,10 @@ public abstract class BoundDescriptor<T extends Class<?>> extends Descriptor {
     private final T binding;
     private final List<MetadataDescriptor> metadataDescriptors;
 
-	BoundDescriptor(Builder<? extends Builder<?,T>, T> builder) {
+    BoundDescriptor(Builder<? extends Builder<?,T>, T> builder) {
         super(builder);
-		this.binding = builder.binding;
-		this.metadataDescriptors = builder.metadataDescriptors;
+        this.binding = builder.binding;
+        this.metadataDescriptors = builder.metadataDescriptors;
     }
 
     public T getBinding() {

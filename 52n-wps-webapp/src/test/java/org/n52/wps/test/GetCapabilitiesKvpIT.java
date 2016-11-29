@@ -75,7 +75,7 @@ public class GetCapabilitiesKvpIT {
     public void missingServiceParameter() throws IOException,
             ParserConfigurationException,
             SAXException {
-    	GetClient.checkForExceptionReport(url, "Request=GetCapabilities", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
+        GetClient.checkForExceptionReport(url, "Request=GetCapabilities", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
     }
 
     @Test

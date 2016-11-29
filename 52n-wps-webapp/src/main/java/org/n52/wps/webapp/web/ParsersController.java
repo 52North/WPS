@@ -48,64 +48,64 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping("parsers")
 public class ParsersController extends BaseConfigurationsController {
 
-	/**
-	 * Display parsers configuration modules
-	 * 
-	 * @return The parsers view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String displayParsers(Model model) {
-		ConfigurationCategory category = ConfigurationCategory.PARSER;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-				.getConfigurationModulesByCategory(category);
-		model.addAttribute("configurations", configurations);
-		LOGGER.info("Retrived '{}' configurations.", category);
-		return "parsers";
-	}
-	
-	/**
-	 * TODO update
-	 * Add a new algorithm to the repository
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithmName
-	 *            The algorithm name
-	 */
-	@RequestMapping(value = "formats/add_format", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void addFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("mimeType") String mimeType, @RequestParam("schema") String schema, @RequestParam("encoding") String encoding) {
-		configurationManager.getConfigurationServices().addFormatEntry(moduleClassName, mimeType, schema, encoding);
-		LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
-	}
-	
-	/**
-	 * Delete a format from the module
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the format
+    /**
+     * Display parsers configuration modules
+     * 
+     * @return The parsers view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String displayParsers(Model model) {
+        ConfigurationCategory category = ConfigurationCategory.PARSER;
+        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
+                .getConfigurationModulesByCategory(category);
+        model.addAttribute("configurations", configurations);
+        LOGGER.info("Retrived '{}' configurations.", category);
+        return "parsers";
+    }
+    
+    /**
+     * TODO update
+     * Add a new algorithm to the repository
+     * 
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the algorithm
+     * @param algorithmName
+     *            The algorithm name
+     */
+    @RequestMapping(value = "formats/add_format", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void addFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("mimeType") String mimeType, @RequestParam("schema") String schema, @RequestParam("encoding") String encoding) {
+        configurationManager.getConfigurationServices().addFormatEntry(moduleClassName, mimeType, schema, encoding);
+        LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
+    }
+    
+    /**
+     * Delete a format from the module
+     * 
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the format
          * @param mimeType
          *            The format mimeType
          * @param schema
          *            The format schema
          * @param encoding
          *            The format encoding
-	 */
-	@RequestMapping(value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void deleteFormat(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
-		mimeType = mimeType.replace("forwardslash", "/");
-		
-		if(schema.equals("null")){
-			schema = "";
-		}
-		if(encoding.equals("null")){
-			encoding = "";
-		}
-		
-		configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
-		LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
-	}
+     */
+    @RequestMapping(value = "formats/{moduleClassName}/{mimeType}/{schema}/{encoding}/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteFormat(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
+        mimeType = mimeType.replace("forwardslash", "/");
+        
+        if(schema.equals("null")){
+            schema = "";
+        }
+        if(encoding.equals("null")){
+            encoding = "";
+        }
+        
+        configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
+        LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
+    }
 
         /**
          * Set the status of a configuration format to active/inactive
@@ -121,23 +121,23 @@ public class ParsersController extends BaseConfigurationsController {
          * @param status
          *            The new status
          */
-	@RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleFormatStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
-			@PathVariable boolean status) {
-		
-		mimeType = mimeType.replace("forwardslash", "/");
-		
-		if(schema.equals("null")){
-			schema = "";
-		}
-		if(encoding.equals("null")){
-			encoding = "";
-		}
-		
-		configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
-//		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
-	}
+    @RequestMapping(value = "formats/activate/{moduleClassName}/{mimeType}/{schema}/{encoding}/{status}", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void toggleFormatStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
+            @PathVariable boolean status) {
+        
+        mimeType = mimeType.replace("forwardslash", "/");
+        
+        if(schema.equals("null")){
+            schema = "";
+        }
+        if(encoding.equals("null")){
+            encoding = "";
+        }
+        
+        configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
+//        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
+    }
 
         
         /**

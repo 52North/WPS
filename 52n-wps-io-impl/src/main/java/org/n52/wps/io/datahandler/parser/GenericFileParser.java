@@ -41,21 +41,21 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GenericFileParser extends AbstractParser{
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
-	
-	public GenericFileParser() {
-		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
-	}
-	
-	@Override
-	public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
-		
-		GenericFileData theData = new GenericFileData(input, mimeType);
-		LOGGER.info("Found File Input " + mimeType);
-		
-		return new GenericFileDataBinding(theData);
-	}
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(GenericFileParser.class);
+    
+    public GenericFileParser() {
+        super();
+        supportedIDataTypes.add(GenericFileDataBinding.class);
+    }
+    
+    @Override
+    public GenericFileDataBinding parse(InputStream input, String mimeType, String schema) {
+        
+        GenericFileData theData = new GenericFileData(input, mimeType);
+        LOGGER.info("Found File Input " + mimeType);
+        
+        return new GenericFileDataBinding(theData);
+    }
 
 }

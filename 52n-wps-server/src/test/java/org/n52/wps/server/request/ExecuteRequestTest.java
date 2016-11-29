@@ -71,41 +71,41 @@ public class ExecuteRequestTest extends AbstractITClass {
 //        WPSConfig.forceInitialization("src/test/resources/org/n52/wps/io/test/inputhandler/generator/wps_config.xml");
     }
 
-	@Before
+    @Before
     public void setUp(){
-		System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
+        System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
 
-		fac = DocumentBuilderFactory.newInstance();
-		fac.setNamespaceAware(true);
+        fac = DocumentBuilderFactory.newInstance();
+        fac.setNamespaceAware(true);
 
         RepositoryManager repositoryManager = new RepositoryManager();
         repositoryManager.setApplicationContext(this.wac);
         repositoryManager.init();
     }
 
-	@Test
+    @Test
     public void testUpdateStatusError() throws ExceptionReport, XmlException, IOException, SAXException, ParserConfigurationException {
 
-		FileInputStream fis = new FileInputStream(new File("src/test/resources/LRDTCCorruptInputResponseDocStatusTrue.xml"));
+        FileInputStream fis = new FileInputStream(new File("src/test/resources/LRDTCCorruptInputResponseDocStatusTrue.xml"));
 
-		// parse the InputStream to create a Document
-		Document doc = fac.newDocumentBuilder().parse(fis);
+        // parse the InputStream to create a Document
+        Document doc = fac.newDocumentBuilder().parse(fis);
 
-    	ExecuteRequestV100 request = new ExecuteRequestV100(doc);
+        ExecuteRequestV100 request = new ExecuteRequestV100(doc);
 
-    	String exceptionText = "TestError";
+        String exceptionText = "TestError";
 
-    	request.updateStatusError(exceptionText);
+        request.updateStatusError(exceptionText);
 
-    	File response = DatabaseFactory.getDatabase().lookupResponseAsFile(request.getUniqueId().toString());
+        File response = DatabaseFactory.getDatabase().lookupResponseAsFile(request.getUniqueId().toString());
 
-    	ExecuteResponseDocument responseDoc = ExecuteResponseDocument.Factory.parse(response);
+        ExecuteResponseDocument responseDoc = ExecuteResponseDocument.Factory.parse(response);
 
-    	StatusType statusType = responseDoc.getExecuteResponse().getStatus();
+        StatusType statusType = responseDoc.getExecuteResponse().getStatus();
 
-    	assertTrue(validateExecuteResponse(responseDoc));
-    	assertTrue(statusType.isSetProcessFailed());
-    	assertTrue(statusType.getProcessFailed().getExceptionReport().getExceptionArray(0).getExceptionTextArray(0).equals(exceptionText));
+        assertTrue(validateExecuteResponse(responseDoc));
+        assertTrue(statusType.isSetProcessFailed());
+        assertTrue(statusType.getProcessFailed().getExceptionReport().getExceptionArray(0).getExceptionTextArray(0).equals(exceptionText));
 
     }
 

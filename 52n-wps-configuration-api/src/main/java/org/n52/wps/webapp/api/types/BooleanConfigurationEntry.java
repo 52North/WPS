@@ -32,12 +32,12 @@ import org.n52.wps.webapp.api.ConfigurationType;
 
 public class BooleanConfigurationEntry extends ConfigurationEntry<Boolean> {
 
-	public BooleanConfigurationEntry(String key, String title) {
-		super(key, title, ConfigurationType.BOOLEAN);
-	}
+    public BooleanConfigurationEntry(String key, String title) {
+        super(key, title, ConfigurationType.BOOLEAN);
+    }
 
-	public BooleanConfigurationEntry(String key, String title, String description, boolean required, Boolean value) {
-		super(key, title, description, required, value, ConfigurationType.BOOLEAN);
-	}
+    public BooleanConfigurationEntry(String key, String title, String description, boolean required, Boolean value) {
+        super(key, title, description, required, value, ConfigurationType.BOOLEAN);
+    }
 
 }

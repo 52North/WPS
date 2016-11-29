@@ -43,31 +43,31 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
  *
  */
 public class WCPSQueryParser extends AbstractParser{
-	
-	public WCPSQueryParser(){
-		super();
-		supportedIDataTypes.add(PlainStringBinding.class);
-	}
+    
+    public WCPSQueryParser(){
+        super();
+        supportedIDataTypes.add(PlainStringBinding.class);
+    }
 
-	@Override
-	public PlainStringBinding parse(InputStream stream, String mimeType, String schema) {
-		BufferedReader br;
-		StringWriter sw;
-		try {
-			br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
-		
-		    sw=new StringWriter();
-		    int k;
-		    while((k=br.read())!=-1){
-		    	sw.write(k);
-		    }
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("Unsupported Encoding");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	    PlainStringBinding result = new PlainStringBinding(sw.toString());
-	    return result;
-	}
+    @Override
+    public PlainStringBinding parse(InputStream stream, String mimeType, String schema) {
+        BufferedReader br;
+        StringWriter sw;
+        try {
+            br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
+        
+            sw=new StringWriter();
+            int k;
+            while((k=br.read())!=-1){
+                sw.write(k);
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unsupported Encoding");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        PlainStringBinding result = new PlainStringBinding(sw.toString());
+        return result;
+    }
 
 }

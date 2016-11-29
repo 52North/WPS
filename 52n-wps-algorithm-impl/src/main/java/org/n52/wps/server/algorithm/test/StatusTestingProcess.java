@@ -50,13 +50,13 @@ public class StatusTestingProcess extends AbstractAnnotatedAlgorithm {
         log.debug("Running echo process");
         
         for (int i = 0; i < 2; i++) {
-        	update("Status " + i);
-			try {
-				Thread.sleep(7000);
-			} catch (InterruptedException e) {
-				log.error(e.getMessage());
-			}
-		}
+            update("Status " + i);
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                log.error(e.getMessage());
+            }
+        }
         
         literalOutput = literalInput;
 

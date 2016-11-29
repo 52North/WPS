@@ -45,19 +45,19 @@ public class PropertyUtil {
     private ConfigurationManager configurationManager;
     
     public PropertyUtil(ConfigurationModule configurationModule) {
-    	this.configurationModule = configurationModule;
-    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
-    	systemPropertyRoot = null;
+        this.configurationModule = configurationModule;
+        configurationManager = WPSConfig.getInstance().getConfigurationManager();
+        systemPropertyRoot = null;
         propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
-    	fillPropertyNameMap();
+        fillPropertyNameMap();
     }
     
     public PropertyUtil(ConfigurationModule configurationModule, String systemPropertyRoot) {
-    	this.configurationModule = configurationModule;
-    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
-    	this.systemPropertyRoot = systemPropertyRoot;
+        this.configurationModule = configurationModule;
+        configurationManager = WPSConfig.getInstance().getConfigurationManager();
+        this.systemPropertyRoot = systemPropertyRoot;
         propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
-    	fillPropertyNameMap();
+        fillPropertyNameMap();
     }
     
     private void fillPropertyNameMap(){
@@ -69,7 +69,7 @@ public class PropertyUtil {
                 }
             }
         }
-    	
+        
     }
 
     public boolean extractBoolean(final String valueKey, boolean valueDefault) {
@@ -105,11 +105,11 @@ public class PropertyUtil {
         }
         
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
-        		return (Boolean) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+            
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
+                return (Boolean) configurationEntry.getValue();
+            }            
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -157,11 +157,11 @@ public class PropertyUtil {
         }
         
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
-        		return (Long) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+            
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
+                return (Long) configurationEntry.getValue();
+            }            
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -209,11 +209,11 @@ public class PropertyUtil {
         }
         
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
-        		return (Double) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+            
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
+                return (Double) configurationEntry.getValue();
+            }            
         }
         
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
@@ -251,11 +251,11 @@ public class PropertyUtil {
         }
         
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
-        		return (String) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+            
+            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+                return (String) configurationEntry.getValue();
+            }            
         }
          
         LOGGER.info("Using default value for \"{}\": {}", valueKey, valueDefault);
@@ -313,12 +313,12 @@ public class PropertyUtil {
         }
         
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
-        		periodAsString = (String) configurationEntry.getValue();
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+            
+            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+                periodAsString = (String) configurationEntry.getValue();
                 
-        		if (periodAsString != null) {
+                if (periodAsString != null) {
                     try {
                         Period period = Period.parse(periodAsString);
                         if (period != null) {
@@ -333,8 +333,8 @@ public class PropertyUtil {
                     }
                 } else {
                     LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
-                }       		
-        	}        	
+                }               
+            }            
         }
         
         LOGGER.info("Using default value for \"{}\" of {}ms", valueKey, valueDefault);

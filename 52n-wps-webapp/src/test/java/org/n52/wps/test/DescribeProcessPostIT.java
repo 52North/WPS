@@ -39,9 +39,9 @@ import org.junit.Test;
 
 public class DescribeProcessPostIT {
 
-	private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
-	private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-	
+    private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
+    private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
+    
     private static String url;
 
     @BeforeClass
@@ -86,7 +86,7 @@ public class DescribeProcessPostIT {
                 + "</wps:DescribeProcess>";
 
         try {
-        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "language");
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "language");
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -149,10 +149,10 @@ public class DescribeProcessPostIT {
                 "</wps:DescribeProcess>";
         
         try {
-			PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"version\"");
-		} catch (IOException e) {
-			fail(e.getMessage());
-		}
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"version\"");
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
     }
 
     @Test
@@ -164,7 +164,7 @@ public class DescribeProcessPostIT {
                 + "</wps:DescribeProcess>";
 
         try {
-        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"service\"");
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"service\"");
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -178,7 +178,7 @@ public class DescribeProcessPostIT {
                 + "</wps:DescribeProcess>";
 
         try {
-        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"identifier\"");
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"identifier\"");
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -192,7 +192,7 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier></ows:Identifier>" + "</wps:DescribeProcess>";
 
         try {
-        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
         } catch (IOException e) {
             fail(e.getMessage());
         }
@@ -206,7 +206,7 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier>XXX</ows:Identifier>" + "</wps:DescribeProcess>";
 
         try {
-        	PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
+            PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
         } catch (IOException e) {
             fail(e.getMessage());
         }

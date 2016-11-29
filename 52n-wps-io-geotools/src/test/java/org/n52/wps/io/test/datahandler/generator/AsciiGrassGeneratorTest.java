@@ -66,75 +66,75 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class AsciiGrassGeneratorTest extends AbstractTestCase<AsciiGrassGenerator> {
 
-	@Test
-	public void testGenerator() {
+    @Test
+    public void testGenerator() {
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.TIF";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.TIF";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		GeotiffParser theParser = new GeotiffParser();
+        GeotiffParser theParser = new GeotiffParser();
 
-		String[] mimetypes = theParser.getSupportedFormats();
+        String[] mimetypes = theParser.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
-				null);
+        GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
+                null);
 
-		Assert.assertTrue(theBinding.getPayload() != null);
+        Assert.assertTrue(theBinding.getPayload() != null);
 
-		String[] mimetypes2 = dataHandler.getSupportedFormats();
+        String[] mimetypes2 = dataHandler.getSupportedFormats();
 
-		AsciiGrassParser asciiGrassParser = new AsciiGrassParser();
+        AsciiGrassParser asciiGrassParser = new AsciiGrassParser();
 
-		for (String string : mimetypes2) {
-			try {
-				InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
+        for (String string : mimetypes2) {
+            try {
+                InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
 
-				AsciiGrassDataBinding rasterBinding = asciiGrassParser.parse(resultStream, mimetypes[0], null);
+                AsciiGrassDataBinding rasterBinding = asciiGrassParser.parse(resultStream, mimetypes[0], null);
 
-				Assert.assertTrue(rasterBinding.getPayload() != null);
-				Assert.assertTrue(rasterBinding.getPayload().getDimension() != 0);
-				Assert.assertTrue(rasterBinding.getPayload().getEnvelope() != null);
+                Assert.assertTrue(rasterBinding.getPayload() != null);
+                Assert.assertTrue(rasterBinding.getPayload().getDimension() != 0);
+                Assert.assertTrue(rasterBinding.getPayload().getEnvelope() != null);
 
-				InputStream resultStreamBase64 = dataHandler.generateBase64Stream(theBinding, string, null);
+                InputStream resultStreamBase64 = dataHandler.generateBase64Stream(theBinding, string, null);
 
-				AsciiGrassDataBinding rasterBindingBase64 = (AsciiGrassDataBinding) asciiGrassParser.parseBase64(resultStreamBase64, mimetypes[0], null);
+                AsciiGrassDataBinding rasterBindingBase64 = (AsciiGrassDataBinding) asciiGrassParser.parseBase64(resultStreamBase64, mimetypes[0], null);
 
-				Assert.assertTrue(rasterBindingBase64.getPayload() != null);
-				Assert.assertTrue(rasterBindingBase64.getPayload().getDimension() != 0);
-				Assert.assertTrue(rasterBindingBase64.getPayload().getEnvelope() != null);
+                Assert.assertTrue(rasterBindingBase64.getPayload() != null);
+                Assert.assertTrue(rasterBindingBase64.getPayload().getDimension() != 0);
+                Assert.assertTrue(rasterBindingBase64.getPayload().getEnvelope() != null);
 
-			} catch (IOException e) {
-				e.printStackTrace();
-				Assert.fail(e.getMessage());
-			}
+            } catch (IOException e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new AsciiGrassGenerator();
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new AsciiGrassGenerator();
 
-	}
+    }
 
 
 }

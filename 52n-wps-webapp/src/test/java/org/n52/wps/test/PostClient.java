@@ -109,11 +109,11 @@ public class PostClient {
 
         try {
             conn.getInputStream();
-		} catch (IOException e) {
-			/*
-			 * expected, ignore
-			 */
-		}
+        } catch (IOException e) {
+            /*
+             * expected, ignore
+             */
+        }
 
         InputStream error = ((HttpURLConnection) conn).getErrorStream();
 
@@ -121,7 +121,7 @@ public class PostClient {
 
         int data = error.read();
         while (data != -1) {
-        	exceptionReport = exceptionReport + (char)data;
+            exceptionReport = exceptionReport + (char)data;
             data = error.read();
         }
         error.close();
@@ -131,6 +131,6 @@ public class PostClient {
 
             assertTrue(exceptionReport.contains(expectedExceptionParameter));
 
-		}
+        }
     }
 }

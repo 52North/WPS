@@ -39,38 +39,38 @@ import org.n52.wps.webapp.service.UserService;
  * instead of contacting the services directly.
  */
 public interface ConfigurationManager {
-	/**
-	 * Access configuration services and operations
-	 *
-	 * @return {@code ConfigurationService}
-	 */
-	ConfigurationService getConfigurationServices();
+    /**
+     * Access configuration services and operations
+     *
+     * @return {@code ConfigurationService}
+     */
+    ConfigurationService getConfigurationServices();
 
-	/**
-	 * Access user services and operations
-	 *
-	 * @return {@code UserService}
-	 */
-	UserService getUserServices();
+    /**
+     * Access user services and operations
+     *
+     * @return {@code UserService}
+     */
+    UserService getUserServices();
 
-	/**
-	 * Access capabilities services and operations
-	 *
-	 * @return {@code CapabilitiesService}
-	 */
-	CapabilitiesService getCapabilitiesServices();
+    /**
+     * Access capabilities services and operations
+     *
+     * @return {@code CapabilitiesService}
+     */
+    CapabilitiesService getCapabilitiesServices();
 
-	/**
-	 * Access log services and operations
-	 *
-	 * @return {@code LogConfigurationsService}
-	 */
-	LogConfigurationsService getLogConfigurationsServices();
+    /**
+     * Access log services and operations
+     *
+     * @return {@code LogConfigurationsService}
+     */
+    LogConfigurationsService getLogConfigurationsServices();
 
-	/**
-	 * Access backup and restore services and operations
-	 *
-	 * @return {@code BackupService}
-	 */
-	BackupService getBackupServices();
+    /**
+     * Access backup and restore services and operations
+     *
+     * @return {@code BackupService}
+     */
+    BackupService getBackupServices();
 }

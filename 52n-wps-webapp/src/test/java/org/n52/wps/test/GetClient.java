@@ -51,8 +51,8 @@ public class GetClient {
 
     public static String sendRequest(String targetURL, String payload) throws IOException {
         // Send data
-    	InputStream in = sendRequestForInputStream(targetURL, payload);
-    	
+        InputStream in = sendRequestForInputStream(targetURL, payload);
+        
         // Get the response
         BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
@@ -87,20 +87,20 @@ public class GetClient {
         URLConnection conn = url.openConnection();
 
         try {            
-            conn.getInputStream();			
-		} catch (IOException e) {
-			/*
-			 * expected, ignore
-			 */			
-		}
-    	
+            conn.getInputStream();            
+        } catch (IOException e) {
+            /*
+             * expected, ignore
+             */            
+        }
+        
         InputStream error = ((HttpURLConnection) conn).getErrorStream();
         
         String exceptionReport = "";
         
         int data = error.read();
         while (data != -1) {
-        	exceptionReport = exceptionReport + (char)data;
+            exceptionReport = exceptionReport + (char)data;
             data = error.read();
         }
         error.close();
@@ -109,7 +109,7 @@ public class GetClient {
         for (String expectedExceptionParameter : expectedExceptionParameters) {
             
             assertTrue(exceptionReport.contains(expectedExceptionParameter)); 
-			
-		}   
+            
+        }   
     }
 }

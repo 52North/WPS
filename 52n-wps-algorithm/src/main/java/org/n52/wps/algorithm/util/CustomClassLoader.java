@@ -42,28 +42,28 @@ public class CustomClassLoader extends ClassLoader {
      */
     private Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 
-	private String baseDir;
+    private String baseDir;
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(CustomClassLoader.class);
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(CustomClassLoader.class);
 
-	public CustomClassLoader(String baseDir){
-	    this.baseDir = baseDir;	
-	}
-	
+    public CustomClassLoader(String baseDir){
+        this.baseDir = baseDir;    
+    }
+    
     @Override
     public String toString() {
         return CustomClassLoader.class.getName();
     }
     
     @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {	    	
-    	try {
-			return UploadedAlgorithmRepository.class.getClassLoader().loadClass(name);				
-		} catch (ClassNotFoundException e) {
-			LOGGER.info("Class not found: " + name + ". Trying custom class loader.");
-			return findClass(name);
-		}
+    public Class<?> loadClass(String name) throws ClassNotFoundException {            
+        try {
+            return UploadedAlgorithmRepository.class.getClassLoader().loadClass(name);                
+        } catch (ClassNotFoundException e) {
+            LOGGER.info("Class not found: " + name + ". Trying custom class loader.");
+            return findClass(name);
+        }
     }
 
     @Override
@@ -98,7 +98,7 @@ public class CustomClassLoader extends ClassLoader {
      * @throws IOException
      */
     private byte[] loadClassData(String name) throws IOException {
-    	
+        
         String pathToClassFile = (baseDir.endsWith(File.separator) ? baseDir : baseDir + File.separator)+ name.replace(".", "/") + ".class"; 
         
         InputStream classBytesStream = null;
@@ -112,7 +112,7 @@ public class CustomClassLoader extends ClassLoader {
             //relative path was passed, so try to get resource as stream 
             classBytesStream =  UploadedAlgorithmRepository.class.getClassLoader().getResourceAsStream(pathToClassFile);
         }
-    	
+        
         BufferedInputStream in = new BufferedInputStream(classBytesStream);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int i;

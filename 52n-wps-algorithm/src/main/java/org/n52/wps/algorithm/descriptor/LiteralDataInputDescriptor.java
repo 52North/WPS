@@ -45,18 +45,18 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
     private final String defaultValue;
     private final List<String> allowedValues;
 
-	protected LiteralDataInputDescriptor(Builder builder) {
-		super(builder);
+    protected LiteralDataInputDescriptor(Builder builder) {
+        super(builder);
         this.dataType = builder.dataType;
-		this.defaultValue = builder.defaultValue;
-		this.allowedValues = builder.allowedValues != null ?
+        this.defaultValue = builder.defaultValue;
+        this.allowedValues = builder.allowedValues != null ?
             Collections.unmodifiableList(builder.allowedValues) :
             Collections.EMPTY_LIST;
         // if allowedValues and defaultValue are set, make sure defaultValue is in set of allowedValues
         Preconditions.checkState(
                 !hasAllowedValues() || !hasDefaultValue() || allowedValues.contains(defaultValue),
                 "defaultValue of %s not in set of allowedValues", defaultValue);
-	}
+    }
 
     public String getDataType() {
         return dataType;

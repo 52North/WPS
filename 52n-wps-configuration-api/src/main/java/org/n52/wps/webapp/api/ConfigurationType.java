@@ -47,5 +47,5 @@ import org.n52.wps.webapp.api.types.URIConfigurationEntry;
  * @see URIConfigurationEntry
  */
 public enum ConfigurationType {
-	INTEGER, FILE, STRING, URI, DOUBLE, BOOLEAN
+    INTEGER, FILE, STRING, URI, DOUBLE, BOOLEAN
 }

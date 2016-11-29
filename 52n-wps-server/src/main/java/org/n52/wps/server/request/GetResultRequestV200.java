@@ -44,20 +44,20 @@ import org.w3c.dom.Document;
 
 public class GetResultRequestV200 extends Request {
 
-	private XmlObject document;
-	
-	private String jobID;
-	
-	private GetResultDocument getResultDocument;
-	
-	public GetResultRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
-		super(map);
-		jobID = getMapValue("jobid", true);		
-	}
+    private XmlObject document;
+    
+    private String jobID;
+    
+    private GetResultDocument getResultDocument;
+    
+    public GetResultRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
+        super(map);
+        jobID = getMapValue("jobid", true);        
+    }
 
-	public GetResultRequestV200(Document doc) throws ExceptionReport {
-		super(doc);
-		
+    public GetResultRequestV200(Document doc) throws ExceptionReport {
+        super(doc);
+        
                 if(!validate()){
                         throw new ExceptionReport("GetResultRequest not valid",
                                         ExceptionReport.NO_APPLICABLE_CODE);
@@ -68,33 +68,33 @@ public class GetResultRequestV200 extends Request {
                 if(jobID == null || jobID.equals("")){
                         throw new ExceptionReport("JobID not valid",
                                         ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
-                }	
-	}
+                }    
+    }
 
-	@Override
-	public Object getAttachedResult() {
-		return document;
-	}
+    @Override
+    public Object getAttachedResult() {
+        return document;
+    }
 
-	@Override
-	public Response call() throws ExceptionReport {
-		try {
-			document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
-		} catch (XmlException | IOException e) {
-			LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
-		}		
-		
-		return new GetResultResponseV200(this);
-	}
+    @Override
+    public Response call() throws ExceptionReport {
+        try {
+            document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
+        } catch (XmlException | IOException e) {
+            LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
+        }        
+        
+        return new GetResultResponseV200(this);
+    }
 
-	@Override
-	public boolean validate() throws ExceptionReport {
-	           try {
-	               getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
+    @Override
+    public boolean validate() throws ExceptionReport {
+               try {
+                   getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
                } catch (XmlException e) {
                        return false;
                }
                return getResultDocument != null;
-	}
+    }
 
 }

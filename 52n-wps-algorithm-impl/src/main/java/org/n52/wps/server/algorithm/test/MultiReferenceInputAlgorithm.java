@@ -66,15 +66,15 @@ public class MultiReferenceInputAlgorithm extends AbstractAnnotatedAlgorithm {
 
     @Execute
     public void runProcess() {
-    	
-    	GenericFileData gfd = data.get(0);
-    	
-    	File f = gfd.getBaseFile(false);
-    	
-    	try {
-			result = new GenericFileData(f, gfd.getMimeType());
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
+        
+        GenericFileData gfd = data.get(0);
+        
+        File f = gfd.getBaseFile(false);
+        
+        try {
+            result = new GenericFileData(f, gfd.getMimeType());
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 }

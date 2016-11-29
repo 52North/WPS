@@ -65,63 +65,63 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 public class GTBinZippedSHPGeneratorTest extends AbstractTestCase<GTBinZippedSHPGenerator> {
 
     @Test
-	public void testParser(){
+    public void testParser(){
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
+        GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
 
-		String[] mimetypes = theParser.getSupportedFormats();
+        String[] mimetypes = theParser.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-//		for (String mimetype : mimetypes) {
+//        for (String mimetype : mimetypes) {
 
-			GTVectorDataBinding theBinding = theParser.parse(input, mimetypes[0], "");
+            GTVectorDataBinding theBinding = theParser.parse(input, mimetypes[0], "");
 
-			try {
-				InputStream generatedStream = dataHandler.generateStream(theBinding, mimetypes[0], null);
+            try {
+                InputStream generatedStream = dataHandler.generateStream(theBinding, mimetypes[0], null);
 
-				GTVectorDataBinding parsedGeneratedBinding = (GTVectorDataBinding) theParser.parse(generatedStream, mimetypes[0], null);
+                GTVectorDataBinding parsedGeneratedBinding = (GTVectorDataBinding) theParser.parse(generatedStream, mimetypes[0], null);
 
-				Assert.assertNotNull(parsedGeneratedBinding.getPayload());
-				Assert.assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());
-				Assert.assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
+                Assert.assertNotNull(parsedGeneratedBinding.getPayload());
+                Assert.assertTrue(parsedGeneratedBinding.getPayloadAsShpFile().exists());
+                Assert.assertTrue(!parsedGeneratedBinding.getPayload().isEmpty());
 
-				InputStream generatedStreamBase64 = dataHandler.generateBase64Stream(theBinding, mimetypes[0], null);
+                InputStream generatedStreamBase64 = dataHandler.generateBase64Stream(theBinding, mimetypes[0], null);
 
-				GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) theParser.parseBase64(generatedStreamBase64, mimetypes[0], null);
+                GTVectorDataBinding parsedGeneratedBindingBase64 = (GTVectorDataBinding) theParser.parseBase64(generatedStreamBase64, mimetypes[0], null);
 
-				Assert.assertNotNull(parsedGeneratedBindingBase64.getPayload());
-				Assert.assertTrue(parsedGeneratedBindingBase64.getPayloadAsShpFile().exists());
-				Assert.assertTrue(!parsedGeneratedBindingBase64.getPayload().isEmpty());
-			} catch (IOException e) {
-				e.printStackTrace();
-				Assert.fail(e.getMessage());
-			}
-//		}
+                Assert.assertNotNull(parsedGeneratedBindingBase64.getPayload());
+                Assert.assertTrue(parsedGeneratedBindingBase64.getPayloadAsShpFile().exists());
+                Assert.assertTrue(!parsedGeneratedBindingBase64.getPayload().isEmpty());
+            } catch (IOException e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
+//        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GTBinZippedSHPGenerator();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GTBinZippedSHPGenerator();
+    }
 
 }

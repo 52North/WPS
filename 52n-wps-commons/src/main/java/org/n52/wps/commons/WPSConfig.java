@@ -64,42 +64,42 @@ public class WPSConfig implements Serializable {
     protected final PropertyChangeSupport propertyChangeSupport = null;
 
     public static final String SERVLET_PATH = "WebProcessingService";
-	public static final String VERSION_100 = "1.0.0";
-	public static final String VERSION_200 = "2.0.0";
-	public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{VERSION_100, VERSION_200});
+    public static final String VERSION_100 = "1.0.0";
+    public static final String VERSION_200 = "2.0.0";
+    public static final List<String> SUPPORTED_VERSIONS = Arrays.asList(new String[]{VERSION_100, VERSION_200});
 
-	public static final String JOB_CONTROL_OPTION_SYNC_EXECUTE = "sync-execute";
-	public static final String JOB_CONTROL_OPTION_ASYNC_EXECUTE = "async-execute";
+    public static final String JOB_CONTROL_OPTION_SYNC_EXECUTE = "sync-execute";
+    public static final String JOB_CONTROL_OPTION_ASYNC_EXECUTE = "async-execute";
 
-	public static final String JOB_CONTROL_OPTIONS_SEPARATOR = " ";
+    public static final String JOB_CONTROL_OPTIONS_SEPARATOR = " ";
 
-	public static final String OUTPUT_TRANSMISSION_VALUE = "value";
-	public static final String OUTPUT_TRANSMISSION_REFERENCE = "reference";
+    public static final String OUTPUT_TRANSMISSION_VALUE = "value";
+    public static final String OUTPUT_TRANSMISSION_REFERENCE = "reference";
 
-	public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
+    public static final String OUTPUT_TRANSMISSIONS_SEPARATOR = " ";
 
     @Autowired // allow tests autowiring cm
-	private ConfigurationManager configurationManager;
+    private ConfigurationManager configurationManager;
 
     private Server serverConfigurationModule;
 
-	public Server getServerConfigurationModule() {
+    public Server getServerConfigurationModule() {
 
-		if (serverConfigurationModule == null) {
-			serverConfigurationModule = (Server) configurationManager
-					.getConfigurationServices().getConfigurationModule(
-							Server.class.getName());
-		}
-		return serverConfigurationModule;
-	}
+        if (serverConfigurationModule == null) {
+            serverConfigurationModule = (Server) configurationManager
+                    .getConfigurationServices().getConfigurationModule(
+                            Server.class.getName());
+        }
+        return serverConfigurationModule;
+    }
 
     public ConfigurationManager getConfigurationManager() {
-		return configurationManager;
-	}
+        return configurationManager;
+    }
 
-	public void setConfigurationManager(ConfigurationManager configurationManager) {
-		this.configurationManager = configurationManager;
-	}
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+    }
 
     /**
      * Add an Listener to the wpsConfig
@@ -132,7 +132,7 @@ public class WPSConfig implements Serializable {
     @Deprecated
     public static WPSConfig getInstance() {
         if (wpsConfig == null) {
-        	wpsConfig = new WPSConfig();
+            wpsConfig = new WPSConfig();
         }
         return wpsConfig;
     }
@@ -147,8 +147,8 @@ public class WPSConfig implements Serializable {
     }
 
     public Map<String, ConfigurationModule> getRegisteredAlgorithmRepositoryConfigModules() {
-    	//TODO check, tests need a mocked up webapp in the future
-    	return configurationManager == null ? new HashMap<String, ConfigurationModule>() : configurationManager.getConfigurationServices().getConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY);
+        //TODO check, tests need a mocked up webapp in the future
+        return configurationManager == null ? new HashMap<String, ConfigurationModule>() : configurationManager.getConfigurationServices().getConfigurationModulesByCategory(ConfigurationCategory.REPOSITORY);
     }
 
     public String getServiceBaseUrl() {
@@ -178,66 +178,66 @@ public class WPSConfig implements Serializable {
         return endpoint;
     }
 
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForGeneratorClass(
-			String name) {
-		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
-		return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
-	}
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForGeneratorClass(
+            String name) {
+        ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
+        return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
+    }
 
-	public List<FormatEntry> getFormatEntriesForGeneratorClass(String name) {
-		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
-		return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
-	}
+    public List<FormatEntry> getFormatEntriesForGeneratorClass(String name) {
+        ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.GENERATOR);
+        return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
+    }
 
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForParserClass(
-			String name) {
-		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
-		return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
-	}
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntriesForParserClass(
+            String name) {
+        ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
+        return  (module == null) ? new ArrayList<ConfigurationEntry<?>>() : module.getConfigurationEntries();
+    }
 
-	public List<FormatEntry> getFormatEntriesForParserClass(String name) {
-		ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
-		return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
-	}
+    public List<FormatEntry> getFormatEntriesForParserClass(String name) {
+        ConfigurationModule module = getConfigurationModuleForClass(name, ConfigurationCategory.PARSER);
+        return  (module == null) ? new ArrayList<FormatEntry>() : module.getFormatEntries();
+    }
 
-	public ConfigurationModule getConfigurationModuleForClass(String name, ConfigurationCategory moduleCategorie){
+    public ConfigurationModule getConfigurationModuleForClass(String name, ConfigurationCategory moduleCategorie){
 
-		Map<String, ConfigurationModule> activeModules = getActiveConfigurationModules(moduleCategorie);
+        Map<String, ConfigurationModule> activeModules = getActiveConfigurationModules(moduleCategorie);
 
-		for (String moduleName : activeModules.keySet()) {
+        for (String moduleName : activeModules.keySet()) {
 
-			ConfigurationModule tmpModule = activeModules.get(moduleName);
+            ConfigurationModule tmpModule = activeModules.get(moduleName);
 
-			if(!(tmpModule instanceof ClassKnowingModule)){
-				continue;
-			}
+            if(!(tmpModule instanceof ClassKnowingModule)){
+                continue;
+            }
 
-			if(((ClassKnowingModule)tmpModule).getClassName().equals(name)){
-				return tmpModule;
-			}
-		}
-		return null;
-	}
+            if(((ClassKnowingModule)tmpModule).getClassName().equals(name)){
+                return tmpModule;
+            }
+        }
+        return null;
+    }
 
-	private Map<String, ConfigurationModule> getActiveConfigurationModules(ConfigurationCategory moduleCategorie){
-		return configurationManager.getConfigurationServices().getActiveConfigurationModulesByCategory(moduleCategorie);
-	}
+    private Map<String, ConfigurationModule> getActiveConfigurationModules(ConfigurationCategory moduleCategorie){
+        return configurationManager.getConfigurationServices().getActiveConfigurationModulesByCategory(moduleCategorie);
+    }
 
-	public boolean isGeneratorActive(String className) {
-		ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.GENERATOR);
-		return module != null ? module.isActive() : false;
-	}
+    public boolean isGeneratorActive(String className) {
+        ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.GENERATOR);
+        return module != null ? module.isActive() : false;
+    }
 
-	public boolean isParserActive(String className) {
-		ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.PARSER);
-		return module != null ? module.isActive() : false;
-	}
+    public boolean isParserActive(String className) {
+        ConfigurationModule module = getConfigurationModuleForClass(className, ConfigurationCategory.PARSER);
+        return module != null ? module.isActive() : false;
+    }
 
-	public Map<String, ConfigurationModule> getActiveRegisteredParserModules() {
-		return getActiveConfigurationModules(ConfigurationCategory.PARSER);
-	}
+    public Map<String, ConfigurationModule> getActiveRegisteredParserModules() {
+        return getActiveConfigurationModules(ConfigurationCategory.PARSER);
+    }
 
-	public Map<String, ConfigurationModule> getActiveRegisteredGeneratorModules() {
-		return getActiveConfigurationModules(ConfigurationCategory.GENERATOR);
-	}
+    public Map<String, ConfigurationModule> getActiveRegisteredGeneratorModules() {
+        return getActiveConfigurationModules(ConfigurationCategory.GENERATOR);
+    }
 }

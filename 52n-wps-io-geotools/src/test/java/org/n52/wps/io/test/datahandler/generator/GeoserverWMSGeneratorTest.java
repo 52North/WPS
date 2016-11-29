@@ -66,68 +66,68 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GeoserverWMSGeneratorTest extends AbstractTestCase<GeoserverWMSGenerator> {
 
-	@Test
-	public void testGenerator() {
+    @Test
+    public void testGenerator() {
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.TIF";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.TIF";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		GeotiffParser theParser = new GeotiffParser();
+        GeotiffParser theParser = new GeotiffParser();
 
-		String[] mimetypes = theParser.getSupportedFormats();
+        String[] mimetypes = theParser.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
-				null);
+        GTRasterDataBinding theBinding = theParser.parse(input, mimetypes[0],
+                null);
 
-		Assert.assertTrue(theBinding.getPayload() != null);
+        Assert.assertTrue(theBinding.getPayload() != null);
 
-		String[] mimetypes2 = dataHandler.getSupportedFormats();
+        String[] mimetypes2 = dataHandler.getSupportedFormats();
 
-		for (String string : mimetypes2) {
-			try {
-				InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
+        for (String string : mimetypes2) {
+            try {
+                InputStream resultStream = dataHandler.generateStream(theBinding, string, null);
 
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resultStream));
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resultStream));
 
-				String line = "";
+                String line = "";
 
-				while((line = bufferedReader.readLine()) != null){
-					System.out.println(line);
-				}
+                while((line = bufferedReader.readLine()) != null){
+                    System.out.println(line);
+                }
 
-				String request = "http://localhost:8181/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=N52:primary738239570087452915.tif_72e5aa87-5e2e-4c70-b913-53f4bf910245&styles=&bbox=444650.0,4631220.0,451640.0,4640510.0&width=385&height=512&srs=EPSG:26716&format=image/tiff";
+                String request = "http://localhost:8181/geoserver/wms?service=WMS&version=1.1.0&request=GetMap&layers=N52:primary738239570087452915.tif_72e5aa87-5e2e-4c70-b913-53f4bf910245&styles=&bbox=444650.0,4631220.0,451640.0,4640510.0&width=385&height=512&srs=EPSG:26716&format=image/tiff";
 
-			} catch (IOException e) {
-				e.printStackTrace();
-				Assert.fail(e.getMessage());
-			}
+            } catch (IOException e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GeoserverWMSGenerator();
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GeoserverWMSGenerator();
 
-	}
+    }
 
 }

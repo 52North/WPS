@@ -44,41 +44,41 @@ import org.n52.wps.webapp.entities.LogConfigurations;
 
 
 public class LogConfigurationsServiceImplTest {
-	@InjectMocks
-	private LogConfigurationsService logConfigurationsService;
+    @InjectMocks
+    private LogConfigurationsService logConfigurationsService;
 
-	@Mock
-	private LogConfigurationsDAO logConfigurationsDAO;
+    @Mock
+    private LogConfigurationsDAO logConfigurationsDAO;
 
-	@Before
-	public void setup() {
-		logConfigurationsService = new LogConfigurationsServiceImpl();
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        logConfigurationsService = new LogConfigurationsServiceImpl();
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@After
-	public void tearDown() {
-		logConfigurationsService = null;
-	}
+    @After
+    public void tearDown() {
+        logConfigurationsService = null;
+    }
 
-	@Test
-	public void getLogConfigurations() throws Exception {
-		when(logConfigurationsDAO.getLogConfigurations()).thenReturn(new LogConfigurations());
-		LogConfigurations logConfigurations = logConfigurationsService.getLogConfigurations();
-		assertNotNull(logConfigurations);
-	}
+    @Test
+    public void getLogConfigurations() throws Exception {
+        when(logConfigurationsDAO.getLogConfigurations()).thenReturn(new LogConfigurations());
+        LogConfigurations logConfigurations = logConfigurationsService.getLogConfigurations();
+        assertNotNull(logConfigurations);
+    }
 
-	@Test
-	public void saveLogConfigurations_validLogConfigurations() throws Exception {
-		LogConfigurations logConfigurations = new LogConfigurations();
-		logConfigurationsService.saveLogConfigurations(logConfigurations);
-		verify(logConfigurationsDAO).saveLogConfigurations(logConfigurations);
-	}
+    @Test
+    public void saveLogConfigurations_validLogConfigurations() throws Exception {
+        LogConfigurations logConfigurations = new LogConfigurations();
+        logConfigurationsService.saveLogConfigurations(logConfigurations);
+        verify(logConfigurationsDAO).saveLogConfigurations(logConfigurations);
+    }
 
-	@Test
-	public void saveLogConfigurations_nullLogConfigurations() throws Exception {
-		LogConfigurations logConfigurations = null;
-		logConfigurationsService.saveLogConfigurations(logConfigurations);
-		verify(logConfigurationsDAO, never()).saveLogConfigurations(logConfigurations);
-	}
+    @Test
+    public void saveLogConfigurations_nullLogConfigurations() throws Exception {
+        LogConfigurations logConfigurations = null;
+        logConfigurationsService.saveLogConfigurations(logConfigurations);
+        verify(logConfigurationsDAO, never()).saveLogConfigurations(logConfigurations);
+    }
 }

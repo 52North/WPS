@@ -48,60 +48,60 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITClass {
 
-	public static final String IDENTIFIER = "CatchMeIfYouCan";
-	public static boolean algorithmTriedToInstantiate;
+    public static final String IDENTIFIER = "CatchMeIfYouCan";
+    public static boolean algorithmTriedToInstantiate;
 
-	@Before
+    @Before
     public void setUp(){
         RepositoryManager repositoryManager = new RepositoryManager();
         repositoryManager.setApplicationContext(this.wac);
         repositoryManager.init();
     }
 
-	@Test
-	public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
-//		MockUtil.getMockConfig();
-		CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
+    @Test
+    public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
+//        MockUtil.getMockConfig();
+        CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
 
-		Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);
+        Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);
 
-		boolean found = false;
-		for (ProcessBriefType pbt : caps.getCapabilities().getProcessOfferings().getProcessArray()) {
-			if (IDENTIFIER.equals(pbt.getIdentifier().getStringValue())) {
-				found = true;
-			}
-		}
+        boolean found = false;
+        for (ProcessBriefType pbt : caps.getCapabilities().getProcessOfferings().getProcessArray()) {
+            if (IDENTIFIER.equals(pbt.getIdentifier().getStringValue())) {
+                found = true;
+            }
+        }
 
-		Assert.assertFalse("Algo found but was not expected!", found);
-	}
+        Assert.assertFalse("Algo found but was not expected!", found);
+    }
 
-	@Algorithm(version = "0.1", identifier = CapabilitiesGetProcessDescriptionExceptionTest.IDENTIFIER)
-	public static class InstantiationExceptionAlgorithm extends AbstractAnnotatedAlgorithm {
+    @Algorithm(version = "0.1", identifier = CapabilitiesGetProcessDescriptionExceptionTest.IDENTIFIER)
+    public static class InstantiationExceptionAlgorithm extends AbstractAnnotatedAlgorithm {
 
-		public InstantiationExceptionAlgorithm() {
-			CapabilitiesGetProcessDescriptionExceptionTest.algorithmTriedToInstantiate = true;
-		}
+        public InstantiationExceptionAlgorithm() {
+            CapabilitiesGetProcessDescriptionExceptionTest.algorithmTriedToInstantiate = true;
+        }
 
-		private String output;
+        private String output;
 
-		@LiteralDataInput(identifier = "input")
-		public String input;
+        @LiteralDataInput(identifier = "input")
+        public String input;
 
-		@LiteralDataOutput(identifier = "output")
-		public String getOutput() {
-			return this.output;
-		}
+        @LiteralDataOutput(identifier = "output")
+        public String getOutput() {
+            return this.output;
+        }
 
-		@Execute
-		public void thisMethodsWillNeverEverByCalled() {
-			this.output = "w0000t";
-		}
+        @Execute
+        public void thisMethodsWillNeverEverByCalled() {
+            this.output = "w0000t";
+        }
 
-		@Override
-		public synchronized ProcessDescription getDescription() {
-			throw new RuntimeException("Gotcha!");
-		}
+        @Override
+        public synchronized ProcessDescription getDescription() {
+            throw new RuntimeException("Gotcha!");
+        }
 
 
-	}
+    }
 }

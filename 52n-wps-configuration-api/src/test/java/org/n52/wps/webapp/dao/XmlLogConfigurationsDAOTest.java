@@ -53,90 +53,90 @@ import org.n52.wps.webapp.util.ResourcePathUtil;
 
 public class XmlLogConfigurationsDAOTest {
 
-	@InjectMocks
-	private LogConfigurationsDAO logConfigurationsDAO;
+    @InjectMocks
+    private LogConfigurationsDAO logConfigurationsDAO;
 
-	@Mock
-	private ResourcePathUtil resourcePathUtil;
+    @Mock
+    private ResourcePathUtil resourcePathUtil;
 
-	@Mock
-	private JDomUtil jDomUtil;
+    @Mock
+    private JDomUtil jDomUtil;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
-	private Document originalTestLogDocument;
-	private String testLogDocumentPath;
+    private Document originalTestLogDocument;
+    private String testLogDocumentPath;
 
-	@Before
-	public void setUp() throws Exception {
-		logConfigurationsDAO = new XmlLogConfigurationsDAO();
-		MockitoAnnotations.initMocks(this);
-		testLogDocumentPath = XmlLogConfigurationsDAOTest.class.getResource("/testfiles/testlogback.xml").getPath();
-		when(resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME)).thenReturn(
-				testLogDocumentPath);
-		when(jDomUtil.parse(testLogDocumentPath)).thenCallRealMethod();
-		doCallRealMethod().when(jDomUtil).write(any(Document.class), eq(testLogDocumentPath));
-		originalTestLogDocument = jDomUtil.parse(testLogDocumentPath);
-	}
+    @Before
+    public void setUp() throws Exception {
+        logConfigurationsDAO = new XmlLogConfigurationsDAO();
+        MockitoAnnotations.initMocks(this);
+        testLogDocumentPath = XmlLogConfigurationsDAOTest.class.getResource("/testfiles/testlogback.xml").getPath();
+        when(resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME)).thenReturn(
+                testLogDocumentPath);
+        when(jDomUtil.parse(testLogDocumentPath)).thenCallRealMethod();
+        doCallRealMethod().when(jDomUtil).write(any(Document.class), eq(testLogDocumentPath));
+        originalTestLogDocument = jDomUtil.parse(testLogDocumentPath);
+    }
 
-	@After
-	public void resetTestDocument() throws Exception {
-		jDomUtil.write(originalTestLogDocument, testLogDocumentPath);
-		logConfigurationsDAO = null;
-	}
+    @After
+    public void resetTestDocument() throws Exception {
+        jDomUtil.write(originalTestLogDocument, testLogDocumentPath);
+        logConfigurationsDAO = null;
+    }
 
-	@Test
-	public void getLogConfigurations() throws Exception {
-		LogConfigurations logConfigurations = logConfigurationsDAO.getLogConfigurations();
-		assertEquals("${logFile}/%d{yyyy-MM-dd}.log", logConfigurations.getWpsfileAppenderFileNamePattern());
-		assertEquals(14, logConfigurations.getWpsfileAppenderMaxHistory());
-		assertEquals("%d{ISO8601} [%t] %-5p %c: %m%n", logConfigurations.getWpsfileAppenderEncoderPattern());
-		assertEquals("%d{ISO8601} [%t] %-5p %c: %m%n", logConfigurations.getWpsconsoleEncoderPattern());
-		assertEquals("INFO", logConfigurations.getRootLevel());
-		assertTrue(logConfigurations.isFileAppenderEnabled());
-		assertTrue(logConfigurations.isConsoleAppenderEnabled());
-		assertEquals("INFO", logConfigurations.getLoggers().get("org.n52.wps"));
-		assertEquals("DEBUG", logConfigurations.getLoggers().get("org.n52.wps.server.WebProcessingService"));
-		assertEquals("OFF", logConfigurations.getLoggers().get("org.apache.axis"));
-		assertEquals("ERROR", logConfigurations.getLoggers().get("org.apache.http.headers"));
-	}
+    @Test
+    public void getLogConfigurations() throws Exception {
+        LogConfigurations logConfigurations = logConfigurationsDAO.getLogConfigurations();
+        assertEquals("${logFile}/%d{yyyy-MM-dd}.log", logConfigurations.getWpsfileAppenderFileNamePattern());
+        assertEquals(14, logConfigurations.getWpsfileAppenderMaxHistory());
+        assertEquals("%d{ISO8601} [%t] %-5p %c: %m%n", logConfigurations.getWpsfileAppenderEncoderPattern());
+        assertEquals("%d{ISO8601} [%t] %-5p %c: %m%n", logConfigurations.getWpsconsoleEncoderPattern());
+        assertEquals("INFO", logConfigurations.getRootLevel());
+        assertTrue(logConfigurations.isFileAppenderEnabled());
+        assertTrue(logConfigurations.isConsoleAppenderEnabled());
+        assertEquals("INFO", logConfigurations.getLoggers().get("org.n52.wps"));
+        assertEquals("DEBUG", logConfigurations.getLoggers().get("org.n52.wps.server.WebProcessingService"));
+        assertEquals("OFF", logConfigurations.getLoggers().get("org.apache.axis"));
+        assertEquals("ERROR", logConfigurations.getLoggers().get("org.apache.http.headers"));
+    }
 
-	@Test
-	public void saveLogConfigurations_validLogConfigurations() throws Exception {
-		LogConfigurations logConfigurations = new LogConfigurations();
-		logConfigurations.setWpsfileAppenderFileNamePattern("testFileAppenderFileNamePattern");
-		logConfigurations.setWpsfileAppenderMaxHistory(10);
-		logConfigurations.setWpsfileAppenderEncoderPattern("testFileAppenderEncoderPattern");
-		logConfigurations.setWpsconsoleEncoderPattern("testWpsconsoleEncoderPattern");
-		logConfigurations.setRootLevel("DEBUG");
-		logConfigurations.setFileAppenderEnabled(true);
-		logConfigurations.setConsoleAppenderEnabled(true);
-		SortedMap<String, String> loggers = new TreeMap<String, String>();
-		loggers.put("org.n52.wps", "DEBUG");
-		loggers.put("org.test.class", "INFO");
-		loggers.put("org.n52.wps.server.WebProcessingService", "ERROR");
-		logConfigurations.setLoggers(loggers);
-		logConfigurationsDAO.saveLogConfigurations(logConfigurations);
+    @Test
+    public void saveLogConfigurations_validLogConfigurations() throws Exception {
+        LogConfigurations logConfigurations = new LogConfigurations();
+        logConfigurations.setWpsfileAppenderFileNamePattern("testFileAppenderFileNamePattern");
+        logConfigurations.setWpsfileAppenderMaxHistory(10);
+        logConfigurations.setWpsfileAppenderEncoderPattern("testFileAppenderEncoderPattern");
+        logConfigurations.setWpsconsoleEncoderPattern("testWpsconsoleEncoderPattern");
+        logConfigurations.setRootLevel("DEBUG");
+        logConfigurations.setFileAppenderEnabled(true);
+        logConfigurations.setConsoleAppenderEnabled(true);
+        SortedMap<String, String> loggers = new TreeMap<String, String>();
+        loggers.put("org.n52.wps", "DEBUG");
+        loggers.put("org.test.class", "INFO");
+        loggers.put("org.n52.wps.server.WebProcessingService", "ERROR");
+        logConfigurations.setLoggers(loggers);
+        logConfigurationsDAO.saveLogConfigurations(logConfigurations);
 
-		logConfigurations = logConfigurationsDAO.getLogConfigurations();
-		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
-		assertEquals(10, logConfigurations.getWpsfileAppenderMaxHistory());
-		assertEquals("testFileAppenderEncoderPattern", logConfigurations.getWpsfileAppenderEncoderPattern());
-		assertEquals("testWpsconsoleEncoderPattern", logConfigurations.getWpsconsoleEncoderPattern());
-		assertEquals("DEBUG", logConfigurations.getRootLevel());
-		assertTrue(logConfigurations.isFileAppenderEnabled());
-		assertTrue(logConfigurations.isConsoleAppenderEnabled());
-		assertEquals("DEBUG", logConfigurations.getLoggers().get("org.n52.wps"));
-		assertEquals("INFO", logConfigurations.getLoggers().get("org.test.class"));
-		assertEquals("ERROR", logConfigurations.getLoggers().get("org.n52.wps.server.WebProcessingService"));
-		assertEquals(null, logConfigurations.getLoggers().get("org.apache.http.headers"));
-	}
+        logConfigurations = logConfigurationsDAO.getLogConfigurations();
+        assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
+        assertEquals(10, logConfigurations.getWpsfileAppenderMaxHistory());
+        assertEquals("testFileAppenderEncoderPattern", logConfigurations.getWpsfileAppenderEncoderPattern());
+        assertEquals("testWpsconsoleEncoderPattern", logConfigurations.getWpsconsoleEncoderPattern());
+        assertEquals("DEBUG", logConfigurations.getRootLevel());
+        assertTrue(logConfigurations.isFileAppenderEnabled());
+        assertTrue(logConfigurations.isConsoleAppenderEnabled());
+        assertEquals("DEBUG", logConfigurations.getLoggers().get("org.n52.wps"));
+        assertEquals("INFO", logConfigurations.getLoggers().get("org.test.class"));
+        assertEquals("ERROR", logConfigurations.getLoggers().get("org.n52.wps.server.WebProcessingService"));
+        assertEquals(null, logConfigurations.getLoggers().get("org.apache.http.headers"));
+    }
 
-	@Test
-	public void saveLogConfigurations_nullLogConfigurations() throws Exception {
-		LogConfigurations logConfigurations = null;
-		exception.expect(NullPointerException.class);
-		logConfigurationsDAO.saveLogConfigurations(logConfigurations);
-	}
+    @Test
+    public void saveLogConfigurations_nullLogConfigurations() throws Exception {
+        LogConfigurations logConfigurations = null;
+        exception.expect(NullPointerException.class);
+        logConfigurationsDAO.saveLogConfigurations(logConfigurations);
+    }
 }

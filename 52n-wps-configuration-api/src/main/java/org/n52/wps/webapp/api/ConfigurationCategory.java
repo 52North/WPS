@@ -34,5 +34,5 @@ package org.n52.wps.webapp.api;
  * the interface. GENERAL category is standalone and need to be given a specific page to display.
  */
 public enum ConfigurationCategory {
-	REPOSITORY, GENERATOR, PARSER, GENERAL, DATABASE;
+    REPOSITORY, GENERATOR, PARSER, GENERAL, DATABASE;
 }

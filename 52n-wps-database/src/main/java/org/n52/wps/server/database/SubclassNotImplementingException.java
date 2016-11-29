@@ -29,10 +29,10 @@
 package org.n52.wps.server.database;
 
 public class SubclassNotImplementingException extends RuntimeException {
-	// Serial number for interoperability with different versions.
-	private static final long serialVersionUID = 3499879190279679833L;
+    // Serial number for interoperability with different versions.
+    private static final long serialVersionUID = 3499879190279679833L;
 
-	public SubclassNotImplementingException() {
+    public SubclassNotImplementingException() {
         super("Subclass not found.");
     }
  

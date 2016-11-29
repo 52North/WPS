@@ -34,11 +34,11 @@ import org.n52.wps.webapp.api.ConfigurationType;
 
 public class URIConfigurationEntry extends ConfigurationEntry<URI> {
 
-	public URIConfigurationEntry(String key, String title) {
-		super(key, title, ConfigurationType.URI);
-	}
+    public URIConfigurationEntry(String key, String title) {
+        super(key, title, ConfigurationType.URI);
+    }
 
-	public URIConfigurationEntry(String key, String title, String description, boolean required, URI value) {
-		super(key, title, description, required, value, ConfigurationType.URI);
-	}
+    public URIConfigurationEntry(String key, String title, String description, boolean required, URI value) {
+        super(key, title, description, required, value, ConfigurationType.URI);
+    }
 }

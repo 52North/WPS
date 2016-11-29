@@ -39,10 +39,10 @@ public class LiteralDataOutputDescriptor<T extends Class<? extends ILiteralData>
 
     private final String dataType;
 
-	protected LiteralDataOutputDescriptor(Builder builder) {
-		super(builder);
+    protected LiteralDataOutputDescriptor(Builder builder) {
+        super(builder);
         this.dataType = builder.dataType;
-	}
+    }
 
     public String getDataType() {
         return dataType;

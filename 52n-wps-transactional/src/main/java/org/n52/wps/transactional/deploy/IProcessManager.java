@@ -38,11 +38,11 @@ import org.w3c.dom.Document;
 
 public interface IProcessManager {
 
-	
-	boolean unDeployProcess(UndeployProcessRequest request) throws Exception;
-	boolean containsProcess(String processID) throws Exception;
-	Collection<String> getAllProcesses() throws Exception;
-	Document invoke(ExecuteDocument payload, String algorithmID) throws Exception;
-	boolean deployProcess(DeployProcessRequest request) throws Exception;
-	
+    
+    boolean unDeployProcess(UndeployProcessRequest request) throws Exception;
+    boolean containsProcess(String processID) throws Exception;
+    Collection<String> getAllProcesses() throws Exception;
+    Document invoke(ExecuteDocument payload, String algorithmID) throws Exception;
+    boolean deployProcess(DeployProcessRequest request) throws Exception;
+    
 }

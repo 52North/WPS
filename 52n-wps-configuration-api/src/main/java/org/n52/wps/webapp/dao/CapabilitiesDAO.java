@@ -36,32 +36,32 @@ import org.n52.wps.webapp.entities.ServiceProvider;
  * {@link ServiceProvider} objects.
  */
 public interface CapabilitiesDAO {
-	/**
-	 * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}
-	 * object
-	 *
-	 * @return Populated {@code ServiceIdentification} object
-	 */
-	ServiceIdentification getServiceIdentification();
+    /**
+     * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}
+     * object
+     *
+     * @return Populated {@code ServiceIdentification} object
+     */
+    ServiceIdentification getServiceIdentification();
 
-	/**
-	 * Write {@code ServiceIdentification} values to wpsCapabilitiesSkeleton.xml
-	 *
-	 * @param serviceIdentification The {@code ServiceIdentification}
-	 */
-	void saveServiceIdentification(ServiceIdentification serviceIdentification);
+    /**
+     * Write {@code ServiceIdentification} values to wpsCapabilitiesSkeleton.xml
+     *
+     * @param serviceIdentification The {@code ServiceIdentification}
+     */
+    void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
-	/**
-	 * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to a {@code ServiceProvider} object
-	 *
-	 * @return Populated {@code ServiceProvider} object
-	 */
-	ServiceProvider getServiceProvider();
+    /**
+     * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to a {@code ServiceProvider} object
+     *
+     * @return Populated {@code ServiceProvider} object
+     */
+    ServiceProvider getServiceProvider();
 
-	/**
-	 * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
-	 *
-	 * @param serviceProvider The {@code ServiceProvider}
-	 */
-	void saveServiceProvider(ServiceProvider serviceProvider);
+    /**
+     * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
+     *
+     * @param serviceProvider The {@code ServiceProvider}
+     */
+    void saveServiceProvider(ServiceProvider serviceProvider);
 }

@@ -52,13 +52,13 @@ import com.google.common.primitives.Doubles;
 public class RawData extends ResponseData {
     public static final Joiner SPACE_JOINER = Joiner.on(" ");
 
-	/**
-	 * @param obj
-	 * @param id
-	 * @param schema
-	 * @param encoding
-	 * @param mimeType
-	 */
+    /**
+     * @param obj
+     * @param id
+     * @param schema
+     * @param encoding
+     * @param mimeType
+     */
     public RawData(IData obj, String id, String schema, String encoding,
                    String mimeType, String algorithmIdentifier,
                    ProcessDescription description)

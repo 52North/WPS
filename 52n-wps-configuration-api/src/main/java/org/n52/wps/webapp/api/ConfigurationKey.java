@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
  *
  * {@literal @}ConfigurationKey(key = "test.string.key")
  * public void setStringMember(String stringMember) {
- * 	  this.stringMember = stringMember;
+ *       this.stringMember = stringMember;
  * }
  * </code>
  * </pre>
@@ -60,5 +60,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConfigurationKey {
-	String key();
+    String key();
 }

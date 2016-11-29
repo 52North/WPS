@@ -35,23 +35,23 @@ import org.n52.wps.server.ExceptionReport;
 
 public class TransactionalExceptionHandler {
 
-	public static void handleException(PrintWriter writer,
-			ExceptionReport exception) {
-		try {
-			exception.getExceptionDocument().save(writer);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void handleException(PrintWriter writer, String exception) {
-		writer.write("<Result>");
-		writer.write(exception);
-		writer.write("</Result>");
-		writer.flush();
-		writer.close();
-		
-	}
+    public static void handleException(PrintWriter writer,
+            ExceptionReport exception) {
+        try {
+            exception.getExceptionDocument().save(writer);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    public static void handleException(PrintWriter writer, String exception) {
+        writer.write("<Result>");
+        writer.write(exception);
+        writer.write("</Result>");
+        writer.flush();
+        writer.close();
+        
+    }
 
 }

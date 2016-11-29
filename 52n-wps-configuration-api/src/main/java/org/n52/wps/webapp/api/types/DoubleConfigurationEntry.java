@@ -32,11 +32,11 @@ import org.n52.wps.webapp.api.ConfigurationType;
 
 public class DoubleConfigurationEntry extends ConfigurationEntry<Double> {
 
-	public DoubleConfigurationEntry(String key, String title) {
-		super(key, title, ConfigurationType.DOUBLE);
-	}
+    public DoubleConfigurationEntry(String key, String title) {
+        super(key, title, ConfigurationType.DOUBLE);
+    }
 
-	public DoubleConfigurationEntry(String key, String title, String description, boolean required, Double value) {
-		super(key, title, description, required, value, ConfigurationType.DOUBLE);
-	}
+    public DoubleConfigurationEntry(String key, String title, String description, boolean required, Double value) {
+        super(key, title, description, required, value, ConfigurationType.DOUBLE);
+    }
 }

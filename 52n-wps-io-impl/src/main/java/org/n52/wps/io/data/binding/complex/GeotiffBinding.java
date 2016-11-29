@@ -35,31 +35,31 @@ import org.n52.wps.io.data.IComplexData;
 
 public class GeotiffBinding implements IComplexData{
 
-	private static final long serialVersionUID = 1L;
-	protected File geotiff;
-	protected String mimeType;
-	
-	public GeotiffBinding(File geotiff){
-		this.geotiff = geotiff;
-		mimeType = "image/tiff";
-	}
-	
-	@Override
-	public File getPayload() {
-		return geotiff;
-	}
-
-	@Override
-	public Class<?> getSupportedClass() {
-		return File.class;
-	}
-
-	public String getMimeType() {
-		return mimeType;
-	}
-	
+    private static final long serialVersionUID = 1L;
+    protected File geotiff;
+    protected String mimeType;
+    
+    public GeotiffBinding(File geotiff){
+        this.geotiff = geotiff;
+        mimeType = "image/tiff";
+    }
+    
     @Override
-	public void dispose(){
-		FileUtils.deleteQuietly(geotiff);
-	}
+    public File getPayload() {
+        return geotiff;
+    }
+
+    @Override
+    public Class<?> getSupportedClass() {
+        return File.class;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+    
+    @Override
+    public void dispose(){
+        FileUtils.deleteQuietly(geotiff);
+    }
 }

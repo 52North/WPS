@@ -61,126 +61,126 @@ import org.w3c.dom.Element;
 
 public class WebProcessingServiceSoap {
 
-	private MessageContext m_msgCtx;
+    private MessageContext m_msgCtx;
 
-	public OMElement execute(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
+    public OMElement execute(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
 
-	}
+    }
 
-	public OMElement cancelJob(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
-	}
+    public OMElement cancelJob(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
+    }
 
-	public OMElement getJobs(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
-	}
+    public OMElement getJobs(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
+    }
 
-	public OMElement pauseJob(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
-	}
+    public OMElement pauseJob(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
+    }
 
-	public OMElement resumeJob(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
-	}
+    public OMElement resumeJob(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
+    }
 
-	public OMElement getCapabilities(OMElement input) throws Exception{
-		return internalSOAPHandler(input);
-	}
+    public OMElement getCapabilities(OMElement input) throws Exception{
+        return internalSOAPHandler(input);
+    }
 
-	public OMElement describeProcess(OMElement input) throws Exception {
-		return internalSOAPHandler(input);
-	}
-	
-	
-	
-	private OMElement internalSOAPHandler(OMElement input) throws IOException, XMLStreamException{
-		m_msgCtx = MessageContext.getCurrentMessageContext();
-		
-		Element payload = null;
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		ByteArrayInputStream bais=null;
-		SOAPRequestHandler handler = null;
-		Element inputDoc=null;
-		
-		/*convert OMElement to Element*/
-		
-		try{
-		inputDoc = XMLUtils.toDOM(input);
-		
-	}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		try {
-				
-			handler = new SOAPRequestHandler(inputDoc.getOwnerDocument(),outputStream);
-			handler.handle();
-			
-			
-		} catch (ExceptionReport serviceException) {
-			serviceException.getExceptionDocument().save(outputStream);
-			InputStream instream = new ByteArrayInputStream(outputStream
-					.toByteArray());
-			OMElement omException = (OMElement) XMLUtils.toOM(instream);
-			
-			SOAPFactory soapFactory;
-			
-			if (m_msgCtx.isSOAP11()) {
-			soapFactory = OMAbstractFactory.getSOAP11Factory();
-		
-			} else {
-			soapFactory = OMAbstractFactory.getSOAP12Factory();
-			
-			}
-			SOAPFault soapFault = soapFactory.createSOAPFault();
-			
-			SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode();
-			SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
-			soapFaultValue.setText(new QName("http://52north.org", "WPS Fault", "WPS fault"));
+    public OMElement describeProcess(OMElement input) throws Exception {
+        return internalSOAPHandler(input);
+    }
+    
+    
+    
+    private OMElement internalSOAPHandler(OMElement input) throws IOException, XMLStreamException{
+        m_msgCtx = MessageContext.getCurrentMessageContext();
+        
+        Element payload = null;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayInputStream bais=null;
+        SOAPRequestHandler handler = null;
+        Element inputDoc=null;
+        
+        /*convert OMElement to Element*/
+        
+        try{
+        inputDoc = XMLUtils.toDOM(input);
+        
+    }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        try {
+                
+            handler = new SOAPRequestHandler(inputDoc.getOwnerDocument(),outputStream);
+            handler.handle();
+            
+            
+        } catch (ExceptionReport serviceException) {
+            serviceException.getExceptionDocument().save(outputStream);
+            InputStream instream = new ByteArrayInputStream(outputStream
+                    .toByteArray());
+            OMElement omException = (OMElement) XMLUtils.toOM(instream);
+            
+            SOAPFactory soapFactory;
+            
+            if (m_msgCtx.isSOAP11()) {
+            soapFactory = OMAbstractFactory.getSOAP11Factory();
+        
+            } else {
+            soapFactory = OMAbstractFactory.getSOAP12Factory();
+            
+            }
+            SOAPFault soapFault = soapFactory.createSOAPFault();
+            
+            SOAPFaultCode soapFaultCode = soapFactory.createSOAPFaultCode();
+            SOAPFaultValue soapFaultValue = soapFactory.createSOAPFaultValue(soapFaultCode);
+            soapFaultValue.setText(new QName("http://52north.org", "WPS Fault", "WPS fault"));
 
-			SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason();
-			SOAPFaultText soapFaultText = soapFactory.createSOAPFaultText(soapFaultReason);
-			soapFaultText.setText(serviceException.getMessage());
+            SOAPFaultReason soapFaultReason = soapFactory.createSOAPFaultReason();
+            SOAPFaultText soapFaultText = soapFactory.createSOAPFaultText(soapFaultReason);
+            soapFaultText.setText(serviceException.getMessage());
 
-			SOAPFaultDetail soapFaultDetail = soapFactory.createSOAPFaultDetail();
-			QName qName = new QName("http://www.opengis.net/ows/1.1", "ExceptionReport");
-			OMElement detail = soapFactory.createOMElement(qName, soapFaultDetail);
-			detail.addChild(omException);
-			
-			soapFault.setDetail(soapFaultDetail);
-			soapFault.setCode(soapFaultCode);
-			soapFault.setReason(soapFaultReason);
-			        
-			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
-			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
-			m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
-			
-			throw new AxisFault(soapFault);
-		}
-		InputStream instream = new ByteArrayInputStream(outputStream
-				.toByteArray());
-		OMElement result = (OMElement) XMLUtils.toOM(instream);
-		return result;
-		
-	}
-	
+            SOAPFaultDetail soapFaultDetail = soapFactory.createSOAPFaultDetail();
+            QName qName = new QName("http://www.opengis.net/ows/1.1", "ExceptionReport");
+            OMElement detail = soapFactory.createOMElement(qName, soapFaultDetail);
+            detail.addChild(omException);
+            
+            soapFault.setDetail(soapFaultDetail);
+            soapFault.setCode(soapFaultCode);
+            soapFault.setReason(soapFaultReason);
+                    
+            m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_CODE_LOCAL_NAME, soapFaultCode);
+            m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_REASON_LOCAL_NAME, soapFaultReason);
+            m_msgCtx.setProperty(SOAP12Constants.SOAP_FAULT_DETAIL_LOCAL_NAME, soapFaultDetail);
+            
+            throw new AxisFault(soapFault);
+        }
+        InputStream instream = new ByteArrayInputStream(outputStream
+                .toByteArray());
+        OMElement result = (OMElement) XMLUtils.toOM(instream);
+        return result;
+        
+    }
+    
 
-//	 public static void writeXmlFile(Document doc, String filename) {
-//	        try {
-//	            // Prepare the DOM document for writing
-//	            Source source = new DOMSource(doc);
-//	    
-//	            // Prepare the output file
-//	            File file = new File(filename);
-//	            Result result = new StreamResult(file);
-//	    
-//	            // Write the DOM document to the file
-//	            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-//	            xformer.transform(source, result);
-//	        } catch (TransformerConfigurationException e) {e.printStackTrace();
-//	        } catch (TransformerException e) {e.printStackTrace();
-//	        }
-//	    }
+//     public static void writeXmlFile(Document doc, String filename) {
+//            try {
+//                // Prepare the DOM document for writing
+//                Source source = new DOMSource(doc);
+//        
+//                // Prepare the output file
+//                File file = new File(filename);
+//                Result result = new StreamResult(file);
+//        
+//                // Write the DOM document to the file
+//                Transformer xformer = TransformerFactory.newInstance().newTransformer();
+//                xformer.transform(source, result);
+//            } catch (TransformerConfigurationException e) {e.printStackTrace();
+//            } catch (TransformerException e) {e.printStackTrace();
+//            }
+//        }
 }

@@ -38,34 +38,34 @@ import org.n52.wps.io.data.binding.complex.GenericXMLDataBinding;
 
 public class GenericXMLDataGenerator extends AbstractGenerator {
 
-	public GenericXMLDataGenerator(){
-		super();
-		supportedIDataTypes.add(GenericXMLDataBinding.class);
-	}
-	
-	@Override
-	public boolean isSupportedSchema(String schema) {
-		//no schema checks
-		return true;
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema)
-			throws IOException {
-		
-		if(data instanceof GenericXMLDataBinding){
-			
-			XmlObject xmlData = ((GenericXMLDataBinding)data).getPayload();
-			
-			XmlOptions xmlOptions = new XmlOptions();
-			
-			xmlOptions.setSaveNoXmlDecl();
-			
-			return xmlData.newInputStream(xmlOptions);
-			
-		}
-		
-		return XmlObject.Factory.newInstance().newInputStream();
-	}
+    public GenericXMLDataGenerator(){
+        super();
+        supportedIDataTypes.add(GenericXMLDataBinding.class);
+    }
+    
+    @Override
+    public boolean isSupportedSchema(String schema) {
+        //no schema checks
+        return true;
+    }
+    
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema)
+            throws IOException {
+        
+        if(data instanceof GenericXMLDataBinding){
+            
+            XmlObject xmlData = ((GenericXMLDataBinding)data).getPayload();
+            
+            XmlOptions xmlOptions = new XmlOptions();
+            
+            xmlOptions.setSaveNoXmlDecl();
+            
+            return xmlData.newInputStream(xmlOptions);
+            
+        }
+        
+        return XmlObject.Factory.newInstance().newInputStream();
+    }
 
 }

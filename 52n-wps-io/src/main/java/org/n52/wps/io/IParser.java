@@ -25,9 +25,9 @@ import org.n52.wps.io.data.IData;
  *
  */
 public interface IParser extends IOHandler{
-	
-	IData parse(InputStream input, String mimeType, String schema);
-	
-	IData parseBase64(InputStream input, String mimeType, String schema);
-	
+    
+    IData parse(InputStream input, String mimeType, String schema);
+    
+    IData parseBase64(InputStream input, String mimeType, String schema);
+    
 }

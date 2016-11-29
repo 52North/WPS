@@ -80,155 +80,155 @@ import org.w3c.dom.Element;
  */
 public class MapserverWMSGenerator extends AbstractGenerator {
 
-	private String mapfile;
-	private String workspace;
-	private String shapefileRepository;
-	private String wmsUrl;
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(MapserverWMSGenerator.class);
+    private String mapfile;
+    private String workspace;
+    private String shapefileRepository;
+    private String wmsUrl;
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(MapserverWMSGenerator.class);
 
-	/**
-	 * Initialize a new MapserverWMSGenerator object. Parse the parameter
-	 * Mapserver_workspace, Mapserver_mapfile, Mapserver_dataRepository and
-	 * Mapserver_wmsUrl from the config.xml of the WPS.
-	 */
-	public MapserverWMSGenerator() {
+    /**
+     * Initialize a new MapserverWMSGenerator object. Parse the parameter
+     * Mapserver_workspace, Mapserver_mapfile, Mapserver_dataRepository and
+     * Mapserver_wmsUrl from the config.xml of the WPS.
+     */
+    public MapserverWMSGenerator() {
 
-		super();
+        super();
 
-		this.supportedIDataTypes.add(GTVectorDataBinding.class);
+        this.supportedIDataTypes.add(GTVectorDataBinding.class);
 
-		for (ConfigurationEntry<?> property : properties) {
-			if (property.getKey().equalsIgnoreCase("Mapserver_workspace")) {
-				workspace = property.getValue().toString();
-			}
-			if (property.getKey().equalsIgnoreCase("Mapserver_mapfile")) {
-				mapfile = property.getValue().toString();
-			}
-			if (property.getKey().equalsIgnoreCase("Mapserver_dataRepository")) {
-				shapefileRepository = property.getValue().toString();
-			}
-			if (property.getKey().equalsIgnoreCase("Mapserver_wmsUrl")) {
-				wmsUrl = property.getValue().toString();
-			}
-		}
-		for (String supportedFormat : supportedFormats) {
-			if (supportedFormat.equals("text/xml")) {
-				supportedFormats.remove(supportedFormat);
-			}
-		}
-	}
+        for (ConfigurationEntry<?> property : properties) {
+            if (property.getKey().equalsIgnoreCase("Mapserver_workspace")) {
+                workspace = property.getValue().toString();
+            }
+            if (property.getKey().equalsIgnoreCase("Mapserver_mapfile")) {
+                mapfile = property.getValue().toString();
+            }
+            if (property.getKey().equalsIgnoreCase("Mapserver_dataRepository")) {
+                shapefileRepository = property.getValue().toString();
+            }
+            if (property.getKey().equalsIgnoreCase("Mapserver_wmsUrl")) {
+                wmsUrl = property.getValue().toString();
+            }
+        }
+        for (String supportedFormat : supportedFormats) {
+            if (supportedFormat.equals("text/xml")) {
+                supportedFormats.remove(supportedFormat);
+            }
+        }
+    }
 
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema)
-			throws IOException {
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema)
+            throws IOException {
 
-		InputStream stream = null;	
-		try {
-			Document doc = storeLayer(data);			
-			String xmlString = XMLUtil.nodeToString(doc);			
-			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
-	    } catch(TransformerException ex){
-	    	LOGGER.error("Error generating MapServer WMS output. Reason: " + ex);
-	    	throw new RuntimeException("Error generating MapServer WMS output. Reason: " + ex);
-	    } catch (IOException e) {
-	    	LOGGER.error("Error generating MapServer WMS output. Reason: " + e);
-	    	throw new RuntimeException("Error generating MapServer WMS output. Reason: " + e);
-		} catch (ParserConfigurationException e) {
-	    	LOGGER.error("Error generating MapServer WMS output. Reason: " + e);
-			throw new RuntimeException("Error generating MapServer WMS output. Reason: " + e);
-		}	
-		return stream;
-	}
+        InputStream stream = null;    
+        try {
+            Document doc = storeLayer(data);            
+            String xmlString = XMLUtil.nodeToString(doc);            
+            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));            
+        } catch(TransformerException ex){
+            LOGGER.error("Error generating MapServer WMS output. Reason: " + ex);
+            throw new RuntimeException("Error generating MapServer WMS output. Reason: " + ex);
+        } catch (IOException e) {
+            LOGGER.error("Error generating MapServer WMS output. Reason: " + e);
+            throw new RuntimeException("Error generating MapServer WMS output. Reason: " + e);
+        } catch (ParserConfigurationException e) {
+            LOGGER.error("Error generating MapServer WMS output. Reason: " + e);
+            throw new RuntimeException("Error generating MapServer WMS output. Reason: " + e);
+        }    
+        return stream;
+    }
 
-	/**
-	 * Stores the input data as an layer in the mapserver and creates an
-	 * response document.
-	 * 
-	 * @param coll
-	 *            IData has to be instanceof GTVectorDataBinding
-	 * 
-	 * @return Document XML response document.
-	 * 
-	 * @throws HttpException
-	 * @throws IOException
-	 * @throws ParserConfigurationException
-	 */
-	private Document storeLayer(IData coll) throws HttpException, IOException,
-			ParserConfigurationException {
+    /**
+     * Stores the input data as an layer in the mapserver and creates an
+     * response document.
+     * 
+     * @param coll
+     *            IData has to be instanceof GTVectorDataBinding
+     * 
+     * @return Document XML response document.
+     * 
+     * @throws HttpException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    private Document storeLayer(IData coll) throws HttpException, IOException,
+            ParserConfigurationException {
 
-		// tests if the mapscript.jar was loaded correctly
-		try {
-			//MapserverProperties.getInstance().testMapscriptLibrary();
-			LOGGER.info("Mapscript is running correctly");
-		} catch (Exception e){
-			e.printStackTrace();
-			LOGGER.warn("Mapscript isn't running correctly");
-			return null;
-		} 
-		
-		// adds the IData to the mapserver.
-		String wmsLayerName = "";
-		if (coll instanceof GTVectorDataBinding) {
-			GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
-			SimpleFeatureCollection ftColl = (SimpleFeatureCollection) gtData.getPayload();
-			wmsLayerName = MSMapfileBinding.getInstance().addFeatureCollectionToMapfile(ftColl, workspace,
-					mapfile, shapefileRepository);
-			LOGGER.info("Layer was added to the mapfile");
-			System.gc();
-		}
+        // tests if the mapscript.jar was loaded correctly
+        try {
+            //MapserverProperties.getInstance().testMapscriptLibrary();
+            LOGGER.info("Mapscript is running correctly");
+        } catch (Exception e){
+            e.printStackTrace();
+            LOGGER.warn("Mapscript isn't running correctly");
+            return null;
+        } 
+        
+        // adds the IData to the mapserver.
+        String wmsLayerName = "";
+        if (coll instanceof GTVectorDataBinding) {
+            GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
+            SimpleFeatureCollection ftColl = (SimpleFeatureCollection) gtData.getPayload();
+            wmsLayerName = MSMapfileBinding.getInstance().addFeatureCollectionToMapfile(ftColl, workspace,
+                    mapfile, shapefileRepository);
+            LOGGER.info("Layer was added to the mapfile");
+            System.gc();
+        }
 
-		// creates the response document
-		String capabilitiesLink = wmsUrl + "?Service=WMS&Request=GetCapabilities";
-		Document doc = createXML(wmsLayerName, capabilitiesLink);
-		LOGGER.info("Capabilities document was generated.");
-		
-		return doc;
+        // creates the response document
+        String capabilitiesLink = wmsUrl + "?Service=WMS&Request=GetCapabilities";
+        Document doc = createXML(wmsLayerName, capabilitiesLink);
+        LOGGER.info("Capabilities document was generated.");
+        
+        return doc;
 
-	}
+    }
 
-	/**
-	 * Creates an response xml, which contains the layer name, the resource link
-	 * and a getCapabilities request for the publishing service.
-	 * 
-	 * @param layerName
-	 *            Name of the layer which was added to the mapserver.
-	 * @param resourceLink
-	 *            Link to the resource (layer) which was added to the mapserver.
-	 * @param getCapabilitiesLink
-	 *            GetCapabilties request to the publishing service.
-	 * 
-	 * @return Document XML response document.
-	 * 
-	 * @throws ParserConfigurationException
-	 */
-	private Document createXML(String layerName, String getCapabilitiesLink)
-			throws ParserConfigurationException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		Document doc = factory.newDocumentBuilder().newDocument();
+    /**
+     * Creates an response xml, which contains the layer name, the resource link
+     * and a getCapabilities request for the publishing service.
+     * 
+     * @param layerName
+     *            Name of the layer which was added to the mapserver.
+     * @param resourceLink
+     *            Link to the resource (layer) which was added to the mapserver.
+     * @param getCapabilitiesLink
+     *            GetCapabilties request to the publishing service.
+     * 
+     * @return Document XML response document.
+     * 
+     * @throws ParserConfigurationException
+     */
+    private Document createXML(String layerName, String getCapabilitiesLink)
+            throws ParserConfigurationException {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = factory.newDocumentBuilder().newDocument();
 
-		Element root = doc.createElement("OWSResponse");
-		root.setAttribute("type", "WMS");
+        Element root = doc.createElement("OWSResponse");
+        root.setAttribute("type", "WMS");
 
-		Element resourceIDElement = doc.createElement("ResourceID");
-		resourceIDElement.appendChild(doc.createTextNode(layerName));
-		root.appendChild(resourceIDElement);
+        Element resourceIDElement = doc.createElement("ResourceID");
+        resourceIDElement.appendChild(doc.createTextNode(layerName));
+        root.appendChild(resourceIDElement);
 
-		Element getCapabilitiesLinkElement = doc
-				.createElement("GetCapabilitiesLink");
-		getCapabilitiesLinkElement.appendChild(doc
-				.createTextNode(getCapabilitiesLink));
-		root.appendChild(getCapabilitiesLinkElement);
-		/*
-		 * Element directResourceLinkElement =
-		 * doc.createElement("DirectResourceLink");
-		 * directResourceLinkElement.appendChild
-		 * (doc.createTextNode(getMapRequest));
-		 * root.appendChild(directResourceLinkElement);
-		 */
-		doc.appendChild(root);
+        Element getCapabilitiesLinkElement = doc
+                .createElement("GetCapabilitiesLink");
+        getCapabilitiesLinkElement.appendChild(doc
+                .createTextNode(getCapabilitiesLink));
+        root.appendChild(getCapabilitiesLinkElement);
+        /*
+         * Element directResourceLinkElement =
+         * doc.createElement("DirectResourceLink");
+         * directResourceLinkElement.appendChild
+         * (doc.createTextNode(getMapRequest));
+         * root.appendChild(directResourceLinkElement);
+         */
+        doc.appendChild(root);
 
-		return doc;
-	}
+        return doc;
+    }
 
 }

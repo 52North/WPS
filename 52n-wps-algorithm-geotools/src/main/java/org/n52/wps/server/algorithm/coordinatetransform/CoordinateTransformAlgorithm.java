@@ -77,191 +77,191 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class CoordinateTransformAlgorithm extends
-		AbstractSelfDescribingAlgorithm {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(CoordinateTransformAlgorithm.class);
+        AbstractSelfDescribingAlgorithm {
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(CoordinateTransformAlgorithm.class);
 
-	private final String inputIdentifierFeatures = "InputData";
-	private final String inputIdentifierTransformation = "Transformation";
-	private final String inputIdentifierTargetReferenceSystem = "TargetCRS";
-	private final String inputIdentifierSourceReferenceSystem = "SourceCRS";
-	private final String outputIdentifierResult = "TransformedData";
-	private SimpleFeatureType featureType;
+    private final String inputIdentifierFeatures = "InputData";
+    private final String inputIdentifierTransformation = "Transformation";
+    private final String inputIdentifierTargetReferenceSystem = "TargetCRS";
+    private final String inputIdentifierSourceReferenceSystem = "SourceCRS";
+    private final String outputIdentifierResult = "TransformedData";
+    private SimpleFeatureType featureType;
 
-	@Override
-	public List<String> getInputIdentifiers() {
-		List<String> identifierList = new ArrayList<String>();
-		identifierList.add(inputIdentifierFeatures);
-		identifierList.add(inputIdentifierSourceReferenceSystem);
-		identifierList.add(inputIdentifierTargetReferenceSystem);
-		identifierList.add(inputIdentifierTransformation);
-		return identifierList;
-	}
+    @Override
+    public List<String> getInputIdentifiers() {
+        List<String> identifierList = new ArrayList<String>();
+        identifierList.add(inputIdentifierFeatures);
+        identifierList.add(inputIdentifierSourceReferenceSystem);
+        identifierList.add(inputIdentifierTargetReferenceSystem);
+        identifierList.add(inputIdentifierTransformation);
+        return identifierList;
+    }
 
-	@Override
-	public List<String> getOutputIdentifiers() {
-		List<String> identifierList = new ArrayList<String>();
-		identifierList.add(outputIdentifierResult);
-		return identifierList;
-	}
+    @Override
+    public List<String> getOutputIdentifiers() {
+        List<String> identifierList = new ArrayList<String>();
+        identifierList.add(outputIdentifierResult);
+        return identifierList;
+    }
 
-	@Override
-	public Class<?> getInputDataType(String id) {
-		if (id.equalsIgnoreCase(inputIdentifierFeatures)) {
-			return GTVectorDataBinding.class;
-		} else if (id.equals(inputIdentifierTargetReferenceSystem)||
-				id.equals(inputIdentifierSourceReferenceSystem)||
-				id.equals(inputIdentifierTransformation)) {
-			return LiteralStringBinding.class;
-		}
-		return null;
-	}
-	
-	@Override
-	public Class<?> getOutputDataType(String id) {
-		return GTVectorDataBinding.class;
-	}
+    @Override
+    public Class<?> getInputDataType(String id) {
+        if (id.equalsIgnoreCase(inputIdentifierFeatures)) {
+            return GTVectorDataBinding.class;
+        } else if (id.equals(inputIdentifierTargetReferenceSystem)||
+                id.equals(inputIdentifierSourceReferenceSystem)||
+                id.equals(inputIdentifierTransformation)) {
+            return LiteralStringBinding.class;
+        }
+        return null;
+    }
+    
+    @Override
+    public Class<?> getOutputDataType(String id) {
+        return GTVectorDataBinding.class;
+    }
 
-	@SuppressWarnings( { "unchecked" })
-	@Override
-	public Map<String, IData> run(Map<String, List<IData>> inputData) {
+    @SuppressWarnings( { "unchecked" })
+    @Override
+    public Map<String, IData> run(Map<String, List<IData>> inputData) {
 
-		if (inputData == null
-				|| !inputData.containsKey(inputIdentifierFeatures)
-				|| !inputData.containsKey(inputIdentifierTargetReferenceSystem)) {
-			LOGGER.error("Error while allocating input parameters");
-			throw new RuntimeException(					
-					"Error while allocating input parameters");
-		}
+        if (inputData == null
+                || !inputData.containsKey(inputIdentifierFeatures)
+                || !inputData.containsKey(inputIdentifierTargetReferenceSystem)) {
+            LOGGER.error("Error while allocating input parameters");
+            throw new RuntimeException(                    
+                    "Error while allocating input parameters");
+        }
 
-		List<IData> dataList = inputData.get(inputIdentifierFeatures);
-		if (dataList == null || dataList.size() != 1) {
-			throw new RuntimeException(
-					"Error while allocating input parameters");
-		}
+        List<IData> dataList = inputData.get(inputIdentifierFeatures);
+        if (dataList == null || dataList.size() != 1) {
+            throw new RuntimeException(
+                    "Error while allocating input parameters");
+        }
 
-		IData firstInputData = dataList.get(0);
-		FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData)
-				.getPayload();
+        IData firstInputData = dataList.get(0);
+        FeatureCollection<?, ?> featureCollection = ((GTVectorDataBinding) firstInputData)
+                .getPayload();
 
-		FeatureIterator<?> featureIterator = featureCollection.features();
+        FeatureIterator<?> featureIterator = featureCollection.features();
 
-		List<IData> secondDataList = inputData
-				.get(inputIdentifierTargetReferenceSystem);		
-		if (secondDataList == null || secondDataList.size() != 1) {
-			throw new RuntimeException(
-					"Error while allocating input parameters");
-		}
+        List<IData> secondDataList = inputData
+                .get(inputIdentifierTargetReferenceSystem);        
+        if (secondDataList == null || secondDataList.size() != 1) {
+            throw new RuntimeException(
+                    "Error while allocating input parameters");
+        }
 
-		IData secondInputData = secondDataList.get(0);
+        IData secondInputData = secondDataList.get(0);
 
-		// crs in epsg code
-		String crs = ((LiteralStringBinding) secondInputData).getPayload();
+        // crs in epsg code
+        String crs = ((LiteralStringBinding) secondInputData).getPayload();
 
-		CoordinateReferenceSystem toCRS = null;
+        CoordinateReferenceSystem toCRS = null;
 
-		try {
+        try {
 
-			toCRS = CRS.decode(crs);
+            toCRS = CRS.decode(crs);
 
-		} catch (Exception e) {
-			throw new RuntimeException(
-					"Could not determine target CRS. Valid EPSG code needed.",
-					e);
-		}
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Could not determine target CRS. Valid EPSG code needed.",
+                    e);
+        }
 
-		if (toCRS == null) {
-			throw new RuntimeException(
-					"Could not determine target CRS. Valid EPSG code needed.");
-		}
-		
-		List<IData> thirdDataList = inputData
-				.get(inputIdentifierSourceReferenceSystem);
-		if (thirdDataList == null || thirdDataList.size() != 1) {
-			throw new RuntimeException(
-					"Error while allocating input parameters");
-		}
-		
-		IData thirdInputData = thirdDataList.get(0);
+        if (toCRS == null) {
+            throw new RuntimeException(
+                    "Could not determine target CRS. Valid EPSG code needed.");
+        }
+        
+        List<IData> thirdDataList = inputData
+                .get(inputIdentifierSourceReferenceSystem);
+        if (thirdDataList == null || thirdDataList.size() != 1) {
+            throw new RuntimeException(
+                    "Error while allocating input parameters");
+        }
+        
+        IData thirdInputData = thirdDataList.get(0);
 
-		// crs in epsg code
-		String fromCRSString = ((LiteralStringBinding) thirdInputData).getPayload();
+        // crs in epsg code
+        String fromCRSString = ((LiteralStringBinding) thirdInputData).getPayload();
 
-		CoordinateReferenceSystem fromCRS = null;
+        CoordinateReferenceSystem fromCRS = null;
 
-		try {
+        try {
 
-			fromCRS = CRS.decode(fromCRSString);
+            fromCRS = CRS.decode(fromCRSString);
 
-		} catch (Exception e) {
-			throw new RuntimeException(
-					"Could not determine target CRS. Valid EPSG code needed.",
-					e);
-		}
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Could not determine target CRS. Valid EPSG code needed.",
+                    e);
+        }
 
-		if (fromCRS == null) {
-			throw new RuntimeException(
-					"Could not determine target CRS. Valid EPSG code needed.");
-		}
-		
+        if (fromCRS == null) {
+            throw new RuntimeException(
+                    "Could not determine target CRS. Valid EPSG code needed.");
+        }
+        
 
-		List<SimpleFeature> featureList = new ArrayList<>();
+        List<SimpleFeature> featureList = new ArrayList<>();
 
-		try {
+        try {
 
-			MathTransform tx = CRS.findMathTransform(fromCRS, toCRS, true);
+            MathTransform tx = CRS.findMathTransform(fromCRS, toCRS, true);
 
-			int coordinates = 0;
-			
-			while (featureIterator.hasNext()) {
+            int coordinates = 0;
+            
+            while (featureIterator.hasNext()) {
 
-				SimpleFeature feature = (SimpleFeature) featureIterator.next();
+                SimpleFeature feature = (SimpleFeature) featureIterator.next();
 
-				Geometry geometry = (Geometry) feature.getDefaultGeometry();
+                Geometry geometry = (Geometry) feature.getDefaultGeometry();
 
-				coordinates = coordinates + geometry.getCoordinates().length;
-				
-				Coordinate[] coords = geometry.getCoordinates();
-				
-				for (Coordinate coordinate : coords) {
-					Coordinate k = new Coordinate();
-					k = JTS.transform(coordinate, k, tx);
-//					System.out.println(k);
-				}
-				
-				Geometry newGeometry = JTS.transform(geometry, tx);
+                coordinates = coordinates + geometry.getCoordinates().length;
+                
+                Coordinate[] coords = geometry.getCoordinates();
+                
+                for (Coordinate coordinate : coords) {
+                    Coordinate k = new Coordinate();
+                    k = JTS.transform(coordinate, k, tx);
+//                    System.out.println(k);
+                }
+                
+                Geometry newGeometry = JTS.transform(geometry, tx);
 
-				SimpleFeature newFeature = createFeature(feature.getID(),
-						newGeometry, toCRS, feature.getProperties());
+                SimpleFeature newFeature = createFeature(feature.getID(),
+                        newGeometry, toCRS, feature.getProperties());
 
-				featureList.add(newFeature);
-			}
-						
+                featureList.add(newFeature);
+            }
+                        
 
-		} catch (Exception e) {
-			throw new RuntimeException("Error while transforming", e);
-		}
+        } catch (Exception e) {
+            throw new RuntimeException("Error while transforming", e);
+        }
 
-		HashMap<String, IData> result = new HashMap<String, IData>();
+        HashMap<String, IData> result = new HashMap<String, IData>();
 
-		result.put(outputIdentifierResult, new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
-		return result;
-	}
+        result.put(outputIdentifierResult, new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
+        return result;
+    }
 
-	private SimpleFeature createFeature(String id, Geometry geometry,
-			CoordinateReferenceSystem crs, Collection<Property> properties) {
-		String uuid = UUID.randomUUID().toString();
-		
-		if(featureType == null){
-		featureType = GTHelper.createFeatureType(properties,
-				geometry, uuid, crs);
-		GTHelper.createGML3SchemaForFeatureType(featureType);
-		}
+    private SimpleFeature createFeature(String id, Geometry geometry,
+            CoordinateReferenceSystem crs, Collection<Property> properties) {
+        String uuid = UUID.randomUUID().toString();
+        
+        if(featureType == null){
+        featureType = GTHelper.createFeatureType(properties,
+                geometry, uuid, crs);
+        GTHelper.createGML3SchemaForFeatureType(featureType);
+        }
 
-		SimpleFeature feature = GTHelper.createFeature(id, geometry, featureType,
-				properties);
+        SimpleFeature feature = GTHelper.createFeature(id, geometry, featureType,
+                properties);
 
-		return feature;
-	}
+        return feature;
+    }
 
 }

@@ -235,9 +235,9 @@ public class CapabilitiesConfigurationV200 {
         try {
             if (capabilitiesDocumentObj == null || reload) {
 
-            	if(loadingStrategy == null){
-            		loadingStrategy = new CreateInstanceStrategy();
-            	}
+                if(loadingStrategy == null){
+                    loadingStrategy = new CreateInstanceStrategy();
+                }
 
                 capabilitiesDocumentObj = loadingStrategy.loadSkeleton();
                 initSkeleton(capabilitiesDocumentObj);
@@ -278,11 +278,11 @@ public class CapabilitiesConfigurationV200 {
                 .addNewContents();
         for (String algorithmName : RepositoryManagerSingletonWrapper.getInstance()
                 .getAlgorithms()) {
-        	try {
-        		ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper
+            try {
+                ProcessOffering offering = (ProcessOffering) RepositoryManagerSingletonWrapper
                         .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_200);
 
-        		ProcessDescriptionType description = offering.getProcess();
+                ProcessDescriptionType description = offering.getProcess();
 
                 if (description != null) {
                     ProcessSummaryType process = contents.addNewProcessSummary();
@@ -292,9 +292,9 @@ public class CapabilitiesConfigurationV200 {
                     LanguageStringType title = null;
                     try {
                         title = description.getTitleArray(0);
-					} catch (Exception e) {
-						throw new RuntimeException(String.format("Process offering for process '{}' not valid. No title specified.", algorithmName));
-					}
+                    } catch (Exception e) {
+                        throw new RuntimeException(String.format("Process offering for process '{}' not valid. No title specified.", algorithmName));
+                    }
                     String processVersion = offering.getProcessVersion();
                     process.setProcessVersion(processVersion);
 
@@ -306,10 +306,10 @@ public class CapabilitiesConfigurationV200 {
 
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
-        	}
-        	catch (RuntimeException e) {
-        		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
-        	}
+            }
+            catch (RuntimeException e) {
+                LOG.warn("Exception during instantiation of process {}", algorithmName, e);
+            }
         }
     }
 
@@ -378,14 +378,14 @@ public class CapabilitiesConfigurationV200 {
         }
     }
 
-	public static ConfigurationManager getConfigurationManager() {
+    public static ConfigurationManager getConfigurationManager() {
 
-		if (configurationManager == null) {
-			configurationManager = WPSConfig.getInstance()
-					.getConfigurationManager();
-		}
-		return configurationManager;
-	}
+        if (configurationManager == null) {
+            configurationManager = WPSConfig.getInstance()
+                    .getConfigurationManager();
+        }
+        return configurationManager;
+    }
 
     /**
      * Strategy to load a capabilities skeleton from a URL.
@@ -574,10 +574,10 @@ public class CapabilitiesConfigurationV200 {
             String[] versionArray = serviceIdentificationConfigurationModule.getServiceTypeVersions().split(";");
 
             for (String version : versionArray) {
-				if(version.trim() != ""){
-					serviceIdentification.addNewServiceTypeVersion().setStringValue(version);
-				}
-			}
+                if(version.trim() != ""){
+                    serviceIdentification.addNewServiceTypeVersion().setStringValue(version);
+                }
+            }
 
             serviceIdentification.setFees(serviceIdentificationConfigurationModule.getFees() != null ? serviceIdentificationConfigurationModule.getFees() : "");
 
@@ -586,10 +586,10 @@ public class CapabilitiesConfigurationV200 {
             KeywordsType keywordsType = serviceIdentification.addNewKeywords();
 
             for (String keyword : keywordArray) {
-				if(keyword.trim() != ""){
-					keywordsType.addNewKeyword().setStringValue(keyword);
-				}
-			}
+                if(keyword.trim() != ""){
+                    keywordsType.addNewKeyword().setStringValue(keyword);
+                }
+            }
 
             OperationsMetadata operationsMetadata = wpsCapabilities.addNewOperationsMetadata();
 
@@ -647,10 +647,10 @@ public class CapabilitiesConfigurationV200 {
             HTTP http = operation.addNewDCP().addNewHTTP();
 
             if(getHREF != null && !getHREF.equals("")){
-            	http.addNewGet().setHref(getHREF);
+                http.addNewGet().setHref(getHREF);
             }
             if(postHREF != null && !postHREF.equals("")){
-            	http.addNewPost().setHref(postHREF);
+                http.addNewPost().setHref(postHREF);
             }
 
         }

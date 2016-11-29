@@ -53,36 +53,36 @@ import com.google.common.collect.Maps;
  *
  */
 public class XMLBeansHelper {
-	public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
-		for(OutputDescriptionType desc : outputDescs) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
+        for(OutputDescriptionType desc : outputDescs) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-	public static InputDescriptionType findInputByID(String outputID, DataInputs inputs) {
-		for(InputDescriptionType desc : inputs.getInputArray()) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static InputDescriptionType findInputByID(String outputID, DataInputs inputs) {
+        for(InputDescriptionType desc : inputs.getInputArray()) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
-	
-	public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
-		for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    
+    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
+        for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-	public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
-		for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
-			if(desc.getIdentifier().getStringValue().equals(inputID)) {
+    public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
+        for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
+            if(desc.getIdentifier().getStringValue().equals(inputID)) {
                 return desc;
             }
         }
@@ -118,12 +118,12 @@ public class XMLBeansHelper {
      * @param schemaLocation
      */
     public static void addSchemaLocationToXMLObject(XmlObject object, String schemaLocation){
-    	
-		XmlCursor c = object.newCursor();
-		c.toFirstChild();
-		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
-    	
+        
+        XmlCursor c = object.newCursor();
+        c.toFirstChild();
+        c.toLastAttribute();
+        c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+        
     }
 
     /**

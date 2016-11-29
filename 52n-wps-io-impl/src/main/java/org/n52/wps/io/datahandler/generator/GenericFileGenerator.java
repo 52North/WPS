@@ -39,16 +39,16 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
  *
  */
 public class GenericFileGenerator extends AbstractGenerator {
-	
-	public GenericFileGenerator (){
-		super();
-		supportedIDataTypes.add(GenericFileDataBinding.class);
-	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
-		return theStream;
-	}
-	
+    
+    public GenericFileGenerator (){
+        super();
+        supportedIDataTypes.add(GenericFileDataBinding.class);
+    }
+    
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+        
+        InputStream theStream = ((GenericFileDataBinding)data).getPayload().getDataStream();
+        return theStream;
+    }
+    
 }

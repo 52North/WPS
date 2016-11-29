@@ -44,57 +44,57 @@ import org.n52.wps.webapp.service.UserService;
 
 public class ConfigurationManagerImplTest {
 
-	@InjectMocks
-	private ConfigurationManager configurationManager;
+    @InjectMocks
+    private ConfigurationManager configurationManager;
 
-	@Mock
-	private ConfigurationService configurationService;
+    @Mock
+    private ConfigurationService configurationService;
 
-	@Mock
-	private UserService userService;
+    @Mock
+    private UserService userService;
 
-	@Mock
-	private CapabilitiesService capabilitiesService;
+    @Mock
+    private CapabilitiesService capabilitiesService;
 
-	@Mock
-	private LogConfigurationsService logConfigurationsService;
+    @Mock
+    private LogConfigurationsService logConfigurationsService;
 
-	@Mock
-	private BackupService backupService;
+    @Mock
+    private BackupService backupService;
 
-	@Before
-	public void setup() {
-		configurationManager = new ConfigurationManagerImpl();
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setup() {
+        configurationManager = new ConfigurationManagerImpl();
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@After
-	public void tearDown() {
-		configurationManager = null;
-	}
+    @After
+    public void tearDown() {
+        configurationManager = null;
+    }
 
-	@Test
-	public void getConfigurationServices() {
-		assertNotNull(configurationManager.getConfigurationServices());
-	}
+    @Test
+    public void getConfigurationServices() {
+        assertNotNull(configurationManager.getConfigurationServices());
+    }
 
-	@Test
-	public void getUserServices() {
-		assertNotNull(configurationManager.getUserServices());
-	}
+    @Test
+    public void getUserServices() {
+        assertNotNull(configurationManager.getUserServices());
+    }
 
-	@Test
-	public void getCapabilitiesServices() {
-		assertNotNull(configurationManager.getCapabilitiesServices());
-	}
+    @Test
+    public void getCapabilitiesServices() {
+        assertNotNull(configurationManager.getCapabilitiesServices());
+    }
 
-	@Test
-	public void getLogConfigurationsServices() {
-		assertNotNull(configurationManager.getLogConfigurationsServices());
-	}
+    @Test
+    public void getLogConfigurationsServices() {
+        assertNotNull(configurationManager.getLogConfigurationsServices());
+    }
 
-	@Test
-	public void getLogBackupServices() {
-		assertNotNull(configurationManager.getBackupServices());
-	}
+    @Test
+    public void getLogBackupServices() {
+        assertNotNull(configurationManager.getBackupServices());
+    }
 }

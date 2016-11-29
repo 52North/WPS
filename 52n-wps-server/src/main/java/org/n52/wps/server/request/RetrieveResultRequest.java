@@ -46,49 +46,49 @@ import org.n52.wps.server.response.RetrieveResultResponse;
  */
 public class RetrieveResultRequest extends Request {
 
-	private InputStream storedResponse = null;
-	
-	/**
-	 * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
-	 * @param ciMap The Map which holds the client input.
-	 */
-	public RetrieveResultRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
-		super(ciMap);
-	}
-	
-	/**
-	 * Actually serves the Request.
-	 * @throws ExceptionReport
-	 */
-	public Response call() throws ExceptionReport {
-		if(validate()){
-			return new RetrieveResultResponse(this);
-		}
-		return null;
-	}
+    private InputStream storedResponse = null;
+    
+    /**
+     * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
+     * @param ciMap The Map which holds the client input.
+     */
+    public RetrieveResultRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
+        super(ciMap);
+    }
+    
+    /**
+     * Actually serves the Request.
+     * @throws ExceptionReport
+     */
+    public Response call() throws ExceptionReport {
+        if(validate()){
+            return new RetrieveResultResponse(this);
+        }
+        return null;
+    }
 
-	/**
-	 * Validates the client input
-	 * @return True if the input is valid, False otherwise
-	 */
-	public boolean validate() throws ExceptionReport {
-		String req_id = getMapValue("request_id", true);
-		if(req_id.length() == 0){
-			throw new ExceptionReport("The value of parameter <request_id> is not valid.", ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
-		try{
-		}catch(NumberFormatException e){
-			throw new ExceptionReport("The value of parameter <request_id> is not an integer identifier", ExceptionReport.INVALID_PARAMETER_VALUE);
-		}
-		IDatabase db = DatabaseFactory.getDatabase();
-		this.storedResponse = db.lookupResponse(req_id);
-		return (this.storedResponse != null);
-	}
-	
-	public Object getAttachedResult() throws NullPointerException {
-		if(this.storedResponse == null)
-			throw new NullPointerException("No stored responses were found!");
-		return this.storedResponse;
-	}
+    /**
+     * Validates the client input
+     * @return True if the input is valid, False otherwise
+     */
+    public boolean validate() throws ExceptionReport {
+        String req_id = getMapValue("request_id", true);
+        if(req_id.length() == 0){
+            throw new ExceptionReport("The value of parameter <request_id> is not valid.", ExceptionReport.INVALID_PARAMETER_VALUE);
+        }
+        try{
+        }catch(NumberFormatException e){
+            throw new ExceptionReport("The value of parameter <request_id> is not an integer identifier", ExceptionReport.INVALID_PARAMETER_VALUE);
+        }
+        IDatabase db = DatabaseFactory.getDatabase();
+        this.storedResponse = db.lookupResponse(req_id);
+        return (this.storedResponse != null);
+    }
+    
+    public Object getAttachedResult() throws NullPointerException {
+        if(this.storedResponse == null)
+            throw new NullPointerException("No stored responses were found!");
+        return this.storedResponse;
+    }
 
 }

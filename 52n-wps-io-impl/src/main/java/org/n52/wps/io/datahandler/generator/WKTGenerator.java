@@ -45,26 +45,26 @@ import com.vividsolutions.jts.io.WKTWriter;
  */
 public class WKTGenerator extends AbstractGenerator {
 
-	public WKTGenerator(){
-		super();
-		supportedIDataTypes.add(JTSGeometryBinding.class);
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema)
-			throws IOException {
-		
-		if(data instanceof JTSGeometryBinding){
-			Geometry g = ((JTSGeometryBinding)data).getPayload();
-			
-			String wktString = new WKTWriter().write(g);
-			
-			InputStream is = new ByteArrayInputStream(wktString.getBytes());
-			
-			return is;
-		}
-		
-		return null;
-	}
+    public WKTGenerator(){
+        super();
+        supportedIDataTypes.add(JTSGeometryBinding.class);
+    }
+    
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema)
+            throws IOException {
+        
+        if(data instanceof JTSGeometryBinding){
+            Geometry g = ((JTSGeometryBinding)data).getPayload();
+            
+            String wktString = new WKTWriter().write(g);
+            
+            InputStream is = new ByteArrayInputStream(wktString.getBytes());
+            
+            return is;
+        }
+        
+        return null;
+    }
 
 }

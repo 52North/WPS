@@ -36,22 +36,22 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 
 public class UndeployProcessRequest implements ITransactionalRequest {
-	private String processID;
+    private String processID;
 
-	public UndeployProcessRequest(Document request) throws ExceptionReport {
-		try {
-			processID = XPathAPI.selectSingleNode(request,
-					"/UnDeployProcessRequest/Process/Identifier/text()").getNodeValue().trim();
-		} catch (DOMException e) {
-			throw new ExceptionReport("Error. Malformed undeploy request",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (TransformerException e) {
-			throw new ExceptionReport("Error. Malformed undeploy request",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-	}
+    public UndeployProcessRequest(Document request) throws ExceptionReport {
+        try {
+            processID = XPathAPI.selectSingleNode(request,
+                    "/UnDeployProcessRequest/Process/Identifier/text()").getNodeValue().trim();
+        } catch (DOMException e) {
+            throw new ExceptionReport("Error. Malformed undeploy request",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (TransformerException e) {
+            throw new ExceptionReport("Error. Malformed undeploy request",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+    }
 
-	public String getProcessID() {
-		return processID;
-	}
+    public String getProcessID() {
+        return processID;
+    }
 }

@@ -51,52 +51,52 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("service_identification")
 public class ServiceIdentificationController {
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(ServiceIdentificationController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ServiceIdentificationController.class);
 
-	/**
-	 * Display the service identification module
-	 * 
-	 * @param model
-	 * @return The service identification view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String display(Model model) {
-		ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices()
-				.getServiceIdentification();
-		model.addAttribute("serviceIdentification", serviceIdentification);
-		LOGGER.info("Reterived '{}' configuration module.", serviceIdentification.getClass().getName());
-		return "service_identification";
-	}
+    /**
+     * Display the service identification module
+     * 
+     * @param model
+     * @return The service identification view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String display(Model model) {
+        ServiceIdentification serviceIdentification = configurationManager.getCapabilitiesServices()
+                .getServiceIdentification();
+        model.addAttribute("serviceIdentification", serviceIdentification);
+        LOGGER.info("Reterived '{}' configuration module.", serviceIdentification.getClass().getName());
+        return "service_identification";
+    }
 
-	/**
-	 * Process form submission. The method will return an HTTP 200 status code if there
-	 * are no errors, else, it will return a 400 status code.
-	 * 
-	 * @param serviceIdentification
-	 *            The model holding the service identification values
-	 * @param result
-	 * @param model
-	 * @param response
-	 * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-	 *         errors.
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	public ValidationResponse processPost(
-			@ModelAttribute("serviceIdentification") @Valid ServiceIdentification serviceIdentification,
-			BindingResult result, Model model, HttpServletResponse response) {
-		ValidationResponse validationResponse = new ValidationResponse();
-		if (result.hasErrors()) {
-			validationResponse.setErrorMessageList(result.getFieldErrors());
-			validationResponse.setStatus("Fail");
-			response.setStatus(400);
-		} else {
-			configurationManager.getCapabilitiesServices().saveServiceIdentification(serviceIdentification);
-			validationResponse.setStatus("Sucess");
-		}
-		return validationResponse;
-	}
+    /**
+     * Process form submission. The method will return an HTTP 200 status code if there
+     * are no errors, else, it will return a 400 status code.
+     * 
+     * @param serviceIdentification
+     *            The model holding the service identification values
+     * @param result
+     * @param model
+     * @param response
+     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
+     *         errors.
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ValidationResponse processPost(
+            @ModelAttribute("serviceIdentification") @Valid ServiceIdentification serviceIdentification,
+            BindingResult result, Model model, HttpServletResponse response) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        if (result.hasErrors()) {
+            validationResponse.setErrorMessageList(result.getFieldErrors());
+            validationResponse.setStatus("Fail");
+            response.setStatus(400);
+        } else {
+            configurationManager.getCapabilitiesServices().saveServiceIdentification(serviceIdentification);
+            validationResponse.setStatus("Sucess");
+        }
+        return validationResponse;
+    }
 }

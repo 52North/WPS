@@ -41,68 +41,68 @@ import org.apache.xmlbeans.XmlObject;
  */
 public class InputReference {
 
-	private InputType inputV100;
+    private InputType inputV100;
 
-	private DataInputType inputV200;
-	
-	public InputReference(InputType inputs){
-		inputV100 = inputs;
-	}
-	
-	public InputReference(DataInputType inputs){
-		inputV200 = inputs;
-	}
+    private DataInputType inputV200;
+    
+    public InputReference(InputType inputs){
+        inputV100 = inputs;
+    }
+    
+    public InputReference(DataInputType inputs){
+        inputV200 = inputs;
+    }
 
-	public InputType getInputV100() {
-		return inputV100;
-	}
+    public InputType getInputV100() {
+        return inputV100;
+    }
 
-	public void setInputV100(InputType inputV100) {
-		this.inputV100 = inputV100;
-	}
+    public void setInputV100(InputType inputV100) {
+        this.inputV100 = inputV100;
+    }
 
-	public DataInputType getInputV200() {
-		return inputV200;
-	}
+    public DataInputType getInputV200() {
+        return inputV200;
+    }
 
-	public void setInputV200(DataInputType inputV200) {
-		this.inputV200 = inputV200;
-	}
+    public void setInputV200(DataInputType inputV200) {
+        this.inputV200 = inputV200;
+    }
 
-	public String getHref() {		
-		return inputV100 != null ? inputV100.getReference().getHref() : inputV200.getReference().getHref();
-	}
-	
-	public String getMimeType() {		
-		return inputV100 != null ? inputV100.getReference().getMimeType() : inputV200.getReference().getMimeType();
-	}
-	
-	public String getSchema() {		
-		return inputV100 != null ? inputV100.getReference().getSchema() : inputV200.getReference().getSchema();
-	}
-	
-	public String getEncoding() {		
-		return inputV100 != null ? inputV100.getReference().getEncoding() : inputV200.getReference().getEncoding();
-	}
+    public String getHref() {        
+        return inputV100 != null ? inputV100.getReference().getHref() : inputV200.getReference().getHref();
+    }
+    
+    public String getMimeType() {        
+        return inputV100 != null ? inputV100.getReference().getMimeType() : inputV200.getReference().getMimeType();
+    }
+    
+    public String getSchema() {        
+        return inputV100 != null ? inputV100.getReference().getSchema() : inputV200.getReference().getSchema();
+    }
+    
+    public String getEncoding() {        
+        return inputV100 != null ? inputV100.getReference().getEncoding() : inputV200.getReference().getEncoding();
+    }
 
-	public String getIdentifier() {
-		return inputV100 != null ? inputV100.getIdentifier().getStringValue() : inputV200.getId();
-	}
+    public String getIdentifier() {
+        return inputV100 != null ? inputV100.getIdentifier().getStringValue() : inputV200.getId();
+    }
 
-	public boolean isSetBodyReference() {
-		return inputV100 != null ? inputV100.getReference().isSetBodyReference() : inputV200.getReference().isSetBodyReference();
-	}
+    public boolean isSetBodyReference() {
+        return inputV100 != null ? inputV100.getReference().isSetBodyReference() : inputV200.getReference().isSetBodyReference();
+    }
 
-	public String getBodyReferenceHref() {
-		return inputV100 != null ? inputV100.getReference().getBodyReference().getHref() : inputV200.getReference().getBodyReference().getHref();
-	}
+    public String getBodyReferenceHref() {
+        return inputV100 != null ? inputV100.getReference().getBodyReference().getHref() : inputV200.getReference().getBodyReference().getHref();
+    }
 
-	public boolean isSetBody() {
-		return inputV100 != null ? inputV100.getReference().isSetBody() : inputV200.getReference().isSetBody();
-	}
+    public boolean isSetBody() {
+        return inputV100 != null ? inputV100.getReference().isSetBody() : inputV200.getReference().isSetBody();
+    }
 
-	public XmlObject getBody() {
-		return inputV100 != null ? inputV100.getReference().getBody() : inputV200.getReference().getBody();
-	}
-	
+    public XmlObject getBody() {
+        return inputV100 != null ? inputV100.getReference().getBody() : inputV200.getReference().getBody();
+    }
+    
 }

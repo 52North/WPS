@@ -65,70 +65,70 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class KMLGeneratorTest extends AbstractTestCase<KMLGenerator> {
 
-	@Test
-	public void testGenerator(){
+    @Test
+    public void testGenerator(){
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/states.zip";
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/states.zip";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
+        GTBinZippedSHPParser theParser = new GTBinZippedSHPParser();
 
-		KMLParser kmlParser = new KMLParser();
+        KMLParser kmlParser = new KMLParser();
 
-		String[] mimetypes1 = theParser.getSupportedFormats();
+        String[] mimetypes1 = theParser.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		String mimetype = mimetypes1[0];
+        String mimetype = mimetypes1[0];
 
-		GTVectorDataBinding theBinding = theParser.parse(input, mimetype, "");
+        GTVectorDataBinding theBinding = theParser.parse(input, mimetype, "");
 
-		Assert.assertNotNull(theBinding.getPayload());
-		Assert.assertTrue(!theBinding.getPayload().isEmpty());
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-		String[] mimetypes2 = dataHandler.getSupportedFormats();
-		String[] schemas2 = dataHandler.getSupportedSchemas();
+        String[] mimetypes2 = dataHandler.getSupportedFormats();
+        String[] schemas2 = dataHandler.getSupportedSchemas();
 
-		for (String string : mimetypes2) {
+        for (String string : mimetypes2) {
 
-			for (String schema : schemas2) {
-				try {
-					InputStream in = dataHandler.generateStream(theBinding, string, schema);
+            for (String schema : schemas2) {
+                try {
+                    InputStream in = dataHandler.generateStream(theBinding, string, schema);
 
-					GTVectorDataBinding generatedParsedBinding = kmlParser.parse(in, kmlParser.getSupportedFormats()[0], kmlParser.getSupportedSchemas()[0]);
+                    GTVectorDataBinding generatedParsedBinding = kmlParser.parse(in, kmlParser.getSupportedFormats()[0], kmlParser.getSupportedSchemas()[0]);
 
-					Assert.assertNotNull(generatedParsedBinding.getPayload());
-					Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
-					Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
+                    Assert.assertNotNull(generatedParsedBinding.getPayload());
+                    Assert.assertTrue(generatedParsedBinding.getPayloadAsShpFile().exists());
+                    Assert.assertTrue(!generatedParsedBinding.getPayload().isEmpty());
 
-				} catch (IOException e) {
-					e.printStackTrace();
-					Assert.fail(e.getMessage());
-				}
-			}
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Assert.fail(e.getMessage());
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new KMLGenerator();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new KMLGenerator();
+    }
 
 }

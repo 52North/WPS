@@ -93,8 +93,8 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
 
     private ServletContext servletContext;
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
     @Autowired
     private RepositoryManager repositoryManager;
@@ -165,11 +165,11 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         applicationBaseDir = servletContext.getRealPath("");
         LOGGER.debug("Application base dir is {}", applicationBaseDir);
 
-		Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
+        Map<String, ConfigurationModule> parserMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.PARSER);
         ParserFactory.initialize(parserMap);
         LOGGER.info("Initialized {}", ParserFactory.getInstance());
 
-		Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
+        Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
         GeneratorFactory.initialize(generatorMap);
         LOGGER.info("Initialized {}", GeneratorFactory.getInstance());
 
@@ -349,11 +349,11 @@ public class WebProcessingService implements ServletContextAware, ServletConfigA
         DatabaseFactory.getDatabase().shutdown();
     }
 
-	@Override
-	public void setServletConfig(ServletConfig servletConfig) {}
+    @Override
+    public void setServletConfig(ServletConfig servletConfig) {}
 
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		this.servletContext = servletContext;
-	}
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
 }

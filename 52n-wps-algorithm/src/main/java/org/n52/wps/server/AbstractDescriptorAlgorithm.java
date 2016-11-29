@@ -98,13 +98,13 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
         AlgorithmDescriptor algorithmDescriptor = getAlgorithmDescriptor();
 
-		ProcessDescription superProcessDescription = new ProcessDescription();
-		
-		superProcessDescription.addProcessDescriptionForVersion(createProcessDescription100(algorithmDescriptor), WPSConfig.VERSION_100);
-		
-		superProcessDescription.addProcessDescriptionForVersion(createProcessDescription200(algorithmDescriptor), WPSConfig.VERSION_200);
-		
-		return superProcessDescription;
+        ProcessDescription superProcessDescription = new ProcessDescription();
+        
+        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription100(algorithmDescriptor), WPSConfig.VERSION_100);
+        
+        superProcessDescription.addProcessDescriptionForVersion(createProcessDescription200(algorithmDescriptor), WPSConfig.VERSION_200);
+        
+        return superProcessDescription;
     }
 
     private void describeComplexDataInputType(SupportedComplexDataType complexData, Class dataTypeClass) {
@@ -150,7 +150,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
             
             List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
             if (fullFormats != null && fullFormats.size() > 0) {
-            	if (needDefault) {
+                if (needDefault) {
                     needDefault = false;
                     describeComplexDataFormat(
                             defaultFormatType.addNewFormat(),
@@ -229,127 +229,127 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     }
     
     private void describeComplexDataInputType200(ComplexDataType complexDataType, Class dataTypeClass) {
-    	List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
-    	List<IParser> foundParsers = new ArrayList<IParser>();
-    	for (IParser parser : parsers) {
+        List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+        List<IParser> foundParsers = new ArrayList<IParser>();
+        for (IParser parser : parsers) {
 // /*2.0*/    Class[] supportedClasses = parser.getSupportedInternalOutputDataType();
-    		/*3.0*/    Class[] supportedClasses = parser.getSupportedDataBindings();
-    		for (Class clazz : supportedClasses) {
-    			if (dataTypeClass.isAssignableFrom(clazz)) {
-    				foundParsers.add(parser);
-    			}
-    		}
-    	}
-    	describeComplexDataType200(complexDataType, foundParsers);
+            /*3.0*/    Class[] supportedClasses = parser.getSupportedDataBindings();
+            for (Class clazz : supportedClasses) {
+                if (dataTypeClass.isAssignableFrom(clazz)) {
+                    foundParsers.add(parser);
+                }
+            }
+        }
+        describeComplexDataType200(complexDataType, foundParsers);
     }
     
     private void describeComplexDataOutputType200(ComplexDataType complexData, Class dataTypeClass) {
-    	
-    	List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
-    	List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
-    	for (IGenerator generator : generators) {
+        
+        List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+        List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+        for (IGenerator generator : generators) {
 // /*2.0*/    Class[] supportedClasses = generator.getSupportedInternalInputDataType(); // appears to have been removed in 52n WPS 3.0
-    		/*3.0*/    Class[] supportedClasses = generator.getSupportedDataBindings();
-    		for (Class clazz : supportedClasses) {
-    			if (clazz.isAssignableFrom(dataTypeClass)) {
-    				foundGenerators.add(generator);
-    			}
-    		}
-    	}
-    	describeComplexDataType200(complexData, foundGenerators);
+            /*3.0*/    Class[] supportedClasses = generator.getSupportedDataBindings();
+            for (Class clazz : supportedClasses) {
+                if (clazz.isAssignableFrom(dataTypeClass)) {
+                    foundGenerators.add(generator);
+                }
+            }
+        }
+        describeComplexDataType200(complexData, foundGenerators);
     }
     
     private void describeComplexDataType200(
-    		ComplexDataType complexDataType,
-    		List<? extends IOHandler> handlers)
+            ComplexDataType complexDataType,
+            List<? extends IOHandler> handlers)
     {
-    	net.opengis.wps.x20.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
-    	
-    	defaultFormatType.setDefault(true);
-    	
-    	boolean needDefault = true;
-    	for (IOHandler handler : handlers) {
-    		
-    		List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
-    		if (fullFormats != null && fullFormats.size() > 0) {
+        net.opengis.wps.x20.FormatDocument.Format defaultFormatType = complexDataType.addNewFormat();
+        
+        defaultFormatType.setDefault(true);
+        
+        boolean needDefault = true;
+        for (IOHandler handler : handlers) {
+            
+            List<FormatEntry> fullFormats = handler.getSupportedFullFormats();
+            if (fullFormats != null && fullFormats.size() > 0) {
                 int start = 0;
-    			if (needDefault) {
-    				needDefault = false;
-    				describeComplexDataFormat200(
-    						defaultFormatType,
-    						fullFormats.get(0));
-    				start = 1;
-    			}
-    			for (int formatIndex = start, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
-    				describeComplexDataFormat200(
-    						complexDataType.addNewFormat(),
-    						fullFormats.get(formatIndex));
-    			}
-    		} else {
-    			
-    			String[] formats = handler.getSupportedFormats();
-    			
-    			if (formats == null || formats.length == 0) {
-    				LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
-    						handler.getClass().getSimpleName(),
-    						getWellKnownName());
-    			} else {
-    				// if formats, encodings or schemas arrays are 'null' or empty, create
-    				// new array with single 'null' element.  We do this so we can utilize
-    				// a single set of nested loops to process all permutations.  'null'
-    				// values will not be output...
-    				String[] encodings = handler.getSupportedEncodings();
-    				if (encodings == null || encodings.length == 0) {
-    					encodings = new String[] { null };
-    				}
-    				String[] schemas = handler.getSupportedSchemas();
-    				if (schemas == null || schemas.length == 0) {
-    					schemas = new String[] { null };
-    				}
-    				
-    				for (String format : formats) {
-    					for (String encoding : encodings) {
-    						for (String schema : schemas) {
-    							if (needDefault) {
-    								needDefault = false;
-    								describeComplexDataFormat200(
-    										defaultFormatType,
-    										format, encoding, schema);
-    							}
-    							describeComplexDataFormat200(
-    									complexDataType.addNewFormat(),
-    									format, encoding, schema);
-    						}
-    					}
-    				}
-    			}
-    		}
-    	}
+                if (needDefault) {
+                    needDefault = false;
+                    describeComplexDataFormat200(
+                            defaultFormatType,
+                            fullFormats.get(0));
+                    start = 1;
+                }
+                for (int formatIndex = start, formatCount = fullFormats.size(); formatIndex < formatCount; ++formatIndex) {
+                    describeComplexDataFormat200(
+                            complexDataType.addNewFormat(),
+                            fullFormats.get(formatIndex));
+                }
+            } else {
+                
+                String[] formats = handler.getSupportedFormats();
+                
+                if (formats == null || formats.length == 0) {
+                    LOGGER.warn("Skipping IOHandler {} in ProcessDescription generation for {}, no formats specified",
+                            handler.getClass().getSimpleName(),
+                            getWellKnownName());
+                } else {
+                    // if formats, encodings or schemas arrays are 'null' or empty, create
+                    // new array with single 'null' element.  We do this so we can utilize
+                    // a single set of nested loops to process all permutations.  'null'
+                    // values will not be output...
+                    String[] encodings = handler.getSupportedEncodings();
+                    if (encodings == null || encodings.length == 0) {
+                        encodings = new String[] { null };
+                    }
+                    String[] schemas = handler.getSupportedSchemas();
+                    if (schemas == null || schemas.length == 0) {
+                        schemas = new String[] { null };
+                    }
+                    
+                    for (String format : formats) {
+                        for (String encoding : encodings) {
+                            for (String schema : schemas) {
+                                if (needDefault) {
+                                    needDefault = false;
+                                    describeComplexDataFormat200(
+                                            defaultFormatType,
+                                            format, encoding, schema);
+                                }
+                                describeComplexDataFormat200(
+                                        complexDataType.addNewFormat(),
+                                        format, encoding, schema);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private void describeComplexDataFormat200(
-    		net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
-    		FormatEntry format)
+            net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
+            FormatEntry format)
     {
-    	describeComplexDataFormat200(supportedFormatType,
-    			format.getMimeType(),
-    			format.getEncoding(),
-    			format.getSchema());
+        describeComplexDataFormat200(supportedFormatType,
+                format.getMimeType(),
+                format.getEncoding(),
+                format.getSchema());
     }
     
     private void describeComplexDataFormat200(net.opengis.wps.x20.FormatDocument.Format supportedFormatType,
-    		String format,
-    		String encoding,
-    		String schema) {
-    	if ( !Strings.isNullOrEmpty(format)) {
-    		supportedFormatType.setMimeType(format);
-    	}
-    	if ( !Strings.isNullOrEmpty(encoding)) {
-    		supportedFormatType.setEncoding(encoding);
-    	}
-    	if ( !Strings.isNullOrEmpty(schema)) {
-    		supportedFormatType.setSchema(schema);
-    	}
+            String format,
+            String encoding,
+            String schema) {
+        if ( !Strings.isNullOrEmpty(format)) {
+            supportedFormatType.setMimeType(format);
+        }
+        if ( !Strings.isNullOrEmpty(encoding)) {
+            supportedFormatType.setEncoding(encoding);
+        }
+        if ( !Strings.isNullOrEmpty(schema)) {
+            supportedFormatType.setSchema(schema);
+        }
     }
 
     @Override
@@ -379,7 +379,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
     protected abstract AlgorithmDescriptor createAlgorithmDescriptor();
     
     private ProcessDescriptionType createProcessDescription100(AlgorithmDescriptor algorithmDescriptor){
-    	
+        
         ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
         ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
         ProcessDescriptionType processDescription = processDescriptions.addNewProcessDescription();
@@ -477,42 +477,42 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
         }
         
         return processDescription;
-    	
+        
     }
 
     private ProcessOffering createProcessDescription200(AlgorithmDescriptor algorithmDescriptor){
-    	
-    	/*
-    	 * We need to use the ProcessOffering here, because it holds some information that will be 
-    	 * shown in the ProcessSummary of the Capabilities
-    	 */
-    	ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
+        
+        /*
+         * We need to use the ProcessOffering here, because it holds some information that will be 
+         * shown in the ProcessSummary of the Capabilities
+         */
+        ProcessOffering processOffering = ProcessOffering.Factory.newInstance();
 
-    	net.opengis.wps.x20.ProcessDescriptionType processDescription = processOffering.addNewProcess();
-    	
+        net.opengis.wps.x20.ProcessDescriptionType processDescription = processOffering.addNewProcess();
+        
         if (algorithmDescriptor == null) {
             throw new IllegalStateException("Instance must have an algorithm descriptor");
         } else {
 
-        	processOffering.setProcessVersion(algorithmDescriptor.getVersion());
-        	
-        	//TODO check options
-        	List<String> jobControlOptions = new ArrayList<>();
-        	
-        	jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_SYNC_EXECUTE);
-        	
-        	if(algorithmDescriptor.getStatusSupported()){
-        		jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_ASYNC_EXECUTE);
-        	}
-        	
-        	processOffering.setJobControlOptions(jobControlOptions);
-        	
-        	List<String> outputTransmissionModes = new ArrayList<>();
-        	
-        	outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_VALUE);
-        	outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_REFERENCE);
-        	
-        	processOffering.setOutputTransmission(outputTransmissionModes);
+            processOffering.setProcessVersion(algorithmDescriptor.getVersion());
+            
+            //TODO check options
+            List<String> jobControlOptions = new ArrayList<>();
+            
+            jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_SYNC_EXECUTE);
+            
+            if(algorithmDescriptor.getStatusSupported()){
+                jobControlOptions.add(WPSConfig.JOB_CONTROL_OPTION_ASYNC_EXECUTE);
+            }
+            
+            processOffering.setJobControlOptions(jobControlOptions);
+            
+            List<String> outputTransmissionModes = new ArrayList<>();
+            
+            outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_VALUE);
+            outputTransmissionModes.add(WPSConfig.OUTPUT_TRANSMISSION_REFERENCE);
+            
+            processOffering.setOutputTransmission(outputTransmissionModes);
             // 1. Identifier
             processDescription.addNewIdentifier().setStringValue(algorithmDescriptor.getIdentifier());
             processDescription.addNewTitle().setStringValue( algorithmDescriptor.hasTitle() ?
@@ -567,12 +567,12 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     literalDataDomainType.addNewDataType().setReference(literalDescriptor.getDataType());
 
                     if (literalDescriptor.hasDefaultValue()) {
-                    	
-                    	ValueType defaultValue = ValueType.Factory.newInstance();
-                    	
-                    	defaultValue.setStringValue(literalDescriptor.getDefaultValue());
-                    	
-                    	literalDataDomainType.setDefaultValue(defaultValue);
+                        
+                        ValueType defaultValue = ValueType.Factory.newInstance();
+                        
+                        defaultValue.setStringValue(literalDescriptor.getDefaultValue());
+                        
+                        literalDataDomainType.setDefaultValue(defaultValue);
                     }
                     if (literalDescriptor.hasAllowedValues()) {
                         net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed = literalDataDomainType.addNewAllowedValues();
@@ -580,7 +580,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                             allowed.addNewValue().setStringValue(allowedValue);
                         }
                     } else {
-                    	literalDataDomainType.addNewAnyValue();
+                        literalDataDomainType.addNewAnyValue();
                     }
                     
                     dataInput.setDataDescription(literalData);
@@ -588,9 +588,9 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     XMLUtil.qualifySubstitutionGroup(dataInput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
 
                 } else if (inputDescriptor instanceof ComplexDataInputDescriptor) {
-                	
-                	ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
-                	
+                    
+                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
+                    
                     ComplexDataInputDescriptor complexInputDescriptor =
                             (ComplexDataInputDescriptor)inputDescriptor;
                     
@@ -652,7 +652,7 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     LiteralDataDomainType literalDataDomainType = literalData.addNewLiteralDataDomain();
                     
                     literalDataDomainType.addNewDataType().setReference(literalDescriptor.getDataType());
-                	
+                    
                     literalDataDomainType.addNewAnyValue();
                     
                     dataOutput.setDataDescription(literalData);
@@ -660,8 +660,8 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
                     XMLUtil.qualifySubstitutionGroup(dataOutput.getDataDescription(), LiteralDataDocument.type.getDocumentElementName(), null);
                     
                 } else if (outputDescriptor instanceof ComplexDataOutputDescriptor) {
-                	
-                	ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
+                    
+                    ComplexDataType complexDataType = ComplexDataType.Factory.newInstance();  
                     describeComplexDataOutputType200(complexDataType, outputDescriptor.getBinding());
                     
                     dataOutput.setDataDescription(complexDataType);

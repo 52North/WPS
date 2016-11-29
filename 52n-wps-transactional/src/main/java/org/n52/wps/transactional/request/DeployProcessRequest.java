@@ -45,92 +45,92 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public class DeployProcessRequest implements ITransactionalRequest {
-	protected Node processDescription;
-	protected DeploymentProfile deploymentProfile;
-	protected String schema;
+    protected Node processDescription;
+    protected DeploymentProfile deploymentProfile;
+    protected String schema;
 
-	public DeployProcessRequest(Document doc) throws ExceptionReport {
-		try {
-			String processID = XPathAPI.selectSingleNode(
-					doc,
-					"/DeployProcess/ProcessDescriptions/"
-							+ "ProcessDescription/Identifier/text()")
-					.getNodeValue().trim();
-			
-			processDescription = XPathAPI.selectSingleNode(doc,
-					"/DeployProcess/ProcessDescriptions");
-			schema = XPathAPI
-					.selectSingleNode(doc,
-							"/DeployProcess/DeploymentProfile/Schema/attribute::href")
-					.getNodeValue();
-			if (schema == null) {
-				throw new ExceptionReport(
-						"Error. Could not find schema in the deployment profile",
-						ExceptionReport.MISSING_PARAMETER_VALUE);
-			}
-			LoggerFactory.getLogger(DeployProcessRequest.class).info(
-					"process ID: " + processID);
-			String deployManagerClass = TransactionalHelper
-					.getDeploymentProfileForSchema(schema);
-			Constructor<?> constructor;
-			constructor = Class.forName(deployManagerClass).getConstructor(
-					Node.class, String.class);
+    public DeployProcessRequest(Document doc) throws ExceptionReport {
+        try {
+            String processID = XPathAPI.selectSingleNode(
+                    doc,
+                    "/DeployProcess/ProcessDescriptions/"
+                            + "ProcessDescription/Identifier/text()")
+                    .getNodeValue().trim();
+            
+            processDescription = XPathAPI.selectSingleNode(doc,
+                    "/DeployProcess/ProcessDescriptions");
+            schema = XPathAPI
+                    .selectSingleNode(doc,
+                            "/DeployProcess/DeploymentProfile/Schema/attribute::href")
+                    .getNodeValue();
+            if (schema == null) {
+                throw new ExceptionReport(
+                        "Error. Could not find schema in the deployment profile",
+                        ExceptionReport.MISSING_PARAMETER_VALUE);
+            }
+            LoggerFactory.getLogger(DeployProcessRequest.class).info(
+                    "process ID: " + processID);
+            String deployManagerClass = TransactionalHelper
+                    .getDeploymentProfileForSchema(schema);
+            Constructor<?> constructor;
+            constructor = Class.forName(deployManagerClass).getConstructor(
+                    Node.class, String.class);
                         //NH 17-12-09 we're asking for the deployment profile but also need the process request info
-			//deploymentProfile = (DeploymentProfile) constructor.newInstance(
-			//		XPathAPI.selectSingleNode(doc,
-			//				"/DeployProcessRequest/DeploymentProfile"),
-			//		processID);
+            //deploymentProfile = (DeploymentProfile) constructor.newInstance(
+            //        XPathAPI.selectSingleNode(doc,
+            //                "/DeployProcessRequest/DeploymentProfile"),
+            //        processID);
                         deploymentProfile = (DeploymentProfile) constructor.newInstance(
-					XPathAPI.selectSingleNode(doc,
-							"/DeployProcess"),
-					processID);
-		} catch (TransformerException e) {
-			throw new ExceptionReport("Error. Malformed DeployProcess request",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (NoSuchMethodException e) {
-			throw new ExceptionReport("An error has occurred while obtaining "
-					+ "the deployment profile",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (ClassNotFoundException e) {
-			throw new ExceptionReport("An error has occurred while obtaining "
-					+ "the deployment profile",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (InstantiationException e) {
-			throw new ExceptionReport("An error has occurred while obtaining "
-					+ "the deployment profile",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (IllegalAccessException e) {
-			throw new ExceptionReport("An error has occurred while obtaining "
-					+ "the deployment profile",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (InvocationTargetException e) {
-			throw new ExceptionReport("An error has occurred while obtaining "
-					+ "the deployment profile",
-					ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-			
-		
-		
-		
-	}
+                    XPathAPI.selectSingleNode(doc,
+                            "/DeployProcess"),
+                    processID);
+        } catch (TransformerException e) {
+            throw new ExceptionReport("Error. Malformed DeployProcess request",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (NoSuchMethodException e) {
+            throw new ExceptionReport("An error has occurred while obtaining "
+                    + "the deployment profile",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (ClassNotFoundException e) {
+            throw new ExceptionReport("An error has occurred while obtaining "
+                    + "the deployment profile",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (InstantiationException e) {
+            throw new ExceptionReport("An error has occurred while obtaining "
+                    + "the deployment profile",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (IllegalAccessException e) {
+            throw new ExceptionReport("An error has occurred while obtaining "
+                    + "the deployment profile",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (InvocationTargetException e) {
+            throw new ExceptionReport("An error has occurred while obtaining "
+                    + "the deployment profile",
+                    ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+            
+        
+        
+        
+    }
 
 
-	public Node getProcessDescription() {
-		return processDescription;
-	}
+    public Node getProcessDescription() {
+        return processDescription;
+    }
 
 
-	public DeploymentProfile getDeploymentProfile() {
-		return deploymentProfile;
-	}
-	
-	public String getSchema() {
-		return schema;
-	}
-	
-	 
+    public DeploymentProfile getDeploymentProfile() {
+        return deploymentProfile;
+    }
+    
+    public String getSchema() {
+        return schema;
+    }
+    
+     
 
-	
-	
+    
+    
 
 }

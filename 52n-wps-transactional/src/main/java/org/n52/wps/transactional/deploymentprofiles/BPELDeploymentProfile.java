@@ -61,58 +61,58 @@ import org.w3c.dom.traversal.NodeIterator;
 
 
 public class BPELDeploymentProfile extends DeploymentProfile{
-	private Node suitCase;
-	private Node bpel;
-	private Node clientWSDL;
-	private Map<Integer, Node> wsdlList;
-	
-	
-	public BPELDeploymentProfile(Node payload, String processID) {
-		super(payload, processID);
-		try {
-		
-			extractInformation(payload);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
+    private Node suitCase;
+    private Node bpel;
+    private Node clientWSDL;
+    private Map<Integer, Node> wsdlList;
+    
+    
+    public BPELDeploymentProfile(Node payload, String processID) {
+        super(payload, processID);
+        try {
+        
+            extractInformation(payload);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+    }
 
-	public Node getSuitCase() {
-		return suitCase;
-	}
+    public Node getSuitCase() {
+        return suitCase;
+    }
 
-	public Node getBPEL() {
-		return bpel;
-	}
+    public Node getBPEL() {
+        return bpel;
+    }
 
-	public Node getClientWSDL() {
-		return clientWSDL;
-	}
+    public Node getClientWSDL() {
+        return clientWSDL;
+    }
 
-	public Map<Integer, Node> getWSDLList() {
-		return wsdlList;
-	}
-	
-	
-	private void extractInformation(Node deployProcessDocument) throws Exception {
-		//parse out
-		//	1. suitcase
-		//	2. clientwsdl
-		//  3. other wsdl
-		//  4. bpel
-		//	5.create describe process
+    public Map<Integer, Node> getWSDLList() {
+        return wsdlList;
+    }
+    
+    
+    private void extractInformation(Node deployProcessDocument) throws Exception {
+        //parse out
+        //    1. suitcase
+        //    2. clientwsdl
+        //  3. other wsdl
+        //  4. bpel
+        //    5.create describe process
 
                 //System.out.println("deployProcessDocument: ");
                 //printNode(deployProcessDocument, "");
-		//writeXmlFile(deployProcessDocument, "C:\\BPEL\\request.xml");
-		
-		//	1. suitcase
-		//suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase");
+        //writeXmlFile(deployProcessDocument, "C:\\BPEL\\request.xml");
+        
+        //    1. suitcase
+        //suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase");
                 suitCase = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/DeploymentProfile/SuitCase/BPELSuitcase/deploy");
-		//select processName
-		//String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
+        //select processName
+        //String processName = XPathAPI.selectSingleNode(suitCase, "/DeployProcessRequest/BPELDeploymentProfile/SuitCase/BPELSuitcase/BPELProcess/@id").getTextContent();
                 //System.out.println("suitCase: ");
                 //printNode(suitCase, "");
                 String processName ="";
@@ -126,51 +126,51 @@ public class BPELDeploymentProfile extends DeploymentProfile{
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-		
-		
-		//	2. clientwsdl
-		//clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/ProcessWSDL/definitions");
+        
+        
+        //    2. clientwsdl
+        //clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/ProcessWSDL/definitions");
                 clientWSDL = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/DeploymentProfile/ProcessWSDL/definitions");
-		//System.out.println("clientWSDL: ");
+        //System.out.println("clientWSDL: ");
                 //printNode(clientWSDL, "");
-		
-		//  3. other wsdl
-		//Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List");
+        
+        //  3. other wsdl
+        //Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List");
                 Node tempWSDLList = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/DeploymentProfile/WSDL-List");
-		//NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List/definitions");
+        //NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcessRequest/BPELDeploymentProfile/WSDL-List/definitions");
                 NodeIterator wsdlIterator = XPathAPI.selectNodeIterator(tempWSDLList, "/DeployProcess/DeploymentProfile/WSDL-List/definitions");
-		//Note: WSDL files are written in the correct order
-		wsdlList = new HashMap<Integer, Node>();
-		int index = 0;
-		while(true){
-			Node wsdl = wsdlIterator.nextNode();
-			if(wsdl == null){
-				break;
-			}
-			wsdlList.put(index, wsdl);
-			index = index +1;
-		}
-		
-		
-		//  4. bpel
-		//bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/BPEL/process");
+        //Note: WSDL files are written in the correct order
+        wsdlList = new HashMap<Integer, Node>();
+        int index = 0;
+        while(true){
+            Node wsdl = wsdlIterator.nextNode();
+            if(wsdl == null){
+                break;
+            }
+            wsdlList.put(index, wsdl);
+            index = index +1;
+        }
+        
+        
+        //  4. bpel
+        //bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcessRequest/BPELDeploymentProfile/BPEL/process");
                 bpel = XPathAPI.selectSingleNode(deployProcessDocument, "/DeployProcess/DeploymentProfile/BPEL/process");
-		//System.out.println("bpel: ");
+        //System.out.println("bpel: ");
                 //printNode(bpel, "");
-		
-	
-	
+        
+    
+    
 
-		
-	}
-	
+        
+    }
+    
 
-		
-	
-	
-	private void writeXmlFile(Document doc, String filename) {
+        
+    
+    
+    private void writeXmlFile(Document doc, String filename) {
         try {
-        	
+            
             // Prepare the DOM document for writing
             Source source = new DOMSource(doc);
     
@@ -183,95 +183,95 @@ public class BPELDeploymentProfile extends DeploymentProfile{
             Transformer xformer = TransformerFactory.newInstance().newTransformer();
             xformer.transform(source, result);
         } catch (TransformerConfigurationException e) {
-        	System.out.println("error");
+            System.out.println("error");
         } catch (TransformerException e) {
-        	System.out.println("error");
+            System.out.println("error");
         } catch (Exception e) {
-        	System.out.println("error");
+            System.out.println("error");
         }
-		
-		
-	}
+        
+        
+    }
 
         public void printNode(Node node, String indent) {
-		switch (node.getNodeType()) {
-		case Node.DOCUMENT_NODE:
-			System.out.println(indent + "<?xml version=\"1.0\"?>");
+        switch (node.getNodeType()) {
+        case Node.DOCUMENT_NODE:
+            System.out.println(indent + "<?xml version=\"1.0\"?>");
 
-			NodeList nodes = node.getChildNodes();
+            NodeList nodes = node.getChildNodes();
 
-			if (nodes != null) {
-				for (int i = 0; i < nodes.getLength(); i++) {
-					printNode(nodes.item(i), "");
-				}
-			}
+            if (nodes != null) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    printNode(nodes.item(i), "");
+                }
+            }
 
-			break;
+            break;
 
-		case Node.ELEMENT_NODE:
+        case Node.ELEMENT_NODE:
 
-			String name = node.getNodeName();
-			System.out.print(indent + "<" + name);
+            String name = node.getNodeName();
+            System.out.print(indent + "<" + name);
 
-			NamedNodeMap attributes = node.getAttributes();
+            NamedNodeMap attributes = node.getAttributes();
 
-			for (int i = 0; i < attributes.getLength(); i++) {
-				Node current = attributes.item(i);
-				System.out.print(" " + current.getNodeName() +
-				        "=\"" + current.getNodeValue() + "\"");
-			}
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Node current = attributes.item(i);
+                System.out.print(" " + current.getNodeName() +
+                        "=\"" + current.getNodeValue() + "\"");
+            }
 
-			System.out.println(">");
+            System.out.println(">");
 
-			NodeList children = node.getChildNodes();
+            NodeList children = node.getChildNodes();
 
-			if (children != null) {
-				for (int i = 0; i < children.getLength();
-					        i++) {
-					printNode(children.item(i),
-					        indent + "  ");
-				}
-			}
+            if (children != null) {
+                for (int i = 0; i < children.getLength();
+                            i++) {
+                    printNode(children.item(i),
+                            indent + "  ");
+                }
+            }
 
-			System.out.println(indent + "</" + name + ">");
+            System.out.println(indent + "</" + name + ">");
 
-			break;
+            break;
 
-		case Node.TEXT_NODE:
-		case Node.CDATA_SECTION_NODE:
-			System.out.println(indent + node.getNodeValue());
+        case Node.TEXT_NODE:
+        case Node.CDATA_SECTION_NODE:
+            System.out.println(indent + node.getNodeValue());
 
-			break;
+            break;
 
-		case Node.PROCESSING_INSTRUCTION_NODE:
-			System.out.println(indent + "<?" + node.getNodeName() +
-			        " " + node.getNodeValue() + " ?>");
+        case Node.PROCESSING_INSTRUCTION_NODE:
+            System.out.println(indent + "<?" + node.getNodeName() +
+                    " " + node.getNodeValue() + " ?>");
 
-			break;
+            break;
 
-		case Node.ENTITY_REFERENCE_NODE:
-			System.out.println("&" + node.getNodeName() + ";");
+        case Node.ENTITY_REFERENCE_NODE:
+            System.out.println("&" + node.getNodeName() + ";");
 
-			break;
+            break;
 
-		case Node.DOCUMENT_TYPE_NODE:
+        case Node.DOCUMENT_TYPE_NODE:
 
-			DocumentType docType = (DocumentType) node;
-			System.out.print("<!DOCTYPE " + docType.getName());
+            DocumentType docType = (DocumentType) node;
+            System.out.print("<!DOCTYPE " + docType.getName());
 
-			if (docType.getPublicId() != null) {
-				System.out.print("PUBLIC \"" +
-				        docType.getPublicId() + "\"");
-			} else {
-				System.out.print(" SYSTEM ");
-			}
+            if (docType.getPublicId() != null) {
+                System.out.print("PUBLIC \"" +
+                        docType.getPublicId() + "\"");
+            } else {
+                System.out.print(" SYSTEM ");
+            }
 
-			System.out.println("\"" + docType.getSystemId() +
-			        "\" >");
+            System.out.println("\"" + docType.getSystemId() +
+                    "\" >");
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 
 
 }

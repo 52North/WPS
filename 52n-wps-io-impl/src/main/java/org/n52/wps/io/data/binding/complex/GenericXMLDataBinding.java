@@ -40,25 +40,25 @@ import org.n52.wps.io.data.IComplexData;
  */
 public class GenericXMLDataBinding implements IComplexData {
 
-	private static final long serialVersionUID = -6875103125533078664L;
+    private static final long serialVersionUID = -6875103125533078664L;
 
-	private XmlObject payload;
-	
-	public GenericXMLDataBinding(XmlObject payload){
-		this.payload = payload;
-	}
-	
-	@Override
-	public XmlObject getPayload() {
-		return payload;
-	}
+    private XmlObject payload;
+    
+    public GenericXMLDataBinding(XmlObject payload){
+        this.payload = payload;
+    }
+    
+    @Override
+    public XmlObject getPayload() {
+        return payload;
+    }
 
-	@Override
-	public Class<XmlObject> getSupportedClass() {
-		return XmlObject.class;
-	}
+    @Override
+    public Class<XmlObject> getSupportedClass() {
+        return XmlObject.class;
+    }
 
-	@Override
-	public void dispose() {}
+    @Override
+    public void dispose() {}
 
 }

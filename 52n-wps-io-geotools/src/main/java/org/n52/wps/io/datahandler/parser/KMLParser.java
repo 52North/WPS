@@ -64,43 +64,43 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
  *
  */
 public class KMLParser extends AbstractParser {
-	
-	public KMLParser() {
-		super();
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
-	
-	public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
-		
-		FileOutputStream fos = null;
-		try{
-			File tempFile = File.createTempFile("kml", "tmp");
-			finalizeFiles.add(tempFile); // mark for final delete
-			fos = new FileOutputStream(tempFile);
-			int i = stream.read();
-			while(i != -1){
-				fos.write(i);
-				i = stream.read();
-			}
-			fos.flush();
-			fos.close();
-			GTVectorDataBinding data = parseXML(tempFile);
-			return data;
-		}
-		catch(IOException e) {
-			if (fos != null) try { fos.close(); } catch (Exception e1) { }
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-	}
+    
+    public KMLParser() {
+        super();
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
+    
+    public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
+        
+        FileOutputStream fos = null;
+        try{
+            File tempFile = File.createTempFile("kml", "tmp");
+            finalizeFiles.add(tempFile); // mark for final delete
+            fos = new FileOutputStream(tempFile);
+            int i = stream.read();
+            while(i != -1){
+                fos.write(i);
+                i = stream.read();
+            }
+            fos.flush();
+            fos.close();
+            GTVectorDataBinding data = parseXML(tempFile);
+            return data;
+        }
+        catch(IOException e) {
+            if (fos != null) try { fos.close(); } catch (Exception e1) { }
+            throw new IllegalArgumentException("Error while creating tempFile", e);
+        }
+    }
 
-	private GTVectorDataBinding parseXML(File file) {
-		Configuration configuration = new KMLConfiguration();
-		
-		SimpleFeatureCollection fc = new GML3BasicParser().parseFeatureCollection(file, configuration, true);
-		
-		GTVectorDataBinding data = new GTVectorDataBinding(fc);
-		
-		return data;
-	}
+    private GTVectorDataBinding parseXML(File file) {
+        Configuration configuration = new KMLConfiguration();
+        
+        SimpleFeatureCollection fc = new GML3BasicParser().parseFeatureCollection(file, configuration, true);
+        
+        GTVectorDataBinding data = new GTVectorDataBinding(fc);
+        
+        return data;
+    }
 
 }

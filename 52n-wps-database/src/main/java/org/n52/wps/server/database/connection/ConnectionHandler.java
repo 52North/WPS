@@ -36,5 +36,5 @@ import java.sql.SQLException;
  */
 public interface ConnectionHandler {
 
-	public Connection getConnection() throws SQLException;
+    public Connection getConnection() throws SQLException;
 }

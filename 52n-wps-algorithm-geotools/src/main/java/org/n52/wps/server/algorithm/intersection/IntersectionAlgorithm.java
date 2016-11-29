@@ -77,126 +77,126 @@ import com.vividsolutions.jts.geom.Polygon;
 
 
 public class IntersectionAlgorithm extends AbstractSelfDescribingAlgorithm {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(IntersectionAlgorithm.class);
-	
-	public IntersectionAlgorithm() {
-		super();
-	}
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(IntersectionAlgorithm.class);
+    
+    public IntersectionAlgorithm() {
+        super();
+    }
 
-	private List<String> errors = new ArrayList<String>();
-	public List<String> getErrors() {
-		return errors;
-	}
-	
-	
-	
-	public Map<String, IData> run(Map<String, List<IData>> inputData) {
-		/*----------------------Polygons Input------------------------------------------*/
-		if(inputData==null || !inputData.containsKey("Polygon1")){
-			throw new RuntimeException("Error while allocating input parameters");
-		}
-		List<IData> dataList = inputData.get("Polygon1");
-		if(dataList == null || dataList.size() != 1){
-			throw new RuntimeException("Error while allocating input parameters");
-		}
-		IData firstInputData = dataList.get(0);
-				
-		FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
-		
-		/*----------------------LineStrings Input------------------------------------------*/
-		if(inputData==null || !inputData.containsKey("Polygon2")){
-			throw new RuntimeException("Error while allocating input parameters");
-		}
-		List<IData> dataListLS = inputData.get("Polygon2");
-		if(dataListLS == null || dataListLS.size() != 1){
-			throw new RuntimeException("Error while allocating input parameters");
-		}
-		IData firstInputDataLS = dataListLS.get(0);
-				
-		FeatureCollection lineStrings = ((GTVectorDataBinding) firstInputDataLS).getPayload();
-		
-		
-		System.out.println("****************************************************************");
-		System.out.println("intersection started");
-		System.out.println("polygons size = " + polygons.size());
-		System.out.println("lineStrings size = " + lineStrings.size());
-		
-		List<SimpleFeature> featureList = new ArrayList<>();
-		
-		FeatureIterator<?> polygonIterator = polygons.features();
-		int j = 1;
-		while(polygonIterator.hasNext()){
-			SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
-			FeatureIterator<?> lineStringIterator = lineStrings.features();
-			int i = 1;
-			System.out.println("Polygon = " + j +"/"+ polygons.size());
-			while(lineStringIterator.hasNext()){
-				//System.out.println("Polygon = " + j + "LineString =" + i +"/"+lineStrings.size());
-				
-				SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
-				Geometry lineStringGeometry = null;
-				if(lineString.getDefaultGeometry()==null && lineString.getAttributeCount()>0 &&lineString.getAttribute(0) instanceof Geometry){
-					lineStringGeometry = (Geometry)lineString.getAttribute(0);
-				}else{
-					lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
-				}
-				try{
-					Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
-					Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
-					SimpleFeature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
-					if(resultFeature!=null){
-								
-					    featureList.add(resultFeature);
-						System.out.println("result feature added. resultCollection = " + featureList.size());
-					}
-				}catch(Exception e){
-						e.printStackTrace();
-					}
-				
-				i++;
-			}
-			j++;
-			
-		}
-		
-		
-		HashMap<String,IData> resulthash = new HashMap<String,IData>();
-		resulthash.put("intersection_result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
-		return resulthash;
-	}
-	
-	private SimpleFeature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
-		
-	    SimpleFeature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
+    private List<String> errors = new ArrayList<String>();
+    public List<String> getErrors() {
+        return errors;
+    }
+    
+    
+    
+    public Map<String, IData> run(Map<String, List<IData>> inputData) {
+        /*----------------------Polygons Input------------------------------------------*/
+        if(inputData==null || !inputData.containsKey("Polygon1")){
+            throw new RuntimeException("Error while allocating input parameters");
+        }
+        List<IData> dataList = inputData.get("Polygon1");
+        if(dataList == null || dataList.size() != 1){
+            throw new RuntimeException("Error while allocating input parameters");
+        }
+        IData firstInputData = dataList.get(0);
+                
+        FeatureCollection polygons = ((GTVectorDataBinding) firstInputData).getPayload();
+        
+        /*----------------------LineStrings Input------------------------------------------*/
+        if(inputData==null || !inputData.containsKey("Polygon2")){
+            throw new RuntimeException("Error while allocating input parameters");
+        }
+        List<IData> dataListLS = inputData.get("Polygon2");
+        if(dataListLS == null || dataListLS.size() != 1){
+            throw new RuntimeException("Error while allocating input parameters");
+        }
+        IData firstInputDataLS = dataListLS.get(0);
+                
+        FeatureCollection lineStrings = ((GTVectorDataBinding) firstInputDataLS).getPayload();
+        
+        
+        System.out.println("****************************************************************");
+        System.out.println("intersection started");
+        System.out.println("polygons size = " + polygons.size());
+        System.out.println("lineStrings size = " + lineStrings.size());
+        
+        List<SimpleFeature> featureList = new ArrayList<>();
+        
+        FeatureIterator<?> polygonIterator = polygons.features();
+        int j = 1;
+        while(polygonIterator.hasNext()){
+            SimpleFeature polygon = (SimpleFeature) polygonIterator.next();
+            FeatureIterator<?> lineStringIterator = lineStrings.features();
+            int i = 1;
+            System.out.println("Polygon = " + j +"/"+ polygons.size());
+            while(lineStringIterator.hasNext()){
+                //System.out.println("Polygon = " + j + "LineString =" + i +"/"+lineStrings.size());
+                
+                SimpleFeature lineString = (SimpleFeature) lineStringIterator.next();
+                Geometry lineStringGeometry = null;
+                if(lineString.getDefaultGeometry()==null && lineString.getAttributeCount()>0 &&lineString.getAttribute(0) instanceof Geometry){
+                    lineStringGeometry = (Geometry)lineString.getAttribute(0);
+                }else{
+                    lineStringGeometry = (Geometry) lineString.getDefaultGeometry();
+                }
+                try{
+                    Geometry polygonGeometry = (Geometry) polygon.getDefaultGeometry();
+                    Geometry intersection = polygonGeometry.intersection(lineStringGeometry);
+                    SimpleFeature resultFeature = createFeature(""+j+"_"+i, intersection, polygon);
+                    if(resultFeature!=null){
+                                
+                        featureList.add(resultFeature);
+                        System.out.println("result feature added. resultCollection = " + featureList.size());
+                    }
+                }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                
+                i++;
+            }
+            j++;
+            
+        }
+        
+        
+        HashMap<String,IData> resulthash = new HashMap<String,IData>();
+        resulthash.put("intersection_result", new GTVectorDataBinding(GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList)));
+        return resulthash;
+    }
+    
+    private SimpleFeature createFeature(String id, Geometry geometry, SimpleFeature bluePrint) {
+        
+        SimpleFeature feature = GTHelper.createFeature(id, geometry, bluePrint.getFeatureType(), bluePrint.getProperties());
 
-		return feature;
-	}
-	
-	
-	public Class getInputDataType(String id) {
-		return GTVectorDataBinding.class;
-	
-	}
+        return feature;
+    }
+    
+    
+    public Class getInputDataType(String id) {
+        return GTVectorDataBinding.class;
+    
+    }
 
-	public Class getOutputDataType(String id) {
-		return GTVectorDataBinding.class;
-	}
-	
-	@Override
-	public List<String> getInputIdentifiers() {
-		List<String> identifierList =  new ArrayList<String>();
-		identifierList.add("Polygon1");
-		identifierList.add("Polygon2");
-		return identifierList;
-	}
+    public Class getOutputDataType(String id) {
+        return GTVectorDataBinding.class;
+    }
+    
+    @Override
+    public List<String> getInputIdentifiers() {
+        List<String> identifierList =  new ArrayList<String>();
+        identifierList.add("Polygon1");
+        identifierList.add("Polygon2");
+        return identifierList;
+    }
 
-	@Override
-	public List<String> getOutputIdentifiers() {
-		List<String> identifierList =  new ArrayList<String>();
-		identifierList.add("intersection_result");
-		return identifierList;
-	}
-	
-	
+    @Override
+    public List<String> getOutputIdentifiers() {
+        List<String> identifierList =  new ArrayList<String>();
+        identifierList.add("intersection_result");
+        return identifierList;
+    }
+    
+    
 }

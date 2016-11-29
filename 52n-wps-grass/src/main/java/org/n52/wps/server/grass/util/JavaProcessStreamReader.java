@@ -48,69 +48,69 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaProcessStreamReader extends Thread {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(JavaProcessStreamReader.class);
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(JavaProcessStreamReader.class);
 
-	InputStream inputStream;
-	String type;
-	OutputStream outputStream;
+    InputStream inputStream;
+    String type;
+    OutputStream outputStream;
 
-	public JavaProcessStreamReader(InputStream is, String type) {
-		this(is, type, null);
-	}
+    public JavaProcessStreamReader(InputStream is, String type) {
+        this(is, type, null);
+    }
 
-	public JavaProcessStreamReader(InputStream is, String type,
-			OutputStream redirect) {
-		this.inputStream = is;
-		this.type = type;
-		this.outputStream = redirect;
-	}
+    public JavaProcessStreamReader(InputStream is, String type,
+            OutputStream redirect) {
+        this.inputStream = is;
+        this.type = type;
+        this.outputStream = redirect;
+    }
 
-	public void run() {
+    public void run() {
 
-		InputStreamReader inputStreamReader = null;
-		PrintWriter printWriter = null;
-		BufferedReader bufferedReader = null;
-		try {
-			if (outputStream != null)
-				printWriter = new PrintWriter(outputStream);
+        InputStreamReader inputStreamReader = null;
+        PrintWriter printWriter = null;
+        BufferedReader bufferedReader = null;
+        try {
+            if (outputStream != null)
+                printWriter = new PrintWriter(outputStream);
 
-			inputStreamReader = new InputStreamReader(inputStream);
-			bufferedReader = new BufferedReader(inputStreamReader);
-			String line = null;
-			while ((line = bufferedReader.readLine()) != null) {
-				if (printWriter != null) {
-					printWriter.println(line);
-				} else {
-					LOGGER.debug(type + ">" + line);
-				}
-			}
-			if (printWriter != null) {
-				printWriter.flush();
-			}
-		} catch (IOException ioe) {
-			LOGGER.error("Something went wrong while parsing the Java process stream.",
-					ioe);
-		} finally {
-			try {
-				if (printWriter != null) {
-					printWriter.close();
-				}
-				if (inputStream != null) {
-					inputStream.close();
-				}
-				if (inputStreamReader != null) {
-					inputStreamReader.close();
-				}
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-			} catch (Exception e) {
-				LOGGER.error(
-						"Something went wrong while trying to close the streams.",
-						e);
-			}
-		}
-	}
+            inputStreamReader = new InputStreamReader(inputStream);
+            bufferedReader = new BufferedReader(inputStreamReader);
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (printWriter != null) {
+                    printWriter.println(line);
+                } else {
+                    LOGGER.debug(type + ">" + line);
+                }
+            }
+            if (printWriter != null) {
+                printWriter.flush();
+            }
+        } catch (IOException ioe) {
+            LOGGER.error("Something went wrong while parsing the Java process stream.",
+                    ioe);
+        } finally {
+            try {
+                if (printWriter != null) {
+                    printWriter.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (inputStreamReader != null) {
+                    inputStreamReader.close();
+                }
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (Exception e) {
+                LOGGER.error(
+                        "Something went wrong while trying to close the streams.",
+                        e);
+            }
+        }
+    }
 
 }

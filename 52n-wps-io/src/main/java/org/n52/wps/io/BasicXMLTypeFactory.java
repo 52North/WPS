@@ -42,21 +42,21 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 
 public class BasicXMLTypeFactory {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(BasicXMLTypeFactory.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(BasicXMLTypeFactory.class);
     
-	// List of supported basic XML datatypes.
-	public static final String DOUBLE_URI = "xs:double";
-	public static final String FLOAT_URI = "xs:float";
-	public static final String INTEGER_URI = "xs:integer";
-	public static final String LONG_URI = "xs:long";
-	public static final String INT_URI = "xs:int";
-	public static final String SHORT_URI = "xs:short";
-	public static final String BYTE_URI = "xs:byte";
-	public static final String BOOLEAN_URI = "xs:boolean";
-	public static final String STRING_URI = "xs:string";
-	public static final String DATETIME_URI = "xs:dateTime";
-	public static final String DATE_URI = "xs:date";
-	public static final String BASE64BINARY_URI = "xs:base64Binary";
+    // List of supported basic XML datatypes.
+    public static final String DOUBLE_URI = "xs:double";
+    public static final String FLOAT_URI = "xs:float";
+    public static final String INTEGER_URI = "xs:integer";
+    public static final String LONG_URI = "xs:long";
+    public static final String INT_URI = "xs:int";
+    public static final String SHORT_URI = "xs:short";
+    public static final String BYTE_URI = "xs:byte";
+    public static final String BOOLEAN_URI = "xs:boolean";
+    public static final String STRING_URI = "xs:string";
+    public static final String DATETIME_URI = "xs:dateTime";
+    public static final String DATE_URI = "xs:date";
+    public static final String BASE64BINARY_URI = "xs:base64Binary";
     public static final String ANYURI_URI = "xs:anyURI";
     
     private final static DatatypeFactory DATATYPE_FACTORY;
@@ -72,61 +72,61 @@ public class BasicXMLTypeFactory {
         }
         DATATYPE_FACTORY = datatypeFactory;
     }
-	
-	private BasicXMLTypeFactory(){
-		
-	}
-	
-	/**
-	 * This is a helper method to create always the correct Java Type out of a string.
-	 * It is based on the basic schema datatypes.
-	 * If xmlDataTypeURI is null, string dataType will be assumed.
-	 * @param xmlDataTypeURI the expected XML basicDataType
-	 * @param obj the XML object String
-	 */
-	public static IData getBasicJavaObject(String xmlDataTypeURI, String obj) {
-		obj = obj.replace('\n', ' ').replace('\t', ' ').trim();
-		if (xmlDataTypeURI == null) {
-			return new LiteralStringBinding(obj);
-		} else if (xmlDataTypeURI.equalsIgnoreCase(FLOAT_URI)) {
-			return new LiteralFloatBinding(Float.parseFloat(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(DOUBLE_URI)) {
-			return new LiteralDoubleBinding(Double.parseDouble(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(LONG_URI)) {
-			return new LiteralLongBinding(Long.parseLong(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(INT_URI) || xmlDataTypeURI.equalsIgnoreCase(INTEGER_URI)) {
-			return new LiteralIntBinding(Integer.parseInt(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(SHORT_URI)) {
-			return new LiteralShortBinding(Short.parseShort(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(BYTE_URI)) {
-			return new LiteralByteBinding(Byte.parseByte(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(BOOLEAN_URI)) {
-			return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(STRING_URI)) {
-			return new LiteralStringBinding(obj);
-		} else if (xmlDataTypeURI.equalsIgnoreCase(DATETIME_URI) || xmlDataTypeURI.equalsIgnoreCase(DATE_URI)) {
+    
+    private BasicXMLTypeFactory(){
+        
+    }
+    
+    /**
+     * This is a helper method to create always the correct Java Type out of a string.
+     * It is based on the basic schema datatypes.
+     * If xmlDataTypeURI is null, string dataType will be assumed.
+     * @param xmlDataTypeURI the expected XML basicDataType
+     * @param obj the XML object String
+     */
+    public static IData getBasicJavaObject(String xmlDataTypeURI, String obj) {
+        obj = obj.replace('\n', ' ').replace('\t', ' ').trim();
+        if (xmlDataTypeURI == null) {
+            return new LiteralStringBinding(obj);
+        } else if (xmlDataTypeURI.equalsIgnoreCase(FLOAT_URI)) {
+            return new LiteralFloatBinding(Float.parseFloat(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(DOUBLE_URI)) {
+            return new LiteralDoubleBinding(Double.parseDouble(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(LONG_URI)) {
+            return new LiteralLongBinding(Long.parseLong(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(INT_URI) || xmlDataTypeURI.equalsIgnoreCase(INTEGER_URI)) {
+            return new LiteralIntBinding(Integer.parseInt(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(SHORT_URI)) {
+            return new LiteralShortBinding(Short.parseShort(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(BYTE_URI)) {
+            return new LiteralByteBinding(Byte.parseByte(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(BOOLEAN_URI)) {
+            return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(STRING_URI)) {
+            return new LiteralStringBinding(obj);
+        } else if (xmlDataTypeURI.equalsIgnoreCase(DATETIME_URI) || xmlDataTypeURI.equalsIgnoreCase(DATE_URI)) {
             try {
                 return new LiteralDateTimeBinding(DATATYPE_FACTORY.newXMLGregorianCalendar(obj).toGregorianCalendar().getTime());
             } catch (Exception e) {
-				LOGGER.error("Could not parse xs:dateTime or xs:date data", e);
-				return null;
+                LOGGER.error("Could not parse xs:dateTime or xs:date data", e);
+                return null;
             }
-		} else if (xmlDataTypeURI.equalsIgnoreCase(BASE64BINARY_URI)) {
-			return new LiteralBase64BinaryBinding(Base64.decode(obj.getBytes()));
-		} else if (xmlDataTypeURI.equalsIgnoreCase(ANYURI_URI)) {
+        } else if (xmlDataTypeURI.equalsIgnoreCase(BASE64BINARY_URI)) {
+            return new LiteralBase64BinaryBinding(Base64.decode(obj.getBytes()));
+        } else if (xmlDataTypeURI.equalsIgnoreCase(ANYURI_URI)) {
             try {
                 return new LiteralAnyURIBinding(new URI(obj));
             } catch (URISyntaxException e) {
-				LOGGER.error("Could not parse anyURI data", e);
-				return null;
+                LOGGER.error("Could not parse anyURI data", e);
+                return null;
             }
-		} else {
+        } else {
             return null;
         }
-	}
+    }
 
    public static String getStringRepresentation(String xmlDataTypeURI, IData obj) {
-	   return obj.getPayload().toString();
+       return obj.getPayload().toString();
    }
    
    public static Class<? extends ILiteralData> getBindingForPayloadType(Class<?> payloadType) {

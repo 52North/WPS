@@ -59,55 +59,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class GML2BasicParserCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
-	
-	private List<FormatEntry> formatEntries;
-	
-	public GML2BasicParserCM(){
-		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "GML2BasicParser";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries;
+    
+    private List<FormatEntry> formatEntries;
+    
+    public GML2BasicParserCM(){
+        formatEntries = new ArrayList<>();
+        configurationEntries = new ArrayList<>();
+    }
+    
+    @Override
+    public String getModuleName() {
+        return "GML2BasicParser";
+    }
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;        
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.PARSER;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return null;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return formatEntries;
+    }
 
-	@Override
-	public String getClassName() {
-		return GML2BasicParser.class.getName();
-	}
+    @Override
+    public String getClassName() {
+        return GML2BasicParser.class.getName();
+    }
 
 }

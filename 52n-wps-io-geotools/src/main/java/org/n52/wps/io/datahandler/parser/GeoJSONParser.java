@@ -78,98 +78,98 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  */
 public class GeoJSONParser extends AbstractParser {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);
 
-	public GeoJSONParser() {
-		super();
-		supportedIDataTypes.add(JTSGeometryBinding.class);
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
+    public GeoJSONParser() {
+        super();
+        supportedIDataTypes.add(JTSGeometryBinding.class);
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
 
-	@Override
-	public IData parse(InputStream input, String mimeType, String schema) {
+    @Override
+    public IData parse(InputStream input, String mimeType, String schema) {
 
-		String geojsonstring = "";
+        String geojsonstring = "";
 
-		String line = "";
+        String line = "";
 
-		BufferedReader breader = new BufferedReader(
-				new InputStreamReader(input));
+        BufferedReader breader = new BufferedReader(
+                new InputStreamReader(input));
 
-		try {
-			while ((line = breader.readLine()) != null) {
-				geojsonstring = geojsonstring.concat(line);
-			}
-		} catch (IOException e) {
-			LOGGER.error("Exception while reading inputstream.", e);
-		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
+        try {
+            while ((line = breader.readLine()) != null) {
+                geojsonstring = geojsonstring.concat(line);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception while reading inputstream.", e);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
 
-		if (geojsonstring.contains("FeatureCollection")) {
+        if (geojsonstring.contains("FeatureCollection")) {
 
-			try {
-				FeatureCollection<?, ?> featureCollection = new FeatureJSON()
-						.readFeatureCollection(geojsonstring);
+            try {
+                FeatureCollection<?, ?> featureCollection = new FeatureJSON()
+                        .readFeatureCollection(geojsonstring);
 
-				return new GTVectorDataBinding(featureCollection);
+                return new GTVectorDataBinding(featureCollection);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read FeatureCollection from inputstream");
-			}
+            } catch (IOException e) {
+                LOGGER.info("Could not read FeatureCollection from inputstream");
+            }
 
-		} else if (geojsonstring.contains("Feature")) {
+        } else if (geojsonstring.contains("Feature")) {
 
-			try {
-				SimpleFeature feature = new FeatureJSON().readFeature(geojsonstring);
+            try {
+                SimpleFeature feature = new FeatureJSON().readFeature(geojsonstring);
 
-				List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
+                List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
 
-				featureList.add(feature);
-				
-				ListFeatureCollection featureCollection = new ListFeatureCollection(
-						feature.getFeatureType(), featureList);
+                featureList.add(feature);
+                
+                ListFeatureCollection featureCollection = new ListFeatureCollection(
+                        feature.getFeatureType(), featureList);
 
-				return new GTVectorDataBinding(featureCollection);
+                return new GTVectorDataBinding(featureCollection);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read Feature from inputstream");
-			}
+            } catch (IOException e) {
+                LOGGER.info("Could not read Feature from inputstream");
+            }
 
-		} else if (geojsonstring.contains("GeometryCollection")) {
+        } else if (geojsonstring.contains("GeometryCollection")) {
 
-			try {
-				GeometryCollection g = new GeometryJSON().readGeometryCollection(geojsonstring);
+            try {
+                GeometryCollection g = new GeometryJSON().readGeometryCollection(geojsonstring);
 
-				return new JTSGeometryBinding(g);
+                return new JTSGeometryBinding(g);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read GeometryCollection from inputstream.");
-			}
+            } catch (IOException e) {
+                LOGGER.info("Could not read GeometryCollection from inputstream.");
+            }
 
-		} else if(geojsonstring.contains("Point") || 
-				geojsonstring.contains("LineString") ||
-				geojsonstring.contains("Polygon") ||
-				geojsonstring.contains("MultiPoint") ||
-				geojsonstring.contains("MultiLineString") ||
-				geojsonstring.contains("MultiPolygon")){
+        } else if(geojsonstring.contains("Point") || 
+                geojsonstring.contains("LineString") ||
+                geojsonstring.contains("Polygon") ||
+                geojsonstring.contains("MultiPoint") ||
+                geojsonstring.contains("MultiLineString") ||
+                geojsonstring.contains("MultiPolygon")){
 
-			try {
-				Geometry g = new GeometryJSON().read(geojsonstring);
+            try {
+                Geometry g = new GeometryJSON().read(geojsonstring);
 
-				return new JTSGeometryBinding(g);
+                return new JTSGeometryBinding(g);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read single Geometry from inputstream.");
-			}
+            } catch (IOException e) {
+                LOGGER.info("Could not read single Geometry from inputstream.");
+            }
 
-		}
-		LOGGER.error("Could not parse inputstream, returning null.");
-		return null;
-	}
+        }
+        LOGGER.error("Could not parse inputstream, returning null.");
+        return null;
+    }
 
 }

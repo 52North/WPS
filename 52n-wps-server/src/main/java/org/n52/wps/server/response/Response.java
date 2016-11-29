@@ -37,25 +37,25 @@ import org.n52.wps.server.request.Request;
 
 abstract public class Response {
 
-	protected Request request;
-		
-	public Response(Request request){
-		this.request = request;
-	}
-	
-	public UUID getUniqueId(){
-		return this.request.getUniqueId();
-	}
-	
-	public String getType() {
-		return this.getClass().getName();
-	}
-	
-	public abstract InputStream getAsStream() throws ExceptionReport;
-	
-	public Request getRequest(){
-		return request;
-	}
+    protected Request request;
+        
+    public Response(Request request){
+        this.request = request;
+    }
+    
+    public UUID getUniqueId(){
+        return this.request.getUniqueId();
+    }
+    
+    public String getType() {
+        return this.getClass().getName();
+    }
+    
+    public abstract InputStream getAsStream() throws ExceptionReport;
+    
+    public Request getRequest(){
+        return request;
+    }
 
 
 }

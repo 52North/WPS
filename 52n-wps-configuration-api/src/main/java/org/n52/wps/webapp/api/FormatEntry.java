@@ -32,86 +32,86 @@ import java.util.Objects;
 
 public class FormatEntry {
 
-	private String mimeType;
-	private String schema;
-	private String encoding;
-	private boolean active;
+    private String mimeType;
+    private String schema;
+    private String encoding;
+    private boolean active;
 
-	public FormatEntry(String mimeType, String schema, String encoding, boolean active) {
-		this.mimeType = mimeType;
-		this.schema = schema;
-		this.encoding = encoding;
-		this.active = active;
-	}
+    public FormatEntry(String mimeType, String schema, String encoding, boolean active) {
+        this.mimeType = mimeType;
+        this.schema = schema;
+        this.encoding = encoding;
+        this.active = active;
+    }
 
-	public String getMimeType() {
-		return mimeType;
-	}
+    public String getMimeType() {
+        return mimeType;
+    }
 
-	public void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
-	}
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
 
-	public String getSchema() {
-		return schema;
-	}
+    public String getSchema() {
+        return schema;
+    }
 
-	public void setSchema(String schema) {
-		this.schema = schema;
-	}
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
-	public String getEncoding() {
-		return encoding;
-	}
+    public String getEncoding() {
+        return encoding;
+    }
 
-	public void setEncoding(String encoding) {
-		this.encoding = encoding;
-	}
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
-		if(obj instanceof FormatEntry){
-			FormatEntry formatEntry = (FormatEntry)obj;
+        if(obj instanceof FormatEntry){
+            FormatEntry formatEntry = (FormatEntry)obj;
 
-			boolean mimeTypesEqual = false;
-			boolean schemasEqual = false;
-			boolean encodingsEqual = false;
+            boolean mimeTypesEqual = false;
+            boolean schemasEqual = false;
+            boolean encodingsEqual = false;
 
-			if(mimeType != null){
-				mimeTypesEqual = mimeType.equals(formatEntry.getMimeType());
-				if(!mimeTypesEqual){
-					return false;
-				}
-			}
+            if(mimeType != null){
+                mimeTypesEqual = mimeType.equals(formatEntry.getMimeType());
+                if(!mimeTypesEqual){
+                    return false;
+                }
+            }
 
-			if(schema != null){
-				schemasEqual = schema.equals(formatEntry.getSchema());
-				if(!schemasEqual){
-					return false;
-				}
-			}
+            if(schema != null){
+                schemasEqual = schema.equals(formatEntry.getSchema());
+                if(!schemasEqual){
+                    return false;
+                }
+            }
 
-			if(encoding != null){
-				encodingsEqual = encoding.equals(formatEntry.getEncoding());
-				if(!encodingsEqual){
-					return false;
-				}
-			}
+            if(encoding != null){
+                encodingsEqual = encoding.equals(formatEntry.getEncoding());
+                if(!encodingsEqual){
+                    return false;
+                }
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		return super.equals(obj);
-	}
+        return super.equals(obj);
+    }
 
     @Override
     public int hashCode() {

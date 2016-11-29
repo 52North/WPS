@@ -60,6 +60,6 @@ public class JTSConvexHullAlgorithm extends AbstractAnnotatedAlgorithm {
 
     @Execute
     public void runAlgorithm() {
-    	result = data.convexHull();
+        result = data.convexHull();
     }
 }

@@ -30,16 +30,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:applicationContext.xml",
-		"classpath*:dispatcher-servlet.xml"})
+        "classpath*:dispatcher-servlet.xml"})
 @WebAppConfiguration(value = "src/test/webapp")
 @ActiveProfiles(profiles = { "test", "common-test" })
 public class AbstractITClass {
-	@Autowired
-	protected WebApplicationContext wac;
+    @Autowired
+    protected WebApplicationContext wac;
 
     @Before
     public void setup() {
         MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+        WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 }

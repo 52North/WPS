@@ -19,22 +19,22 @@ package org.n52.wps.server;
 import java.util.Collection;
 
 /**
- * @author 	Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
+ * @author     Bastian Schaeffer, University of Muenster, Theodor Foerster, ITC
  *
  */
 public interface IAlgorithmRepository {
-	Collection<String> getAlgorithmNames();
-	
-	IAlgorithm getAlgorithm(String processID);
-	
-	ProcessDescription getProcessDescription(String processID);
-	
-	boolean containsAlgorithm(String processID);
+    Collection<String> getAlgorithmNames();
+    
+    IAlgorithm getAlgorithm(String processID);
+    
+    ProcessDescription getProcessDescription(String processID);
+    
+    boolean containsAlgorithm(String processID);
 
-	/**
-	 * use to free resources
-	 */
-	public void shutdown();
-	
+    /**
+     * use to free resources
+     */
+    public void shutdown();
+    
 
 }

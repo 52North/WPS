@@ -46,39 +46,39 @@ import org.n52.wps.io.data.IData;
  *
  */
 public interface DataInputInterceptors {
-	
+    
 
-	/**
-	 * @return a map where input identifiers are keys
-	 */
-	public Map<String, InterceptorInstance> getInterceptors();
-	
-	
-	public static interface InterceptorInstance {
-		
-		/**
-		 * applies the actual interception
-		 * @param input the input as provided in the Execute request
-		 * 
-		 * @return true if processed, this triggers a skip of parsing within the InputHandler 
-		 */
-		public List<IData> applyInterception(XmlObject inputObject);
-		
-	}
-	
-	/**
-	 * Decorate your Algorithm implementation with this
-	 * annotation. the value must be the fully qualified
-	 * class name of the {@link DataInputInterceptors} implementation.
-	 * 
-	 * @author matthes rieke
-	 *
-	 */
-	@Retention(RetentionPolicy.RUNTIME)
-	public static @interface DataInputInterceptorImplementations {
-		
-		String value();
-		
-	}
+    /**
+     * @return a map where input identifiers are keys
+     */
+    public Map<String, InterceptorInstance> getInterceptors();
+    
+    
+    public static interface InterceptorInstance {
+        
+        /**
+         * applies the actual interception
+         * @param input the input as provided in the Execute request
+         * 
+         * @return true if processed, this triggers a skip of parsing within the InputHandler 
+         */
+        public List<IData> applyInterception(XmlObject inputObject);
+        
+    }
+    
+    /**
+     * Decorate your Algorithm implementation with this
+     * annotation. the value must be the fully qualified
+     * class name of the {@link DataInputInterceptors} implementation.
+     * 
+     * @author matthes rieke
+     *
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    public static @interface DataInputInterceptorImplementations {
+        
+        String value();
+        
+    }
 
 }

@@ -53,55 +53,55 @@ import org.w3c.dom.Node;
 
 public class TransactionalHelper {
 
-	public static Repository getMatchingTransactionalRepositoryClassName(String schema){
-		WPSConfig config = WPSConfig.getInstance();
-		Repository[] repositories = config.getRegisterdAlgorithmRepositories();
-		
-		for(Repository repository : repositories){
-			Property[] properties = repository.getPropertyArray();
-			for(Property property : properties){
-				if(property.getName().equals("supportedFormat")){
-					if(property.getStringValue().equals(schema)){
-						return repository;
-					}
-					
-				}
-				
-			}
-		}
-		return null;
-	}
-	
+    public static Repository getMatchingTransactionalRepositoryClassName(String schema){
+        WPSConfig config = WPSConfig.getInstance();
+        Repository[] repositories = config.getRegisterdAlgorithmRepositories();
+        
+        for(Repository repository : repositories){
+            Property[] properties = repository.getPropertyArray();
+            for(Property property : properties){
+                if(property.getName().equals("supportedFormat")){
+                    if(property.getStringValue().equals(schema)){
+                        return repository;
+                    }
+                    
+                }
+                
+            }
+        }
+        return null;
+    }
+    
 
-	public static ITransactionalAlgorithmRepository getMatchingTransactionalRepository(String schema){
-		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
-		String className = repository.getClassName();
-		IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForClassName(className);
-		if(algorithmRepository!=null){
-			if(algorithmRepository instanceof ITransactionalAlgorithmRepository){
-				return (ITransactionalAlgorithmRepository) algorithmRepository;
-			}
-		}
-		return null;
-	}
-	
-	public static String getDeploymentProfileForSchema(String schema){
-		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
-		Property[] properties = repository.getPropertyArray();
-		for(Property property : properties){
-			if(property.getName().equals("DeploymentProfileClass")){
-				return property.getStringValue();
-			}
-		}
-		return null;
-	}
-	
-	public static IProcessManager getProcessManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
-		Repository repository = getMatchingTransactionalRepositoryClassName(schema);
-		Property[] properties = repository.getPropertyArray();
-		for(Property property : properties){
-			if(property.getName().equals("DeployManager")){
-				//return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
+    public static ITransactionalAlgorithmRepository getMatchingTransactionalRepository(String schema){
+        Repository repository = getMatchingTransactionalRepositoryClassName(schema);
+        String className = repository.getClassName();
+        IAlgorithmRepository algorithmRepository = RepositoryManager.getInstance().getRepositoryForClassName(className);
+        if(algorithmRepository!=null){
+            if(algorithmRepository instanceof ITransactionalAlgorithmRepository){
+                return (ITransactionalAlgorithmRepository) algorithmRepository;
+            }
+        }
+        return null;
+    }
+    
+    public static String getDeploymentProfileForSchema(String schema){
+        Repository repository = getMatchingTransactionalRepositoryClassName(schema);
+        Property[] properties = repository.getPropertyArray();
+        for(Property property : properties){
+            if(property.getName().equals("DeploymentProfileClass")){
+                return property.getStringValue();
+            }
+        }
+        return null;
+    }
+    
+    public static IProcessManager getProcessManagerForSchema(String schema) throws InstantiationException, IllegalAccessException, ClassNotFoundException{
+        Repository repository = getMatchingTransactionalRepositoryClassName(schema);
+        Property[] properties = repository.getPropertyArray();
+        for(Property property : properties){
+            if(property.getName().equals("DeployManager")){
+                //return (IDeployManager) Class.forName(property.getStringValue()).newInstance();
                             try{
 
                                 Class depManager = Class.forName(property.getStringValue());
@@ -122,26 +122,26 @@ public class TransactionalHelper {
                                 e.printStackTrace();
                             }
 
-			}
-		}
-		return null;
-	}
-	
-	public static void writeXmlFile(Node node, String filename) {
-	    try {
-	        // Prepare the DOM document for writing
-	        Source source = new DOMSource(node);
+            }
+        }
+        return null;
+    }
+    
+    public static void writeXmlFile(Node node, String filename) {
+        try {
+            // Prepare the DOM document for writing
+            Source source = new DOMSource(node);
 
-	        // Prepare the output file
-	        File file = new File(filename);
-	        Result result = new StreamResult(file);
+            // Prepare the output file
+            File file = new File(filename);
+            Result result = new StreamResult(file);
 
-	        // Write the DOM document to the file
-	        Transformer xformer = TransformerFactory.newInstance().newTransformer();
-	        xformer.transform(source, result);
-	    } catch (TransformerConfigurationException e) {
-	    } catch (TransformerException e) {
-	    }
-	}
+            // Write the DOM document to the file
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            xformer.transform(source, result);
+        } catch (TransformerConfigurationException e) {
+        } catch (TransformerException e) {
+        }
+    }
 
 }

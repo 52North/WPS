@@ -45,9 +45,9 @@ import org.xml.sax.SAXException;
 
 public class DescribeProcessKvpIT {
 
-	private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
-	private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-	
+    private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
+    private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
+    
     private static String url;
 
     @BeforeClass
@@ -122,8 +122,8 @@ public class DescribeProcessKvpIT {
     
     @Test
     public void testDescribeProcessMissingIdentifierValue() throws IOException, ParserConfigurationException, SAXException {
-    	System.out.println("\nRunning testDescribeProcessMissingIdentifierValue");
-    	
+        System.out.println("\nRunning testDescribeProcessMissingIdentifierValue");
+        
         GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
     }
 }

@@ -34,18 +34,18 @@ import org.n52.wps.webapp.entities.LogConfigurations;
  * Used for configuring log settings. The interface gets and saves {@link LogConfigurations} object.
  */
 public interface LogConfigurationsService {
-	/**
-	 * Get the {@code LogConfigurations} object
-	 *
-	 * @return Log configurations object
-	 */
-	LogConfigurations getLogConfigurations();
+    /**
+     * Get the {@code LogConfigurations} object
+     *
+     * @return Log configurations object
+     */
+    LogConfigurations getLogConfigurations();
 
-	/**
-	 * Save a {@code LogConfigurations} object to log file
-	 *
-	 * @param logConfigurations
-	 *            the log configurations object
-	 */
-	void saveLogConfigurations(LogConfigurations logConfigurations);
+    /**
+     * Save a {@code LogConfigurations} object to log file
+     *
+     * @param logConfigurations
+     *            the log configurations object
+     */
+    void saveLogConfigurations(LogConfigurations logConfigurations);
 }

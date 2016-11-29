@@ -50,51 +50,51 @@ import org.springframework.test.web.servlet.ResultActions;
 
 public class LogConfigurationsControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	@Autowired
-	ConfigurationManager configurationManager;
+    @Autowired
+    ConfigurationManager configurationManager;
 
-	@Autowired
-	private JDomUtil jDomUtil;
+    @Autowired
+    private JDomUtil jDomUtil;
 
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
+    @Autowired
+    private ResourcePathUtil resourcePathUtil;
 
-	@Test
-	public void display() throws Exception {
-		RequestBuilder builder = get("/log").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.getMockedWebService().perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("log"))
-				.andExpect(model().attributeExists("logConfigurations"));
-	}
+    @Test
+    public void display() throws Exception {
+        RequestBuilder builder = get("/log").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("log"))
+                .andExpect(model().attributeExists("logConfigurations"));
+    }
 
-	@Test
-	public void processPost_success() throws Exception {
-		String path = resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);
-		Document originalDoc = jDomUtil.parse(path);
+    @Test
+    public void processPost_success() throws Exception {
+        String path = resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);
+        Document originalDoc = jDomUtil.parse(path);
 
-		RequestBuilder request = post("/log")
-				.param("wpsfileAppenderFileNamePattern", "testFileAppenderFileNamePattern")
-		.param("wpsfileAppenderEncoderPattern", "testFileAppenderFileNamePattern")
-		.param("wpsconsoleEncoderPattern", "testFileAppenderFileNamePattern")
-		.param("wpsfileAppenderMaxHistory", "10")
-		.param("rootLevel", "DEBUG")
-		.param("fileAppenderEnabled", "true")
-		.param("consoleAppenderEnabled", "true")
-		.param("loggers['org.apache.axiom']", "ERROR")
-		.param("loggers['org.apache.http.wire']", "OFF");
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isOk());
-		LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
-		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
+        RequestBuilder request = post("/log")
+                .param("wpsfileAppenderFileNamePattern", "testFileAppenderFileNamePattern")
+        .param("wpsfileAppenderEncoderPattern", "testFileAppenderFileNamePattern")
+        .param("wpsconsoleEncoderPattern", "testFileAppenderFileNamePattern")
+        .param("wpsfileAppenderMaxHistory", "10")
+        .param("rootLevel", "DEBUG")
+        .param("fileAppenderEnabled", "true")
+        .param("consoleAppenderEnabled", "true")
+        .param("loggers['org.apache.axiom']", "ERROR")
+        .param("loggers['org.apache.http.wire']", "OFF");
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
+        assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
 
-		//reset document to original state
-		jDomUtil.write(originalDoc, path);
-	}
+        //reset document to original state
+        jDomUtil.write(originalDoc, path);
+    }
 
-	@Test
-	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/log").param("wpsfileAppenderFileNamePattern", "");
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isBadRequest());
-	}
+    @Test
+    public void processPost_failure() throws Exception {
+        RequestBuilder request = post("/log").param("wpsfileAppenderFileNamePattern", "");
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isBadRequest());
+    }
 }

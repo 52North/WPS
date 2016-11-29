@@ -60,27 +60,27 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  *
  */
 public class GRASSXMLGenerator extends AbstractGenerator {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
-	private static String[] SUPPORTED_SCHEMAS = new String[]{
-//		"http://schemas.opengis.net/gml/2.1.1/feature.xsd",
-		"http://schemas.opengis.net/gml/2.1.2/feature.xsd",
-//		"http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
-//		"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
-		};
-	
-	public GRASSXMLGenerator(){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
-	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
-		
-		return theStream;
-	}
-	
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(GRASSXMLGenerator.class);
+    private static String[] SUPPORTED_SCHEMAS = new String[]{
+//        "http://schemas.opengis.net/gml/2.1.1/feature.xsd",
+        "http://schemas.opengis.net/gml/2.1.2/feature.xsd",
+//        "http://schemas.opengis.net/gml/2.1.2.1/feature.xsd",
+//        "http://schemas.opengis.net/gml/3.0.0/base/feature.xsd",
+//        "http://schemas.opengis.net/gml/3.0.1/base/feature.xsd",
+//        "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd"
+        };
+    
+    public GRASSXMLGenerator(){
+        super();
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+    }
+    
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+        
+        InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
+        
+        return theStream;
+    }
+    
 }

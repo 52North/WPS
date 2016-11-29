@@ -39,13 +39,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("test_client")
 public class TestClientController {
 
-	/**
-	 * Display the test client.
-	 * 
-	 * @return The test client view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String display() {
-		return "test_client";
-	}
+    /**
+     * Display the test client.
+     * 
+     * @return The test client view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String display() {
+        return "test_client";
+    }
 }

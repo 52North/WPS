@@ -89,195 +89,195 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  */
 public class SimpleGMLParser extends AbstractParser {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(SimpleGMLParser.class);
-	private SimpleFeatureType type;
-	private SimpleFeatureBuilder featureBuilder;
-	private GeometryFactory geomFactory;
-	
-	public SimpleGMLParser() {
-		super();
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-		geomFactory = new GeometryFactory();
-	}
-	
-	public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
-		GMLPacketDocument doc;
-		try {
-			doc = GMLPacketDocument.Factory.parse(stream);
-		}
-		catch(XmlException e) {
-			throw new IllegalArgumentException("Error while parsing XML", e);
-		}
-		catch(IOException e) {
-			throw new IllegalArgumentException("Error transfering XML", e);
-		}
-		if(doc != null) {
-			return parseXML(doc);
-		}
-		return null;
-	}
-	
-	private GTVectorDataBinding parseXML(GMLPacketDocument doc) {
-		
-		int numberOfMembers = doc.getGMLPacket().getPacketMemberArray().length;
-		List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
-		for(int i = 0; i< numberOfMembers; i++) {
-			StaticFeatureType feature = doc.getGMLPacket().getPacketMemberArray(i).getStaticFeature();
-			//at the start create the featureType and the featureBuilder
-			if(i==0) {
-				type = createFeatureType(feature);
-				featureBuilder = new SimpleFeatureBuilder(type);
-			}
-				
-			SimpleFeature newFeature = convertStaticFeature(feature);
-			if (newFeature != null) {
-				simpleFeatureList.add(newFeature);
-			}
-			else {
-				LOGGER.debug("feature has no geometry, feature will not be included in featureCollection");
-			}
-		}
-		
-		SimpleFeatureCollection collection = new ListFeatureCollection(type, simpleFeatureList);
-		
-		return new GTVectorDataBinding(collection); 
-	}
-	
-	private SimpleFeature convertStaticFeature(StaticFeatureType staticFeature) {
-		
-		SimpleFeature feature = null;
-		Geometry geom = null;
-		if(staticFeature.isSetLineStringProperty()) {
-			geom = convertToJTSGeometry(staticFeature.getLineStringProperty());
-		}
-		else if(staticFeature.isSetPointProperty()) {
-			geom = convertToJTSGeometry(staticFeature.getPointProperty());
-		}
-		else if(staticFeature.isSetPolygonProperty()) {
-			geom = convertToJTSGeometry(staticFeature.getPolygonProperty());
-		}
-		if(geom == null) {
-			return null;
-		}
-		
-		if(type.getAttributeCount()>1){
-			if(staticFeature.sizeOfPropertyArray() > 0){
-				ArrayList<Object> properties = new ArrayList<Object>(staticFeature.sizeOfPropertyArray());
-				properties.add(geom);
-				for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {						
-					PropertyType ptype = staticFeature.getPropertyArray(i);
-					if(!ptype.getPropertyName().contains("geom")){
-					Value v = ptype.getValue();
-					properties.add(v.getStringValue());	
-					}
-				}
-				feature = featureBuilder.buildFeature(staticFeature.getFid(), properties.toArray());
-			}				
-		
-		}
-		else {
-		 feature = featureBuilder.buildFeature(staticFeature.getFid(), new Object[]{geom});
-			}
-		
-		return feature;
-	}
-	
-	private SimpleFeatureType createFeatureType(StaticFeatureType staticFeature) {
-		SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
-		typeBuilder.setName("gmlPacketFeatures");
-		
-		if(staticFeature.isSetLineStringProperty()) {
-			typeBuilder.add( "LineString", LineString.class);
-			
-		}
-		else if(staticFeature.isSetPointProperty()) {
-			typeBuilder.add( "Point", Point.class);
-		}
-		else if(staticFeature.isSetPolygonProperty()) {
-			typeBuilder.add( "Polygon", Polygon.class);
-		}
-		
-		if(staticFeature.sizeOfPropertyArray() > 0){
-			for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {
-				
-				PropertyType type = staticFeature.getPropertyArray(i);
-				if(!type.getPropertyName().contains("geom")) {
-					typeBuilder.add(type.getPropertyName(),String.class);
-				}
-			}
-			
-		}
-		return typeBuilder.buildFeatureType();
-	}
-	
-	private Geometry convertToJTSGeometry(LineStringPropertyType lineString) {
-		Geometry geom;
-		if(lineString.getLineString().getCoordArray().length != 0) {
-			CoordType[] xmlCoords = lineString.getLineString().getCoordArray();
-			Coordinate[] coords = convertToJTSCoordinates(xmlCoords);
-			if(coords.length == 0) {
-				LOGGER.debug("feature does not include any geometry (LineString)");
-				return null;
-			}
-			geom = geomFactory.createLineString(coords);
-		}
-		else if (lineString.getLineString().isSetCoordinates()) {
-			throw new IllegalArgumentException("Element gml:coordinates is not supported yet");
-		}
-		else {
-			LOGGER.debug("LineString has no coordinates");
-			return null;
-		}
-		return geom;
-	}
-	
-	private Geometry convertToJTSGeometry(PointPropertyType point) {
-		Coordinate coord = convertToJTSCoordinate(point.getPoint().getCoord());
-		return geomFactory.createPoint(coord);
-	}
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(SimpleGMLParser.class);
+    private SimpleFeatureType type;
+    private SimpleFeatureBuilder featureBuilder;
+    private GeometryFactory geomFactory;
+    
+    public SimpleGMLParser() {
+        super();
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+        geomFactory = new GeometryFactory();
+    }
+    
+    public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
+        GMLPacketDocument doc;
+        try {
+            doc = GMLPacketDocument.Factory.parse(stream);
+        }
+        catch(XmlException e) {
+            throw new IllegalArgumentException("Error while parsing XML", e);
+        }
+        catch(IOException e) {
+            throw new IllegalArgumentException("Error transfering XML", e);
+        }
+        if(doc != null) {
+            return parseXML(doc);
+        }
+        return null;
+    }
+    
+    private GTVectorDataBinding parseXML(GMLPacketDocument doc) {
+        
+        int numberOfMembers = doc.getGMLPacket().getPacketMemberArray().length;
+        List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+        for(int i = 0; i< numberOfMembers; i++) {
+            StaticFeatureType feature = doc.getGMLPacket().getPacketMemberArray(i).getStaticFeature();
+            //at the start create the featureType and the featureBuilder
+            if(i==0) {
+                type = createFeatureType(feature);
+                featureBuilder = new SimpleFeatureBuilder(type);
+            }
+                
+            SimpleFeature newFeature = convertStaticFeature(feature);
+            if (newFeature != null) {
+                simpleFeatureList.add(newFeature);
+            }
+            else {
+                LOGGER.debug("feature has no geometry, feature will not be included in featureCollection");
+            }
+        }
+        
+        SimpleFeatureCollection collection = new ListFeatureCollection(type, simpleFeatureList);
+        
+        return new GTVectorDataBinding(collection); 
+    }
+    
+    private SimpleFeature convertStaticFeature(StaticFeatureType staticFeature) {
+        
+        SimpleFeature feature = null;
+        Geometry geom = null;
+        if(staticFeature.isSetLineStringProperty()) {
+            geom = convertToJTSGeometry(staticFeature.getLineStringProperty());
+        }
+        else if(staticFeature.isSetPointProperty()) {
+            geom = convertToJTSGeometry(staticFeature.getPointProperty());
+        }
+        else if(staticFeature.isSetPolygonProperty()) {
+            geom = convertToJTSGeometry(staticFeature.getPolygonProperty());
+        }
+        if(geom == null) {
+            return null;
+        }
+        
+        if(type.getAttributeCount()>1){
+            if(staticFeature.sizeOfPropertyArray() > 0){
+                ArrayList<Object> properties = new ArrayList<Object>(staticFeature.sizeOfPropertyArray());
+                properties.add(geom);
+                for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {                        
+                    PropertyType ptype = staticFeature.getPropertyArray(i);
+                    if(!ptype.getPropertyName().contains("geom")){
+                    Value v = ptype.getValue();
+                    properties.add(v.getStringValue());    
+                    }
+                }
+                feature = featureBuilder.buildFeature(staticFeature.getFid(), properties.toArray());
+            }                
+        
+        }
+        else {
+         feature = featureBuilder.buildFeature(staticFeature.getFid(), new Object[]{geom});
+            }
+        
+        return feature;
+    }
+    
+    private SimpleFeatureType createFeatureType(StaticFeatureType staticFeature) {
+        SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
+        typeBuilder.setName("gmlPacketFeatures");
+        
+        if(staticFeature.isSetLineStringProperty()) {
+            typeBuilder.add( "LineString", LineString.class);
+            
+        }
+        else if(staticFeature.isSetPointProperty()) {
+            typeBuilder.add( "Point", Point.class);
+        }
+        else if(staticFeature.isSetPolygonProperty()) {
+            typeBuilder.add( "Polygon", Polygon.class);
+        }
+        
+        if(staticFeature.sizeOfPropertyArray() > 0){
+            for (int i = 0; i < staticFeature.sizeOfPropertyArray(); i++) {
+                
+                PropertyType type = staticFeature.getPropertyArray(i);
+                if(!type.getPropertyName().contains("geom")) {
+                    typeBuilder.add(type.getPropertyName(),String.class);
+                }
+            }
+            
+        }
+        return typeBuilder.buildFeatureType();
+    }
+    
+    private Geometry convertToJTSGeometry(LineStringPropertyType lineString) {
+        Geometry geom;
+        if(lineString.getLineString().getCoordArray().length != 0) {
+            CoordType[] xmlCoords = lineString.getLineString().getCoordArray();
+            Coordinate[] coords = convertToJTSCoordinates(xmlCoords);
+            if(coords.length == 0) {
+                LOGGER.debug("feature does not include any geometry (LineString)");
+                return null;
+            }
+            geom = geomFactory.createLineString(coords);
+        }
+        else if (lineString.getLineString().isSetCoordinates()) {
+            throw new IllegalArgumentException("Element gml:coordinates is not supported yet");
+        }
+        else {
+            LOGGER.debug("LineString has no coordinates");
+            return null;
+        }
+        return geom;
+    }
+    
+    private Geometry convertToJTSGeometry(PointPropertyType point) {
+        Coordinate coord = convertToJTSCoordinate(point.getPoint().getCoord());
+        return geomFactory.createPoint(coord);
+    }
 
-	private Geometry convertToJTSGeometry(PolygonPropertyType polygon) {
-		LinearRingType outerRing = polygon.getPolygon().getOuterBoundaryIs().getLinearRing();
-		LinearRing jtsOuterRing = convertToJTSLinearRing(outerRing);
-		LinearRingMemberType[] innerRings = polygon.getPolygon().getInnerBoundaryIsArray();
-		List<LinearRing> jtsInnerRings = new ArrayList<LinearRing>();
-		for(LinearRingMemberType ring : innerRings) {
-			if(ring.getLinearRing() != null) {
-				jtsInnerRings.add(convertToJTSLinearRing(ring.getLinearRing()));
-			}
-		}
-		return geomFactory.createPolygon(jtsOuterRing, (LinearRing[])jtsInnerRings.toArray(new LinearRing[jtsInnerRings.size()]));
-	}
-	
-	private LinearRing convertToJTSLinearRing(LinearRingType linearRing) {
-		Coordinate[] coords = convertToJTSCoordinates(linearRing.getCoordArray());
-		return geomFactory.createLinearRing(coords);
-	}
-	
-	/**
-	 * expects Coordinates with X & Y or X & Y & Z
-	 * @param coords
-	 * @return
-	 */
-	private Coordinate[] convertToJTSCoordinates(CoordType[] coords) {
-		List<Coordinate> coordList = new ArrayList<Coordinate>();
-		for(CoordType coord : coords) {
-			Coordinate coordinate = convertToJTSCoordinate(coord);
-			coordList.add(coordinate);
-		}
-		return coordList.toArray(new Coordinate[coordList.size()]);
-	}
-	
-	private Coordinate convertToJTSCoordinate(CoordType coord) {
-		if(!coord.isSetZ()) {
-			return new Coordinate(coord.getX().doubleValue(), coord.getY().doubleValue());
-		}
-		else {
-			return new Coordinate(coord.getX().doubleValue(), 
-										coord.getY().doubleValue(), 
-										coord.getZ().doubleValue());
-		}
-	}
-	
+    private Geometry convertToJTSGeometry(PolygonPropertyType polygon) {
+        LinearRingType outerRing = polygon.getPolygon().getOuterBoundaryIs().getLinearRing();
+        LinearRing jtsOuterRing = convertToJTSLinearRing(outerRing);
+        LinearRingMemberType[] innerRings = polygon.getPolygon().getInnerBoundaryIsArray();
+        List<LinearRing> jtsInnerRings = new ArrayList<LinearRing>();
+        for(LinearRingMemberType ring : innerRings) {
+            if(ring.getLinearRing() != null) {
+                jtsInnerRings.add(convertToJTSLinearRing(ring.getLinearRing()));
+            }
+        }
+        return geomFactory.createPolygon(jtsOuterRing, (LinearRing[])jtsInnerRings.toArray(new LinearRing[jtsInnerRings.size()]));
+    }
+    
+    private LinearRing convertToJTSLinearRing(LinearRingType linearRing) {
+        Coordinate[] coords = convertToJTSCoordinates(linearRing.getCoordArray());
+        return geomFactory.createLinearRing(coords);
+    }
+    
+    /**
+     * expects Coordinates with X & Y or X & Y & Z
+     * @param coords
+     * @return
+     */
+    private Coordinate[] convertToJTSCoordinates(CoordType[] coords) {
+        List<Coordinate> coordList = new ArrayList<Coordinate>();
+        for(CoordType coord : coords) {
+            Coordinate coordinate = convertToJTSCoordinate(coord);
+            coordList.add(coordinate);
+        }
+        return coordList.toArray(new Coordinate[coordList.size()]);
+    }
+    
+    private Coordinate convertToJTSCoordinate(CoordType coord) {
+        if(!coord.isSetZ()) {
+            return new Coordinate(coord.getX().doubleValue(), coord.getY().doubleValue());
+        }
+        else {
+            return new Coordinate(coord.getX().doubleValue(), 
+                                        coord.getY().doubleValue(), 
+                                        coord.getZ().doubleValue());
+        }
+    }
+    
 }

@@ -28,9 +28,9 @@ public class ComplexDataInputDescriptor<T extends Class<? extends IComplexData>>
 
     private final BigInteger maximumMegaBytes;
 
-	private ComplexDataInputDescriptor(Builder builder) {
+    private ComplexDataInputDescriptor(Builder builder) {
         super(builder);
-		this.maximumMegaBytes = builder.maximumMegaBytes;
+        this.maximumMegaBytes = builder.maximumMegaBytes;
     }
 
     public boolean hasMaximumMegaBytes() {

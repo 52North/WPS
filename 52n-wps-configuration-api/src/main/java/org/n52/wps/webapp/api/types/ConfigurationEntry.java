@@ -44,71 +44,71 @@ import org.n52.wps.webapp.api.ConfigurationType;
  * TODO: add isActive here?!
  */
 public abstract class ConfigurationEntry<T> {
-	private T value;
-	private String key;
-	private String title;
-	private String description;
-	private boolean required;
-	private ConfigurationType type;
+    private T value;
+    private String key;
+    private String title;
+    private String description;
+    private boolean required;
+    private ConfigurationType type;
 
-	protected ConfigurationEntry(String key, String title, ConfigurationType type) {
-		this.key = key;
-		this.title = title;
-		this.type = type;
-	}
+    protected ConfigurationEntry(String key, String title, ConfigurationType type) {
+        this.key = key;
+        this.title = title;
+        this.type = type;
+    }
 
-	protected ConfigurationEntry(String key, String title, String description, boolean required, T value,
-			ConfigurationType type) {
-		this.key = key;
-		this.title = title;
-		this.description = description;
-		this.required = required;
-		this.value = value;
-		this.type = type;
-	}
+    protected ConfigurationEntry(String key, String title, String description, boolean required, T value,
+            ConfigurationType type) {
+        this.key = key;
+        this.title = title;
+        this.description = description;
+        this.required = required;
+        this.value = value;
+        this.type = type;
+    }
 
-	public T getValue() {
-		return value;
-	}
+    public T getValue() {
+        return value;
+    }
 
         @Deprecated // this setter makes it unclear if the value of the entry stores the actual value, or if I must save the value myself in a CM
-	public void setValue(T value) {
-		this.value = value;
-	}
+    public void setValue(T value) {
+        this.value = value;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public boolean isRequired() {
-		return required;
-	}
+    public boolean isRequired() {
+        return required;
+    }
 
-	public void setRequired(boolean required) {
-		this.required = required;
-	}
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
 
-	public ConfigurationType getType() {
-		return type;
-	}
+    public ConfigurationType getType() {
+        return type;
+    }
 }

@@ -59,353 +59,353 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GrassProcessDescriptionCreator {
-	
-	private final String fileSeparator = System.getProperty("file.separator");
-	private final String lineSeparator = System.getProperty("line.separator");
-	private String grassHome = "";
-	private String pythonHome = "";	
-	private String pythonPath = "";	
-	private String addonPath = "";	
+    
+    private final String fileSeparator = System.getProperty("file.separator");
+    private final String lineSeparator = System.getProperty("line.separator");
+    private String grassHome = "";
+    private String pythonHome = "";    
+    private String pythonPath = "";    
+    private String addonPath = "";    
 
-	private String[] envp = null;
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessDescriptionCreator.class);
-	private final String wpsProcessDescCmd = " --wps-process-description";
-	private Runtime rt = Runtime.getRuntime();
-	private ExecutorService executor = Executors.newFixedThreadPool(10);
-	private String gisrcDir;
+    private String[] envp = null;
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(GrassProcessDescriptionCreator.class);
+    private final String wpsProcessDescCmd = " --wps-process-description";
+    private Runtime rt = Runtime.getRuntime();
+    private ExecutorService executor = Executors.newFixedThreadPool(10);
+    private String gisrcDir;
 
-	public GrassProcessDescriptionCreator() {
+    public GrassProcessDescriptionCreator() {
 
-		grassHome = GrassProcessRepository.grassHome;
-		pythonHome = GrassProcessRepository.pythonHome;
-		pythonPath = GrassProcessRepository.pythonPath;
-		gisrcDir = GrassProcessRepository.gisrcDir;
-		addonPath = GrassProcessRepository.addonPath;
-	}
+        grassHome = GrassProcessRepository.grassHome;
+        pythonHome = GrassProcessRepository.pythonHome;
+        pythonPath = GrassProcessRepository.pythonPath;
+        gisrcDir = GrassProcessRepository.gisrcDir;
+        addonPath = GrassProcessRepository.addonPath;
+    }
 
-	public ProcessDescription createDescribeProcessType(String identifier, boolean addon)
-			throws IOException, XmlException {
+    public ProcessDescription createDescribeProcessType(String identifier, boolean addon)
+            throws IOException, XmlException {
 
-		Process proc = null;
+        Process proc = null;
 
-		//addons have their own directory and are python scripts
-		if(addon){
+        //addons have their own directory and are python scripts
+        if(addon){
 
-			if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
-				proc = rt.exec(addonPath + fileSeparator +
-						identifier + wpsProcessDescCmd,
-						getEnvp());
-			} else {
-				proc = rt.exec(pythonHome  + fileSeparator + "python.exe " + addonPath
-						+ fileSeparator + identifier + ".py"
-						+ wpsProcessDescCmd, getEnvp());
-			}			
-			
-		} else {
+            if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
+                proc = rt.exec(addonPath + fileSeparator +
+                        identifier + wpsProcessDescCmd,
+                        getEnvp());
+            } else {
+                proc = rt.exec(pythonHome  + fileSeparator + "python.exe " + addonPath
+                        + fileSeparator + identifier + ".py"
+                        + wpsProcessDescCmd, getEnvp());
+            }            
+            
+        } else {
 
-			if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
-				proc = rt.exec(grassHome + fileSeparator + "bin"
-						+ fileSeparator + identifier + wpsProcessDescCmd,
-						getEnvp());
-			} else {
-				proc = rt.exec(grassHome + fileSeparator + "bin"
-						+ fileSeparator + identifier + ".exe"
-						+ wpsProcessDescCmd, getEnvp());
-			}
-		}
-		
-		PipedOutputStream pipedOut = new PipedOutputStream();
+            if (!GrassIOHandler.OS_Name.startsWith("Windows")) {
+                proc = rt.exec(grassHome + fileSeparator + "bin"
+                        + fileSeparator + identifier + wpsProcessDescCmd,
+                        getEnvp());
+            } else {
+                proc = rt.exec(grassHome + fileSeparator + "bin"
+                        + fileSeparator + identifier + ".exe"
+                        + wpsProcessDescCmd, getEnvp());
+            }
+        }
+        
+        PipedOutputStream pipedOut = new PipedOutputStream();
 
-		PipedInputStream pipedIn = new PipedInputStream(pipedOut);
+        PipedInputStream pipedIn = new PipedInputStream(pipedOut);
 
-		PipedOutputStream pipedOutError = new PipedOutputStream();
+        PipedOutputStream pipedOutError = new PipedOutputStream();
 
-		PipedInputStream pipedInError = new PipedInputStream(pipedOutError);
-		
-		// attach error stream reader
-		JavaProcessStreamReader errorGobbler = new JavaProcessStreamReader(proc.getErrorStream(),
-				"ERROR", pipedOutError);
+        PipedInputStream pipedInError = new PipedInputStream(pipedOutError);
+        
+        // attach error stream reader
+        JavaProcessStreamReader errorGobbler = new JavaProcessStreamReader(proc.getErrorStream(),
+                "ERROR", pipedOutError);
 
-		// attach output stream reader
-		JavaProcessStreamReader outputGobbler = new JavaProcessStreamReader(proc.getInputStream(),
-				"OUTPUT", pipedOut);
+        // attach output stream reader
+        JavaProcessStreamReader outputGobbler = new JavaProcessStreamReader(proc.getInputStream(),
+                "OUTPUT", pipedOut);
 
-		// start them
-		executor.execute(errorGobbler);
-		executor.execute(outputGobbler);
+        // start them
+        executor.execute(errorGobbler);
+        executor.execute(outputGobbler);
 
-		BufferedReader xmlReader = new BufferedReader(new InputStreamReader(
-				pipedIn));
+        BufferedReader xmlReader = new BufferedReader(new InputStreamReader(
+                pipedIn));
 
-		String line = xmlReader.readLine();
+        String line = xmlReader.readLine();
 
-		String xml = "";
+        String xml = "";
 
-		while (line != null) {
+        while (line != null) {
 
-			xml = xml.concat(line + lineSeparator);
+            xml = xml.concat(line + lineSeparator);
 
-			line = xmlReader.readLine();
-		}
+            line = xmlReader.readLine();
+        }
 
-		pipedIn.close();
-		pipedOut.close();
-		xmlReader.close();
+        pipedIn.close();
+        pipedOut.close();
+        xmlReader.close();
 
-		BufferedReader errorReader = new BufferedReader(new InputStreamReader(
-				pipedInError));
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(
+                pipedInError));
 
-		String errorLine = errorReader.readLine();
+        String errorLine = errorReader.readLine();
 
-		String errors = "";
+        String errors = "";
 
-		while (errorLine != null) {
+        while (errorLine != null) {
 
-			errors = errors.concat(errorLine + lineSeparator);
+            errors = errors.concat(errorLine + lineSeparator);
 
-			errorLine = errorReader.readLine();
-		}
+            errorLine = errorReader.readLine();
+        }
 
-		if (errors != "") {
-			LOGGER.error("Error while creating processdescription for process "
-					+ identifier + ": " + errors);
-		}
-		
-		pipedInError.close();
-		pipedOutError.close();
-		errorReader.close();
-		
-		try {
-			proc.waitFor();
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+        if (errors != "") {
+            LOGGER.error("Error while creating processdescription for process "
+                    + identifier + ": " + errors);
+        }
+        
+        pipedInError.close();
+        pipedOutError.close();
+        errorReader.close();
+        
+        try {
+            proc.waitFor();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
 
-		proc.destroy();
+        proc.destroy();
 
-		ProcessDescriptionsDocument pDoc = ProcessDescriptionsDocument.Factory
-				.parse(xml);
+        ProcessDescriptionsDocument pDoc = ProcessDescriptionsDocument.Factory
+                .parse(xml);
 
-		int i = pDoc.getProcessDescriptions().getProcessDescriptionArray().length;
+        int i = pDoc.getProcessDescriptions().getProcessDescriptionArray().length;
 
-		if (i == 1) {
+        if (i == 1) {
 
-			ProcessDescriptionType result = pDoc.getProcessDescriptions()
-					.getProcessDescriptionArray()[0];
+            ProcessDescriptionType result = pDoc.getProcessDescriptions()
+                    .getProcessDescriptionArray()[0];
 
-			result.setProcessVersion("1.0.0");
-			
-			InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
-			
-			for (InputDescriptionType inputDescriptionType : inputs) {
-				checkForBase64Encoding(inputDescriptionType.getComplexData());
-				checkForKMLMimeType(inputDescriptionType);	
-				addZippedSHPMimeType(inputDescriptionType);
-			}			
-			
-			SupportedComplexDataType outputType = result.getProcessOutputs()
-					.getOutputArray(0).getComplexOutput();
+            result.setProcessVersion("1.0.0");
+            
+            InputDescriptionType[] inputs = result.getDataInputs().getInputArray();
+            
+            for (InputDescriptionType inputDescriptionType : inputs) {
+                checkForBase64Encoding(inputDescriptionType.getComplexData());
+                checkForKMLMimeType(inputDescriptionType);    
+                addZippedSHPMimeType(inputDescriptionType);
+            }            
+            
+            SupportedComplexDataType outputType = result.getProcessOutputs()
+                    .getOutputArray(0).getComplexOutput();
 
-			if (outputType != null) {
+            if (outputType != null) {
 
-				String schema = outputType.getDefault().getFormat().getSchema();
+                String schema = outputType.getDefault().getFormat().getSchema();
 
-				if (schema != null) {
+                if (schema != null) {
 
-					if (schema
-							.contains("http://schemas.opengis.net/gml/2.0.0/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/2.1.1/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/2.1.2/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/2.1.2.1/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/3.0.0/base/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/3.0.1/base/feature.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")
-							|| schema
-									.contains("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd")) {
+                    if (schema
+                            .contains("http://schemas.opengis.net/gml/2.0.0/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/2.1.1/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/2.1.2/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/2.1.2.1/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/3.0.0/base/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/3.0.1/base/feature.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/3.1.1/base/gml.xsd")
+                            || schema
+                                    .contains("http://schemas.opengis.net/gml/3.1.1/base/feature.xsd")) {
 
-						ComplexDataDescriptionType xZippedShapeType = outputType.getSupported().addNewFormat();
-																		
-						xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
-						xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
+                        ComplexDataDescriptionType xZippedShapeType = outputType.getSupported().addNewFormat();
+                                                                        
+                        xZippedShapeType.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+                        xZippedShapeType.setEncoding(IOHandler.ENCODING_BASE64);
 
-						ComplexDataDescriptionType xZippedShapeTypeUTF8 = outputType.getSupported().addNewFormat();
-																		
-						xZippedShapeTypeUTF8.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+                        ComplexDataDescriptionType xZippedShapeTypeUTF8 = outputType.getSupported().addNewFormat();
+                                                                        
+                        xZippedShapeTypeUTF8.setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
 
-					}
-				}
-				
-				checkForBase64Encoding(result.getProcessOutputs()
-						.getOutputArray(0).getComplexOutput());
-				checkForKMLMimeType(result.getProcessOutputs()
-						.getOutputArray(0));
+                    }
+                }
+                
+                checkForBase64Encoding(result.getProcessOutputs()
+                        .getOutputArray(0).getComplexOutput());
+                checkForKMLMimeType(result.getProcessOutputs()
+                        .getOutputArray(0));
 
-			}
+            }
 
-			ProcessDescription processDescription = new ProcessDescription();
-			
-			processDescription.addProcessDescriptionForVersion(result, "1.0.0");
-			
-			return processDescription;
-		}
+            ProcessDescription processDescription = new ProcessDescription();
+            
+            processDescription.addProcessDescriptionForVersion(result, "1.0.0");
+            
+            return processDescription;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	private void checkForBase64Encoding(SupportedComplexDataType complexData){
-		
-		if(complexData == null){
-			return;
-		}
-		
-		String[] genericFileParserMimeTypes = new GenericFileDataWithGTParser().getSupportedFormats();
-		
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			String supportedMimeType = complexDataDescriptionType.getMimeType();
-			
-			String supportedEncoding = complexDataDescriptionType.getEncoding();
-			
-			if(supportedMimeType != null && supportedEncoding == null){			
-				for (String mimeType : genericFileParserMimeTypes) {
-					if(mimeType.equals(IOHandler.MIME_TYPE_ZIPPED_SHP)){
-						continue;
-					}
-					if(mimeType.equals(supportedMimeType)){					
-						ComplexDataDescriptionType base64Format = complexData.getSupported().addNewFormat();						
-						base64Format.setMimeType(supportedMimeType);
-						base64Format.setEncoding(IOHandler.ENCODING_BASE64);
-					}
-				}			
-			}
-		}
-	}
-	
-	private void checkForKMLMimeType(InputDescriptionType inputDescriptionType) {
-		
-		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
-		
-		if(complexData == null){
-			return;
-		}
-		
-		if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
-			complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
-			return; 
-		}
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
-				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
-				return;
-			}
-		}
-		
-	}
-	
-	private void addZippedSHPMimeType(InputDescriptionType inputDescriptionType) {
-		
-		SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
-		
-		if(complexData == null){
-			return;
-		}
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/gml/2.1.2/feature.xsd")){
-				inputDescriptionType.getComplexData().getSupported().addNewFormat().setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
-				return;
-			}
-		}
-		
-	}
+    private void checkForBase64Encoding(SupportedComplexDataType complexData){
+        
+        if(complexData == null){
+            return;
+        }
+        
+        String[] genericFileParserMimeTypes = new GenericFileDataWithGTParser().getSupportedFormats();
+        
+        ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+        
+        for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+            String supportedMimeType = complexDataDescriptionType.getMimeType();
+            
+            String supportedEncoding = complexDataDescriptionType.getEncoding();
+            
+            if(supportedMimeType != null && supportedEncoding == null){            
+                for (String mimeType : genericFileParserMimeTypes) {
+                    if(mimeType.equals(IOHandler.MIME_TYPE_ZIPPED_SHP)){
+                        continue;
+                    }
+                    if(mimeType.equals(supportedMimeType)){                    
+                        ComplexDataDescriptionType base64Format = complexData.getSupported().addNewFormat();                        
+                        base64Format.setMimeType(supportedMimeType);
+                        base64Format.setEncoding(IOHandler.ENCODING_BASE64);
+                    }
+                }            
+            }
+        }
+    }
+    
+    private void checkForKMLMimeType(InputDescriptionType inputDescriptionType) {
+        
+        SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+        
+        if(complexData == null){
+            return;
+        }
+        
+        if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+            complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+            return; 
+        }
+        ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+        
+        for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+            if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+                complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+                return;
+            }
+        }
+        
+    }
+    
+    private void addZippedSHPMimeType(InputDescriptionType inputDescriptionType) {
+        
+        SupportedComplexDataInputType complexData = inputDescriptionType.getComplexData();
+        
+        if(complexData == null){
+            return;
+        }
+        ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+        
+        for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+            if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/gml/2.1.2/feature.xsd")){
+                inputDescriptionType.getComplexData().getSupported().addNewFormat().setMimeType(IOHandler.MIME_TYPE_ZIPPED_SHP);
+                return;
+            }
+        }
+        
+    }
 
-	private void checkForKMLMimeType(OutputDescriptionType outputDescriptionType) {
-		
-		SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
-		
-		if(complexData == null){
-			return;
-		}
-		
-		if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
-			complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
-			return; 
-		}
-		ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
-		
-		for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
-			if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
-				complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
-				return;
-			}
-		}
-		
-	}
+    private void checkForKMLMimeType(OutputDescriptionType outputDescriptionType) {
+        
+        SupportedComplexDataType complexData = outputDescriptionType.getComplexOutput();
+        
+        if(complexData == null){
+            return;
+        }
+        
+        if(complexData.getDefault().getFormat().getSchema() != null && complexData.getDefault().getFormat().getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+            complexData.getDefault().getFormat().setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+            return; 
+        }
+        ComplexDataDescriptionType[] supportedTypes = complexData.getSupported().getFormatArray();
+        
+        for (ComplexDataDescriptionType complexDataDescriptionType : supportedTypes) {
+            if(complexDataDescriptionType.getSchema() != null && complexDataDescriptionType.getSchema().equals("http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd")){
+                complexDataDescriptionType.setMimeType(GenericFileDataConstants.MIME_TYPE_KML);
+                return;
+            }
+        }
+        
+    }
 
-	private String[] getEnvp() {
+    private String[] getEnvp() {
 
-		if (envp == null) {
+        if (envp == null) {
 
-			
-			if (GrassIOHandler.OS_Name.startsWith("Windows")) {
+            
+            if (GrassIOHandler.OS_Name.startsWith("Windows")) {
 
-				envp = new String[] {
-						"GISRC=" + gisrcDir,
-						"GDAL_DATA=" + grassHome + fileSeparator + "etc"
-								+ fileSeparator + "ogr_csv",
-						"GISBASE=" + grassHome,
-						"PATH=" + grassHome + fileSeparator + "lib;"
-								+ grassHome + fileSeparator + "bin;"
-								+ grassHome + fileSeparator + "scripts;"
-								+ pythonHome + ";" + grassHome + fileSeparator
-								+ "extralib;" + grassHome + fileSeparator
-								+ "extrabin",
-						"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
-						"PWD=" + grassHome,
-						"PYTHONHOME=" + pythonHome,
-						"PYTHONPATH=" + grassHome + fileSeparator + "etc"
-								+ fileSeparator + "python",
-						"GRASS_CONFIG_DIR=.grass7",
-						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
-						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
-						"GRASS_VERSION=7.0.svn", "WINGISBASE=" + grassHome };
-			}else{
-				
-				envp = new String[] {
-						"GISRC=" + gisrcDir,
-						"GDAL_DATA=" + grassHome + fileSeparator + "etc"
-								+ fileSeparator + "ogr_csv",
-						"GISBASE=" + grassHome,
-						"PATH=" + grassHome + fileSeparator + "lib:"
-								+ grassHome + fileSeparator + "bin:"
-								+ grassHome + fileSeparator + "scripts:"
-								+ pythonHome + ":" + grassHome + fileSeparator
-								+ "extralib:" + grassHome + fileSeparator
-								+ "extrabin",
-						"LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
-						"PWD=" + grassHome,
-						"PYTHONHOME=" + pythonHome,
-						"PYTHONPATH=" + grassHome + fileSeparator + "etc"
-								+ fileSeparator + "python" + ":" + pythonPath,
-						"GRASS_CONFIG_DIR=.grass7",
-						"GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
-						"GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
-						"GRASS_VERSION=7.0.svn"};
-				
-			}
-		}
-		return envp;
-	}
-	
+                envp = new String[] {
+                        "GISRC=" + gisrcDir,
+                        "GDAL_DATA=" + grassHome + fileSeparator + "etc"
+                                + fileSeparator + "ogr_csv",
+                        "GISBASE=" + grassHome,
+                        "PATH=" + grassHome + fileSeparator + "lib;"
+                                + grassHome + fileSeparator + "bin;"
+                                + grassHome + fileSeparator + "scripts;"
+                                + pythonHome + ";" + grassHome + fileSeparator
+                                + "extralib;" + grassHome + fileSeparator
+                                + "extrabin",
+                        "LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
+                        "PWD=" + grassHome,
+                        "PYTHONHOME=" + pythonHome,
+                        "PYTHONPATH=" + grassHome + fileSeparator + "etc"
+                                + fileSeparator + "python",
+                        "GRASS_CONFIG_DIR=.grass7",
+                        "GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+                        "GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+                        "GRASS_VERSION=7.0.svn", "WINGISBASE=" + grassHome };
+            }else{
+                
+                envp = new String[] {
+                        "GISRC=" + gisrcDir,
+                        "GDAL_DATA=" + grassHome + fileSeparator + "etc"
+                                + fileSeparator + "ogr_csv",
+                        "GISBASE=" + grassHome,
+                        "PATH=" + grassHome + fileSeparator + "lib:"
+                                + grassHome + fileSeparator + "bin:"
+                                + grassHome + fileSeparator + "scripts:"
+                                + pythonHome + ":" + grassHome + fileSeparator
+                                + "extralib:" + grassHome + fileSeparator
+                                + "extrabin",
+                        "LD_LIBRARY_PATH=" + grassHome + fileSeparator + "lib",
+                        "PWD=" + grassHome,
+                        "PYTHONHOME=" + pythonHome,
+                        "PYTHONPATH=" + grassHome + fileSeparator + "etc"
+                                + fileSeparator + "python" + ":" + pythonPath,
+                        "GRASS_CONFIG_DIR=.grass7",
+                        "GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
+                        "GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
+                        "GRASS_VERSION=7.0.svn"};
+                
+            }
+        }
+        return envp;
+    }
+    
 }

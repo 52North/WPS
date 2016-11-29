@@ -45,59 +45,59 @@ import org.w3c.dom.Document;
 
 public class GetStatusRequestV200 extends Request {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(GetStatusRequestV200.class);
-	
-	private StatusInfoDocument document;
-	
-	private GetStatusDocument getStatusDocument;
-	
-	private String jobID;
-	
-	public GetStatusRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
-		super(map);
-		jobID = getMapValue("jobid", true);		
-	}
+    private static Logger LOGGER = LoggerFactory.getLogger(GetStatusRequestV200.class);
+    
+    private StatusInfoDocument document;
+    
+    private GetStatusDocument getStatusDocument;
+    
+    private String jobID;
+    
+    public GetStatusRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
+        super(map);
+        jobID = getMapValue("jobid", true);        
+    }
 
-	public GetStatusRequestV200(Document doc) throws ExceptionReport {
-		super(doc);
-		
-		if(!validate()){
-			throw new ExceptionReport("GetStatusRequest not valid",
-					ExceptionReport.NO_APPLICABLE_CODE);
-		}
-		if(getStatusDocument.getGetStatus() != null){
-			jobID = getStatusDocument.getGetStatus().getJobID();
-		}
-		if(jobID == null || jobID.equals("")){
-			throw new ExceptionReport("JobID not valid",
-					ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
-		}
-	}
+    public GetStatusRequestV200(Document doc) throws ExceptionReport {
+        super(doc);
+        
+        if(!validate()){
+            throw new ExceptionReport("GetStatusRequest not valid",
+                    ExceptionReport.NO_APPLICABLE_CODE);
+        }
+        if(getStatusDocument.getGetStatus() != null){
+            jobID = getStatusDocument.getGetStatus().getJobID();
+        }
+        if(jobID == null || jobID.equals("")){
+            throw new ExceptionReport("JobID not valid",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+        }
+    }
 
-	@Override
-	public Object getAttachedResult() {
-		return document;
-	}
+    @Override
+    public Object getAttachedResult() {
+        return document;
+    }
 
-	@Override
-	public Response call() throws ExceptionReport {
-		try {
-			document = StatusInfoDocument.Factory.parse(DatabaseFactory.getDatabase().lookupStatus(jobID));
-		} catch (XmlException | IOException e) {
-			LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
-		}		
-		
-		return new GetStatusResponseV200(this);
-	}
+    @Override
+    public Response call() throws ExceptionReport {
+        try {
+            document = StatusInfoDocument.Factory.parse(DatabaseFactory.getDatabase().lookupStatus(jobID));
+        } catch (XmlException | IOException e) {
+            LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
+        }        
+        
+        return new GetStatusResponseV200(this);
+    }
 
-	@Override
-	public boolean validate() throws ExceptionReport {		
-		try {
-			getStatusDocument = GetStatusDocument.Factory.parse(doc.getFirstChild());
-		} catch (XmlException e) {
-			return false;
-		}
-		return getStatusDocument != null;
-	}
+    @Override
+    public boolean validate() throws ExceptionReport {        
+        try {
+            getStatusDocument = GetStatusDocument.Factory.parse(doc.getFirstChild());
+        } catch (XmlException e) {
+            return false;
+        }
+        return getStatusDocument != null;
+    }
 
 }

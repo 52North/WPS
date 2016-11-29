@@ -65,50 +65,50 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  *
  */
 public class GML2BasicParser4Files extends AbstractParser {
-	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
 
-	
-	public GML2BasicParser4Files() {
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
-	}
-	
-	public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
-		
-		FileOutputStream fos = null;
-		try{
-			File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
-			finalizeFiles.add(tempFile); // mark for final delete
-			fos = new FileOutputStream(tempFile);
-			int i = stream.read();
-			while(i != -1){
-				fos.write(i);
-				i = stream.read();
-			}
-			fos.flush();
-			fos.close();
-			GenericFileDataWithGTBinding data = parseXML(tempFile);
-			
-			return data;
-		}
-		catch(IOException e) {
-			if (fos != null) try { fos.close(); } catch (Exception e1) { }
-			throw new IllegalArgumentException("Error while creating tempFile", e);
-		}
-	}
+    
+    public GML2BasicParser4Files() {
+        super();
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+    }
+    
+    public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
+        
+        FileOutputStream fos = null;
+        try{
+            File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
+            finalizeFiles.add(tempFile); // mark for final delete
+            fos = new FileOutputStream(tempFile);
+            int i = stream.read();
+            while(i != -1){
+                fos.write(i);
+                i = stream.read();
+            }
+            fos.flush();
+            fos.close();
+            GenericFileDataWithGTBinding data = parseXML(tempFile);
+            
+            return data;
+        }
+        catch(IOException e) {
+            if (fos != null) try { fos.close(); } catch (Exception e1) { }
+            throw new IllegalArgumentException("Error while creating tempFile", e);
+        }
+    }
 
-	private GenericFileDataWithGTBinding parseXML(File file) {
-		
-		SimpleFeatureCollection fc = new GML2BasicParser().parseSimpleFeatureCollection(file);
-		
-		GenericFileDataWithGTBinding data = null;
-		try {
-			data = new GenericFileDataWithGTBinding(new GenericFileDataWithGT(fc));
-		} catch (IOException e) {
-			LOGGER.error("Exception while trying to wrap GenericFileData around GML2 FeatureCollection.", e);
-		}
-				
-		return data;
-	}
+    private GenericFileDataWithGTBinding parseXML(File file) {
+        
+        SimpleFeatureCollection fc = new GML2BasicParser().parseSimpleFeatureCollection(file);
+        
+        GenericFileDataWithGTBinding data = null;
+        try {
+            data = new GenericFileDataWithGTBinding(new GenericFileDataWithGT(fc));
+        } catch (IOException e) {
+            LOGGER.error("Exception while trying to wrap GenericFileData around GML2 FeatureCollection.", e);
+        }
+                
+        return data;
+    }
 
 }

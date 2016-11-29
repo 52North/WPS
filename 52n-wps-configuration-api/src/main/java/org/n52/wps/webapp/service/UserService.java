@@ -36,50 +36,50 @@ import org.n52.wps.webapp.entities.User;
  */
 public interface UserService {
 
-	/**
-	 * Get user by user id
-	 *
-	 * @param userId
-	 *            the id of the user
-	 * @return The user specified by the id
-	 */
-	User getUser(int userId);
+    /**
+     * Get user by user id
+     *
+     * @param userId
+     *            the id of the user
+     * @return The user specified by the id
+     */
+    User getUser(int userId);
 
-	/**
-	 * Get user by username
-	 *
-	 * @param username
-	 *            the username of the user
-	 * @return The user specified by the username
-	 */
-	User getUser(String username);
+    /**
+     * Get user by username
+     *
+     * @param username
+     *            the username of the user
+     * @return The user specified by the username
+     */
+    User getUser(String username);
 
-	/**
-	 * Get all users
-	 *
-	 * @return The list of all users
-	 */
-	List<User> getAllUsers();
+    /**
+     * Get all users
+     *
+     * @return The list of all users
+     */
+    List<User> getAllUsers();
 
-	/**
-	 * Insert new user
-	 *
-	 * @param user the user to be inserted
-	 */
-	void insertUser(User user);
+    /**
+     * Insert new user
+     *
+     * @param user the user to be inserted
+     */
+    void insertUser(User user);
 
-	/**
-	 * Update existing user
-	 *
-	 * @param user the user to be updated
-	 */
-	void updateUser(User user);
+    /**
+     * Update existing user
+     *
+     * @param user the user to be updated
+     */
+    void updateUser(User user);
 
-	/**
-	 * Delete user
-	 *
-	 * @param userId
-	 *            the id of the user to be deleted
-	 */
-	void deleteUser(int userId);
+    /**
+     * Delete user
+     *
+     * @param userId
+     *            the id of the user to be deleted
+     */
+    void deleteUser(int userId);
 }

@@ -45,32 +45,32 @@ import org.springframework.test.web.servlet.ResultActions;
 
 public class ServerControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	@Autowired
-	private Server server;
+    @Autowired
+    private Server server;
 
-	@Test
-	public void display() throws Exception {
-		RequestBuilder builder = get("/server").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.getMockedWebService().perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("server"))
-				.andExpect(model().attributeExists("configurationModule"));
-	}
+    @Test
+    public void display() throws Exception {
+        RequestBuilder builder = get("/server").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("server"))
+                .andExpect(model().attributeExists("configurationModule"));
+    }
 
-	@Test
-	public void processPost_success() throws Exception {
-		RequestBuilder request = post("/server").param("key", "hostname")
-				.param("value", "testhost").param("module", server.getClass().getName());
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isOk());
-		assertEquals("testhost", server.getHostname());
-		assertEquals("testhost", server.getConfigurationEntries().get(1).getValue());
-	}
+    @Test
+    public void processPost_success() throws Exception {
+        RequestBuilder request = post("/server").param("key", "hostname")
+                .param("value", "testhost").param("module", server.getClass().getName());
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        assertEquals("testhost", server.getHostname());
+        assertEquals("testhost", server.getConfigurationEntries().get(1).getValue());
+    }
 
-	@Test
-	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/server").param("key", "hostname")
-				.param("value", "").param("module", server.getClass().getName());
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isBadRequest());
-	}
+    @Test
+    public void processPost_failure() throws Exception {
+        RequestBuilder request = post("/server").param("key", "hostname")
+                .param("value", "").param("module", server.getClass().getName());
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isBadRequest());
+    }
 }

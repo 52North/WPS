@@ -37,22 +37,22 @@ import org.springframework.validation.FieldError;
  * object by controller classes.
  */
 public class ValidationResponse {
-	private String status;
-	private List<FieldError> errorMessageList;
+    private String status;
+    private List<FieldError> errorMessageList;
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public List<FieldError> getErrorMessageList() {
-		return this.errorMessageList;
-	}
+    public List<FieldError> getErrorMessageList() {
+        return this.errorMessageList;
+    }
 
-	public void setErrorMessageList(List<FieldError> errorMessageList) {
-		this.errorMessageList = errorMessageList;
-	}
+    public void setErrorMessageList(List<FieldError> errorMessageList) {
+        this.errorMessageList = errorMessageList;
+    }
 }

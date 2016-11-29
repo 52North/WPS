@@ -66,322 +66,322 @@ import net.opengis.wps.x20.StatusInfoDocument.StatusInfo;
  */
 public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(ExecuteRequestV200.class);
-	private ExecuteDocument execDom;
-	private Map<String, IData> returnResults;
-	private ExecuteResponseBuilderV200 execRespType;
-	private boolean rawData;
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(ExecuteRequestV200.class);
+    private ExecuteDocument execDom;
+    private Map<String, IData> returnResults;
+    private ExecuteResponseBuilderV200 execRespType;
+    private boolean rawData;
 
-	/**
-	 * Creates an ExecuteRequest based on a Document (HTTP_POST)
-	 *
-	 * @param doc
-	 *            The clients submission
-	 * @throws ExceptionReport
-	 */
-	public ExecuteRequestV200(Document doc) throws ExceptionReport {
-		super(doc);
-		try {
-			XmlOptions option = new XmlOptions();
-			option.setLoadTrimTextBuffer();
-			this.execDom = ExecuteDocument.Factory.parse(doc, option);
-			if (this.execDom == null) {
-				LOGGER.error("ExecuteDocument is null");
-				throw new ExceptionReport("Error while parsing post data",
-						ExceptionReport.MISSING_PARAMETER_VALUE);
-			}
-		} catch (XmlException e) {
-			throw new ExceptionReport("Error while parsing post data",
-					ExceptionReport.MISSING_PARAMETER_VALUE, e);
-		}
+    /**
+     * Creates an ExecuteRequest based on a Document (HTTP_POST)
+     *
+     * @param doc
+     *            The clients submission
+     * @throws ExceptionReport
+     */
+    public ExecuteRequestV200(Document doc) throws ExceptionReport {
+        super(doc);
+        try {
+            XmlOptions option = new XmlOptions();
+            option.setLoadTrimTextBuffer();
+            this.execDom = ExecuteDocument.Factory.parse(doc, option);
+            if (this.execDom == null) {
+                LOGGER.error("ExecuteDocument is null");
+                throw new ExceptionReport("Error while parsing post data",
+                        ExceptionReport.MISSING_PARAMETER_VALUE);
+            }
+        } catch (XmlException e) {
+            throw new ExceptionReport("Error while parsing post data",
+                    ExceptionReport.MISSING_PARAMETER_VALUE, e);
+        }
 
-		// validate the client input
-		validate();
+        // validate the client input
+        validate();
 
-		// create an initial response
-		execRespType = new ExecuteResponseBuilderV200(this);
+        // create an initial response
+        execRespType = new ExecuteResponseBuilderV200(this);
 
-		storeRequest(execDom);
-	}
+        storeRequest(execDom);
+    }
 
-	/**
-	 * Validates the client request
-	 *
-	 * @return True if the input is valid, False otherwise
-	 */
-	public boolean validate() throws ExceptionReport {
-		// Identifier must be specified.
-		if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute()
-				.getVersion())) {
-			throw new ExceptionReport("Specified version is not supported.",
-					ExceptionReport.INVALID_PARAMETER_VALUE, "version="
-							+ getExecute().getVersion());
-		}
+    /**
+     * Validates the client request
+     *
+     * @return True if the input is valid, False otherwise
+     */
+    public boolean validate() throws ExceptionReport {
+        // Identifier must be specified.
+        if (!WPSConfig.SUPPORTED_VERSIONS.contains(execDom.getExecute()
+                .getVersion())) {
+            throw new ExceptionReport("Specified version is not supported.",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "version="
+                            + getExecute().getVersion());
+        }
 
-		// Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
-		String identifier = getAlgorithmIdentifier();
+        // Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+        String identifier = getAlgorithmIdentifier();
 
-		if (identifier == null) {
-			throw new ExceptionReport("No process identifier supplied.",
-					ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");
-		}
+        if (identifier == null) {
+            throw new ExceptionReport("No process identifier supplied.",
+                    ExceptionReport.MISSING_PARAMETER_VALUE, "identifier");
+        }
 
-		// check if the algorithm is in our repository
-		if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(identifier)) {
-			throw new ExceptionReport(
-					"Specified process identifier does not exist",
-					ExceptionReport.INVALID_PARAMETER_VALUE, "identifier="
-							+ identifier);
-		}
+        // check if the algorithm is in our repository
+        if (!RepositoryManagerSingletonWrapper.getInstance().containsAlgorithm(identifier)) {
+            throw new ExceptionReport(
+                    "Specified process identifier does not exist",
+                    ExceptionReport.INVALID_PARAMETER_VALUE, "identifier="
+                            + identifier);
+        }
 
-		// validate if the process can be executed
-		ProcessOffering desc = (ProcessOffering) RepositoryManagerSingletonWrapper
-				.getInstance().getProcessDescription(getAlgorithmIdentifier())
-				.getProcessDescriptionType(WPSConfig.VERSION_200);
-		// We need a description of the inputs for the algorithm
-		if (desc == null) {
-			LOGGER.warn("desc == null");
-			return false;
-		}
+        // validate if the process can be executed
+        ProcessOffering desc = (ProcessOffering) RepositoryManagerSingletonWrapper
+                .getInstance().getProcessDescription(getAlgorithmIdentifier())
+                .getProcessDescriptionType(WPSConfig.VERSION_200);
+        // We need a description of the inputs for the algorithm
+        if (desc == null) {
+            LOGGER.warn("desc == null");
+            return false;
+        }
 
-	    //TODO validate in-/outputs
+        //TODO validate in-/outputs
 
-		//TODO check for null
-		rawData = execDom.getExecute().getResponse().equals(ExecuteRequestType.Response.RAW);
+        //TODO check for null
+        rawData = execDom.getExecute().getResponse().equals(ExecuteRequestType.Response.RAW);
 
-		return true;
-	}
+        return true;
+    }
 
-	/**
-	 * Gets the Execute that is associated with this Request
-	 *
-	 * @return The Execute
-	 */
-	public ExecuteRequestType getExecute() {
-		return execDom.getExecute();
-	}
+    /**
+     * Gets the Execute that is associated with this Request
+     *
+     * @return The Execute
+     */
+    public ExecuteRequestType getExecute() {
+        return execDom.getExecute();
+    }
 
-	/**
-	 * Actually serves the Request.
-	 *
-	 * @throws ExceptionReport
-	 */
-	public Response call() throws ExceptionReport {
-		IAlgorithm algorithm = null;
-		Map<String, List<IData>> inputMap = null;
-		try {
-			//TODO add outputs to execution context
-			ExecutionContext context = new ExecutionContext();
+    /**
+     * Actually serves the Request.
+     *
+     * @throws ExceptionReport
+     */
+    public Response call() throws ExceptionReport {
+        IAlgorithm algorithm = null;
+        Map<String, List<IData>> inputMap = null;
+        try {
+            //TODO add outputs to execution context
+            ExecutionContext context = new ExecutionContext();
 
-			// register so that any function that calls
-			// ExecuteContextFactory.getContext() gets the instance registered
-			// with this thread
-			ExecutionContextFactory.registerContext(context);
+            // register so that any function that calls
+            // ExecuteContextFactory.getContext() gets the instance registered
+            // with this thread
+            ExecutionContextFactory.registerContext(context);
 
-			LOGGER.debug("started with execution");
+            LOGGER.debug("started with execution");
 
-			updateStatusStarted();
+            updateStatusStarted();
 
-			// parse the input
-			DataInputType[] inputs = new DataInputType[0];
-			if (getExecute().getInputArray() != null) {
-				inputs = getExecute().getInputArray();
-			}
-			InputHandler parser = new InputHandler.Builder(new Input(inputs),
-					getAlgorithmIdentifier()).build();
+            // parse the input
+            DataInputType[] inputs = new DataInputType[0];
+            if (getExecute().getInputArray() != null) {
+                inputs = getExecute().getInputArray();
+            }
+            InputHandler parser = new InputHandler.Builder(new Input(inputs),
+                    getAlgorithmIdentifier()).build();
 
-			// we got so far:
-			// get the algorithm, and run it with the clients input
+            // we got so far:
+            // get the algorithm, and run it with the clients input
 
-			algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(
-					getAlgorithmIdentifier());
+            algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(
+                    getAlgorithmIdentifier());
 
-			if (algorithm instanceof ISubject) {
-				ISubject subject = (ISubject) algorithm;
-				subject.addObserver(this);
-			}
+            if (algorithm instanceof ISubject) {
+                ISubject subject = (ISubject) algorithm;
+                subject.addObserver(this);
+            }
 
-			inputMap = parser.getParsedInputData();
-			returnResults = algorithm.run(inputMap);
+            inputMap = parser.getParsedInputData();
+            returnResults = algorithm.run(inputMap);
 
-			List<String> errorList = algorithm.getErrors();
-			if (errorList != null && !errorList.isEmpty()) {
-				String errorMessage = errorList.get(0);
-				LOGGER.error("Error reported while handling ExecuteRequest for "
-						+ getAlgorithmIdentifier() + ": " + errorMessage);
-				updateStatusError(errorMessage);
-			} else {
-				updateStatusSuccess();
-			}
-		} catch (Throwable e) {
-			String errorMessage = null;
-			if (algorithm != null && algorithm.getErrors() != null
-					&& !algorithm.getErrors().isEmpty()) {
-				errorMessage = algorithm.getErrors().get(0);
-			}
-			if (errorMessage == null) {
-				errorMessage = e.toString();
-			}
-			if (errorMessage == null) {
-				errorMessage = "UNKNOWN ERROR";
-			}
-			LOGGER.error("Exception/Error while executing ExecuteRequest for "
-					+ getAlgorithmIdentifier() + ": " + errorMessage);
-			updateStatusError(errorMessage);
-			if (e instanceof Error) {
-				// This is required when catching Error
-				throw (Error) e;
-			}
-			if (e instanceof ExceptionReport) {
-				throw (ExceptionReport) e;
-			} else {
-				throw new ExceptionReport(
-						"Error while executing the embedded process for: "
-								+ getAlgorithmIdentifier(),
-						ExceptionReport.NO_APPLICABLE_CODE, e);
-			}
-		} finally {
-			// you ***MUST*** call this or else you will have a PermGen
-			// ClassLoader memory leak due to ThreadLocal use
-			ExecutionContextFactory.unregisterContext();
-			if (algorithm instanceof ISubject) {
-				((ISubject) algorithm).removeObserver(this);
-			}
-			if (inputMap != null) {
-				for (List<IData> l : inputMap.values()) {
-					for (IData d : l) {
-						if (d instanceof IComplexData) {
-							((IComplexData) d).dispose();
-						}
-					}
-				}
-			}
-			if (returnResults != null) {
-				for (IData d : returnResults.values()) {
-					if (d instanceof IComplexData) {
-						((IComplexData) d).dispose();
-					}
-				}
-			}
-		}
+            List<String> errorList = algorithm.getErrors();
+            if (errorList != null && !errorList.isEmpty()) {
+                String errorMessage = errorList.get(0);
+                LOGGER.error("Error reported while handling ExecuteRequest for "
+                        + getAlgorithmIdentifier() + ": " + errorMessage);
+                updateStatusError(errorMessage);
+            } else {
+                updateStatusSuccess();
+            }
+        } catch (Throwable e) {
+            String errorMessage = null;
+            if (algorithm != null && algorithm.getErrors() != null
+                    && !algorithm.getErrors().isEmpty()) {
+                errorMessage = algorithm.getErrors().get(0);
+            }
+            if (errorMessage == null) {
+                errorMessage = e.toString();
+            }
+            if (errorMessage == null) {
+                errorMessage = "UNKNOWN ERROR";
+            }
+            LOGGER.error("Exception/Error while executing ExecuteRequest for "
+                    + getAlgorithmIdentifier() + ": " + errorMessage);
+            updateStatusError(errorMessage);
+            if (e instanceof Error) {
+                // This is required when catching Error
+                throw (Error) e;
+            }
+            if (e instanceof ExceptionReport) {
+                throw (ExceptionReport) e;
+            } else {
+                throw new ExceptionReport(
+                        "Error while executing the embedded process for: "
+                                + getAlgorithmIdentifier(),
+                        ExceptionReport.NO_APPLICABLE_CODE, e);
+            }
+        } finally {
+            // you ***MUST*** call this or else you will have a PermGen
+            // ClassLoader memory leak due to ThreadLocal use
+            ExecutionContextFactory.unregisterContext();
+            if (algorithm instanceof ISubject) {
+                ((ISubject) algorithm).removeObserver(this);
+            }
+            if (inputMap != null) {
+                for (List<IData> l : inputMap.values()) {
+                    for (IData d : l) {
+                        if (d instanceof IComplexData) {
+                            ((IComplexData) d).dispose();
+                        }
+                    }
+                }
+            }
+            if (returnResults != null) {
+                for (IData d : returnResults.values()) {
+                    if (d instanceof IComplexData) {
+                        ((IComplexData) d).dispose();
+                    }
+                }
+            }
+        }
 
-		ExecuteResponse response = new ExecuteResponse(this);
-		return response;
-	}
+        ExecuteResponse response = new ExecuteResponse(this);
+        return response;
+    }
 
-	/**
-	 * Gets the identifier of the algorithm the client requested
-	 *
-	 * @return An identifier
-	 */
-	public String getAlgorithmIdentifier() {
-		// Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
-		if (getExecute().getIdentifier() != null) {
-			return getExecute().getIdentifier().getStringValue();
-		}
-		return null;
-	}
+    /**
+     * Gets the identifier of the algorithm the client requested
+     *
+     * @return An identifier
+     */
+    public String getAlgorithmIdentifier() {
+        // Fix for bug https://bugzilla.52north.org/show_bug.cgi?id=906
+        if (getExecute().getIdentifier() != null) {
+            return getExecute().getIdentifier().getStringValue();
+        }
+        return null;
+    }
 
-	public Map<String, IData> getAttachedResult() {
-		return returnResults;
-	}
+    public Map<String, IData> getAttachedResult() {
+        return returnResults;
+    }
 
-	public ExecuteResponseBuilderV200 getExecuteResponseBuilder() {
-		return this.execRespType;
-	}
+    public ExecuteResponseBuilderV200 getExecuteResponseBuilder() {
+        return this.execRespType;
+    }
 
-	public boolean isRawData() {
-		return rawData;
-	}
+    public boolean isRawData() {
+        return rawData;
+    }
 
-	public void update(ISubject subject) {
-		Object state = subject.getState();
-		LOGGER.info("Update received from Subject, state changed to : " + state);
+    public void update(ISubject subject) {
+        Object state = subject.getState();
+        LOGGER.info("Update received from Subject, state changed to : " + state);
 
-		StatusInfo status = StatusInfo.Factory.newInstance();
+        StatusInfo status = StatusInfo.Factory.newInstance();
 
-		int percentage = 0;
-		if (state instanceof Integer) {
-			percentage = (Integer) state;
-			status.setPercentCompleted(percentage);
-		}
-		status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
-		updateStatus(status);
-	}
+        int percentage = 0;
+        if (state instanceof Integer) {
+            percentage = (Integer) state;
+            status.setPercentCompleted(percentage);
+        }
+        status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
+        updateStatus(status);
+    }
 
-	public void updateStatusAccepted() {
-		StatusInfo status = StatusInfo.Factory.newInstance();
-		status.setStatus(ExecuteResponseBuilderV200.Status.Accepted.toString());
-		updateStatus(status);
-	}
+    public void updateStatusAccepted() {
+        StatusInfo status = StatusInfo.Factory.newInstance();
+        status.setStatus(ExecuteResponseBuilderV200.Status.Accepted.toString());
+        updateStatus(status);
+    }
 
-	public void updateStatusSuccess() {
-		StatusInfo status = StatusInfo.Factory.newInstance();
-		status.setStatus(ExecuteResponseBuilderV200.Status.Succeeded.toString());
-		updateStatus(status);
-	}
+    public void updateStatusSuccess() {
+        StatusInfo status = StatusInfo.Factory.newInstance();
+        status.setStatus(ExecuteResponseBuilderV200.Status.Succeeded.toString());
+        updateStatus(status);
+    }
 
-	public void updateStatusStarted() {
-		StatusInfo status = StatusInfo.Factory.newInstance();
-		status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
-		status.setPercentCompleted(0);
-		updateStatus(status);
-	}
+    public void updateStatusStarted() {
+        StatusInfo status = StatusInfo.Factory.newInstance();
+        status.setStatus(ExecuteResponseBuilderV200.Status.Running.toString());
+        status.setPercentCompleted(0);
+        updateStatus(status);
+    }
 
-	private void updateStatus(StatusInfo status) {
-		status.setJobID(getUniqueId().toString());
-		getExecuteResponseBuilder().setStatus(status);
-		try {
-			getExecuteResponseBuilder().update();
-//			if (isStoreResponse()) {
-				ExecuteResponse executeResponse = new ExecuteResponse(this);
-				InputStream is = null;
-				try {
-					is = executeResponse.getAsStream();
-					DatabaseFactory.getDatabase().storeResponse(
-							getUniqueId().toString(), is);
-				} finally {
-					IOUtils.closeQuietly(is);
-				}
-//			}
-		} catch (ExceptionReport e) {
-			LOGGER.error("Update of process status failed.", e);
-			throw new RuntimeException(e);
-		}
-	}
+    private void updateStatus(StatusInfo status) {
+        status.setJobID(getUniqueId().toString());
+        getExecuteResponseBuilder().setStatus(status);
+        try {
+            getExecuteResponseBuilder().update();
+//            if (isStoreResponse()) {
+                ExecuteResponse executeResponse = new ExecuteResponse(this);
+                InputStream is = null;
+                try {
+                    is = executeResponse.getAsStream();
+                    DatabaseFactory.getDatabase().storeResponse(
+                            getUniqueId().toString(), is);
+                } finally {
+                    IOUtils.closeQuietly(is);
+                }
+//            }
+        } catch (ExceptionReport e) {
+            LOGGER.error("Update of process status failed.", e);
+            throw new RuntimeException(e);
+        }
+    }
 
-	private void storeRequest(ExecuteDocument executeDocument) {
-		InputStream is = null;
-		try {
-			is = executeDocument.newInputStream();
-			DatabaseFactory.getDatabase().insertRequest(
-					getUniqueId().toString(), is, true);
-		} catch (Exception e) {
-			LOGGER.error("Exception storing ExecuteRequest", e);
-		} finally {
-			IOUtils.closeQuietly(is);
-		}
-	}
-	@Override
-	public boolean isStoreResponse() {
-		return getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC);
-	}
+    private void storeRequest(ExecuteDocument executeDocument) {
+        InputStream is = null;
+        try {
+            is = executeDocument.newInputStream();
+            DatabaseFactory.getDatabase().insertRequest(
+                    getUniqueId().toString(), is, true);
+        } catch (Exception e) {
+            LOGGER.error("Exception storing ExecuteRequest", e);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+    @Override
+    public boolean isStoreResponse() {
+        return getExecute().getMode().equals(ExecuteRequestType.Mode.ASYNC);
+    }
 
-	@Override
-	public void updateStatusError(String errorMessage) {
-		StatusInfo status = StatusInfo.Factory.newInstance();
-		status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
-		updateStatus(status);
-		
-		ExceptionReportDocument exceptionReportDocument = ExceptionReportDocument.Factory.newInstance();
-		
-		ExceptionReportDocument.ExceptionReport excRep = exceptionReportDocument.addNewExceptionReport();
-		excRep.setVersion("2.0.0");
-		ExceptionType excType = excRep.addNewException();
-		excType.addNewExceptionText().setStringValue(errorMessage);
-		excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
-		//TODO update Result
-		DatabaseFactory.getDatabase().storeResponse(id.toString(), exceptionReportDocument.newInputStream());
-	}
+    @Override
+    public void updateStatusError(String errorMessage) {
+        StatusInfo status = StatusInfo.Factory.newInstance();
+        status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
+        updateStatus(status);
+        
+        ExceptionReportDocument exceptionReportDocument = ExceptionReportDocument.Factory.newInstance();
+        
+        ExceptionReportDocument.ExceptionReport excRep = exceptionReportDocument.addNewExceptionReport();
+        excRep.setVersion("2.0.0");
+        ExceptionType excType = excRep.addNewException();
+        excType.addNewExceptionText().setStringValue(errorMessage);
+        excType.setExceptionCode(ExceptionReport.NO_APPLICABLE_CODE);
+        //TODO update Result
+        DatabaseFactory.getDatabase().storeResponse(id.toString(), exceptionReportDocument.newInputStream());
+    }
 }

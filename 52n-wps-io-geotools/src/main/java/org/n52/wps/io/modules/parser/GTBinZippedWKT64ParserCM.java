@@ -59,55 +59,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class GTBinZippedWKT64ParserCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
-	
-	private List<FormatEntry> formatEntries;
-	
-	public GTBinZippedWKT64ParserCM(){
-		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "GTBinZippedWKT64Parser";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries;
+    
+    private List<FormatEntry> formatEntries;
+    
+    public GTBinZippedWKT64ParserCM(){
+        formatEntries = new ArrayList<>();
+        configurationEntries = new ArrayList<>();
+    }
+    
+    @Override
+    public String getModuleName() {
+        return "GTBinZippedWKT64Parser";
+    }
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;        
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.PARSER;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return null;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return formatEntries;
+    }
 
-	@Override
-	public String getClassName() {
-		return GTBinZippedWKT64Parser.class.getName();
-	}
+    @Override
+    public String getClassName() {
+        return GTBinZippedWKT64Parser.class.getName();
+    }
 
 }

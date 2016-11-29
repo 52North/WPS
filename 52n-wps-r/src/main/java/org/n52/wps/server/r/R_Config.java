@@ -98,7 +98,7 @@ public class R_Config implements ServletContextAware {
     }
 
     public void setConfigModule(RConfigurationModule configModule) {
-    	this.configModule = configModule;
+        this.configModule = configModule;
     }
 
     public RConfigurationModule getConfigModule() {
@@ -199,7 +199,7 @@ public class R_Config implements ServletContextAware {
     }
 
     public boolean getEnableBatchStart() {
-    	return configModule.isEnableBatchStart();
+        return configModule.isEnableBatchStart();
     }
 
     public URL getProcessDescriptionURL(String processWKN) {

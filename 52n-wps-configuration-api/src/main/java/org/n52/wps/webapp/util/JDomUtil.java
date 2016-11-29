@@ -47,48 +47,48 @@ import org.springframework.stereotype.Component;
 @Component
 public class JDomUtil {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(JDomUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(JDomUtil.class);
 
-	/**
-	 * Parse a file to a {@code Document}
-	 *
-	 * @param filePath
-	 *            file path of the file to be parsed
-	 * @return Parsed {@code Document} object
-	 * @throws RuntimeException
-	 *             if the path or the format of the file are invalid
-	 */
-	public Document parse(String filePath) {
-		SAXBuilder sb = new SAXBuilder();
-		Document document = null;
+    /**
+     * Parse a file to a {@code Document}
+     *
+     * @param filePath
+     *            file path of the file to be parsed
+     * @return Parsed {@code Document} object
+     * @throws RuntimeException
+     *             if the path or the format of the file are invalid
+     */
+    public Document parse(String filePath) {
+        SAXBuilder sb = new SAXBuilder();
+        Document document = null;
 
-		try (FileInputStream inputStream = new FileInputStream(new File(filePath))) {
-			document = sb.build(inputStream);
-			LOGGER.info("{} is parsed and a Document is returned.", filePath);
-		} catch (JDOMException | IOException e) {
-			throw new RuntimeException("Unable to parse '" + filePath +"': ", e);
-		}
-		return document;
-	}
+        try (FileInputStream inputStream = new FileInputStream(new File(filePath))) {
+            document = sb.build(inputStream);
+            LOGGER.info("{} is parsed and a Document is returned.", filePath);
+        } catch (JDOMException | IOException e) {
+            throw new RuntimeException("Unable to parse '" + filePath +"': ", e);
+        }
+        return document;
+    }
 
-	/**
-	 * Write a {@code Document} to a file
-	 *
-	 * @param document
-	 *            the document to be written
-	 * @param filePath
-	 *            the path to write to
-	 * @throws RuntimeException
-	 *             if the path is invalid or the document is null
-	 */
-	public void write(Document document, String filePath) {
-		XMLOutputter xmlOutputter = new XMLOutputter();
-		xmlOutputter.setFormat(Format.getPrettyFormat());
-		try (FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
-			xmlOutputter.output(document, outputStream);
-			LOGGER.info("{} is written successfully.", filePath);
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to write Document to '" + filePath +"': ");
-		}
-	}
+    /**
+     * Write a {@code Document} to a file
+     *
+     * @param document
+     *            the document to be written
+     * @param filePath
+     *            the path to write to
+     * @throws RuntimeException
+     *             if the path is invalid or the document is null
+     */
+    public void write(Document document, String filePath) {
+        XMLOutputter xmlOutputter = new XMLOutputter();
+        xmlOutputter.setFormat(Format.getPrettyFormat());
+        try (FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
+            xmlOutputter.output(document, outputStream);
+            LOGGER.info("{} is written successfully.", filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write Document to '" + filePath +"': ");
+        }
+    }
 }

@@ -84,181 +84,181 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  */
 public class OutputDataItemTest extends AbstractITClass{
 
-	private ProcessDescriptionType descriptionsType;
-	private ProcessDescription description;
-	private String processID = "org.n52.wps.server.response.OutputDataItemTest";
-	private ExecuteResponseDocument mockupResponseDocument;
-	private LanguageStringType outputTitle = LanguageStringType.Factory
-			.newInstance();
-	private LanguageStringType processTitle = LanguageStringType.Factory
-			.newInstance();
-	private Random random = new Random();
-	private List<ILiteralData> literalDataList;
+    private ProcessDescriptionType descriptionsType;
+    private ProcessDescription description;
+    private String processID = "org.n52.wps.server.response.OutputDataItemTest";
+    private ExecuteResponseDocument mockupResponseDocument;
+    private LanguageStringType outputTitle = LanguageStringType.Factory
+            .newInstance();
+    private LanguageStringType processTitle = LanguageStringType.Factory
+            .newInstance();
+    private Random random = new Random();
+    private List<ILiteralData> literalDataList;
 
-	@Before
-	public void setUp() {
-		literalDataList = new ArrayList<ILiteralData>();
+    @Before
+    public void setUp() {
+        literalDataList = new ArrayList<ILiteralData>();
 
-		String url = "";
-		try {
-			url = "http://52north.org";
-			literalDataList.add(new LiteralAnyURIBinding(new URL(url).toURI()));
-		} catch (Exception e1) {
-			System.out.println(url + " caused " + e1);
-		}
+        String url = "";
+        try {
+            url = "http://52north.org";
+            literalDataList.add(new LiteralAnyURIBinding(new URL(url).toURI()));
+        } catch (Exception e1) {
+            System.out.println(url + " caused " + e1);
+        }
 
-		String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString();
 
-		literalDataList.add(new LiteralBase64BinaryBinding(uuid.getBytes()));
-		literalDataList.add(new LiteralBooleanBinding(true));
-		literalDataList.add(new LiteralByteBinding((byte) 127));
-		literalDataList.add(new LiteralDateTimeBinding(Calendar.getInstance()
-				.getTime()));
-		literalDataList.add(new LiteralDoubleBinding(random.nextDouble()));
-		literalDataList.add(new LiteralFloatBinding(random.nextFloat()));
-		literalDataList.add(new LiteralIntBinding(random.nextInt()));
-		literalDataList.add(new LiteralLongBinding(random.nextLong()));
-		literalDataList.add(new LiteralShortBinding((short) random.nextInt(Short.MAX_VALUE + 1)));
-		literalDataList.add(new LiteralStringBinding(uuid));
+        literalDataList.add(new LiteralBase64BinaryBinding(uuid.getBytes()));
+        literalDataList.add(new LiteralBooleanBinding(true));
+        literalDataList.add(new LiteralByteBinding((byte) 127));
+        literalDataList.add(new LiteralDateTimeBinding(Calendar.getInstance()
+                .getTime()));
+        literalDataList.add(new LiteralDoubleBinding(random.nextDouble()));
+        literalDataList.add(new LiteralFloatBinding(random.nextFloat()));
+        literalDataList.add(new LiteralIntBinding(random.nextInt()));
+        literalDataList.add(new LiteralLongBinding(random.nextLong()));
+        literalDataList.add(new LiteralShortBinding((short) random.nextInt(Short.MAX_VALUE + 1)));
+        literalDataList.add(new LiteralStringBinding(uuid));
 
-		outputTitle.setStringValue("output title");
-		processTitle.setStringValue("process title");
+        outputTitle.setStringValue("output title");
+        processTitle.setStringValue("process title");
 
-		ProcessDescriptionsDocument descriptionsDocument = ProcessDescriptionsDocument.Factory
-				.newInstance();
-		descriptionsType = descriptionsDocument.addNewProcessDescriptions()
-				.addNewProcessDescription();
+        ProcessDescriptionsDocument descriptionsDocument = ProcessDescriptionsDocument.Factory
+                .newInstance();
+        descriptionsType = descriptionsDocument.addNewProcessDescriptions()
+                .addNewProcessDescription();
 
-		descriptionsType.addNewIdentifier().setStringValue(processID);
+        descriptionsType.addNewIdentifier().setStringValue(processID);
 
-		mockupResponseDocument = createExecuteResponseDocument();
-	}
+        mockupResponseDocument = createExecuteResponseDocument();
+    }
 
-	private ExecuteResponseDocument createExecuteResponseDocument() {
+    private ExecuteResponseDocument createExecuteResponseDocument() {
 
-		ExecuteResponseDocument doc = ExecuteResponseDocument.Factory
-				.newInstance();
-		ExecuteResponse responseElem = doc.addNewExecuteResponse();
-		XmlCursor c = doc.newCursor();
-		c.toFirstChild();
-		c.toLastAttribute();
-		c.setAttributeText(
-				new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
-						"schemaLocation"),
-				"http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+        ExecuteResponseDocument doc = ExecuteResponseDocument.Factory
+                .newInstance();
+        ExecuteResponse responseElem = doc.addNewExecuteResponse();
+        XmlCursor c = doc.newCursor();
+        c.toFirstChild();
+        c.toLastAttribute();
+        c.setAttributeText(
+                new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                        "schemaLocation"),
+                "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
         responseElem.setServiceInstance(WPSConfig.getInstance().getServiceEndpoint()
-				+ "?REQUEST=GetCapabilities&SERVICE=WPS");
-		responseElem.setLang(WebProcessingService.DEFAULT_LANGUAGE);
-		responseElem.setService("WPS");
-		responseElem.setVersion("1.0.0");
-		ProcessBriefType process = responseElem.addNewProcess();
-		process.addNewIdentifier().setStringValue(processID);
-		process.setProcessVersion("1.0.0");
-		process.setTitle(processTitle);
-		responseElem.addNewStatus().setProcessSucceeded("Process successful");
-		responseElem.getStatus().setCreationTime(Calendar.getInstance());
+                + "?REQUEST=GetCapabilities&SERVICE=WPS");
+        responseElem.setLang(WebProcessingService.DEFAULT_LANGUAGE);
+        responseElem.setService("WPS");
+        responseElem.setVersion("1.0.0");
+        ProcessBriefType process = responseElem.addNewProcess();
+        process.addNewIdentifier().setStringValue(processID);
+        process.setProcessVersion("1.0.0");
+        process.setTitle(processTitle);
+        responseElem.addNewStatus().setProcessSucceeded("Process successful");
+        responseElem.getStatus().setCreationTime(Calendar.getInstance());
 
-		responseElem.addNewProcessOutputs();
+        responseElem.addNewProcessOutputs();
 
-		return doc;
+        return doc;
 
-	}
+    }
 
-	@Test
-	public void testUpdateResponseForLiteralData() {
+    @Test
+    public void testUpdateResponseForLiteralData() {
 
-		for (ILiteralData literalData : literalDataList) {
+        for (ILiteralData literalData : literalDataList) {
 
-			try {
-				testLiteralOutput(literalData);
-			} catch (Exception e) {
-				System.out.println("Test failed for " + literalData.getClass()
-						+ " " + e);
-			}
+            try {
+                testLiteralOutput(literalData);
+            } catch (Exception e) {
+                System.out.println("Test failed for " + literalData.getClass()
+                        + " " + e);
+            }
 
-			mockupResponseDocument.getExecuteResponse().getProcessOutputs()
-					.removeOutput(0);
-		}
-	}
+            mockupResponseDocument.getExecuteResponse().getProcessOutputs()
+                    .removeOutput(0);
+        }
+    }
 
-	private void testLiteralOutput(ILiteralData literalDataBinding)
-			throws Exception {
+    private void testLiteralOutput(ILiteralData literalDataBinding)
+            throws Exception {
 
-		String startText = "Testing " + literalDataBinding.getClass()
-				+ " and value ";
+        String startText = "Testing " + literalDataBinding.getClass()
+                + " and value ";
 
-		String endText = "ResponseDocument valid for "
-				+ literalDataBinding.getClass() + " and value ";
+        String endText = "ResponseDocument valid for "
+                + literalDataBinding.getClass() + " and value ";
 
-		if (literalDataBinding.getPayload() instanceof byte[]) {
+        if (literalDataBinding.getPayload() instanceof byte[]) {
 
-			byte[] bytes = (byte[]) literalDataBinding.getPayload();
+            byte[] bytes = (byte[]) literalDataBinding.getPayload();
 
-			String bytesAsIntegerValues = "[";
+            String bytesAsIntegerValues = "[";
 
-			for (int i = 0; i < bytes.length; i++) {
-				if(i < bytes.length -1){
-				bytesAsIntegerValues = bytesAsIntegerValues
-						.concat((int) bytes[i] + ", ");
-				}else{
-					bytesAsIntegerValues = bytesAsIntegerValues
-							.concat((int) bytes[i] + "]");
-				}
-			}
-			startText = startText.concat("" + bytesAsIntegerValues);
-			endText = endText.concat("" + bytesAsIntegerValues);
-		} else {
-			startText = startText.concat("" + literalDataBinding.getPayload());
-			endText = endText.concat("" + literalDataBinding.getPayload());
-		}
+            for (int i = 0; i < bytes.length; i++) {
+                if(i < bytes.length -1){
+                bytesAsIntegerValues = bytesAsIntegerValues
+                        .concat((int) bytes[i] + ", ");
+                }else{
+                    bytesAsIntegerValues = bytesAsIntegerValues
+                            .concat((int) bytes[i] + "]");
+                }
+            }
+            startText = startText.concat("" + bytesAsIntegerValues);
+            endText = endText.concat("" + bytesAsIntegerValues);
+        } else {
+            startText = startText.concat("" + literalDataBinding.getPayload());
+            endText = endText.concat("" + literalDataBinding.getPayload());
+        }
 
-		System.out.println(startText);
+        System.out.println(startText);
 
-		ProcessOutputs processOutputs = descriptionsType.addNewProcessOutputs();
-		OutputDescriptionType outputDescType = processOutputs.addNewOutput();
-		outputDescType.addNewIdentifier().setStringValue("output");
-		LiteralOutputType outputType = outputDescType.addNewLiteralOutput();
+        ProcessOutputs processOutputs = descriptionsType.addNewProcessOutputs();
+        OutputDescriptionType outputDescType = processOutputs.addNewOutput();
+        outputDescType.addNewIdentifier().setStringValue("output");
+        LiteralOutputType outputType = outputDescType.addNewLiteralOutput();
 
-		String dataTypeAsString = BasicXMLTypeFactory
-				.getXMLDataTypeforBinding(literalDataBinding.getClass());
+        String dataTypeAsString = BasicXMLTypeFactory
+                .getXMLDataTypeforBinding(literalDataBinding.getClass());
 
-		outputType.addNewDataType().setStringValue(dataTypeAsString);
+        outputType.addNewDataType().setStringValue(dataTypeAsString);
 
-		description = new ProcessDescription();
+        description = new ProcessDescription();
 
-		description.addProcessDescriptionForVersion(descriptionsType, WPSConfig.VERSION_100);
+        description.addProcessDescriptionForVersion(descriptionsType, WPSConfig.VERSION_100);
 
-		OutputDataItem ouDI = new OutputDataItem(literalDataBinding, "output",
-				null, null, null, outputTitle, processID, description);
+        OutputDataItem ouDI = new OutputDataItem(literalDataBinding, "output",
+                null, null, null, outputTitle, processID, description);
 
-		ouDI.updateResponseForLiteralData(mockupResponseDocument,
-				dataTypeAsString);
+        ouDI.updateResponseForLiteralData(mockupResponseDocument,
+                dataTypeAsString);
 
-		assertTrue(validateResponseDocument(mockupResponseDocument));
+        assertTrue(validateResponseDocument(mockupResponseDocument));
 
-		System.out.println(endText);
-		System.out.println();
-	}
+        System.out.println(endText);
+        System.out.println();
+    }
 
-	private boolean validateResponseDocument(ExecuteResponseDocument doc) {
-		XmlOptions xmlOptions = new XmlOptions();
-		List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();
-		xmlOptions.setErrorListener(xmlValidationErrorList);
-		boolean valid = doc.validate(xmlOptions);
-		if (!valid) {
-			System.err
-					.println("Error validating ExecuteResponseDocument for data type"
-							+ doc.getExecuteResponse().getProcessOutputs()
-									.getOutputArray(0).getData()
-									.getLiteralData().getDataType());
-			for (XmlValidationError xmlValidationError : xmlValidationErrorList) {
-				System.err.println("\tMessage: "
-						+ xmlValidationError.getMessage());
-				System.err.println("\tLocation of invalid XML: "
-						+ xmlValidationError.getCursorLocation().xmlText());
-			}
-		}
-		return valid;
-	}
+    private boolean validateResponseDocument(ExecuteResponseDocument doc) {
+        XmlOptions xmlOptions = new XmlOptions();
+        List<XmlValidationError> xmlValidationErrorList = new ArrayList<XmlValidationError>();
+        xmlOptions.setErrorListener(xmlValidationErrorList);
+        boolean valid = doc.validate(xmlOptions);
+        if (!valid) {
+            System.err
+                    .println("Error validating ExecuteResponseDocument for data type"
+                            + doc.getExecuteResponse().getProcessOutputs()
+                                    .getOutputArray(0).getData()
+                                    .getLiteralData().getDataType());
+            for (XmlValidationError xmlValidationError : xmlValidationErrorList) {
+                System.err.println("\tMessage: "
+                        + xmlValidationError.getMessage());
+                System.err.println("\tLocation of invalid XML: "
+                        + xmlValidationError.getCursorLocation().xmlText());
+            }
+        }
+        return valid;
+    }
 
 }

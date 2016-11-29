@@ -42,22 +42,22 @@ import org.springframework.stereotype.Service;
 @Service("logConfigurationsService")
 public class LogConfigurationsServiceImpl implements LogConfigurationsService {
 
-	@Autowired
-	private LogConfigurationsDAO logConfigurationsDAO;
+    @Autowired
+    private LogConfigurationsDAO logConfigurationsDAO;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsServiceImpl.class);
 
-	@Override
-	public LogConfigurations getLogConfigurations() {
-		return logConfigurationsDAO.getLogConfigurations();
-	}
+    @Override
+    public LogConfigurations getLogConfigurations() {
+        return logConfigurationsDAO.getLogConfigurations();
+    }
 
-	@Override
-	public void saveLogConfigurations(LogConfigurations logConfigurations) {
-		if (logConfigurations != null) {
-			logConfigurationsDAO.saveLogConfigurations(logConfigurations);
-			LOGGER.debug("Log configurations has been updated.");
-		}
-	}
+    @Override
+    public void saveLogConfigurations(LogConfigurations logConfigurations) {
+        if (logConfigurations != null) {
+            logConfigurationsDAO.saveLogConfigurations(logConfigurations);
+            LOGGER.debug("Log configurations has been updated.");
+        }
+    }
 
 }

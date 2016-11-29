@@ -72,7 +72,7 @@ public class AllTestsIT {
     public static final String referenceComplexBinaryInputURL = AllTestsIT.getURL().replace(WPSConfig.SERVLET_PATH,
                                                                                      "static/testData/elev_srtm_30m21.tif");
     public static final String referenceComplexXMLInputURL = AllTestsIT.getURL().replace(WPSConfig.SERVLET_PATH,
-                                                                                  "static/testData/test-data.xml");	
+                                                                                  "static/testData/test-data.xml");    
     private final static String TIFF_MAGIC = "II";
 
     public static int getPort() {
@@ -196,61 +196,61 @@ public class AllTestsIT {
         }
         throw new IOException("Test did not complete in allotted time");
     }
-	
-	public static void checkContentDispositionOfRetrieveResultServlet(String response, String filename, String suffix)
-			throws IOException, ParserConfigurationException, SAXException {
+    
+    public static void checkContentDispositionOfRetrieveResultServlet(String response, String filename, String suffix)
+            throws IOException, ParserConfigurationException, SAXException {
 
-		String refResult = AllTestsIT.getAsyncDoc(response);
-		
-    	ExecuteResponseDocument document = null;
-    	
-    	try {    		
-    		document = ExecuteResponseDocument.Factory.parse(refResult);	    		
-		} catch (Exception e) {
-			System.err.println("Could not parse execute response document.");
-		}   	
-    	
-    	assertThat(document, not(nullValue()));    	
-    	
-    	ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
-    	
-    	assertThat(outputs, not(nullValue()));    	
-    	assertThat(outputs.sizeOfOutputArray(), not(0)); 
-    	
-    	OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
-    	
-    	assertThat(outputDataType, not(nullValue()));       	
-    	
-    	OutputReferenceType data = outputDataType.getReference();  
-    	
-    	assertThat(data, not(nullValue()));
-    	
-    	String url = data.getHref();
-    	
-    	if(filename != null){
-    		//concat filename to URL
-    		url = url.concat("&filename=" + filename);
-    	}
-    	
-    	URLConnection urlConnection = new URL(url).openConnection();
-    	
-    	List<String> headerFields = urlConnection.getHeaderFields().get("Content-Disposition");
-    	
-    	boolean oneHeaderFieldContainsFilename = false;
-    	
-		for (String field : headerFields) {
-			if(field.contains("filename")){
-				oneHeaderFieldContainsFilename = true;
-				if(suffix != null && !suffix.equals("")){
-					assertTrue(field.endsWith(suffix + "\""));
-				}
-				if(filename != null && !filename.equals("")){
-					assertTrue(field.contains(filename));
-				}
-			}
-		}
-		assertTrue(oneHeaderFieldContainsFilename);
-	}
+        String refResult = AllTestsIT.getAsyncDoc(response);
+        
+        ExecuteResponseDocument document = null;
+        
+        try {            
+            document = ExecuteResponseDocument.Factory.parse(refResult);                
+        } catch (Exception e) {
+            System.err.println("Could not parse execute response document.");
+        }       
+        
+        assertThat(document, not(nullValue()));        
+        
+        ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
+        
+        assertThat(outputs, not(nullValue()));        
+        assertThat(outputs.sizeOfOutputArray(), not(0)); 
+        
+        OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+        
+        assertThat(outputDataType, not(nullValue()));           
+        
+        OutputReferenceType data = outputDataType.getReference();  
+        
+        assertThat(data, not(nullValue()));
+        
+        String url = data.getHref();
+        
+        if(filename != null){
+            //concat filename to URL
+            url = url.concat("&filename=" + filename);
+        }
+        
+        URLConnection urlConnection = new URL(url).openConnection();
+        
+        List<String> headerFields = urlConnection.getHeaderFields().get("Content-Disposition");
+        
+        boolean oneHeaderFieldContainsFilename = false;
+        
+        for (String field : headerFields) {
+            if(field.contains("filename")){
+                oneHeaderFieldContainsFilename = true;
+                if(suffix != null && !suffix.equals("")){
+                    assertTrue(field.endsWith(suffix + "\""));
+                }
+                if(filename != null && !filename.equals("")){
+                    assertTrue(field.contains(filename));
+                }
+            }
+        }
+        assertTrue(oneHeaderFieldContainsFilename);
+    }
 
     public static void checkReferenceXMLResult(String response, String stringThatShouldBeContained) throws ParserConfigurationException,
             SAXException,
@@ -264,70 +264,70 @@ public class AllTestsIT {
     public static void checkReferenceBinaryResultBase64(String response) throws ParserConfigurationException,
     SAXException,
     IOException {
-    	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString("ProcessSucceeded"));
-    	assertThat(response, response, containsString("Reference"));
-    	
-    	String responseAsString = getRefAsString(response);
-    	
-    	assertTrue(Base64.isBase64(responseAsString));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("ProcessSucceeded"));
+        assertThat(response, response, containsString("Reference"));
+        
+        String responseAsString = getRefAsString(response);
+        
+        assertTrue(Base64.isBase64(responseAsString));
     }
     
     public static void checkReferenceBinaryResultDefault(String response) throws ParserConfigurationException,
     SAXException,
     IOException {
-    	assertThat(response, response, not(containsString("ExceptionReport")));
-    	assertThat(response, response, containsString("ProcessSucceeded"));
-    	assertThat(response, response, containsString("Reference"));
-    	
-    	String responseAsString = getRefAsString(response);
-    	
-    	assertThat(responseAsString, responseAsString, containsString(TIFF_MAGIC));
+        assertThat(response, response, not(containsString("ExceptionReport")));
+        assertThat(response, response, containsString("ProcessSucceeded"));
+        assertThat(response, response, containsString("Reference"));
+        
+        String responseAsString = getRefAsString(response);
+        
+        assertThat(responseAsString, responseAsString, containsString(TIFF_MAGIC));
     }
     
     public static void checkInlineResultBase64(String response){
-    	
-    	ExecuteResponseDocument document = null;
-    	
-    	try {    		
-    		document = ExecuteResponseDocument.Factory.parse(response);	    		
-		} catch (Exception e) {
-			System.err.println("Could not parse execute response document.");
-		}   	
-    	
-    	assertThat(document, not(nullValue()));    	
-    	
-    	ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
-    	
-    	assertThat(outputs, not(nullValue()));    	
-    	assertThat(outputs.sizeOfOutputArray(), not(0)); 
-    	
-    	OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
-    	
-    	assertThat(outputDataType, not(nullValue()));       	
-    	
-    	DataType data = outputDataType.getData();
-    	
-    	assertTrue(data.isSetComplexData());    	
-    	
-    	ComplexDataType complexData = outputDataType.getData().getComplexData();
-    	
-    	assertThat(complexData, not(nullValue())); 
-    	
-    	Node domNode = complexData.getDomNode();
-    	
-    	assertThat(domNode, not(nullValue()));       
-    	
-    	Node firstChild = domNode.getFirstChild();
-    	
-    	assertThat(firstChild, not(nullValue()));       
-    	
-    	String nodeValue = firstChild.getNodeValue();
-    	
-    	assertThat(nodeValue, not(nullValue()));   
-		
-		assertTrue(Base64.isBase64(nodeValue));
-    	
+        
+        ExecuteResponseDocument document = null;
+        
+        try {            
+            document = ExecuteResponseDocument.Factory.parse(response);                
+        } catch (Exception e) {
+            System.err.println("Could not parse execute response document.");
+        }       
+        
+        assertThat(document, not(nullValue()));        
+        
+        ProcessOutputs outputs = document.getExecuteResponse().getProcessOutputs();
+        
+        assertThat(outputs, not(nullValue()));        
+        assertThat(outputs.sizeOfOutputArray(), not(0)); 
+        
+        OutputDataType outputDataType = document.getExecuteResponse().getProcessOutputs().getOutputArray(0);
+        
+        assertThat(outputDataType, not(nullValue()));           
+        
+        DataType data = outputDataType.getData();
+        
+        assertTrue(data.isSetComplexData());        
+        
+        ComplexDataType complexData = outputDataType.getData().getComplexData();
+        
+        assertThat(complexData, not(nullValue())); 
+        
+        Node domNode = complexData.getDomNode();
+        
+        assertThat(domNode, not(nullValue()));       
+        
+        Node firstChild = domNode.getFirstChild();
+        
+        assertThat(firstChild, not(nullValue()));       
+        
+        String nodeValue = firstChild.getNodeValue();
+        
+        assertThat(nodeValue, not(nullValue()));   
+        
+        assertTrue(Base64.isBase64(nodeValue));
+        
     }
     
     public static void checkRawBinaryResultBase64(InputStream stream){
@@ -339,36 +339,36 @@ public class AllTestsIT {
 
     public static void checkRawBinaryResultDefault(InputStream stream){
 
-    	String responseAsString = saveInputStreamToString(stream);
+        String responseAsString = saveInputStreamToString(stream);
         
         assertThat(responseAsString, responseAsString, containsString(TIFF_MAGIC));
     }
     
     public static String saveInputStreamToString(InputStream stream){
-		
-    	StringBuilder stringBuilder = new StringBuilder();
-    	
-    	try {
-    		
-    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-    		
-    		String line = null;
-    		
-    		while ((line = bufferedReader.readLine()) !=  null) {
-				stringBuilder.append(line);
-			}
-    		
-		} catch (Exception e) {
-			System.err.println("Could not save inputstream content to String.");
-		} finally{    		
-    		try {
-				stream.close();
-			} catch (IOException e) {
+        
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        try {
+            
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
+            
+            String line = null;
+            
+            while ((line = bufferedReader.readLine()) !=  null) {
+                stringBuilder.append(line);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Could not save inputstream content to String.");
+        } finally{            
+            try {
+                stream.close();
+            } catch (IOException e) {
                 //
-			}
-		}
-    	
-		return stringBuilder.toString();
-		
+            }
+        }
+        
+        return stringBuilder.toString();
+        
     }
 }

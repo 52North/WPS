@@ -30,5 +30,5 @@ package org.n52.wps.webapp.api;
 
 public abstract class ClassKnowingModule implements ConfigurationModule {
 
-	public abstract String getClassName();
+    public abstract String getClassName();
 }

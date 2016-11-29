@@ -39,31 +39,31 @@ import net.opengis.wps.x20.DataInputType;
  */
 public class Input {
 
-	private InputType[] inputsV100;
+    private InputType[] inputsV100;
 
-	private DataInputType[] inputsV200;
-	
-	public Input(InputType[] inputs){
-		inputsV100 = inputs;
-	}
-	
-	public Input(DataInputType[] inputs){
-		inputsV200 = inputs;
-	}
+    private DataInputType[] inputsV200;
+    
+    public Input(InputType[] inputs){
+        inputsV100 = inputs;
+    }
+    
+    public Input(DataInputType[] inputs){
+        inputsV200 = inputs;
+    }
 
-	public InputType[] getInputsV100() {
-		return inputsV100;
-	}
+    public InputType[] getInputsV100() {
+        return inputsV100;
+    }
 
-	public void setInputsV100(InputType[] inputsV100) {
-		this.inputsV100 = inputsV100;
-	}
+    public void setInputsV100(InputType[] inputsV100) {
+        this.inputsV100 = inputsV100;
+    }
 
-	public DataInputType[] getInputsV200() {
-		return inputsV200;
-	}
+    public DataInputType[] getInputsV200() {
+        return inputsV200;
+    }
 
-	public void setInputsV200(DataInputType[] inputsV200) {
-		this.inputsV200 = inputsV200;
-	}
+    public void setInputsV200(DataInputType[] inputsV200) {
+        this.inputsV200 = inputsV200;
+    }
 }

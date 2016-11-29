@@ -62,25 +62,25 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  *
  */
 public class ProxyGMLGenerator4Files extends AbstractGenerator{
-	
-	public ProxyGMLGenerator4Files(){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
-	}
-	
-	//TODO: provides some logic for generic conversion trough piped generators
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
-		GTVectorDataBinding vectorBindingData = ((GenericFileDataWithGTBinding)data).getPayload().getAsGTVectorDataBinding();
-		IGenerator assistanceGen = GeneratorFactory.getInstance().getGenerator(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
-		
-		return assistanceGen.generateStream(vectorBindingData, mimeType, schema);
-	}
-	
+    
+    public ProxyGMLGenerator4Files(){
+        super();
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+    }
+    
+    //TODO: provides some logic for generic conversion trough piped generators
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+        
+//        // check for correct request before returning the stream
+//        if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
+//            throw new IOException("I don't support the incoming datatype");
+//        }
+        
+        GTVectorDataBinding vectorBindingData = ((GenericFileDataWithGTBinding)data).getPayload().getAsGTVectorDataBinding();
+        IGenerator assistanceGen = GeneratorFactory.getInstance().getGenerator(schema, mimeType, IOHandler.DEFAULT_ENCODING, GTVectorDataBinding.class);
+        
+        return assistanceGen.generateStream(vectorBindingData, mimeType, schema);
+    }
+    
 }

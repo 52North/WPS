@@ -37,7 +37,7 @@ public class AlgorithmDescriptor extends Descriptor {
     private final Map<String, OutputDescriptor> outputDescriptorMap;
     private final List<MetadataDescriptor> metadataDescriptors;
 
-	AlgorithmDescriptor(Builder<? extends Builder<?>> builder) {
+    AlgorithmDescriptor(Builder<? extends Builder<?>> builder) {
         super(builder);
         this.version = builder.version;
         this.storeSupported = builder.storeSupported;

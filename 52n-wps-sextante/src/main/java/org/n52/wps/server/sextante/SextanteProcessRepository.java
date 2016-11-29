@@ -59,101 +59,101 @@ import es.unex.sextante.exceptions.NullParameterAdditionalInfoException;
  * This should be changed in the future, when process descriptions should be generated automatically. When a execute process request comes in, a generic GenericSextanteProcessDelegator is created. 
  */
 public class SextanteProcessRepository implements IAlgorithmRepository{
-	private static Logger LOGGER = LoggerFactory.getLogger(SextanteProcessRepository.class);
-	private Map<String, ProcessDescription> registeredProcesses;
-	private ConfigurationModule sextanteAlgorithmRepoConfigModule;
-	 
-	
-	public SextanteProcessRepository(){
-		LOGGER.info("Initializing Sextante Repository");
-		registeredProcesses = new HashMap<String, ProcessDescription>();
-		
-		/*
-		 * get properties of Repository
-		 *
-		 * check whether process is amongst them and active
-		 * 
-		 * if properties are empty (not initialized yet)
-		 * 		add all valid processes to WPSConfig
-		 */
-		
-		sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-		
-		Collection<String> processList = getAlgorithmNames();
-		
-		Sextante.initialize();
-		HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
-		HashMap<String, GeoAlgorithm> algorithmMap = sextanteMap.get("SEXTANTE");
-		Set<String> keys = algorithmMap.keySet();
-		SextanteProcessDescriptionCreator descriptionCreator = new SextanteProcessDescriptionCreator();
-		for(Object keyObject : keys){
-			String key = (String) keyObject;
-			if(!processList.contains(key)){
-				LOGGER.info("Did not add Sextante Process : " + key +". Not in Repository properties or not active.");
-				continue;
-			}
-			GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(key);
-			ProcessDescription processDescription;
-			try {
-				processDescription = descriptionCreator.createDescribeProcessType(sextanteProcess);
-			} catch (NullParameterAdditionalInfoException e) {
-				LOGGER.warn("Could not add Sextante Process : " + key +". Errors while creating describe Process");
-				continue;
-			} catch (UnsupportedGeoAlgorithmException e) {
-				LOGGER.warn("Could not add Sextante Process : " + key + ". Errors while creating describe Process");
-				continue;
-			}
-		
-			registeredProcesses.put(key, processDescription);
-			LOGGER.info("Sextante Process " + key + " added.");
-		}
-		
-		
-		LOGGER.info("Initialization of Sextante Repository successfull");
-	}
+    private static Logger LOGGER = LoggerFactory.getLogger(SextanteProcessRepository.class);
+    private Map<String, ProcessDescription> registeredProcesses;
+    private ConfigurationModule sextanteAlgorithmRepoConfigModule;
+     
+    
+    public SextanteProcessRepository(){
+        LOGGER.info("Initializing Sextante Repository");
+        registeredProcesses = new HashMap<String, ProcessDescription>();
+        
+        /*
+         * get properties of Repository
+         *
+         * check whether process is amongst them and active
+         * 
+         * if properties are empty (not initialized yet)
+         *         add all valid processes to WPSConfig
+         */
+        
+        sextanteAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
+        
+        Collection<String> processList = getAlgorithmNames();
+        
+        Sextante.initialize();
+        HashMap<String, HashMap<String, GeoAlgorithm>> sextanteMap = Sextante.getAlgorithms();
+        HashMap<String, GeoAlgorithm> algorithmMap = sextanteMap.get("SEXTANTE");
+        Set<String> keys = algorithmMap.keySet();
+        SextanteProcessDescriptionCreator descriptionCreator = new SextanteProcessDescriptionCreator();
+        for(Object keyObject : keys){
+            String key = (String) keyObject;
+            if(!processList.contains(key)){
+                LOGGER.info("Did not add Sextante Process : " + key +". Not in Repository properties or not active.");
+                continue;
+            }
+            GeoAlgorithm sextanteProcess = Sextante.getAlgorithmFromCommandLineName(key);
+            ProcessDescription processDescription;
+            try {
+                processDescription = descriptionCreator.createDescribeProcessType(sextanteProcess);
+            } catch (NullParameterAdditionalInfoException e) {
+                LOGGER.warn("Could not add Sextante Process : " + key +". Errors while creating describe Process");
+                continue;
+            } catch (UnsupportedGeoAlgorithmException e) {
+                LOGGER.warn("Could not add Sextante Process : " + key + ". Errors while creating describe Process");
+                continue;
+            }
+        
+            registeredProcesses.put(key, processDescription);
+            LOGGER.info("Sextante Process " + key + " added.");
+        }
+        
+        
+        LOGGER.info("Initialization of Sextante Repository successfull");
+    }
 
-	public boolean containsAlgorithm(String processID) {
-		return getAlgorithmNames().contains(processID);
-	}
+    public boolean containsAlgorithm(String processID) {
+        return getAlgorithmNames().contains(processID);
+    }
 
-	public IAlgorithm getAlgorithm(String processID) {
-		if(!containsAlgorithm(processID)){
-			throw new RuntimeException("Could not allocate Process");
-		}
-		return new GenericSextanteProcessDelegator(processID, registeredProcesses.get(processID));
-	}
+    public IAlgorithm getAlgorithm(String processID) {
+        if(!containsAlgorithm(processID)){
+            throw new RuntimeException("Could not allocate Process");
+        }
+        return new GenericSextanteProcessDelegator(processID, registeredProcesses.get(processID));
+    }
 
-	public Collection<String> getAlgorithmNames() {
+    public Collection<String> getAlgorithmNames() {
 
-		Collection<String> algorithmNames = new ArrayList<>();
+        Collection<String> algorithmNames = new ArrayList<>();
 
-		List<AlgorithmEntry> algorithmEntries = sextanteAlgorithmRepoConfigModule
-				.getAlgorithmEntries();
+        List<AlgorithmEntry> algorithmEntries = sextanteAlgorithmRepoConfigModule
+                .getAlgorithmEntries();
 
-		for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-			if (algorithmEntry.isActive()) {
-				algorithmNames.add(algorithmEntry.getAlgorithm());
-			}
-		}
+        for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+            if (algorithmEntry.isActive()) {
+                algorithmNames.add(algorithmEntry.getAlgorithm());
+            }
+        }
 
-		return algorithmNames;
-	}
+        return algorithmNames;
+    }
 
-	public boolean removeAlgorithm(Object className) {
-		//not implemented
-		return false;
-	}
-	
-	@Override
-	public ProcessDescription getProcessDescription(String processID) {
-		if (getAlgorithmNames().contains(processID)) {
-			return registeredProcesses.get(processID);
-		}
-		return null;
-	}
+    public boolean removeAlgorithm(Object className) {
+        //not implemented
+        return false;
+    }
+    
+    @Override
+    public ProcessDescription getProcessDescription(String processID) {
+        if (getAlgorithmNames().contains(processID)) {
+            return registeredProcesses.get(processID);
+        }
+        return null;
+    }
 
 
-	@Override
-	public void shutdown() {}
+    @Override
+    public void shutdown() {}
 
 }

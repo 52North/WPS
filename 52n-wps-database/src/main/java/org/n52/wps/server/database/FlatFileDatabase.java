@@ -131,8 +131,8 @@ public final class FlatFileDatabase implements IDatabase {
     protected FlatFileDatabase() {
 
         FlatFileDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (FlatFileDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(FlatFileDatabaseConfigurationModule.class.getName());
-            	
-    	Server server = WPSConfig.getInstance().getServerConfigurationModule();
+                
+        Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
         PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
         

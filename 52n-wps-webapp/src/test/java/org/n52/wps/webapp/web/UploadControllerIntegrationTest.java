@@ -55,196 +55,196 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UploadControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	@Autowired
-	private UploadController uploadController;
+    @Autowired
+    private UploadController uploadController;
 
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
+    @Autowired
+    private ResourcePathUtil resourcePathUtil;
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
-	@Test
-	public void display() throws Exception {
-		RequestBuilder builder = get("/backup").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.getMockedWebService().perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("backup"));
-	}
+    @Test
+    public void display() throws Exception {
+        RequestBuilder builder = get("/backup").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("backup"));
+    }
 
-	@Test
-	public void uploadProcess_validJavaFile_validXmlFile_success() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile javaFile = getValidJavaFile();
-		MultipartFile xmlFile = getValidXmlFile();
-		multiRequest.addFile(javaFile);
-		multiRequest.addFile(xmlFile);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadProcess_validJavaFile_validXmlFile_success() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile javaFile = getValidJavaFile();
+        MultipartFile xmlFile = getValidXmlFile();
+        multiRequest.addFile(javaFile);
+        multiRequest.addFile(xmlFile);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
-		assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
-				.exists());
-		assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
-				.exists());
+        String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
+        assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
+                .exists());
+        assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
+                .exists());
 
-		// Clean up
-		deleteFolder(new File(uploadDirectory));
-		configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
-	}
+        // Clean up
+        deleteFolder(new File(uploadDirectory));
+        configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
+    }
 
-	@Test
-	public void uploadProcess_validJavaFile_noXmlFile_success() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile javaFile = getValidJavaFile();
-		multiRequest.addFile(javaFile);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadProcess_validJavaFile_noXmlFile_success() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile javaFile = getValidJavaFile();
+        multiRequest.addFile(javaFile);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
-		assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
-				.exists());
-		assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
-				.exists());
+        String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
+        assertTrue(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
+                .exists());
+        assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
+                .exists());
 
-		// Clean up
-		deleteFolder(new File(uploadDirectory));
-		configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
-	}
+        // Clean up
+        deleteFolder(new File(uploadDirectory));
+        configurationManager.getConfigurationServices().deleteAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), "org.n52.wps.server.algorithm.convexhull.SampleJava");
+    }
 
-	@Test
-	public void uploadProcess_validJavaFile_invalidXmlFile_noUpload() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile javaFile = getValidJavaFile();
-		MultipartFile xmlFile = getInvalidXmlFile();
-		multiRequest.addFile(javaFile);
-		multiRequest.addFile(xmlFile);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadProcess_validJavaFile_invalidXmlFile_noUpload() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile javaFile = getValidJavaFile();
+        MultipartFile xmlFile = getInvalidXmlFile();
+        multiRequest.addFile(javaFile);
+        multiRequest.addFile(xmlFile);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
-		assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
-				.exists());
-		assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
-				.exists());
-	}
+        String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
+        assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
+                .exists());
+        assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
+                .exists());
+    }
 
-	@Test
-	public void uploadProcess_invalidJavaFile_noUpload() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile javaFile = getInvalidJavaFile();
-		multiRequest.addFile(javaFile);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadProcess_invalidJavaFile_noUpload() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile javaFile = getInvalidJavaFile();
+        multiRequest.addFile(javaFile);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
-		assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
-				.exists());
-		assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
-				.exists());
-	}
+        String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/WEB-INF/classes");
+        assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleJava.java")
+                .exists());
+        assertFalse(new File(uploadDirectory + "/uploaded/org/n52/wps/server/algorithm/convexhull/SampleXml.xml")
+                .exists());
+    }
 
-	@Test
-	public void uploadScript_validRScript_withProcessName_success() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile rScript = getValidRScriptFile();
-		multiRequest.addFile(rScript);
-		multiRequest.addParameter("rScriptProcessName", "UserProcessName");
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadScript_validRScript_withProcessName_success() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile rScript = getValidRScriptFile();
+        multiRequest.addFile(rScript);
+        multiRequest.addParameter("rScriptProcessName", "UserProcessName");
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		/*
-		 * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
-		 * NullPointerException because it cannot find the LocalRAlgorithmRepository
-		 */
+        /*
+         * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
+         * NullPointerException because it cannot find the LocalRAlgorithmRepository
+         */
 
-		// String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
-		// assertTrue(new File(uploadDirectory + "/scripts/UserProcessName.R").exists());
+        // String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
+        // assertTrue(new File(uploadDirectory + "/scripts/UserProcessName.R").exists());
 
-		// Clean up
-		// deleteFoler(uploadDirectory + "/scripts/SampleRScript.R");
-	}
+        // Clean up
+        // deleteFoler(uploadDirectory + "/scripts/SampleRScript.R");
+    }
 
-	@Test
-	public void uploadScript_validRScript_withoutProcessName_success() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile rScript = getValidRScriptFile();
-		multiRequest.addFile(rScript);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadScript_validRScript_withoutProcessName_success() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile rScript = getValidRScriptFile();
+        multiRequest.addFile(rScript);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		/*
-		 * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
-		 * NullPointerException because it cannot find the LocalRAlgorithmRepository
-		 */
+        /*
+         * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
+         * NullPointerException because it cannot find the LocalRAlgorithmRepository
+         */
 
-		// String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
-		// assertTrue(new File(uploadDirectory + "/scripts/SampleRScript.R").exists());
+        // String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
+        // assertTrue(new File(uploadDirectory + "/scripts/SampleRScript.R").exists());
 
-		// Clean up
-		// deleteFoler(uploadDirectory + "/scripts/SampleRScript.R");
-	}
+        // Clean up
+        // deleteFoler(uploadDirectory + "/scripts/SampleRScript.R");
+    }
 
-	@Test
-	public void uploadScript_invalidRScript_noUpload() throws Exception {
-		MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
-		MultipartFile rScript = getInvalidRScriptFile();
-		multiRequest.addFile(rScript);
-		multiRequest.setRequestURI("/upload");
-		multiRequest.setSession(new MockHttpSession(new MockServletContext()));
-		uploadController.upload(multiRequest, new MockHttpServletResponse());
+    @Test
+    public void uploadScript_invalidRScript_noUpload() throws Exception {
+        MockMultipartHttpServletRequest multiRequest = new MockMultipartHttpServletRequest();
+        MultipartFile rScript = getInvalidRScriptFile();
+        multiRequest.addFile(rScript);
+        multiRequest.setRequestURI("/upload");
+        multiRequest.setSession(new MockHttpSession(new MockServletContext()));
+        uploadController.upload(multiRequest, new MockHttpServletResponse());
 
-		/*
-		 * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
-		 * NullPointerException because it cannot find the LocalRAlgorithmRepository
-		 */
+        /*
+         * Currently, the test is disabled. An R module is needed to assert the upload. The function will throw a
+         * NullPointerException because it cannot find the LocalRAlgorithmRepository
+         */
 
-		// String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
-		// assertFalse(new File(uploadDirectory + "/scripts/SampleRScript.R").exists());
-	}
+        // String uploadDirectory = resourcePathUtil.getWebAppResourcePath("/R");
+        // assertFalse(new File(uploadDirectory + "/scripts/SampleRScript.R").exists());
+    }
 
-	private MockMultipartFile getValidJavaFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/SampleJava.java");
-		return new MockMultipartFile("javaFile", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getValidJavaFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/SampleJava.java");
+        return new MockMultipartFile("javaFile", file.getName(), null, new FileInputStream(file));
+    }
 
-	private MockMultipartFile getInvalidJavaFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
-		return new MockMultipartFile("javaFile", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getInvalidJavaFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
+        return new MockMultipartFile("javaFile", file.getName(), null, new FileInputStream(file));
+    }
 
-	private MockMultipartFile getValidXmlFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/SampleXml.xml");
-		return new MockMultipartFile("xmlFile", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getValidXmlFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/SampleXml.xml");
+        return new MockMultipartFile("xmlFile", file.getName(), null, new FileInputStream(file));
+    }
 
-	private MockMultipartFile getInvalidXmlFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
-		return new MockMultipartFile("xmlFile", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getInvalidXmlFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
+        return new MockMultipartFile("xmlFile", file.getName(), null, new FileInputStream(file));
+    }
 
-	private MockMultipartFile getValidRScriptFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/SampleRScript.R");
-		return new MockMultipartFile("rScript", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getValidRScriptFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/SampleRScript.R");
+        return new MockMultipartFile("rScript", file.getName(), null, new FileInputStream(file));
+    }
 
-	private MockMultipartFile getInvalidRScriptFile() throws Exception {
-		File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
-		return new MockMultipartFile("rScript", file.getName(), null, new FileInputStream(file));
-	}
+    private MockMultipartFile getInvalidRScriptFile() throws Exception {
+        File file = new File("src/test/resources/testfiles/uploadtests/InvalidFormat.gif");
+        return new MockMultipartFile("rScript", file.getName(), null, new FileInputStream(file));
+    }
 
-	private void deleteFolder(File folder) {
-		for (File file : folder.listFiles()) {
-			if (file.isDirectory()) {
-				deleteFolder(file);
-			}
-			file.delete();
-		}
-		folder.delete();
-	}
+    private void deleteFolder(File folder) {
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                deleteFolder(file);
+            }
+            file.delete();
+        }
+        folder.delete();
+    }
 }

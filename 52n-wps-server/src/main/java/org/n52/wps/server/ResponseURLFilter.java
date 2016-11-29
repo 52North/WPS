@@ -226,14 +226,14 @@ public class ResponseURLFilter implements Filter {
             outputStream.flush();
         }
 
-		@Override
-		public boolean isReady() {
-			return false;
-		}
+        @Override
+        public boolean isReady() {
+            return false;
+        }
 
-		@Override
-		public void setWriteListener(WriteListener writeListener) {			
-		}
+        @Override
+        public void setWriteListener(WriteListener writeListener) {            
+        }
 
     }
 }

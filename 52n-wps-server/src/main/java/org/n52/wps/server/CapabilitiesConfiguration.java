@@ -264,8 +264,8 @@ public class CapabilitiesConfiguration {
             LOG.warn("No algorithms found in repository manager.");
 
         for (String algorithmName : algorithms) {
-        	try {
-        		ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
+            try {
+                ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper
                         .getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
                 if (description != null) {
                     ProcessBriefType process = processes.addNewProcess();
@@ -277,10 +277,10 @@ public class CapabilitiesConfiguration {
                     process.setTitle(title);
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
-        	}
-        	catch (RuntimeException e) {
-        		LOG.warn("Exception during instantiation of process {}", algorithmName, e);
-        	}
+            }
+            catch (RuntimeException e) {
+                LOG.warn("Exception during instantiation of process {}", algorithmName, e);
+            }
         }
     }
 
@@ -350,21 +350,21 @@ public class CapabilitiesConfiguration {
         }
     }
 
-	public static Server getServerConfigurationModule() {
+    public static Server getServerConfigurationModule() {
 
-		if (serverConfigurationModule == null) {
+        if (serverConfigurationModule == null) {
 
-			if (configurationManager == null) {
-				configurationManager = WPSConfig
-						.getInstance().getConfigurationManager();
-			}if(configurationManager != null){
-			    serverConfigurationModule = (Server) configurationManager
-					    .getConfigurationServices().getConfigurationModule(
-							    Server.class.getName());
-			}
-		}
-		return serverConfigurationModule;
-	}
+            if (configurationManager == null) {
+                configurationManager = WPSConfig
+                        .getInstance().getConfigurationManager();
+            }if(configurationManager != null){
+                serverConfigurationModule = (Server) configurationManager
+                        .getConfigurationServices().getConfigurationModule(
+                                Server.class.getName());
+            }
+        }
+        return serverConfigurationModule;
+    }
 
     /**
      * Strategy to load a capabilities skeleton from a URL.

@@ -25,7 +25,7 @@ import org.n52.wps.io.data.IComplexData;
 public class ComplexDataOutputDescriptor<T extends Class<? extends IComplexData>> extends OutputDescriptor<T> {
 
 
-	private ComplexDataOutputDescriptor(Builder builder) {
+    private ComplexDataOutputDescriptor(Builder builder) {
         super(builder);
     }
     

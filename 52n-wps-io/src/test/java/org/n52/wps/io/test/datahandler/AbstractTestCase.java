@@ -28,39 +28,39 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends AbstractITClass {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
 
-	protected String projectRoot;
+    protected String projectRoot;
 
-	protected T dataHandler;
+    protected T dataHandler;
 
-	public AbstractTestCase() {
-		 File f = new File(this.getClass().getProtectionDomain().getCodeSource()
-				 .getLocation().getFile());
-				 projectRoot = f.getParentFile().getParentFile().getParent();
+    public AbstractTestCase() {
+         File f = new File(this.getClass().getProtectionDomain().getCodeSource()
+                 .getLocation().getFile());
+                 projectRoot = f.getParentFile().getParentFile().getParent();
     }
 
-	@Before
-	public void setUp(){
-		initializeDataHandler();
-	}
+    @Before
+    public void setUp(){
+        initializeDataHandler();
+    }
 
-	protected boolean isDataHandlerActive(){
+    protected boolean isDataHandlerActive(){
 
-		if(dataHandler == null){
-			LOGGER.info("Data handler not initialized in test class " + this.getClass().getName());
-			return false;
-		}
+        if(dataHandler == null){
+            LOGGER.info("Data handler not initialized in test class " + this.getClass().getName());
+            return false;
+        }
 
-		String className = dataHandler.getClass().getName();
+        String className = dataHandler.getClass().getName();
 
-		if(!(WPSConfig.getInstance().isGeneratorActive(className)||WPSConfig.getInstance().isParserActive(className))){
-			LOGGER.info("Skipping inactive data handler: " + className);
-			return false;
-		}
-		return true;
-	}
+        if(!(WPSConfig.getInstance().isGeneratorActive(className)||WPSConfig.getInstance().isParserActive(className))){
+            LOGGER.info("Skipping inactive data handler: " + className);
+            return false;
+        }
+        return true;
+    }
 
-	protected abstract void initializeDataHandler();
+    protected abstract void initializeDataHandler();
 
 }

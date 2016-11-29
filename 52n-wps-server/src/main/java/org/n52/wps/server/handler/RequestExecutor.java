@@ -48,15 +48,15 @@ import org.n52.wps.webapp.entities.Server;
  */
 public class RequestExecutor extends ThreadPoolExecutor {
 
-	public static Server serverConfig = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
-	
-	/**
-	 * Create a RequestExecutor.
-	 */
-	public RequestExecutor() {
-		super(serverConfig.getMinPoolSize(), serverConfig.getMaxPoolSize(), serverConfig.getKeepAliveSeconds(),
-				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(
-						serverConfig.getMaxQueuedTasks()));
-	}
+    public static Server serverConfig = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
+    
+    /**
+     * Create a RequestExecutor.
+     */
+    public RequestExecutor() {
+        super(serverConfig.getMinPoolSize(), serverConfig.getMaxPoolSize(), serverConfig.getKeepAliveSeconds(),
+                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(
+                        serverConfig.getMaxQueuedTasks()));
+    }
 
 }

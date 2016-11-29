@@ -59,55 +59,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class KMLParserCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
-	
-	private List<FormatEntry> formatEntries;
-	
-	public KMLParserCM(){
-		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "KMLParser";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries;
+    
+    private List<FormatEntry> formatEntries;
+    
+    public KMLParserCM(){
+        formatEntries = new ArrayList<>();
+        configurationEntries = new ArrayList<>();
+    }
+    
+    @Override
+    public String getModuleName() {
+        return "KMLParser";
+    }
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;        
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.PARSER;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return null;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return formatEntries;
+    }
 
-	@Override
-	public String getClassName() {
-		return KMLParser.class.getName();
-	}
+    @Override
+    public String getClassName() {
+        return KMLParser.class.getName();
+    }
 
 }

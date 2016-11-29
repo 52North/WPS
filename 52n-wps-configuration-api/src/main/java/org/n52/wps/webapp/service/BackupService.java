@@ -37,36 +37,36 @@ import org.n52.wps.webapp.api.WPSConfigurationException;
  * Used to backup and restore configurations database and files.
  */
 public interface BackupService {
-	/**
-	 * Create a backup archive for the items provided. Supported items are:
-	 * <p>
-	 * "database" to backup the database.
-	 * </p>
-	 * <p>
-	 * "log" to backup the logback.xml file.
-	 * </p>
-	 * <p>
-	 * "wpscapabilities" to backup the wpsCapabilitiesSkeleton.xml file.
-	 * </p>
-	 *
-	 * @param itemsToBackup
-	 *            a list of items to back up
-	 * @return the location of the created backup archive
-	 * @throws IOException
-	 *             if an item cannot be found in the expected path
-	 */
-	String createBackup(String[] itemsToBackup) throws IOException;
+    /**
+     * Create a backup archive for the items provided. Supported items are:
+     * <p>
+     * "database" to backup the database.
+     * </p>
+     * <p>
+     * "log" to backup the logback.xml file.
+     * </p>
+     * <p>
+     * "wpscapabilities" to backup the wpsCapabilitiesSkeleton.xml file.
+     * </p>
+     *
+     * @param itemsToBackup
+     *            a list of items to back up
+     * @return the location of the created backup archive
+     * @throws IOException
+     *             if an item cannot be found in the expected path
+     */
+    String createBackup(String[] itemsToBackup) throws IOException;
 
-	/**
-	 * Extract and restore a backup archive
-	 *
-	 * @param zipFile
-	 *            the backup archive inputstream
-	 * @return the number of items restored
-	 * @throws IOException
-	 *             if the archive cannot be extracted or the content cannot be written
-	 * @throws WPSConfigurationException
-	 *             if the archive contains invalid configuration files
-	 */
-	int restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException;
+    /**
+     * Extract and restore a backup archive
+     *
+     * @param zipFile
+     *            the backup archive inputstream
+     * @return the number of items restored
+     * @throws IOException
+     *             if the archive cannot be extracted or the content cannot be written
+     * @throws WPSConfigurationException
+     *             if the archive contains invalid configuration files
+     */
+    int restoreBackup(InputStream zipFile) throws IOException, WPSConfigurationException;
 }

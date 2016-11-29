@@ -50,68 +50,68 @@ import org.springframework.test.web.servlet.ResultActions;
 
 public class ServiceProviderControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
-	@Autowired
-	private JDomUtil jDomUtil;
+    @Autowired
+    private JDomUtil jDomUtil;
 
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
+    @Autowired
+    private ResourcePathUtil resourcePathUtil;
 
-	@Test
-	public void display() throws Exception {
-		RequestBuilder builder = get("/service_provider").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.getMockedWebService().perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("service_provider"))
-				.andExpect(model().attributeExists("serviceProvider"));
-	}
+    @Test
+    public void display() throws Exception {
+        RequestBuilder builder = get("/service_provider").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("service_provider"))
+                .andExpect(model().attributeExists("serviceProvider"));
+    }
 
-	@Test
-	public void processPost_success() throws Exception {
-		String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
-		Document originalDoc = jDomUtil.parse(path);
+    @Test
+    public void processPost_success() throws Exception {
+        String path = resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME);
+        Document originalDoc = jDomUtil.parse(path);
 
-		RequestBuilder request = post("/service_provider")
-				.param("providerName", "providerName")
-				.param("providerSite", "providerSite")
-				.param("individualName", "individualName")
-				.param("position", "position")
-				.param("phone", "phone")
-				.param("facsimile", "facsimile")
-				.param("email", "email")
-				.param("deliveryPoint", "deliveryPoint")
-				.param("city", "city")
-				.param("administrativeArea", "administrativeArea")
-				.param("postalCode", "postalCode")
-				.param("country", "country");
-		ResultActions result = this.getMockedWebService().perform(request);
-		result.andExpect(status().isOk());
-		ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
-		assertEquals("providerName", serviceProvider.getProviderName());
+        RequestBuilder request = post("/service_provider")
+                .param("providerName", "providerName")
+                .param("providerSite", "providerSite")
+                .param("individualName", "individualName")
+                .param("position", "position")
+                .param("phone", "phone")
+                .param("facsimile", "facsimile")
+                .param("email", "email")
+                .param("deliveryPoint", "deliveryPoint")
+                .param("city", "city")
+                .param("administrativeArea", "administrativeArea")
+                .param("postalCode", "postalCode")
+                .param("country", "country");
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
+        assertEquals("providerName", serviceProvider.getProviderName());
 
-		//reset document to original state
-		jDomUtil.write(originalDoc, path);
-	}
+        //reset document to original state
+        jDomUtil.write(originalDoc, path);
+    }
 
-	//not needed anymore in this form, as all provider parameters are optional now
-//	@Test
-//	public void processPost_failure() throws Exception {
-//		RequestBuilder request = post("/service_provider")
-//				.param("providerName", "providerName")
-//				.param("providerSite", "providerSite")
-//				.param("individualName", "individualName")
-//				.param("position", "position")
-//				.param("phone", "phone")
-//				.param("facsimile", "facsimile")
-//				.param("email", "email")
-//				.param("deliveryPoint", "deliveryPoint")
-//				.param("city", "city")
-//				.param("administrativeArea", "administrativeArea")
-//				.param("postalCode", "postalCode")
-//				.param("country", "country")
-//				.param("providerName", "providerName");
-//		ResultActions result = this.mockMvc.perform(request);
-//		result.andExpect(status().isBadRequest());
-//	}
+    //not needed anymore in this form, as all provider parameters are optional now
+//    @Test
+//    public void processPost_failure() throws Exception {
+//        RequestBuilder request = post("/service_provider")
+//                .param("providerName", "providerName")
+//                .param("providerSite", "providerSite")
+//                .param("individualName", "individualName")
+//                .param("position", "position")
+//                .param("phone", "phone")
+//                .param("facsimile", "facsimile")
+//                .param("email", "email")
+//                .param("deliveryPoint", "deliveryPoint")
+//                .param("city", "city")
+//                .param("administrativeArea", "administrativeArea")
+//                .param("postalCode", "postalCode")
+//                .param("country", "country")
+//                .param("providerName", "providerName");
+//        ResultActions result = this.mockMvc.perform(request);
+//        result.andExpect(status().isBadRequest());
+//    }
 }

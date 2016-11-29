@@ -28,54 +28,54 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class LocalAlgorithmRepositoryCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private List<AlgorithmEntry> algorithmEntries;
+    private List<AlgorithmEntry> algorithmEntries;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
-	
-	public LocalAlgorithmRepositoryCM() {
-		algorithmEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "LocalAlgorithmRepository Configuration Module";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
+    
+    public LocalAlgorithmRepositoryCM() {
+        algorithmEntries = new ArrayList<>();
+    }
+    
+    @Override
+    public String getModuleName() {
+        return "LocalAlgorithmRepository Configuration Module";
+    }
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.REPOSITORY;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.REPOSITORY;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return algorithmEntries;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return algorithmEntries;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return null;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return null;
+    }
 
-	@Override
-	public String getClassName() {
-		return LocalAlgorithmRepository.class.getName();
-	}
+    @Override
+    public String getClassName() {
+        return LocalAlgorithmRepository.class.getName();
+    }
 
 }

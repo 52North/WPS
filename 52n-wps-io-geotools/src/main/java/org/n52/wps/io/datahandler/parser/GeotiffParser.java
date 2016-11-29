@@ -65,62 +65,62 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public class GeotiffParser extends AbstractParser {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GeotiffParser.class);
+    
+    private static Logger LOGGER = LoggerFactory.getLogger(GeotiffParser.class);
 
-	public GeotiffParser() {
-		super();
-		supportedIDataTypes.add(GTRasterDataBinding.class);
-	}
-	
-	
-	@Override
-	public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
-		
-		File tempFile;
-		
-		try {
+    public GeotiffParser() {
+        super();
+        supportedIDataTypes.add(GTRasterDataBinding.class);
+    }
+    
+    
+    @Override
+    public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
+        
+        File tempFile;
+        
+        try {
             tempFile = File.createTempFile("tempfile" + UUID.randomUUID(),"tmp");
             finalizeFiles.add(tempFile); // mark for final delete
-			FileOutputStream outputStream = new FileOutputStream(tempFile);
-			byte buf[] = new byte[4096];
-			int len;
-			while ((len = input.read(buf)) > 0) {
-				outputStream.write(buf, 0, len);
-			}
-			
-			outputStream.flush();
-			outputStream.close();
-			input.close();
-		} catch (FileNotFoundException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		} catch (IOException e1) {
-			LOGGER.error(e1.getMessage(), e1);
-			throw new RuntimeException(e1);
-		}
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+            byte buf[] = new byte[4096];
+            int len;
+            while ((len = input.read(buf)) > 0) {
+                outputStream.write(buf, 0, len);
+            }
+            
+            outputStream.flush();
+            outputStream.close();
+            input.close();
+        } catch (FileNotFoundException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (IOException e1) {
+            LOGGER.error(e1.getMessage(), e1);
+            throw new RuntimeException(e1);
+        }
 
-		return parseTiff(tempFile);
+        return parseTiff(tempFile);
 
-	}
-	
-	private GTRasterDataBinding parseTiff(File file){
-		JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
-		
-		Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-				Boolean.TRUE);
-		GeoTiffReader reader;
-		try {
-			reader = new GeoTiffReader(file, hints);
-			GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
-			return new GTRasterDataBinding(coverage);
-		} catch (DataSourceException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		}
-	}
+    }
+    
+    private GTRasterDataBinding parseTiff(File file){
+        JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
+        
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
+                Boolean.TRUE);
+        GeoTiffReader reader;
+        try {
+            reader = new GeoTiffReader(file, hints);
+            GridCoverage2D coverage = (GridCoverage2D) reader.read(null);
+            return new GTRasterDataBinding(coverage);
+        } catch (DataSourceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
 
 }

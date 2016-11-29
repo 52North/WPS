@@ -59,28 +59,28 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  *
  */
 public class GenericRasterFileGenerator extends AbstractGenerator {
-	
-	public GenericRasterFileGenerator (){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
-	}
-	
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
-		return theStream;
-	}
-	
-	/**
-	 * conversion method to support translation of output formats
-	 * TODO: implement logic
-	 * 
-	 * @param inputFile
-	 * @return  
-	 */
-	private GenericFileDataWithGT convertFile (GenericFileDataWithGT inputFile){
-		//not implemented
-		return null;
-	}
-	
+    
+    public GenericRasterFileGenerator (){
+        super();
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+    }
+    
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+        
+        InputStream theStream = ((GenericFileDataWithGTBinding)data).getPayload().getDataStream();
+        return theStream;
+    }
+    
+    /**
+     * conversion method to support translation of output formats
+     * TODO: implement logic
+     * 
+     * @param inputFile
+     * @return  
+     */
+    private GenericFileDataWithGT convertFile (GenericFileDataWithGT inputFile){
+        //not implemented
+        return null;
+    }
+    
 }

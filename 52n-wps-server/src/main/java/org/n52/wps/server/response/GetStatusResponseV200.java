@@ -40,21 +40,21 @@ import org.n52.wps.server.request.GetStatusRequestV200;
  *
  */
 public class GetStatusResponseV200 extends Response {
-		
-	/**
-	 * Serves the Request with a Response
-	 * @param request The GetCapabilities request
-	 */
-	public GetStatusResponseV200(GetStatusRequestV200 request){
-		super(request);
-	}
-	
-	/**
-	 * Save this Response to an OutputStream
-	 * @param os The OutputStream to save this Response to
-	 * @throws ExceptionReport
-	 */
-	public InputStream getAsStream() throws ExceptionReport{
-		return ((StatusInfoDocument)getRequest().getAttachedResult()).newInputStream();
-	}
+        
+    /**
+     * Serves the Request with a Response
+     * @param request The GetCapabilities request
+     */
+    public GetStatusResponseV200(GetStatusRequestV200 request){
+        super(request);
+    }
+    
+    /**
+     * Save this Response to an OutputStream
+     * @param os The OutputStream to save this Response to
+     * @throws ExceptionReport
+     */
+    public InputStream getAsStream() throws ExceptionReport{
+        return ((StatusInfoDocument)getRequest().getAttachedResult()).newInputStream();
+    }
 }

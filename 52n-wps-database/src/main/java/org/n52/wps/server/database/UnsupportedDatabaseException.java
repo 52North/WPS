@@ -29,10 +29,10 @@
 package org.n52.wps.server.database;
 
 public class UnsupportedDatabaseException extends RuntimeException {
-	// Serial number for interoperability with different versions.
-	private static final long serialVersionUID = 1574654947884385428L;
+    // Serial number for interoperability with different versions.
+    private static final long serialVersionUID = 1574654947884385428L;
 
-	public UnsupportedDatabaseException() {
+    public UnsupportedDatabaseException() {
         super("Unsupported database.");
     }
  

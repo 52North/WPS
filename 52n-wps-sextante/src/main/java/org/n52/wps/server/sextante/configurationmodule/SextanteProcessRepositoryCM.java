@@ -43,55 +43,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
  *
  */
 public class SextanteProcessRepositoryCM extends ClassKnowingModule{
-	
-	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
-	
-	private boolean isActive = true;
+    
+    private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
+    
+    private boolean isActive = true;
 
-	private List<AlgorithmEntry> algorithmEntries;
-	
-	public SextanteProcessRepositoryCM() {
-		algorithmEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "SEXTANTE Algorithm Repository";
-	}
+    private List<AlgorithmEntry> algorithmEntries;
+    
+    public SextanteProcessRepositoryCM() {
+        algorithmEntries = new ArrayList<>();
+    }
+    
+    @Override
+    public String getModuleName() {
+        return "SEXTANTE Algorithm Repository";
+    }
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.REPOSITORY;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.REPOSITORY;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return algorithmEntries;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return algorithmEntries;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return null;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return null;
+    }
 
-	@Override
-	public String getClassName() {
-		return SextanteProcessRepository.class.getName();
-	}
+    @Override
+    public String getClassName() {
+        return SextanteProcessRepository.class.getName();
+    }
 
 }

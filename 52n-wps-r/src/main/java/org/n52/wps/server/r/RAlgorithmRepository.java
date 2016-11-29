@@ -126,8 +126,8 @@ public class RAlgorithmRepository implements ITransactionalAlgorithmRepository {
 //        SpringIntegrationHelper.autowireBean(WPSConfig.getInstance());
 
         RConfigurationModule configModule = (RConfigurationModule) WPSConfig.getInstance()
-				.getConfigurationModuleForClass(this.getClass().getName(),
-						ConfigurationCategory.REPOSITORY);
+                .getConfigurationModuleForClass(this.getClass().getName(),
+                        ConfigurationCategory.REPOSITORY);
         if (configModule == null || !configModule.isActive()) {
             LOGGER.info("*R*AlgorithmRepository is INACTIVE.");
         } else {

@@ -50,24 +50,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class DeploymentProfile {
-	
-	private Object payload;
-	private String processID;
-	
-	public DeploymentProfile(Node payload, String processID){
-		this.processID = processID;
-		this.payload = payload;
-		
-	}
+    
+    private Object payload;
+    private String processID;
+    
+    public DeploymentProfile(Node payload, String processID){
+        this.processID = processID;
+        this.payload = payload;
+        
+    }
 
-	public String getProcessID() {
-		return processID;
-	}
+    public String getProcessID() {
+        return processID;
+    }
 
-	public Object getPayload() {
-		return payload;
-	}
+    public Object getPayload() {
+        return payload;
+    }
 
-	
-	
+    
+    
 }

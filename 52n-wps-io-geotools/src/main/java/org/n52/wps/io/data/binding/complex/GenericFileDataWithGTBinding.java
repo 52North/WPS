@@ -57,28 +57,28 @@ import org.n52.wps.io.data.IComplexData;
  *
  */
 public class GenericFileDataWithGTBinding implements IComplexData {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 625383192227478620L;
-	protected GenericFileDataWithGT payload; 
-	
-	public GenericFileDataWithGTBinding(GenericFileDataWithGT fileData){
-		this.payload = fileData;
-	}
-	
-	public GenericFileDataWithGT getPayload() {
-		return payload;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 625383192227478620L;
+    protected GenericFileDataWithGT payload; 
+    
+    public GenericFileDataWithGTBinding(GenericFileDataWithGT fileData){
+        this.payload = fileData;
+    }
+    
+    public GenericFileDataWithGT getPayload() {
+        return payload;
+    }
 
-	public Class getSupportedClass() {
-		return GenericFileDataWithGT.class;
-	}
+    public Class getSupportedClass() {
+        return GenericFileDataWithGT.class;
+    }
     
     @Override
-	public void dispose(){
+    public void dispose(){
                 //FIXME (MH) The command bellow is flawed because getBaseFile(...) *writes* files from an inputstream into the wps temp directory. 
                    // If the given input stream is closed, the method throws *RuntimeExceptions* that let the process crash.
-		//FileUtils.deleteQuietly(payload.getBaseFile(false));
-	}
+        //FileUtils.deleteQuietly(payload.getBaseFile(false));
+    }
 }

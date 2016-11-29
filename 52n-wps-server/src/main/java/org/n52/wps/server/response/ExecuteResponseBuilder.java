@@ -43,15 +43,15 @@ import org.n52.wps.server.ExceptionReport;
  */
 public interface ExecuteResponseBuilder {
 
-	public void update() throws ExceptionReport;
+    public void update() throws ExceptionReport;
 
-	public String getMimeType();
+    public String getMimeType();
 
-	public String getMimeType(XmlObject definitionObject);
+    public String getMimeType(XmlObject definitionObject);
 
-	public InputStream getAsStream() throws ExceptionReport;
+    public InputStream getAsStream() throws ExceptionReport;
 
-	public void setStatus(XmlObject statusObject);
+    public void setStatus(XmlObject statusObject);
 
 }
 

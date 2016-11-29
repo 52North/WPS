@@ -24,7 +24,7 @@ import org.n52.wps.io.data.IData;
  */
 public abstract class OutputDescriptor<T extends Class<? extends IData>> extends BoundDescriptor<T> {
 
-	OutputDescriptor(Builder<? extends Builder<?,T>, T> builder) {
+    OutputDescriptor(Builder<? extends Builder<?,T>, T> builder) {
         super(builder);
     }
 
