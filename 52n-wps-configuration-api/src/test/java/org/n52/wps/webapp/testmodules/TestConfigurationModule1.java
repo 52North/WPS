@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -91,7 +91,7 @@ public class TestConfigurationModule1 implements ConfigurationModule {
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	@Override
 	public void setActive(boolean active) {
 		this.active = active;
@@ -175,7 +175,7 @@ public class TestConfigurationModule1 implements ConfigurationModule {
 	public void setIntInvalidMember(int intInvalidMember, int secondParameter) {
 		this.intInvalidMember = intInvalidMember;
 	}
-	
+
 	public int getIntInvalidMember() {
 		return intInvalidMember;
 	}

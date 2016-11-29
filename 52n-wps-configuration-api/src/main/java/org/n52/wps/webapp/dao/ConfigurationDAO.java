@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,32 +41,32 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Insert a new module
-	 * 
+	 *
 	 * @param module
 	 *            the module to be inserted
-	 * 
+	 *
 	 */
 	void insertConfigurationModule(ConfigurationModule module);
 
 	/**
 	 * Update an existing module status
-	 * 
+	 *
 	 * @param module
 	 *            the module to be updated
 	 */
 	void updateConfigurationModuleStatus(ConfigurationModule module);
-	
+
 	/**
 	 * Get the active/inactive status of a configuration module
-	 * 
-	 * @param module
+	 *
+	 * @param module The module for which the status is checked
 	 * @return The module status
 	 */
 	Boolean getConfigurationModuleStatus(ConfigurationModule module);
 
 	/**
 	 * Get the stored configuration entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
 	 * @param entryKey
@@ -77,7 +77,7 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Insert new configuration entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
 	 * @param entryKey
@@ -89,7 +89,7 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Update a configuration entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
 	 * @param entryKey
@@ -101,7 +101,7 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Get the stored algorithm entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithm
@@ -112,7 +112,7 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Insert new algorithm entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithm
@@ -124,7 +124,7 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Update an algorithm entry
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithm
@@ -136,32 +136,32 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Get all algorithm entries
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entries
 	 * @return All algorithm entries of the module.
-	 */	
+	 */
 	List<AlgorithmEntry> getAlgorithmEntries(String moduleClassName);
 
 	/**
 	 * Delete an algorithm entries
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entries
-	 * @param algorithm
-	 *            the algorithm to be deleted	 
+	 * @param algorithmName
+	 *            the name of the algorithm to be deleted
 	 */
 	void deleteAlgorithmEntry(String moduleClassName, String algorithmName);
-	
+
 	/**
 	 * Get the stored format entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
          * @param mimeType
-         *            the mime type of the format entry 
+         *            the mime type of the format entry
          * @param schema
-         *            the schema of the format entry    
+         *            the schema of the format entry
          * @param encoding
          *            the encoding of the format entry
 	 * @return The format entry or {@code null} if no entry is found.
@@ -170,13 +170,13 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Insert new format entry value
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
          * @param mimeType
-         *            the mime type of the format entry 
+         *            the mime type of the format entry
          * @param schema
-         *            the schema of the format entry    
+         *            the schema of the format entry
          * @param encoding
          *            the encoding of the format entry
 	 * @param active
@@ -186,13 +186,13 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Update an format entry
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
          * @param mimeType
-         *            the mime type of the format entry 
+         *            the mime type of the format entry
          * @param schema
-         *            the schema of the format entry    
+         *            the schema of the format entry
          * @param encoding
          *            the encoding of the format entry
 	 * @param active
@@ -202,20 +202,22 @@ public interface ConfigurationDAO {
 
 	/**
 	 * Get all format entries
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entries
 	 * @return All format entries of the module.
-	 */	
+	 */
 	List<FormatEntry> getFormatEntries(String moduleClassName);
 
 	/**
 	 * Delete an format entry
-	 * 
+	 *
+         * @param moduleClassName
+         *            the class name of the module
          * @param mimeType
-         *            the mime type of the format entry 
+         *            the mime type of the format entry
          * @param schema
-         *            the schema of the format entry    
+         *            the schema of the format entry
          * @param encoding
          *            the encoding of the format entry
 	 */
@@ -223,7 +225,7 @@ public interface ConfigurationDAO {
 
     /**
      * Update class name of an algorithm entry
-     * 
+     *
      * @param moduleClassName
      *            the fully qualified name of the module holding the algorithm
      * @param newAlgorithmName
@@ -237,7 +239,7 @@ public interface ConfigurationDAO {
 
     /**
      * Update a format
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the format
      * @param oldMimeType

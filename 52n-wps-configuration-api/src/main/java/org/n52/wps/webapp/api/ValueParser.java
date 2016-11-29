@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.n52.wps.webapp.service.ConfigurationService;
 import org.springframework.stereotype.Component;
 
 /**

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,21 +31,21 @@ package org.n52.wps.webapp.api.types;
 import org.n52.wps.webapp.api.ConfigurationType;
 
 public class StringConfigurationEntry extends ConfigurationEntry<String> {
-	
+
 	/**
-	 * @param key
-	 * @param title
+	 * @param key the key of this configuration entry
+	 * @param title the title of this configuration entry
 	 */
 	public StringConfigurationEntry(String key, String title) {
 		super(key, title, ConfigurationType.STRING);
 	}
-	
+
 	/**
-	 * @param key
-	 * @param title
-	 * @param description
-	 * @param required
-	 * @param value
+	 * @param key the key of this configuration entry
+	 * @param title the title of this configuration entry
+	 * @param description the description of this configuration entry
+	 * @param required indicates, whether this configuration entry is required
+	 * @param value the value of this configuration entry
 	 */
 	public StringConfigurationEntry(String key, String title, String description, boolean required, String value) {
 		super(key, title, description, required, value, ConfigurationType.STRING);

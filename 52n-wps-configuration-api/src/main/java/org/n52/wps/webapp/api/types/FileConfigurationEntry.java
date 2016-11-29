@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import java.io.File;
 import org.n52.wps.webapp.api.ConfigurationType;
 
 public class FileConfigurationEntry extends ConfigurationEntry<File> {
-	
+
 	public FileConfigurationEntry(String key, String title) {
 		super(key, title, ConfigurationType.FILE);
 	}

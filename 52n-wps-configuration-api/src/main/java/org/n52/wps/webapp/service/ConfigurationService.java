@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
  * <p>
  * Different service interfaces are used to handle special configurations such as log or user configurations.
  * </p>
- * 
+ *
  * @see UserService
  * @see LogConfigurationsService
  * @see CapabilitiesService
@@ -53,14 +53,14 @@ public interface ConfigurationService {
 	/**
 	 * Get all classes that implements the {@code ConfigurationModule} interface. Modules are mapped by their fully
 	 * qualified name.
-	 * 
+	 *
 	 * @return A map of all configuration modules.
 	 */
 	Map<String, ConfigurationModule> getAllConfigurationModules();
 
 	/**
 	 * Get all configuration modules of a particular category.
-	 * 
+	 *
 	 * @param category
 	 *            the category of the modules
 	 * @return A map of all configuration modules of the specified category.
@@ -70,7 +70,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Get only active configuration modules of a particular category.
-	 * 
+	 *
 	 * @param category
 	 *            the category of the modules
 	 * @return A map of all active configuration modules of the specified category.
@@ -80,7 +80,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Get a configuration module by its fully qualified name.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module required
 	 * @return The configuration module or {@code null} if no module is found.
@@ -89,7 +89,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Update a configuration module activation status
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module to be updated
 	 * @param status
@@ -99,7 +99,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Get a configuration entry.
-	 * 
+	 *
 	 * @param module
 	 *            the configuration module holding the configuration entry
 	 * @param entryKey
@@ -110,14 +110,15 @@ public interface ConfigurationService {
 
 	/**
 	 * Get the configuration entry value and return it as the required type.
-	 * 
+	 *
 	 * @param module
 	 *            the configuration module holding the configuration entry
 	 * @param entry
 	 *            the configuration entry
 	 * @param requiredType
 	 *            the required type
-	 * @return The entry value in the required type
+	 * @param <T> the type
+	 * @return the entry value in the required type
 	 * @throws WPSConfigurationException
 	 *             if the entry value cannot be be parsed to the required type
 	 */
@@ -126,7 +127,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Set the values for a configuration module. The {@code Object} values will be parsed to the entry types.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the configuration entry
 	 * @param entryKeys
@@ -141,7 +142,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Get an algorithm entry.
-	 * 
+	 *
 	 * @param module
 	 *            the configuration module holding the algorithm entry
 	 * @param algorithm
@@ -152,7 +153,7 @@ public interface ConfigurationService {
 
 	/**
 	 * Set the value of an algorithm entry.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithm
@@ -164,33 +165,33 @@ public interface ConfigurationService {
 
 	/**
 	 * Adds a new algorithm entry.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithmName
 	 *            the algorithm name
 	 */
 	void addAlgorithmEntry(String moduleClassName, String algorithmName);
-	
+
 	/**
 	 * Delete an algorithm entry.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the algorithm entry
 	 * @param algorithmName
 	 *            the algorithm name
 	 */
 	void deleteAlgorithmEntry(String moduleClassName, String algorithmName);
-	
+
 	/**
 	 * Set the value of an format entry.
-	 *  
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
 	 * @param mimeType
-	 *            the mime type of the format entry	
+	 *            the mime type of the format entry
 	 * @param schema
-	 *            the schema of the format entry	
+	 *            the schema of the format entry
 	 * @param encoding
 	 *            the encoding of the format entry
 	 * @param status
@@ -200,27 +201,27 @@ public interface ConfigurationService {
 
 	/**
 	 * Adds a new format entry.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
 	 * @param mimeType
-	 *            the mime type of the format entry	
+	 *            the mime type of the format entry
 	 * @param schema
-	 *            the schema of the format entry	
+	 *            the schema of the format entry
 	 * @param encoding
 	 *            the encoding of the format entry
 	 */
 	void addFormatEntry(String moduleClassName, String mimeType, String schema, String encoding);
-	
+
 	/**
 	 * Delete an format entry.
-	 * 
+	 *
 	 * @param moduleClassName
 	 *            the fully qualified name of the module holding the format entry
 	 * @param mimeType
-	 *            the mime type of the format entry	
+	 *            the mime type of the format entry
 	 * @param schema
-	 *            the schema of the format entry	
+	 *            the schema of the format entry
 	 * @param encoding
 	 *            the encoding of the format entry
 	 */
@@ -228,10 +229,10 @@ public interface ConfigurationService {
 
     /**
      * Update class name of an algorithm entry
-     * 
+     *
      * @param moduleClassName
      *            the fully qualified name of the module holding the algorithm
-     * @param newAlgorithmName
+     * @param algorithmName
      *            the new fully qualified name of the algorithm
      * @param oldAlgorithmName
      *            the old fully qualified name of the algorithm
@@ -240,10 +241,10 @@ public interface ConfigurationService {
             String algorithmName,
             String oldAlgorithmName);
 
-    
+
     /**
      * Update a format
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the format
      * @param oldMimeType

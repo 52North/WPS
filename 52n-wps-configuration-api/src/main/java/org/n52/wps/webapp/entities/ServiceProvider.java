@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.wps.webapp.service.CapabilitiesService;
 
 /**
  * Holds parsed service provider values.
- * 
+ *
  * @see CapabilitiesService
  * @see CapabilitiesDAO
  */
@@ -62,7 +62,7 @@ public class ServiceProvider  {
 	private String country;
 
 	private String email;
-	
+
 	public String getProviderName() {
 		return providerName;
 	}

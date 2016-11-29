@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -60,7 +60,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 	@Autowired
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	
+
 	@Autowired
 	private DataSource dataSource;
 
@@ -73,10 +73,10 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
 			try {
 				/*
-				 * if there is a user, data has already been loaded into the db 
+				 * if there is a user, data has already been loaded into the db
 				 */
 				String sql = "SELECT * FROM users";
-				
+
 				List<String> list = namedParameterJdbcTemplate.query(sql, new RowMapper<String>() {
 
 					@Override
@@ -84,7 +84,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 							throws SQLException {
 						return rs.getString("username");
 					}
-					
+
 				});
 
 				if (list.isEmpty()) {
@@ -97,8 +97,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 			}
 		}
 	}
-	
-	
+
+
 	@Override
 	public void insertConfigurationModule(ConfigurationModule module) {
 		LOGGER.debug("Inserting configuration module '{}' into the database.", module.getClass().getName());
@@ -270,7 +270,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 				return e;
 			}
 		});
-		
+
 		return algorithmEntries;
 	}
 
@@ -289,7 +289,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 						parameters);
 		LOGGER.debug("Number of rows affected: " + numberOfRowsAffected);
 	}
-	
+
 	@Override
 	public FormatEntry getFormatEntry(String moduleClassName, String mimeType, String schema, String encoding) {
 		LOGGER.debug("Getting format entry '{}', '{}', '{}' in configuration module '{}' from the database.", mimeType, schema, encoding,
@@ -332,15 +332,15 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 //		parameters.put("encoding", encoding);
 //		parameters.put("configuration_module", moduleClassName);
 //		parameters.put("active", active);
-				
+
 		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		
+
 		parameterSource.addValue("mime_type", mimeType);
 		parameterSource.addValue("schema", schema);
 		parameterSource.addValue("encoding", encoding);
 		parameterSource.addValue("configuration_module", moduleClassName);
 		parameterSource.addValue("active", active);
-		
+
 		namedParameterJdbcTemplate.update("INSERT INTO formatentry (mime_type, schema, encoding, configuration_module, active)"
 				+ "VALUES(:mime_type, :schema, :encoding, :configuration_module, :active)", parameterSource);
 
@@ -377,7 +377,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 				return e;
 			}
 		});
-		
+
 		return formatEntries;
 	}
 
@@ -395,7 +395,7 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 				.update("DELETE FROM formatentry "
 						+ "WHERE mime_type = :mime_type AND schema = :schema AND encoding = :encoding AND configuration_module = :configuration_module",
 						parameters);
-		
+
 	}
 
 
@@ -428,6 +428,6 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         parameters.put("old_schema", oldSchema);
         parameters.put("old_encoding", oldEncoding);
         parameters.put("configuration_module", moduleClassName);
-        namedParameterJdbcTemplate.update("UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding " + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding AND configuration_module = :configuration_module", parameters);        
+        namedParameterJdbcTemplate.update("UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding " + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding AND configuration_module = :configuration_module", parameters);
     }
 }

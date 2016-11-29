@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -64,9 +64,9 @@ public class BackupServiceImplTest {
 
 	@Mock
 	private ResourcePathUtil resourcePathUtil;
-	
+
 	@Mock
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate; 
+	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
@@ -91,7 +91,7 @@ public class BackupServiceImplTest {
 				"src/test/resources/testfiles/testlogback.xml");
 		when(resourcePathUtil.getWebAppResourcePath(BackupServiceImpl.WPS_CAPABILITIES_SKELETON)).thenReturn(
 				"src/test/resources/testfiles/wpsCapabilitiesSkeleton.xml");
-		
+
 		String[] itemsToBackup = { "database", "log", "wpscapabilities" };
 		String zipPath = backupService.createBackup(itemsToBackup);
 		File zipFile = new File(zipPath);
@@ -99,11 +99,11 @@ public class BackupServiceImplTest {
 		assertTrue(zipFile.exists());
 		assertThat(zipFile.getName(), containsString("WPSBackup"));
 		assertThat(zipFile.getName(), endsWith(".zip"));
-		
+
 		verify(namedParameterJdbcTemplate.getJdbcOperations()).execute(contains("BACKUP DATABASE TO"));
 		assertEquals("testlogback.xml", zipArchive.getEntry("testlogback.xml").getName());
 		assertEquals("wpsCapabilitiesSkeleton.xml", zipArchive.getEntry("wpsCapabilitiesSkeleton.xml").getName());
-		
+
 		// clean up
 		zipArchive.close();
 		zipFile.delete();
@@ -126,11 +126,11 @@ public class BackupServiceImplTest {
 				"src/test/resources/testfiles/backuptest/testlogback.xml");
 		when(resourcePathUtil.getWebAppResourcePath(BackupServiceImpl.WPS_CAPABILITIES_SKELETON)).thenReturn(
 				"src/test/resources/testfiles/backuptest/wpsCapabilitiesSkeleton.xml");
-		
+
 		// Create test folder
 		File folder = new File("src/test/resources/testfiles/backuptest/");
 		folder.mkdir();
-		
+
 		// Create temp data folder
 		File data = new File("src/test/resources/testfiles/backuptest/data");
 		data.mkdir();
@@ -138,7 +138,7 @@ public class BackupServiceImplTest {
 		// Get the test zip file input stream
 		File zipFile = new File("src/test/resources/testfiles/WPSBackup_Valid_Test.zip");
 		InputStream is = new FileInputStream(zipFile);
-		
+
 		backupService.restoreBackup(is);
 		assertTrue(new File("src/test/resources/testfiles/backuptest/data/wpsconfig.script").exists());
 		assertTrue(new File("src/test/resources/testfiles/backuptest/data/wpsconfig.properties").exists());
@@ -156,7 +156,7 @@ public class BackupServiceImplTest {
 		exception.expect(WPSConfigurationException.class);
 		backupService.restoreBackup(is);
 	}
-	
+
 	private void deleteFolder(File folder) {
 		for (File file : folder.listFiles()) {
 			if (file.isDirectory()) {

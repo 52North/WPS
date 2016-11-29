@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,7 +48,7 @@ public interface BackupService {
 	 * <p>
 	 * "wpscapabilities" to backup the wpsCapabilitiesSkeleton.xml file.
 	 * </p>
-	 * 
+	 *
 	 * @param itemsToBackup
 	 *            a list of items to back up
 	 * @return the location of the created backup archive
@@ -59,7 +59,7 @@ public interface BackupService {
 
 	/**
 	 * Extract and restore a backup archive
-	 * 
+	 *
 	 * @param zipFile
 	 *            the backup archive inputstream
 	 * @return the number of items restored

@@ -83,7 +83,7 @@ This project includes:
   Grid Coverage module under Lesser General Public License (LGPL)
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest All under New BSD License
-  Hamcrest Core under BSD style
+  Hamcrest Core under New BSD License
   Hamcrest Library under BSD style
   Hibernate Validator Engine under Apache License, Version 2.0
   HttpClient under Apache License
@@ -117,7 +117,7 @@ This project includes:
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
   jsr-275 under BSD License
-  jstl under GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)
+  jstl under GNU General Public License (GPL), version 2, with the CLASSPATH exception
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0

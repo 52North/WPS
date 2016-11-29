@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,23 +40,23 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class JDomUtilTest {
-	
+
 	private JDomUtil jDomUtil;
 	private String path = JDomUtilTest.class.getResource("/testfiles/").getPath();
-	
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	@Before
 	public void setup() {
 		jDomUtil = new JDomUtil();
 	}
-	
+
 	@After
 	public void tearDown() {
 		jDomUtil = null;
 	}
-	
+
 	@Test
 	public void parse_validXmlFile_validPath() throws Exception {
 		Document document = jDomUtil.parse(path + "testdata.xml");
@@ -66,42 +66,42 @@ public class JDomUtilTest {
 		assertEquals("HP", document.getRootElement().getChild("Product").getChild("Brand").getValue());
 		assertEquals("999", document.getRootElement().getChild("Product").getChild("Price").getValue());
 	}
-	
+
 	@Test
 	public void parse_invalidPath() throws Exception {
 		exception.expect(RuntimeException.class);
 		exception.expectMessage("Unable to parse");
 		jDomUtil.parse(path + "non_existing_file");
 	}
-	
+
 	@Test
 	public void parse_invalidXmlFormat_validPath() throws Exception {
 		exception.expect(RuntimeException.class);
 		exception.expectMessage("Unable to parse");
 		jDomUtil.parse(path + "52n-logo.gif");
 	}
-	
+
 	@Test
 	public void write_validDocument_validPath() throws Exception {
 		Document document = jDomUtil.parse(path + "testdata.xml");
-		
+
 		assertEquals("PC", document.getRootElement().getChild("Product").getChild("Name").getValue());
 		document.getRootElement().getChild("Product").getChild("Name").setText("New PC Name");
 		jDomUtil.write(document, path + "testdata2.xml");
-		
+
 		Document updatedDocument = jDomUtil.parse(path + "testdata2.xml");
 		assertEquals("New PC Name", updatedDocument.getRootElement().getChild("Product").getChild("Name").getValue());
-		
+
 		new File(path + "testdata2.xml").delete();
 	}
-	
+
 	@Test
 	public void write_nullDocument_validPath() throws Exception {
 		Document document = null;
 		exception.expect(NullPointerException.class);
 		jDomUtil.write(document, path + "testdata2.xml");
 	}
-	
+
 	@Test
 	public void write_validDocument_invalidPath() throws Exception {
 		Document document = jDomUtil.parse(path + "testdata.xml");

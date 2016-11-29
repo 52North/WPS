@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -107,7 +107,7 @@ public class XmlCapabilitiesDAOTest {
 						Namespace.getNamespace("ows", XmlCapabilitiesDAO.NAMESPACE)));
 		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
-	
+
 	@Test
 	public void saveServiceIdentification_nullServiceIdentification() throws Exception {
 		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
@@ -118,7 +118,7 @@ public class XmlCapabilitiesDAOTest {
 		exception.expect(NullPointerException.class);
 		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
 	}
-	
+
 	@Test
 	public void getServiceProvider() throws Exception {
 		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(
@@ -153,7 +153,7 @@ public class XmlCapabilitiesDAOTest {
 				providerSite.getAttributeValue("href", Namespace.getNamespace("xlink", "http://www.w3.org/1999/xlink")));
 		verify(jDomUtil).write(testDoc, "mocked_wpsCapabilitiesSkeleton_xml_absolute_path");
 	}
-	
+
 	@Test
 	public void saveServiceIdentification_nullServiceProvider() throws Exception {
 		when(resourcePathUtil.getWebAppResourcePath(XmlCapabilitiesDAO.FILE_NAME)).thenReturn(

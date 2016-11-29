@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,7 +52,7 @@ public class ResourcePathUtil {
 
 	/**
 	 * Returns the absolute path for web app resources and directories.
-	 * 
+	 *
 	 * @param relativePath
 	 *            the relative path of a resource or a directory
 	 * @return The absolute path of a resource or a directory
@@ -72,7 +72,7 @@ public class ResourcePathUtil {
 
 	/**
 	 * Returns the absolute path for classpath resources and directories.
-	 * 
+	 *
 	 * @param relativePath
 	 *            the relative path of a resource or a directory
 	 * @return The absolute path of a resource or a directory

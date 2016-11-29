@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,29 +38,29 @@ import org.n52.wps.webapp.entities.ServiceProvider;
 public interface CapabilitiesService {
 	/**
 	 * Get the service identification information
-	 * 
+	 *
 	 * @return service identification information
 	 */
 	ServiceIdentification getServiceIdentification();
 
 	/**
 	 * Get the service provider information
-	 * 
+	 *
 	 * @return service provider information
 	 */
 	ServiceProvider getServiceProvider();
 
 	/**
 	 * Save the service identification information to file
-	 * 
-	 * @param serviceIdentification
+	 *
+	 * @param serviceIdentification the <code>ServiceIdentification</code> to be saved
 	 */
 	void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
 	/**
 	 * Save the service provider information to file
-	 * 
-	 * @param serviceProvider
+	 *
+	 * @param serviceProvider the <code>ServiceProvider</code> to be saved
 	 */
 	void saveServiceProvider(ServiceProvider serviceProvider);
 }

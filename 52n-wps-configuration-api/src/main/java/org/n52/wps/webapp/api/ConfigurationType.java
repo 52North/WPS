@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,9 +28,17 @@
  */
 package org.n52.wps.webapp.api;
 
+import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
+import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
+import org.n52.wps.webapp.api.types.FileConfigurationEntry;
+import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
+import org.n52.wps.webapp.api.types.StringConfigurationEntry;
+import org.n52.wps.webapp.api.types.URIConfigurationEntry;
+
 /**
- * User by {@link ConfigurationEntry<T>} implementations to specify their type. Each type has its own class.
- * 
+ * User by {@link ConfigurationEntry} implementations to specify their type. Each type has its own class.
+ *
  * @see StringConfigurationEntry
  * @see IntegerConfigurationEntry
  * @see BooleanConfigurationEntry

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,10 +36,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.n52.wps.webapp.dao.LogConfigurationsDAO;
+import org.n52.wps.webapp.service.LogConfigurationsService;
 
 /**
  * Holds parsed log configuration values.
- * 
+ *
  * @see LogConfigurationsService
  * @see LogConfigurationsDAO
  */

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,7 +46,7 @@ public class ConfigurationManagerImplTest {
 
 	@InjectMocks
 	private ConfigurationManager configurationManager;
-	
+
 	@Mock
 	private ConfigurationService configurationService;
 
@@ -58,16 +58,16 @@ public class ConfigurationManagerImplTest {
 
 	@Mock
 	private LogConfigurationsService logConfigurationsService;
-	
+
 	@Mock
 	private BackupService backupService;
-		
+
 	@Before
 	public void setup() {
 		configurationManager = new ConfigurationManagerImpl();
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	@After
 	public void tearDown() {
 		configurationManager = null;
@@ -77,22 +77,22 @@ public class ConfigurationManagerImplTest {
 	public void getConfigurationServices() {
 		assertNotNull(configurationManager.getConfigurationServices());
 	}
-	
+
 	@Test
 	public void getUserServices() {
 		assertNotNull(configurationManager.getUserServices());
 	}
-	
+
 	@Test
 	public void getCapabilitiesServices() {
 		assertNotNull(configurationManager.getCapabilitiesServices());
 	}
-	
+
 	@Test
 	public void getLogConfigurationsServices() {
 		assertNotNull(configurationManager.getLogConfigurationsServices());
 	}
-	
+
 	@Test
 	public void getLogBackupServices() {
 		assertNotNull(configurationManager.getBackupServices());

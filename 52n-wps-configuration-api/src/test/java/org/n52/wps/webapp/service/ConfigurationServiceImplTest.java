@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -579,7 +579,7 @@ public class ConfigurationServiceImplTest {
 		configurationService.setAlgorithmEntry(testModule1ClassName, nonExisting, false);
 		verify(configurationDAO, never()).updateAlgorithmEntry(testModule1ClassName, nonExisting, false);
 	}
-	
+
 	@Test
 	public void addFormatEntry_validEntry() {
 		configurationService.addFormatEntry(testParserModuleClassName, "text/xml", "http://xyz", "UTF-8");

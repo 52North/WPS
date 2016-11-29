@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,7 +62,7 @@ public class JdbcConfigurationDAOTest {
 
 	private String module1ClassName = TestConfigurationModule1.class.getName();
 	private String module2ClassName = TestConfigurationModule2.class.getName();
-	
+
 	private TestConfigurationModule1 testModule1;
 	private TestConfigurationModule2 testModule2;
 	private TestConfigurationModule3 testModule3;
@@ -96,13 +96,13 @@ public class JdbcConfigurationDAOTest {
 		boolean statusOfModule2 = configurationDAO.getConfigurationModuleStatus(testModule2);
 		assertFalse(statusOfModule2);
 	}
-	
+
 	@Test
 	public void getConfigurationModuleStatus_nonExistingModule() {
 		Boolean statusOfModule = configurationDAO.getConfigurationModuleStatus(testModule3);
 		assertNull(statusOfModule);
 	}
-	
+
 	@Test
 	public void insertConfigurationModule() {
 		Boolean statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
@@ -111,7 +111,7 @@ public class JdbcConfigurationDAOTest {
 		statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
 		assertTrue(statusOfModule3);
 	}
-	
+
 	@Test
 	public void updateConfigurationModule() {
 		boolean statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
@@ -121,7 +121,7 @@ public class JdbcConfigurationDAOTest {
 		statusOfModule1 = configurationDAO.getConfigurationModuleStatus(testModule1);
 		assertFalse(statusOfModule1);
 	}
-	
+
 	@Test
 	public void getConfigurationEntryValue_validEntry() throws Exception {
 		Object stringValue = configurationDAO.getConfigurationEntryValue(module1ClassName, "test.string.key");

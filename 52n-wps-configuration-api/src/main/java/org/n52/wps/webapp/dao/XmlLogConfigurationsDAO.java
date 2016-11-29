@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -152,14 +152,14 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 		if (logConfigurations.isFileAppenderEnabled()) {
 			setAppender(rootLevelElement, "wpsfile");
 		}
-		
+
 		if (logConfigurations.isConsoleAppenderEnabled()) {
 			setAppender(rootLevelElement, "wpsconsole");
 		}
 		jDomUtil.write(document, absolutePath);
 		LOGGER.info("LogConfigurations values written to '{}'", absolutePath);
 	}
-	
+
 	private String getValue(Element element) {
 		if (element != null) {
 			return element.getValue();
@@ -172,7 +172,7 @@ public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 			element.setText(value);
 		}
 	}
-	
+
 	private void setAppender(Element rootLevelElement, String appender) {
 		Element appenderElement = new Element("appender-ref");
 		appenderElement.setAttribute("ref", appender);

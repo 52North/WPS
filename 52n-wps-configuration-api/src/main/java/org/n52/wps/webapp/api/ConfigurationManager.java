@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,35 +41,35 @@ import org.n52.wps.webapp.service.UserService;
 public interface ConfigurationManager {
 	/**
 	 * Access configuration services and operations
-	 * 
+	 *
 	 * @return {@code ConfigurationService}
 	 */
 	ConfigurationService getConfigurationServices();
 
 	/**
 	 * Access user services and operations
-	 * 
+	 *
 	 * @return {@code UserService}
 	 */
 	UserService getUserServices();
 
 	/**
 	 * Access capabilities services and operations
-	 * 
+	 *
 	 * @return {@code CapabilitiesService}
 	 */
 	CapabilitiesService getCapabilitiesServices();
 
 	/**
 	 * Access log services and operations
-	 * 
+	 *
 	 * @return {@code LogConfigurationsService}
 	 */
 	LogConfigurationsService getLogConfigurationsServices();
 
 	/**
 	 * Access backup and restore services and operations
-	 * 
+	 *
 	 * @return {@code BackupService}
 	 */
 	BackupService getBackupServices();

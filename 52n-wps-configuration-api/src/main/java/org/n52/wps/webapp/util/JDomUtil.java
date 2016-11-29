@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ public class JDomUtil {
 
 	/**
 	 * Parse a file to a {@code Document}
-	 * 
+	 *
 	 * @param filePath
 	 *            file path of the file to be parsed
 	 * @return Parsed {@code Document} object
@@ -61,7 +61,7 @@ public class JDomUtil {
 	public Document parse(String filePath) {
 		SAXBuilder sb = new SAXBuilder();
 		Document document = null;
-		
+
 		try (FileInputStream inputStream = new FileInputStream(new File(filePath))) {
 			document = sb.build(inputStream);
 			LOGGER.info("{} is parsed and a Document is returned.", filePath);
@@ -73,7 +73,7 @@ public class JDomUtil {
 
 	/**
 	 * Write a {@code Document} to a file
-	 * 
+	 *
 	 * @param document
 	 *            the document to be written
 	 * @param filePath

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ public interface UserDAO {
 
 	/**
 	 * Get user by user id
-	 * 
+	 *
 	 * @param userId
 	 *            the id of the user
 	 * @return The user specified by the id
@@ -48,7 +48,7 @@ public interface UserDAO {
 
 	/**
 	 * Get user by username
-	 * 
+	 *
 	 * @param username
 	 *            the username of the user
 	 * @return The user specified by the username
@@ -57,28 +57,28 @@ public interface UserDAO {
 
 	/**
 	 * Get all users
-	 * 
+	 *
 	 * @return The list of all users
 	 */
 	List<User> getAllUsers();
 
 	/**
 	 * Insert new user
-	 * 
-	 * @param user
+	 *
+	 * @param user the new user
 	 */
 	void insertUser(User user);
 
 	/**
 	 * Update existing user
-	 * 
-	 * @param user
+	 *
+	 * @param user the user to be updated
 	 */
 	void updateUser(User user);
 
 	/**
 	 * Delete user
-	 * 
+	 *
 	 * @param userId
 	 *            the id of the user to be deleted
 	 */

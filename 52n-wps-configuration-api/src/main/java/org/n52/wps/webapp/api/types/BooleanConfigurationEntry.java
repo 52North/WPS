@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -31,13 +31,13 @@ package org.n52.wps.webapp.api.types;
 import org.n52.wps.webapp.api.ConfigurationType;
 
 public class BooleanConfigurationEntry extends ConfigurationEntry<Boolean> {
-	
+
 	public BooleanConfigurationEntry(String key, String title) {
 		super(key, title, ConfigurationType.BOOLEAN);
 	}
-	
+
 	public BooleanConfigurationEntry(String key, String title, String description, boolean required, Boolean value) {
 		super(key, title, description, required, value, ConfigurationType.BOOLEAN);
 	}
-	
+
 }

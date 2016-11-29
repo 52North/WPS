@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -82,7 +82,7 @@ public class TestConfigurationModuleParser1 implements ConfigurationModule {
 			entry5, entry6, entry7, entry8);
 
 	private List<AlgorithmEntry> algorithmEntries = Arrays.asList(algorithmEntry, algorithmEntry2);
-	
+
 	private List<FormatEntry> formatEntries = new ArrayList<>();
 
 	@Override
@@ -94,12 +94,12 @@ public class TestConfigurationModuleParser1 implements ConfigurationModule {
 	public boolean isActive() {
 		return active;
 	}
-	
+
 	@Override
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
 	@Override
 	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
 		return configurationEntries;
@@ -178,7 +178,7 @@ public class TestConfigurationModuleParser1 implements ConfigurationModule {
 	public void setIntInvalidMember(int intInvalidMember, int secondParameter) {
 		this.intInvalidMember = intInvalidMember;
 	}
-	
+
 	public int getIntInvalidMember() {
 		return intInvalidMember;
 	}

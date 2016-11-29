@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,48 +41,48 @@ import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ResourcePathUtilTest {
-	
+
 	private ResourcePathUtil resourcePathUtil;
-	
+
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	private MockServletContext mockServletContext;
-	
+
 	@Before
 	public void setup() {
 		resourcePathUtil = new ResourcePathUtil();
 		mockServletContext = new MockServletContext();
 		ReflectionTestUtils.setField(resourcePathUtil, "servletContext", mockServletContext);
 	}
-	
+
 	@After
 	public void tearDown() {
 		resourcePathUtil = null;
 		mockServletContext = null;
 	}
-	
+
 	@Test
 	public void getWebAppResourcePath_validPath() {
 		String releativePath = "testfiles/wpsCapabilitiesSkeleton.xml";
 		String absoultPath = resourcePathUtil.getWebAppResourcePath(releativePath);
 		assertTrue(new File(absoultPath).exists());
 	}
-	
+
 	@Test
 	public void getWebAppResourcePath_invalidPath() {
 		exception.expect(RuntimeException.class);
 		exception.expectMessage("nonExistingResource");
 		resourcePathUtil.getWebAppResourcePath("nonExistingResource");
 	}
-	
+
 	@Test
 	public void getClassPathResourcePath_validPath() throws Exception {
 		String releativePath = "logback.xml";
 		String absoultPath = resourcePathUtil.getClassPathResourcePath(releativePath);
 		assertTrue(new File(absoultPath).exists());
 	}
-	
+
 	@Test
 	public void getClassPathResourcePath_invalidPath() {
 		exception.expect(RuntimeException.class);

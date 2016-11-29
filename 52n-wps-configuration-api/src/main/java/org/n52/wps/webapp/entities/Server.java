@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,7 +48,7 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 public class Server implements ConfigurationModule {
 
 	private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",
-			true, "localhost");	
+			true, "localhost");
 	private ConfigurationEntry<String> protocolEntry = new StringConfigurationEntry("protocol", "Server protocol", "",
 			true, "http");
 	private ConfigurationEntry<Integer> hostportEntry = new IntegerConfigurationEntry("hostport", "Server Host Port",
@@ -155,7 +155,7 @@ public class Server implements ConfigurationModule {
 	public String getProtocol() {
 		return protocol;
 	}
-	
+
 	@ConfigurationKey(key = "protocol")
 	public void setProtocol(String protocol) {
 		this.protocol = protocol;
@@ -224,7 +224,7 @@ public class Server implements ConfigurationModule {
 	public int getMinPoolSize() {
 		return minPoolSize;
 	}
-	
+
 	public int getMaxPoolSize() {
 		return maxPoolSize;
 	}

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,29 +39,29 @@ public interface CapabilitiesDAO {
 	/**
 	 * Parse wpsCapabilitiesSkeleton.xml and map service identification properties to a {@code ServiceIdentification}
 	 * object
-	 * 
+	 *
 	 * @return Populated {@code ServiceIdentification} object
 	 */
 	ServiceIdentification getServiceIdentification();
 
 	/**
 	 * Write {@code ServiceIdentification} values to wpsCapabilitiesSkeleton.xml
-	 * 
-	 * @param {@code ServiceIdentification}
+	 *
+	 * @param serviceIdentification The {@code ServiceIdentification}
 	 */
 	void saveServiceIdentification(ServiceIdentification serviceIdentification);
 
 	/**
 	 * Parse wpsCapabilitiesSkeleton.xml and map service provider properties to a {@code ServiceProvider} object
-	 * 
+	 *
 	 * @return Populated {@code ServiceProvider} object
 	 */
 	ServiceProvider getServiceProvider();
 
 	/**
 	 * Write {@code ServiceProvider} values to wpsCapabilitiesSkeleton.xml
-	 * 
-	 * @param {@code ServiceProvider}
+	 *
+	 * @param serviceProvider The {@code ServiceProvider}
 	 */
 	void saveServiceProvider(ServiceProvider serviceProvider);
 }

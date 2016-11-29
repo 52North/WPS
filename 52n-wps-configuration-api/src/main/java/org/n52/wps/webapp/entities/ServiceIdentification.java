@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,10 +29,12 @@
 package org.n52.wps.webapp.entities;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.n52.wps.webapp.dao.CapabilitiesDAO;
+import org.n52.wps.webapp.service.CapabilitiesService;
 
 /**
  * Holds parsed service identification values.
- * 
+ *
  * @see CapabilitiesService
  * @see CapabilitiesDAO
  */

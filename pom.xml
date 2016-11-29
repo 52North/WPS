@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>52-North</artifactId>
-		<groupId>org.n52</groupId>
-		<version>5.6.6</version>
+        <groupId>org.n52</groupId>
+        <artifactId>parent</artifactId>
+        <version>2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
@@ -34,40 +34,40 @@
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	</scm>
-	<repositories>
-		<repository>
-			<id>Apache</id>
-			<name>Apache repository</name>
-			<url>http://repo1.maven.org/maven2</url>
-		</repository>
-		<repository>
-			<id>n52-releases</id>
-			<name>52n Releases</name>
-			<url>http://52north.org/maven/repo/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>geotools</id>
-			<name>Geotools Repo</name>
-			<url>http://download.osgeo.org/webdav/geotools</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>OpenGEO</id>
-			<name>opengeo repository</name>
-			<url>http://repo.opengeo.org</url>
-		</repository>
-	</repositories>
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<id>Apache</id> -->
+<!-- 			<name>Apache repository</name> -->
+<!-- 			<url>http://repo1.maven.org/maven2</url> -->
+<!-- 		</repository> -->
+<!-- 		<repository> -->
+<!-- 			<id>n52-releases</id> -->
+<!-- 			<name>52n Releases</name> -->
+<!-- 			<url>http://52north.org/maven/repo/releases</url> -->
+<!-- 			<releases> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</releases> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 		</repository> -->
+<!-- 		<repository> -->
+<!-- 			<id>geotools</id> -->
+<!-- 			<name>Geotools Repo</name> -->
+<!-- 			<url>http://download.osgeo.org/webdav/geotools</url> -->
+<!-- 			<releases> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</releases> -->
+<!-- 			<snapshots> -->
+<!-- 				<enabled>true</enabled> -->
+<!-- 			</snapshots> -->
+<!-- 		</repository> -->
+<!-- 		<repository> -->
+<!-- 			<id>OpenGEO</id> -->
+<!-- 			<name>opengeo repository</name> -->
+<!-- 			<url>http://repo.opengeo.org</url> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -687,6 +687,11 @@
             	<artifactId>spring-security-taglibs</artifactId>
             	<version>${org.spring-security.version}</version>
             </dependency>
+		    <dependency>
+			    <groupId>org.springframework</groupId>
+			    <artifactId>spring-tx</artifactId>
+			    <version>${org.springframework.version}</version>
+		    </dependency>
 			<!-- end spring dependencies -->
 			<dependency>
 				<groupId>com.sun.jersey</groupId>
@@ -832,36 +837,16 @@
 				<artifactId>52n-wps-grass</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>${project.groupId}</groupId> -->
-<!-- 				<artifactId>52n-wps-ags</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 			</dependency> -->
-<!-- 			<dependency> -->
-<!-- 				<groupId>${project.groupId}</groupId> -->
-<!-- 				<artifactId>52n-wps-python</artifactId> -->
-<!-- 				<version>${project.version}</version> -->
-<!-- 			</dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-r</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!--  			<dependency> -->
-<!--  				<groupId>${project.groupId}</groupId> -->
-<!--  				<artifactId>52n-wps-mc</artifactId> -->
-<!--  				<version>${project.version}</version> -->
-<!--  			</dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-<!--             <dependency> -->
-<!--                 <groupId>${project.groupId}</groupId> -->
-<!--                 <artifactId>52n-wps-matlab</artifactId> -->
-<!--                 <version>${project.version}</version> -->
-<!--             </dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-configuration-api</artifactId>
@@ -873,13 +858,7 @@
 				<artifactId>ogckml2.2</artifactId>
 				<version>1.0.0</version>
 			</dependency>
-<!-- 			<dependency> -->
-<!-- 				<groupId>org.n52.wps</groupId> -->
-<!-- 				<artifactId>52n-wps-ags-workspace</artifactId> -->
-<!-- 				<version>10.0.2</version> -->
-<!-- 			</dependency> -->
 			<dependency>
-				<groupId>org.n52.wps</groupId>
 				<groupId>org.n52.sensorweb</groupId>
 				<artifactId>52n-xml-wps-v100</artifactId>
 				<version>2.2.0</version>
@@ -973,6 +952,11 @@
                 <artifactId>cors-filter</artifactId>
                 <version>1.9.3</version>
             </dependency>
+		    <dependency>
+			    <groupId>javax.validation</groupId>
+			    <artifactId>validation-api</artifactId>
+			    <version>1.1.0.Final</version>
+		    </dependency>
             <!-- new dependencies for GeoTools update -->
             <dependency>
                 <groupId>jdom</groupId>

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,14 +33,14 @@ import org.n52.wps.webapp.api.ConfigurationType;
 
 /**
  * Used by {@link ConfigurationModule} implementations to create type safe configuration entries using the extending classes.
- * 
+ *
  * @see StringConfigurationEntry
  * @see IntegerConfigurationEntry
  * @see BooleanConfigurationEntry
  * @see DoubleConfigurationEntry
  * @see FileConfigurationEntry
  * @see URIConfigurationEntry
- * 
+ *
  * TODO: add isActive here?!
  */
 public abstract class ConfigurationEntry<T> {

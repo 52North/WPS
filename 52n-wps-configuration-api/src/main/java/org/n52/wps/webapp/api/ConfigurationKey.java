@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,13 +41,13 @@ import java.lang.annotation.Target;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * <code>
  * private String stringMember;
- * 
+ *
  * // a configuration entry with a 'test.string.key' key;
- * 
+ *
  * {@literal @}ConfigurationKey(key = "test.string.key")
  * public void setStringMember(String stringMember) {
  * 	  this.stringMember = stringMember;

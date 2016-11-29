@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,35 +46,35 @@ import org.n52.wps.webapp.entities.LogConfigurations;
 public class LogConfigurationsServiceImplTest {
 	@InjectMocks
 	private LogConfigurationsService logConfigurationsService;
-	
+
 	@Mock
 	private LogConfigurationsDAO logConfigurationsDAO;
-	
+
 	@Before
 	public void setup() {
 		logConfigurationsService = new LogConfigurationsServiceImpl();
 		MockitoAnnotations.initMocks(this);
 	}
-	
+
 	@After
 	public void tearDown() {
 		logConfigurationsService = null;
 	}
-	
+
 	@Test
 	public void getLogConfigurations() throws Exception {
 		when(logConfigurationsDAO.getLogConfigurations()).thenReturn(new LogConfigurations());
 		LogConfigurations logConfigurations = logConfigurationsService.getLogConfigurations();
 		assertNotNull(logConfigurations);
 	}
-	
+
 	@Test
 	public void saveLogConfigurations_validLogConfigurations() throws Exception {
 		LogConfigurations logConfigurations = new LogConfigurations();
 		logConfigurationsService.saveLogConfigurations(logConfigurations);
 		verify(logConfigurationsDAO).saveLogConfigurations(logConfigurations);
 	}
-	
+
 	@Test
 	public void saveLogConfigurations_nullLogConfigurations() throws Exception {
 		LogConfigurations logConfigurations = null;

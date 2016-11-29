@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,14 +36,14 @@ import org.n52.wps.webapp.entities.LogConfigurations;
 public interface LogConfigurationsService {
 	/**
 	 * Get the {@code LogConfigurations} object
-	 * 
+	 *
 	 * @return Log configurations object
 	 */
 	LogConfigurations getLogConfigurations();
 
 	/**
 	 * Save a {@code LogConfigurations} object to log file
-	 * 
+	 *
 	 * @param logConfigurations
 	 *            the log configurations object
 	 */

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -294,15 +294,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * entry into the database
 	 */
 	private void syncConfigurationModuleAlgorithmEntries(ConfigurationModule module) {
-		
+
 		List<String> moduleAlgorithmNames = new ArrayList<>();
-		
-		if (module.getAlgorithmEntries() != null) {			
-			
+
+		if (module.getAlgorithmEntries() != null) {
+
 			for (AlgorithmEntry entry : module.getAlgorithmEntries()) {
 				AlgorithmEntry storedEntry = configurationDAO.getAlgorithmEntry(module.getClass().getName(),
 						entry.getAlgorithm());
-				if (storedEntry != null) {		
+				if (storedEntry != null) {
 					entry.setActive(storedEntry.isActive());
 					moduleAlgorithmNames.add(entry.getAlgorithm());
 					LOGGER.debug("Algorithm '{}' in module '{}' has been set to '{}' from the database.",
@@ -316,13 +316,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 							entry.getAlgorithm(), entry.isActive(), module.getClass().getName());
 				}
 			}
-			
+
 		}
-		for (AlgorithmEntry entry : configurationDAO.getAlgorithmEntries(module.getClass().getName())) {				
-			
+		for (AlgorithmEntry entry : configurationDAO.getAlgorithmEntries(module.getClass().getName())) {
+
 			if(!moduleAlgorithmNames.contains(entry.getAlgorithm())){
 				try {
-					module.getAlgorithmEntries().add(entry);					
+					module.getAlgorithmEntries().add(entry);
 				} catch (Exception e) {
 					LOGGER.info("Could not add algorithm " + entry.getAlgorithm() + " to repository " + module.getClass().getName(), e.getClass());
 				}
@@ -335,38 +335,38 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * entry into the database
 	 */
 	private void syncConfigurationModuleFormatEntries(ConfigurationModule module) {
-		
+
 		List<FormatEntry> moduleFormats = new ArrayList<>();
-		
-		if (module.getFormatEntries() != null) {			
-			
+
+		if (module.getFormatEntries() != null) {
+
 			for (FormatEntry entry : module.getFormatEntries()) {
 				FormatEntry storedEntry = configurationDAO.getFormatEntry(module.getClass().getName(),
 						entry.getMimeType(), entry.getSchema(), entry.getEncoding());
-				if (storedEntry != null) {		
+				if (storedEntry != null) {
 					entry.setActive(storedEntry.isActive());
 					moduleFormats.add(entry);
 					LOGGER.debug("Format '{}', '{}', '{}' in module '{}' has been set to '{}' from the database.",
 							entry.getMimeType(), entry.getSchema(), entry.getEncoding(), module.getClass().getName(), storedEntry.isActive());
 				} else {
 					// save a new entry to the database
-					configurationDAO.insertFormatEntry(module.getClass().getName(), entry.getMimeType(), entry.getSchema(), entry.getEncoding(), 
+					configurationDAO.insertFormatEntry(module.getClass().getName(), entry.getMimeType(), entry.getSchema(), entry.getEncoding(),
 							entry.isActive());
 					LOGGER.debug(
 							"Format '{}', '{}', '{}' with active status '{}' in module '{}' has been saved to the database.",
 							entry.getMimeType(), entry.getSchema(), entry.getEncoding(), entry.isActive(), module.getClass().getName());
 				}
 			}
-			
+
 		}
-		for (FormatEntry entry : configurationDAO.getFormatEntries(module.getClass().getName())) {				
-			
+		for (FormatEntry entry : configurationDAO.getFormatEntries(module.getClass().getName())) {
+
 			if(!moduleFormats.contains(entry)){
 				module.getFormatEntries().add(entry);
 			}
 		}
 	}
-	
+
 	/*
 	 * Loop through a module configuration entries and pass the values to setter methods annotated with the entry's key
 	 */
@@ -534,8 +534,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			String algorithmName) {
 		configurationDAO.deleteAlgorithmEntry(moduleClassName, algorithmName);
 		ConfigurationModule module = getConfigurationModule(moduleClassName);
-		Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();	
-		
+		Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();
+
 		while (algorithmEntryIterator.hasNext()) {
 			AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator
 					.next();
@@ -552,7 +552,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		configurationDAO.updateFormatEntry(moduleClassName, mimeType, schema, encoding, status);
 		LOGGER.debug(
 				"Format with mime type '{}', schema '{}', encoding '{}' and status '{}' of module '{}' has been updated.",
-				mimeType, schema, encoding, status, moduleClassName);	
+				mimeType, schema, encoding, status, moduleClassName);
 	}
 
 	@Override
@@ -560,22 +560,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			String encoding) {
 		boolean status = true;
 		configurationDAO.insertFormatEntry(moduleClassName, mimeType, schema, encoding, status);
-		FormatEntry formatEntry = new FormatEntry(mimeType, schema, encoding, status);	
-		ConfigurationModule module = getConfigurationModule(moduleClassName);		
+		FormatEntry formatEntry = new FormatEntry(mimeType, schema, encoding, status);
+		ConfigurationModule module = getConfigurationModule(moduleClassName);
 		module.getFormatEntries().add(formatEntry);
 		LOGGER.debug(
 				"Format with mime type '{}', schema '{}', encoding '{}' and status '{}' has been added to module '{}' and saved to the database.",
-				mimeType, schema, encoding, status, moduleClassName);	
+				mimeType, schema, encoding, status, moduleClassName);
 	}
 
 	@Override
 	public void deleteFormatEntry(String moduleClassName, String mimeType, String schema, String encoding) {
 		configurationDAO.deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
 		ConfigurationModule module = getConfigurationModule(moduleClassName);
-		Iterator<FormatEntry> formatEntryIterator = module.getFormatEntries().iterator();	
+		Iterator<FormatEntry> formatEntryIterator = module.getFormatEntries().iterator();
 		/*
 		 * FormatEntry class has a built-in method for comparison including checks for null values
-		 */		
+		 */
 		FormatEntry tempFormatEntryForComparison = new FormatEntry(mimeType, schema, encoding, true);
 		while (formatEntryIterator.hasNext()) {
 			FormatEntry formatEntry = (FormatEntry) formatEntryIterator
@@ -592,7 +592,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             String newAlgorithmName,
             String oldAlgorithmName) {
         ConfigurationModule module = getConfigurationModule(moduleClassName);
-        Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();      
+        Iterator<AlgorithmEntry> algorithmEntryIterator = module.getAlgorithmEntries().iterator();
         while (algorithmEntryIterator.hasNext()) {
             AlgorithmEntry algorithmEntry = (AlgorithmEntry) algorithmEntryIterator
                             .next();
@@ -617,6 +617,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
             String newSchema,
             String newEncoding) {
         configurationDAO.updateFormatEntry(moduleClassName, oldMimeType, oldSchema, oldEncoding, newMimeType, newSchema, newEncoding);
-        
+
     }
 }
