@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,11 +53,14 @@ public class RawData extends ResponseData {
     public static final Joiner SPACE_JOINER = Joiner.on(" ");
 
     /**
-     * @param obj
-     * @param id
-     * @param schema
-     * @param encoding
-     * @param mimeType
+     * @param obj the <code>IData</code> object
+     * @param id the id of the data
+     * @param schema the schema of the data
+     * @param encoding the encoding of the data
+     * @param mimeType the mimeType of the data
+     * @param algorithmIdentifier the id of the data
+     * @param description the process description that the <code>RawData</code> belongs to
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public RawData(IData obj, String id, String schema, String encoding,
                    String mimeType, String algorithmIdentifier,

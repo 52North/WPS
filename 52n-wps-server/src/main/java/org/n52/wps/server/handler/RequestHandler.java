@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,6 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.io.IOUtils;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.request.CapabilitiesRequest;
 import org.n52.wps.server.request.DescribeProcessRequest;
 import org.n52.wps.server.request.DescribeProcessRequestV200;
@@ -69,11 +68,11 @@ import org.xml.sax.SAXException;
  * time runs out, the client will be served with a reference to the future
  * result. The client can come back later to retrieve the result. Uses
  * "computation_timeout_seconds" from wps.properties
- * 
+ *
  * @author Timon ter Braak
  */
 public class RequestHandler {
-    
+
     public static final String VERSION_ATTRIBUTE_NAME = "version";
 
     /** Computation timeout in seconds */
@@ -82,22 +81,22 @@ public class RequestHandler {
     protected OutputStream os;
 
     private static Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
-    
+
     protected String responseMimeType;
-    
+
     protected Request req;
-    
+
     private String requestedVersion;
-    
+
     // Empty constructor due to classes which extend the RequestHandler
     protected RequestHandler() {
-        
+
     }
 
     /**
      * Handles requests of type HTTP_GET (currently capabilities and
      * describeProcess). A Map is used to represent the client input.
-     * 
+     *
      * @param params
      *            The client input
      * @param os
@@ -114,19 +113,19 @@ public class RequestHandler {
         }
         String sleepTime = WPSConfig.getInstance().getWPSConfig().getServer().getComputationTimeoutMilliSeconds();
         */
-        
-        
+
+
         Request req;
         CaseInsensitiveMap ciMap = new CaseInsensitiveMap(params);
-        
+
         /*
          * check if service parameter is present and equals "WPS"
          * otherwise an ExceptionReport will be thrown
          */
         String serviceType = Request.getMapValue("service", ciMap, true);
-        
+
         if(!serviceType.equalsIgnoreCase("WPS")){
-            throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + serviceType, 
+            throw new ExceptionReport("Parameter <service> is not correct, expected: WPS, got: " + serviceType,
                     ExceptionReport.INVALID_PARAMETER_VALUE, "service");
         }
 
@@ -135,61 +134,61 @@ public class RequestHandler {
          * Fix for https://bugzilla.52north.org/show_bug.cgi?id=905
          */
         String language = Request.getMapValue("language", ciMap, false);
-        
+
         if(language != null){
             Request.checkLanguageSupported(language);
         }
-        
+
         // get the request type
         String requestType = Request.getMapValue("request", ciMap, true);
-        
+
         if (requestType.equalsIgnoreCase("GetCapabilities")) {
             req = new CapabilitiesRequest(ciMap);
-        } 
+        }
         else if (requestType.equalsIgnoreCase("DescribeProcess")) {
 
             requestedVersion = Request.getMapValue("version", ciMap, true);
-            
-            if(requestedVersion.equals(WPSConfig.VERSION_100)){                
-                req = new DescribeProcessRequest(ciMap);                
-            }else if(requestedVersion.equals(WPSConfig.VERSION_200)){                
-                req = new DescribeProcessRequestV200(ciMap);                
+
+            if(requestedVersion.equals(WPSConfig.VERSION_100)){
+                req = new DescribeProcessRequest(ciMap);
+            }else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+                req = new DescribeProcessRequestV200(ciMap);
             }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");        
+                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
         }
         else if (requestType.equalsIgnoreCase("Execute")) {
-            
-            requestedVersion = Request.getMapValue("version", ciMap, true);            
-            
-            if(requestedVersion.equals(WPSConfig.VERSION_100)){    
+
+            requestedVersion = Request.getMapValue("version", ciMap, true);
+
+            if(requestedVersion.equals(WPSConfig.VERSION_100)){
                 req = new ExecuteRequestV100(ciMap);
-                setResponseMimeType((ExecuteRequestV100)req);                
+                setResponseMimeType((ExecuteRequestV100)req);
             }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");        
+                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        } 
+        }
         else if (requestType.equalsIgnoreCase("GetStatus")) {
-            requestedVersion = Request.getMapValue("version", ciMap, true);            
-            
+            requestedVersion = Request.getMapValue("version", ciMap, true);
+
             if(requestedVersion.equals(WPSConfig.VERSION_200)){
                 req = new GetStatusRequestV200(ciMap);
                 }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");        
+                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
-        } 
+        }
         else if (requestType.equalsIgnoreCase("GetResult")) {
-            requestedVersion = Request.getMapValue("version", ciMap, true);            
-            
+            requestedVersion = Request.getMapValue("version", ciMap, true);
+
             if(requestedVersion.equals(WPSConfig.VERSION_200)){
-                req = new GetResultRequestV200(ciMap);                
+                req = new GetResultRequestV200(ciMap);
             }else{
-                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");        
+                throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
             }
         }
         else if (requestType.equalsIgnoreCase("RetrieveResult")) {
             req = new RetrieveResultRequest(ciMap);
-        } 
+        }
         else {
             throw new ExceptionReport(
                     "The requested Operation is not supported or not applicable to the specification: "
@@ -204,30 +203,32 @@ public class RequestHandler {
      * Handles requests of type HTTP_POST (currently executeProcess). A Document
      * is used to represent the client input. This Document must first be parsed
      * from an InputStream.
-     * 
+     *
      * @param is
      *            The client input
      * @param os
      *            The OutputStream to write the response to.
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred while constructing the requesthandler
      */
     public RequestHandler(InputStream is, OutputStream os)
             throws ExceptionReport {
-        String nodeName, localName, nodeURI = null;
+        String nodeName;
+        String localName;
+        String nodeURI = null;
         Document doc;
         this.os = os;
-        
+
         boolean isCapabilitiesNode = false;
-        
+
         try {
             System.setProperty("javax.xml.parsers.DocumentBuilderFactory", "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl");
-        
+
             DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
             fac.setNamespaceAware(true);
 
             // parse the InputStream to create a Document
             doc = fac.newDocumentBuilder().parse(is);
-            
+
             // Get the first non-comment child.
             Node child = doc.getFirstChild();
             while(child.getNodeName().compareTo("#comment")==0) {
@@ -237,12 +238,12 @@ public class RequestHandler {
             localName = child.getLocalName();
             nodeURI = child.getNamespaceURI();
             Node versionNode = child.getAttributes().getNamedItem("version");
-            
+
             /*
              * check for service parameter. this has to be present for all requests
              */
             Node serviceNode = child.getAttributes().getNamedItem("service");
-            
+
             if(serviceNode == null){
                 throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "service");
             }else{
@@ -250,7 +251,7 @@ public class RequestHandler {
                     throw new ExceptionReport("Parameter <service> not specified.", ExceptionReport.INVALID_PARAMETER_VALUE, "service");
                 }
             }
-            
+
             isCapabilitiesNode = nodeName.toLowerCase().contains("capabilities");
             if(versionNode == null && !isCapabilitiesNode) {
                 throw new ExceptionReport("Parameter <version> not specified.", ExceptionReport.MISSING_PARAMETER_VALUE, "version");
@@ -289,9 +290,9 @@ public class RequestHandler {
             throw new ExceptionReport("Version not supported." , ExceptionReport.INVALID_PARAMETER_VALUE, "version");
         }
         // get the request type
-        
+
         if (nodeURI.equals(XMLBeansHelper.NS_WPS_1_0_0)){
-            
+
             if (localName.equals("Execute")) {
                 req = new ExecuteRequestV100(doc);
                 setResponseMimeType((ExecuteRequestV100)req);
@@ -301,7 +302,7 @@ public class RequestHandler {
             } else if (localName.equals("DescribeProcess")) {
                 req = new DescribeProcessRequest(doc);
                 this.responseMimeType = "text/xml";
-                
+
             }  else if(!localName.equals("Execute")){
                 throw new ExceptionReport("The requested Operation not supported or not applicable to the specification: "
                         + nodeName, ExceptionReport.OPERATION_NOT_SUPPORTED, localName);
@@ -311,7 +312,7 @@ public class RequestHandler {
                         + nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
             }
         }else if (nodeURI.equals(XMLBeansHelper.NS_WPS_2_0)){
-            
+
             if (localName.equals("Execute")) {
                 req = new ExecuteRequestV200(doc);
                 setResponseMimeType((ExecuteRequestV200)req);
@@ -331,7 +332,7 @@ public class RequestHandler {
                 throw new ExceptionReport("specified namespace is not supported: "
                         + nodeURI, ExceptionReport.INVALID_PARAMETER_VALUE);
             }
-            
+
         }
     }
 
@@ -340,9 +341,8 @@ public class RequestHandler {
      * for execution. If the server has enough free resources, the client will
      * be served immediately. If time runs out, the client will be asked to come
      * back later with a reference to the result.
-     * 
-     * @param req The request of the client.
-     * @throws ExceptionReport
+     *
+     * @throws ExceptionReport if an exception occurred while handling the request
      */
     public void handle() throws ExceptionReport {
         Response resp = null;
@@ -352,9 +352,9 @@ public class RequestHandler {
         if (req instanceof ExecuteRequest) {
             // cast the request to an executerequest
             ExecuteRequest execReq = (ExecuteRequest) req;
-            
+
             execReq.updateStatusAccepted();
-            
+
             ExceptionReport exceptionReport = null;
             try {
                 if (execReq.isStoreResponse()) {
@@ -434,35 +434,35 @@ public class RequestHandler {
             } catch (IOException e) {
                 throw new ExceptionReport("Could not read from response stream.", ExceptionReport.NO_APPLICABLE_CODE);
             }
-            
+
         }
     }
-    
+
     protected void setResponseMimeType(Request req) {
-        
+
         if(req instanceof ExecuteRequestV100){
-            
+
             ExecuteRequestV100 executeRequest = (ExecuteRequestV100)req;
-            
+
             if(executeRequest.isRawData()){
                 responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
             }else{
                 responseMimeType = "text/xml";
             }
         }else if(req instanceof ExecuteRequestV200){
-            
+
             ExecuteRequestV200 executeRequest = (ExecuteRequestV200)req;
-            
+
             if(executeRequest.isRawData()){
                 responseMimeType = executeRequest.getExecuteResponseBuilder().getMimeType();
             }else{
                 responseMimeType = "text/xml";
             }
-        }        
-        
+        }
+
     }
-    
-    
+
+
 
     public String getResponseMimeType(){
         if(responseMimeType == null){
@@ -474,8 +474,8 @@ public class RequestHandler {
     public String getRequestedVersion() {
         return requestedVersion;
     }
-    
-    
+
+
 }
 
 

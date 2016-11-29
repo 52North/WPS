@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -260,8 +260,9 @@ public class CapabilitiesConfiguration {
                 .addNewProcessOfferings();
         RepositoryManager rm = RepositoryManagerSingletonWrapper.getInstance();
         List<String> algorithms = rm.getAlgorithms();
-        if (algorithms.isEmpty())
+        if (algorithms.isEmpty()){
             LOG.warn("No algorithms found in repository manager.");
+        }
 
         for (String algorithmName : algorithms) {
             try {

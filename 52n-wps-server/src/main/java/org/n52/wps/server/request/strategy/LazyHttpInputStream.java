@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,12 +46,12 @@ import org.n52.wps.server.request.InputHandler;
  * An extension of an Input Stream with HTTP Connection abilities.
  * Uses an {@link InputStream} internally. HTTP connection is established
  * in a lazy fashion, i.e. on first read attempt.
- * 
+ *
  * This class shall prevent timeout issues with I/O streaming in the WPS framework.
- * 
+ *
  * @deprecated alternative implementation now used, featuring {@link ReferenceInputStream} and
  * corresponding adjustments in {@link InputHandler}
- * 
+ *
  * @author Matthias Mueller, TU Dresden
  *
  */
@@ -60,19 +60,19 @@ public class LazyHttpInputStream extends InputStream {
 
     private InputStream is;
     private boolean initDone = false;
-    
+
     // connection parameters
     final boolean useHttpGet;
     final String dataURLString;
     final String body;
     final String mimeType;
-    
+
     /**
      * Constructor for HTTP/POST
-     * 
-     * @param dataURLString
-     * @param body
-     * @param mimeType
+     *
+     * @param dataURLString the URL of the data to be fetched
+     * @param body the body of the request
+     * @param mimeType the mime type of the request
      */
     public LazyHttpInputStream (final String dataURLString, final String body, final String mimeType){
         this.dataURLString = dataURLString;
@@ -80,13 +80,12 @@ public class LazyHttpInputStream extends InputStream {
         this.mimeType = mimeType;
         useHttpGet = false;
     }
-    
+
     /**
      * Constructor for HTTP/GET
-     * 
-     * @param dataURLString
-     * @param body
-     * @param mimeType
+     *
+     * @param dataURLString the URL of the data to be fetched
+     * @param mimeType the mime type of the request
      */
     public LazyHttpInputStream (final String dataURLString, final String mimeType){
         this.dataURLString = dataURLString;
@@ -94,11 +93,11 @@ public class LazyHttpInputStream extends InputStream {
         this.mimeType = mimeType;
         useHttpGet = true;
     }
-    
+
     /**
      * Private init method that makes HTTP connections.
-     * 
-     * @throws IOException
+     *
+     * @throws IOException if an exception occurred during initialization
      */
     private final void init() throws IOException{
         if (useHttpGet){
@@ -106,7 +105,7 @@ public class LazyHttpInputStream extends InputStream {
         } else {
             is = httpPost(dataURLString, body, mimeType);
         }
-        
+
         initDone = true;
     }
 
@@ -163,47 +162,47 @@ public class LazyHttpInputStream extends InputStream {
         }
         return is.markSupported();
     }
-    
+
     /**
      * Make a GET request using mimeType and href
-     * 
+     *
      * TODO: add support for autoretry, proxy
      */
     private static InputStream httpGet(final String dataURLString, final String mimeType) throws IOException {
         HttpClient backend = new DefaultHttpClient();
         DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
-        
+
         HttpGet httpget = new HttpGet(dataURLString);
-        
+
         if (mimeType != null){
             httpget.addHeader(new BasicHeader("Content-type", mimeType));
         }
-        
+
         HttpResponse response = httpclient.execute(httpget);
         HttpEntity entity = response.getEntity();
         return entity.getContent();
     }
-    
+
     /**
      * Make a POST request using mimeType and href
-     * 
+     *
      * TODO: add support for autoretry, proxy
      */
     private static InputStream httpPost(final String dataURLString, final String body, final String mimeType) throws IOException {
         HttpClient backend = new DefaultHttpClient();
-        
+
         DecompressingHttpClient httpclient = new DecompressingHttpClient(backend);
-        
+
         HttpPost httppost = new HttpPost(dataURLString);
-        
+
         if (mimeType != null){
             httppost.addHeader(new BasicHeader("Content-type", mimeType));
         }
-        
+
         // set body entity
         HttpEntity postEntity = new StringEntity(body);
         httppost.setEntity(postEntity);
-        
+
         HttpResponse response = httpclient.execute(httppost);
         HttpEntity resultEntity = response.getEntity();
         return resultEntity.getContent();

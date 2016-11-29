@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,10 +32,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlString;
+import org.n52.wps.io.BasicXMLTypeFactory;
+import org.n52.wps.io.IOHandler;
+import org.n52.wps.io.data.IBBOXData;
+import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
+import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.ProcessDescription;
+import org.n52.wps.server.database.DatabaseFactory;
+import org.n52.wps.server.database.IDatabase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import com.google.common.primitives.Doubles;
 
 import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.CodeType;
@@ -48,33 +68,9 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputReferenceType;
 import net.opengis.wps.x20.DataDocument.Data;
 import net.opengis.wps.x20.DataOutputType;
-import net.opengis.wps.x20.LiteralDataDocument;
 import net.opengis.wps.x20.LiteralValueDocument;
 import net.opengis.wps.x20.LiteralValueDocument.LiteralValue;
 import net.opengis.wps.x20.ResultDocument;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
-import org.n52.wps.commons.XMLUtil;
-import org.n52.wps.io.BasicXMLTypeFactory;
-import org.n52.wps.io.IOHandler;
-import org.n52.wps.io.data.IBBOXData;
-import org.n52.wps.io.data.IData;
-import org.n52.wps.io.data.binding.literal.AbstractLiteralDataBinding;
-import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.ProcessDescription;
-import org.n52.wps.server.database.DatabaseFactory;
-import org.n52.wps.server.database.IDatabase;
-import org.n52.wps.util.XMLBeansHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import com.google.common.primitives.Doubles;
 
 /*
  * @author foerster
@@ -88,14 +84,15 @@ public class OutputDataItem extends ResponseData {
 
     /**
      *
-     * @param obj
-     * @param id
-     * @param schema
-     * @param encoding
-     * @param mimeType
-     * @param title
-     * @param algorithmIdentifier
-     * @throws ExceptionReport
+     * @param obj the <code>IData</code> object
+     * @param id the id of the data
+     * @param schema the schema of the data
+     * @param encoding the encoding of the data
+     * @param mimeType the mimeType of the data
+     * @param title the title of the data
+     * @param algorithmIdentifier the id of the data
+     * @param description the process description that the <code>RawData</code> belongs to
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public OutputDataItem(IData obj, String id, String schema, String encoding,
             String mimeType, XmlString title, String algorithmIdentifier, ProcessDescription description) throws ExceptionReport {
@@ -106,8 +103,8 @@ public class OutputDataItem extends ResponseData {
 
     /**
      *
-     * @param res
-     * @throws ExceptionReport
+     * @param res the <code>ExecuteResponseDocument</code>
+     * @throws ExceptionReport if an exception occurred while updating the response document
      */
     public void updateResponseForInlineComplexData(ExecuteResponseDocument res) throws ExceptionReport {
         OutputDataType output = prepareOutput(res);
@@ -280,16 +277,16 @@ public class OutputDataItem extends ResponseData {
 //                    literalData.setDataType(dataTypeReference);
 //            }
             LiteralValueDocument literalValueDocument = LiteralValueDocument.Factory.newInstance();
-            
+
             LiteralValue literalValue = literalValueDocument.addNewLiteralValue();
-            
+
             try {
                 DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
                 Document document = builder.newDocument();
                 Node dataNode = document.createTextNode(processValue);
                 literalValue.set(XmlObject.Factory.parse(dataNode));
                 literalData.set(literalValueDocument);
-                
+
             } catch (Exception e) {
                 LOGGER.error("Excepion while trying to write inline literal output.");
                 LOGGER.error(e.getMessage());
@@ -301,7 +298,7 @@ public class OutputDataItem extends ResponseData {
 //                            literalData.setUom(uom);
 //                    }
 //            }
-        
+
     }
 
     public void updateResponseAsReference(ResultDocument res, String reqID,
@@ -349,7 +346,7 @@ public class OutputDataItem extends ResponseData {
         // MSS:  05-02-2009 changed default output type to text/xml to be certain that the calling application doesn't
         // serve the wrong type as it is a reference in this case.
         this.mimeType = "text/xml";
-        
+
     }
 
     public void updateResponseForInlineComplexData(ResultDocument res) throws ExceptionReport {
@@ -421,26 +418,26 @@ public class OutputDataItem extends ResponseData {
                 complexData.setMimeType(mimeType);
             }
         }
-        
+
     }
 
     public void updateResponseForBBOXData(ResultDocument res,
             IBBOXData bbox) {
         DataOutputType output = prepareOutput(res);
-        
+
         BoundingBoxDocument bbBoxDocument = BoundingBoxDocument.Factory.newInstance();
-        
+
         net.opengis.ows.x20.BoundingBoxType bbBoxType = bbBoxDocument.addNewBoundingBox();
-        
+
         if (bbox.getCRS() != null) {
             bbBoxType.setCrs(bbox.getCRS());
         }
         bbBoxType.setLowerCorner(Doubles.asList(bbox.getLowerCorner()));
         bbBoxType.setUpperCorner(Doubles.asList(bbox.getUpperCorner()));
         bbBoxType.setDimensions(BigInteger.valueOf(bbox.getDimension()));
-        
+
         Data data = output.addNewData();
-        
+
         data.set(bbBoxDocument);
     }
 }

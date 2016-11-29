@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import net.opengis.wps.x20.DataInputType;
 
 /**
  * Wrapper for inputs of different WPS versions
- * 
+ *
  * @author Benjamin Pross
  *
  */
@@ -42,11 +42,11 @@ public class Input {
     private InputType[] inputsV100;
 
     private DataInputType[] inputsV200;
-    
+
     public Input(InputType[] inputs){
         inputsV100 = inputs;
     }
-    
+
     public Input(DataInputType[] inputs){
         inputsV200 = inputs;
     }

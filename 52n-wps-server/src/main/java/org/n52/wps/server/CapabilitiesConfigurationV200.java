@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -72,7 +72,7 @@ import com.google.common.base.Preconditions;
  * Encapsulation of the WPS Capabilities document. This class has to be initialized with either a
  * {@linkplain #getInstance(java.io.File) file}, {@linkplain #getInstance(java.net.URL) URL},
  * {@linkplain #getInstance(java.lang.String) path} or
- * {@linkplain #getInstance(net.opengis.wps.x200.CapabilitiesDocument) instance}.
+ * {@linkplain #getInstance(net.opengis.wps.x20.CapabilitiesDocument) instance}.
  *
  * @author foerster
  * @author Christian Autermann

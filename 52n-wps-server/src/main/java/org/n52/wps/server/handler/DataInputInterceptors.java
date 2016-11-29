@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,44 +41,44 @@ import org.n52.wps.io.data.IData;
  * the DataInputs before being processed. An algorithm
  * should provide implementations of these through this
  * interface and the corresponding annotation.
- * 
+ *
  * @author matthes rieke
  *
  */
 public interface DataInputInterceptors {
-    
+
 
     /**
      * @return a map where input identifiers are keys
      */
     public Map<String, InterceptorInstance> getInterceptors();
-    
-    
+
+
     public static interface InterceptorInstance {
-        
+
         /**
          * applies the actual interception
-         * @param input the input as provided in the Execute request
-         * 
-         * @return true if processed, this triggers a skip of parsing within the InputHandler 
+         * @param inputObject the input as provided in the Execute request
+         *
+         * @return a list of <code>IData</code> elements
          */
         public List<IData> applyInterception(XmlObject inputObject);
-        
+
     }
-    
+
     /**
      * Decorate your Algorithm implementation with this
      * annotation. the value must be the fully qualified
      * class name of the {@link DataInputInterceptors} implementation.
-     * 
+     *
      * @author matthes rieke
      *
      */
     @Retention(RetentionPolicy.RUNTIME)
     public static @interface DataInputInterceptorImplementations {
-        
+
         String value();
-        
+
     }
 
 }

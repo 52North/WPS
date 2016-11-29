@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,16 +40,16 @@ import org.n52.wps.webapp.entities.Server;
  * resource-exhaustion, this ThreadPoolExecutor stores the Requests in a queue,
  * and handles only a couple of them at a time. To tune the performance one can
  * alter the parameters of this pool.
- * 
+ *
  * Proper pool size estimation: N = Number of processors WT = Average waiting
  * time of a task ST = Average service time of a task #Threads = N * (1 + WT/ST)
- * 
+ *
  * @author Timon ter Braak
  */
 public class RequestExecutor extends ThreadPoolExecutor {
 
     public static Server serverConfig = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
-    
+
     /**
      * Create a RequestExecutor.
      */

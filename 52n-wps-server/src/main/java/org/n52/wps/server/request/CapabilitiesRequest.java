@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,10 +52,10 @@ public class CapabilitiesRequest extends Request {
 
     /**
      * Creates a CapabilitesRequest based on a Map (HTTP_GET)
-     * 
+     *
      * @param ciMap
      *        The client input
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public CapabilitiesRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
         super(ciMap);
@@ -119,8 +119,8 @@ public class CapabilitiesRequest extends Request {
 
     /**
      * Validates the client input
-     * 
-     * @throws ExceptionReport
+     *
+     * @throws ExceptionReport if an exception occurred during validation
      * @return True if the input is valid, False otherwise
      */
     public boolean validate() throws ExceptionReport {
@@ -141,8 +141,8 @@ public class CapabilitiesRequest extends Request {
 
     /**
      * Actually serves the Request.
-     * 
-     * @throws ExceptionReport
+     *
+     * @throws ExceptionReport if an exception occurred while handling the request
      * @return Response The result of the computation
      */
     public Response call() throws ExceptionReport {

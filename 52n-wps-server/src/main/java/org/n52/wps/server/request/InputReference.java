@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.apache.xmlbeans.XmlObject;
 
 /**
  * Wrapper for inputs references of different WPS versions
- * 
+ *
  * @author Benjamin Pross
  *
  */
@@ -44,11 +44,11 @@ public class InputReference {
     private InputType inputV100;
 
     private DataInputType inputV200;
-    
+
     public InputReference(InputType inputs){
         inputV100 = inputs;
     }
-    
+
     public InputReference(DataInputType inputs){
         inputV200 = inputs;
     }
@@ -69,19 +69,19 @@ public class InputReference {
         this.inputV200 = inputV200;
     }
 
-    public String getHref() {        
+    public String getHref() {
         return inputV100 != null ? inputV100.getReference().getHref() : inputV200.getReference().getHref();
     }
-    
-    public String getMimeType() {        
+
+    public String getMimeType() {
         return inputV100 != null ? inputV100.getReference().getMimeType() : inputV200.getReference().getMimeType();
     }
-    
-    public String getSchema() {        
+
+    public String getSchema() {
         return inputV100 != null ? inputV100.getReference().getSchema() : inputV200.getReference().getSchema();
     }
-    
-    public String getEncoding() {        
+
+    public String getEncoding() {
         return inputV100 != null ? inputV100.getReference().getEncoding() : inputV200.getReference().getEncoding();
     }
 
@@ -104,5 +104,5 @@ public class InputReference {
     public XmlObject getBody() {
         return inputV100 != null ? inputV100.getReference().getBody() : inputV200.getReference().getBody();
     }
-    
+
 }

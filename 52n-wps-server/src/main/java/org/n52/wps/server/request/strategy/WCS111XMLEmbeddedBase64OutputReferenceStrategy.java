@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,19 +45,19 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.InputReference;
 
 public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenceStrategy{
-    
+
     private String fetchedMimeType;
     private String fetchedEncoding;
 
     @Override
     public boolean isApplicable(InputReference input) {
 
-        if(input.isSetBody()) {            
-            XmlObject xo = input.getBody();            
+        if(input.isSetBody()) {
+            XmlObject xo = input.getBody();
             return xo.toString().contains("http://www.opengis.net/wcs/1.1.1");
         }else{
             String dataURLString = input.getHref();
-            return (dataURLString.contains("=GetCoverage") && dataURLString.contains("=1.1.1"));        
+            return (dataURLString.contains("=GetCoverage") && dataURLString.contains("=1.1.1"));
         }
     }
 
@@ -65,11 +65,11 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
     public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport {
 
         String dataURLString = input.getHref();
-    
+
         String schema = input.getSchema();
         String encoding = input.getEncoding();
         String mimeType = input.getMimeType();
-        
+
         try {
             URL dataURL = new URL(dataURLString);
             // Do not give a direct inputstream.
@@ -89,82 +89,82 @@ public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenc
             //Handling POST with inline message
             else if (input.isSetBody()) {
                 conn.setDoOutput(true);
-                
+
                 input.getBody().save(conn.getOutputStream());
             }
             InputStream inputStream = retrievingZippedContent(conn);
-            
+
             BufferedReader bRead = new BufferedReader(new InputStreamReader(inputStream));
-            
+
             String line = "";
-            
+
             //boundary between different content types
             String boundary = "";
-            
+
             boolean boundaryFound = false;
-            
+
             boolean encodedImagepart = false;
-            
+
             String encodedImage = "";
-            
+
             //e.g. base64
             String contentTransferEncoding = "";
-            
+
             String imageContentType = "";
-            
+
             int boundaryCount = 0;
-            
+
             while((line = bRead.readLine()) != null){
-                
+
                 if(line.contains("boundary")){
                     boundary = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
                     boundaryFound = true;
                     continue;
                 }
-                if(boundaryFound){                    
+                if(boundaryFound){
                     if(line.contains(boundary)){
                         boundaryCount++;
                         continue;
                     }
                 }
-                
+
                 if(encodedImagepart){
                     encodedImage = encodedImage.concat(line);
-                }                
+                }
                 //is the image always the third part?!
                 else if(boundaryCount == 2){
                     if(line.contains("Content-Type")){
                         imageContentType = line.substring(line.indexOf(":") +1).trim();
                     }else if(line.contains("Content-Transfer-Encoding")){
-                        contentTransferEncoding = line.substring(line.indexOf(":") +1).trim();                    
+                        contentTransferEncoding = line.substring(line.indexOf(":") +1).trim();
                     }else if(line.contains("Content-ID")){
                         /*    just move further one line (which is hopefully empty)
-                         *     and start parsing the encoded image                 
+                         *     and start parsing the encoded image
                          */
                         line = bRead.readLine();
                         encodedImagepart = true;
                     }
                 }
-                
+
             }
-            
+
             return new ReferenceInputStream(
                     new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes())),
                     imageContentType,
                     null); // encoding is null since encoding was removed
         }
         catch(RuntimeException e) {
-            throw new ExceptionReport("Error occured while parsing XML", 
+            throw new ExceptionReport("Error occured while parsing XML",
                                         ExceptionReport.NO_APPLICABLE_CODE, e);
         }
         catch(MalformedURLException e) {
             String inputID = input.getIdentifier();
-            throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString, 
+            throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString,
                                         ExceptionReport.INVALID_PARAMETER_VALUE );
         }
         catch(IOException e) {
              String inputID = input.getIdentifier();
-             throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString, 
+             throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString,
                                      ExceptionReport.INVALID_PARAMETER_VALUE );
         }
     }

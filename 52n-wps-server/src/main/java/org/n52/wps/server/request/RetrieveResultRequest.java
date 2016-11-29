@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,18 +47,19 @@ import org.n52.wps.server.response.RetrieveResultResponse;
 public class RetrieveResultRequest extends Request {
 
     private InputStream storedResponse = null;
-    
+
     /**
      * Create a Request based on a CaseInsensitiveMap as input (HTTP GET)
      * @param ciMap The Map which holds the client input.
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public RetrieveResultRequest(CaseInsensitiveMap ciMap) throws ExceptionReport{
         super(ciMap);
     }
-    
+
     /**
      * Actually serves the Request.
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public Response call() throws ExceptionReport {
         if(validate()){
@@ -70,6 +71,7 @@ public class RetrieveResultRequest extends Request {
     /**
      * Validates the client input
      * @return True if the input is valid, False otherwise
+     * @throws ExceptionReport if an exception occurred during validation
      */
     public boolean validate() throws ExceptionReport {
         String req_id = getMapValue("request_id", true);
@@ -84,10 +86,11 @@ public class RetrieveResultRequest extends Request {
         this.storedResponse = db.lookupResponse(req_id);
         return (this.storedResponse != null);
     }
-    
+
     public Object getAttachedResult() throws NullPointerException {
-        if(this.storedResponse == null)
+        if(this.storedResponse == null) {
             throw new NullPointerException("No stored responses were found!");
+        }
         return this.storedResponse;
     }
 

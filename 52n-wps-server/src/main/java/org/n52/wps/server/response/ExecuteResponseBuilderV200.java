@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -297,7 +297,7 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
             DatabaseFactory.getDatabase().insertResponse(
                     request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
             return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
-        }             
+        }
         XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
         return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
     }

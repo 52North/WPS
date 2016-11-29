@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 
+ *
  * @author Benjamin Pross, Daniel Nüst
  *
  */
@@ -66,7 +66,7 @@ public class RetrieveResultServlet {
 
     // TODO: in future parameterize
     private final boolean indentXML = false;
-    
+
     private final int uuid_length = 36;
 
     public RetrieveResultServlet() {
@@ -97,11 +97,11 @@ public class RetrieveResultServlet {
             if(!isIDValid(id)){
                 errorResponse("id parameter not valid", response);
             }
-            
+
             IDatabase db = DatabaseFactory.getDatabase();
             String mimeType = db.getMimeTypeForStoreResponse(id);
             long contentLength = db.getContentLengthForStoreResponse(id);
-            
+
             InputStream inputStream = null;
             OutputStream outputStream = null;
             try {
@@ -224,14 +224,14 @@ public class RetrieveResultServlet {
     public static Throwable getRootCause(Throwable t) {
         return t.getCause() == null ? t : getRootCause(t.getCause());
     }
-    
-    public boolean isIDValid(String id){    
-        
+
+    public boolean isIDValid(String id){
+
         if(id.length() <= uuid_length){
-            
+
             try {
                 UUID checkUUID = UUID.fromString(id);
-                
+
                 if(checkUUID.toString().equals(id)){
                     return true;
                 }else{
@@ -240,16 +240,16 @@ public class RetrieveResultServlet {
             } catch (Exception e) {
                 return false;
             }
-            
+
         }else {
-            
+
             String uuidPartOne = id.substring(0, uuid_length);
             String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());
-            
-            return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);            
+
+            return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);
         }
     }
-    
+
     public boolean isUUIDValid(String uuid) {
 
         // the following can be used to check whether the id is a valid UUID

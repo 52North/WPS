@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,21 +34,20 @@ import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
-import net.opengis.wps.x20.ProcessOfferingsDocument;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.commons.WPSConfig;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.response.DescribeProcessResponse;
 import org.n52.wps.server.response.Response;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
+import net.opengis.wps.x20.ProcessOfferingsDocument;
 
 /**
  * Handles a DescribeProcessRequest
@@ -61,7 +60,7 @@ public class DescribeProcessRequestV200 extends Request {
     /**
      * Creates a DescribeProcessRequest based on a Map (HTTP_GET)
      * @param ciMap The client input
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public DescribeProcessRequestV200(CaseInsensitiveMap ciMap) throws ExceptionReport{
         super(ciMap);
@@ -70,7 +69,7 @@ public class DescribeProcessRequestV200 extends Request {
     /**
      * Creates a DescribeProcessRequest based on a Document
      * @param doc The client input
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public DescribeProcessRequestV200(Document doc) throws ExceptionReport{
         super(doc);
@@ -114,7 +113,7 @@ public class DescribeProcessRequestV200 extends Request {
 
     /**
      * Validates the client input
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during validation
      * @return True if the input is valid, False otherwise
      */
     public boolean validate() throws ExceptionReport{
@@ -129,7 +128,7 @@ public class DescribeProcessRequestV200 extends Request {
 
     /**
      * Actually serves the Request.
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred while handling the request
      * @return Response The result of the computation
      */
     public Response call() throws ExceptionReport {

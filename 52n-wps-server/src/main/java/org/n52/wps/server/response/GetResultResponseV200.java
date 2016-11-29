@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.n52.wps.server.request.GetResultRequestV200;
  *
  */
 public class GetResultResponseV200 extends Response {
-        
+
     /**
      * Serves the Request with a Response
      * @param request The GetCapabilities request
@@ -47,11 +47,10 @@ public class GetResultResponseV200 extends Response {
     public GetResultResponseV200(GetResultRequestV200 request){
         super(request);
     }
-    
+
     /**
-     * Save this Response to an OutputStream
-     * @param os The OutputStream to save this Response to
-     * @throws ExceptionReport
+     * Save this Response to an InputStream
+     * @throws ExceptionReport if an exception occurred while creating the response <code>InputStream</code>
      */
     public InputStream getAsStream() throws ExceptionReport{
         return ((XmlObject)getRequest().getAttachedResult()).newInputStream();

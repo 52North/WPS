@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -78,7 +78,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
      *
      * @param doc
      *            The clients submission
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public ExecuteRequestV200(Document doc) throws ExceptionReport {
         super(doc);
@@ -109,6 +109,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
      * Validates the client request
      *
      * @return True if the input is valid, False otherwise
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public boolean validate() throws ExceptionReport {
         // Identifier must be specified.
@@ -165,7 +166,7 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred while handling the request
      */
     public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
@@ -373,9 +374,9 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         StatusInfo status = StatusInfo.Factory.newInstance();
         status.setStatus(ExecuteResponseBuilderV200.Status.Failed.toString());
         updateStatus(status);
-        
+
         ExceptionReportDocument exceptionReportDocument = ExceptionReportDocument.Factory.newInstance();
-        
+
         ExceptionReportDocument.ExceptionReport excRep = exceptionReportDocument.addNewExceptionReport();
         excRep.setVersion("2.0.0");
         ExceptionType excType = excRep.addNewException();

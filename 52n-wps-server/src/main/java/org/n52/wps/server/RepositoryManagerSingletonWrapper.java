@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,12 +28,14 @@
  */
 package org.n52.wps.server;
 
+import org.springframework.beans.factory.annotation.Autowire;
+
 /**
  * Wraps {@link RepositoryManager} as it got refactored to IoC managable. This class
  * determines an intermediate refactor step. To use {@link RepositoryManager} instance
  * define dependency injection or just {@link Autowire} it.
  *
- * @author Henning Bredel <h.bredel@52north.org>
+ * @author Henning Bredel (contact h.bredel@52north.org)
  */
 @Deprecated
 public class RepositoryManagerSingletonWrapper {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,21 +46,21 @@ import org.w3c.dom.Document;
 public class GetStatusRequestV200 extends Request {
 
     private static Logger LOGGER = LoggerFactory.getLogger(GetStatusRequestV200.class);
-    
+
     private StatusInfoDocument document;
-    
+
     private GetStatusDocument getStatusDocument;
-    
+
     private String jobID;
-    
+
     public GetStatusRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
         super(map);
-        jobID = getMapValue("jobid", true);        
+        jobID = getMapValue("jobid", true);
     }
 
     public GetStatusRequestV200(Document doc) throws ExceptionReport {
         super(doc);
-        
+
         if(!validate()){
             throw new ExceptionReport("GetStatusRequest not valid",
                     ExceptionReport.NO_APPLICABLE_CODE);
@@ -85,13 +85,13 @@ public class GetStatusRequestV200 extends Request {
             document = StatusInfoDocument.Factory.parse(DatabaseFactory.getDatabase().lookupStatus(jobID));
         } catch (XmlException | IOException e) {
             LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
-        }        
-        
+        }
+
         return new GetStatusResponseV200(this);
     }
 
     @Override
-    public boolean validate() throws ExceptionReport {        
+    public boolean validate() throws ExceptionReport {
         try {
             getStatusDocument = GetStatusDocument.Factory.parse(doc.getFirstChild());
         } catch (XmlException e) {

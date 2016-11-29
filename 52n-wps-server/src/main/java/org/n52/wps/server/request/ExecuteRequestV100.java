@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -98,14 +98,12 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
     private Map<String, IData> returnResults;
     private ExecuteResponseBuilderV100 execRespType;
 
-
-
     /**
      * Creates an ExecuteRequest based on a Document (HTTP_POST)
      *
      * @param doc
      *            The clients submission
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred during construction
      */
     public ExecuteRequestV100(Document doc) throws ExceptionReport {
         super(doc);
@@ -149,13 +147,6 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         storeRequest(ciMap);
     }
 
-    public void getKVPDataInputs(){
-
-    }
-
-    /**
-     * @param ciMap
-     */
     private void initForGET(CaseInsensitiveMap ciMap) throws ExceptionReport {
         String version = getMapValue("version", ciMap, true);
         if (!WPSConfig.SUPPORTED_VERSIONS.contains(version)) {//TODO check if this mustn't be 1.0.0
@@ -485,6 +476,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
      * Validates the client request
      *
      * @return True if the input is valid, False otherwise
+     * @throws ExceptionReport if an exception occurred during validation
      */
     public boolean validate() throws ExceptionReport {
         // Identifier must be specified.
@@ -545,10 +537,11 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
 
         //prevent NullPointerException for zero input values in execute request (if only default values are used)
         InputType[] inputs;
-        if(getExecute().getDataInputs()==null)
+        if(getExecute().getDataInputs()==null) {
                 inputs=new InputType[0];
-        else
+        } else {
             inputs = getExecute().getDataInputs().getInputArray();
+        }
 
             // For each input supplied by the client
             for (InputType input : inputs) {
@@ -570,10 +563,11 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                             }
                             // literalValue.getDataType ist optional
                             if (input.getData().getLiteralData().getDataType() != null) {
-                                if (inputDesc.getLiteralData() != null)
-                                    if (inputDesc.getLiteralData().getDataType() != null)
+                                if (inputDesc.getLiteralData() != null) {
+                                    if (inputDesc.getLiteralData().getDataType() != null) {
                                         if (inputDesc.getLiteralData()
-                                                .getDataType().getReference() != null)
+                                                .getDataType().getReference() != null){
+
                                             if (!input
                                                     .getData()
                                                     .getLiteralData()
@@ -595,25 +589,11 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
                                                                         .getStringValue(),
                                                         ExceptionReport.INVALID_PARAMETER_VALUE);
                                             }
+                                        }
+                                    }
+                                }
                             }
                         }
-                        // Excluded, because ProcessDescription validation should be
-                        // done on startup!
-                        // else if (input.getComplexValue() != null) {
-                        // if(ParserFactory.getInstance().getParser(input.getComplexValue().getSchema())
-                        // == null) {
-                        // LOGGER.warn("Request validation message: schema attribute
-                        // null, so the simple one will be used!");
-                        // }
-                        // }
-                        // else if (input.getComplexValueReference() != null) {
-                        // // we found a complexvalue input, try to get the parser.
-                        // if(ParserFactory.getInstance().getParser(input.getComplexValueReference().getSchema())
-                        // == null) {
-                        // LOGGER.warn("Request validation message: schema attribute
-                        // null, so the simple one will be used!");
-                        // }
-                        // }
                         break;
                     }
                 }
@@ -633,7 +613,7 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
     /**
      * Actually serves the Request.
      *
-     * @throws ExceptionReport
+     * @throws ExceptionReport if an exception occurred while handling the request
      */
     public Response call() throws ExceptionReport {
         IAlgorithm algorithm = null;
@@ -677,7 +657,6 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
             if(algorithm instanceof ISubject){
                 ISubject subject = (ISubject) algorithm;
                 subject.addObserver(this);
-
             }
 
             if(algorithm instanceof AbstractTransactionalAlgorithm){

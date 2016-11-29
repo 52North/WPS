@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -192,9 +192,8 @@ public class RepositoryManager implements ApplicationContextAware {
      * The first match is returned.
      * If no match could be found, null is returned
      *
-     * @param className
+     * @param className the class name of the algorithm
      * @return IAlgorithm or null
-     * @throws Exception
      */
     public IAlgorithm getAlgorithm(String className) {
 

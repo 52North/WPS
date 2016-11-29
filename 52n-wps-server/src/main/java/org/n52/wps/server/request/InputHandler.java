@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -332,14 +332,14 @@ public class InputHandler {
         return complexValue;
     }
 
-    
-    
+
+
     /**
      * Handles the complexValue, which in this case should always include XML
      * which can be parsed into a FeatureCollection.
      * @param input The client input
-         * @param inputId
-         * @throws ExceptionReport If error occured while parsing XML
+     * @param inputId the id of the input
+     * @throws ExceptionReport If error occurred while parsing XML
      */
      protected void handleComplexData(InputType input, String inputId) throws ExceptionReport{
         String complexValue;
@@ -1709,9 +1709,9 @@ public class InputHandler {
         String inputID = input.getId();
         String parameter = "";
         LiteralValueDocument literalValueDocument = null;
-        
+
         Node dataNode = input.getData().getDomNode();
-        
+
         for (int i = 0; i < dataNode.getChildNodes().getLength(); i++) {
             Node childNode = dataNode.getChildNodes().item(i);
             String localName = childNode.getLocalName();
@@ -1724,7 +1724,7 @@ public class InputHandler {
                         }
                     }
                 }
-            
+
         parameter = literalValueDocument.getLiteralValue().getStringValue();
 
         net.opengis.wps.x20.InputDescriptionType inputDesc = XMLBeansHelper.findInputByID(inputID, processOffering.getProcess());
@@ -1732,7 +1732,7 @@ public class InputHandler {
         LiteralDataDomain literalDataDomain = ((LiteralDataType)inputDesc.getDataDescription()).getLiteralDataDomainArray(0);
 
         net.opengis.ows.x20.DomainMetadataType dataType = literalDataDomain.getDataType();
-        
+
         String xmlDataType = dataType != null ? dataType.getReference() : null;
 
         //still null, assume string as default
@@ -2388,7 +2388,8 @@ public class InputHandler {
     private IData parseBoundingBox(BoundingBoxType bbt)
             throws ExceptionReport {
         final BigInteger dim = bbt.getDimensions();
-        final double[] lower, upper;
+        final double[] lower;
+        final double[] upper;
 
         if (dim != null && (dim.compareTo(INT_MAX) > 0 ||
                             dim.compareTo(INT_MIN) < 0)) {
@@ -2435,15 +2436,15 @@ public class InputHandler {
     private void handleBBoxValue(DataInputType input)
             throws ExceptionReport {
 
-        BoundingBoxDocument boundingBoxDocument = null;        
-        
+        BoundingBoxDocument boundingBoxDocument = null;
+
         Node dataNode = input.getData().getDomNode();
-        
+
         try {
             if(dataNode.getChildNodes().getLength() > 1){
                 boundingBoxDocument = BoundingBoxDocument.Factory.parse(dataNode.getChildNodes().item(1));
             }else{
-                boundingBoxDocument = BoundingBoxDocument.Factory.parse(input.getData().getDomNode());                
+                boundingBoxDocument = BoundingBoxDocument.Factory.parse(input.getData().getDomNode());
             }
         } catch (XmlException e) {
             LOGGER.error("XmlException occurred while trying to parse bounding box: " + (boundingBoxDocument == null ? null : boundingBoxDocument.toString()), e);
@@ -2463,7 +2464,8 @@ public class InputHandler {
     private IData parseBoundingBox(net.opengis.ows.x20.BoundingBoxType bbt)
             throws ExceptionReport {
         final BigInteger dim = bbt.getDimensions();
-        final double[] lower, upper;
+        final double[] lower;
+        final double[] upper;
 
         if (dim != null && (dim.compareTo(INT_MAX) > 0 ||
                             dim.compareTo(INT_MIN) < 0)) {
