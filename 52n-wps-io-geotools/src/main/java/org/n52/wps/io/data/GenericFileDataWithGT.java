@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -150,9 +150,10 @@ public class GenericFileDataWithGT {
 
             File[] allFiles = new File[extensions.length + 1];
 
-            for (int i = 0; i < extensions.length; i++)
+            for (int i = 0; i < extensions.length; i++){
                 allFiles[i] = new File(directory, baseFile + "."
                         + extensions[i]);
+            }
 
             allFiles[extensions.length] = primaryFile;
 

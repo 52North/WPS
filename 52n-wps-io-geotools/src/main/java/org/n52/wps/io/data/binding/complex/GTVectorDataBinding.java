@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,9 +61,9 @@ import org.n52.wps.io.datahandler.generator.SimpleGMLGenerator;
 import org.n52.wps.io.datahandler.parser.SimpleGMLParser;
 
 public class GTVectorDataBinding implements IComplexData{
-    
-    protected transient FeatureCollection<?, ?> featureCollection;    
-    
+
+    protected transient FeatureCollection<?, ?> featureCollection;
+
     public GTVectorDataBinding(FeatureCollection<?, ?> payload) {
         this.featureCollection = payload;
     }
@@ -75,7 +75,7 @@ public class GTVectorDataBinding implements IComplexData{
     public FeatureCollection<?, ?> getPayload() {
             return featureCollection;
     }
-    
+
     public File getPayloadAsShpFile(){
         try {
             return GenericFileDataWithGT.getShpFile(featureCollection);
@@ -83,7 +83,7 @@ public class GTVectorDataBinding implements IComplexData{
             e.printStackTrace();
             throw new RuntimeException("Could not transform Feature Collection into shp file. Reason " +e.getMessage());
         }
-        
+
     }
     private synchronized void writeObject(java.io.ObjectOutputStream oos) throws IOException
     {
@@ -92,22 +92,22 @@ public class GTVectorDataBinding implements IComplexData{
         generator.write(this, buffer);
         oos.writeObject(buffer.toString());
     }
-    
+
     private synchronized void readObject(java.io.ObjectInputStream oos) throws IOException, ClassNotFoundException
     {
         SimpleGMLParser parser = new SimpleGMLParser();
-            
+
         InputStream stream = new ByteArrayInputStream(((String) oos.readObject()).getBytes());
-        
+
         // use a default configuration for the parser by requesting the first supported format and schema
         GTVectorDataBinding data = parser.parse(stream, parser.getSupportedFormats()[0], parser.getSupportedEncodings()[0]);
-        
+
         this.featureCollection = data.getPayload();
     }
-    
+
     @Override
     public void dispose() {
-        
+
     }
 
 }

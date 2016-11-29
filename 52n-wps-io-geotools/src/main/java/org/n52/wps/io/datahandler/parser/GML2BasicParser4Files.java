@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -67,14 +67,14 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
 public class GML2BasicParser4Files extends AbstractParser {
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser4Files.class);
 
-    
+
     public GML2BasicParser4Files() {
         super();
         supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
     }
-    
+
     public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
-        
+
         FileOutputStream fos = null;
         try{
             File tempFile = File.createTempFile(UUID.randomUUID().toString(), ".gml2");
@@ -88,26 +88,29 @@ public class GML2BasicParser4Files extends AbstractParser {
             fos.flush();
             fos.close();
             GenericFileDataWithGTBinding data = parseXML(tempFile);
-            
+
             return data;
         }
         catch(IOException e) {
-            if (fos != null) try { fos.close(); } catch (Exception e1) { }
+            if (fos != null){
+                try { fos.close(); }
+                catch (Exception e1) { }
+            }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }
 
     private GenericFileDataWithGTBinding parseXML(File file) {
-        
+
         SimpleFeatureCollection fc = new GML2BasicParser().parseSimpleFeatureCollection(file);
-        
+
         GenericFileDataWithGTBinding data = null;
         try {
             data = new GenericFileDataWithGTBinding(new GenericFileDataWithGT(fc));
         } catch (IOException e) {
             LOGGER.error("Exception while trying to wrap GenericFileData around GML2 FeatureCollection.", e);
         }
-                
+
         return data;
     }
 

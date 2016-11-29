@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -71,11 +71,11 @@ import edu.umn.gis.mapscript.rectObj;
  * This Class managed the communication between the input shapefile and the
  * mapscript layer objects. It extracts out from the shapefile different
  * information and creates the corresponding mapscript object.
- * 
+ *
  * @author Jacob Mendt
- * 
- * @TODO Layer management
- * @TODO Timestamp
+ *
+ * TODO Layer management
+ * TODO Timestamp
  */
 public class MSLayerBinding {
 
@@ -100,13 +100,13 @@ public class MSLayerBinding {
 
     /**
      * Initializes a new MSLayerBinding Object.
-     * 
+     *
      * @param shapePath
      *            Path to the shapefile object which should be encapsulated.
      * @param workspace
      *            Path to the workspace of the mapfile object.
-     * 
-     * @throws Exception
+     *
+     * @throws Exception if the <code>MSLayerBinding</code>  cannot be constructed
      */
     public MSLayerBinding(String shapePath, String workspace) throws Exception {
 
@@ -119,8 +119,9 @@ public class MSLayerBinding {
             LOGGER.debug("Parsing of the relativ data source path successful.");
             if (this.openShapefile(shapePath)) {
                 LOGGER.debug("Opening and parsing of the shapefile successful.");
-            } else
+            } else{
                 LOGGER.error("Error while opening and parsing the shapefile.");
+            }
         } else {
             LOGGER.error("Shapefile doesn't lie in the folder hierarchy of the mapfile workspace.");
             throw new Exception("Error while opening shapefile: " + shapePath);
@@ -178,12 +179,12 @@ public class MSLayerBinding {
      * Parse the relativ data source path for referencing the data source folder
      * in the mapfile. Data source folder have to be in the folder hierarchy of
      * the workspace.
-     * 
+     *
      * @param shapePath
      *            Path to the shapefile.
      * @param workspace
      *            Path to the folder/workspace of the mapfile.
-     * 
+     *
      * @return <tt>true</tt> if relativ data source path is set and lies in the
      *         folder hierarchy of the workspace
      */
@@ -203,10 +204,10 @@ public class MSLayerBinding {
     /**
      * Opens the shapefile as a GeoTools FeatureSource for further use in the
      * MSLayerBinding class.
-     * 
+     *
      * @param shapePath
      *            Path to the shapefile
-     * 
+     *
      * @return <tt>true</tt> if the shapefile could be opened successful.
      */
     private boolean openShapefile(String shapePath) {
@@ -237,7 +238,7 @@ public class MSLayerBinding {
      * Parse the GeometryType from the FeatureSource and creates an mapscript
      * MS_LAYER_TYPE object. Right know this class supports the geometryType
      * POINT, MULTIPOINT, LINE, MULTILINESTRING, POLYGON, MULTIPOLYGON
-     * 
+     *
      * @return <tt>true</tt> if the GeometryType could be parsed
      */
     private boolean parseGeometryDescription() {
@@ -273,7 +274,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return CoordinateReferenceSystem
      */
     public CoordinateReferenceSystem getCRS() {
@@ -281,7 +282,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return String EPSG Code for the SRS of the layer
      */
     public String getMdCRS() {
@@ -289,7 +290,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return String Title of the layer
      */
     public String getMdTitle() {
@@ -297,7 +298,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return String Timestamp of the layer
      */
     public String getMdTimestamp() {
@@ -305,7 +306,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return GeomtryType Right now the class supports POINT, MULTIPOINT, LINE,
      *         MULTILINESTRING, POLYGON and MULTIPOLYGON
      */
@@ -314,7 +315,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return String Path to the shapefile data source of the layer
      */
     public String getDataSourcePath() {
@@ -322,7 +323,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return rectObj BoundingBox of the layer
      */
     public rectObj getBBox() {
@@ -330,7 +331,7 @@ public class MSLayerBinding {
     }
 
     /**
-     * 
+     *
      * @return String BoundingBox as a String
      */
     public String getMdBBox() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,20 +58,21 @@ import org.geotools.data.DataStore;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.n52.wps.io.IOUtils;
+import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 public class GTBinZippedSHPParser extends AbstractParser {
-    
+
     public GTBinZippedSHPParser(){
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     /**
      * @throws RuntimeException
      *             if an error occurs while writing the stream to disk or
      *             unzipping the written file
-     * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
+     * @see IParser#parse(InputStream input, String mimeType, String schema)
      */
     @Override
     public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
@@ -101,7 +102,7 @@ public class GTBinZippedSHPParser extends AbstractParser {
             SimpleFeatureCollection features = store.getFeatureSource(
                     store.getTypeNames()[0]).getFeatures();
             System.gc();
-            
+
             return new GTVectorDataBinding(features);
         } catch (IOException e) {
             throw new RuntimeException(
@@ -110,5 +111,5 @@ public class GTBinZippedSHPParser extends AbstractParser {
     }
 
 
-    
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,14 +61,14 @@ import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public class GeotiffZippedParser extends AbstractParser {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GeotiffZippedParser.class);
-    
+
     public GeotiffZippedParser() {
         super();
         supportedIDataTypes.add(GTRasterDataBinding.class);
     }
-    
+
     @Override
     public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
         //unzip
@@ -76,22 +76,22 @@ public class GeotiffZippedParser extends AbstractParser {
         try {
             zippedFile = IOUtils.writeStreamToFile(input, "zip");
             finalizeFiles.add(zippedFile); // mark for final delete
-        
+
             List<File> files = IOUtils.unzipAll(zippedFile);
             finalizeFiles.addAll(files); // mark for final delete
-            
+
             for(File file : files){
                 if(file.getName().toLowerCase().endsWith(".tif") || file.getName().toLowerCase().endsWith(".tiff")){
                     return parseTiff(file);
                 }
             }
-            
+
         } catch (IOException e) {
             LOGGER.error("Exception while trying to unzip tiff.", e);
         }
         throw new RuntimeException("Could not parse zipped geotiff.");
     }
-    
+
     private GTRasterDataBinding parseTiff(File file){
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
                 Boolean.TRUE);
@@ -103,7 +103,7 @@ public class GeotiffZippedParser extends AbstractParser {
         } catch (Exception e) {
             LOGGER.error("Exception while trying to create GTRasterDataBinding out of tiff.", e);
             throw new RuntimeException(e);
-        } 
+        }
     }
 
 }

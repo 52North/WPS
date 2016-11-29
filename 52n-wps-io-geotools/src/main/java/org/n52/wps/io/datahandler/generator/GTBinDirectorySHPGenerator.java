@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -84,8 +84,8 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class GTBinDirectorySHPGenerator {
 
-    
-    
+
+
     public File writeFeatureCollectionToDirectory(IData data)
             throws IOException {
         return writeFeatureCollectionToDirectory(data, null);
@@ -96,13 +96,13 @@ public class GTBinDirectorySHPGenerator {
         FeatureCollection originalCollection = binding.getPayload();
 
         FeatureCollection collection = createCorrectFeatureCollection(originalCollection);
-        
+
         return createShapefileDirectory(collection, parent);
     }
-    
+
     private FeatureCollection createCorrectFeatureCollection(
             FeatureCollection fc) {
-        
+
         List<SimpleFeature> featureList = new ArrayList<>();
         SimpleFeatureType featureType = null;
         FeatureIterator iterator = fc.features();
@@ -110,25 +110,25 @@ public class GTBinDirectorySHPGenerator {
         int i = 0;
         while(iterator.hasNext()){
             SimpleFeature feature = (SimpleFeature) iterator.next();
-        
+
             if(i==0){
                 featureType = GTHelper.createFeatureType(feature.getProperties(), (Geometry)feature.getDefaultGeometry(), uuid, feature.getFeatureType().getCoordinateReferenceSystem());
                 QName qname = GTHelper.createGML3SchemaForFeatureType(featureType);
                 SchemaRepository.registerSchemaLocation(qname.getNamespaceURI(), qname.getLocalPart());
             }
             SimpleFeature resultFeature = GTHelper.createFeature("ID"+i, (Geometry)feature.getDefaultGeometry(), featureType, feature.getProperties());
-        
+
             featureList.add(resultFeature);
             i++;
         }
         return GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
-        
+
     }
 
     /**
      * Transforms the given {@link FeatureCollection} into a zipped SHP file
      * (.shp, .shx, .dbf, .prj) and returs its Base64 encoding
-     * 
+     *
      * @param collection
      *            the collection to transform
      * @return the zipped shapefile
@@ -149,14 +149,14 @@ public class GTBinDirectorySHPGenerator {
 
         if (parent == null || !parent.isDirectory()) {
             throw new IllegalStateException("Could not find temporary file directory.");
-        }        
-        
+        }
+
         File shpBaseDirectory = new File(parent, UUID.randomUUID().toString());
-        
+
         if (!shpBaseDirectory.mkdir()) {
             throw new IllegalStateException("Could not create temporary shp directory.");
         }
-        
+
         File tempSHPfile = File.createTempFile("shp", ".shp", shpBaseDirectory);
         tempSHPfile.deleteOnExit();
         DataStoreFactorySpi dataStoreFactory = new ShapefileDataStoreFactory();
@@ -204,14 +204,14 @@ public class GTBinDirectorySHPGenerator {
         File shx = new File(baseName + ".shx");
         File dbf = new File(baseName + ".dbf");
         File prj = new File(baseName + ".prj");
-        
+
         // mark created files for delete
         tempSHPfile.deleteOnExit();
         shx.deleteOnExit();
         dbf.deleteOnExit();
         prj.deleteOnExit();
         shpBaseDirectory.deleteOnExit();
-        
+
         return shpBaseDirectory;
     }
 

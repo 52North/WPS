@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,14 +62,14 @@ public class GML32BasicParserCM extends ClassKnowingModule{
     private boolean isActive = true;
 
     private List<? extends ConfigurationEntry<?>> configurationEntries;
-    
+
     private List<FormatEntry> formatEntries;
-    
+
     public GML32BasicParserCM(){
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "GML32BasicParser";
@@ -82,7 +82,7 @@ public class GML32BasicParserCM extends ClassKnowingModule{
 
     @Override
     public void setActive(boolean active) {
-        this.isActive = active;        
+        this.isActive = active;
     }
 
     @Override

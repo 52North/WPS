@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -78,33 +78,33 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GML2BasicGenerator extends AbstractGenerator {
-    
+
     private boolean featureTransformerIncludeBounding;
     private int featureTransformerDecimalPlaces;
-    
-    private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);        
-    
+
+    private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicGenerator.class);
+
     public GML2BasicGenerator(){
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
-        
+
         featureTransformerIncludeBounding = false;
         featureTransformerDecimalPlaces = 4;
         for(ConfigurationEntry<?> property : properties){
             if(property.getKey().equalsIgnoreCase("featureTransformerIncludeBounding")){
                 featureTransformerIncludeBounding = new Boolean(property.getValue().toString());
-                
+
             }
             if(property.getKey().equalsIgnoreCase("featureTransformerDecimalPlaces")){
                 featureTransformerDecimalPlaces = new Integer(property.getValue().toString());
-                
+
             }
         }
     }
-    
+
     private void write(IData data, Writer writer) throws IOException {
         FeatureCollection<?,?> fc = ((GTVectorDataBinding)data).getPayload();
-        // this might be a workaround... 
+        // this might be a workaround...
         if(fc == null || fc.size() == 0) {
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
             writer.write("<wfs:FeatureCollection xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\"/>");
@@ -113,11 +113,11 @@ public class GML2BasicGenerator extends AbstractGenerator {
         Feature f = fc.features().next();
         FeatureType ft = f.getType();
         //String srsName = (String)f.getDefaultGeometry().getUserData();
-    
+
         Map<Object, Object> userData = f.getUserData();
         Object srs = userData.get("srs");
         String srsName = null;
-        
+
         if (srs instanceof String) {
             srsName = (String) srs;
         }
@@ -127,14 +127,14 @@ public class GML2BasicGenerator extends AbstractGenerator {
                 srsName= iter.next().toString();
             }
         }
-        
-        
+
+
         FeatureTransformer tx = new FeatureTransformer();
         tx.setFeatureBounding(featureTransformerIncludeBounding);
         tx.setNumDecimals(featureTransformerDecimalPlaces);
         FeatureTypeNamespaces ftNames = tx.getFeatureTypeNamespaces();
         // StringBuffer typeNames = new StringBuffer();
-        
+
         Map<String, String> ftNamespaces = new HashMap<String, String>();
 
         String uri = ft.getName().getNamespaceURI();
@@ -150,13 +150,13 @@ public class GML2BasicGenerator extends AbstractGenerator {
         if(srsName != null) {
             tx.setSrsName(srsName);
         }
-        
+
         String namespace = f.getType().getName().getNamespaceURI();
         String schemaLocation = SchemaRepository.getSchemaLocation(namespace);
-        
+
         tx.addSchemaLocation(uri,schemaLocation);
         tx.addSchemaLocation("http://www.opengis.net/wfs", "http://schemas.opengis.net/wfs/1.0.0/WFS-basic.xsd");
-        
+
         try{
             tx.transform( fc, writer);
             writer.close();
@@ -166,10 +166,10 @@ public class GML2BasicGenerator extends AbstractGenerator {
             throw new IOException("Unable to generate GML");
         }
     }
-    
+
     @Override
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-        
+
         File tempFile = File.createTempFile("gml2", "xml");
         finalizeFiles.add(tempFile);
         FileWriter fw = new FileWriter(tempFile);
@@ -177,7 +177,7 @@ public class GML2BasicGenerator extends AbstractGenerator {
         fw.close();
         InputStream is = new FileInputStream(tempFile);
         return is;
-        
+
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,14 +62,14 @@ public class GenericFileDataWithGTParserCM extends ClassKnowingModule{
     private boolean isActive = true;
 
     private List<? extends ConfigurationEntry<?>> configurationEntries;
-    
+
     private List<FormatEntry> formatEntries;
-    
+
     public GenericFileDataWithGTParserCM(){
         formatEntries = new ArrayList<>();
         configurationEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "GenericFileDataWithGTParser";
@@ -82,7 +82,7 @@ public class GenericFileDataWithGTParserCM extends ClassKnowingModule{
 
     @Override
     public void setActive(boolean active) {
-        this.isActive = active;        
+        this.isActive = active;
     }
 
     @Override

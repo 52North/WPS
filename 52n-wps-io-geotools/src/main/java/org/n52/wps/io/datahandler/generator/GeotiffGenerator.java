@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -73,32 +73,32 @@ import org.opengis.parameter.ParameterValueGroup;
 
 public class GeotiffGenerator  extends AbstractGenerator {
     private static Logger LOGGER = LoggerFactory.getLogger(GeotiffGenerator.class);
-    
+
     public GeotiffGenerator() {
         super();
         supportedIDataTypes.add(GTRasterDataBinding.class);
         supportedIDataTypes.add(GeotiffBinding.class);
     }
-    
+
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-        
+
         InputStream stream = null;
-        
+
         if((data instanceof GTRasterDataBinding)){
-            
+
             GridCoverage coverage = ((GTRasterDataBinding)data).getPayload();
             GeoTiffWriter geoTiffWriter = null;
-            String tmpDirPath = System.getProperty("java.io.tmpdir");            
+            String tmpDirPath = System.getProperty("java.io.tmpdir");
             String fileName = tmpDirPath + File.separatorChar + "temp" + UUID.randomUUID() + ".tmp";
             File outputFile = new File(fileName);
             this.finalizeFiles.add(outputFile); // mark file for final delete
-            
+
             try {
                 geoTiffWriter = new GeoTiffWriter(outputFile);
                 writeGeotiff(geoTiffWriter, coverage);
                 geoTiffWriter.dispose();
                 stream = new FileInputStream(outputFile);
-                
+
             } catch (IOException e) {
                 LOGGER.error(e.getMessage());
                 throw new IOException("Could not create output due to an IO error");
@@ -112,17 +112,17 @@ public class GeotiffGenerator  extends AbstractGenerator {
                 throw new IOException("Error while generating geotiff. Source file not found.");
             }
         }
-        
+
         return stream;
     }
-    
+
     private void writeGeotiff(GeoTiffWriter geoTiffWriter, GridCoverage coverage){
         GeoTiffFormat format = new GeoTiffFormat();
-        
+
         GeoTiffWriteParams wp = new GeoTiffWriteParams();
-        
+
         wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-        wp.setCompressionType("LZW"); 
+        wp.setCompressionType("LZW");
         wp.setTilingMode(GeoToolsWriteParams.MODE_EXPLICIT);
         int width = ((GridCoverage2D) coverage).getRenderedImage().getWidth();
         int tileWidth = 1024;
@@ -133,7 +133,7 @@ public class GeotiffGenerator  extends AbstractGenerator {
         ParameterValueGroup paramWrite = format.getWriteParameters();
         paramWrite.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
-        
+
         try {
             geoTiffWriter.write(coverage, (GeneralParameterValue[])paramWrite.values().toArray(new
                     GeneralParameterValue[1]));
@@ -147,5 +147,5 @@ public class GeotiffGenerator  extends AbstractGenerator {
             throw new RuntimeException(e1);
         }
     }
-    
+
 }

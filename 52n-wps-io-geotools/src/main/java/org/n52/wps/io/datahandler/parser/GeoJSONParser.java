@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -69,12 +69,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 /**
- * 
- * 
+ *
+ *
  * This class parses json into JTS geometries.
- *         
+ *
  *  @author BenjaminPross(bpross-52n)
- * 
+ *
  */
 public class GeoJSONParser extends AbstractParser {
 
@@ -130,7 +130,7 @@ public class GeoJSONParser extends AbstractParser {
                 List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
 
                 featureList.add(feature);
-                
+
                 ListFeatureCollection featureCollection = new ListFeatureCollection(
                         feature.getFeatureType(), featureList);
 
@@ -151,7 +151,7 @@ public class GeoJSONParser extends AbstractParser {
                 LOGGER.info("Could not read GeometryCollection from inputstream.");
             }
 
-        } else if(geojsonstring.contains("Point") || 
+        } else if(geojsonstring.contains("Point") ||
                 geojsonstring.contains("LineString") ||
                 geojsonstring.contains("Polygon") ||
                 geojsonstring.contains("MultiPoint") ||

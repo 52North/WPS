@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,12 +58,12 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
     protected String password;
     protected String host;
     protected String port;
-    
-    public AbstractGeoserverWXSGenerator() {        
+
+    public AbstractGeoserverWXSGenerator() {
         super();
         this.supportedIDataTypes.add(GTRasterDataBinding.class);
         this.supportedIDataTypes.add(GeotiffBinding.class);
-        
+
         for(ConfigurationEntry<?> property : properties){
             if(property.getKey().equalsIgnoreCase("Geoserver_username")){
                 username = property.getValue().toString();
@@ -81,13 +81,13 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
         if(port == null){
             port = "" + WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getHostport();
         }
-        
+
         for(String supportedFormat : supportedFormats){
             if(supportedFormat.equals("text/xml")){
                 supportedFormats.remove(supportedFormat);
             }
         }
-        
+
     }
 
 }

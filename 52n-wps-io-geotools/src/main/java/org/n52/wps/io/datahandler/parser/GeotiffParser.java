@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -65,20 +65,20 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 
 public class GeotiffParser extends AbstractParser {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GeotiffParser.class);
 
     public GeotiffParser() {
         super();
         supportedIDataTypes.add(GTRasterDataBinding.class);
     }
-    
-    
+
+
     @Override
     public GTRasterDataBinding parse(InputStream input, String mimeType, String schema) {
-        
+
         File tempFile;
-        
+
         try {
             tempFile = File.createTempFile("tempfile" + UUID.randomUUID(),"tmp");
             finalizeFiles.add(tempFile); // mark for final delete
@@ -88,7 +88,7 @@ public class GeotiffParser extends AbstractParser {
             while ((len = input.read(buf)) > 0) {
                 outputStream.write(buf, 0, len);
             }
-            
+
             outputStream.flush();
             outputStream.close();
             input.close();
@@ -103,10 +103,10 @@ public class GeotiffParser extends AbstractParser {
         return parseTiff(tempFile);
 
     }
-    
+
     private GTRasterDataBinding parseTiff(File file){
         JAI.getDefaultInstance().getTileCache().setMemoryCapacity(256*1024*1024);
-        
+
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
                 Boolean.TRUE);
         GeoTiffReader reader;

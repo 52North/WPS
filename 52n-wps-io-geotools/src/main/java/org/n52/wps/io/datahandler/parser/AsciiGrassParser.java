@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -69,28 +69,28 @@ import org.opengis.coverage.grid.GridCoverageReader;
 public class AsciiGrassParser extends AbstractParser {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
-    
+
     public AsciiGrassParser(){
         super();
         supportedIDataTypes.add(AsciiGrassDataBinding.class);
     }
-    
+
     @Override
     public AsciiGrassDataBinding parse(InputStream input, String mimeType, String schema) {
-        
+
 
         GridCoverage2D grid = null;
-        
-        try {            
+
+        try {
             /** Step 1: Reading the coverage */
 
             GridCoverageReader reader = new ArcGridReader(dumpToFile(input));
 
             grid = (GridCoverage2D) reader.read(null);
-                
+
             LOGGER.info("getCoordinateReferenceSystem2D(): " + grid.getCoordinateReferenceSystem2D().toString());
             LOGGER.info("getEnvelope():" + grid.getEnvelope2D().toString());
-            
+
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e);
@@ -98,7 +98,7 @@ public class AsciiGrassParser extends AbstractParser {
         return new AsciiGrassDataBinding(grid);
     }
 
-    
+
     private File dumpToFile(InputStream inputStream)
             throws FileNotFoundException, IOException {
 

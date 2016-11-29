@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -59,19 +59,19 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 
 /**
- * This parser handles xml files compliant to gmlpacket.xsd 
+ * This parser handles xml files compliant to gmlpacket.xsd
  * @author schaeffer
  *
  */
 public class KMLParser extends AbstractParser {
-    
+
     public KMLParser() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
-        
+
         FileOutputStream fos = null;
         try{
             File tempFile = File.createTempFile("kml", "tmp");
@@ -88,18 +88,21 @@ public class KMLParser extends AbstractParser {
             return data;
         }
         catch(IOException e) {
-            if (fos != null) try { fos.close(); } catch (Exception e1) { }
+            if (fos != null) {
+                try { fos.close(); }
+                catch (Exception e1) { }
+            }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }
 
     private GTVectorDataBinding parseXML(File file) {
         Configuration configuration = new KMLConfiguration();
-        
+
         SimpleFeatureCollection fc = new GML3BasicParser().parseFeatureCollection(file, configuration, true);
-        
+
         GTVectorDataBinding data = new GTVectorDataBinding(fc);
-        
+
         return data;
     }
 

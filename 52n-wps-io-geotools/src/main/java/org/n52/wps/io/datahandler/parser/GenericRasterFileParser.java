@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -59,20 +59,20 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  *
  */
 public class GenericRasterFileParser extends AbstractParser{
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GenericRasterFileParser.class);
-    
+
     public GenericRasterFileParser() {
         super();
         supportedIDataTypes.add(GenericRasterFileParser.class);
     }
-    
+
     @Override
     public GenericFileDataWithGTBinding parse(InputStream input, String mimeType, String schema) {
-        
+
         GenericFileDataWithGT theData = new GenericFileDataWithGT(input, mimeType);
         LOGGER.info("Found File Input " + mimeType);
-        
+
         return new GenericFileDataWithGTBinding(theData);
     }
 

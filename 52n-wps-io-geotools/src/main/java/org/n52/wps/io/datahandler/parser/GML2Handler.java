@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -63,16 +63,16 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  */
 public class GML2Handler extends DefaultHandler {
-    
+
     private Logger LOGGER = LoggerFactory.getLogger(GML2Handler.class);
     // private static String SCHEMA = "http://www.opengis.net/wfs";
     private String  schemaUrl;
     private String nameSpaceURI;
     private boolean rootVisited = false;
     private Map<String, String> namespaces = new HashMap<String, String>();
-    
+
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException { 
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         super.startElement(uri, localName, qName, attributes);
         if(rootVisited) {
             return;
@@ -101,7 +101,7 @@ public class GML2Handler extends DefaultHandler {
                 schemaUrl = locationStrings[i + 1];
                 return;
             }
-                
+
         }
     }
 
@@ -113,14 +113,14 @@ public class GML2Handler extends DefaultHandler {
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
         super.startPrefixMapping(prefix, uri);
         namespaces.put(prefix, uri);
-        
+
     }
 
     public String getNameSpaceURI() {
         return nameSpaceURI;
     }
 
-    
-    
+
+
 
 }

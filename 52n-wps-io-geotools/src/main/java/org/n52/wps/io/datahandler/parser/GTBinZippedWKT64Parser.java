@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,6 +68,7 @@ import org.geotools.geometry.jts.WKTReader2;
 import org.geotools.referencing.CRS;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.IOUtils;
+import org.n52.wps.io.IParser;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -85,9 +86,9 @@ import com.vividsolutions.jts.io.ParseException;
  *
  */
 public class GTBinZippedWKT64Parser extends AbstractParser {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GTBinZippedWKT64Parser.class);
-    
+
     public GTBinZippedWKT64Parser() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
@@ -97,12 +98,12 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
      * @throws RuntimeException
      *             if an error occurs while writing the stream to disk or
      *             unzipping the written file
-     * @see org.n52.wps.io.IParser#parse(java.io.InputStream)
+     * @see IParser#parse(InputStream input, String mimeType, String schema)
      */
     @Override
     public GTVectorDataBinding parse(InputStream stream, String mimeType, String schema) {
         try {
-            
+
             String fileName = "tempfile" + UUID.randomUUID() + ".zip";
             String tmpDirPath = System.getProperty("java.io.tmpdir");
             File tempFile = new File(tmpDirPath + File.separatorChar + fileName);
@@ -124,13 +125,13 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
                 LOGGER.error(e.getMessage(), e);
                 System.gc();
                 throw new RuntimeException(e);
-            }            
-            
+            }
+
             finalizeFiles.add(tempFile); // mark for final delete
             stream.close();
             List<File> wktFiles = IOUtils.unzip(tempFile, "wkt");
             finalizeFiles.addAll(wktFiles); // mark for final delete
-            
+
             if (wktFiles == null || wktFiles.size() == 0) {
                 throw new RuntimeException(
                         "Cannot find a shapefile inside the zipped file.");
@@ -138,19 +139,19 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
 
             //set namespace namespace
             List<Geometry> geometries = new ArrayList<Geometry>();
-        
+
             //read wkt file
             //please not that only 1 geometry is returned. If multiple geometries are included, perhaps use the read(String wktstring) method
             for(int i = 0; i<wktFiles.size();i++){
                 File wktFile = wktFiles.get(i);
                 Reader fileReader = new FileReader(wktFile);
-                
+
                 WKTReader2 wktReader = new WKTReader2();
                 com.vividsolutions.jts.geom.Geometry geometry = wktReader.read(fileReader);
                 geometries.add(geometry);
             }
 
-            CoordinateReferenceSystem coordinateReferenceSystem = CRS.decode("EPSG:4326");            
+            CoordinateReferenceSystem coordinateReferenceSystem = CRS.decode("EPSG:4326");
             SimpleFeatureCollection inputFeatureCollection = createFeatureCollection(geometries, coordinateReferenceSystem);
 
             return new GTVectorDataBinding(inputFeatureCollection);
@@ -161,18 +162,18 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
         } catch (ParseException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);        
+                    "An error has occurred while accessing provided data", e);
         } catch (NoSuchAuthorityCodeException e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(
-                    "An error has occurred while accessing provided data", e);        
+                    "An error has occurred while accessing provided data", e);
         } catch (FactoryException e) {
             LOGGER.error(e.getMessage(), e);
                 throw new RuntimeException(
-                        "An error has occurred while accessing provided data", e);            
+                        "An error has occurred while accessing provided data", e);
         }
     }
-    
+
     private SimpleFeatureCollection createFeatureCollection(List<com.vividsolutions.jts.geom.Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
@@ -182,7 +183,7 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
             } catch (NoSuchAuthorityCodeException e) {
             LOGGER.error(e.getMessage(), e);
                 throw new RuntimeException(
-                        "An error has occurred while trying to decode CRS EPSG:4326", e);                
+                        "An error has occurred while trying to decode CRS EPSG:4326", e);
             } catch (FactoryException e) {
             LOGGER.error(e.getMessage());
                 throw new RuntimeException(
@@ -190,24 +191,24 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
             }
             typeBuilder.setCRS(coordinateReferenceSystem);
         }
-    
+
         String namespace = "http://www.opengis.net/gml";
         typeBuilder.setNamespaceURI(namespace);
         Name nameType = new NameImpl(namespace, "Feature");
         typeBuilder.setName(nameType);
         typeBuilder.add("GEOMETRY", geometries.get(0).getClass());
-    
-        List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();        
-        
+
+        List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+
         SimpleFeatureType featureType = typeBuilder.buildFeatureType();
-    
+
         for(int i = 0; i<geometries.size();i++){
                 SimpleFeature feature = GTHelper.createFeature(""+i, geometries.get(i), featureType, new ArrayList<Property>());
                 simpleFeatureList.add(feature);        }
-        
-        
+
+
         SimpleFeatureCollection collection =  new ListFeatureCollection(featureType, simpleFeatureList);
-        
+
         return collection;
     }
 

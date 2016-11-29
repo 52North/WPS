@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -79,14 +79,14 @@ import edu.umn.gis.mapscript.styleObj;
 /**
  * This class managed the modifying of the mapfile of an UMN Mapserver. Right
  * now it only supports the adding of a Geotools FeatureCollection.
- * 
+ *
  * @author Jacob Mendt
- * 
- * @TODO better solution for replacing the old with the new mapfile.
- * @TODO Giving the ShapefileRepository as an external Input in the method
+ *
+ * TODO better solution for replacing the old with the new mapfile.
+ * TODO Giving the ShapefileRepository as an external Input in the method
  *       addFeatureCollectionToMapfile is maybe not the best way.
- * @TODO check if layer is already in mapfile.
- * 
+ * TODO check if layer is already in mapfile.
+ *
  */
 public final class MSMapfileBinding {
 
@@ -103,7 +103,7 @@ public final class MSMapfileBinding {
 
     /**
      * Implementation of a thread-safe Singleton Pattern
-     * 
+     *
      * @return MSMapfileBinding.class
      */
     public static synchronized MSMapfileBinding getInstance() {
@@ -113,17 +113,17 @@ public final class MSMapfileBinding {
     /**
      * This method adds a FeatureCollection as an extra layer to the default
      * mapfile of this MSMapfileBinding object.
-     * 
+     *
      * @param ftColl
      *            Input FeatureCollection which should be added as a layer to
      *            the mapfile.
-     * @param workspace
+     * @param workspacePath
      *            Path to the workspace folder of the mapfile object.
-     * @param mapfile
+     * @param mapfilePath
      *            Name of the mapfile object in the workspace folder.
-     * @param dataRep
+     * @param dataRepPath
      *            Path to the data repository of the mapserver.
-     * 
+     *
      * @return The name of the layer of featureCollection which was added to the
      *         mapfile.
      */
@@ -197,16 +197,16 @@ public final class MSMapfileBinding {
     /**
      * This method adds a shapfile as an extra layer to the default mapfile of
      * this MSMapfileBinding object.
-     * 
+     *
      * @param shapefilePath
      *            Path to the shapefile which should be added to the mapfile.
      * @param tmpMapfilePath
      *            Path to the temporary copy of the mapfile.
      * @param workspacePath
      *            to the workspace folder of the mapfile object
-     * 
+     *
      * @return The name of the added layer.
-     * 
+     *
      * @TODO Check if layer already exist in the mapfile.
      */
     private synchronized String addShapefileAsLayerToMapfile(
@@ -290,12 +290,12 @@ public final class MSMapfileBinding {
     /**
      * Checks if the metadata tag "wms_srs" already contains the crs of the
      * layer
-     * 
+     *
      * @param wmsSupportedCrs
      *            content of the metadata tag "wms_srs"
      * @param mdCrs
      *            epsg code of the layer
-     * @return
+     * @return the supported CRS
      */
     private String getMDSupportedCRS(String wmsSupportedCrs, String mdCrs) {
         String[] aCrs = wmsSupportedCrs.split(" ");
@@ -310,14 +310,14 @@ public final class MSMapfileBinding {
 
     /**
      * Creates a copy of the mapfile
-     * 
-     * @param String
-     *            orgMapfilePath Path to the original mapfile.
-     * @param String
-     *            tmpMapfilePath Path to the temporary mapfile.
-     * 
+     *
+     * @param orgMapfilePath
+     *            Path to the original mapfile.
+     * @param tmpMapfilePath
+     *            Path to the temporary mapfile.
+     *
      * @return <tt>true</tt> if the copying of the mapfile went okay.
-     * 
+     *
      * @throws IOException
      *             If something went wrong while copying the content of the
      *             original mapfile to the temporary mapfile.
@@ -339,10 +339,12 @@ public final class MSMapfileBinding {
             e.printStackTrace();
 
         } finally {
-            if (inCh != null)
+            if (inCh != null){
                 inCh.close();
-            if (outCh != null)
+            }
+            if (outCh != null){
                 outCh.close();
+            }
         }
 
         // default return
@@ -351,10 +353,10 @@ public final class MSMapfileBinding {
 
     /**
      * Deletes the mapfile.
-     * 
+     *
      * @param mapfilePath
      *            Path to the mapfile which should be delete.
-     * 
+     *
      * @return <tt>true</tt> if the mapfile was deleted successful.
      */
     private boolean deleteMapfile(String mapfilePath) {
@@ -372,17 +374,17 @@ public final class MSMapfileBinding {
      * Saves the FeatureCollection as a shapefile in the data repository of the
      * mapserver. If the CRS of the FeatureCollection is not WGS84 the
      * FeatureCollection will be transformed to WGS 84
-     * 
+     *
      * @param ftColl
      *            FeatureCollection which should be saved as shapefile
      * @param workspacePath
      *            Path to the workspace folder of the mapfile object.
      * @param dataRepository
      *            Path to the data repository of the mapserver.
-     * 
+     *
      * @return Path to the shapefile, which lies in the data repository of the
      *         mapserver.
-     * 
+     *
      * @throws IOException
      * @throws URISyntaxException
      * @throws Exception
@@ -391,11 +393,11 @@ public final class MSMapfileBinding {
             SimpleFeatureCollection ftColl, String workspacePath,
             String dataRepository) throws IOException, URISyntaxException,
             Exception {
-        
+
         //FeatureCollection ftColl = createCorrectFeatureCollection(ftCollWrong);
         //FeatureCollectionTester tester = new FeatureCollectionTester();
         //tester.testFeatureCollection(ftColl);
-        
+
         SimpleFeatureType TYPE = (SimpleFeatureType) ftColl.getSchema();
 
         String shapefilePath;
@@ -405,10 +407,11 @@ public final class MSMapfileBinding {
             shapefilePath = workspacePath + dataRepository + "shape_"
                     + TYPE.getName().getLocalPart().toLowerCase() + "_"
                     + System.currentTimeMillis() + ".shp";
-        } else
+        } else{
             shapefilePath = workspacePath + dataRepository + "/shape_"
                     + TYPE.getName().getLocalPart().toLowerCase() + "_"
                     + System.currentTimeMillis() + ".shp";
+        }
 
         /*
          * Get an output file name and create the new shapefile

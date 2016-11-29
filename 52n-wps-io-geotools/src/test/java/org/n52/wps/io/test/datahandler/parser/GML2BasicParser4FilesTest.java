@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -72,7 +72,7 @@ public class GML2BasicParser4FilesTest extends
         if (!isDataHandlerActive()) {
             return;
         }
-        
+
         List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
 
         FormatEntry format = formats.get(0);

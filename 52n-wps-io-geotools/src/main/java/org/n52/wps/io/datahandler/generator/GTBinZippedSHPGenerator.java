@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -57,29 +57,28 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 
 /**
- * Generator to create a zipped shapefile by using GDMS drivers:
- * {@link GeotoolsFeatureCollectionDriver} and {@link ShapefileDriver}
- * 
+ * Generator to create a zipped shapefile
+ *
  * @author victorzinho; Matthias Mueller, TU Dresden
  */
 public class GTBinZippedSHPGenerator extends AbstractGenerator {
-    
+
     public GTBinZippedSHPGenerator(){
         super();
-        supportedIDataTypes.add(GTVectorDataBinding.class);    
+        supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     @Override
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-        
+
 //        // check for correct request before returning the stream
 //        if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
 //            throw new IOException("I don't support the incoming datatype");
 //        }
-        GTBinDirectorySHPGenerator directoryShp = new GTBinDirectorySHPGenerator(); 
+        GTBinDirectorySHPGenerator directoryShp = new GTBinDirectorySHPGenerator();
         InputStream stream = new FileInputStream(createZippedShapefile(
                 directoryShp.writeFeatureCollectionToDirectory(data)));
-        
+
         return stream;
     }
 
@@ -91,7 +90,7 @@ public class GTBinZippedSHPGenerator extends AbstractGenerator {
 
         return null;
     }
-    
 
-    
+
+
 }

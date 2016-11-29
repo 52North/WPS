@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -92,32 +92,32 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public class GTHelper {
     private static Logger LOGGER = LoggerFactory.getLogger(GTHelper.class);
-    
+
     private static final String GEOMETRY_NAME = "the_geom";
-    
+
     public static SimpleFeatureType createFeatureType(Collection<Property> attributes, Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
         String namespace = "http://www.52north.org/"+uuid;
-        
+
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
         if(coordinateReferenceSystem==null){
-            coordinateReferenceSystem= getDefaultCRS();            
+            coordinateReferenceSystem= getDefaultCRS();
         }
         typeBuilder.setCRS(coordinateReferenceSystem);
         typeBuilder.setNamespaceURI(namespace);
         Name nameType = new NameImpl(namespace, "Feature-"+uuid);
         typeBuilder.setName(nameType);
-        
+
         for(Property property : attributes){
-            if(property.getValue()!=null){ 
+            if(property.getValue()!=null){
                 String name = property.getName().getLocalPart();
                 Class<?> binding = property.getType().getBinding();
                 if(binding.equals(Envelope.class)){
                     continue;
                 }
-                if( 
+                if(
                    (binding.equals(Geometry.class) ||
                     binding.equals(GeometryCollection.class) ||
-                   binding.equals(MultiCurve.class) || 
+                   binding.equals(MultiCurve.class) ||
                    binding.equals(MultiLineString.class) ||
                    binding.equals(Curve.class) ||
                    binding.equals(MultiPoint.class) ||
@@ -126,17 +126,17 @@ public class GTHelper {
                    binding.equals(LineString.class) ||
                    binding.equals(Point.class) ||
                    binding.equals(LineString.class) ||
-                   binding.equals(Polygon.class))                   
+                   binding.equals(Polygon.class))
                  &&!name.equals("location")){
-                                       
-                    
+
+
                     if(newGeometry.getClass().equals(Point.class) && (!name.equals("location"))){
                         typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
                     }else if(newGeometry.getClass().equals(LineString.class) && (!name.equals("location"))){
-                    
+
                         typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
                     }else if( newGeometry.getClass().equals(Polygon.class) && (!name.equals("location"))){
-                    
+
                         typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
                     }else if(!binding.equals(Object.class)){
                         typeBuilder.add(GEOMETRY_NAME, newGeometry.getClass());
@@ -148,39 +148,39 @@ public class GTHelper {
                             if(g.getClass().equals(Point.class) && (!name.equals("location"))){
                                 typeBuilder.add(GEOMETRY_NAME, MultiPoint.class);
                             }else if(g.getClass().equals(LineString.class) && (!name.equals("location"))){
-                            
+
                                 typeBuilder.add(GEOMETRY_NAME, MultiLineString.class);
                             }else if( g.getClass().equals(Polygon.class) && (!name.equals("location"))){
-                            
+
                                 typeBuilder.add(GEOMETRY_NAME, MultiPolygon.class);
                             }else{
                                 typeBuilder.add(GEOMETRY_NAME, g.getClass());
                             }
-                            
+
                         }catch(ClassCastException e){
-                            
+
                         }
-                        
+
                     }else if(!name.equals("location")){
                         typeBuilder.add(name, binding);
                     }
                 }
             }
-        
-         
+
+
         }
-        
+
         SimpleFeatureType featureType;
-        
+
         featureType = typeBuilder.buildFeatureType();
         return featureType;
     }
-    
-    
-    
+
+
+
     public static SimpleFeatureType createFeatureType(Geometry newGeometry, String uuid, CoordinateReferenceSystem coordinateReferenceSystem){
         String namespace = "http://www.52north.org/"+uuid;
-        
+
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
         if(coordinateReferenceSystem==null){
             coordinateReferenceSystem= getDefaultCRS();
@@ -188,28 +188,28 @@ public class GTHelper {
         typeBuilder.setCRS(coordinateReferenceSystem);
         typeBuilder.setNamespaceURI(namespace);
         Name nameType = new NameImpl(namespace, "Feature-"+uuid);
-        typeBuilder.setName(nameType);        
-                    
+        typeBuilder.setName(nameType);
+
         typeBuilder.add(GEOMETRY_NAME, newGeometry.getClass());
-                    
+
         SimpleFeatureType featureType;
-        
+
         featureType = typeBuilder.buildFeatureType();
         return featureType;
     }
-    
+
     public static SimpleFeature createFeature(String id, Geometry geometry, SimpleFeatureType featureType, Collection<Property> originalAttributes) {
-        
+
             if(geometry==null || geometry.isEmpty()){
                 return null;
             }
-            
+
             SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
             SimpleFeature feature = null;
             Collection<PropertyDescriptor> featureTypeAttributes = featureType.getDescriptors();
-                        
+
             Object[] newData = new Object[featureType.getDescriptors().size()];
-            
+
             int i = 0;
             for(PropertyDescriptor propertyDescriptor : featureTypeAttributes){
                 for(Property originalProperty : originalAttributes){
@@ -221,7 +221,7 @@ public class GTHelper {
                         }
                     }
                 }
-                
+
                 if(propertyDescriptor instanceof GeometryDescriptor){
                     if(geometry.getGeometryType().equals("Point")){
                         Point[] points = new Point[1];
@@ -240,31 +240,31 @@ public class GTHelper {
                             }else{
                                 newData[i] = geometry;
                             }
-                    
+
                 }
                 i++;
             }
-                
-        
-            
+
+
+
             feature = featureBuilder.buildFeature(id, newData);
-        
+
             return feature;
     }
-    
+
     public static SimpleFeature createFeature(String id, Geometry geometry, SimpleFeatureType featureType) {
-        
+
         if(geometry==null || geometry.isEmpty()){
             return null;
         }
-        
+
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
         SimpleFeature feature = null;
-                    
+
         Object[] newData = new Object[featureType.getDescriptors().size()];
-        
+
         int i = 0;
-    
+
         if(geometry.getGeometryType().equals("Point")){
             Point[] points = new Point[1];
             points[0] = (Point)geometry;
@@ -282,15 +282,15 @@ public class GTHelper {
                 }else{
                     newData[i] = geometry;
                 }
-            
-        
+
+
         feature = featureBuilder.buildFeature(id, newData);
-    
+
         return feature;
 }
-    
+
         public static QName createGML3SchemaForFeatureType(SimpleFeatureType featureType){
-        
+
         String uuid = featureType.getName().getNamespaceURI().replace("http://www.52north.org/", "");
         String namespace = "http://www.52north.org/"+uuid;
         String schema = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xs:schema targetNamespace=\""+namespace+"\" " +
@@ -301,45 +301,45 @@ public class GTHelper {
                 "version=\"1.0\"> "+
                 "<xs:import namespace=\"http://www.opengis.net/gml\" "+
                 "schemaLocation=\"http://schemas.opengis.net/gml/3.1.1/base/gml.xsd\"/> ";
-                
+
         String typeName = featureType.getGeometryDescriptor().getType().getBinding().getName();
         String geometryTypeName = "";
         if(typeName.contains("Point")){
             geometryTypeName = "PointPropertyType";
         }
-               
+
          if(typeName.contains("MultiPoint")){
-             geometryTypeName = "MultiPointPropertyType";    
+             geometryTypeName = "MultiPointPropertyType";
                         }
          if(typeName.contains("LineString")){
-             geometryTypeName = "CurvePropertyType";    
+             geometryTypeName = "CurvePropertyType";
          }
          if(typeName.contains("MultiLineString")){
-             geometryTypeName = "MultiCurvePropertyType";    
+             geometryTypeName = "MultiCurvePropertyType";
          }
          if(typeName.contains("Polygon")){
-             geometryTypeName = "SurfacePropertyType";    
+             geometryTypeName = "SurfacePropertyType";
          }
          if(typeName.contains("MultiPolygon")){
-             geometryTypeName = "MultiSurfacePropertyType";    
-         }        
-                
+             geometryTypeName = "MultiSurfacePropertyType";
+         }
+
                 // add feature type definition and generic geometry
             schema = schema + "<xs:element name=\"Feature-"+uuid+"\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
                     "<xs:complexType name=\"FeatureType\"> " +
                     "<xs:complexContent> " +
                     "<xs:extension base=\"gml:AbstractFeatureType\"> "+
                     "<xs:sequence> " +
-                    //"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+                    
+                    //"<xs:element name=\"GEOMETRY\" type=\"gml:GeometryPropertyType\"> "+
                     "<xs:element name=\"" + GEOMETRY_NAME + "\" type=\"gml:"+geometryTypeName+"\"> "+
                     "</xs:element> ";
-            
+
             //add attributes
             Collection<PropertyDescriptor> attributes = featureType.getDescriptors();
             for(PropertyDescriptor property : attributes){
                 String attributeName = property.getName().getLocalPart();
                 if(!(property instanceof GeometryDescriptor)){
-                    
+
                     if(property.getType().getBinding().equals(String.class) ){
                         schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
                         "<xs:simpleType> ";
@@ -363,8 +363,8 @@ public class GTHelper {
                         "</xs:element> ";
                     }
                 }
-            }        
-            
+            }
+
             //close
             schema = schema +  "</xs:sequence> "+
               "</xs:extension> "+
@@ -374,17 +374,17 @@ public class GTHelper {
             String schemalocation = "";
             try {
                 schemalocation = storeSchema(schema, uuid);
-                
+
             } catch (IOException e) {
                 LOGGER.error("Exception while storing schema.", e);
                 throw new RuntimeException("Exception while storing schema.", e);
             }
             return new QName(namespace, schemalocation);
-            
+
         }
-        
+
         public static QName createGML2SchemaForFeatureType(SimpleFeatureType featureType){
-            
+
             String uuid = featureType.getName().getNamespaceURI().replace("http://www.52north.org/", "");
             String namespace = "http://www.52north.org/"+uuid;
             String schema = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><xs:schema targetNamespace=\""+namespace+"\" " +
@@ -395,7 +395,7 @@ public class GTHelper {
                     "version=\"1.0\"> "+
                     "<xs:import namespace=\"http://www.opengis.net/gml\" "+
                     "schemaLocation=\"http://schemas.opengis.net/gml/2.1.2/feature.xsd\"/> ";
-                
+
                     // add feature type definition and generic geometry
                 schema = schema + "<xs:element name=\"Feature\" type=\"n52:FeatureType\" substitutionGroup=\"gml:_Feature\"/> " +
                         "<xs:complexType name=\"FeatureType\"> " +
@@ -404,13 +404,13 @@ public class GTHelper {
                         "<xs:sequence> " +
                         "<xs:element name=\"" + GEOMETRY_NAME + "\" type=\"gml:GeometryPropertyType\"> "+
                         "</xs:element> ";
-                
+
                 //add attributes
                 Collection<PropertyDescriptor> attributes = featureType.getDescriptors();
                 for(PropertyDescriptor property : attributes){
                     String attributeName = property.getName().getLocalPart();
                     if(!(property instanceof GeometryDescriptor)){
-                        
+
                         if(property.getType().getBinding().equals(String.class) ){
                             schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
                             "<xs:simpleType> ";
@@ -434,8 +434,8 @@ public class GTHelper {
                             "</xs:element> ";
                         }
                     }
-                }        
-                
+                }
+
                 //close
                 schema = schema +  "</xs:sequence> "+
                   "</xs:extension> "+
@@ -445,28 +445,28 @@ public class GTHelper {
                 String schemalocation = "";
                 try {
                     schemalocation = storeSchema(schema, uuid);
-                    
+
                 } catch (IOException e) {
                     LOGGER.error("Exception while storing schema.", e);
                     throw new RuntimeException("Exception while storing schema.", e);
                 }
                 return new QName(namespace, schemalocation);
-                
+
             }
 
         public static String storeSchema(String schema, String uuid) throws IOException {
-            
+
             String serviceBaseURL = WPSConfig.getInstance().getWPSConfig().getServiceBaseUrl();
-            
+
             LOGGER.debug("GTHelper service base URL " + serviceBaseURL);
-            
+
             String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
-            
+
             domain = URLDecoder.decode(domain, "UTF-8");
-            
+
             int startIndex = domain.indexOf("WEB-INF");
             if(startIndex<0){
-                //not running as webapp                
+                //not running as webapp
                 File f = File.createTempFile(uuid, ".xsd");
                 f.deleteOnExit();
                 FileWriter writer = new FileWriter(f);
@@ -475,9 +475,9 @@ public class GTHelper {
                 writer.close();
                 return "file:"+f.getAbsolutePath();
             }else{
-                domain = domain.substring(0,startIndex);            
+                domain = domain.substring(0,startIndex);
                 String baseDirLocation = domain;
-            
+
                 String baseDir = baseDirLocation +  "/static/schemas" + File.separator;
                 File folder = new File(baseDir);
                 if(!folder.exists()){
@@ -488,12 +488,12 @@ public class GTHelper {
                 writer.write(schema);
                 writer.flush();
                 writer.close();
-                
+
                 String url = serviceBaseURL +"/static/schemas/"+ uuid+".xsd";
                 return url;
             }
         }
-        
+
         private static CoordinateReferenceSystem getDefaultCRS(){
 
             try {
@@ -503,13 +503,13 @@ public class GTHelper {
             }
             return null;
         }
-        
+
         public static SimpleFeatureCollection createSimpleFeatureCollectionFromSimpleFeatureList(List<SimpleFeature> featureList){
-            
+
             if(featureList.size() > 0){
                 return new ListFeatureCollection(featureList.get(0).getFeatureType(), featureList);
             }
-            return new DefaultFeatureCollection();            
+            return new DefaultFeatureCollection();
         }
 
 }

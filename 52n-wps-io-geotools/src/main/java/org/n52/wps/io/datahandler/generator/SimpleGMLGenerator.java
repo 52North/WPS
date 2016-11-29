@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -87,19 +87,19 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class SimpleGMLGenerator extends AbstractGenerator {
-    
-    
+
+
     public SimpleGMLGenerator() {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     @Override
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-        
+
         File tempFile = null;
         InputStream stream = null;
-        
+
         try {
             tempFile = File.createTempFile("gml", "xml");
             this.finalizeFiles.add(tempFile);
@@ -107,12 +107,12 @@ public class SimpleGMLGenerator extends AbstractGenerator {
             this.writeToStream(data, outputStream);
             outputStream.flush();
             outputStream.close();
-            
+
             stream = new FileInputStream(tempFile);
         } catch (IOException e){
             throw new IOException("Unable to generate GML");
         }
-        
+
         return stream;
     }
 
@@ -151,7 +151,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                 if (coord != null) {
                     PointPropertyType pointType = staticFeature.addNewPointProperty();
                     pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
-                    generateAttribute(feature, staticFeature);                    
+                    generateAttribute(feature, staticFeature);
                     }
             }
             else if(geomType.equals("LineString")) {
@@ -161,8 +161,8 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                     ls.getCoordinates();
                     LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
                     lsType.addNewLineString().setCoordArray(coords);
-                    
-                    generateAttribute(feature, staticFeature);    
+
+                    generateAttribute(feature, staticFeature);
                 }
             }
             else if(geomType.equals("Polygon")) {
@@ -174,7 +174,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                     LinearRingType innerRing = innerBoundary.addNewLinearRing();
                     innerRing.setCoordArray(convertToXMLCoordType(polygon.getInteriorRingN(i).getCoordinates()));
                 }
-                generateAttribute(feature, staticFeature);    
+                generateAttribute(feature, staticFeature);
             }
             else if (geomType.equals("MultiPolygon")) {
                 MultiPolygon mp = (MultiPolygon)geom;
@@ -183,7 +183,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                         staticFeature = packet.addNewPacketMember().addNewStaticFeature();
                     }
                     Polygon p = (Polygon) (geom.getGeometryN(i));
-                    
+
                     PolygonType pType = staticFeature.addNewPolygonProperty().addNewPolygon();
                     pType.setOuterBoundaryIs(convertToXMLLinearRing(p.getExteriorRing()));
                     LinearRingMemberType innerBoundary = pType.addNewInnerBoundaryIs();
@@ -191,11 +191,11 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                         LinearRingType innerRing = innerBoundary.addNewLinearRing();
                         innerRing.setCoordArray(convertToXMLCoordType(p.getInteriorRingN(j).getCoordinates()));
                     }
-                    
+
                 }
-                generateAttribute(feature, staticFeature);    
+                generateAttribute(feature, staticFeature);
             }
-            // THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs, 
+            // THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs,
             else if(geomType.equals("MultiLineString")) {
                 MultiLineString mls = (MultiLineString)geom;
                 for(int i = 0; i < mls.getNumGeometries(); i++) {
@@ -206,7 +206,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                     LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
                     lsType.addNewLineString().setCoordArray(convertToXMLCoordType(ls.getCoordinates()));
                 }
-                generateAttribute(feature, staticFeature);    
+                generateAttribute(feature, staticFeature);
             }
 //            else if(geomType.equals("GeometryCollection")) {
 //                GeometryCollection geomColl = (GeometryCollection)geom;
@@ -214,7 +214,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 //            }
             else if(geom.isEmpty()) {
                 //GEOMETRY is empty, do nothing
-                
+
             }
             else {
                 throw new IllegalArgumentException("geometryType not supported: " + geomType);
@@ -226,7 +226,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
     private void generateAttribute(SimpleFeature feature,
             StaticFeatureType staticFeature) {
         if(feature.getFeatureType().getAttributeCount()>1){
-            
+
             PropertyType propertyType;
             Value value;
             int attributePosCounter=0;
@@ -243,8 +243,10 @@ public class SimpleGMLGenerator extends AbstractGenerator {
                 }else if(o instanceof Double){
                     dataType = DataType.DECIMAL;
                 }
-                else continue;    //Don't create anything
-                
+                else {
+                    continue;    //Don't create anything
+                }
+
                 propertyType = staticFeature.addNewProperty();
                 propertyType.setPropertyName(feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
                 value = propertyType.addNewValue();
@@ -254,7 +256,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
             }
         }
     }
-    
+
     private LinearRingMemberType convertToXMLLinearRing(LineString ls) {
         LinearRingMemberType ringMember = LinearRingMemberType.Factory.newInstance();
         LinearRingType ring = LinearRingType.Factory.newInstance();
@@ -266,7 +268,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
         ringMember.setLinearRing(ring);
         return ringMember;
     }
-    
+
     private CoordType[] convertToXMLCoordType(Coordinate[] coords) {
         ArrayList<CoordType> coordsList = new ArrayList<CoordType>();
         for(int i = 0; i < coords.length; i++) {
@@ -282,7 +284,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
         returnCoords = coordsList.toArray(returnCoords);
         return returnCoords;
     }
-    
+
     private CoordType convertToXMLCoordType(Coordinate coord) {
         if(Double.isNaN(coord.x) || Double.isNaN(coord.y)) {
             return null;
@@ -303,7 +305,7 @@ public class SimpleGMLGenerator extends AbstractGenerator {
 
     public void writeToStream(IData coll, OutputStream os) {
         OutputStreamWriter w = new OutputStreamWriter(os);
-        write (coll, w);        
+        write (coll, w);
     }
 
 }

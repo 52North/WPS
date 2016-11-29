@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -92,11 +92,11 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This parser handles xml files for GML 3.2.1
- *  
+ *
  * @author matthes rieke
  */
 public class GML32BasicParser extends AbstractParser {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GML32BasicParser.class);
     private Configuration configuration;
 
@@ -105,7 +105,7 @@ public class GML32BasicParser extends AbstractParser {
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     public void setConfiguration(Configuration config) {
         this.configuration = config;
     }
@@ -130,7 +130,10 @@ public class GML32BasicParser extends AbstractParser {
             return parse(new FileInputStream(tempFile), schematypeTuple);
         }
         catch (IOException e) {
-            if (fos != null) try { fos.close(); } catch (Exception e1) { }
+            if (fos != null){
+                try { fos.close(); }
+                catch (Exception e1) { }
+            }
             throw new IllegalArgumentException("Error while creating tempFile", e);
         }
     }
@@ -150,7 +153,7 @@ public class GML32BasicParser extends AbstractParser {
 
         return data;
     }
-    
+
 
     private FeatureCollection resolveFeatureCollection(Parser parser, InputStream input) {
         FeatureCollection fc = null;
@@ -174,7 +177,7 @@ public class GML32BasicParser extends AbstractParser {
             FeatureIterator featureIterator = fc.features();
             while (featureIterator.hasNext()) {
                 SimpleFeature feature = (SimpleFeature) featureIterator.next();
-                
+
                 if (feature.getDefaultGeometry() == null) {
                     Collection<Property> properties = feature.getProperties();
                     for (Property property : properties){
@@ -214,10 +217,10 @@ public class GML32BasicParser extends AbstractParser {
             LOGGER.warn(e.getMessage(), e);
             throw new RuntimeException(e);
         }
-        
+
         return fc;
     }
-    
+
 
     private Configuration resolveConfiguration(QName schematypeTuple) {
         /*
@@ -239,7 +242,7 @@ public class GML32BasicParser extends AbstractParser {
         } else{
             configuration = new GMLConfiguration();
         }
-        
+
         return configuration;
     }
 
@@ -249,9 +252,9 @@ public class GML32BasicParser extends AbstractParser {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);
 
-            factory.newSAXParser().parse(new FileInputStream(file), handler); 
+            factory.newSAXParser().parse(new FileInputStream(file), handler);
 
-            String schemaUrl = handler.getSchemaUrl(); 
+            String schemaUrl = handler.getSchemaUrl();
 
             if(schemaUrl == null){
                 return null;
@@ -274,7 +277,7 @@ public class GML32BasicParser extends AbstractParser {
         }
     }
 
-    
+
     public static GML32BasicParser getInstanceForConfiguration(
             Configuration config) {
         GML32BasicParser parser = new GML32BasicParser();

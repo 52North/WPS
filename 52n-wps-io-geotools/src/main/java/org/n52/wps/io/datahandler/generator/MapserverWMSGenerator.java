@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -72,11 +72,11 @@ import org.w3c.dom.Element;
  * this generator only supports publishing results over an Mapserver-WMS. As
  * input this generator right now only supports GTVectorDataBinding. As template
  * for this class served the GeoserverWMSGenerator.
- * 
+ *
  * @author Jacob Mendt
- * 
- * @TODO Support more inputs (shapefile, raster)
- * @TODO Generator for WCS and WFS
+ *
+ * TODO Support more inputs (shapefile, raster)
+ * TODO Generator for WCS and WFS
  */
 public class MapserverWMSGenerator extends AbstractGenerator {
 
@@ -84,7 +84,7 @@ public class MapserverWMSGenerator extends AbstractGenerator {
     private String workspace;
     private String shapefileRepository;
     private String wmsUrl;
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(MapserverWMSGenerator.class);
 
     /**
@@ -123,11 +123,11 @@ public class MapserverWMSGenerator extends AbstractGenerator {
     public InputStream generateStream(IData data, String mimeType, String schema)
             throws IOException {
 
-        InputStream stream = null;    
+        InputStream stream = null;
         try {
-            Document doc = storeLayer(data);            
-            String xmlString = XMLUtil.nodeToString(doc);            
-            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));            
+            Document doc = storeLayer(data);
+            String xmlString = XMLUtil.nodeToString(doc);
+            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
         } catch(TransformerException ex){
             LOGGER.error("Error generating MapServer WMS output. Reason: " + ex);
             throw new RuntimeException("Error generating MapServer WMS output. Reason: " + ex);
@@ -137,19 +137,19 @@ public class MapserverWMSGenerator extends AbstractGenerator {
         } catch (ParserConfigurationException e) {
             LOGGER.error("Error generating MapServer WMS output. Reason: " + e);
             throw new RuntimeException("Error generating MapServer WMS output. Reason: " + e);
-        }    
+        }
         return stream;
     }
 
     /**
      * Stores the input data as an layer in the mapserver and creates an
      * response document.
-     * 
+     *
      * @param coll
      *            IData has to be instanceof GTVectorDataBinding
-     * 
+     *
      * @return Document XML response document.
-     * 
+     *
      * @throws HttpException
      * @throws IOException
      * @throws ParserConfigurationException
@@ -165,8 +165,8 @@ public class MapserverWMSGenerator extends AbstractGenerator {
             e.printStackTrace();
             LOGGER.warn("Mapscript isn't running correctly");
             return null;
-        } 
-        
+        }
+
         // adds the IData to the mapserver.
         String wmsLayerName = "";
         if (coll instanceof GTVectorDataBinding) {
@@ -182,7 +182,7 @@ public class MapserverWMSGenerator extends AbstractGenerator {
         String capabilitiesLink = wmsUrl + "?Service=WMS&Request=GetCapabilities";
         Document doc = createXML(wmsLayerName, capabilitiesLink);
         LOGGER.info("Capabilities document was generated.");
-        
+
         return doc;
 
     }
@@ -190,16 +190,16 @@ public class MapserverWMSGenerator extends AbstractGenerator {
     /**
      * Creates an response xml, which contains the layer name, the resource link
      * and a getCapabilities request for the publishing service.
-     * 
+     *
      * @param layerName
      *            Name of the layer which was added to the mapserver.
      * @param resourceLink
      *            Link to the resource (layer) which was added to the mapserver.
      * @param getCapabilitiesLink
      *            GetCapabilties request to the publishing service.
-     * 
+     *
      * @return Document XML response document.
-     * 
+     *
      * @throws ParserConfigurationException
      */
     private Document createXML(String layerName, String getCapabilitiesLink)

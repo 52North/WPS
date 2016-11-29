@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -64,21 +64,21 @@ import org.n52.wps.io.data.IComplexData;
 
 public class ShapefileBinding implements IComplexData{
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
 
     private static Logger LOGGER = LoggerFactory.getLogger(ShapefileBinding.class);
-    
-    
+
+
     protected File shpFile;
     protected String mimeType;
-    
+
     public ShapefileBinding(File shapeFile){
         this.shpFile = shapeFile;
         mimeType = IOHandler.MIME_TYPE_ZIPPED_SHP;
     }
-    
+
     @Override
     public File getPayload() {
         return shpFile;
@@ -88,7 +88,7 @@ public class ShapefileBinding implements IComplexData{
     public Class getSupportedClass() {
         return File.class;
     }
-    
+
     public String getMimeType() {
         return mimeType;
     }
@@ -108,7 +108,7 @@ public class ShapefileBinding implements IComplexData{
         return zipped;
 
     }
-    
+
     public GTVectorDataBinding getPayloadAsGTVectorDataBinding(){
         try {
             DataStore store = new ShapefileDataStore(shpFile.toURI().toURL());
@@ -123,11 +123,11 @@ public class ShapefileBinding implements IComplexData{
             throw new RuntimeException("Something went wrong while converting shapefile to FeatureCollection", e);
         }
     }
-    
+
     @Override
     public void dispose(){
         FileUtils.deleteQuietly(shpFile);
     }
-    
-    
+
+
 }

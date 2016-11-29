@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -60,7 +60,7 @@ public class GRASSKMLParser extends AbstractParser {
 
     public GRASSKMLParser(){
         super();
-        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);        
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
     }
 
     @Override

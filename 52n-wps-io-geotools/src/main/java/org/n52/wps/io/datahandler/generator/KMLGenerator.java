@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -69,17 +69,17 @@ import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
  *
  */
 public class KMLGenerator extends AbstractGenerator {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(KMLGenerator.class);
-    
+
     public KMLGenerator(){
         super();
         supportedIDataTypes.add(GTVectorDataBinding.class);
     }
-    
+
     @Override
     public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-        
+
         File tempFile = null;
         InputStream stream = null;
         try {
@@ -89,25 +89,25 @@ public class KMLGenerator extends AbstractGenerator {
             this.writeToStream(data, outputStream);
             outputStream.flush();
             outputStream.close();
-            
+
             stream = new FileInputStream(tempFile);
         } catch (IOException e){
             LOGGER.error(e.getMessage());
             throw new IOException("Unable to generate KML");
         }
-        
+
         return stream;
     }
 
     private void writeToStream(IData coll, OutputStream os) {
         FeatureCollection<?, ?> fc = ((GTVectorDataBinding)coll).getPayload();
-        
+
         Configuration configuration = new KMLConfiguration();
         Encoder encoder = new org.geotools.xml.Encoder(configuration);
-       
+
         try{
             encoder.encode(fc, KML.kml, os);
-           
+
         }catch(IOException e){
             throw new RuntimeException(e);
         }

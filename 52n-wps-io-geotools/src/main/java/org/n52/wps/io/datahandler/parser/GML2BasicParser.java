@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -89,9 +89,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This parser handles xml files compliant to GML2.
- * 
+ *
  * @author foerster
- * 
+ *
  */
 public class GML2BasicParser extends AbstractParser {
     private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
@@ -121,25 +121,26 @@ public class GML2BasicParser extends AbstractParser {
 
             return data;
         } catch (IOException e) {
-            if (fos != null)
+            if (fos != null){
                 try {
                     fos.close();
                 } catch (Exception e1) {
                 }
+            }
             throw new IllegalArgumentException("Error while creating tempFile",
                     e);
         }
     }
 
     public GTVectorDataBinding parseXML(File file) {
-        
+
         SimpleFeatureCollection fc = parseSimpleFeatureCollection(file);
-        
+
         GTVectorDataBinding data = new GTVectorDataBinding(fc);
 
         return data;
     }
-    
+
     public SimpleFeatureCollection parseSimpleFeatureCollection(File file) {
         QName schematypeTuple = determineFeatureTypeSchema(file);
 
