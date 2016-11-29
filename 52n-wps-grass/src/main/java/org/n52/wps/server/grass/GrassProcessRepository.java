@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -71,23 +71,23 @@ public class GrassProcessRepository implements IAlgorithmRepository {
         registeredProcesses = new HashMap<String, ProcessDescription>();
         processesAddonFlagMap = new HashMap<String, Boolean>();
         // check if the repository is active
-        
+
         grassConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-        
+
         if (grassConfigModule.isActive()) {
             LOGGER.info("Initializing Grass Repository");
 
             List<? extends ConfigurationEntry<?>> propertyArray = grassConfigModule.getConfigurationEntries();
-            
+
             /*
              * get properties of Repository
              *
              * check whether process is amongst them and active
-             * 
+             *
              * if properties are empty (not initialized yet)
              *         add all valid processes to WPSConfig
              */
-            
+
             for (ConfigurationEntry<?> property : propertyArray) {
                 if (property.getKey().equalsIgnoreCase(
                         GrassProcessRepositoryCM.tmpDirKey)) {
@@ -113,10 +113,10 @@ public class GrassProcessRepository implements IAlgorithmRepository {
                     pythonPath = property.getValue().toString();
                 }
             }
-            
-            List<AlgorithmEntry> algorithmEntries = grassConfigModule.getAlgorithmEntries();            
+
+            List<AlgorithmEntry> algorithmEntries = grassConfigModule.getAlgorithmEntries();
             ArrayList<String> processList = new ArrayList<String>(algorithmEntries.size());
-            
+
             for (AlgorithmEntry algorithmEntry : algorithmEntries) {
                 if(algorithmEntry.isActive()){
                     processList.add(algorithmEntry.getAlgorithm());
@@ -144,8 +144,8 @@ public class GrassProcessRepository implements IAlgorithmRepository {
                     throw new RuntimeException("Variable " + variable
                             + " not initialized.");
                 }
-            }            
-            
+            }
+
             File tmpDirectory = new File(tmpDir);
 
             if (tmpDirectory.exists()) {
@@ -167,8 +167,8 @@ public class GrassProcessRepository implements IAlgorithmRepository {
                          */
                     }
                 }
-            }            
-            
+            }
+
             // initialize after properties are fetched
             GrassProcessDescriptionCreator creator = new GrassProcessDescriptionCreator();
 
@@ -209,9 +209,9 @@ public class GrassProcessRepository implements IAlgorithmRepository {
                 }
 
             }
-            
+
             if(addonPath != null && !addonPath.equalsIgnoreCase("N/A")){
-            
+
             File addonDirectory = new File(addonPath);
 
             if (addonDirectory.isDirectory()) {
@@ -331,7 +331,7 @@ public class GrassProcessRepository implements IAlgorithmRepository {
     @Override
     public void shutdown() {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
 }

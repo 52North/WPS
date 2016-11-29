@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * This class handles Java process streams. If this would not be done, the thread would not wait
  * for the process to be finished.
  * (See http://www.javaworld.com/javaworld/jw-12-2000/jw-1229-traps.html?page=4)
- * 
+ *
  * @author Benjamin Pross(bpross-52n)
  *
  */
@@ -72,8 +72,9 @@ public class JavaProcessStreamReader extends Thread {
         PrintWriter printWriter = null;
         BufferedReader bufferedReader = null;
         try {
-            if (outputStream != null)
+            if (outputStream != null) {
                 printWriter = new PrintWriter(outputStream);
+            }
 
             inputStreamReader = new InputStreamReader(inputStream);
             bufferedReader = new BufferedReader(inputStreamReader);

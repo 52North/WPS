@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,33 +58,33 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GrassIOHandler {
-    
+
     private String grassHome;
-    private String pythonHome;    
-    private String pythonPath;    
-    private String grassModuleStarterHome;    
+    private String pythonHome;
+    private String pythonPath;
+    private String grassModuleStarterHome;
     private String tmpDir;
     private String inputTxtFilename;
-    private String command;    
+    private String command;
     private String systemBlock;
     private String grassBlock;
     private String complexInputDataBlock;
     private String literalInputDataBlock;
-    private String outputDataBlock;    
-    private String uuid;    
-    private String pythonName = "python.exe";    
-    private String addonPath;    
+    private String outputDataBlock;
+    private String uuid;
+    private String pythonName = "python.exe";
+    private String addonPath;
     private String[] envp;
     private boolean isAddon;
     private static Logger LOGGER = LoggerFactory.getLogger(GrassIOHandler.class);
-    
+
     private final String logFilename = ".log";
     private final String stdErrorFilename = "_stderr.log";
-    private final String stdOutFilename = "_stdout.log ";    
+    private final String stdOutFilename = "_stdout.log ";
     private final String fileSeparator = System.getProperty("file.separator");
     private final String lineSeparator = System.getProperty("line.separator");
     private final String appDataDir = System.getenv("APPDATA");
-    
+
     public static final String GRASS_ADDON_PATH = "�addonPath�";
     public static final String PROCESS_IDENTIFIER = "�process_identifier�";
     public static final String INPUT_IDENTIFIER = "�input_identifier�";
@@ -100,13 +100,13 @@ public class GrassIOHandler {
     public static final String OUTPUTDIR = "�outputdir�";
     public static final String OS_Name = System.getProperty("os.name");
     private static final String LOGS_DIR_NAME = "GRASS_LOGS";
-    
-    public GrassIOHandler(){        
-        
+
+    public GrassIOHandler(){
+
         if(!OS_Name.startsWith("Windows")){
-            pythonName = "python";    
+            pythonName = "python";
         }
-        
+
         grassHome = GrassProcessRepository.grassHome;
         grassModuleStarterHome = GrassProcessRepository.grassModuleStarterHome;
         tmpDir = GrassProcessRepository.tmpDir;
@@ -115,15 +115,15 @@ public class GrassIOHandler {
         addonPath = GrassProcessRepository.addonPath;
 
         File tmpDirectory = new File(tmpDir);
-        
+
         if(!tmpDirectory.exists()){
             tmpDirectory.mkdir();
         }
-    }    
-    
+    }
+
     /**
      * Method to execute a GRASS GIS process.
-     * 
+     *
      * @param processID the name of the process
      * @param complexInputData complex inputdata for the process
      * @param literalInputData literal inputdata for the process
@@ -133,56 +133,56 @@ public class GrassIOHandler {
      * @return a GenericFileDataBinding containing the generated ouput
      */
     public IData executeGrassProcess(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputMimeType, String outputSchema, boolean isAddon){
-        
+
         String outputFileName = "";
-        
+
         this.isAddon = isAddon;
-        
+
         outputFileName = tmpDir + fileSeparator + "out" + UUID.randomUUID().toString().substring(0, 5) + "." + GenericFileDataConstants.mimeTypeFileTypeLUT().get(outputMimeType);
-        
+
         boolean success = createInputTxt(processID, complexInputData, literalInputData, outputID, outputFileName, outputMimeType, outputSchema);
-        
+
         if(!success){
-            inputTxtFilename = null;    
+            inputTxtFilename = null;
             return null;
         }
-        
-        //start grassmodulestarter.py 
+
+        //start grassmodulestarter.py
         executeGrassModuleStarter();
-        
+
         File outputFile = new File(outputFileName);
-        
+
         if(!outputFile.exists()){
-            inputTxtFilename = null;    
+            inputTxtFilename = null;
             return null;
         }
-        
+
         //give back genericfiledatabinding with the outputfile created by grass
         try {
-            
+
             GenericFileDataWithGT outputFileData = new GenericFileDataWithGT(outputFile, outputMimeType);
-            
-            GenericFileDataWithGTBinding outputData = new GenericFileDataWithGTBinding(outputFileData);    
-            
+
+            GenericFileDataWithGTBinding outputData = new GenericFileDataWithGTBinding(outputFileData);
+
             return outputData;
-            
+
         } catch (IOException e) {
             e.printStackTrace();
-            
+
             return null;
         }finally{
             inputTxtFilename = null;
-        }        
+        }
     }
-    
+
     private String getCommand() {
-        
+
         if(command == null){
             uuid = UUID.randomUUID().toString().substring(0, 7);
             command  = getPythonHome() + fileSeparator + pythonName + " "
             + grassModuleStarterHome + fileSeparator + "GrassModuleStarter.py -f " + getInputTxtFilename() +" -l " + tmpDir + fileSeparator + uuid + logFilename + " -o " + tmpDir + fileSeparator + stdOutFilename + " -e " + tmpDir + fileSeparator + stdErrorFilename;
         }
-        
+
         return command;
     }
 
@@ -209,8 +209,8 @@ public class GrassIOHandler {
                         "GRASS_CONFIG_DIR=.grass7",
                         "GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
                         "GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
-                        "GRASS_VERSION=7.0.svn"};        
-                
+                        "GRASS_VERSION=7.0.svn"};
+
             } else {
 
                 envp = new String[] {
@@ -225,8 +225,8 @@ public class GrassIOHandler {
                         "GRASS_GNUPLOT=gnuplot -persist", "GRASS_PAGER=less",
                         "GRASS_PYTHON=python", "GRASS_SH=/bin/sh",
                         "GRASS_VERSION=7.0.svn", "SystemRoot=" + System.getenv("SystemRoot"),
-                        "WINGISBASE=" + grassHome 
-                        };                
+                        "WINGISBASE=" + grassHome
+                        };
             }
         }
 
@@ -234,13 +234,13 @@ public class GrassIOHandler {
     }
 
     private String getInputTxtFilename() {
-        
+
         if(inputTxtFilename == null){
-            
+
             String txtID = UUID.randomUUID().toString();
-            
+
             txtID = txtID.substring(0, 5);
-            
+
             inputTxtFilename = tmpDir + fileSeparator + txtID + ".txt";
         }
         return inputTxtFilename;
@@ -305,10 +305,10 @@ public class GrassIOHandler {
         }
         return pythonHome;
     }
-    
+
     /**
      * Creates the txt-file required by the GrassModuleStarter.py
-     * 
+     *
      * @param processID
      *            ID of the process
      * @param complexInputData
@@ -324,44 +324,44 @@ public class GrassIOHandler {
      * @return true, if everything worked, otherwise false
      */
     private boolean createInputTxt(String processID, Map<String, List<IData>> complexInputData, Map<String, List<IData>> literalInputData, String outputID, String outputFileName, String outputMimeType, String outputSchema){
-    
+
         try {
-            
+
             LOGGER.info("Creating input.txt.");
-            
+
             BufferedWriter inputTxtWriter = new BufferedWriter(new FileWriter(new File(getInputTxtFilename())));
-            
+
             String tmpBlock;
-            
+
             tmpBlock = getSystemBlock().replace(WORKDIR, tmpDir);
             tmpBlock = tmpBlock.replace(OUTPUTDIR, tmpDir);
-            
+
             inputTxtWriter.write(tmpBlock);
             inputTxtWriter.write(lineSeparator);
-            
-            tmpBlock  = getGrassBlock().replace(PROCESS_IDENTIFIER, processID); 
+
+            tmpBlock  = getGrassBlock().replace(PROCESS_IDENTIFIER, processID);
             if(isAddon){
-                tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, addonPath);             
-            }else{                
-                tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, "");             
+                tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, addonPath);
+            }else{
+                tmpBlock  = tmpBlock.replace(GRASS_ADDON_PATH, "");
             }
-            
+
             inputTxtWriter.write(tmpBlock);
             inputTxtWriter.write(lineSeparator);
-            
+
             for (String key : complexInputData.keySet()) {
-                
+
                 List<IData> dataList = complexInputData.get(key);
-                
+
                 for (IData data : dataList) {
-                
+
                 if(!(data instanceof GenericFileDataWithGTBinding)){
                     continue;
                 }
-                
+
                 String mimetype = ((GenericFileDataWithGTBinding)data).getPayload().getMimeType();
-                
-                if(mimetype.equals(GenericFileDataConstants.MIME_TYPE_TIFF)){                    
+
+                if(mimetype.equals(GenericFileDataConstants.MIME_TYPE_TIFF)){
                     tmpBlock = getComplexInputDataBlock().replace(MIMETYPE, mimetype);
                     tmpBlock = tmpBlock.replace(ENCODING, "");
                     tmpBlock = tmpBlock.replace(SCHEMA, "");
@@ -413,28 +413,28 @@ public class GrassIOHandler {
                     tmpBlock = getComplexInputDataBlock().replace(MIMETYPE, "APPLICATION/DGN");
                     tmpBlock = tmpBlock.replace(ENCODING, "");
                     tmpBlock = tmpBlock.replace(SCHEMA, "");
-                }                    
+                }
 
                 String filename = ((GenericFileDataWithGTBinding)data).getPayload().getBaseFile(true).getAbsolutePath();
-                
+
                 tmpBlock = tmpBlock.replace(INPUT_IDENTIFIER, key);
                 tmpBlock = tmpBlock.replace(INPUT_PATH, filename);
-                
+
                 inputTxtWriter.write(tmpBlock);
                 inputTxtWriter.write(lineSeparator);
                 }
             }
-            
+
             for (String key : literalInputData.keySet()) {
-                
+
                 List<IData> dataList = literalInputData.get(key);
-                
+
                 for (IData data : dataList) {
-                
+
                 tmpBlock = getLiteralInputDataBlock().replace(INPUT_IDENTIFIER, key);
-                
+
                 Class<?> supportedClass = data.getSupportedClass();
-                
+
                 if(supportedClass.equals(Float.class)){
                     tmpBlock = tmpBlock.replace(DATA_TYPE, "float");
                 }else if(supportedClass.equals(Double.class)){
@@ -448,22 +448,22 @@ public class GrassIOHandler {
                 }else if(supportedClass.equals(Boolean.class)){
                     tmpBlock = tmpBlock.replace(DATA_TYPE, "boolean");
                 }
-                
+
                 tmpBlock = tmpBlock.replace(VALUE, String.valueOf(data.getPayload()));
-                
+
                 inputTxtWriter.write(tmpBlock);
                 inputTxtWriter.write(lineSeparator);
-                
+
                 }
             }
-            
+
             tmpBlock = getOutputDataBlock().replace(OUTPUT_IDENTIFIER, outputID);
             tmpBlock = tmpBlock.replace(OUTPUT_PATH, outputFileName);
-            
+
             if(outputMimeType.equals(GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT)){
                 tmpBlock = tmpBlock.replace(MIMETYPE, "text/plain");
                 tmpBlock = tmpBlock.replace(ENCODING, "");
-                tmpBlock = tmpBlock.replace(SCHEMA, "");                
+                tmpBlock = tmpBlock.replace(SCHEMA, "");
             }else if(outputMimeType.equals(GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP)){
                 tmpBlock = tmpBlock.replace(MIMETYPE, "APPLICATION/SHP");
                 tmpBlock = tmpBlock.replace(ENCODING, "");
@@ -472,7 +472,7 @@ public class GrassIOHandler {
                 tmpBlock = tmpBlock.replace(MIMETYPE, GenericFileDataConstants.MIME_TYPE_TIFF);
                 tmpBlock = tmpBlock.replace(ENCODING, "");
                 tmpBlock = tmpBlock.replace(SCHEMA, "");
-            }else if(outputMimeType.equals(GenericFileDataConstants.MIME_TYPE_TEXT_XML)){ 
+            }else if(outputMimeType.equals(GenericFileDataConstants.MIME_TYPE_TEXT_XML)){
                 tmpBlock = tmpBlock.replace(MIMETYPE, GenericFileDataConstants.MIME_TYPE_TEXT_XML);
                 tmpBlock = tmpBlock.replace(ENCODING, "UTF-8");
                 tmpBlock = tmpBlock.replace(SCHEMA, "http://schemas.opengis.net/gml/3.1.0/polygon.xsd");//TODO change to gml2.1.2?!
@@ -513,34 +513,34 @@ public class GrassIOHandler {
                 tmpBlock = tmpBlock.replace(ENCODING, "");
                 tmpBlock = tmpBlock.replace(SCHEMA, "");
             }
-            
+
             inputTxtWriter.write(tmpBlock);
-            
+
             inputTxtWriter.flush();
             inputTxtWriter.close();
-            
+
             return true;
-            
+
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     private void executeGrassModuleStarter() {
 
         try {
 
             LOGGER.info("Executing GRASS module starter.");
-            
+
             Runtime rt = Runtime.getRuntime();
-            
+
             Process proc = rt.exec(getCommand(), getEnvp());
-            
+
             PipedOutputStream pipedOut = new PipedOutputStream();
-            
-            PipedInputStream pipedIn = new PipedInputStream(pipedOut);  
-            
+
+            PipedInputStream pipedIn = new PipedInputStream(pipedOut);
+
             // attach error stream reader
             JavaProcessStreamReader errorStreamReader = new JavaProcessStreamReader(proc
                     .getErrorStream(), "ERROR", pipedOut);
@@ -548,11 +548,11 @@ public class GrassIOHandler {
             // attach output stream reader
             JavaProcessStreamReader outputStreamReader = new JavaProcessStreamReader(proc
                     .getInputStream(), "OUTPUT");
-            
+
             // start them
             errorStreamReader.start();
             outputStreamReader.start();
-            
+
             //fetch errors if there are any
             String errors = "";
             try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(pipedIn));) {
@@ -563,7 +563,7 @@ public class GrassIOHandler {
                     line = errorReader.readLine();
                 }
             }
-            
+
             try {
                 proc.waitFor();
             } catch (InterruptedException e1) {
@@ -580,7 +580,7 @@ public class GrassIOHandler {
                 }
                 File tmpLog = new File(tmpDir + fileSeparator + uuid + logFilename);
                 File serverLog = new File(baseDir + fileSeparator + uuid + logFilename);
-                
+
                 if(tmpLog.exists()){
                     FileInputStream fis  = new FileInputStream(tmpLog);
                     FileOutputStream fos = new FileOutputStream(serverLog);
@@ -590,13 +590,17 @@ public class GrassIOHandler {
                         while ((i = fis.read(buf)) != -1) {
                             fos.write(buf, 0, i);
                         }
-                    } 
+                    }
                     catch (Exception e) {
                         e.printStackTrace();
                     }
                     finally {
-                        if (fis != null) fis.close();
-                        if (fos != null) fos.close();
+                        if (fis != null) {
+                            fis.close();
+                        }
+                        if (fos != null) {
+                            fos.close();
+                        }
                     }
 
                 }else{
@@ -610,11 +614,11 @@ public class GrassIOHandler {
                         + WPSConfig.getInstance().getServiceBaseUrl() + "/" + LOGS_DIR_NAME + "/" + uuid + logFilename
                         + " for more details.");
             }
-            
+
         } catch (IOException e) {
             LOGGER.error("An error occured while executing the GRASS GIS process.", e);
             throw new RuntimeException(e);
         }
     }
-    
+
 }

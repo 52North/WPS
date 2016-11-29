@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,7 +46,7 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
  *
  */
 public class GrassProcessRepositoryCM extends ClassKnowingModule{
-    
+
     public static final String grassHomeKey = "grass_home";
     public static final String pythonHomeKey = "python_home";
     public static final String pythonPathKey = "python_path";
@@ -54,9 +54,9 @@ public class GrassProcessRepositoryCM extends ClassKnowingModule{
     public static final String tmpDirKey = "tmp_dir";
     public static final String gisrcDirKey = "gisrc_dir";
     public static final String addonDirKey = "addon_dir";
-    
+
     private ConfigurationEntry<String> grassHomeEntry = new StringConfigurationEntry(grassHomeKey, "Grass 7 Home", "Path to GRASS 7 installation, e.g. 'C:\\Program Files (x86)\\GRASS GIS 7.0.0' or '/usr/lib/grass70'",
-            true, "C:\\Program Files (x86)\\GRASS GIS 7.0.0");    
+            true, "C:\\Program Files (x86)\\GRASS GIS 7.0.0");
     private ConfigurationEntry<String> pythonHomeEntry = new StringConfigurationEntry(pythonHomeKey, "Python Home", "Path to python executable, e.g. 'C:\\python27' or '/usr/bin'",
             true, "C:\\python27");
     private ConfigurationEntry<String> pythonPathEntry = new StringConfigurationEntry(pythonPathKey, "Python Path", "Path to python installation, e.g. 'C:\\python27' or '/usr/lib/python2.7'",
@@ -69,7 +69,7 @@ public class GrassProcessRepositoryCM extends ClassKnowingModule{
             true, "C:\\Program Files (x86)\\GRASS GIS 7.0.0\\demolocation\\.grassrc70");
     private ConfigurationEntry<String> addonDirEntry = new StringConfigurationEntry(addonDirKey, "Addon Directory", "Path to addon Directory, optional.",
             false, "N/A");
-    
+
     private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(grassHomeEntry, pythonHomeEntry, pythonPathEntry, moduleStarterHomeEntry, tmpDirEntry, gisrcDirEntry, addonDirEntry);
 
     private String grassHome;
@@ -79,15 +79,15 @@ public class GrassProcessRepositoryCM extends ClassKnowingModule{
     private String tmpDir;
     private String gisrcDir;
     private String addonDir;
-    
+
     private boolean isActive = true;
 
     private List<AlgorithmEntry> algorithmEntries;
-    
+
     public GrassProcessRepositoryCM() {
         algorithmEntries = new ArrayList<>();
     }
-    
+
     @Override
     public String getModuleName() {
         return "GRASS 7 Algorithm Repository";

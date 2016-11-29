@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,41 +68,41 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
     private String processID;
     private boolean isAddon;
     private ProcessDescription processDescription;
-    private List<String> errors;    
-    private HashMap<String, Class<?>> complexInputTypes;    
+    private List<String> errors;
+    private HashMap<String, Class<?>> complexInputTypes;
     private HashMap<String, Class<?>> literalInputTypes;
     private HashMap<String, String> outputTypeMimeTypeMap;
-    
+
     private final String dataTypeFloat = "float";
     private final String dataTypeBoolean = "boolean";
     private final String dataTypeString = "string";
     private final String dataTypeInteger ="integer";
     private final String dataTypeDouble = "double";
-    
-    
+
+
     public GrassProcessDelegator(String processID, ProcessDescription processDescriptionType, boolean isAddon){
         this.processID = processID;
         this.isAddon = isAddon;
         this.processDescription = processDescriptionType;
         this.errors = new ArrayList<String>();
-        mapInputAndOutputTypes((ProcessDescriptionType) processDescriptionType.getProcessDescriptionType("1.0.0"));        
+        mapInputAndOutputTypes((ProcessDescriptionType) processDescriptionType.getProcessDescriptionType("1.0.0"));
     }
-    
+
     private void mapInputAndOutputTypes(ProcessDescriptionType processDescriptionType){
-        
+
         complexInputTypes = new HashMap<String, Class<?>>();
         literalInputTypes = new HashMap<String, Class<?>>();
         outputTypeMimeTypeMap = new HashMap<String, String>();
-        
-        DataInputs inputs = processDescriptionType.getDataInputs();            
-        
+
+        DataInputs inputs = processDescriptionType.getDataInputs();
+
         for (int j = 0; j < inputs.getInputArray().length; j++) {
             InputDescriptionType input = inputs.getInputArray(j);
-            
+
             CodeType identifierType = input.getIdentifier();
-            
+
             String identifierString = identifierType.getStringValue();
-            
+
             SupportedComplexDataInputType complexData = input.getComplexData();
 
             if (complexData != null) {
@@ -111,11 +111,11 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
                         GenericFileDataWithGTBinding.class);
 
             } else if (input.getLiteralData() != null) {
-                
+
                 LiteralInputType literalType = input.getLiteralData();
-                
+
                 String datatype = literalType.getDataType().getStringValue();
-                
+
                 if(datatype.equals(dataTypeFloat)){
                     literalInputTypes.put(identifierString, LiteralFloatBinding.class);
                 }else if(datatype.equals(dataTypeBoolean)){
@@ -127,26 +127,26 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
                 }else if(datatype.equals(dataTypeDouble)){
                     literalInputTypes.put(identifierString, LiteralDoubleBinding.class);
                 }
-                
+
             }
         }
-        
+
         ProcessOutputs pOutputs = processDescriptionType.getProcessOutputs();
-        
+
         for (int i = 0; i < pOutputs.getOutputArray().length; i++) {
-            
+
             OutputDescriptionType oDescType = pOutputs.getOutputArray(i);
-            
+
             SupportedComplexDataType type = oDescType.getComplexOutput();
 
             String outputIdentifier = oDescType.getIdentifier().getStringValue();
-            
+
             String defaultMimeType = type.getDefault().getFormat().getMimeType();
-            
+
             outputTypeMimeTypeMap.put(outputIdentifier, defaultMimeType);
         }
     }
-    
+
     @Override
     public ProcessDescription getDescription() {
         return processDescription;
@@ -165,11 +165,11 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
             return literalInputTypes.get(id);
         }else {
             return null;
-        }        
+        }
     }
 
     @Override
-    public Class<?> getOutputDataType(String id) {        
+    public Class<?> getOutputDataType(String id) {
         return GenericFileDataWithGTBinding.class;
     }
 
@@ -187,19 +187,19 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
     public Map<String, IData> run(Map<String, List<IData>> inputData) {
 
         LOGGER.info("Executing GRASS process " + processID + ".");
-        
+
         Map<String, IData> result = new HashMap<String, IData>();
 
         OutputDefinitionType output = ExecutionContextFactory.getContext().getOutputs().get(0);
-        
+
         String outputSchema = output.getSchema();
-        
+
         String outputMimeType = output.getMimeType();
-        
+
         CodeType outputIdentifierCT = output.getIdentifier();
-        
-        String outputIdentifier = outputIdentifierCT.getStringValue();    
-        
+
+        String outputIdentifier = outputIdentifierCT.getStringValue();
+
         HashMap<String, List<IData>> firstInputMap = new HashMap<String, List<IData>>();
 
         for (String key : complexInputTypes.keySet()) {
@@ -208,27 +208,27 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
                 firstInputMap.put(key, inputData.get(key));
             }
         }
-        
+
         HashMap<String, List<IData>> secondInputMap = new HashMap<String, List<IData>>();
-        
+
         for (String key : literalInputTypes.keySet()) {
 
             if (inputData.containsKey(key)) {
                 secondInputMap.put(key, inputData.get(key));
             }
         }
-        
+
         if(outputMimeType == null || outputMimeType.equals("")){
             outputMimeType = outputTypeMimeTypeMap.get(outputIdentifier);
         }
-        
+
         IData outputFileDB = new GrassIOHandler().executeGrassProcess(
                 processID, firstInputMap, secondInputMap, outputIdentifier, outputMimeType, outputSchema, isAddon);
-        
+
         if(outputIdentifier == null || outputIdentifier.equals("")){
             outputIdentifier = "output";
         }
-        
+
         result.put(outputIdentifier, outputFileDB);
 
         return result;
