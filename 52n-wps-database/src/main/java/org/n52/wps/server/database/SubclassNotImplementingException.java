@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,11 +35,11 @@ public class SubclassNotImplementingException extends RuntimeException {
     public SubclassNotImplementingException() {
         super("Subclass not found.");
     }
- 
+
     public SubclassNotImplementingException(String message) {
         super(message);
     }
- 
+
     public SubclassNotImplementingException(String message, Throwable cause) {
         super(message, cause);
     }

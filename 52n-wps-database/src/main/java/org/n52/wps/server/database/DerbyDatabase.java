@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @note Uses lazy initialization without synchronization  
+ * <b>Note:</b> Uses lazy initialization without synchronization
  */
 public class DerbyDatabase extends AbstractDatabase {
 
@@ -50,7 +50,7 @@ public class DerbyDatabase extends AbstractDatabase {
     private static String connectionURL = null;
     private static Connection conn = null;
     private static DerbyDatabase db = new DerbyDatabase(); // Static loading.
-    
+
     /**
      * Static initialization is guaranteed to be thread-safe and no synchronization must be incurred.
      */
@@ -74,8 +74,8 @@ public class DerbyDatabase extends AbstractDatabase {
                 throw new RuntimeException("Creating prepared statements failed.");
         }
     }
-    
-    public static synchronized DerbyDatabase getInstance() { 
+
+    public static synchronized DerbyDatabase getInstance() {
         if (DerbyDatabase.conn == null) {
             if(!DerbyDatabase.createConnection()) {
                     throw new RuntimeException("Creating database connection failed.");
@@ -89,7 +89,7 @@ public class DerbyDatabase extends AbstractDatabase {
         }
         return DerbyDatabase.db;
     }
-    
+
     private static boolean createConnection() {
         Properties props = new Properties();
         DerbyDatabase.conn = null;
@@ -104,7 +104,7 @@ public class DerbyDatabase extends AbstractDatabase {
         }
         return true;
     }
-    
+
     private static boolean createResultTable() {
         try {
             ResultSet rs = null;
@@ -116,7 +116,7 @@ public class DerbyDatabase extends AbstractDatabase {
                 Statement st = DerbyDatabase.conn.createStatement();
                 st.executeUpdate(DerbyDatabase.creationString);
                 DerbyDatabase.conn.commit();
-                
+
                 rs = null;
                 meta = DerbyDatabase.conn.getMetaData();
                 rs = meta.getTables(null, null, "RESULTS",
@@ -135,9 +135,9 @@ public class DerbyDatabase extends AbstractDatabase {
                     + e.getMessage());
             return false;
         }
-        return true;    
+        return true;
     }
-    
+
     private static boolean createPreparedStatements() {
         // Create prepared staments (more efficient).
         try {
@@ -151,22 +151,22 @@ public class DerbyDatabase extends AbstractDatabase {
         }
         return true;
     }
-    
+
     @Override
     public Connection getConnection() {
         return DerbyDatabase.conn;
     }
-    
+
     @Override
     public String getConnectionURL() {
         return DerbyDatabase.connectionURL;
     }
-    
+
     /**
      * Shutdown the database in a clean, safe way.
      */
     /*
-     
+
      public void shutdown() {
         boolean gotSQLExc = false;
         try {
@@ -186,13 +186,14 @@ public class DerbyDatabase extends AbstractDatabase {
         }
     }
     */
-    
+
     /**
      * Shutdown the database in a clean, safe way.
      */
     @Override
     public void shutdown() {
-           boolean flag0 = false, flag1 = false;
+           boolean flag0 = false;
+           boolean flag1 = false;
            try {
            if (DerbyDatabase.conn != null) {
                // Close PreparedStatements if needed.
@@ -202,20 +203,20 @@ public class DerbyDatabase extends AbstractDatabase {
                DerbyDatabase.conn.close();
                DerbyDatabase.conn = null;
                flag1 = true;
-               // Force garbage collection. 
+               // Force garbage collection.
                System.gc();
                // Setting the database to null;
                DerbyDatabase.db = null;
            }
        } catch (SQLException sql_ex) {
-               LOGGER.error("Error occured while closing connection: " + 
-                       sql_ex.getMessage() + "::" 
+               LOGGER.error("Error occured while closing connection: " +
+                       sql_ex.getMessage() + "::"
                        + "closed prepared statements?" + flag0
                        + ";closed connection?" + flag1);
                return;
        } catch(Exception exception) {
-               LOGGER.error("Error occured while closing connection: " + 
-                       exception.getMessage() + "::" 
+               LOGGER.error("Error occured while closing connection: " +
+                       exception.getMessage() + "::"
                        + "closed prepared statements?" + flag0
                        + ";closed connection?" + flag1);
                return;
@@ -228,7 +229,7 @@ public class DerbyDatabase extends AbstractDatabase {
          }
        LOGGER.info("Derby database connection is closed succesfully");
     }
-    
+
     /**
      * Always make sure the statements are closed, when you exit.
      */
@@ -237,7 +238,7 @@ public class DerbyDatabase extends AbstractDatabase {
         if(DerbyDatabase.insertSQL != null) {
             DerbyDatabase.insertSQL.close();
             DerbyDatabase.insertSQL = null;
-        } 
+        }
         if(DerbyDatabase.selectSQL != null) {
             DerbyDatabase.selectSQL.close();
             DerbyDatabase.selectSQL = null;
@@ -253,7 +254,7 @@ public class DerbyDatabase extends AbstractDatabase {
         return true;
     }
 
-    
+
     @Override
     public boolean deleteStoredResponse(String id) {
         // TODO Auto-generated method stub
@@ -271,5 +272,5 @@ public class DerbyDatabase extends AbstractDatabase {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,8 +39,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.ws.Response;
-
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ConfigurationCategory;
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -52,21 +50,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
-* An anstract-layer to the databases. 
-* 
+* An anstract-layer to the databases.
+*
 * @author Janne Kovanen
-* 
+*
 */
 public abstract class AbstractDatabase implements IDatabase{
     /** Property of the path to the location of the database */
     public static final String PROPERTY_NAME_DATABASE_PATH = "databasePath";
-    
+
     /** Property of the path to the location of the database - Actual name of the database. */
     public static final String PROPERTY_NAME_DATABASE_NAME = "databaseName";
-    
+
     /** Property of the path to the location of the database - name of database type: DERBY, HSQL, ...*/
     public static final String PROPERTY_NAME_DATABASE = "database";
-    
+
     /** SQL to create a response in the DB **/
     public static final String     creationString = "CREATE TABLE RESULTS (" +
     "REQUEST_ID VARCHAR(100) NOT NULL PRIMARY KEY, " +
@@ -74,7 +72,7 @@ public abstract class AbstractDatabase implements IDatabase{
     "RESPONSE_TYPE VARCHAR(100), " +
     "RESPONSE CLOB, " +
     "RESPONSE_MIMETYPE VARCHAR(100))";
-    
+
     /** SQL to insert a response into the database */
     public static final String insertionString = "INSERT INTO RESULTS VALUES (?, ?, ?, ?, ?)";
 
@@ -106,10 +104,10 @@ public abstract class AbstractDatabase implements IDatabase{
     protected static final int UPDATE_COLUMN_REQUEST_ID = 2;
 
     protected static final int INSERT_COLUMN_MIME_TYPE = 5;
-    
+
     /** get access to the global logger. */
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractDatabase.class);
-    
+
     protected static PreparedStatement insertSQL = null;
     protected static PreparedStatement updateSQL = null;
     protected static PreparedStatement selectSQL = null;
@@ -117,7 +115,7 @@ public abstract class AbstractDatabase implements IDatabase{
     @Autowired
     private ConfigurationManager configurationManager;
     private Server serverConfigurationModule;
-    
+
 
     public Server getServerConfigurationModule() {
 
@@ -128,7 +126,7 @@ public abstract class AbstractDatabase implements IDatabase{
         }
         return serverConfigurationModule;
     }
-    
+
     /**
      * Get an instance of the Database object. Only one instance is required. If
      * it not already exists, it will be created. The first call of this method
@@ -137,37 +135,39 @@ public abstract class AbstractDatabase implements IDatabase{
      * Database-application is started, it first tries to connect to an existing
      * database. If it is not found, this method tries to create a new one.
      * Implementations can have additional properties, such as username/password.
-     * 
+     *
      * @return A static instance of Database.
      */
     public static IDatabase getInstance() {
         throw new SubclassNotImplementingException(
             "Subclasses of AbstractDatabase must implement the method \"static String getInstance()\"");
     }
-    
-    
+
+
     @Override
-    public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {            
+    public synchronized void insertRequest(String id, InputStream inputStream, boolean xml) {
         insertResultEntity(inputStream, "REQ_" + id, "ExecuteRequest", xml ? "text/xml" : "text/plain");
     }
-    
+
     /**
      * Insert a new Response into the Database.
-     * 
-     * @param response  The Response to insert.
-     * @see #storeResponse(Response)
-     * 
+     *
+     * @param inputStream the Response to insert as <code>InputStream</code>
+     * @return URL to obtain the result from the WPS
+     * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
-    public synchronized String insertResponse(String id, InputStream inputStream) {            
+    public synchronized String insertResponse(String id, InputStream inputStream) {
         return insertResultEntity(inputStream, id, "ExecuteResponse", "text/xml");
     }
-    
+
     /**
      * Inserts any result, which has to be stored in the DB.
-     * @param baos
-     * @param id
-     * @param type
+     * @param stream <code>InputStream</code> containing the data
+     * @param id the id of the data
+     * @param type the type of the data
+     * @param mimeType the mime type of the data
+     * @return URL to obtain the result from the WPS
      */
     protected synchronized String insertResultEntity(InputStream stream, String id, String type, String mimeType) {
         // Use Calendar to get the current timestamp.
@@ -182,22 +182,21 @@ public abstract class AbstractDatabase implements IDatabase{
             AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, stream);
             AbstractDatabase.insertSQL.setString(INSERT_COLUMN_MIME_TYPE, mimeType);
             // AbstractDatabase.insertSQL.setAsciiStream(INSERT_COLUMN_RESPONSE, bais, b.length);
-        
+
             AbstractDatabase.insertSQL.executeUpdate();
             getConnection().commit();
         } catch (SQLException e) {
             LOGGER.error("Could not insert Response into database: "
                     + e.getMessage());
-        } 
+        }
         return generateRetrieveResultURL(id);
     }
 
     /**
      * Update the Response in the Database, based on the Identifier.
-     * 
-     * @param response
-     *            The Response to update
-     * @see #storeResponse(Response)
+     *
+     * @param inputStream the Response to update as <code>InputStream</code>
+     * @see #storeResponse(String id, InputStream inputStream)
      */
     @Override
     public synchronized void updateResponse(String id, InputStream inputStream) {
@@ -219,10 +218,10 @@ public abstract class AbstractDatabase implements IDatabase{
     /**
      * Store the Response of a deferred Request. It either gets inserted into
      * the database, or it updates a previous Response, based on the identifier.
-     * 
-     * @param response
-     *            The Response to store.
-     */ 
+     *
+     * @param inputStream the Response to update as <code>InputStream</code>
+     * @return URL to obtain the result from the WPS or null
+     */
     @Override
     public synchronized String storeResponse(String id, InputStream inputStream) {
         if (lookupResponse(id) == null) {
@@ -253,11 +252,11 @@ public abstract class AbstractDatabase implements IDatabase{
             return null;
         }
     }
-    
+
     /**
      * Retrieve the Response on a previous Request, based on an unique
      * identifier, which was already given to the client for reference.
-     * 
+     *
      * @param request_id
      *            The identifier of the Request
      * @return null, if an SQLException occurred, else an InputStream with the
@@ -282,27 +281,27 @@ public abstract class AbstractDatabase implements IDatabase{
             return null;
         }
     }
-    
+
     @Override
     public synchronized String storeComplexValue(String id, InputStream stream, String type, String mimeType) {
         return insertResultEntity(stream, id, type, mimeType);
     }
-    
+
     /**
-     * The URL referencing the location from which the ExecuteResponse can be retrieved. 
-     * If "status" is "true" in the Execute request, the ExecuteResponse should also be 
-     * found here as soon as the process returns the initial response to the client. 
+     * The URL referencing the location from which the ExecuteResponse can be retrieved.
+     * If "status" is "true" in the Execute request, the ExecuteResponse should also be
+     * found here as soon as the process returns the initial response to the client.
      * It should persist at this location as long as the outputs are accessible from the server.
-     * The outputs may be stored for as long as the implementer of the server decides. 
-     * If the process takes a long time, this URL can be repopulated on an ongoing basis 
-     * in order to keep the client updated on progress. Before the process has succeeded, 
-     * the ExecuteResponse contains information about the status of the process, including 
-     * whether or not processing has started, and the percentage completed. It may also 
-     * optionally contain the inputs and any ProcessStartedType interim results. When the 
-     * process has succeeded, the ExecuteResponse found at this URL shall contain the output 
+     * The outputs may be stored for as long as the implementer of the server decides.
+     * If the process takes a long time, this URL can be repopulated on an ongoing basis
+     * in order to keep the client updated on progress. Before the process has succeeded,
+     * the ExecuteResponse contains information about the status of the process, including
+     * whether or not processing has started, and the percentage completed. It may also
+     * optionally contain the inputs and any ProcessStartedType interim results. When the
+     * process has succeeded, the ExecuteResponse found at this URL shall contain the output
      * values or references to them.
      * @return
-     */    
+     */
     @Override
     public String generateRetrieveResultURL(String id) {
         return WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getProtocol() + "://"
@@ -311,33 +310,33 @@ public abstract class AbstractDatabase implements IDatabase{
                 + getServerConfigurationModule().getWebappPath() + "/"
                 + "RetrieveResultServlet?id=";   // TODO:  Parameterize this... Execution Context..?
     }
-    
+
     public abstract Connection getConnection();
     public abstract String getConnectionURL();
-    
+
     /**
      * Returns the name of the database.
      */
     @Override
     public String getDatabaseName() {
-        
+
         String dbName = getDatabaseProperties(PROPERTY_NAME_DATABASE_NAME);
         return (dbName == null || dbName.equals("")) ? "wps" : dbName;
     }
-    
+
     static String getDatabaseProperties(String propertyName) {
-        
+
         Map<String, ConfigurationModule> activeDatabaseConfigModules = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.DATABASE);
-        
+
         ConfigurationModule databaseConfigModule = null;
-        
+
         try{
             //there should be only one
             databaseConfigModule = activeDatabaseConfigModules.get(activeDatabaseConfigModules.keySet().iterator().next());
         }catch(Exception e){
             throw new RuntimeException("Could not load any active database configuration module.");
         }
-        
+
         List<? extends ConfigurationEntry<?>> configurationEntries = databaseConfigModule.getConfigurationEntries();
 
         for(ConfigurationEntry<?> property : configurationEntries){
@@ -348,16 +347,16 @@ public abstract class AbstractDatabase implements IDatabase{
         return null;
     }
 
-    /** 
+    /**
      * Returns the path to the database.
-     * 
-     * @note The path has no file separator in the end of the file.
+     *
+     * <b>Note:</b> The path has no file separator in the end of the file.
      */
     protected static String getDatabasePath() {
         String dbPath = getDatabaseProperties(PROPERTY_NAME_DATABASE_PATH);
         String dbName = getDatabaseProperties(PROPERTY_NAME_DATABASE_NAME);
         String dbTypeName = getDatabaseProperties(PROPERTY_NAME_DATABASE);
-        
+
         if (dbPath == null || dbPath.compareTo("") == 0) {
             // TODO:  parameterize base path
             dbPath = System.getProperty("java.io.tmpdir", ".") + File.separator + "Databases";
@@ -374,22 +373,22 @@ public abstract class AbstractDatabase implements IDatabase{
         }
         return dbPath;
     }
-    
+
     @Override
     public void shutdown() {
         try {
             getConnection().close();
         } catch (SQLException e) {
-            
+
             LOGGER.error("Problem encountered when closing the SQL connection", e);
         }
     }
-    
+
     @Override
     public String getMimeTypeForStoreResponse(String id) {
         try {
             AbstractDatabase.selectSQL.setString(SELECT_COLUMN_RESPONSE, id);
-        
+
             ResultSet res = AbstractDatabase.selectSQL.executeQuery();
             if (res == null || !res.next()) {
                 LOGGER.warn("Query did not return a valid result.");
@@ -405,12 +404,12 @@ public abstract class AbstractDatabase implements IDatabase{
             return null;
         }
     }
-    
+
     @Override
     public long getContentLengthForStoreResponse(String id) {
         return -1;
     }
-    
+
     @Override
     public boolean deleteStoredResponse(String id) {
         return false;
@@ -425,5 +424,5 @@ public abstract class AbstractDatabase implements IDatabase{
     public File lookupResponseAsFile(String id) {
         return null;
     }
-    
+
 }

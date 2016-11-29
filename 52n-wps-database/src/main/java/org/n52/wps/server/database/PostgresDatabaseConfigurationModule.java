@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,17 +45,17 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
     private boolean isActive = true;
 
     private boolean isWipeEnabled;
-    
+
     private String wipePeriod;
-    
+
     private String wipeThreshold;
-    
+
     private final String isWipeEnabledKey = "wipe.enabled";
-    
+
     private final String wipePeriodKey = "wipe.period";
-    
+
     private final String wipeThresholdKey = "wipe.threshold";
-    
+
     private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey, "Database wipe enabled", "Enable database wiping based on values below",
             false, true);
     private ConfigurationEntry<String> wipePeriodEntry = new StringConfigurationEntry(wipePeriodKey, "Wipe period",
@@ -64,7 +64,7 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
             "Delete files older than this period (P7D = 7 days)", false, "P7D");
 
     private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry);
-    
+
     @Override
     public String getModuleName() {
         return "Postgres database configuration";
@@ -77,7 +77,7 @@ public class PostgresDatabaseConfigurationModule implements ConfigurationModule 
 
     @Override
     public void setActive(boolean active) {
-        isActive = active;        
+        isActive = active;
     }
 
     @Override

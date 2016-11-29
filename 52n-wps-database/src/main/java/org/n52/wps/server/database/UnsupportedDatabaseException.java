@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,11 +35,11 @@ public class UnsupportedDatabaseException extends RuntimeException {
     public UnsupportedDatabaseException() {
         super("Unsupported database.");
     }
- 
+
     public UnsupportedDatabaseException(String message) {
         super(message);
     }
- 
+
     public UnsupportedDatabaseException(String message, Throwable cause) {
         super(message, cause);
     }

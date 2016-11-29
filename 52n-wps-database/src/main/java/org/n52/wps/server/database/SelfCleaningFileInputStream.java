@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,7 +54,7 @@ public class SelfCleaningFileInputStream extends FileInputStream {
     @Override
     public void close() throws IOException {
         super.close();
-        
+
         String path = file.getAbsolutePath();
         if (!file.exists()) {
             LOGGER.debug("File at {} does not exist", path);
