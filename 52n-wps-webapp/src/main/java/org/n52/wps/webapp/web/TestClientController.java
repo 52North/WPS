@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ public class TestClientController {
 
     /**
      * Display the test client.
-     * 
+     *
      * @return The test client view
      */
     @RequestMapping(method = RequestMethod.GET)

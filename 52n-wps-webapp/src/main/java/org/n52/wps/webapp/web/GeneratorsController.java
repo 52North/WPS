@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,8 @@ public class GeneratorsController extends BaseConfigurationsController {
 
     /**
      * Display generators configuration modules
-     * 
+     *
+     * @param model the model
      * @return The generators view
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -63,10 +64,10 @@ public class GeneratorsController extends BaseConfigurationsController {
         LOGGER.info("Reterived '{}' configurations.", category);
         return "generators";
     }
-    
+
     /**
      * Add a new format to the module
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the format
          * @param mimeType
@@ -82,10 +83,10 @@ public class GeneratorsController extends BaseConfigurationsController {
         configurationManager.getConfigurationServices().addFormatEntry(moduleClassName, mimeType, schema, encoding);
         LOGGER.info("Format '{}', '{}', '{}' has been added to module '{}'", mimeType, schema, encoding, moduleClassName);
     }
-    
+
         /**
          * Delete a format from the module
-         * 
+         *
          * @param moduleClassName
          *            The fully qualified name of the module holding the format
          * @param mimeType
@@ -99,21 +100,21 @@ public class GeneratorsController extends BaseConfigurationsController {
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteFormat(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding) {
         mimeType = mimeType.replace("forwardslash", "/");
-        
+
         if(schema.equals("null")){
             schema = "";
         }
         if(encoding.equals("null")){
             encoding = "";
         }
-        
+
         configurationManager.getConfigurationServices().deleteFormatEntry(moduleClassName, mimeType, schema, encoding);
         LOGGER.info("Format '{}', '{}', '{}' of module '{}' has been deleted", mimeType, schema, encoding, moduleClassName);
     }
 
     /**
      * Set the status of a format to active/inactive
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the format
      * @param mimeType
@@ -129,24 +130,24 @@ public class GeneratorsController extends BaseConfigurationsController {
     @ResponseStatus(value = HttpStatus.OK)
     public void toggleFormatStatus(@PathVariable String moduleClassName, @PathVariable String mimeType, @PathVariable String schema, @PathVariable String encoding,
             @PathVariable boolean status) {
-        
+
         mimeType = mimeType.replace("forwardslash", "/");
-        
+
         if(schema.equals("null")){
             schema = "";
         }
         if(encoding.equals("null")){
             encoding = "";
         }
-        
+
         configurationManager.getConfigurationServices().setFormatEntry(moduleClassName, mimeType, schema, encoding, status);
 //        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
     }
 
-        
+
         /**
          * Update a format
-         * 
+         *
          * @param moduleClassName
          *            The fully qualified name of the module holding the format
          * @param oldMimetype
@@ -165,7 +166,7 @@ public class GeneratorsController extends BaseConfigurationsController {
         @RequestMapping(value = "formats/edit_format", method = RequestMethod.POST)
         @ResponseStatus(value = HttpStatus.OK)
         public void editFormat(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("old_mimetype") String oldMimetype, @RequestParam("old_schema") String oldSchema, @RequestParam("old_encoding") String oldEncoding, @RequestParam("new_mimetype") String newMimetype, @RequestParam("new_schema") String newSchema, @RequestParam("new_encoding") String newEncoding) {
-            
+
             if(oldSchema.equals("undefined")){
                 oldSchema = "";
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,8 +58,8 @@ public class ServiceIdentificationController {
 
     /**
      * Display the service identification module
-     * 
-     * @param model
+     *
+     * @param model the model
      * @return The service identification view
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -74,12 +74,12 @@ public class ServiceIdentificationController {
     /**
      * Process form submission. The method will return an HTTP 200 status code if there
      * are no errors, else, it will return a 400 status code.
-     * 
+     *
      * @param serviceIdentification
      *            The model holding the service identification values
-     * @param result
-     * @param model
-     * @param response
+     * @param result the <code>BindingResult</code>
+     * @param model the model
+     * @param response the servlet response
      * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
      *         errors.
      */

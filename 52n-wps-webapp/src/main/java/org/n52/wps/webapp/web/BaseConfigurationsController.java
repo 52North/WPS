@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Abstract configuration controller used by standard configuration modules. The class respond to form posts, set
  * configuration modules status, and provide standard way for error handling.
- * 
+ *
  * @see RepositoriesController
  * @see GeneratorsController
  * @see ParsersController
@@ -65,8 +65,8 @@ public class BaseConfigurationsController {
      * Process form post for standard configuration modules (repositories, generators, and parsers). If there is an
      * error in the form values, an exception will be thrown and handled by the
      * {@link #displayError(WPSConfigurationException) displayError} method.
-     * 
-     * @param request
+     *
+     * @param request the servlet request
      * @throws WPSConfigurationException
      *             if form values parsing and validation fails
      */
@@ -84,7 +84,7 @@ public class BaseConfigurationsController {
 
     /**
      * Set the status of a configuration module to active/inactive
-     * 
+     *
      * @param moduleClassName
      *            the fully qualified name of the module to be set
      * @param status
@@ -100,7 +100,7 @@ public class BaseConfigurationsController {
     /**
      * Handle exceptions thrown by form processing methods. This method will get the field causing the exception along
      * with the error message, and return the error as a JSON object to the client.
-     * 
+     *
      * @param e
      *            the exception thrown
      * @return an object containing the field error and message

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,7 +50,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
- * Handles URI requests and mapping for the backup & restore pages.
+ * Handles URI requests and mapping for the backup and restore pages.
  */
 @Controller
 @RequestMapping("backup")
@@ -63,7 +63,7 @@ public class BackupController {
 
     /**
      * Display the backup page
-     * 
+     *
      * @return the backup view
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -73,8 +73,9 @@ public class BackupController {
 
     /**
      * Process the backup request. The method will pass the user selection of items to backup to the service.
-     * 
-     * @param request
+     *
+     * @param request the servlet request
+     * @param response the servlet response
      * @return the created Zip archive URL
      */
     @RequestMapping(method = RequestMethod.POST)
@@ -100,9 +101,9 @@ public class BackupController {
 
     /**
      * Upload the Zip archive and pass it to the service to overwrite configurations.
-     * 
-     * @param request
-     * @param response
+     *
+     * @param request the servlet request
+     * @param response the servlet response
      * @return {@code ValidationResponse}
      */
     @RequestMapping(value = "restore", method = RequestMethod.POST)

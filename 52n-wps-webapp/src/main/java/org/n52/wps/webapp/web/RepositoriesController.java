@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,7 +50,8 @@ public class RepositoriesController extends BaseConfigurationsController {
 
     /**
      * Display repositories configuration modules
-     * 
+     *
+     * @param model the model
      * @return The repositories view
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -65,7 +66,7 @@ public class RepositoriesController extends BaseConfigurationsController {
 
     /**
      * Set the status of a configuration algorithm to active/inactive
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the algorithm
      * @param algorithm
@@ -80,10 +81,10 @@ public class RepositoriesController extends BaseConfigurationsController {
         configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, status);
         LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
     }
-    
+
     /**
      * Add a new algorithm to the repository
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the algorithm
      * @param algorithmName
@@ -95,15 +96,15 @@ public class RepositoriesController extends BaseConfigurationsController {
         configurationManager.getConfigurationServices().addAlgorithmEntry(moduleClassName, algorithmName);
         LOGGER.info("Algorithm '{}' has been added to module '{}'", algorithmName, moduleClassName);
     }
-    
+
+
     /**
-     * TODO: update javadoc
-     * Add a new algorithm to the repository
-     * 
+     * Edit an algorithm name
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the algorithm
-     * @param algorithmName
-     *            The algorithm name
+     * @param oldAlgorithmName the old name
+     * @param algorithmName the nem name
      */
     @RequestMapping(value = "algorithms/edit_algorithm", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
@@ -111,10 +112,10 @@ public class RepositoriesController extends BaseConfigurationsController {
         configurationManager.getConfigurationServices().updateAlgorithmEntry(moduleClassName, algorithmName, oldAlgorithmName);
         LOGGER.info("Algorithm '{}' has been updated in module '{}'", algorithmName, moduleClassName);
     }
-    
+
     /**
      * Delete an algorithm from the repository
-     * 
+     *
      * @param moduleClassName
      *            The fully qualified name of the module holding the algorithm
      * @param algorithmName

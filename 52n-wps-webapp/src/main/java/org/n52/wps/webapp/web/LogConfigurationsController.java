@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,8 +61,8 @@ public class LogConfigurationsController {
 
     /**
      * Display the log configuration module
-     * 
-     * @param model
+     *
+     * @param model the model
      * @return The log view
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -82,12 +82,12 @@ public class LogConfigurationsController {
     /**
      * Process form submission. The method will return an HTTP 200 status code if there are no errors, else, it will
      * return a 400 status code.
-     * 
+     *
      * @param logConfigurations
      *            The model holding the log configuration values
-     * @param result
-     * @param model
-     * @param response
+     * @param result the <code>BindingResult</code>
+     * @param model the model
+     * @param response the servlet response
      * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
      *         errors.
      */

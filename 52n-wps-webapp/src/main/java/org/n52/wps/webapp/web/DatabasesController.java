@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,7 +47,7 @@ public class DatabasesController extends BaseConfigurationsController {
 
     /**
      * Display databases configuration modules
-     * 
+     * @param model the model
      * @return The databases view
      */
     @RequestMapping(method = RequestMethod.GET)

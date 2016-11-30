@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -73,9 +73,9 @@ public class UploadController {
     /**
      * Process all upload requests; forward to the appropriate method based on the type of file uploaded. The method
      * will return an HTTP 200 status code if there are no errors, else, it will return a 400 status code.
-     * 
-     * @param request
-     * @param response
+     *
+     * @param request the servlet request
+     * @param response the servlet response
      * @return A {@code ValidationResponse} object which contains the list of errors, if any.
      */
     @RequestMapping(value = "upload", method = RequestMethod.POST)
@@ -212,7 +212,7 @@ public class UploadController {
 
         // try to get the package name from the file, read line by line
         String tmpFilePath = System.getProperty("java.io.tmpdir") + File.separatorChar + java.getOriginalFilename();
-        
+
         File tempFile = new File(tmpFilePath);
         String packageName = null;
 
@@ -220,7 +220,7 @@ public class UploadController {
         List<String> lines = FileUtils.readLines(tempFile);
 
         String fullyQualifiedName = tempFile.getName().replace(".java", "");
-        
+
         // find the first line with the word package at it's beginning
         for (String line : lines) {
             if (line.indexOf("package") == 0) {
@@ -241,14 +241,14 @@ public class UploadController {
         // copy the file to the final directory
         FileUtils.copyFileToDirectory(tempFile, new File(directoryPath.toString()));
         LOGGER.info("Uploaded file saved in '{}'.", directoryPath.toString());
-        
+
         String fileName = directoryPath.toString().endsWith(File.separator) ? directoryPath.toString() + tempFile.getName() : directoryPath.toString() + File.separator + tempFile.getName();
-        
+
         //TODO: inform user about possible compile errors
         JavaProcessCompiler.compile(fileName);
-        
+
         configurationManager.getConfigurationServices().addAlgorithmEntry(UploadedAlgorithmRepositoryCM.class.getName(), fullyQualifiedName);
-        
+
         tempFile.delete();
         return directoryPath.toString();
     }

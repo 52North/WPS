@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,10 +41,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping("server")
 public class ServerController extends BaseConfigurationsController {
-    
+
     /**
      * Display the server configuration module
-     * 
+     *
+     * @param model the model
      * @return The server view
      */
     @RequestMapping(method = RequestMethod.GET)
