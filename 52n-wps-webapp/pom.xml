@@ -394,7 +394,6 @@
 		<dependency>
 			<artifactId>Rserve</artifactId>
 			<groupId>org.nuiton.thirdparty</groupId>
-            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<artifactId>jdom</artifactId>
