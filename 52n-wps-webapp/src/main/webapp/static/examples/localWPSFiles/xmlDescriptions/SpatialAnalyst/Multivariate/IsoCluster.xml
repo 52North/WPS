@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.isocluster</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.isocluster</ows:Identifier><!-- ParameterCount=6 -->
 		<ows:Title>IsoCluster_sa</ows:Title>
 		<ows:Abstract>Uses an isodata clustering algorithm to determine the characteristics of the natural groupings of cells in multidimensional attribute space and stores the results in an output ASCII signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -36,7 +36,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>number_iterations</ows:Identifier><!-- 3 -->
@@ -45,7 +45,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>min_class_size</ows:Identifier><!-- 4 -->
@@ -54,7 +54,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>sample_interval</ows:Identifier><!-- 5 -->
@@ -63,13 +63,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
-			</Input>	
+				</LiteralData>
+			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_signature_file</ows:Identifier><!-- 1 -->
-				<ows:Title>out signature file</ows:Title>	
+				<ows:Title>out signature file</ows:Title>
 				<ows:Abstract>Output signature file. A ".gsg" extension is required.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -89,5 +89,5 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

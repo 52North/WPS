@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.surface.contourwithbarriers</ows:Identifier><!-- ParameterCount=11 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.surface.contourwithbarriers</ows:Identifier><!-- ParameterCount=11 -->
 		<ows:Title>ContourWithBarriers_sa</ows:Title>
 		<ows:Abstract>Creates contours from a raster surface. The inclusion of barrier features will allow one to independently generate contours on either side of a barrier. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -57,7 +57,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>POLYLINES</ows:Value>
 						<ows:Value>POLYGON</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
@@ -75,7 +75,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/txt</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -89,7 +89,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>NO_EXPLICIT_VALUES_ONLY</ows:Value>
 						<ows:Value>EXPLICIT_VALUES_ONLY</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -100,7 +100,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
 				</LiteralData>
-			</Input>	
+			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>in_contour_interval</ows:Identifier><!-- 7 -->
 				<ows:Title>in contour interval</ows:Title>
@@ -141,7 +141,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_contour_feature_class</ows:Identifier><!-- 1 -->
-				<ows:Title>out contour feature class</ows:Title>	
+				<ows:Title>out contour feature class</ows:Title>
 				<ows:Abstract>Ouput contour features.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -154,12 +154,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

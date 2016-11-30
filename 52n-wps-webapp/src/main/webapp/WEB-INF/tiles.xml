@@ -46,7 +46,7 @@
 		<put-attribute name="description" value="Configure properties and processes" type="string" />
 		<put-attribute name="body" value="/WEB-INF/tiles/content/parsers.jsp"></put-attribute>
 	</definition>
-	
+
 	<definition name="databases" extends="base">
 		<put-attribute name="title" value="Database Configurations - 52° North WPS" />
 		<put-attribute name="pageHeader" value="Database Configurations" type="string" />

@@ -18,7 +18,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<Format>
 						<MimeType>application/img</MimeType>
 						<Schema></Schema>
-					</Format>	
+					</Format>
 				</Default>
 				<Supported>
 					<Format>

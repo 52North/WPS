@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.splinewithbarriers</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.splinewithbarriers</ows:Identifier><!-- ParameterCount=6 -->
 		<ows:Title>SplineWithBarriers_sa</ows:Title>
 		<ows:Abstract>Interpolates a surface, using barriers, from points using a minimum curvature spline technique. The barriers are entered as either polygon or polyline features. The barriers are entered as either polygon or polyline features. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -32,7 +32,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
 				<ows:Identifier>Output_cell_size</ows:Identifier><!-- 3 -->
@@ -41,7 +41,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>input_barrier_features</ows:Identifier><!-- 2 -->
@@ -58,7 +58,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -69,13 +69,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>Output_raster</ows:Identifier><!-- 4 -->
-				<ows:Title>Output raster</ows:Title>	
+				<ows:Title>Output raster</ows:Title>
 				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -92,12 +92,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.overlay.symetricaldifference</ows:Identifier><!-- ParameterCount=5 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.overlay.symetricaldifference</ows:Identifier><!-- ParameterCount=5 -->
 		<ows:Title>SymDiff_analysis</ows:Title>
 		<ows:Abstract>Computes a geometric intersection of the input and update features. Features or portions of features in the input and update features which do not overlap will be written to the Output Feature Class. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -40,7 +40,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -54,7 +54,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<ows:Value>ALL</ows:Value>
 						<ows:Value>NO_FID</ows:Value>
 						<ows:Value>ONLY_FID</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -64,13 +64,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_feature_class</ows:Identifier><!-- 2 -->
-				<ows:Title>out feature class</ows:Title>	
+				<ows:Title>out feature class</ows:Title>
 				<ows:Abstract>The feature class to which the results will be written.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -94,5 +94,5 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- Sextante backend has to be enabled. --> 
+<!-- Sextante backend has to be enabled. -->
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
 	<ows:Identifier>union</ows:Identifier>
@@ -18,7 +18,7 @@
 												<gml:coord>
 													<gml:X>3428982.8405</gml:X>
 													<gml:Y>5669744.010199999</gml:Y>
-												</gml:coord>	
+												</gml:coord>
 												<gml:coord>
 													<gml:X>3426695.9354999997</gml:X>
 													<gml:Y>5673588.8499</gml:Y>
@@ -38,7 +38,7 @@
 												<gml:coord>
 													<gml:X>3428982.8405</gml:X>
 													<gml:Y>5669744.010199999</gml:Y>
-												</gml:coord>																				
+												</gml:coord>
 											</gml:LinearRing>
 										</gml:outerBoundaryIs>
 										<gml:innerBoundaryIs/>
@@ -49,7 +49,7 @@
 								<pac:value dataType="double">2.0</pac:value>
 								</pac:property>
 							</pac:StaticFeature>
-						</pac:packetMember>																				
+						</pac:packetMember>
 					</pac:GMLPacket>
 				</wps:ComplexData>
 			</wps:Data>
@@ -88,11 +88,11 @@
 												<gml:coord>
 													<gml:X>3427298.0301</gml:X>
 													<gml:Y>5671042.8522</gml:Y>
-												</gml:coord>	
+												</gml:coord>
 												<gml:coord>
 													<gml:X>3426298.5950999996</gml:X>
 													<gml:Y>5671289.7454</gml:Y>
-												</gml:coord>																			
+												</gml:coord>
 											</gml:LinearRing>
 										</gml:outerBoundaryIs>
 										<gml:innerBoundaryIs/>
@@ -103,12 +103,12 @@
 								<pac:value dataType="double">2.0</pac:value>
 								</pac:property>
 							</pac:StaticFeature>
-						</pac:packetMember>																				
+						</pac:packetMember>
 					</pac:GMLPacket>
 				</wps:ComplexData>
 			</wps:Data>
 		</wps:Input>
-	
+
 		<!-- Hier kommen die einzelnen InputParameter hinein, alle untereinander - PROCESS_NAME nicht vergessen (s.o.) -->
 	</wps:DataInputs>
 	<wps:ResponseForm>

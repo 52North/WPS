@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,7 +47,7 @@ public class DescribeProcessKvpIT {
 
     private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
     private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-    
+
     private static String url;
 
     @BeforeClass
@@ -60,7 +60,7 @@ public class DescribeProcessKvpIT {
         System.out.println("\nRunning testDescribeProcessCompleteSingle");
 
         String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID);
-        
+
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString(testProcessID));
@@ -82,9 +82,9 @@ public class DescribeProcessKvpIT {
     @Test
     public void testDescribeProcessCompleteAll() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessCompleteAll");
-        
+
         String response = GetClient.sendRequest(url, "Service=WPS&Request=DescribeProcess&Version=1.0.0&Identifier=all");
-        
+
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString(testProcessID));
@@ -95,35 +95,35 @@ public class DescribeProcessKvpIT {
     @Test
     public void testDescribeProcessMissingVersionParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingVersionParameter");
-        
+
         GetClient.checkForExceptionReport(url, "Service=WPS&Request=DescribeProcess&Identifier=" + testProcessID, HttpServletResponse.SC_BAD_REQUEST, "locator=\"version\"");
     }
 
     @Test
     public void testDescribeProcessMissingServiceParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingServiceParameter");
-        
+
         GetClient.checkForExceptionReport(url, "Request=DescribeProcess&Version=1.0.0&Identifier=" + testProcessID, HttpServletResponse.SC_BAD_REQUEST, "locator=\"service\"");
     }
 
     @Test
     public void testDescribeProcessMissingIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingIdentifierParameter");
-        
+
         GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"identifier\"");
     }
 
     @Test
     public void testDescribeProcessWrongIdentifierParameter() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessWrongIdentifierParameter");
-        
+
         GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=XXX", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
     }
-    
+
     @Test
     public void testDescribeProcessMissingIdentifierValue() throws IOException, ParserConfigurationException, SAXException {
         System.out.println("\nRunning testDescribeProcessMissingIdentifierValue");
-        
+
         GetClient.checkForExceptionReport(url, "Request=DescribeProcess&service=WPS&Version=1.0.0&Identifier=", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue", "locator=\"identifier\"");
     }
 }

@@ -41,6 +41,7 @@ import org.n52.wps.webapp.api.WPSConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.NestedRuntimeException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -127,7 +128,7 @@ public class BackupController {
             } else {
                 try {
                     configurationManager.getBackupServices().restoreBackup(zipFile.getInputStream());
-                } catch (IOException | WPSConfigurationException e) {
+                } catch (IOException | WPSConfigurationException | NestedRuntimeException e) {//added NestedRuntimeException so spring-core will be included at scope compile 
                     FieldError error = new FieldError(zipFile.getOriginalFilename(), zipFile.getName(),
                             "Error in restoring backup. It's possible that the file is not a correct WPSBackup Zip archive.");
                     listOfErros.add(error);

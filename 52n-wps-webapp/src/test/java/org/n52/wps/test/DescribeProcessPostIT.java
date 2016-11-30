@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ public class DescribeProcessPostIT {
 
     private final String testProcessID = "org.n52.wps.server.algorithm.test.EchoProcess";
     private final String testProcessID2 = "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm";
-    
+
     private static String url;
 
     @BeforeClass
@@ -147,7 +147,7 @@ public class DescribeProcessPostIT {
                 + "<ows:Identifier>" + testProcessID + "</ows:Identifier>" +
 
                 "</wps:DescribeProcess>";
-        
+
         try {
             PostClient.checkForExceptionReport(DescribeProcessPostIT.url, payload, HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue", "locator=\"version\"");
         } catch (IOException e) {
@@ -183,7 +183,7 @@ public class DescribeProcessPostIT {
             fail(e.getMessage());
         }
     }
-    
+
     @Test
     public void testDescribeProcessMissingIdentifierValue() {
         String payload = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"

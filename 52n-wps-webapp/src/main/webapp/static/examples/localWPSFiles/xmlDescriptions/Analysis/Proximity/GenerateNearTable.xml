@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.proximity.generateneartable</ows:Identifier><!-- ParameterCount=8 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.generateneartable</ows:Identifier><!-- ParameterCount=8 -->
 		<ows:Title>GenerateNearTable_analysis</ows:Title>
 		<ows:Abstract>Determines the distance from each feature in the Input Features to the nearest features in the Near Features, within the Search Radius. The results are recorded in the output table. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -40,7 +40,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -62,7 +62,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>NEAR_DIST</ows:Value>
 						<ows:Value>NEAR_Y</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -96,7 +96,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_table</ows:Identifier><!-- 2 -->
-				<ows:Title>out table</ows:Title>	
+				<ows:Title>out table</ows:Title>
 				<ows:Abstract>The output table that will contain the proximity information such as INPUT_FID, NEAR_FID, and NEAR_DIST and other attributes such as NEAR_XY, NEAR_ANGLE, and NEAR_FC if necessary.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -113,12 +113,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 					    <MimeType>text/XML</MimeType>
 						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
-				    </Format>	
+				    </Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

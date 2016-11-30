@@ -34,14 +34,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-commons</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-client-lib</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -56,6 +59,7 @@
 					<groupId>stax</groupId>
 				</exclusion>
 			</exclusions>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -70,6 +74,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm-impl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 <!--         <dependency> -->
 <!-- 			<groupId>${project.groupId}</groupId> -->
@@ -78,6 +83,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-database</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -178,10 +184,12 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
@@ -206,6 +214,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -214,6 +223,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -222,18 +232,26 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -247,64 +265,87 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- End of Spring dependencies -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>commons-io</artifactId>
+			<groupId>commons-io</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>validation-api</artifactId>
+			<groupId>javax.validation</groupId>
 		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-extras</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- Database dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
@@ -637,18 +678,22 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-io-geotools</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-algorithm-geotools</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-r</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-grass</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 <!--  				<dependency> -->
 <!--  					<groupId>${project.groupId}</groupId> -->
@@ -663,6 +708,7 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
 		</profile>

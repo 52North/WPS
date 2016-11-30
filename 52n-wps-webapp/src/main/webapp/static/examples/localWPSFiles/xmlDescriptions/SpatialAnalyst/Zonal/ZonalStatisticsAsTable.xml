@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.zonal.zonalatatisticsastable</ows:Identifier><!-- ParameterCount=5 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.zonal.zonalatatisticsastable</ows:Identifier><!-- ParameterCount=5 -->
 		<ows:Title>ZonalStatisticsAsTable_sa</ows:Title>
 		<ows:Abstract>Summarizes the values of a raster within the zones of another dataset and reports the results to a table. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -36,7 +36,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="1" maxOccurs="1">
 				<ows:Identifier>in_value_raster</ows:Identifier><!-- 2 -->
@@ -57,7 +57,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -65,19 +65,19 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<ows:Identifier>ignore_nodata</ows:Identifier><!-- 4 -->
 				<ows:Title>ignore nodata</ows:Title>
 				<ows:Abstract>Denotes whether NoData values on the Value input will influence the results of the zone that they fall within.
-					DATA  — Within any particular zone, only cells that have a value in the input Value raster will be used in determining the output value for that zone. NoData cells in the Value raster will be ignored in the statistic calculation. 
+					DATA  — Within any particular zone, only cells that have a value in the input Value raster will be used in determining the output value for that zone. NoData cells in the Value raster will be ignored in the statistic calculation.
 					NODATA  — Within any particular zone, if any NoData cells exist in the Value raster it is deemed that there is insufficient information to perform statistical calculations for all the cells in that zone. Therefore, the entire zone will receive the NoData value on the output raster.
 				</ows:Abstract>
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_table</ows:Identifier><!-- 3 -->
-				<ows:Title>out table</ows:Title>	
+				<ows:Title>out table</ows:Title>
 				<ows:Abstract>Output table that will contain the summary of the values in each zone.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -90,12 +90,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/dbf</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

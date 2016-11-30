@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -59,9 +59,9 @@ import org.xml.sax.SAXException;
 import com.vividsolutions.jts.io.InputStreamInStream;
 
 /**
- * 
+ *
  * To run this integration tests the GRASS 7 repository must be enabled and properly configured in the WPS config.
- *  
+ *
  */
 public class GrassIT {
 
@@ -69,7 +69,7 @@ public class GrassIT {
 
     private String hostExp = "$host$";
     private String portExp = "$port$";
-    
+
     @BeforeClass
     public static void beforeClass() {
         wpsUrl = AllTestsIT.getURL();
@@ -94,10 +94,10 @@ public class GrassIT {
         assertThat(response, not(containsString("ExceptionReport")));
         assertThat(response, containsString("v.buffer"));
     }
-    
+
     @Test
     public void resultRawSHPIsBase64Encoded() throws IOException, ParserConfigurationException, SAXException, XmlException {
-        
+
         URL resource = GrassIT.class.getResource("/Grass/v.buffer_request_out_shp_raw_base64.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
@@ -107,62 +107,62 @@ public class GrassIT {
 
         assertTrue(Base64.isBase64(response));
     }
-    
+
     @Test
     public void resultRawSHPIsNotBase64Encoded() throws XmlException, IOException {
-        
+
         URL resource = GrassIT.class.getResource("/Grass/v.buffer_request_out_shp_raw.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
 
         String payload = xmlPayload.toString();
         InputStream response = PostClient.sendRequestForInputStream(wpsUrl, payload);
-        
+
         GTBinZippedSHPParser gtBinZippedSHPParser = new GTBinZippedSHPParser();
-        
+
         GTVectorDataBinding gtVectorDataBinding = gtBinZippedSHPParser.parse(response, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP, null);
-        
+
         assertTrue(gtVectorDataBinding.getPayload() != null);
         assertTrue(gtVectorDataBinding.getPayload().size() != 0);
     }
-    
+
     @Test
     public void resultEmbeddedSHPIsBase64Encoded() throws IOException, ParserConfigurationException, SAXException, XmlException {
-        
+
         URL resource = GrassIT.class.getResource("/Grass/v.buffer_request_out_shp_doc_base64.xml");
         XmlObject xmlPayload = XmlObject.Factory.parse(resource);
-        
+
         String payload = xmlPayload.toString();
         String response = PostClient.sendRequest(wpsUrl, payload);
         assertThat(response, not(containsString("ExceptionReport")));
-        
+
         AllTestsIT.checkInlineResultBase64(response);
     }
-    
+
     @Test
     public void resultRawGeoTiffIsBase64Encoded() throws IOException,
     ParserConfigurationException, SAXException, XmlException {
-        
+
         XmlObject xmlPayload = createPayloadReplacingHostAndPort("/Grass/r.resample_request_out_tiff_raw_base64.xml");
-        
+
         String payload = xmlPayload.toString();
         String response = PostClient.sendRequest(wpsUrl, payload);
         assertThat(response, not(containsString("ExceptionReport")));
-        
+
         assertTrue(Base64.isBase64(response));
     }
-    
+
     @Test
     public void resultRawGeoTiffIsNotBase64Encoded() throws XmlException, IOException {
 
         XmlObject xmlPayload = createPayloadReplacingHostAndPort("/Grass/r.resample_request_out_tiff_raw.xml");
-        
+
         String payload = xmlPayload.toString();
         InputStream response = PostClient.sendRequestForInputStream(wpsUrl, payload);
-        
+
         GeotiffParser geotiffParser = new GeotiffParser();
 
         GTRasterDataBinding gtRasterDataBinding = geotiffParser.parse(response, "image/tiff", null);
-        
+
         assertTrue(gtRasterDataBinding.getPayload() != null);
         assertTrue(gtRasterDataBinding.getPayload().getEnvelope() != null);
         assertTrue(gtRasterDataBinding.getPayload().getEnvelope().getLowerCorner().getCoordinate()[0] == 633872.54238781);
@@ -180,21 +180,21 @@ public class GrassIT {
 
         AllTestsIT.checkInlineResultBase64(response);
     }
-    
+
     private XmlObject createPayloadReplacingHostAndPort(String resourceURL){
-        
+
         URL resource = GrassIT.class
                 .getResource(resourceURL);
-        
+
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(resource.openStream()));
-            
+
             String payload = "";
-            
+
             String line = "";
-            
+
             while((line = bufferedReader.readLine()) != null){
-                
+
                 if(line.contains(hostExp)){
                     line = line.replace(hostExp, AllTestsIT.getHost());
                 }
@@ -211,6 +211,6 @@ public class GrassIT {
             fail(e.getMessage());
         }
         return XmlObject.Factory.newInstance();
-        
+
     }
 }

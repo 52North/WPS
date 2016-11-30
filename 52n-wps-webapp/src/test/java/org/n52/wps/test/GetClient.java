@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,7 +52,7 @@ public class GetClient {
     public static String sendRequest(String targetURL, String payload) throws IOException {
         // Send data
         InputStream in = sendRequestForInputStream(targetURL, payload);
-        
+
         // Get the response
         BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
@@ -78,7 +78,7 @@ public class GetClient {
 
         return url.openStream();
     }
-    
+
     public static void checkForExceptionReport(String targetURL, String payload, int expectedHTTPStatusCode, String... expectedExceptionParameters) throws IOException{
         // Send data
         String payloadClean = payload.replace("?", "");
@@ -86,30 +86,30 @@ public class GetClient {
 
         URLConnection conn = url.openConnection();
 
-        try {            
-            conn.getInputStream();            
+        try {
+            conn.getInputStream();
         } catch (IOException e) {
             /*
              * expected, ignore
-             */            
+             */
         }
-        
+
         InputStream error = ((HttpURLConnection) conn).getErrorStream();
-        
+
         String exceptionReport = "";
-        
+
         int data = error.read();
         while (data != -1) {
             exceptionReport = exceptionReport + (char)data;
             data = error.read();
         }
         error.close();
-        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);    
-        
+        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);
+
         for (String expectedExceptionParameter : expectedExceptionParameters) {
-            
-            assertTrue(exceptionReport.contains(expectedExceptionParameter)); 
-            
-        }   
+
+            assertTrue(exceptionReport.contains(expectedExceptionParameter));
+
+        }
     }
 }

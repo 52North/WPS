@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.hydrology.streamorder</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.hydrology.streamorder</ows:Identifier><!-- ParameterCount=4 -->
 		<ows:Title>StreamOrder_sa</ows:Title>
 		<ows:Abstract>Assigns a numeric order to segments of a raster representing branches of a linear network. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -48,7 +48,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -62,14 +62,14 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>STRAHLER</ows:Value>
 						<ows:Value>SHREVE</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_raster</ows:Identifier><!-- 2 -->
-				<ows:Title>out raster</ows:Title>	
+				<ows:Title>out raster</ows:Title>
 				<ows:Abstract>The output stream order raster.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -86,12 +86,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

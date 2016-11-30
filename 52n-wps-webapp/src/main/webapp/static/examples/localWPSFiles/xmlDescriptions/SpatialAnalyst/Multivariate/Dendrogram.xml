@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.dendrogram</ows:Identifier><!-- ParameterCount=4 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.dendrogram</ows:Identifier><!-- ParameterCount=4 -->
 		<ows:Title>Dendrogram_sa</ows:Title>
 		<ows:Abstract>Constructs a tree diagram showing attribute distances between sequentially merged classes in a signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -41,7 +41,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<LiteralData>
 						<ows:DataType ows:reference="xs:boolean"></ows:DataType>
 						<ows:AnyValue/>
-					</LiteralData>	
+					</LiteralData>
 				</Input>
 		</DataInputs>
 		<ProcessOutputs>
@@ -67,5 +67,5 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

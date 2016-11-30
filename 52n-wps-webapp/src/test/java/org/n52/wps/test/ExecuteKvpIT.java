@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,22 +52,22 @@ public class ExecuteKvpIT {
 
     private String referenceComplexBinaryInputURLEncoded;
     private String referenceComplexXMLInputURLEncoded;
-    
+
     @BeforeClass
     public static void beforeClass() throws XmlException, IOException {
         url = AllTestsIT.getURL();                                                                              // needed
     }
-    
+
     @Before
-    public void before(){        
+    public void before(){
         try {
             referenceComplexBinaryInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexBinaryInputURL, "UTF-8");
             referenceComplexXMLInputURLEncoded = URLEncoder.encode(AllTestsIT.referenceComplexXMLInputURL, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }        
+        }
     }
-    
+
     @Test
     public void testExecuteKVPSynchronousLiteralDataReponseDoc() throws IOException {
         System.out.println("\nRunning testExecuteKVPSynchronousLiteralDataReponseDoc");
@@ -171,11 +171,11 @@ public class ExecuteKvpIT {
     @Test
     public void testExecuteKVPSynchronousComplexDataReferenceResponseDoc() throws IOException {
         System.out.println("\nRunning testExecuteKVPSynchronousComplexDataReferenceResponseDoc");
-        
+
         String inputID = "complexInput";
         String inputMimeType = "text/xml";
         String outputID = "complexOutput";
-        
+
         String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&ResponseDocument=" + outputID;
 
         String response = GetClient.sendRequest(getURL);
@@ -197,7 +197,7 @@ public class ExecuteKvpIT {
         String inputMimeType = "text/xml";
         String outputID = "complexOutput";
         String outputMimeType = "text/xml";
-        
+
         String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&ResponseDocument=" + outputID + "@mimeType=" + outputMimeType + "";
 
         String response = GetClient.sendRequest(getURL);
@@ -224,7 +224,7 @@ public class ExecuteKvpIT {
         String expectedResult4 = " mimeType=\"image/tiff\"";
 
         assertThat(response, response, not(containsString(exceptionReport)));
-        assertThat(response, response, containsString(processSucceeded));       
+        assertThat(response, response, containsString(processSucceeded));
         assertThat(response, response, containsString(expectedResult2));
         assertThat(response, response, containsString(expectedResult3));
         assertThat(response, response, containsString(expectedResult4));
@@ -239,7 +239,7 @@ public class ExecuteKvpIT {
         String inputMimeType = "text/xml";
         String outputID = "complexOutput";
         String outputMimeType = "text/xml";
-        
+
         String getURL = ExecuteKvpIT.url + "?Service=WPS&Request=Execute&Version=1.0.0&Identifier=org.n52.wps.server.algorithm.test.EchoProcess&DataInputs=" + inputID + "=@href=" + referenceComplexXMLInputURLEncoded + "@mimeType=" + inputMimeType + "&RawDataOutput=" + outputID + "@mimeType=" + outputMimeType + "";
 
         String response = GetClient.sendRequest(getURL);
@@ -247,7 +247,7 @@ public class ExecuteKvpIT {
         String expectedResult = "<TestData>";
 
         assertThat(response, response, not(containsString(exceptionReport)));
-        assertThat(response, response, containsString(expectedResult));  
-        
+        assertThat(response, response, containsString(expectedResult));
+
     }
 }

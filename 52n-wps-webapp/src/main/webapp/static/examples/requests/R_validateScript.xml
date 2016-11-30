@@ -10,7 +10,7 @@
 			<ows:Identifier>script</ows:Identifier>
 			<wps:Data>
 				<!-- <wps:ComplexData encoding="UTF-8" mimeType="text/plain"> -->
-				<!-- <![CDATA[ is only used to disable formatting of the content, ComplexData 
+				<!-- <![CDATA[ is only used to disable formatting of the content, ComplexData
 					works without it, too -->
 				<wps:ComplexData><![CDATA[# wps.des: test.validation, title = A minimal process, abstract = Example Calculation with R;
 					# wps.in: input, integer;

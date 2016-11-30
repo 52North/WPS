@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.generalization.thin</ows:Identifier><!-- ParameterCount=6 -->		
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.generalization.thin</ows:Identifier><!-- ParameterCount=6 -->
 		<ows:Title>Thin_sa</ows:Title>
 		<ows:Abstract>Thins rasterized linear features by reducing the number of cells representing the width of the features. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -39,7 +39,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>ZERO</ows:Value>
 						<ows:Value>NODATA</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -50,7 +50,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:boolean"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>corners</ows:Identifier><!-- 4 -->
@@ -61,7 +61,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>ROUND</ows:Value>
 						<ows:Value>SHARP</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -71,13 +71,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:integer"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_raster</ows:Identifier><!-- 1 -->
-				<ows:Title>out raster</ows:Title>	
+				<ows:Title>out raster</ows:Title>
 				<ows:Abstract>The raster to be created.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -94,12 +94,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

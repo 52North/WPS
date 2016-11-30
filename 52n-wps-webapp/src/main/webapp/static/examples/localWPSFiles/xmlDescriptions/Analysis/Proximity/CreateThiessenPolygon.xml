@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.proximity.createthiessenpolygons</ows:Identifier><!-- ParameterCount=3 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.createthiessenpolygons</ows:Identifier><!-- ParameterCount=3 -->
 		<ows:Title>CreateThiessenPolygons_analysis</ows:Title>
 		<ows:Abstract>This converts input points to an output feature class of Thiessen proximal polygons.
 		Thiessen polygons have the unique property that each polygon contains only one input point, and any location within a polygon is closer to its associated point than to the point of any other polygon. Uses ArcObjects library - Analysis</ows:Abstract>
@@ -22,7 +22,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -35,14 +35,14 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>ONLY_FID</ows:Value>
 						<ows:Value>ALL</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_feature_class</ows:Identifier><!-- 1 -->
-				<ows:Title>out feature class</ows:Title>	
+				<ows:Title>out feature class</ows:Title>
 				<ows:Abstract>The polygon feature class that will contain the Thiessen features.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -59,12 +59,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 					    <MimeType>text/XML</MimeType>
 						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
-				    </Format>	
+				    </Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

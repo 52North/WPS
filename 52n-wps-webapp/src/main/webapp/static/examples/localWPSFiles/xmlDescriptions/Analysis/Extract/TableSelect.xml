@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.extract.split</ows:Identifier><!-- ParameterCount=3 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.extract.split</ows:Identifier><!-- ParameterCount=3 -->
 		<ows:Title>TableSelect_analysis</ows:Title>
 		<ows:Abstract>This extracts selected table records or features from an input table or table view and stores them in a new output table. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/dbf</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -35,13 +35,13 @@ The syntax for the expression differs slightly depending on the data source. For
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_table</ows:Identifier><!-- 1 -->
-				<ows:Title>out table</ows:Title>	
+				<ows:Title>out table</ows:Title>
 				<ows:Abstract>The output table to be created. The output table can be a geodatabase table, a dBASE table, or an INFO table. If the output location is in a folder and no extension is specified, the output will be an INFO table.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -54,12 +54,12 @@ The syntax for the expression differs slightly depending on the data source. For
 						<Format>
 							<MimeType>application/dbf</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+
