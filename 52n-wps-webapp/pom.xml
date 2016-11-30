@@ -76,10 +76,6 @@
 			<artifactId>52n-wps-algorithm-impl</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-<!--         <dependency> -->
-<!-- 			<groupId>${project.groupId}</groupId> -->
-<!-- 			<artifactId>52n-wps-matlab</artifactId> -->
-<!-- 		</dependency> -->
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-database</artifactId>
@@ -719,14 +715,6 @@
 					<classifier>geotools</classifier> </configuration> </plugin> </plugins> -->
 			</build>
 			<dependencies>
-<!-- 				<dependency> -->
-<!-- 					<groupId>${project.groupId}</groupId> -->
-<!-- 					<artifactId>52n-wps-ags</artifactId> -->
-<!-- 				</dependency> -->
-<!-- 				<dependency> -->
-<!-- 					<groupId>${project.groupId}</groupId> -->
-<!-- 					<artifactId>52n-wps-python</artifactId> -->
-<!-- 				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-io-geotools</artifactId>
@@ -747,16 +735,6 @@
 					<artifactId>52n-wps-grass</artifactId>
 					<scope>runtime</scope>
 				</dependency>
-<!--  				<dependency> -->
-<!--  					<groupId>${project.groupId}</groupId> -->
-<!--  					<artifactId>52n-wps-mc</artifactId> -->
-<!--  					<exclusions> -->
-<!--  						<exclusion> -->
-<!--  							<artifactId>xml-apis</artifactId> -->
-<!--  							<groupId>xml-apis</groupId> -->
-<!--  						</exclusion> -->
-<!--  					</exclusions> -->
-<!--  				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>
