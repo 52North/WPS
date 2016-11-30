@@ -128,7 +128,7 @@ public class BackupController {
             } else {
                 try {
                     configurationManager.getBackupServices().restoreBackup(zipFile.getInputStream());
-                } catch (IOException | WPSConfigurationException | NestedRuntimeException e) {//added NestedRuntimeException so spring-core will be included at scope compile 
+                } catch (IOException | WPSConfigurationException | NestedRuntimeException e) {//added NestedRuntimeException so spring-core will be included at scope compile
                     FieldError error = new FieldError(zipFile.getOriginalFilename(), zipFile.getName(),
                             "Error in restoring backup. It's possible that the file is not a correct WPSBackup Zip archive.");
                     listOfErros.add(error);

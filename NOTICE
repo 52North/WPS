@@ -102,7 +102,7 @@ This project includes:
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
   jcommon under GNU Lesser General Public Licence
-  jdom under Similar to Apache License but with the acknowledgment clause removed
+  JDOM under Similar to Apache License but with the acknowledgment clause removed
   jep under GNU General Public License, version 2
   jfreechart under GNU Lesser General Public Licence
   jGridShift under GNU Lesser General Public License, version 2.0 (LGPLv2)

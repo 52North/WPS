@@ -347,6 +347,60 @@
 			<artifactId>commons-dbcp</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<artifactId>xmlbeans</artifactId>
+			<groupId>org.apache.xmlbeans</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-ows-v110</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-wps-v100</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+            <scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-coverage</artifactId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>guava</artifactId>
+			<groupId>com.google.guava</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>commons-codec</artifactId>
+			<groupId>commons-codec</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>commons-httpclient</artifactId>
+			<groupId>commons-httpclient</groupId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>hamcrest-core</artifactId>
+			<groupId>org.hamcrest</groupId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>Rserve</artifactId>
+			<groupId>org.nuiton.thirdparty</groupId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jdom</artifactId>
+			<groupId>org.jdom</groupId>
+            <scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<properties>
@@ -423,7 +477,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
 				<configuration>
 					<argLine>-Xmx1024m</argLine>
 					<testFailureIgnore>true</testFailureIgnore>

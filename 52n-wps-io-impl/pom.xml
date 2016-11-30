@@ -11,21 +11,6 @@
 	<packaging>jar</packaging>
 	<name>52North WPS Input/Ouput Implementation</name>
 	<description>Implementation of the input/output API for WPS service</description>
-<!-- 	<repositories> -->
-<!-- 		<repository> -->
-<!-- 			<id>osgeo</id> -->
-<!-- 			<name>Open Source Geospatial Foundation Repository</name> -->
-<!-- 			<url>http://download.osgeo.org/webdav/geotools/</url> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 			<id>opengeo</id> -->
-<!-- 			<name>OpenGeo Maven Repository</name> -->
-<!-- 			<url>http://repo.opengeo.org</url> -->
-<!-- 		</repository> -->
-<!-- 	</repositories> -->
 	<build>
 		<plugins>
 			<plugin>
@@ -116,6 +101,26 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

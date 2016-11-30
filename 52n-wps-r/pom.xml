@@ -189,6 +189,10 @@
 			<artifactId>52n-wps-commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-wps-commons</artifactId>
             <classifier>tests</classifier>
@@ -199,6 +203,31 @@
 			<artifactId>52n-wps-configuration-api</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.nuiton.thirdparty</groupId>
