@@ -34,40 +34,19 @@
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	</scm>
-<!-- 	<repositories> -->
-<!-- 		<repository> -->
-<!-- 			<id>Apache</id> -->
-<!-- 			<name>Apache repository</name> -->
-<!-- 			<url>http://repo1.maven.org/maven2</url> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<id>n52-releases</id> -->
-<!-- 			<name>52n Releases</name> -->
-<!-- 			<url>http://52north.org/maven/repo/releases</url> -->
-<!-- 			<releases> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</releases> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<id>geotools</id> -->
-<!-- 			<name>Geotools Repo</name> -->
-<!-- 			<url>http://download.osgeo.org/webdav/geotools</url> -->
-<!-- 			<releases> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</releases> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 		</repository> -->
-<!-- 		<repository> -->
-<!-- 			<id>OpenGEO</id> -->
-<!-- 			<name>opengeo repository</name> -->
-<!-- 			<url>http://repo.opengeo.org</url> -->
-<!-- 		</repository> -->
-<!-- 	</repositories> -->
+	<repositories>
+		<repository>
+			<id>geotools</id>
+			<name>Geotools Repo</name>
+			<url>http://download.osgeo.org/webdav/geotools</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -94,7 +73,30 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
+		<plugins>            
+		    <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                               <requireNoRepositories>
+                                   <banRepositories>false</banRepositories>
+                                   <allowSnapshotRepositories>true</allowSnapshotRepositories>
+                                   <!-- Define allowed repositories, use repo id -->
+                                   <allowedRepositories>
+                                        <id>geotools</id>
+                                   </allowedRepositories>
+                               </requireNoRepositories>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
