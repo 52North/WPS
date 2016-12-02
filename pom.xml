@@ -34,7 +34,18 @@
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	</scm>
-	<repositories>
+	<repositories>		
+	    <repository>
+			<id>n52-releases</id>
+			<name>52n Releases</name>
+			<url>http://52north.org/maven/repo/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+        </repository>
 		<repository>
 			<id>geotools</id>
 			<name>Geotools Repo</name>
@@ -89,7 +100,7 @@
                                    <allowSnapshotRepositories>true</allowSnapshotRepositories>
                                    <!-- Define allowed repositories, use repo id -->
                                    <allowedRepositories>
-                                        <id>geotools</id>
+                                        <id>52n Releases, geotools</id>
                                    </allowedRepositories>
                                </requireNoRepositories>
                             </rules>
