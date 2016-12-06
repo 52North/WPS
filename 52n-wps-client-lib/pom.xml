@@ -72,6 +72,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>xalan</groupId>

@@ -346,14 +346,17 @@
 		<dependency>
 			<artifactId>xmlbeans</artifactId>
 			<groupId>org.apache.xmlbeans</groupId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<artifactId>52n-xml-ows-v110</artifactId>
 			<groupId>org.n52.sensorweb</groupId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<artifactId>52n-xml-wps-v100</artifactId>
 			<groupId>org.n52.sensorweb</groupId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -363,6 +366,7 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-opengis</artifactId>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -372,10 +376,12 @@
 		<dependency>
 			<artifactId>guava</artifactId>
 			<groupId>com.google.guava</groupId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<artifactId>commons-codec</artifactId>
 			<groupId>commons-codec</groupId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<artifactId>commons-httpclient</artifactId>
@@ -390,6 +396,7 @@
 		<dependency>
 			<artifactId>Rserve</artifactId>
 			<groupId>org.nuiton.thirdparty</groupId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<artifactId>jdom</artifactId>
@@ -738,6 +745,21 @@
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<artifactId>Rserve</artifactId>
+					<groupId>org.nuiton.thirdparty</groupId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-opengis</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-coverage</artifactId>
 					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
