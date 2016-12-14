@@ -117,7 +117,7 @@ public class GeneratorFactory {
     public IGenerator getGenerator(String schema, String format, String encoding, Class<?> outputInternalClass) {
 
         // dealing with NULL encoding
-        if (encoding == null){
+        if (encoding == null || encoding.isEmpty()){
             encoding = IOHandler.DEFAULT_ENCODING;
         }
 

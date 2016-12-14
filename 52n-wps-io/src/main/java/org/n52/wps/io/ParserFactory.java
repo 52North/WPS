@@ -126,7 +126,7 @@ public class ParserFactory {
     public IParser getParser(String schema, String format, String encoding, Class<?> requiredInputClass) {
 
         // dealing with NULL encoding
-        if (encoding == null){
+        if (encoding == null || encoding.isEmpty()){
             encoding = IOHandler.DEFAULT_ENCODING;
         }
 
