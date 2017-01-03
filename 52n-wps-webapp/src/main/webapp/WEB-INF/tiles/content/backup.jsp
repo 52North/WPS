@@ -112,6 +112,7 @@
 		$.ajax({
 			type : form.attr('method'),
 			url : url,
+			headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 			data : form.serialize(),
 			success : function(xhr) {
 				var savePath = xhr;
@@ -144,6 +145,7 @@
 
 		$.ajax({
 			url : url,
+			headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 			data : formData,
 			dataType : 'text',
 			processData : false,
