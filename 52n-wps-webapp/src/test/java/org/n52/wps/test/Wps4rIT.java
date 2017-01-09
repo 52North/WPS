@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -56,21 +56,21 @@ import org.rosuda.REngine.Rserve.RserveException;
 import org.xml.sax.SAXException;
 
 /**
- * 
+ *
  * To run this integration tests there has to be RServe running on the localhost and the R repository must be
  * enabled in the WPS config.
- * 
+ *
  * To start RServe:
- * 
+ *
  * <ul>
  * <li>start <code>R</code></li>
  * <li>in the R console, load the library Rserve: <code>library(Rserve)</code></li>
  * <li>in the R console, start Rserve: <code>Rserve()</code></li>
  * <li>you should see and output "... Ok, ready to answer queries."</li>
  * </ul>
- * 
+ *
  * To enable the R process repository:
- * 
+ *
  * <ul>
  * <li>open your WPSConfiguration file, normally located in WEB-INF/config/wps_config.xml</li>
  * <li>Find the "LocalRAlgorithmRepository"</li>

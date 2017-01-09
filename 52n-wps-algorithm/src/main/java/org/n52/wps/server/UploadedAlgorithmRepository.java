@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -16,10 +16,6 @@
  */
 package org.n52.wps.server;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,141 +33,149 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A static repository to retrieve the available algorithms.
- * 
+ *
  * @author foerster, Bastian Schaeffer, University of Muenster
- * 
+ *
  */
 public class UploadedAlgorithmRepository implements
-		ITransactionalAlgorithmRepository {
+        ITransactionalAlgorithmRepository {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(LocalAlgorithmRepository.class);
-	private Map<String, String> algorithmMap;
-	private Map<String, ProcessDescription> processDescriptionMap;
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(LocalAlgorithmRepository.class);
+    private Map<String, String> algorithmMap;
+    private Map<String, ProcessDescription> processDescriptionMap;
 
-	public UploadedAlgorithmRepository() {
-		algorithmMap = new HashMap<String, String>();
-		processDescriptionMap = new HashMap<String, ProcessDescription>();
-		
-		ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
-		
-		// check if the repository is active
-		if(uploadedAlgorithmRepoConfigModule.isActive()){
-			List<AlgorithmEntry> algorithmEntries = uploadedAlgorithmRepoConfigModule.getAlgorithmEntries();			
-			
-			for (AlgorithmEntry algorithmEntry : algorithmEntries) {
-				if(algorithmEntry.isActive()){
-					addAlgorithm(algorithmEntry.getAlgorithm());
-				}
-			}
-		} else {
-			LOGGER.debug("Local Algorithm Repository is inactive.");
-		}
+    public UploadedAlgorithmRepository() {
+        algorithmMap = new HashMap<String, String>();
+        processDescriptionMap = new HashMap<String, ProcessDescription>();
 
-	}
+        ConfigurationModule uploadedAlgorithmRepoConfigModule = WPSConfig.getInstance().getConfigurationModuleForClass(this.getClass().getName(), ConfigurationCategory.REPOSITORY);
 
-	public boolean addAlgorithms(String[] algorithms) {
-		for (String algorithmClassName : algorithms) {
-			addAlgorithm(algorithmClassName);
-		}
-		LOGGER.info("Algorithms registered!");
-		return true;
+        // check if the repository is active
+        if(uploadedAlgorithmRepoConfigModule.isActive()){
+            List<AlgorithmEntry> algorithmEntries = uploadedAlgorithmRepoConfigModule.getAlgorithmEntries();
 
-	}
+            for (AlgorithmEntry algorithmEntry : algorithmEntries) {
+                if(algorithmEntry.isActive()){
+                    addAlgorithm(algorithmEntry.getAlgorithm());
+                }
+            }
+        } else {
+            LOGGER.debug("Local Algorithm Repository is inactive.");
+        }
 
-	public IAlgorithm getAlgorithm(String className) {
-		try {
-			return loadAlgorithm(algorithmMap.get(className));
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			return null;
-		}
-	}
+    }
 
-	public Collection<IAlgorithm> getAlgorithms() {
-		Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
-		try {
-			for (String algorithmClasses : algorithmMap.values()) {
-				resultList
-						.add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
-			}
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-		}
-		return resultList;
-	}
+    public boolean addAlgorithms(String[] algorithms) {
+        for (String algorithmClassName : algorithms) {
+            addAlgorithm(algorithmClassName);
+        }
+        LOGGER.info("Algorithms registered!");
+        return true;
 
-	public Collection<String> getAlgorithmNames() {
-		return new ArrayList<String>(algorithmMap.keySet());
-	}
+    }
 
-	public boolean containsAlgorithm(String className) {
-		return algorithmMap.containsKey(className);
-	}
+    public IAlgorithm getAlgorithm(String className) {
+        try {
+            return loadAlgorithm(algorithmMap.get(className));
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return null;
+        }
+    }
 
-	private IAlgorithm loadAlgorithm(String algorithmClassName)
-			throws Exception {
-		
-		Class<?> algorithmClass = new CustomClassLoader("/uploaded").loadClass(algorithmClassName);
-		IAlgorithm algorithm = null;
-		if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
-			algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());
-		} else if (algorithmClass.isAnnotationPresent(Algorithm.class)) {
-			// we have an annotated algorithm that doesn't implement IAlgorithm
-			// wrap it in a proxy class
-			algorithm = new AbstractAnnotatedAlgorithm.Proxy(algorithmClass);
-		} else {
-			throw new Exception(
-					"Could not load algorithm "
-							+ algorithmClassName
-							+ " does not implement IAlgorithm or have a Algorithm annotation.");
-		}
-		
-		
+    public Collection<IAlgorithm> getAlgorithms() {
+        Collection<IAlgorithm> resultList = new ArrayList<IAlgorithm>();
+        try {
+            for (String algorithmClasses : algorithmMap.values()) {
+                resultList
+                        .add(loadAlgorithm(algorithmMap.get(algorithmClasses)));
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return resultList;
+    }
+
+    public Collection<String> getAlgorithmNames() {
+        return new ArrayList<String>(algorithmMap.keySet());
+    }
+
+    public boolean containsAlgorithm(String className) {
+        return algorithmMap.containsKey(className);
+    }
+
+    private IAlgorithm loadAlgorithm(String algorithmClassName)
+            throws Exception {
+
+        Class<?> algorithmClass = new CustomClassLoader("uploaded").loadClass(algorithmClassName);
+        IAlgorithm algorithm = null;
+        if (IAlgorithm.class.isAssignableFrom(algorithmClass)) {
+            algorithm = IAlgorithm.class.cast(algorithmClass.newInstance());
+        } else if (algorithmClass.isAnnotationPresent(Algorithm.class)) {
+            // we have an annotated algorithm that doesn't implement IAlgorithm
+            // wrap it in a proxy class
+            algorithm = new AbstractAnnotatedAlgorithm.Proxy(algorithmClass);
+        } else {
+            throw new Exception(
+                    "Could not load algorithm "
+                            + algorithmClassName
+                            + " does not implement IAlgorithm or have a Algorithm annotation.");
+        }
+
+
         for (String supportedVersion : WPSConfig.SUPPORTED_VERSIONS) {
-            
-    		if(!algorithm.processDescriptionIsValid(supportedVersion)) {
-    			LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
-    			throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
-    		}
-		}
-		return algorithm;
-	}
 
-	public boolean addAlgorithm(Object processID) {
-		if (!(processID instanceof String)) {
-			return false;
-		}
-		String algorithmClassName = (String) processID;
+            if(!algorithm.processDescriptionIsValid(supportedVersion)) {
+                LOGGER.warn("Algorithm description is not valid: " + algorithmClassName);//TODO add version to exception/log
+                throw new Exception("Could not load algorithm " +algorithmClassName +". ProcessDescription Not Valid.");
+            }
+        }
+        return algorithm;
+    }
 
-		algorithmMap.put(algorithmClassName, algorithmClassName);
-		LOGGER.info("Algorithm class registered: " + algorithmClassName);
+    @Override
+    public boolean addAlgorithm(Object item) {
+        if ( !(item instanceof String || item instanceof Class<?>)) {
+            return false;
+        }
+        String algorithmClassName;
+        if (item instanceof String) {
+            algorithmClassName = (String) item;
+        } else {
+            // TODO to be tested as custom class loader is being used
+            // which scans in /uploaded folder only
+            algorithmClassName = ((Class<?>) item).getName();
+        }
 
-		return true;
+        algorithmMap.put(algorithmClassName, algorithmClassName);
+        LOGGER.info("Algorithm class registered: " + algorithmClassName);
 
-	}
+        return true;
 
-	public boolean removeAlgorithm(Object processID) {
-		if (!(processID instanceof String)) {
-			return false;
-		}
-		String className = (String) processID;
-		if (algorithmMap.containsKey(className)) {
-			algorithmMap.remove(className);
-			return true;
-		}
-		return false;
-	}
+    }
 
-	@Override
-	public ProcessDescription getProcessDescription(String processID) {
-		if (!processDescriptionMap.containsKey(processID)) {
-			processDescriptionMap.put(processID, getAlgorithm(processID).getDescription());
-		}
-		return processDescriptionMap.get(processID);
-	}
+    public boolean removeAlgorithm(Object processID) {
+        if (!(processID instanceof String)) {
+            return false;
+        }
+        String className = (String) processID;
+        if (algorithmMap.containsKey(className)) {
+            algorithmMap.remove(className);
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public void shutdown() {}
-	
+    @Override
+    public ProcessDescription getProcessDescription(String processID) {
+        if (!processDescriptionMap.containsKey(processID)) {
+            processDescriptionMap.put(processID, getAlgorithm(processID).getDescription());
+        }
+        return processDescriptionMap.get(processID);
+    }
+
+    @Override
+    public void shutdown() {}
+
 }

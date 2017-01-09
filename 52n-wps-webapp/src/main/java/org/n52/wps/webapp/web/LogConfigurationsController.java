@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,58 +54,58 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("log")
 public class LogConfigurationsController {
 
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(LogConfigurationsController.class);
 
-	/**
-	 * Display the log configuration module
-	 * 
-	 * @param model
-	 * @return The log view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String display(Model model) {
-		LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices()
-				.getLogConfigurations();
-		List<String> logLevel = new ArrayList<String>();
-		logLevel.add("DEBUG");
-		logLevel.add("INFO");
-		logLevel.add("WARN");
-		model.addAttribute("logLevel", logLevel);
-		model.addAttribute("logConfigurations", logConfigurations);
-		LOGGER.info("Reterived '{}' configuration module.", logConfigurations.getClass().getName());
-		return "log";
-	}
+    /**
+     * Display the log configuration module
+     *
+     * @param model the model
+     * @return The log view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String display(Model model) {
+        LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices()
+                .getLogConfigurations();
+        List<String> logLevel = new ArrayList<String>();
+        logLevel.add("DEBUG");
+        logLevel.add("INFO");
+        logLevel.add("WARN");
+        model.addAttribute("logLevel", logLevel);
+        model.addAttribute("logConfigurations", logConfigurations);
+        LOGGER.info("Reterived '{}' configuration module.", logConfigurations.getClass().getName());
+        return "log";
+    }
 
-	/**
-	 * Process form submission. The method will return an HTTP 200 status code if there are no errors, else, it will
-	 * return a 400 status code.
-	 * 
-	 * @param logConfigurations
-	 *            The model holding the log configuration values
-	 * @param result
-	 * @param model
-	 * @param response
-	 * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-	 *         errors.
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	public ValidationResponse processPost(
-			@ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations, BindingResult result,
-			Model model, HttpServletResponse response) {
-		ValidationResponse res = new ValidationResponse();
-		if (result.hasErrors()) {
-			model.addAttribute("logConfigurations", logConfigurations);
-			res.setErrorMessageList(result.getFieldErrors());
-			res.setStatus("Fail");
-			response.setStatus(400);
-		} else {
-			configurationManager.getLogConfigurationsServices().saveLogConfigurations(logConfigurations);
-			res.setStatus("Sucess");
-		}
-		return res;
-	}
+    /**
+     * Process form submission. The method will return an HTTP 200 status code if there are no errors, else, it will
+     * return a 400 status code.
+     *
+     * @param logConfigurations
+     *            The model holding the log configuration values
+     * @param result the <code>BindingResult</code>
+     * @param model the model
+     * @param response the servlet response
+     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
+     *         errors.
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ValidationResponse processPost(
+            @ModelAttribute("logConfigurations") @Valid LogConfigurations logConfigurations, BindingResult result,
+            Model model, HttpServletResponse response) {
+        ValidationResponse res = new ValidationResponse();
+        if (result.hasErrors()) {
+            model.addAttribute("logConfigurations", logConfigurations);
+            res.setErrorMessageList(result.getFieldErrors());
+            res.setStatus("Fail");
+            response.setStatus(400);
+        } else {
+            configurationManager.getLogConfigurationsServices().saveLogConfigurations(logConfigurations);
+            res.setStatus("Sucess");
+        }
+        return res;
+    }
 }

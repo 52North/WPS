@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Controller
 public class MainController {
-			
-	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String displayLoginForm() {
-		return "login";
-	}
+
+    @RequestMapping(value = "login", method = RequestMethod.GET)
+    public String displayLoginForm() {
+        return "login";
+    }
 }

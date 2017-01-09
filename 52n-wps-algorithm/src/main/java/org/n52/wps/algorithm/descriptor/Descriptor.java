@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,7 +28,7 @@ public abstract class Descriptor {
     private final String title;
     private final String abstrakt; // want 'abstract' but it's a java keyword
 
-	Descriptor(Builder<? extends Builder<?>> builder) {
+    Descriptor(Builder<? extends Builder<?>> builder) {
         this.identifier = builder.identifier;
         this.title = builder.title;
         this.abstrakt = builder.abstrakt;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,50 +47,50 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
  */
 public class Server implements ConfigurationModule {
 
-	private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",
-			true, "localhost");	
-	private ConfigurationEntry<String> protocolEntry = new StringConfigurationEntry("protocol", "Server protocol", "",
-			true, "http");
-	private ConfigurationEntry<Integer> hostportEntry = new IntegerConfigurationEntry("hostport", "Server Host Port",
-			"", true, 8080);
-	private ConfigurationEntry<Boolean> includeDataInputsInResponseEntry = new BooleanConfigurationEntry(
-			"data_inputs_in_response", "Include Data Inputs", "", true, false);
-	private ConfigurationEntry<Integer> computationTimeoutEntry = new IntegerConfigurationEntry("computation_timeout",
-			"Computation Timeout", "In milli seconds", true, 5);
-	private ConfigurationEntry<Boolean> cacheCapabilitesEntry = new BooleanConfigurationEntry("cache_capabilites",
-			"Cache Capabilities", "", true, false);
-	private ConfigurationEntry<String> weppappPathEntry = new StringConfigurationEntry("weppapp_path", "Webapp Path",
-			"", true, "wps");
-	private ConfigurationEntry<Double> repoReloadIntervalEntry = new DoubleConfigurationEntry("repo_reload_interval",
-			"Repo Reload Interval", "(In hours. 0 = No Auto Reload)", true, 0.0);
-	private ConfigurationEntry<Boolean> responseURLFilterEnabledEntry = new BooleanConfigurationEntry(
-			"response_url_filter_enabled", "Response URL Filter Enabled", "", true, false);
-	private ConfigurationEntry<Integer> minPoolSizeEntry = new IntegerConfigurationEntry("min_pool_size", "Minimum thread pool size",
-			"Request executor core thread pool size", true, 10);
-	private ConfigurationEntry<Integer> maxPoolSizeEntry = new IntegerConfigurationEntry("max_pool_size", "Maxmum thread pool size",
-			"Request executor maximum thread pool size", true, 20);
-	private ConfigurationEntry<Integer> keepAliveSecondsEntry = new IntegerConfigurationEntry("keep_alive_seconds", "Keep alive seconds",
-			"Maximum time that excess idle threads are kept alive", true, 1000);
-	private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
-			"Maximum queued tasks of the work queue", true, 100);
+    private ConfigurationEntry<String> hostnameEntry = new StringConfigurationEntry("hostname", "Server Host Name", "",
+            true, "localhost");
+    private ConfigurationEntry<String> protocolEntry = new StringConfigurationEntry("protocol", "Server protocol", "",
+            true, "http");
+    private ConfigurationEntry<Integer> hostportEntry = new IntegerConfigurationEntry("hostport", "Server Host Port",
+            "", true, 8080);
+    private ConfigurationEntry<Boolean> includeDataInputsInResponseEntry = new BooleanConfigurationEntry(
+            "data_inputs_in_response", "Include Data Inputs", "", true, false);
+    private ConfigurationEntry<Integer> computationTimeoutEntry = new IntegerConfigurationEntry("computation_timeout",
+            "Computation Timeout", "In milli seconds", true, 5);
+    private ConfigurationEntry<Boolean> cacheCapabilitesEntry = new BooleanConfigurationEntry("cache_capabilites",
+            "Cache Capabilities", "", true, false);
+    private ConfigurationEntry<String> weppappPathEntry = new StringConfigurationEntry("weppapp_path", "Webapp Path",
+            "", true, "wps");
+    private ConfigurationEntry<Double> repoReloadIntervalEntry = new DoubleConfigurationEntry("repo_reload_interval",
+            "Repo Reload Interval", "(In hours. 0 = No Auto Reload)", true, 0.0);
+    private ConfigurationEntry<Boolean> responseURLFilterEnabledEntry = new BooleanConfigurationEntry(
+            "response_url_filter_enabled", "Response URL Filter Enabled", "", true, false);
+    private ConfigurationEntry<Integer> minPoolSizeEntry = new IntegerConfigurationEntry("min_pool_size", "Minimum thread pool size",
+            "Request executor core thread pool size", true, 10);
+    private ConfigurationEntry<Integer> maxPoolSizeEntry = new IntegerConfigurationEntry("max_pool_size", "Maxmum thread pool size",
+            "Request executor maximum thread pool size", true, 20);
+    private ConfigurationEntry<Integer> keepAliveSecondsEntry = new IntegerConfigurationEntry("keep_alive_seconds", "Keep alive seconds",
+            "Maximum time that excess idle threads are kept alive", true, 1000);
+    private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
+            "Maximum queued tasks of the work queue", true, 100);
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
-			computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
-			cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry);
+    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
+            computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
+            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry);
 
-	private String hostname;
-	private String protocol;
-	private int hostport;
-	private boolean includeDataInputsInResponse;
-	private int computationTimeout;
-	private boolean cacheCapabilites;
-	private String webappPath;
-	private double repoReloadInterval;
-	private boolean responseURLFilterEnabled;
-	private int minPoolSize;
-	private int maxPoolSize;
-	private int keepAliveSeconds;
-	private int maxQueuedTasks;
+    private String hostname;
+    private String protocol;
+    private int hostport;
+    private boolean includeDataInputsInResponse;
+    private int computationTimeout;
+    private boolean cacheCapabilites;
+    private String webappPath;
+    private double repoReloadInterval;
+    private boolean responseURLFilterEnabled;
+    private int minPoolSize;
+    private int maxPoolSize;
+    private int keepAliveSeconds;
+    private int maxQueuedTasks;
 
     public Server() {
         //
@@ -105,156 +105,156 @@ public class Server implements ConfigurationModule {
     }
 
     @Override
-	public String getModuleName() {
-		return "Server Configuration";
-	}
+    public String getModuleName() {
+        return "Server Configuration";
+    }
 
-	@Override
-	public boolean isActive() {
-		return true;
-	}
+    @Override
+    public boolean isActive() {
+        return true;
+    }
 
-	@Override
-	public void setActive(boolean active) {
+    @Override
+    public void setActive(boolean active) {
 
-	}
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.GENERAL;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.GENERAL;
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return null;
+    }
 
-	public String getHostname() {
-		return hostname;
-	}
+    public String getHostname() {
+        return hostname;
+    }
 
-	@ConfigurationKey(key = "hostname")
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
+    @ConfigurationKey(key = "hostname")
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
 
-	public int getHostport() {
-		return hostport;
-	}
+    public int getHostport() {
+        return hostport;
+    }
 
-	@ConfigurationKey(key = "hostport")
-	public void setHostport(int hostport) {
-		this.hostport = hostport;
-	}
+    @ConfigurationKey(key = "hostport")
+    public void setHostport(int hostport) {
+        this.hostport = hostport;
+    }
 
-	public String getProtocol() {
-		return protocol;
-	}
-	
-	@ConfigurationKey(key = "protocol")
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    public String getProtocol() {
+        return protocol;
+    }
 
-	public boolean isIncludeDataInputsInResponse() {
-		return includeDataInputsInResponse;
-	}
+    @ConfigurationKey(key = "protocol")
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-	@ConfigurationKey(key = "data_inputs_in_response")
-	public void setIncludeDataInputsInResponse(boolean includeDataInputsInResponse) {
-		this.includeDataInputsInResponse = includeDataInputsInResponse;
-	}
+    public boolean isIncludeDataInputsInResponse() {
+        return includeDataInputsInResponse;
+    }
 
-	public int getComputationTimeout() {
-		return computationTimeout;
-	}
+    @ConfigurationKey(key = "data_inputs_in_response")
+    public void setIncludeDataInputsInResponse(boolean includeDataInputsInResponse) {
+        this.includeDataInputsInResponse = includeDataInputsInResponse;
+    }
 
-	@ConfigurationKey(key = "computation_timeout")
-	public void setComputationTimeout(int computationTimeout) {
-		this.computationTimeout = computationTimeout;
-	}
+    public int getComputationTimeout() {
+        return computationTimeout;
+    }
 
-	public boolean isCacheCapabilites() {
-		return cacheCapabilites;
-	}
+    @ConfigurationKey(key = "computation_timeout")
+    public void setComputationTimeout(int computationTimeout) {
+        this.computationTimeout = computationTimeout;
+    }
 
-	@ConfigurationKey(key = "cache_capabilites")
-	public void setCacheCapabilites(boolean cacheCapabilites) {
-		this.cacheCapabilites = cacheCapabilites;
-	}
+    public boolean isCacheCapabilites() {
+        return cacheCapabilites;
+    }
 
-	public String getWebappPath() {
-		return webappPath;
-	}
+    @ConfigurationKey(key = "cache_capabilites")
+    public void setCacheCapabilites(boolean cacheCapabilites) {
+        this.cacheCapabilites = cacheCapabilites;
+    }
 
-	@ConfigurationKey(key = "weppapp_path")
-	public void setWebappPath(String webappPath) {
-		this.webappPath = webappPath;
-	}
+    public String getWebappPath() {
+        return webappPath;
+    }
 
-	public double getRepoReloadInterval() {
-		return repoReloadInterval;
-	}
+    @ConfigurationKey(key = "weppapp_path")
+    public void setWebappPath(String webappPath) {
+        this.webappPath = webappPath;
+    }
 
-	@ConfigurationKey(key = "repo_reload_interval")
-	public void setRepoReloadInterval(double repoReloadInterval) {
-		this.repoReloadInterval = repoReloadInterval;
-	}
+    public double getRepoReloadInterval() {
+        return repoReloadInterval;
+    }
 
-	public boolean isResponseURLFilterEnabled() {
-		return responseURLFilterEnabled;
-	}
+    @ConfigurationKey(key = "repo_reload_interval")
+    public void setRepoReloadInterval(double repoReloadInterval) {
+        this.repoReloadInterval = repoReloadInterval;
+    }
 
-	@ConfigurationKey(key = "response_url_filter_enabled")
-	public void setResponseURLFilterEnabled(boolean responseURLFilterEnabled) {
-		this.responseURLFilterEnabled = responseURLFilterEnabled;
-	}
+    public boolean isResponseURLFilterEnabled() {
+        return responseURLFilterEnabled;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @ConfigurationKey(key = "response_url_filter_enabled")
+    public void setResponseURLFilterEnabled(boolean responseURLFilterEnabled) {
+        this.responseURLFilterEnabled = responseURLFilterEnabled;
+    }
 
-	public int getMinPoolSize() {
-		return minPoolSize;
-	}
-	
-	public int getMaxPoolSize() {
-		return maxPoolSize;
-	}
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public int getKeepAliveSeconds() {
-		return keepAliveSeconds;
-	}
+    public int getMinPoolSize() {
+        return minPoolSize;
+    }
 
-	public int getMaxQueuedTasks() {
-		return maxQueuedTasks;
-	}
+    public int getMaxPoolSize() {
+        return maxPoolSize;
+    }
 
-	@ConfigurationKey(key = "min_pool_size")
-	public void setMinPoolSize(int minPoolSize) {
-		this.minPoolSize = minPoolSize;
-	}
+    public int getKeepAliveSeconds() {
+        return keepAliveSeconds;
+    }
 
-	@ConfigurationKey(key = "max_pool_size")
-	public void setMaxPoolSize(int maxPoolSize) {
-		this.maxPoolSize = maxPoolSize;
-	}
+    public int getMaxQueuedTasks() {
+        return maxQueuedTasks;
+    }
 
-	@ConfigurationKey(key = "keep_alive_seconds")
-	public void setKeepAliveSeconds(int keepAliveSeconds) {
-		this.keepAliveSeconds = keepAliveSeconds;
-	}
+    @ConfigurationKey(key = "min_pool_size")
+    public void setMinPoolSize(int minPoolSize) {
+        this.minPoolSize = minPoolSize;
+    }
 
-	@ConfigurationKey(key = "max_queued_tasks")
-	public void setMaxQueuedTasks(int maxQueuedTasks) {
-		this.maxQueuedTasks = maxQueuedTasks;
-	}
+    @ConfigurationKey(key = "max_pool_size")
+    public void setMaxPoolSize(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+
+    @ConfigurationKey(key = "keep_alive_seconds")
+    public void setKeepAliveSeconds(int keepAliveSeconds) {
+        this.keepAliveSeconds = keepAliveSeconds;
+    }
+
+    @ConfigurationKey(key = "max_queued_tasks")
+    public void setMaxQueuedTasks(int maxQueuedTasks) {
+        this.maxQueuedTasks = maxQueuedTasks;
+    }
 
 }

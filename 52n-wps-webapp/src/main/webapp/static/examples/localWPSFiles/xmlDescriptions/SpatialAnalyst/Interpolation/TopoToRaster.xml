@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.topotoraster</ows:Identifier><!-- ParameterCount=19 -->		
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.interpolation.topotoraster</ows:Identifier><!-- ParameterCount=19 -->
 		<ows:Title>TopoToRaster_sa</ows:Title>
 		<ows:Abstract>Interpolates a hydrologically correct surface from point, line, and polygon data. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -32,7 +32,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>extent</ows:Identifier><!-- 3 -->
@@ -41,7 +41,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>margin</ows:Identifier><!-- 4 -->
@@ -50,7 +50,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>minimum_z_value</ows:Identifier><!-- 5 -->
@@ -59,7 +59,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>maximum_z_value</ows:Identifier><!-- 6 -->
@@ -68,7 +68,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>enforce</ows:Identifier><!-- 7 -->
@@ -81,7 +81,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<ows:Value>ENFORCE</ows:Value>
 						<ows:Value>NO_ENFORCE</ows:Value>
 						<ows:Value>ENFORCE_WITH_SINK</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -93,7 +93,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>CONTOUR</ows:Value>
 						<ows:Value>SPOT</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -103,7 +103,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>roughness_penality</ows:Identifier><!-- 10 -->
@@ -112,7 +112,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>discrete_error_factor</ows:Identifier><!-- 11 -->
@@ -121,7 +121,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>vertical_standard_error</ows:Identifier><!-- 12 -->
@@ -130,7 +130,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>tolerance_1</ows:Identifier><!-- 13 -->
@@ -139,7 +139,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>tolerance_2</ows:Identifier><!-- 14 -->
@@ -148,13 +148,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:double"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_surface_raster</ows:Identifier><!-- 1 -->
-				<ows:Title>out surface raster</ows:Title>	
+				<ows:Title>out surface raster</ows:Title>
 				<ows:Abstract>The output raster surface to be created.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -171,13 +171,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_stream_features</ows:Identifier><!-- 15 -->
-				<ows:Title>out stream features</ows:Title>	
+				<ows:Title>out stream features</ows:Title>
 				<ows:Abstract>The output line feature class of stream polyline features and ridge line features. The line features are created at the beginning of the interpolation process. It provides the general morphology of the surface for interpolation. It can be used to verify correct drainage and morphology by comparing known stream and ridge data.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -196,7 +196,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 			</Output>
 			<Output>
 				<ows:Identifier>out_sink_features</ows:Identifier><!-- 16 -->
-				<ows:Title>out sink features</ows:Title>	
+				<ows:Title>out sink features</ows:Title>
 				<ows:Abstract>The output point feature class of the remaining sink point features. These are the sinks that were not specified in the input sink coverage and were not cleared during drainage enforcement. Adjusting the values of the tolerances, {tolerance_1} and {tolerance_2}, can reduce the number of remaining sinks. Remaining sinks often indicate errors in the input data that the drainage enforcement algorithm could not resolve. This can be an efficient way of detecting subtle elevation errors.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -215,7 +215,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 			</Output>
 			<Output>
 				<ows:Identifier>out_diagnostic_file</ows:Identifier><!-- 17 -->
-				<ows:Title>out diagnostic file</ows:Title>	
+				<ows:Title>out diagnostic file</ows:Title>
 				<ows:Abstract>The output diagnostic file listing all inputs and parameters used and the number of sinks cleared at each resolution and iteration.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -234,7 +234,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 			</Output>
 			<Output>
 				<ows:Identifier>out_parameter_file</ows:Identifier><!-- 18 -->
-				<ows:Title>out parameter file</ows:Title>	
+				<ows:Title>out parameter file</ows:Title>
 				<ows:Abstract>The output parameter file listing all inputs and parameters used, which can be used with Topo to Raster by File to run the interpolation again.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -254,5 +254,5 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

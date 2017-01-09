@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,15 +37,15 @@ import javax.servlet.ServletContextListener;
  */
 public class WebAppPropertiesListener implements ServletContextListener {
 
-	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		String rootPath = sce.getServletContext().getRealPath("/");
-		System.setProperty("webroot", rootPath);
-	}
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        String rootPath = sce.getServletContext().getRealPath("/");
+        System.setProperty("webroot", rootPath);
+    }
 
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
 
-	}
+    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,42 +47,42 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /*
- * 
+ *
  * Some conveniant methods, to access some XMLBean objects.
  * @author foerster
  *
  */
 public class XMLBeansHelper {
-	public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
-		for(OutputDescriptionType desc : outputDescs) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
+        for(OutputDescriptionType desc : outputDescs) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-	public static InputDescriptionType findInputByID(String outputID, DataInputs inputs) {
-		for(InputDescriptionType desc : inputs.getInputArray()) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
-                return desc;
-            }
-        }
-        return null;
-    }
-	
-	public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
-		for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
-			if(desc.getIdentifier().getStringValue().equals(outputID)) {
+    public static InputDescriptionType findInputByID(String outputID, DataInputs inputs) {
+        for(InputDescriptionType desc : inputs.getInputArray()) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
                 return desc;
             }
         }
         return null;
     }
 
-	public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
-		for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
-			if(desc.getIdentifier().getStringValue().equals(inputID)) {
+    public static net.opengis.wps.x20.OutputDescriptionType findOutputByID(String outputID, net.opengis.wps.x20.OutputDescriptionType[] outputDescs) {
+        for(net.opengis.wps.x20.OutputDescriptionType desc : outputDescs) {
+            if(desc.getIdentifier().getStringValue().equals(outputID)) {
+                return desc;
+            }
+        }
+        return null;
+    }
+
+    public static net.opengis.wps.x20.InputDescriptionType findInputByID(String inputID, ProcessDescriptionType descType) {
+        for(net.opengis.wps.x20.InputDescriptionType desc : descType.getInputArray()) {
+            if(desc.getIdentifier().getStringValue().equals(inputID)) {
                 return desc;
             }
         }
@@ -104,33 +104,33 @@ public class XMLBeansHelper {
      * Registers a prefix for a namespace to be used in responses.
      *
      * @param namespace the XML namespace
-     * @param prefix    the prefix
+     * @param prefix the prefix
      */
     public static void registerPrefix(String namespace, String prefix) {
         PREFIXES.put(Preconditions.checkNotNull(Strings.emptyToNull(namespace)),
                      Preconditions.checkNotNull(Strings.emptyToNull(prefix)));
     }
-    
+
     /**
-     * TODO javadoc
-     * 
-     * @param object
-     * @param schemaLocation
+     *Adds a schema location attribute to an XMLObject
+     *
+     * @param object the XMLObject
+     * @param schemaLocation the schema location
      */
     public static void addSchemaLocationToXMLObject(XmlObject object, String schemaLocation){
-    	
-		XmlCursor c = object.newCursor();
-		c.toFirstChild();
-		c.toLastAttribute();
-		c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
-    	
+
+        XmlCursor c = object.newCursor();
+        c.toFirstChild();
+        c.toLastAttribute();
+        c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+
     }
 
     /**
      * The namespace for WPS 1.0.0: {@value}.
      */
     public static final String NS_WPS_1_0_0 = "http://www.opengis.net/wps/1.0.0";
-    
+
     /**
      * The namespace for WPS 1.0.0: {@value}.
      */
@@ -145,7 +145,7 @@ public class XMLBeansHelper {
      * The namespace for WPS 1.0.0: {@value}.
      */
     public static final String NS_OWS_1_1 = "http://www.opengis.net/ows/1.1";
-    
+
     /**
      * The namespace for WPS 1.0.0: {@value}.
      */

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,66 +48,83 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequestMapping("repositories")
 public class RepositoriesController extends BaseConfigurationsController {
 
-	/**
-	 * Display repositories configuration modules
-	 * 
-	 * @return The repositories view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String displayRepositories(Model model) {
-		ConfigurationCategory category = ConfigurationCategory.REPOSITORY;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-				.getConfigurationModulesByCategory(category);
-		model.addAttribute("configurations", configurations);
-		LOGGER.info("Retrived '{}' configurations.", category);
-		return "repositories";
-	}
+    /**
+     * Display repositories configuration modules
+     *
+     * @param model the model
+     * @return The repositories view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String displayRepositories(Model model) {
+        ConfigurationCategory category = ConfigurationCategory.REPOSITORY;
+        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
+                .getConfigurationModulesByCategory(category);
+        model.addAttribute("configurations", configurations);
+        LOGGER.info("Retrived '{}' configurations.", category);
+        return "repositories";
+    }
 
-	/**
-	 * Set the status of a configuration algorithm to active/inactive
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithm
-	 *            The algorithm name
-	 * @param status
-	 *            The new status
-	 */
-	@RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm,
-			@PathVariable boolean status) {
-		configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, status);
-		LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
-	}
-	
-	/**
-	 * Add a new algorithm to the repository
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithmName
-	 *            The algorithm name
-	 */
-	@RequestMapping(value = "algorithms/add_algorithm", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void addAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("algorithmName") String algorithmName) {
-		configurationManager.getConfigurationServices().addAlgorithmEntry(moduleClassName, algorithmName);
-		LOGGER.info("Algorithm '{}' has been added to module '{}'", algorithmName, moduleClassName);
-	}
-	
-	/**
-	 * Delete an algorithm from the repository
-	 * 
-	 * @param moduleClassName
-	 *            The fully qualified name of the module holding the algorithm
-	 * @param algorithmName
-	 *            The algorithm name
-	 */
-	@RequestMapping(value = "algorithms/{moduleClassName}/{algorithmName}/delete", method = RequestMethod.POST)
-	@ResponseStatus(value = HttpStatus.OK)
-	public void deleteAlgorithm(@PathVariable String moduleClassName, @PathVariable String algorithmName) {
-		configurationManager.getConfigurationServices().deleteAlgorithmEntry(moduleClassName, algorithmName);
-		LOGGER.info("Algorithm '{}' has been deleted from module '{}'", algorithmName, moduleClassName);
-	}
+    /**
+     * Set the status of a configuration algorithm to active/inactive
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the algorithm
+     * @param algorithm
+     *            The algorithm name
+     * @param status
+     *            The new status
+     */
+    @RequestMapping(value = "algorithms/activate/{moduleClassName}/{algorithm}/{status}", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void toggleAlgorithmStatus(@PathVariable String moduleClassName, @PathVariable String algorithm,
+            @PathVariable boolean status) {
+        configurationManager.getConfigurationServices().setAlgorithmEntry(moduleClassName, algorithm, status);
+        LOGGER.info("Algorithm '{}' status in module '{}' has been updated to '{}'", algorithm, moduleClassName, status);
+    }
+
+    /**
+     * Add a new algorithm to the repository
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the algorithm
+     * @param algorithmName
+     *            The algorithm name
+     */
+    @RequestMapping(value = "algorithms/add_algorithm", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void addAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("algorithmName") String algorithmName) {
+        configurationManager.getConfigurationServices().addAlgorithmEntry(moduleClassName, algorithmName);
+        LOGGER.info("Algorithm '{}' has been added to module '{}'", algorithmName, moduleClassName);
+    }
+
+
+    /**
+     * Edit an algorithm name
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the algorithm
+     * @param oldAlgorithmName the old name
+     * @param algorithmName the nem name
+     */
+    @RequestMapping(value = "algorithms/edit_algorithm", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void editAlgorithm(@RequestParam("moduleClassName") String moduleClassName, @RequestParam("oldAlgorithmName") String oldAlgorithmName, @RequestParam("algorithmName") String algorithmName) {
+        configurationManager.getConfigurationServices().updateAlgorithmEntry(moduleClassName, algorithmName, oldAlgorithmName);
+        LOGGER.info("Algorithm '{}' has been updated in module '{}'", algorithmName, moduleClassName);
+    }
+
+    /**
+     * Delete an algorithm from the repository
+     *
+     * @param moduleClassName
+     *            The fully qualified name of the module holding the algorithm
+     * @param algorithmName
+     *            The algorithm name
+     */
+    @RequestMapping(value = "algorithms/{moduleClassName}/{algorithmName}/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteAlgorithm(@PathVariable String moduleClassName, @PathVariable String algorithmName) {
+        configurationManager.getConfigurationServices().deleteAlgorithmEntry(moduleClassName, algorithmName);
+        LOGGER.info("Algorithm '{}' has been deleted from module '{}'", algorithmName, moduleClassName);
+    }
 }

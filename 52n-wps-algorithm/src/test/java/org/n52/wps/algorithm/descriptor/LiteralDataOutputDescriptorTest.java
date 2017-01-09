@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,17 +34,17 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
  * @author tkunicki
  */
 public class LiteralDataOutputDescriptorTest extends TestCase {
-    
+
     public LiteralDataOutputDescriptorTest(String testName) {
         super(testName);
     }
-    
+
     public void testStaticBuilder() {
         LiteralDataOutputDescriptor descriptor =
                 LiteralDataOutputDescriptor.builder("mock_identifier", LiteralStringBinding.class).build();
         assertEquals("mock_identifier", descriptor.getIdentifier());
         assertEquals(LiteralStringBinding.class, descriptor.getBinding());
-        
+
         boolean thrown = false;
         try {
             LiteralDataOutputDescriptor.builder(null, LiteralStringBinding.class);
@@ -53,7 +53,7 @@ public class LiteralDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             LiteralDataOutputDescriptor.builder("", LiteralStringBinding.class);
@@ -62,7 +62,7 @@ public class LiteralDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             LiteralDataOutputDescriptor.builder("mock_identifier", null);
@@ -71,7 +71,7 @@ public class LiteralDataOutputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
     }
 
     public void testAnyURIBuilder() {
@@ -150,5 +150,5 @@ public class LiteralDataOutputDescriptorTest extends TestCase {
         assertEquals(LiteralStringBinding.class, descriptor.getBinding());
         assertEquals(BasicXMLTypeFactory.STRING_URI, descriptor.getDataType());
     }
-    
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,57 +44,57 @@ import org.n52.wps.webapp.service.UserService;
 
 public class ConfigurationManagerImplTest {
 
-	@InjectMocks
-	private ConfigurationManager configurationManager;
-	
-	@Mock
-	private ConfigurationService configurationService;
+    @InjectMocks
+    private ConfigurationManager configurationManager;
 
-	@Mock
-	private UserService userService;
+    @Mock
+    private ConfigurationService configurationService;
 
-	@Mock
-	private CapabilitiesService capabilitiesService;
+    @Mock
+    private UserService userService;
 
-	@Mock
-	private LogConfigurationsService logConfigurationsService;
-	
-	@Mock
-	private BackupService backupService;
-		
-	@Before
-	public void setup() {
-		configurationManager = new ConfigurationManagerImpl();
-		MockitoAnnotations.initMocks(this);
-	}
-	
-	@After
-	public void tearDown() {
-		configurationManager = null;
-	}
+    @Mock
+    private CapabilitiesService capabilitiesService;
 
-	@Test
-	public void getConfigurationServices() {
-		assertNotNull(configurationManager.getConfigurationServices());
-	}
-	
-	@Test
-	public void getUserServices() {
-		assertNotNull(configurationManager.getUserServices());
-	}
-	
-	@Test
-	public void getCapabilitiesServices() {
-		assertNotNull(configurationManager.getCapabilitiesServices());
-	}
-	
-	@Test
-	public void getLogConfigurationsServices() {
-		assertNotNull(configurationManager.getLogConfigurationsServices());
-	}
-	
-	@Test
-	public void getLogBackupServices() {
-		assertNotNull(configurationManager.getBackupServices());
-	}
+    @Mock
+    private LogConfigurationsService logConfigurationsService;
+
+    @Mock
+    private BackupService backupService;
+
+    @Before
+    public void setup() {
+        configurationManager = new ConfigurationManagerImpl();
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void tearDown() {
+        configurationManager = null;
+    }
+
+    @Test
+    public void getConfigurationServices() {
+        assertNotNull(configurationManager.getConfigurationServices());
+    }
+
+    @Test
+    public void getUserServices() {
+        assertNotNull(configurationManager.getUserServices());
+    }
+
+    @Test
+    public void getCapabilitiesServices() {
+        assertNotNull(configurationManager.getCapabilitiesServices());
+    }
+
+    @Test
+    public void getLogConfigurationsServices() {
+        assertNotNull(configurationManager.getLogConfigurationsServices());
+    }
+
+    @Test
+    public void getLogBackupServices() {
+        assertNotNull(configurationManager.getBackupServices());
+    }
 }

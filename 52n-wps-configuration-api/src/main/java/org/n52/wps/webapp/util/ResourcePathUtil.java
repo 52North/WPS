@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,49 +45,49 @@ import org.springframework.web.context.support.ServletContextResource;
 @Component
 public class ResourcePathUtil {
 
-	@Autowired
-	private ServletContext servletContext;
+    @Autowired
+    private ServletContext servletContext;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(ResourcePathUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ResourcePathUtil.class);
 
-	/**
-	 * Returns the absolute path for web app resources and directories.
-	 * 
-	 * @param relativePath
-	 *            the relative path of a resource or a directory
-	 * @return The absolute path of a resource or a directory
-	 * @throws RuntimeException
-	 *             if the path cannot be resolved
-	 */
-	public String getWebAppResourcePath(String relativePath) {
-		Resource resource = new ServletContextResource(servletContext, relativePath);
-		try {
-			String absolutePath = resource.getFile().getAbsolutePath();
-			LOGGER.info("Resolved webapp resource'{}' to '{}'", relativePath, absolutePath);
-			return absolutePath;
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a webapp resource:", e);
-		}
-	}
+    /**
+     * Returns the absolute path for web app resources and directories.
+     *
+     * @param relativePath
+     *            the relative path of a resource or a directory
+     * @return The absolute path of a resource or a directory
+     * @throws RuntimeException
+     *             if the path cannot be resolved
+     */
+    public String getWebAppResourcePath(String relativePath) {
+        Resource resource = new ServletContextResource(servletContext, relativePath);
+        try {
+            String absolutePath = resource.getFile().getAbsolutePath();
+            LOGGER.info("Resolved webapp resource'{}' to '{}'", relativePath, absolutePath);
+            return absolutePath;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a webapp resource:", e);
+        }
+    }
 
-	/**
-	 * Returns the absolute path for classpath resources and directories.
-	 * 
-	 * @param relativePath
-	 *            the relative path of a resource or a directory
-	 * @return The absolute path of a resource or a directory
-	 * @throws RuntimeException
-	 *             if the path cannot be resolved
-	 */
-	public String getClassPathResourcePath(String relativePath) {
-		Resource resource = new ClassPathResource(relativePath);
-		try {
-			String absolutePath = resource.getFile().getAbsolutePath();
-			LOGGER.info("Resolved classpath resource '{}' to '{}'", relativePath, absolutePath);
-			return absolutePath;
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a calsspath resource:", e);
-		}
-	}
+    /**
+     * Returns the absolute path for classpath resources and directories.
+     *
+     * @param relativePath
+     *            the relative path of a resource or a directory
+     * @return The absolute path of a resource or a directory
+     * @throws RuntimeException
+     *             if the path cannot be resolved
+     */
+    public String getClassPathResourcePath(String relativePath) {
+        Resource resource = new ClassPathResource(relativePath);
+        try {
+            String absolutePath = resource.getFile().getAbsolutePath();
+            LOGGER.info("Resolved classpath resource '{}' to '{}'", relativePath, absolutePath);
+            return absolutePath;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to resolve '{" + relativePath + "}' to a calsspath resource:", e);
+        }
+    }
 
 }

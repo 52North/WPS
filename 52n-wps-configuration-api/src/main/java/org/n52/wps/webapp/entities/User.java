@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,53 +29,55 @@
 package org.n52.wps.webapp.entities;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.n52.wps.webapp.dao.UserDAO;
+import org.n52.wps.webapp.service.UserService;
 
 /**
  * User bean to represent the user.
- * 
+ *
  * @see UserService
  * @see UserDAO
  */
 public class User {
-	private int userId;
+    private int userId;
 
-	@NotBlank(message = "Username must not be blank.")
-	private String username;
+    @NotBlank(message = "Username must not be blank.")
+    private String username;
 
-	@NotBlank(message = "Password must not be blank.")
-	private String password;
-	private String role;
+    @NotBlank(message = "Password must not be blank.")
+    private String password;
+    private String role;
 
-	public int getUserId() {
-		return userId;
-	}
+    public int getUserId() {
+        return userId;
+    }
 
-	public void setUserId(int userId) {
-		this.userId = userId;
-	}
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getRole() {
-		return role;
-	}
+    public String getRole() {
+        return role;
+    }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+    public void setRole(String role) {
+        this.role = role;
+    }
 
 }

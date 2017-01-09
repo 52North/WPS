@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,18 +45,18 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
     private final String defaultValue;
     private final List<String> allowedValues;
 
-	protected LiteralDataInputDescriptor(Builder builder) {
-		super(builder);
+    protected LiteralDataInputDescriptor(Builder builder) {
+        super(builder);
         this.dataType = builder.dataType;
-		this.defaultValue = builder.defaultValue;
-		this.allowedValues = builder.allowedValues != null ?
+        this.defaultValue = builder.defaultValue;
+        this.allowedValues = builder.allowedValues != null ?
             Collections.unmodifiableList(builder.allowedValues) :
             Collections.EMPTY_LIST;
         // if allowedValues and defaultValue are set, make sure defaultValue is in set of allowedValues
         Preconditions.checkState(
                 !hasAllowedValues() || !hasDefaultValue() || allowedValues.contains(defaultValue),
                 "defaultValue of %s not in set of allowedValues", defaultValue);
-	}
+    }
 
     public String getDataType() {
         return dataType;
@@ -102,7 +102,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
     public static Builder<?,Class<LiteralDateTimeBinding>> dateTimeBuilder(String identifier) {
         return builder(identifier, LiteralDateTimeBinding.class);
     }
-    
+
     public static Builder<?,Class<LiteralDoubleBinding>> doubleBuilder(String identifier) {
         return builder(identifier, LiteralDoubleBinding.class);
     }
@@ -142,7 +142,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
         private final String dataType;
         private String defaultValue;
         private List<String> allowedValues;
-        
+
         protected Builder(String identifier, T binding) {
             super(identifier, binding);
             this.dataType = Preconditions.checkNotNull(
@@ -162,7 +162,7 @@ public class LiteralDataInputDescriptor<T extends Class<? extends ILiteralData>>
             for (Enum constant : constants) { names.add(constant.name()); }
             return allowedValues(names);
         }
-        
+
         public B allowedValues(String[] allowedValues) {
             return allowedValues(Arrays.asList(allowedValues));
         }

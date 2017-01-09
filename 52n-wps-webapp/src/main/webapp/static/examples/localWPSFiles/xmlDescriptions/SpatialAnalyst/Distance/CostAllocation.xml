@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.distance.costallocation</ows:Identifier><!-- ParameterCount=8 -->		
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.distance.costallocation</ows:Identifier><!-- ParameterCount=8 -->
 		<ows:Title>CostAllocation_sa</ows:Title>
 		<ows:Abstract>Calculates, for each cell its nearest source based on the least accumulative cost over a cost surface. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 						<Format>
 							<MimeType>application/x-zipped-shape</MimeType>
 							<Schema></Schema>
@@ -84,7 +84,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -101,7 +101,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_allocation_raster</ows:Identifier><!-- 2 -->
-				<ows:Title>out allocation raster</ows:Title>	
+				<ows:Title>out allocation raster</ows:Title>
 				<ows:Abstract>A raster that identifies the zone of each source location (cell or feature) that could be reached with the least accumulative cost.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -118,13 +118,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_distance_raster</ows:Identifier><!-- 6 -->
-				<ows:Title>out distance raster</ows:Title>	
+				<ows:Title>out distance raster</ows:Title>
 				<ows:Abstract>A raster that identifies the zone of each source location (cell or feature) that could be reached with the least accumulative cost.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -141,13 +141,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_backlink_raster</ows:Identifier><!-- 7 -->
-				<ows:Title>out backlink raster</ows:Title>	
+				<ows:Title>out backlink raster</ows:Title>
 				<ows:Abstract>The name of the output cost back link raster. The back link raster contains values of 0 through 8, which define the direction or identify the next neighboring cell (the succeeding cell) along the least accumulative cost path from a cell to reach its least cost source. If the path is to pass into the right neighbor, the cell will be assigned the value 1, 2 for the lower right diagonal cell, and continuing clockwise. The value 0 is reserved for source cells.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -164,12 +164,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

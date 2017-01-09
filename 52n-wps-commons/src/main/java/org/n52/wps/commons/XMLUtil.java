@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
-
-import javanet.staxutils.IndentingXMLStreamWriter;
-import javanet.staxutils.XMLStreamUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -49,8 +46,11 @@ import org.w3c.dom.Node;
 import com.ctc.wstx.stax.WstxInputFactory;
 import com.ctc.wstx.stax.WstxOutputFactory;
 
+import javanet.staxutils.IndentingXMLStreamWriter;
+import javanet.staxutils.XMLStreamUtils;
+
 /**
- * 
+ *
  * @author tkunicki
  */
 public class XMLUtil {
@@ -146,7 +146,7 @@ public class XMLUtil {
 
         return stringWriter.toString();
     }
-    
+
     public static XmlObject qualifySubstitutionGroup(XmlObject xobj, QName newInstance, SchemaType newType) {
         XmlObject substitute = null;
         if (newType != null) {
@@ -156,13 +156,13 @@ public class XMLUtil {
                return substitute;
             }
         }
-        
+
          XmlCursor cursor = xobj.newCursor();
          cursor.setName(newInstance);
          QName qName = new QName("http://www.w3.org/2001/XMLSchema-instance", "type");
          cursor.removeAttribute(qName);
          cursor.dispose();
-         
+
          return null;
      }
 }

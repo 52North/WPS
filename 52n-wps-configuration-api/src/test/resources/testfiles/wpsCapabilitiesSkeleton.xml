@@ -61,7 +61,7 @@
 			</ows:DCP>
 		</ows:Operation>
 	</ows:OperationsMetadata>
-	
+
 	<wps:Languages>
 		<wps:Default>
 			<ows:Language>en-US</ows:Language>
@@ -69,6 +69,6 @@
 		<wps:Supported>
 			<ows:Language>en-US</ows:Language>
 		</wps:Supported>
-	</wps:Languages> 
+	</wps:Languages>
 
 </wps:Capabilities>

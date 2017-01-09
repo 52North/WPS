@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class ErrorController {
-	@RequestMapping(value = { "/error", "/404", "/403" })
-	public String handle(HttpServletRequest request, Model model) {
-		model.addAttribute("errorCode", request.getAttribute("javax.servlet.error.status_code"));
-		model.addAttribute("errorMessage", request.getAttribute("javax.servlet.error.message"));
-		return "error";
-	}
+    @RequestMapping(value = { "/error", "/404", "/403" })
+    public String handle(HttpServletRequest request, Model model) {
+        model.addAttribute("errorCode", request.getAttribute("javax.servlet.error.status_code"));
+        model.addAttribute("errorMessage", request.getAttribute("javax.servlet.error.message"));
+        return "error";
+    }
 }

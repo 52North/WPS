@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,12 +40,11 @@ import org.n52.wps.algorithm.annotation.Algorithm;
 import org.n52.wps.algorithm.annotation.ComplexDataInput;
 import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.algorithm.annotation.LiteralDataOutput;
+import org.n52.wps.commons.SpringIntegrationHelper;
 import org.n52.wps.io.data.binding.complex.PlainStringBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
-import org.n52.wps.server.r.R_Config;
-import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.metadata.RAnnotationParser;
 import org.n52.wps.server.r.syntax.RAnnotation;
 import org.n52.wps.server.r.syntax.RAnnotationException;
@@ -67,15 +66,13 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
 
     private String validationResult;
 
-    private String annotationsString = null;
+    private String annotationsString;
 
-    private static RAnnotationParser parser = new RAnnotationParser(new RDataTypeRegistry(), new SimpleR_Config());
-
-    private static class SimpleR_Config extends R_Config {
-        //
-    }
+    private RAnnotationParser parser;
 
     public AnnotationValidationProcess() {
+        this.parser = new RAnnotationParser();
+        SpringIntegrationHelper.autowireBean(parser);
         LOGGER.debug("NEW {}", this);
     }
 
@@ -146,8 +143,9 @@ public class AnnotationValidationProcess extends AbstractAnnotatedAlgorithm {
             }
         }
 
-        if (this.annotationsString != null && valid)
+        if (this.annotationsString != null && valid) {
             validation.append("\n").append(RESULT_OK).append("\n");
+        }
 
         this.validationResult = validation.toString();
     }

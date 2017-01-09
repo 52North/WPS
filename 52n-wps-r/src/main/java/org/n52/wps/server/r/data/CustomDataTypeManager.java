@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.StringTokenizer;
+import javax.annotation.PostConstruct;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.R_Config;
@@ -62,12 +63,11 @@ public class CustomDataTypeManager {
         LOGGER.info("NEW {}", this);
     }
 
-    /**
-     * Called by RPropertyChangeManager and eventually after config file was changed
-     */
+    @PostConstruct
     public void update() {
         try {
-            readConfig();
+            addCustomDataTypesFromConfigFile();
+            datatypeRegistry.logDataTypeTable();
         }
         catch (IOException e) {
             LOGGER.error("Invalid r config file. Costum R data types cannot be registered.", e);
@@ -79,7 +79,7 @@ public class CustomDataTypeManager {
         }
     }
 
-    private void readConfig() throws IOException, ExceptionReport {
+    private void addCustomDataTypesFromConfigFile() throws IOException, ExceptionReport {
         String file = config.resolveFullPath(config.getConfigModule().getDatatypeConfig());
         this.configFile = new File(file);
         if (getConfigFile() == null) {
@@ -87,27 +87,26 @@ public class CustomDataTypeManager {
             return;
         }
 
+        LOGGER.info("Reading custom R data types from '{}'.", file);
+
         datatypeRegistry.clearCustomDataTypes();
 
-        FileReader fr = new FileReader(getConfigFile());
-        BufferedReader reader = new BufferedReader(fr);
+        try (FileReader fr = new FileReader(getConfigFile()); BufferedReader reader = new BufferedReader(fr)) {
 
-        for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-            if (line.startsWith(COMMENT_CHARACTER))
-                continue;
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                if (line.startsWith(COMMENT_CHARACTER)) {
+                    continue;
+                }
 
-            StringTokenizer tokenizer = new StringTokenizer(line, ",");
-            if (tokenizer.countTokens() == 3) {
-
-                String key = tokenizer.nextToken().trim();
-                String mimetype = tokenizer.nextToken().trim();
-                String hint = tokenizer.nextToken().trim();
-                addNewDataType(key, mimetype, hint);
+                StringTokenizer tokenizer = new StringTokenizer(line, ",");
+                if (tokenizer.countTokens() == 3) {
+                    String key = tokenizer.nextToken().trim();
+                    String mimetype = tokenizer.nextToken().trim();
+                    String hint = tokenizer.nextToken().trim();
+                    addNewDataType(key, mimetype, hint);
+                }
             }
-
         }
-        reader.close();
-        fr.close();
     }
 
     private void addNewDataType(String key, String mimetype, String hint) {

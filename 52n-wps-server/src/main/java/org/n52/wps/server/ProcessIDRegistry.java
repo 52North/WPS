@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,68 +36,68 @@ import java.util.ArrayList;
  *
  */
 public class ProcessIDRegistry {
-	
-	private static ProcessIDRegistry instance = new ProcessIDRegistry();
-	private volatile boolean lock = false;
-	private static ArrayList<String> idList = new ArrayList<String>();
-	
-	private ProcessIDRegistry(){
-		//empty private constructor
-	}
-	
-	public static ProcessIDRegistry getInstance(){
-		return instance;
-	}
-	
-	public boolean addID(String id){
-		while (lock){
-			//spin
-		}
-		try{
-			lock = true;
-			boolean retval = idList.add(id);
-			lock = false;
-			return retval;
-		}
-		finally{
-			lock = false;
-		}
-	}
-	
-	public synchronized boolean removeID(String id){
-		while (lock){
-			//spin
-		}
-		try{
-			lock = true;
-			boolean retval = idList.remove(id);
-			lock = false;
-			return retval;
-		}
-		finally{
-			lock = false;
-		}
-	}
-	
-	public boolean containsID(String id){
-		return idList.contains(id);
-	}
-	
-	public String[] getIDs(){
-		return idList.toArray(new String[idList.size()]);
-	}
-	
-	protected void clearRegistry(){
-		while (lock){
-			//spin
-		}
-		try{
-			lock = true;
-			idList.clear();
-			lock = false;
-		}
-		finally{
-			lock = false;
-		}
-	}
+
+    private static ProcessIDRegistry instance = new ProcessIDRegistry();
+    private volatile boolean lock = false;
+    private static ArrayList<String> idList = new ArrayList<String>();
+
+    private ProcessIDRegistry(){
+        //empty private constructor
+    }
+
+    public static ProcessIDRegistry getInstance(){
+        return instance;
+    }
+
+    public boolean addID(String id){
+        while (lock){
+            //spin
+        }
+        try{
+            lock = true;
+            boolean retval = idList.add(id);
+            lock = false;
+            return retval;
+        }
+        finally{
+            lock = false;
+        }
+    }
+
+    public synchronized boolean removeID(String id){
+        while (lock){
+            //spin
+        }
+        try{
+            lock = true;
+            boolean retval = idList.remove(id);
+            lock = false;
+            return retval;
+        }
+        finally{
+            lock = false;
+        }
+    }
+
+    public boolean containsID(String id){
+        return idList.contains(id);
+    }
+
+    public String[] getIDs(){
+        return idList.toArray(new String[idList.size()]);
+    }
+
+    protected void clearRegistry(){
+        while (lock){
+            //spin
+        }
+        try{
+            lock = true;
+            idList.clear();
+            lock = false;
+        }
+        finally{
+            lock = false;
+        }
+    }
 }

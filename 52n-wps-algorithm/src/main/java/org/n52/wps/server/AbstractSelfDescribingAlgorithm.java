@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,370 +55,370 @@ import org.n52.wps.webapp.api.FormatEntry;
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{
 
-	@Override
-	protected ProcessDescription initializeDescription() {
-		ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
-		ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
-		ProcessDescriptionType processDescription = processDescriptions.addNewProcessDescription();
-		processDescription.setStatusSupported(true);
-		processDescription.setStoreSupported(true);
-		processDescription.setProcessVersion("1.0.0");
-		
-		//1. Identifier
-		processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
-		processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
-	
-		//2. Inputs
-		List<String> identifiers = this.getInputIdentifiers();
-		DataInputs dataInputs = null;
-		if(identifiers.size()>0){
-			dataInputs = processDescription.addNewDataInputs();
-		}
-		
-		for(String identifier : identifiers){
-			InputDescriptionType dataInput = dataInputs.addNewInput();
-			dataInput.setMinOccurs(getMinOccurs(identifier));
-			dataInput.setMaxOccurs(getMaxOccurs(identifier));
-			dataInput.addNewIdentifier().setStringValue(identifier);
-			dataInput.addNewTitle().setStringValue(identifier);
-			
-			Class<?> inputDataTypeClass = this.getInputDataType(identifier);
-			Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
-			
-			//we have to add this because of the new AbstractLiteralDataBinding class 
-			if(interfaces.length == 0){
-				interfaces = inputDataTypeClass.getSuperclass().getInterfaces();
-			}
-			
-			for(Class<?> implementedInterface : interfaces){
-				if(implementedInterface.equals(ILiteralData.class)){
-					LiteralInputType literalData = dataInput.addNewLiteralData();
-					String inputClassType = "";
-					
-					Constructor<?>[] constructors = inputDataTypeClass.getConstructors();
-					for(Constructor<?> constructor : constructors){
-						Class<?>[] parameters = constructor.getParameterTypes();
-						if(parameters.length==1){
-							inputClassType	= parameters[0].getSimpleName();
-						}
-					}
-					
-					if(inputClassType.length()>0){
-						DomainMetadataType datatype = literalData.addNewDataType();
-						datatype.setReference("xs:"+inputClassType.toLowerCase());
-						literalData.addNewAnyValue();		
-					}
-				}else if(implementedInterface.equals(IBBOXData.class)){
-						SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
-						String[] supportedCRSAray = getSupportedCRSForBBOXInput(identifier);
-						for(int i = 0; i<supportedCRSAray.length; i++){
-							if(i==0){
-								Default defaultCRS = bboxData.addNewDefault();
-								defaultCRS.setCRS(supportedCRSAray[0]);
-								if(supportedCRSAray.length==1){
-									CRSsType supportedCRS = bboxData.addNewSupported();
-									supportedCRS.addCRS(supportedCRSAray[0]);
-								}
-							}else{
-								if(i==1){
-									CRSsType supportedCRS = bboxData.addNewSupported();
-									supportedCRS.addCRS(supportedCRSAray[1]);
-								}else{
-									bboxData.getSupported().addCRS(supportedCRSAray[i]);
-								}
-							}
-						}
-						
-						
-						
-									
-				}else if(implementedInterface.equals(IComplexData.class)){
-					SupportedComplexDataInputType complexData = dataInput.addNewComplexData();					
-					List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
-					List<IParser> foundParsers = new ArrayList<IParser>();
-					for(IParser parser : parsers) {
-						Class<?>[] supportedClasses = parser.getSupportedDataBindings();
-						for(Class<?> clazz : supportedClasses){
-							if(clazz.equals(inputDataTypeClass)){
-								foundParsers.add(parser);
-							}
-							
-						}
-					}
-					
-					addInputFormats(complexData, foundParsers);					
+    @Override
+    protected ProcessDescription initializeDescription() {
+        ProcessDescriptionsDocument document = ProcessDescriptionsDocument.Factory.newInstance();
+        ProcessDescriptions processDescriptions = document.addNewProcessDescriptions();
+        ProcessDescriptionType processDescription = processDescriptions.addNewProcessDescription();
+        processDescription.setStatusSupported(true);
+        processDescription.setStoreSupported(true);
+        processDescription.setProcessVersion("1.0.0");
 
-				}		
-			}
-		}
-		
-		//3. Outputs
-		ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
-		List<String> outputIdentifiers = this.getOutputIdentifiers();
-		for(String identifier : outputIdentifiers){
-			OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
-			
-			
-			dataOutput.addNewIdentifier().setStringValue(identifier);
-			dataOutput.addNewTitle().setStringValue(identifier);
-			dataOutput.addNewAbstract().setStringValue(identifier);
-			
-			Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
-			Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
-			
-			//we have to add this because of the new AbstractLiteralDataBinding class 
-			if(interfaces.length == 0){
-				interfaces = outputDataTypeClass.getSuperclass().getInterfaces();
-			}
-			for(Class<?> implementedInterface : interfaces){
-					
-				
-				if(implementedInterface.equals(ILiteralData.class)){
-					LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
-					String outputClassType = "";
-					
-					Constructor<?>[] constructors = outputDataTypeClass.getConstructors();
-					for(Constructor<?> constructor : constructors){
-						Class<?>[] parameters = constructor.getParameterTypes();
-						if(parameters.length==1){
-							outputClassType	= parameters[0].getSimpleName();
-						}
-					}
-					
-					if(outputClassType.length()>0){
-						literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
-					}
-				
-				}else if(implementedInterface.equals(IBBOXData.class)){
-					SupportedCRSsType bboxData = dataOutput.addNewBoundingBoxOutput();
-					String[] supportedCRSAray = getSupportedCRSForBBOXOutput(identifier);
-					for(int i = 0; i<supportedCRSAray.length; i++){
-						if(i==0){
-							Default defaultCRS = bboxData.addNewDefault();
-							defaultCRS.setCRS(supportedCRSAray[0]);
-							if(supportedCRSAray.length==1){
-								CRSsType supportedCRS = bboxData.addNewSupported();
-								supportedCRS.addCRS(supportedCRSAray[0]);
-							}
-						}else{
-							if(i==1){
-								CRSsType supportedCRS = bboxData.addNewSupported();
-								supportedCRS.addCRS(supportedCRSAray[1]);
-							}else{
-								bboxData.getSupported().addCRS(supportedCRSAray[i]);
-							}
-						}
-					}
-					
-				}else if(implementedInterface.equals(IComplexData.class)){
-					
-						SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
-						
-						List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
-						List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
-						for(IGenerator generator : generators) {
-							Class<?>[] supportedClasses = generator.getSupportedDataBindings();
-							for(Class<?> clazz : supportedClasses){
-								if(clazz.equals(outputDataTypeClass)){
-									foundGenerators.add(generator);
-								}
-								
-							}
-					}
-					
-					addOutputFormats(complexData, foundGenerators);
+        //1. Identifier
+        processDescription.addNewIdentifier().setStringValue(this.getClass().getName());
+        processDescription.addNewTitle().setStringValue(this.getClass().getCanonicalName());
 
-				}		
-			}
-		}
-		
-		ProcessDescription superProcessDescription = new ProcessDescription();
-		
-		superProcessDescription.addProcessDescriptionForVersion(document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
-		
-		return superProcessDescription;
-	}
-	
-	/**
-	 * Override this class for BBOX input data to set supported mime types. The first one in the resulting array will be the default one.
-	 * @param identifier ID of the input BBOXType
-	 * @return
-	 */
-	public String[] getSupportedCRSForBBOXInput(String identifier){
-		return new String[0];
-	}
-	
-	/**
-	 * Override this class for BBOX output data to set supported mime types. The first one in the resulting array will be the default one.
-	 * @param identifier ID of the input BBOXType
-	 * @return
-	 */
-	public String[] getSupportedCRSForBBOXOutput(String identifier){
-		return new String[0];
-	}
-	
-	public BigInteger getMinOccurs(String identifier){
-		return new BigInteger("1");
-	}
-	public BigInteger getMaxOccurs(String identifier){
-		return new BigInteger("1");
-	}
-	
-	public abstract List<String> getInputIdentifiers();
-	public abstract List<String> getOutputIdentifiers();
-	
+        //2. Inputs
+        List<String> identifiers = this.getInputIdentifiers();
+        DataInputs dataInputs = null;
+        if(identifiers.size()>0){
+            dataInputs = processDescription.addNewDataInputs();
+        }
 
-	
-	private List<IObserver> observers = new ArrayList<IObserver>();
+        for(String identifier : identifiers){
+            InputDescriptionType dataInput = dataInputs.addNewInput();
+            dataInput.setMinOccurs(getMinOccurs(identifier));
+            dataInput.setMaxOccurs(getMaxOccurs(identifier));
+            dataInput.addNewIdentifier().setStringValue(identifier);
+            dataInput.addNewTitle().setStringValue(identifier);
 
-	private Object state = null;
+            Class<?> inputDataTypeClass = this.getInputDataType(identifier);
+            Class<?>[] interfaces = inputDataTypeClass.getInterfaces();
 
-	public Object getState() {
-	  return state;
-	}
+            //we have to add this because of the new AbstractLiteralDataBinding class
+            if(interfaces.length == 0){
+                interfaces = inputDataTypeClass.getSuperclass().getInterfaces();
+            }
 
-	public void update(Object state) {
-	   this.state = state;
-	   notifyObservers();
-	}
+            for(Class<?> implementedInterface : interfaces){
+                if(implementedInterface.equals(ILiteralData.class)){
+                    LiteralInputType literalData = dataInput.addNewLiteralData();
+                    String inputClassType = "";
 
-	 public void addObserver(IObserver o) {
-	   observers.add(o);
-	 }
+                    Constructor<?>[] constructors = inputDataTypeClass.getConstructors();
+                    for(Constructor<?> constructor : constructors){
+                        Class<?>[] parameters = constructor.getParameterTypes();
+                        if(parameters.length==1){
+                            inputClassType    = parameters[0].getSimpleName();
+                        }
+                    }
 
-	 public void removeObserver(IObserver o) {
-	   observers.remove(o);
-	 }
+                    if(inputClassType.length()>0){
+                        DomainMetadataType datatype = literalData.addNewDataType();
+                        datatype.setReference("xs:"+inputClassType.toLowerCase());
+                        literalData.addNewAnyValue();
+                    }
+                }else if(implementedInterface.equals(IBBOXData.class)){
+                        SupportedCRSsType bboxData = dataInput.addNewBoundingBoxData();
+                        String[] supportedCRSAray = getSupportedCRSForBBOXInput(identifier);
+                        for(int i = 0; i<supportedCRSAray.length; i++){
+                            if(i==0){
+                                Default defaultCRS = bboxData.addNewDefault();
+                                defaultCRS.setCRS(supportedCRSAray[0]);
+                                if(supportedCRSAray.length==1){
+                                    CRSsType supportedCRS = bboxData.addNewSupported();
+                                    supportedCRS.addCRS(supportedCRSAray[0]);
+                                }
+                            }else{
+                                if(i==1){
+                                    CRSsType supportedCRS = bboxData.addNewSupported();
+                                    supportedCRS.addCRS(supportedCRSAray[1]);
+                                }else{
+                                    bboxData.getSupported().addCRS(supportedCRSAray[i]);
+                                }
+                            }
+                        }
 
-	 public void notifyObservers() {
-	   Iterator<IObserver> i = observers.iterator();
-	   while (i.hasNext()) {
-	     IObserver o = (IObserver) i.next();
-	     o.update(this);
-	   }
-	 }
-	 
-	 @Override
-		public List<String> getErrors() {
-			List<String> errors = new ArrayList<String>();
-			return errors;
-		}
-	 
-	 
-	private void addInputFormats(SupportedComplexDataInputType complexData,
-			List<IParser> foundParsers) {
-		ComplexDataCombinationsType supportedInputFormat = complexData
-				.addNewSupported();
 
-		for (int i = 0; i < foundParsers.size(); i++) {
-			IParser parser = foundParsers.get(i);
 
-			List<FormatEntry> supportedFullFormats = parser.getSupportedFullFormats();
 
-			if (complexData.getDefault() == null) {
-				ComplexDataCombinationType defaultInputFormat = complexData
-						.addNewDefault();
-				/*
-				 * default format will be the first config format
-				 */
-				FormatEntry format = supportedFullFormats.get(0);
-				ComplexDataDescriptionType defaultFormat = defaultInputFormat
-						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimeType());
+                }else if(implementedInterface.equals(IComplexData.class)){
+                    SupportedComplexDataInputType complexData = dataInput.addNewComplexData();
+                    List<IParser> parsers = ParserFactory.getInstance().getAllParsers();
+                    List<IParser> foundParsers = new ArrayList<IParser>();
+                    for(IParser parser : parsers) {
+                        Class<?>[] supportedClasses = parser.getSupportedDataBindings();
+                        for(Class<?> clazz : supportedClasses){
+                            if(clazz.equals(inputDataTypeClass)){
+                                foundParsers.add(parser);
+                            }
 
-				String encoding = format.getEncoding();
+                        }
+                    }
 
-				if (encoding != null && !encoding.equals("")) {
-					defaultFormat.setEncoding(encoding);
-				}
+                    addInputFormats(complexData, foundParsers);
 
-				String schema = format.getSchema();
+                }
+            }
+        }
 
-				if (schema != null && !schema.equals("")) {
-					defaultFormat.setSchema(schema);
-				}
+        //3. Outputs
+        ProcessOutputs dataOutputs = processDescription.addNewProcessOutputs();
+        List<String> outputIdentifiers = this.getOutputIdentifiers();
+        for(String identifier : outputIdentifiers){
+            OutputDescriptionType dataOutput = dataOutputs.addNewOutput();
 
-			}
 
-			for (int j = 0; j < supportedFullFormats.size(); j++) {
-				/*
-				 * create supportedFormat for each mimetype, encoding, schema
-				 * composition mimetypes can have several encodings and schemas
-				 */
-				FormatEntry format1 = supportedFullFormats.get(j);
+            dataOutput.addNewIdentifier().setStringValue(identifier);
+            dataOutput.addNewTitle().setStringValue(identifier);
+            dataOutput.addNewAbstract().setStringValue(identifier);
 
-				/*
-				 * add one format for this mimetype
-				 */
-				ComplexDataDescriptionType supportedFormat = supportedInputFormat
-						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimeType());
-				if (format1.getEncoding() != null) {
-					supportedFormat.setEncoding(format1.getEncoding());
-				}
-				if (format1.getSchema() != null) {
-					supportedFormat.setSchema(format1.getSchema());
-				}
-			}
-		}
-	}
-	
-	private void addOutputFormats(SupportedComplexDataType complexData,
-			List<IGenerator> foundGenerators) {
-		ComplexDataCombinationsType supportedOutputFormat = complexData
-				.addNewSupported();
+            Class<?> outputDataTypeClass = this.getOutputDataType(identifier);
+            Class<?>[] interfaces = outputDataTypeClass.getInterfaces();
 
-		for (int i = 0; i < foundGenerators.size(); i++) {
-			IGenerator generator = foundGenerators.get(i);
+            //we have to add this because of the new AbstractLiteralDataBinding class
+            if(interfaces.length == 0){
+                interfaces = outputDataTypeClass.getSuperclass().getInterfaces();
+            }
+            for(Class<?> implementedInterface : interfaces){
 
-			List<FormatEntry> supportedFullFormats = generator.getSupportedFullFormats();
 
-			if (complexData.getDefault() == null) {
-				ComplexDataCombinationType defaultInputFormat = complexData
-						.addNewDefault();
-				/*
-				 * default format will be the first config format
-				 */
-				FormatEntry format = supportedFullFormats.get(0);
-				ComplexDataDescriptionType defaultFormat = defaultInputFormat
-						.addNewFormat();
-				defaultFormat.setMimeType(format.getMimeType());
+                if(implementedInterface.equals(ILiteralData.class)){
+                    LiteralOutputType literalData = dataOutput.addNewLiteralOutput();
+                    String outputClassType = "";
 
-				String encoding = format.getEncoding();
+                    Constructor<?>[] constructors = outputDataTypeClass.getConstructors();
+                    for(Constructor<?> constructor : constructors){
+                        Class<?>[] parameters = constructor.getParameterTypes();
+                        if(parameters.length==1){
+                            outputClassType    = parameters[0].getSimpleName();
+                        }
+                    }
 
-				if (encoding != null && !encoding.equals("")) {
-					defaultFormat.setEncoding(encoding);
-				}
+                    if(outputClassType.length()>0){
+                        literalData.addNewDataType().setReference("xs:"+outputClassType.toLowerCase());
+                    }
 
-				String schema = format.getSchema();
+                }else if(implementedInterface.equals(IBBOXData.class)){
+                    SupportedCRSsType bboxData = dataOutput.addNewBoundingBoxOutput();
+                    String[] supportedCRSAray = getSupportedCRSForBBOXOutput(identifier);
+                    for(int i = 0; i<supportedCRSAray.length; i++){
+                        if(i==0){
+                            Default defaultCRS = bboxData.addNewDefault();
+                            defaultCRS.setCRS(supportedCRSAray[0]);
+                            if(supportedCRSAray.length==1){
+                                CRSsType supportedCRS = bboxData.addNewSupported();
+                                supportedCRS.addCRS(supportedCRSAray[0]);
+                            }
+                        }else{
+                            if(i==1){
+                                CRSsType supportedCRS = bboxData.addNewSupported();
+                                supportedCRS.addCRS(supportedCRSAray[1]);
+                            }else{
+                                bboxData.getSupported().addCRS(supportedCRSAray[i]);
+                            }
+                        }
+                    }
 
-				if (schema != null && !schema.equals("")) {
-					defaultFormat.setSchema(schema);
-				}
+                }else if(implementedInterface.equals(IComplexData.class)){
 
-			}
+                        SupportedComplexDataType complexData = dataOutput.addNewComplexOutput();
 
-			for (int j = 0; j < supportedFullFormats.size(); j++) {
-				/*
-				 * create supportedFormat for each mimetype, encoding, schema
-				 * composition mimetypes can have several encodings and schemas
-				 */
-				FormatEntry format1 = supportedFullFormats.get(j);
+                        List<IGenerator> generators = GeneratorFactory.getInstance().getAllGenerators();
+                        List<IGenerator> foundGenerators = new ArrayList<IGenerator>();
+                        for(IGenerator generator : generators) {
+                            Class<?>[] supportedClasses = generator.getSupportedDataBindings();
+                            for(Class<?> clazz : supportedClasses){
+                                if(clazz.equals(outputDataTypeClass)){
+                                    foundGenerators.add(generator);
+                                }
 
-				/*
-				 * add one format for this mimetype
-				 */
-				ComplexDataDescriptionType supportedFormat = supportedOutputFormat
-						.addNewFormat();
-				supportedFormat.setMimeType(format1.getMimeType());
-				if (format1.getEncoding() != null) {
-					supportedFormat.setEncoding(format1.getEncoding());
-				}
-				if (format1.getSchema() != null) {
-					supportedFormat.setSchema(format1.getSchema());
-				}
-			}
-		}
-	}
+                            }
+                    }
+
+                    addOutputFormats(complexData, foundGenerators);
+
+                }
+            }
+        }
+
+        ProcessDescription superProcessDescription = new ProcessDescription();
+
+        superProcessDescription.addProcessDescriptionForVersion(document.getProcessDescriptions().getProcessDescriptionArray(0), "1.0.0");
+
+        return superProcessDescription;
+    }
+
+    /**
+     * Override this class for BBOX input data to set supported mime types. The first one in the resulting array will be the default one.
+     * @param identifier ID of the input BBOXType
+     * @return an array containing Strings representing the supported CRSs for inputs
+     */
+    public String[] getSupportedCRSForBBOXInput(String identifier){
+        return new String[0];
+    }
+
+    /**
+     * Override this class for BBOX output data to set supported mime types. The first one in the resulting array will be the default one.
+     * @param identifier ID of the input BBOXType
+     * @return an array containing Strings representing the supported CRSs for outputs
+     */
+    public String[] getSupportedCRSForBBOXOutput(String identifier){
+        return new String[0];
+    }
+
+    public BigInteger getMinOccurs(String identifier){
+        return new BigInteger("1");
+    }
+    public BigInteger getMaxOccurs(String identifier){
+        return new BigInteger("1");
+    }
+
+    public abstract List<String> getInputIdentifiers();
+    public abstract List<String> getOutputIdentifiers();
+
+
+
+    private List<IObserver> observers = new ArrayList<IObserver>();
+
+    private Object state = null;
+
+    public Object getState() {
+      return state;
+    }
+
+    public void update(Object state) {
+       this.state = state;
+       notifyObservers();
+    }
+
+     public void addObserver(IObserver o) {
+       observers.add(o);
+     }
+
+     public void removeObserver(IObserver o) {
+       observers.remove(o);
+     }
+
+     public void notifyObservers() {
+       Iterator<IObserver> i = observers.iterator();
+       while (i.hasNext()) {
+         IObserver o = (IObserver) i.next();
+         o.update(this);
+       }
+     }
+
+     @Override
+        public List<String> getErrors() {
+            List<String> errors = new ArrayList<String>();
+            return errors;
+        }
+
+
+    private void addInputFormats(SupportedComplexDataInputType complexData,
+            List<IParser> foundParsers) {
+        ComplexDataCombinationsType supportedInputFormat = complexData
+                .addNewSupported();
+
+        for (int i = 0; i < foundParsers.size(); i++) {
+            IParser parser = foundParsers.get(i);
+
+            List<FormatEntry> supportedFullFormats = parser.getSupportedFullFormats();
+
+            if (complexData.getDefault() == null) {
+                ComplexDataCombinationType defaultInputFormat = complexData
+                        .addNewDefault();
+                /*
+                 * default format will be the first config format
+                 */
+                FormatEntry format = supportedFullFormats.get(0);
+                ComplexDataDescriptionType defaultFormat = defaultInputFormat
+                        .addNewFormat();
+                defaultFormat.setMimeType(format.getMimeType());
+
+                String encoding = format.getEncoding();
+
+                if (encoding != null && !encoding.equals("")) {
+                    defaultFormat.setEncoding(encoding);
+                }
+
+                String schema = format.getSchema();
+
+                if (schema != null && !schema.equals("")) {
+                    defaultFormat.setSchema(schema);
+                }
+
+            }
+
+            for (int j = 0; j < supportedFullFormats.size(); j++) {
+                /*
+                 * create supportedFormat for each mimetype, encoding, schema
+                 * composition mimetypes can have several encodings and schemas
+                 */
+                FormatEntry format1 = supportedFullFormats.get(j);
+
+                /*
+                 * add one format for this mimetype
+                 */
+                ComplexDataDescriptionType supportedFormat = supportedInputFormat
+                        .addNewFormat();
+                supportedFormat.setMimeType(format1.getMimeType());
+                if (format1.getEncoding() != null) {
+                    supportedFormat.setEncoding(format1.getEncoding());
+                }
+                if (format1.getSchema() != null) {
+                    supportedFormat.setSchema(format1.getSchema());
+                }
+            }
+        }
+    }
+
+    private void addOutputFormats(SupportedComplexDataType complexData,
+            List<IGenerator> foundGenerators) {
+        ComplexDataCombinationsType supportedOutputFormat = complexData
+                .addNewSupported();
+
+        for (int i = 0; i < foundGenerators.size(); i++) {
+            IGenerator generator = foundGenerators.get(i);
+
+            List<FormatEntry> supportedFullFormats = generator.getSupportedFullFormats();
+
+            if (complexData.getDefault() == null) {
+                ComplexDataCombinationType defaultInputFormat = complexData
+                        .addNewDefault();
+                /*
+                 * default format will be the first config format
+                 */
+                FormatEntry format = supportedFullFormats.get(0);
+                ComplexDataDescriptionType defaultFormat = defaultInputFormat
+                        .addNewFormat();
+                defaultFormat.setMimeType(format.getMimeType());
+
+                String encoding = format.getEncoding();
+
+                if (encoding != null && !encoding.equals("")) {
+                    defaultFormat.setEncoding(encoding);
+                }
+
+                String schema = format.getSchema();
+
+                if (schema != null && !schema.equals("")) {
+                    defaultFormat.setSchema(schema);
+                }
+
+            }
+
+            for (int j = 0; j < supportedFullFormats.size(); j++) {
+                /*
+                 * create supportedFormat for each mimetype, encoding, schema
+                 * composition mimetypes can have several encodings and schemas
+                 */
+                FormatEntry format1 = supportedFullFormats.get(j);
+
+                /*
+                 * add one format for this mimetype
+                 */
+                ComplexDataDescriptionType supportedFormat = supportedOutputFormat
+                        .addNewFormat();
+                supportedFormat.setMimeType(format1.getMimeType());
+                if (format1.getEncoding() != null) {
+                    supportedFormat.setEncoding(format1.getEncoding());
+                }
+                if (format1.getSchema() != null) {
+                    supportedFormat.setSchema(format1.getSchema());
+                }
+            }
+        }
+    }
 
 }

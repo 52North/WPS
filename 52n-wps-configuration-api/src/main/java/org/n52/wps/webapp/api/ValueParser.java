@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,6 +32,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.n52.wps.webapp.service.ConfigurationService;
 import org.springframework.stereotype.Component;
 
 /**
@@ -40,66 +41,66 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValueParser {
 
-	public String parseString(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		try {
-			return String.valueOf(value);
-		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException(e);
-		}
-	}
+    public String parseString(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        try {
+            return String.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            throw new WPSConfigurationException(e);
+        }
+    }
 
-	public Integer parseInteger(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		try {
-			return Integer.parseInt(String.valueOf(value));
-		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException("'" + value + "' is not a valid integer value.");
-		}
-	}
+    public Integer parseInteger(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        try {
+            return Integer.parseInt(String.valueOf(value));
+        } catch (IllegalArgumentException e) {
+            throw new WPSConfigurationException("'" + value + "' is not a valid integer value.");
+        }
+    }
 
-	public Double parseDouble(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		try {
-			return Double.parseDouble(String.valueOf(value));
-		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException("'" + value + "' is not a valid double value.");
-		}
-	}
+    public Double parseDouble(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        try {
+            return Double.parseDouble(String.valueOf(value));
+        } catch (IllegalArgumentException e) {
+            throw new WPSConfigurationException("'" + value + "' is not a valid double value.");
+        }
+    }
 
-	public Boolean parseBoolean(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		String stringValue = value.toString();
-		if ((stringValue.trim().equalsIgnoreCase("true")) || (stringValue.trim().equalsIgnoreCase("false"))) {
-			return Boolean.valueOf(String.valueOf(value));
-		} else {
-			throw new WPSConfigurationException("'" + value + "' is not a valid boolean value.");
-		}
+    public Boolean parseBoolean(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        String stringValue = value.toString();
+        if ((stringValue.trim().equalsIgnoreCase("true")) || (stringValue.trim().equalsIgnoreCase("false"))) {
+            return Boolean.valueOf(String.valueOf(value));
+        } else {
+            throw new WPSConfigurationException("'" + value + "' is not a valid boolean value.");
+        }
 
-	}
+    }
 
-	public File parseFile(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		try {
-			return new File(String.valueOf(value));
-		} catch (IllegalArgumentException e) {
-			throw new WPSConfigurationException("'" + value + "' is not a valid file path.");
-		}
+    public File parseFile(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        try {
+            return new File(String.valueOf(value));
+        } catch (IllegalArgumentException e) {
+            throw new WPSConfigurationException("'" + value + "' is not a valid file path.");
+        }
 
-	}
+    }
 
-	public URI parseURI(Object value) throws WPSConfigurationException {
-		nullOrEmptyCheck(value);
-		try {
-			return new URI(String.valueOf(value));
-		} catch (URISyntaxException e) {
-			throw new WPSConfigurationException("'" + value + "' is not a valid URI path.");
-		}
-	}
+    public URI parseURI(Object value) throws WPSConfigurationException {
+        nullOrEmptyCheck(value);
+        try {
+            return new URI(String.valueOf(value));
+        } catch (URISyntaxException e) {
+            throw new WPSConfigurationException("'" + value + "' is not a valid URI path.");
+        }
+    }
 
-	private void nullOrEmptyCheck(Object value) throws WPSConfigurationException {
-		if (value == null || value.toString().trim().isEmpty()) {
-			throw new WPSConfigurationException("The field cannot be empty.");
-		}
-	}
+    private void nullOrEmptyCheck(Object value) throws WPSConfigurationException {
+        if (value == null || value.toString().trim().isEmpty()) {
+            throw new WPSConfigurationException("The field cannot be empty.");
+        }
+    }
 }

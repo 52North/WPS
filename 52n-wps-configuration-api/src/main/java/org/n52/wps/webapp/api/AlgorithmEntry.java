@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,29 +34,29 @@ import java.util.Objects;
  * Used by repository {@link ConfigurationModule} implementations to create a list of algorithms they contain.
  */
 public class AlgorithmEntry {
-	private String algorithm;
-	private boolean active;
+    private String algorithm;
+    private boolean active;
 
-	public AlgorithmEntry(String algorithm, boolean active) {
-		this.algorithm = algorithm;
-		this.active = active;
-	}
+    public AlgorithmEntry(String algorithm, boolean active) {
+        this.algorithm = algorithm;
+        this.active = active;
+    }
 
-	public String getAlgorithm() {
-		return algorithm;
-	}
+    public String getAlgorithm() {
+        return algorithm;
+    }
 
-	public void setAlgorithm(String algorithm) {
-		this.algorithm = algorithm;
-	}
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     @Override
     public int hashCode() {

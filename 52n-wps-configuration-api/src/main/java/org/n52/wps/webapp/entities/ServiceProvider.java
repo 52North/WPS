@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,129 +33,129 @@ import org.n52.wps.webapp.service.CapabilitiesService;
 
 /**
  * Holds parsed service provider values.
- * 
+ *
  * @see CapabilitiesService
  * @see CapabilitiesDAO
  */
 public class ServiceProvider  {
 
-	private String providerName;
+    private String providerName;
 
-	private String providerSite;
+    private String providerSite;
 
-	private String individualName;
+    private String individualName;
 
-	private String position;
+    private String position;
 
-	private String phone;
+    private String phone;
 
-	private String facsimile;
+    private String facsimile;
 
-	private String deliveryPoint;
+    private String deliveryPoint;
 
-	private String city;
+    private String city;
 
-	private String administrativeArea;
+    private String administrativeArea;
 
-	private String postalCode;
+    private String postalCode;
 
-	private String country;
+    private String country;
 
-	private String email;
-	
-	public String getProviderName() {
-		return providerName;
-	}
+    private String email;
 
-	public void setProviderName(String providerName) {
-		this.providerName = providerName;
-	}
+    public String getProviderName() {
+        return providerName;
+    }
 
-	public String getProviderSite() {
-		return providerSite;
-	}
+    public void setProviderName(String providerName) {
+        this.providerName = providerName;
+    }
 
-	public void setProviderSite(String providerSite) {
-		this.providerSite = providerSite;
-	}
+    public String getProviderSite() {
+        return providerSite;
+    }
 
-	public String getIndividualName() {
-		return individualName;
-	}
+    public void setProviderSite(String providerSite) {
+        this.providerSite = providerSite;
+    }
 
-	public void setIndividualName(String individualName) {
-		this.individualName = individualName;
-	}
+    public String getIndividualName() {
+        return individualName;
+    }
 
-	public String getPosition() {
-		return position;
-	}
+    public void setIndividualName(String individualName) {
+        this.individualName = individualName;
+    }
 
-	public void setPosition(String position) {
-		this.position = position;
-	}
+    public String getPosition() {
+        return position;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public String getFacsimile() {
-		return facsimile;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public void setFacsimile(String facsimile) {
-		this.facsimile = facsimile;
-	}
+    public String getFacsimile() {
+        return facsimile;
+    }
 
-	public String getDeliveryPoint() {
-		return deliveryPoint;
-	}
+    public void setFacsimile(String facsimile) {
+        this.facsimile = facsimile;
+    }
 
-	public void setDeliveryPoint(String deliveryPoint) {
-		this.deliveryPoint = deliveryPoint;
-	}
+    public String getDeliveryPoint() {
+        return deliveryPoint;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public void setDeliveryPoint(String deliveryPoint) {
+        this.deliveryPoint = deliveryPoint;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getAdministrativeArea() {
-		return administrativeArea;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setAdministrativeArea(String administrativeArea) {
-		this.administrativeArea = administrativeArea;
-	}
+    public String getAdministrativeArea() {
+        return administrativeArea;
+    }
 
-	public String getPostalCode() {
-		return postalCode;
-	}
+    public void setAdministrativeArea(String administrativeArea) {
+        this.administrativeArea = administrativeArea;
+    }
 
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
+    public String getPostalCode() {
+        return postalCode;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,31 +33,31 @@ package org.n52.wps.webapp.api;
  */
 public class WPSConfigurationException extends Exception {
 
-	private static final long serialVersionUID = -1311630308994476529L;
+    private static final long serialVersionUID = -1311630308994476529L;
 
-	private String field;
+    private String field;
 
-	public WPSConfigurationException() {
-		super();
-	}
+    public WPSConfigurationException() {
+        super();
+    }
 
-	public WPSConfigurationException(String message) {
-		super(message);
-	}
+    public WPSConfigurationException(String message) {
+        super(message);
+    }
 
-	public WPSConfigurationException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public WPSConfigurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public WPSConfigurationException(Throwable cause) {
-		super(cause);
-	}
+    public WPSConfigurationException(Throwable cause) {
+        super(cause);
+    }
 
-	public String getField() {
-		return field;
-	}
+    public String getField() {
+        return field;
+    }
 
-	public void setField(String field) {
-		this.field = field;
-	}
+    public void setField(String field) {
+        this.field = field;
+    }
 }

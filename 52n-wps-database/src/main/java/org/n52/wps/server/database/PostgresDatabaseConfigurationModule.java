@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,89 +42,89 @@ import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
 public class PostgresDatabaseConfigurationModule implements ConfigurationModule {
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private boolean isWipeEnabled;
-	
-	private String wipePeriod;
-	
-	private String wipeThreshold;
-	
-	private final String isWipeEnabledKey = "wipe.enabled";
-	
-	private final String wipePeriodKey = "wipe.period";
-	
-	private final String wipeThresholdKey = "wipe.threshold";
-	
-	private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey, "Database wipe enabled", "Enable database wiping based on values below",
-			false, true);
-	private ConfigurationEntry<String> wipePeriodEntry = new StringConfigurationEntry(wipePeriodKey, "Wipe period",
-			"How often to scan database (PT1H = every hour)", false, "PT1H");
-	private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey, "Wipe threshold",
-			"Delete files older than this period (P7D = 7 days)", false, "P7D");
+    private boolean isWipeEnabled;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry);
-	
-	@Override
-	public String getModuleName() {
-		return "Postgres database configuration";
-	}
+    private String wipePeriod;
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    private String wipeThreshold;
 
-	@Override
-	public void setActive(boolean active) {
-		isActive = active;		
-	}
+    private final String isWipeEnabledKey = "wipe.enabled";
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.DATABASE;
-	}
+    private final String wipePeriodKey = "wipe.period";
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    private final String wipeThresholdKey = "wipe.threshold";
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return null;
-	}
+    private ConfigurationEntry<Boolean> wipeEnabledEntry = new BooleanConfigurationEntry(isWipeEnabledKey, "Database wipe enabled", "Enable database wiping based on values below",
+            false, true);
+    private ConfigurationEntry<String> wipePeriodEntry = new StringConfigurationEntry(wipePeriodKey, "Wipe period",
+            "How often to scan database (PT1H = every hour)", false, "PT1H");
+    private ConfigurationEntry<String> wipeThresholdEntry = new StringConfigurationEntry(wipeThresholdKey, "Wipe threshold",
+            "Delete files older than this period (P7D = 7 days)", false, "P7D");
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return null;
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(wipeEnabledEntry, wipePeriodEntry, wipeThresholdEntry);
 
-	public boolean isWipeEnabled() {
-		return isWipeEnabled;
-	}
+    @Override
+    public String getModuleName() {
+        return "Postgres database configuration";
+    }
 
-	@ConfigurationKey(key = isWipeEnabledKey)
-	public void setWipeEnabled(boolean isWipeEnabled) {
-		this.isWipeEnabled = isWipeEnabled;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	public String getWipePeriod() {
-		return wipePeriod;
-	}
+    @Override
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 
-	@ConfigurationKey(key = wipePeriodKey)
-	public void setWipePeriod(String wipePeriod) {
-		this.wipePeriod = wipePeriod;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.DATABASE;
+    }
 
-	public String getWipeThreshold() {
-		return wipeThreshold;
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
 
-	@ConfigurationKey(key = wipeThresholdKey)
-	public void setWipeThreshold(String wipeThreshold) {
-		this.wipeThreshold = wipeThreshold;
-	}
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return null;
+    }
+
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return null;
+    }
+
+    public boolean isWipeEnabled() {
+        return isWipeEnabled;
+    }
+
+    @ConfigurationKey(key = isWipeEnabledKey)
+    public void setWipeEnabled(boolean isWipeEnabled) {
+        this.isWipeEnabled = isWipeEnabled;
+    }
+
+    public String getWipePeriod() {
+        return wipePeriod;
+    }
+
+    @ConfigurationKey(key = wipePeriodKey)
+    public void setWipePeriod(String wipePeriod) {
+        this.wipePeriod = wipePeriod;
+    }
+
+    public String getWipeThreshold() {
+        return wipeThreshold;
+    }
+
+    @ConfigurationKey(key = wipeThresholdKey)
+    public void setWipeThreshold(String wipeThreshold) {
+        this.wipeThreshold = wipeThreshold;
+    }
 
 }

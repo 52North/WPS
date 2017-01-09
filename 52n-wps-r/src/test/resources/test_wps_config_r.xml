@@ -38,13 +38,13 @@
 	<Server hostname="localhost" hostport="8080"
 		includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5"
 		cacheCapabilites="false" webappPath="wps" repoReloadInterval="0">
-		<!-- Setting to 'true' will enable filtering of responses documents. Any 
-			server URL in the response document will be replaced with the server URL 
+		<!-- Setting to 'true' will enable filtering of responses documents. Any
+			server URL in the response document will be replaced with the server URL
 			used in the HTTP request. -->
 		<Property name="responseURLFilterEnabled" active="true">false
 		</Property>
 		<Database>
-			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase 
+			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase
 				(the default) -->
 			<!-- enable database wiping base on values below -->
 			<Property name="wipe.enabled" active="true">true</Property>

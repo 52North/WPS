@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,63 +28,63 @@ import net.opengis.wps.x100.ProcessDescriptionType;
 
 public class ServiceLoaderAlgorithmRepository implements IAlgorithmRepository {
 
-	private static final Logger logger = LoggerFactory.getLogger(ServiceLoaderAlgorithmRepository.class);
-	private Map<String, Class<? extends IAlgorithm>> currentAlgorithms;
+    private static final Logger logger = LoggerFactory.getLogger(ServiceLoaderAlgorithmRepository.class);
+    private Map<String, Class<? extends IAlgorithm>> currentAlgorithms;
 
-	public ServiceLoaderAlgorithmRepository() {
-		this.currentAlgorithms = loadAlgorithms();
-	}
-	
-	private Map<String, Class<? extends IAlgorithm>> loadAlgorithms() {
-		Map<String, Class<? extends IAlgorithm>> result = new HashMap<String, Class<? extends IAlgorithm>>();
-		ServiceLoader<IAlgorithm> loader = ServiceLoader.load(IAlgorithm.class);
-		
-		for (IAlgorithm ia : loader) {
-			logger.debug("Adding algorithm with identifier {} and class {}",
-					ia.getWellKnownName(), ia.getClass().getCanonicalName());
-			result.put(ia.getWellKnownName(), ia.getClass());
-		}
-		
-		return result;
-	}
-	
-	@Override
-	public Collection<String> getAlgorithmNames() {
-		return this.currentAlgorithms.keySet();
-	}
+    public ServiceLoaderAlgorithmRepository() {
+        this.currentAlgorithms = loadAlgorithms();
+    }
 
-	@Override
-	public IAlgorithm getAlgorithm(String processID) {
-		Class<? extends IAlgorithm> clazz = this.currentAlgorithms.get(processID);
-		if (clazz != null) {
-			try {
-				return clazz.newInstance();
-			} catch (InstantiationException e) {
-				logger.warn(e.getMessage(), e);
-			} catch (IllegalAccessException e) {
-				logger.warn(e.getMessage(), e);
-			}
-		}
-		return null;
-	}
+    private Map<String, Class<? extends IAlgorithm>> loadAlgorithms() {
+        Map<String, Class<? extends IAlgorithm>> result = new HashMap<String, Class<? extends IAlgorithm>>();
+        ServiceLoader<IAlgorithm> loader = ServiceLoader.load(IAlgorithm.class);
 
-	@Override
-	public ProcessDescription getProcessDescription(String processID) {
-		IAlgorithm algo = getAlgorithm(processID);
-		if (algo != null) {
-			return algo.getDescription();
-		}
-		return null;
-	}
+        for (IAlgorithm ia : loader) {
+            logger.debug("Adding algorithm with identifier {} and class {}",
+                    ia.getWellKnownName(), ia.getClass().getCanonicalName());
+            result.put(ia.getWellKnownName(), ia.getClass());
+        }
 
-	@Override
-	public boolean containsAlgorithm(String processID) {
-		return this.currentAlgorithms.containsKey(processID);
-	}
+        return result;
+    }
 
-	@Override
-	public void shutdown() {
-	}
+    @Override
+    public Collection<String> getAlgorithmNames() {
+        return this.currentAlgorithms.keySet();
+    }
+
+    @Override
+    public IAlgorithm getAlgorithm(String processID) {
+        Class<? extends IAlgorithm> clazz = this.currentAlgorithms.get(processID);
+        if (clazz != null) {
+            try {
+                return clazz.newInstance();
+            } catch (InstantiationException e) {
+                logger.warn(e.getMessage(), e);
+            } catch (IllegalAccessException e) {
+                logger.warn(e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ProcessDescription getProcessDescription(String processID) {
+        IAlgorithm algo = getAlgorithm(processID);
+        if (algo != null) {
+            return algo.getDescription();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean containsAlgorithm(String processID) {
+        return this.currentAlgorithms.containsKey(processID);
+    }
+
+    @Override
+    public void shutdown() {
+    }
 
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,7 +58,7 @@ public class GetCapabilitiesKvpIT {
 
         assertThat(AllTestsIT.parseXML(response), is(not(nullValue())));
         assertThat(response, response, not(containsString("ExceptionReport")));
-        
+
         assertThat(response, response, containsString("<wps:Capabilities"));
         assertThat(response, response, containsString("<ows:Operation name=\"Execute\">"));
         assertThat(response, response, containsString("<ows:ServiceType>WPS</ows:ServiceType>"));
@@ -70,12 +70,12 @@ public class GetCapabilitiesKvpIT {
             SAXException {
         GetClient.checkForExceptionReport(url, "Service=WPS", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
     }
-    
+
     @Test
     public void missingServiceParameter() throws IOException,
             ParserConfigurationException,
             SAXException {
-    	GetClient.checkForExceptionReport(url, "Request=GetCapabilities", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
+        GetClient.checkForExceptionReport(url, "Request=GetCapabilities", HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class GetCapabilitiesKvpIT {
     public void wrongVersion() throws ParserConfigurationException, SAXException, IOException {
         GetClient.checkForExceptionReport(url, "Service=WPS&Request=GetCapabilities&acceptVersions=42.17", HttpServletResponse.SC_BAD_REQUEST, "VersionNegotiationFailed");
     }
-    
+
     @Test
     public void wrongServiceParameter() throws ParserConfigurationException, SAXException, IOException {
         GetClient.checkForExceptionReport(url, "Service=HotDogStand&Request=GetCapabilities", HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue");

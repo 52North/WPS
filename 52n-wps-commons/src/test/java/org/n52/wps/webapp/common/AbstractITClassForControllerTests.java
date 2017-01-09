@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -16,26 +16,45 @@
  */
 package org.n52.wps.webapp.common;
 
+import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.webapp.api.ConfigurationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Loads Testmodules, which are omitted for other tests. 
- * 
+ * Loads Testmodules, which are omitted for other tests.
+ *
  * @author Benjamin Pross
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml", 
-		"classpath:dispatcher-servlet.xml"})
+@ContextConfiguration(locations = {"classpath*:applicationContext.xml",
+        "classpath*:dispatcher-servlet.xml"})
 @WebAppConfiguration
-@ActiveProfiles("controller-test")
+@ActiveProfiles(profiles = { "test", "controller-test" })
 public class AbstractITClassForControllerTests {
-	@Autowired
-	protected WebApplicationContext wac;
+
+    @Autowired
+    protected WebApplicationContext wac;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+    }
+
+    protected MockMvc getMockedWebService() {
+        return mockMvc;
+    }
+
 }

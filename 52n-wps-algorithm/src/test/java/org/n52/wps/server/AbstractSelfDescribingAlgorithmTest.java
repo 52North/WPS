@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -19,7 +19,9 @@ package org.n52.wps.server;
 import java.util.HashMap;
 
 import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
+import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +35,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  * @author tkunicki
  */
 public class AbstractSelfDescribingAlgorithmTest extends AbstractITClass {
-    
+
     public AbstractSelfDescribingAlgorithmTest() {
     }
 
     @Before
     public void setUp() throws Exception {
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
     }
 
     @Test
@@ -82,21 +82,27 @@ public class AbstractSelfDescribingAlgorithmTest extends AbstractITClass {
     private void printAlgorithmProcessDescription(IAlgorithm algorithm) {
         System.out.println();
         System.out.println(" ### DescribeProcess for " + algorithm.getClass().getName() + " ###");
-        System.out.println(getXMLAsStringFromDescription((ProcessDescriptionType) algorithm.getDescription().getProcessDescriptionType("1.0.0")));//FIXME check
+        System.out.println(getXMLAsStringFromDescription(algorithm.getDescription().getProcessDescriptionType("2.0.0")));//FIXME check
         System.out.println();
     }
 
-    private String getXMLAsStringFromDescription(ProcessDescriptionType decription) {
+    private String getXMLAsStringFromDescription(XmlObject xmlObject) {
         XmlOptions options = new XmlOptions();
         options.setSavePrettyPrint();
         options.setSaveOuter();
         HashMap ns = new HashMap();
-        ns.put("http://www.opengis.net/wps/1.0.0", "wps");
-        ns.put("http://www.opengis.net/ows/1.1", "ows");
+        if(xmlObject instanceof ProcessDescriptionType){
+            ns.put("http://www.opengis.net/wps/1.0.0", "wps");
+            ns.put("http://www.opengis.net/ows/1.1", "ows");
+        }
+        else if(xmlObject instanceof ProcessOffering){
+            ns.put("http://www.opengis.net/wps/2.0", "wps");
+            ns.put("http://www.opengis.net/ows/2.0", "ows");
+        }
         options.setSaveNamespacesFirst().
                 setSaveSuggestedPrefixes(ns).
                 setSaveAggressiveNamespaces();
-        return decription.xmlText(options);
+        return xmlObject.xmlText(options);
     }
 
 }

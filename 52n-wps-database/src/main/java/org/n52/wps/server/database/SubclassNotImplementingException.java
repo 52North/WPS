@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,17 +29,17 @@
 package org.n52.wps.server.database;
 
 public class SubclassNotImplementingException extends RuntimeException {
-	// Serial number for interoperability with different versions.
-	private static final long serialVersionUID = 3499879190279679833L;
+    // Serial number for interoperability with different versions.
+    private static final long serialVersionUID = 3499879190279679833L;
 
-	public SubclassNotImplementingException() {
+    public SubclassNotImplementingException() {
         super("Subclass not found.");
     }
- 
+
     public SubclassNotImplementingException(String message) {
         super(message);
     }
- 
+
     public SubclassNotImplementingException(String message, Throwable cause) {
         super(message, cause);
     }

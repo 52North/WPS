@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,98 +48,98 @@ import org.n52.wps.webapp.dao.UserDAO;
 import org.n52.wps.webapp.entities.User;
 
 public class UserServiceImplTest {
-	
-	@InjectMocks
-	private UserService userService;
-	
-	@Mock
-	private UserDAO userDAO;
-	
-	@Before
-	public void setup() {
-		userService = new UserServiceImpl();
-		MockitoAnnotations.initMocks(this);
-	}
-	
-	@After
-	public void tearDown() {
-		userDAO = null;
-	}
-	
-	@Test
-	public void getUser_validId() {
-		when(userDAO.getUserById(4)).thenReturn(new User());
-		User user = userService.getUser(4);
-		assertNotNull(user);
-	}
-	
-	@Test
-	public void getUser_invalidId() {
-		when(userDAO.getUserById(-99)).thenReturn(null);
-		User user = userService.getUser(-99);
-		assertNull(user);
-	}
-	
-	@Test
-	public void getUser_validUsername() {
-		when(userDAO.getUserByUsername("username")).thenReturn(new User());
-		User user = userService.getUser("username");
-		assertNotNull(user);
-	}
-	
-	@Test
-	public void getUser_invalidUsername() {
-		when(userDAO.getUserByUsername("invalid_username")).thenReturn(null);
-		User user = userService.getUser("invalid_username");
-		assertNull(user);
-	}
-	
-	@Test
-	public void getAllUsers() {
-		List<User> users = new ArrayList<User>();
-		users.add(new User());
-		users.add(new User());
-		when(userDAO.getAllUsers()).thenReturn(users);
-		List<User> usersList = userService.getAllUsers();
-		assertEquals(2, usersList.size());
-	}
-	
-	@Test
-	public void insertUser() {
-		User user = new User();
-		userService.insertUser(user);
-		verify(userDAO).insertUser(user);
-	}
-	
-	@Test
-	public void updatetUser_existingUser() {
-		User user = new User();
-		user.setUserId(5);
-		when(userDAO.getUserById(user.getUserId())).thenReturn(user);
-		userService.updateUser(user);
-		verify(userDAO).updateUser(user);
-	}
-	
-	@Test
-	public void updatetUser_nonExistingUser() {
-		User user = new User();
-		user.setUserId(5);
-		when(userDAO.getUserById(user.getUserId())).thenReturn(null);
-		userService.updateUser(user);
-		verify(userDAO, never()).updateUser(user);
-	}
-	
-	@Test
-	public void deleteUser_existingUser() {
-		when(userDAO.getUserById(4)).thenReturn(new User());
-		userService.deleteUser(4);
-		verify(userDAO).deleteUser(4);
-	}
-	
-	@Test
-	public void deleteUser_nonExistingUser() {
-		when(userDAO.getUserById(4)).thenReturn(null);
-		userService.deleteUser(4);
-		verify(userDAO, never()).deleteUser(4);
-	}
+
+    @InjectMocks
+    private UserService userService;
+
+    @Mock
+    private UserDAO userDAO;
+
+    @Before
+    public void setup() {
+        userService = new UserServiceImpl();
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void tearDown() {
+        userDAO = null;
+    }
+
+    @Test
+    public void getUser_validId() {
+        when(userDAO.getUserById(4)).thenReturn(new User());
+        User user = userService.getUser(4);
+        assertNotNull(user);
+    }
+
+    @Test
+    public void getUser_invalidId() {
+        when(userDAO.getUserById(-99)).thenReturn(null);
+        User user = userService.getUser(-99);
+        assertNull(user);
+    }
+
+    @Test
+    public void getUser_validUsername() {
+        when(userDAO.getUserByUsername("username")).thenReturn(new User());
+        User user = userService.getUser("username");
+        assertNotNull(user);
+    }
+
+    @Test
+    public void getUser_invalidUsername() {
+        when(userDAO.getUserByUsername("invalid_username")).thenReturn(null);
+        User user = userService.getUser("invalid_username");
+        assertNull(user);
+    }
+
+    @Test
+    public void getAllUsers() {
+        List<User> users = new ArrayList<User>();
+        users.add(new User());
+        users.add(new User());
+        when(userDAO.getAllUsers()).thenReturn(users);
+        List<User> usersList = userService.getAllUsers();
+        assertEquals(2, usersList.size());
+    }
+
+    @Test
+    public void insertUser() {
+        User user = new User();
+        userService.insertUser(user);
+        verify(userDAO).insertUser(user);
+    }
+
+    @Test
+    public void updatetUser_existingUser() {
+        User user = new User();
+        user.setUserId(5);
+        when(userDAO.getUserById(user.getUserId())).thenReturn(user);
+        userService.updateUser(user);
+        verify(userDAO).updateUser(user);
+    }
+
+    @Test
+    public void updatetUser_nonExistingUser() {
+        User user = new User();
+        user.setUserId(5);
+        when(userDAO.getUserById(user.getUserId())).thenReturn(null);
+        userService.updateUser(user);
+        verify(userDAO, never()).updateUser(user);
+    }
+
+    @Test
+    public void deleteUser_existingUser() {
+        when(userDAO.getUserById(4)).thenReturn(new User());
+        userService.deleteUser(4);
+        verify(userDAO).deleteUser(4);
+    }
+
+    @Test
+    public void deleteUser_nonExistingUser() {
+        when(userDAO.getUserById(4)).thenReturn(null);
+        userService.deleteUser(4);
+        verify(userDAO, never()).deleteUser(4);
+    }
 }

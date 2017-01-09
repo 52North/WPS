@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import net.opengis.ows.x20.ExceptionReportDocument;
 import net.opengis.wps.x20.ResultDocument;
 import net.opengis.wps.x20.StatusInfoDocument;
 
@@ -77,8 +78,8 @@ public final class FlatFileDatabase implements IDatabase {
     private final static String KEY_DATABASE_WIPE_PERIOD = "wipe.period";
     private final static String KEY_DATABASE_WIPE_THRESHOLD = "wipe.threshold";
     private final static String KEY_DATABASE_COMPLEX_GZIP = "complex.gzip";
-    
-    private final static String DEFAULT_DATABASE_PATH = 
+
+    private final static String DEFAULT_DATABASE_PATH =
             Joiner.on(File.separator).join(
                 System.getProperty("java.io.tmpdir", "."),
                 "Database",
@@ -87,7 +88,7 @@ public final class FlatFileDatabase implements IDatabase {
     private final static long DEFAULT_DATABASE_WIPE_PERIOD = 1000 * 60 * 60;  // P1H
     private final static long DEFAULT_DATABASE_WIPE_THRESHOLD = 1000 * 60 * 60 * 24 * 7; // P7D
     private final static boolean DEFAULT_DATABASE_COMPLEX_GZIP = true; // P7D
-    
+
     private final static String SUFFIX_MIMETYPE = "mime-type";
     private final static String SUFFIX_CONTENT_LENGTH = "content-length";
     private final static String SUFFIX_XML = "xml";
@@ -130,16 +131,16 @@ public final class FlatFileDatabase implements IDatabase {
     protected FlatFileDatabase() {
 
         FlatFileDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (FlatFileDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(FlatFileDatabaseConfigurationModule.class.getName());
-            	
-    	Server server = WPSConfig.getInstance().getServerConfigurationModule();
+
+        Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
         PropertyUtil propertyUtil = new PropertyUtil(flatFileDatabaseConfigurationModule, KEY_DATABASE_ROOT);
-        
+
         // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
         baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
                 server.getHostname(), server.getHostport(), server.getWebappPath());
         LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
-        
+
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         baseDirectory = new File(baseDirectoryPath);
         LOGGER.info("Using \"{}\" as base directory for results database", baseDirectoryPath);
@@ -149,7 +150,7 @@ public final class FlatFileDatabase implements IDatabase {
         }
 
         if (propertyUtil.extractBoolean(KEY_DATABASE_WIPE_ENABLED, DEFAULT_DATABASE_WIPE_ENABLED)) {
-            
+
             long periodMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_PERIOD, DEFAULT_DATABASE_WIPE_PERIOD);
             long thresholdMillis = propertyUtil.extractPeriodAsMillis(KEY_DATABASE_WIPE_THRESHOLD, DEFAULT_DATABASE_WIPE_THRESHOLD);
 
@@ -495,7 +496,7 @@ public final class FlatFileDatabase implements IDatabase {
             try {
 
                 InputStream inputStream = responseFile.getName().endsWith(SUFFIX_GZIP) ? new GZIPInputStream(new FileInputStream(responseFile)) : new FileInputStream(responseFile);
-                
+
                 /*
                  * Check if status doc
                  * Status docs and result docs are saved in the same folder and
@@ -512,7 +513,7 @@ public final class FlatFileDatabase implements IDatabase {
 
                 if (object instanceof StatusInfoDocument) {
                     return object.newInputStream();
-                } else if (object instanceof ResultDocument) {
+                } else if (object instanceof ResultDocument || object instanceof ExceptionReportDocument) {
 
                     LOGGER.info("Last response file not of type status info document.");
 

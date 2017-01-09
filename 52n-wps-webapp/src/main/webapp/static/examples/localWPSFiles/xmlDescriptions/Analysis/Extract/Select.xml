@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.extract.select</ows:Identifier><!-- ParameterCount=3 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.extract.select</ows:Identifier><!-- ParameterCount=3 -->
 		<ows:Title>Select_analysis</ows:Title>
 		<ows:Abstract>Extracts features from an input feature class or input feature layer and stores them in a new output feature class. The output feature class may be created with a subset of features based on a Structured Query Language (SQL) expression. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -36,13 +36,13 @@ The syntax for the expression differs slightly depending on the data source. For
 				<LiteralData>
 					<ows:DataType ows:reference="xs:string"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_feature_class</ows:Identifier><!-- 1 -->
-				<ows:Title>out feature class</ows:Title>	
+				<ows:Title>out feature class</ows:Title>
 				<ows:Abstract>The output feature class to be created. This feature class will contain all the features from the input if no expression is specified.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -66,5 +66,5 @@ The syntax for the expression differs slightly depending on the data source. For
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

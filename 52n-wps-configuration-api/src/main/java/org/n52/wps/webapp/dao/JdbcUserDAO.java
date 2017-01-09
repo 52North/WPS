@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,113 +47,113 @@ import org.springframework.stereotype.Repository;
 @Repository("userDAO")
 public class JdbcUserDAO implements UserDAO {
 
-	@Autowired
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-	@Override
-	public User getUserById(int userId) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("user_id", userId);
-		String sql = "SELECT * FROM users WHERE user_id = :user_id";
-		List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
+    @Override
+    public User getUserById(int userId) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("user_id", userId);
+        String sql = "SELECT * FROM users WHERE user_id = :user_id";
+        List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
-			@Override
-			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User u = new User();
-				u.setUserId(rs.getInt("user_id"));
-				u.setUsername(rs.getString("username"));
-				u.setPassword(rs.getString("password"));
-				u.setRole(rs.getString("role"));
-				return u;
-			}
-		});
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User u = new User();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setRole(rs.getString("role"));
+                return u;
+            }
+        });
 
-		if (users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return users.get(0);
-		} else {
-			return null;
-		}
-	}
+        if (users.isEmpty()) {
+            return null;
+        } else if (users.size() == 1) {
+            return users.get(0);
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public User getUserByUsername(String username) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("username", username);
-		String sql = "SELECT * FROM users WHERE username = :username";
-		List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
+    @Override
+    public User getUserByUsername(String username) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("username", username);
+        String sql = "SELECT * FROM users WHERE username = :username";
+        List<User> users = namedParameterJdbcTemplate.query(sql, parameters, new RowMapper<User>() {
 
-			@Override
-			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User u = new User();
-				u.setUserId(rs.getInt("user_id"));
-				u.setUsername(rs.getString("username"));
-				u.setPassword(rs.getString("password"));
-				u.setRole(rs.getString("role"));
-				return u;
-			}
-		});
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User u = new User();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setRole(rs.getString("role"));
+                return u;
+            }
+        });
 
-		if (users.isEmpty()) {
-			return null;
-		} else if (users.size() == 1) {
-			return users.get(0);
-		} else {
-			return null;
-		}
-	}
+        if (users.isEmpty()) {
+            return null;
+        } else if (users.size() == 1) {
+            return users.get(0);
+        } else {
+            return null;
+        }
+    }
 
-	@Override
-	public List<User> getAllUsers() {
-		String sql = "SELECT * FROM users";
-		List<User> users = namedParameterJdbcTemplate.query(sql, new RowMapper<User>() {
+    @Override
+    public List<User> getAllUsers() {
+        String sql = "SELECT * FROM users";
+        List<User> users = namedParameterJdbcTemplate.query(sql, new RowMapper<User>() {
 
-			@Override
-			public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User u = new User();
-				u.setUserId(rs.getInt("user_id"));
-				u.setUsername(rs.getString("username"));
-				u.setPassword(rs.getString("password"));
-				u.setRole(rs.getString("role"));
-				return u;
-			}
-		});
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User u = new User();
+                u.setUserId(rs.getInt("user_id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setRole(rs.getString("role"));
+                return u;
+            }
+        });
 
-		if (users.isEmpty()) {
-			return null;
-		} else {
-			return users;
-		}
-	}
+        if (users.isEmpty()) {
+            return null;
+        } else {
+            return users;
+        }
+    }
 
-	@Override
-	public void insertUser(User user) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("username", user.getUsername());
-		parameters.put("password", user.getPassword());
-		parameters.put("role", user.getRole());
-		String sql = "INSERT INTO users (username, password, role) VALUES(:username," + ":password, :role)";
-		namedParameterJdbcTemplate.update(sql, parameters);
+    @Override
+    public void insertUser(User user) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("username", user.getUsername());
+        parameters.put("password", user.getPassword());
+        parameters.put("role", user.getRole());
+        String sql = "INSERT INTO users (username, password, role) VALUES(:username," + ":password, :role)";
+        namedParameterJdbcTemplate.update(sql, parameters);
 
-	}
+    }
 
-	@Override
-	public void updateUser(User user) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("user_id", user.getUserId());
-		parameters.put("password", user.getPassword());
-		parameters.put("role", user.getRole());
-		String sql = "UPDATE users SET password = :password, role = :role WHERE user_id = :user_id";
-		namedParameterJdbcTemplate.update(sql, parameters);
-	}
+    @Override
+    public void updateUser(User user) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("user_id", user.getUserId());
+        parameters.put("password", user.getPassword());
+        parameters.put("role", user.getRole());
+        String sql = "UPDATE users SET password = :password, role = :role WHERE user_id = :user_id";
+        namedParameterJdbcTemplate.update(sql, parameters);
+    }
 
-	@Override
-	public void deleteUser(int userId) {
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("user_id", userId);
-		String sql = "DELETE FROM users WHERE user_id = :user_id";
-		namedParameterJdbcTemplate.update(sql, parameters);
-	}
+    @Override
+    public void deleteUser(int userId) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("user_id", userId);
+        String sql = "DELETE FROM users WHERE user_id = :user_id";
+        namedParameterJdbcTemplate.update(sql, parameters);
+    }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,54 +68,54 @@ import org.opengis.coverage.grid.GridCoverageReader;
  */
 public class AsciiGrassParser extends AbstractParser {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
-	
-	public AsciiGrassParser(){
-		super();
-		supportedIDataTypes.add(AsciiGrassDataBinding.class);
-	}
-	
-	@Override
-	public AsciiGrassDataBinding parse(InputStream input, String mimeType, String schema) {
-		
+    private static Logger LOGGER = LoggerFactory.getLogger(AsciiGrassParser.class);
 
-		GridCoverage2D grid = null;
-		
-		try {			
-			/** Step 1: Reading the coverage */
+    public AsciiGrassParser(){
+        super();
+        supportedIDataTypes.add(AsciiGrassDataBinding.class);
+    }
 
-			GridCoverageReader reader = new ArcGridReader(dumpToFile(input));
+    @Override
+    public AsciiGrassDataBinding parse(InputStream input, String mimeType, String schema) {
 
-			grid = (GridCoverage2D) reader.read(null);
-				
-			LOGGER.info("getCoordinateReferenceSystem2D(): " + grid.getCoordinateReferenceSystem2D().toString());
-			LOGGER.info("getEnvelope():" + grid.getEnvelope2D().toString());
-			
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new RuntimeException(e);
-		}
-		return new AsciiGrassDataBinding(grid);
-	}
 
-	
-	private File dumpToFile(InputStream inputStream)
-			throws FileNotFoundException, IOException {
+        GridCoverage2D grid = null;
 
-		BufferedInputStream bis = new BufferedInputStream(inputStream);
+        try {
+            /** Step 1: Reading the coverage */
 
-		File outputFile = File.createTempFile("temp" + inputStream.hashCode(), "tmp");
+            GridCoverageReader reader = new ArcGridReader(dumpToFile(input));
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+            grid = (GridCoverage2D) reader.read(null);
 
-		int _byte;
-		while ((_byte = bis.read()) != -1) {
-			bw.write(_byte);
-		}
+            LOGGER.info("getCoordinateReferenceSystem2D(): " + grid.getCoordinateReferenceSystem2D().toString());
+            LOGGER.info("getEnvelope():" + grid.getEnvelope2D().toString());
 
-		bw.close();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+        return new AsciiGrassDataBinding(grid);
+    }
 
-		return outputFile;
-	}
+
+    private File dumpToFile(InputStream inputStream)
+            throws FileNotFoundException, IOException {
+
+        BufferedInputStream bis = new BufferedInputStream(inputStream);
+
+        File outputFile = File.createTempFile("temp" + inputStream.hashCode(), "tmp");
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+
+        int _byte;
+        while ((_byte = bis.read()) != -1) {
+            bw.write(_byte);
+        }
+
+        bw.close();
+
+        return outputFile;
+    }
 
 }

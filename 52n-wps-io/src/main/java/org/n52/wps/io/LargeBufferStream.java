@@ -113,8 +113,9 @@ package org.n52.wps.io;
                          while (len > 0) {
                                  Block s = last();
                                  if (s.isFull()) {
-                                         if (reachedInCoreLimit())
+                                         if (reachedInCoreLimit()){
                                                  break;
+                                         }
 
                                          s = new Block();
                                          blocks.add(s);
@@ -128,8 +129,9 @@ package org.n52.wps.io;
                          }
                  }
 
-                 if (len > 0)
+                 if (len > 0){
                          diskOut.write(b, off, len);
+                 }
          }
 
          private Block last() {
@@ -137,15 +139,17 @@ package org.n52.wps.io;
          }
 
          private boolean reachedInCoreLimit() throws IOException {
-                 if (blocks.size() * Block.SZ < inCoreLimit)
+                 if (blocks.size() * Block.SZ < inCoreLimit){
                          return false;
+                 }
 
                  onDiskFile = File.createTempFile("jgit_", ".buffer");
                  diskOut = new FileOutputStream(onDiskFile);
 
                  final Block last = blocks.remove(blocks.size() - 1);
-                 for (final Block b : blocks)
+                 for (final Block b : blocks){
                          diskOut.write(b.buffer, 0, b.count);
+                 }
                  blocks = null;
 
                  diskOut = new BufferedOutputStream(diskOut, Block.SZ);
@@ -171,8 +175,9 @@ package org.n52.wps.io;
           * @return total length of the buffer, in bytes.
           */
          public long length() {
-                 if (onDiskFile != null)
+                 if (onDiskFile != null){
                          return onDiskFile.length();
+                 }
 
                  final Block last = last();
                  return ((long) blocks.size()) * Block.SZ - (Block.SZ - last.count);
@@ -186,23 +191,19 @@ package org.n52.wps.io;
           *
           * @param os
           *            stream to send this buffer's complete content to.
-          * @param pm
-          *            if not null progress updates are sent here. Caller should
-          *            initialize the task and the number of work units to
-          *            <code>{@link #length()}/1024</code>.
           * @throws IOException
           *             an error occurred reading from a temporary file on the local
           *             system, or writing to the output stream.
           */
          public void writeTo(final OutputStream os)
                          throws IOException {
-                
+
                  if (blocks != null) {
                          // Everything is in core so we can stream directly to   the output.
                          //
                         for (final Block b : blocks) {
                                  os.write(b.buffer, 0, b.count);
-                                 
+
                          }
                  } else {
                          // Reopen the temporary file and copy the contents.
@@ -213,7 +214,7 @@ package org.n52.wps.io;
                                  final byte[] buf = new byte[Block.SZ];
                                  while ((cnt = in.read(buf)) >= 0) {
                                         os.write(buf, 0, cnt);
-                                       
+
                                 }
                          } finally {
                               in.close();
@@ -235,8 +236,9 @@ package org.n52.wps.io;
                  }
 
                 if (onDiskFile != null) {
-                         if (!onDiskFile.delete())
+                         if (!onDiskFile.delete()){
                                  onDiskFile.deleteOnExit();
+                         }
                        onDiskFile = null;
                  }
          }

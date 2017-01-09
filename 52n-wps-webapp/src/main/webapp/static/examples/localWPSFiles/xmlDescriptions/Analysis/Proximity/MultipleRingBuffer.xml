@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.analysis.proximity.multipleringbuffer</ows:Identifier><!-- ParameterCount=7 -->		
+		<ows:Identifier>org.n52.wps.ags.analysis.proximity.multipleringbuffer</ows:Identifier><!-- ParameterCount=7 -->
 		<ows:Title>MultipleRingBuffer_analysis</ows:Title>
 		<ows:Abstract>Creates a new feature class of buffer features using a set of buffer distances. The new features may be dissolved using the distance values or as a set of individual features. Uses ArcObjects library - Analysis</ows:Abstract>
 		<DataInputs>
@@ -21,7 +21,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/x-zipped-shp</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -56,9 +56,9 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<ows:Value>NauticalMiles</ows:Value>
 						<ows:Value>Points</ows:Value>
 						<ows:Value>Yards</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
-			</Input>		
+			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>Field_Name</ows:Identifier><!-- 4 -->
 				<ows:Title>Field Name</ows:Title>
@@ -77,7 +77,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 					<ows:AllowedValues>
 						<ows:Value>NONE</ows:Value>
 						<ows:Value>ALL</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
@@ -93,7 +93,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>Output_Feature_class</ows:Identifier><!-- 1 -->
-				<ows:Title>Output Feature class</ows:Title>	
+				<ows:Title>Output Feature class</ows:Title>
 				<ows:Abstract>The new polygon feature class to be created.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -110,12 +110,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 					    <MimeType>text/XML</MimeType>
 						  <Schema>http://schemas.opengis.net/gml/2.1.2/feature.xsd</Schema>
-				    </Format>	
+				    </Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

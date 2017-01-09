@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,50 +50,50 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("service_provider")
 public class ServiceProviderController {
-	@Autowired
-	private ConfigurationManager configurationManager;
+    @Autowired
+    private ConfigurationManager configurationManager;
 
-	private final Logger LOGGER = LoggerFactory.getLogger(ServiceProviderController.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(ServiceProviderController.class);
 
-	/**
-	 * Display the service provider module
-	 * 
-	 * @param model
-	 * @return The service provider view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String display(Model model) {
-		ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
-		model.addAttribute("serviceProvider", serviceProvider);
-		LOGGER.info("Reterived '{}' configuration module.", serviceProvider.getClass().getName());
-		return "service_provider";
-	}
+    /**
+     * Display the service provider module
+     *
+     * @param model the model
+     * @return The service provider view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String display(Model model) {
+        ServiceProvider serviceProvider = configurationManager.getCapabilitiesServices().getServiceProvider();
+        model.addAttribute("serviceProvider", serviceProvider);
+        LOGGER.info("Reterived '{}' configuration module.", serviceProvider.getClass().getName());
+        return "service_provider";
+    }
 
-	/**
-	 * Process form submission. The method will return an HTTP 200 status code if there
-	 * are no errors, else, it will return a 400 status code.
-	 * 
-	 * @param serviceProvider
-	 *            The model holding the service provider values
-	 * @param result
-	 * @param model
-	 * @param response
-	 * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
-	 *         errors.
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	public ValidationResponse processPost(@ModelAttribute("serviceProvider") @Valid ServiceProvider serviceProvider,
-			BindingResult result, Model model, HttpServletResponse response) {
-		ValidationResponse validationResponse = new ValidationResponse();
-		if (result.hasErrors()) {
-			validationResponse.setErrorMessageList(result.getFieldErrors());
-			validationResponse.setStatus("Fail");
-			response.setStatus(400);
-		} else {
-			configurationManager.getCapabilitiesServices().saveServiceProvider(serviceProvider);
-			validationResponse.setStatus("Sucess");
-		}
-		return validationResponse;
-	}
+    /**
+     * Process form submission. The method will return an HTTP 200 status code if there
+     * are no errors, else, it will return a 400 status code.
+     *
+     * @param serviceProvider
+     *            The model holding the service provider values
+     * @param result the <code>BindingResult</code>
+     * @param model the model
+     * @param response the servlet response
+     * @return A {@code ValidationResponse} object with the list of form errors which can be empty if there are no
+     *         errors.
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public ValidationResponse processPost(@ModelAttribute("serviceProvider") @Valid ServiceProvider serviceProvider,
+            BindingResult result, Model model, HttpServletResponse response) {
+        ValidationResponse validationResponse = new ValidationResponse();
+        if (result.hasErrors()) {
+            validationResponse.setErrorMessageList(result.getFieldErrors());
+            validationResponse.setStatus("Fail");
+            response.setStatus(400);
+        } else {
+            configurationManager.getCapabilitiesServices().saveServiceProvider(serviceProvider);
+            validationResponse.setStatus("Sucess");
+        }
+        return validationResponse;
+    }
 }

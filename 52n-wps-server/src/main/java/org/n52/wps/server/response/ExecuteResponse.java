@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,23 +35,23 @@ import org.n52.wps.server.request.ExecuteRequest;
 
 public class ExecuteResponse extends Response {
 
-	private ExecuteResponseBuilder builder;
-	
-	public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
-		super(request);
-		this.builder = request.getExecuteResponseBuilder();
-	}
-	
+    private ExecuteResponseBuilder builder;
+
+    public ExecuteResponse(ExecuteRequest request) throws ExceptionReport{
+        super(request);
+        this.builder = request.getExecuteResponseBuilder();
+    }
+
     @Override
-	public InputStream getAsStream() throws ExceptionReport{
-		return this.builder.getAsStream();
-	}
-	
-	public ExecuteResponseBuilder getExecuteResponseBuilder(){
-		return builder;
-	}
-	
-	public String getMimeType(){
-		return builder.getMimeType();
-	}
+    public InputStream getAsStream() throws ExceptionReport{
+        return this.builder.getAsStream();
+    }
+
+    public ExecuteResponseBuilder getExecuteResponseBuilder(){
+        return builder;
+    }
+
+    public String getMimeType(){
+        return builder.getMimeType();
+    }
 }

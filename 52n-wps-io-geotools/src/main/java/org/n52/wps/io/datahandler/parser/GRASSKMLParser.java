@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,16 +58,16 @@ import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
  */
 public class GRASSKMLParser extends AbstractParser {
 
-	public GRASSKMLParser(){
-		super();
-		supportedIDataTypes.add(GenericFileDataWithGTBinding.class);		
-	}
+    public GRASSKMLParser(){
+        super();
+        supportedIDataTypes.add(GenericFileDataWithGTBinding.class);
+    }
 
-	@Override
-	public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
-		GenericFileDataWithGTBinding data = new GenericFileDataWithGTBinding(
-				new GenericFileDataWithGT(stream, "text/xml"));
-		return data;
-	}
+    @Override
+    public GenericFileDataWithGTBinding parse(InputStream stream, String mimeType, String schema) {
+        GenericFileDataWithGTBinding data = new GenericFileDataWithGTBinding(
+                new GenericFileDataWithGT(stream, "text/xml"));
+        return data;
+    }
 
 }

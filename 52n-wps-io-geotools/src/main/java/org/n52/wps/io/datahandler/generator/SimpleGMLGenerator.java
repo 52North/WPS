@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -87,223 +87,225 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 public class SimpleGMLGenerator extends AbstractGenerator {
-	
-	
-	public SimpleGMLGenerator() {
-		super();
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
-		
-		File tempFile = null;
-		InputStream stream = null;
-		
-		try {
-			tempFile = File.createTempFile("gml", "xml");
-			this.finalizeFiles.add(tempFile);
-			FileOutputStream outputStream = new FileOutputStream(tempFile);
-			this.writeToStream(data, outputStream);
-			outputStream.flush();
-			outputStream.close();
-			
-			stream = new FileInputStream(tempFile);
-		} catch (IOException e){
-			throw new IOException("Unable to generate GML");
-		}
-		
-		return stream;
-	}
 
-	public Node generateXML(IData coll, String schema) {
-		return generateXMLObj(coll, schema).getDomNode();
-	}
 
-	public void write(IData coll, Writer writer) {
-		GMLPacketDocument doc = generateXMLObj(coll, null);
-		try {
-			BufferedWriter bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			doc.save(bufferedWriter);
-			bufferedWriter.close();
-		}
-		catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public SimpleGMLGenerator() {
+        super();
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
 
-	private GMLPacketDocument generateXMLObj(IData coll, String schema2) {
-		GMLPacketDocument doc = GMLPacketDocument.Factory.newInstance();
-		GMLPacketType packet = doc.addNewGMLPacket();
-		if(coll == null) {
-			return doc;
-		}
-		FeatureIterator<?> iter = ((GTVectorDataBinding)coll).getPayload().features();
-		while(iter.hasNext()) {
-			SimpleFeature feature = (SimpleFeature) iter.next();
-			StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();
-			Geometry geom = (Geometry) feature.getDefaultGeometry();
-			String geomType = geom.getGeometryType();
-			if(geomType.equals("Point")) {
-				Point point = (Point)geom;
-				Coordinate coord = point.getCoordinate();
-				if (coord != null) {
-					PointPropertyType pointType = staticFeature.addNewPointProperty();
-					pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
-					generateAttribute(feature, staticFeature);					
-					}
-			}
-			else if(geomType.equals("LineString")) {
-				LineString ls = (LineString)geom;
-				CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
-				if(coords != null) {
-					ls.getCoordinates();
-					LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
-					lsType.addNewLineString().setCoordArray(coords);
-					
-					generateAttribute(feature, staticFeature);	
-				}
-			}
-			else if(geomType.equals("Polygon")) {
-				Polygon polygon = (Polygon)geom;
-				PolygonType xmlPolygon = staticFeature.addNewPolygonProperty().addNewPolygon();
-				xmlPolygon.setOuterBoundaryIs(convertToXMLLinearRing(polygon.getExteriorRing()));
-				LinearRingMemberType innerBoundary = xmlPolygon.addNewInnerBoundaryIs();
-				for(int i = 0; i < polygon.getNumInteriorRing(); i++) {
-					LinearRingType innerRing = innerBoundary.addNewLinearRing();
-					innerRing.setCoordArray(convertToXMLCoordType(polygon.getInteriorRingN(i).getCoordinates()));
-				}
-				generateAttribute(feature, staticFeature);	
-			}
-			else if (geomType.equals("MultiPolygon")) {
-				MultiPolygon mp = (MultiPolygon)geom;
-				for(int i = 0; i < mp.getNumGeometries(); i++) {
-					if(i > 0) {
-						staticFeature = packet.addNewPacketMember().addNewStaticFeature();
-					}
-					Polygon p = (Polygon) (geom.getGeometryN(i));
-					
-					PolygonType pType = staticFeature.addNewPolygonProperty().addNewPolygon();
-					pType.setOuterBoundaryIs(convertToXMLLinearRing(p.getExteriorRing()));
-					LinearRingMemberType innerBoundary = pType.addNewInnerBoundaryIs();
-					for(int j = 0; j < p.getNumInteriorRing(); j++) {
-						LinearRingType innerRing = innerBoundary.addNewLinearRing();
-						innerRing.setCoordArray(convertToXMLCoordType(p.getInteriorRingN(j).getCoordinates()));
-					}
-					
-				}
-				generateAttribute(feature, staticFeature);	
-			}
-			// THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs, 
-			else if(geomType.equals("MultiLineString")) {
-				MultiLineString mls = (MultiLineString)geom;
-				for(int i = 0; i < mls.getNumGeometries(); i++) {
-					if(i > 0) {
-						staticFeature = packet.addNewPacketMember().addNewStaticFeature();
-					}
-					LineString ls = (LineString) (geom.getGeometryN(i));
-					LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
-					lsType.addNewLineString().setCoordArray(convertToXMLCoordType(ls.getCoordinates()));
-				}
-				generateAttribute(feature, staticFeature);	
-			}
-//			else if(geomType.equals("GeometryCollection")) {
-//				GeometryCollection geomColl = (GeometryCollection)geom;
-//				geomColl.get
-//			}
-			else if(geom.isEmpty()) {
-				//GEOMETRY is empty, do nothing
-				
-			}
-			else {
-				throw new IllegalArgumentException("geometryType not supported: " + geomType);
-			}
-		}
-		return doc;
-	}
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 
-	private void generateAttribute(SimpleFeature feature,
-			StaticFeatureType staticFeature) {
-		if(feature.getFeatureType().getAttributeCount()>1){
-			
-			PropertyType propertyType;
-			Value value;
-			int attributePosCounter=0;
-			for (Object o: feature.getAttributes()) {
-				DataType.Enum dataType;
-				if(o instanceof Integer){
-					dataType = DataType.INTEGER;
-				}else if(o instanceof String){
-					dataType = DataType.STRING;
-				}else if(o instanceof Boolean){
-					dataType = DataType.BOOLEAN;
-				}else if(o instanceof Long){
-					dataType = DataType.LONG;
-				}else if(o instanceof Double){
-					dataType = DataType.DECIMAL;
-				}
-				else continue;	//Don't create anything
-				
-				propertyType = staticFeature.addNewProperty();
-				propertyType.setPropertyName(feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
-				value = propertyType.addNewValue();
-				value.setDataType(dataType);
-				value.setStringValue(String.valueOf(o));
-				attributePosCounter++;
-			}
-		}
-	}
-	
-	private LinearRingMemberType convertToXMLLinearRing(LineString ls) {
-		LinearRingMemberType ringMember = LinearRingMemberType.Factory.newInstance();
-		LinearRingType ring = LinearRingType.Factory.newInstance();
-		CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
-		if(coords == null) {
-			return null;
-		}
-		ring.setCoordArray(coords);
-		ringMember.setLinearRing(ring);
-		return ringMember;
-	}
-	
-	private CoordType[] convertToXMLCoordType(Coordinate[] coords) {
-		ArrayList<CoordType> coordsList = new ArrayList<CoordType>();
-		for(int i = 0; i < coords.length; i++) {
-			CoordType tempCoord = convertToXMLCoordType(coords[i]);
-			if(tempCoord != null) {
-				coordsList.add(tempCoord);
-			}
-		}
-		if(coordsList.isEmpty()) {
-			return null;
-		}
-		CoordType[] returnCoords = new CoordType[coordsList.size()];
-		returnCoords = coordsList.toArray(returnCoords);
-		return returnCoords;
-	}
-	
-	private CoordType convertToXMLCoordType(Coordinate coord) {
-		if(Double.isNaN(coord.x) || Double.isNaN(coord.y)) {
-			return null;
-		}
-		CoordType xmlCoord = CoordType.Factory.newInstance();
-		try {
-			xmlCoord.setX(new BigDecimal(Double.toString(coord.x)));
-			xmlCoord.setY(new BigDecimal(Double.toString(coord.y)));
-		}
-		catch(NumberFormatException e) {
-			throw new IllegalArgumentException(e);
-		}
-		if(!Double.isNaN(coord.z)) {
-			xmlCoord.setZ(BigDecimal.valueOf(coord.z));
-		}
-		return xmlCoord;
-	}
+        File tempFile = null;
+        InputStream stream = null;
 
-	public void writeToStream(IData coll, OutputStream os) {
-		OutputStreamWriter w = new OutputStreamWriter(os);
-		write (coll, w);		
-	}
+        try {
+            tempFile = File.createTempFile("gml", "xml");
+            this.finalizeFiles.add(tempFile);
+            FileOutputStream outputStream = new FileOutputStream(tempFile);
+            this.writeToStream(data, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            stream = new FileInputStream(tempFile);
+        } catch (IOException e){
+            throw new IOException("Unable to generate GML");
+        }
+
+        return stream;
+    }
+
+    public Node generateXML(IData coll, String schema) {
+        return generateXMLObj(coll, schema).getDomNode();
+    }
+
+    public void write(IData coll, Writer writer) {
+        GMLPacketDocument doc = generateXMLObj(coll, null);
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(writer);
+            bufferedWriter.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            doc.save(bufferedWriter);
+            bufferedWriter.close();
+        }
+        catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private GMLPacketDocument generateXMLObj(IData coll, String schema2) {
+        GMLPacketDocument doc = GMLPacketDocument.Factory.newInstance();
+        GMLPacketType packet = doc.addNewGMLPacket();
+        if(coll == null) {
+            return doc;
+        }
+        FeatureIterator<?> iter = ((GTVectorDataBinding)coll).getPayload().features();
+        while(iter.hasNext()) {
+            SimpleFeature feature = (SimpleFeature) iter.next();
+            StaticFeatureType staticFeature = packet.addNewPacketMember().addNewStaticFeature();
+            Geometry geom = (Geometry) feature.getDefaultGeometry();
+            String geomType = geom.getGeometryType();
+            if(geomType.equals("Point")) {
+                Point point = (Point)geom;
+                Coordinate coord = point.getCoordinate();
+                if (coord != null) {
+                    PointPropertyType pointType = staticFeature.addNewPointProperty();
+                    pointType.addNewPoint().setCoord(convertToXMLCoordType(coord));
+                    generateAttribute(feature, staticFeature);
+                    }
+            }
+            else if(geomType.equals("LineString")) {
+                LineString ls = (LineString)geom;
+                CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
+                if(coords != null) {
+                    ls.getCoordinates();
+                    LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
+                    lsType.addNewLineString().setCoordArray(coords);
+
+                    generateAttribute(feature, staticFeature);
+                }
+            }
+            else if(geomType.equals("Polygon")) {
+                Polygon polygon = (Polygon)geom;
+                PolygonType xmlPolygon = staticFeature.addNewPolygonProperty().addNewPolygon();
+                xmlPolygon.setOuterBoundaryIs(convertToXMLLinearRing(polygon.getExteriorRing()));
+                LinearRingMemberType innerBoundary = xmlPolygon.addNewInnerBoundaryIs();
+                for(int i = 0; i < polygon.getNumInteriorRing(); i++) {
+                    LinearRingType innerRing = innerBoundary.addNewLinearRing();
+                    innerRing.setCoordArray(convertToXMLCoordType(polygon.getInteriorRingN(i).getCoordinates()));
+                }
+                generateAttribute(feature, staticFeature);
+            }
+            else if (geomType.equals("MultiPolygon")) {
+                MultiPolygon mp = (MultiPolygon)geom;
+                for(int i = 0; i < mp.getNumGeometries(); i++) {
+                    if(i > 0) {
+                        staticFeature = packet.addNewPacketMember().addNewStaticFeature();
+                    }
+                    Polygon p = (Polygon) (geom.getGeometryN(i));
+
+                    PolygonType pType = staticFeature.addNewPolygonProperty().addNewPolygon();
+                    pType.setOuterBoundaryIs(convertToXMLLinearRing(p.getExteriorRing()));
+                    LinearRingMemberType innerBoundary = pType.addNewInnerBoundaryIs();
+                    for(int j = 0; j < p.getNumInteriorRing(); j++) {
+                        LinearRingType innerRing = innerBoundary.addNewLinearRing();
+                        innerRing.setCoordArray(convertToXMLCoordType(p.getInteriorRingN(j).getCoordinates()));
+                    }
+
+                }
+                generateAttribute(feature, staticFeature);
+            }
+            // THE MULTILINESTRING WILL BE DEVIDED INTO NORMAL LINESTRINGs,
+            else if(geomType.equals("MultiLineString")) {
+                MultiLineString mls = (MultiLineString)geom;
+                for(int i = 0; i < mls.getNumGeometries(); i++) {
+                    if(i > 0) {
+                        staticFeature = packet.addNewPacketMember().addNewStaticFeature();
+                    }
+                    LineString ls = (LineString) (geom.getGeometryN(i));
+                    LineStringPropertyType lsType = staticFeature.addNewLineStringProperty();
+                    lsType.addNewLineString().setCoordArray(convertToXMLCoordType(ls.getCoordinates()));
+                }
+                generateAttribute(feature, staticFeature);
+            }
+//            else if(geomType.equals("GeometryCollection")) {
+//                GeometryCollection geomColl = (GeometryCollection)geom;
+//                geomColl.get
+//            }
+            else if(geom.isEmpty()) {
+                //GEOMETRY is empty, do nothing
+
+            }
+            else {
+                throw new IllegalArgumentException("geometryType not supported: " + geomType);
+            }
+        }
+        return doc;
+    }
+
+    private void generateAttribute(SimpleFeature feature,
+            StaticFeatureType staticFeature) {
+        if(feature.getFeatureType().getAttributeCount()>1){
+
+            PropertyType propertyType;
+            Value value;
+            int attributePosCounter=0;
+            for (Object o: feature.getAttributes()) {
+                DataType.Enum dataType;
+                if(o instanceof Integer){
+                    dataType = DataType.INTEGER;
+                }else if(o instanceof String){
+                    dataType = DataType.STRING;
+                }else if(o instanceof Boolean){
+                    dataType = DataType.BOOLEAN;
+                }else if(o instanceof Long){
+                    dataType = DataType.LONG;
+                }else if(o instanceof Double){
+                    dataType = DataType.DECIMAL;
+                }
+                else {
+                    continue;    //Don't create anything
+                }
+
+                propertyType = staticFeature.addNewProperty();
+                propertyType.setPropertyName(feature.getFeatureType().getAttributeDescriptors().get(attributePosCounter).getLocalName());
+                value = propertyType.addNewValue();
+                value.setDataType(dataType);
+                value.setStringValue(String.valueOf(o));
+                attributePosCounter++;
+            }
+        }
+    }
+
+    private LinearRingMemberType convertToXMLLinearRing(LineString ls) {
+        LinearRingMemberType ringMember = LinearRingMemberType.Factory.newInstance();
+        LinearRingType ring = LinearRingType.Factory.newInstance();
+        CoordType[] coords = convertToXMLCoordType(ls.getCoordinates());
+        if(coords == null) {
+            return null;
+        }
+        ring.setCoordArray(coords);
+        ringMember.setLinearRing(ring);
+        return ringMember;
+    }
+
+    private CoordType[] convertToXMLCoordType(Coordinate[] coords) {
+        ArrayList<CoordType> coordsList = new ArrayList<CoordType>();
+        for(int i = 0; i < coords.length; i++) {
+            CoordType tempCoord = convertToXMLCoordType(coords[i]);
+            if(tempCoord != null) {
+                coordsList.add(tempCoord);
+            }
+        }
+        if(coordsList.isEmpty()) {
+            return null;
+        }
+        CoordType[] returnCoords = new CoordType[coordsList.size()];
+        returnCoords = coordsList.toArray(returnCoords);
+        return returnCoords;
+    }
+
+    private CoordType convertToXMLCoordType(Coordinate coord) {
+        if(Double.isNaN(coord.x) || Double.isNaN(coord.y)) {
+            return null;
+        }
+        CoordType xmlCoord = CoordType.Factory.newInstance();
+        try {
+            xmlCoord.setX(new BigDecimal(Double.toString(coord.x)));
+            xmlCoord.setY(new BigDecimal(Double.toString(coord.y)));
+        }
+        catch(NumberFormatException e) {
+            throw new IllegalArgumentException(e);
+        }
+        if(!Double.isNaN(coord.z)) {
+            xmlCoord.setZ(BigDecimal.valueOf(coord.z));
+        }
+        return xmlCoord;
+    }
+
+    public void writeToStream(IData coll, OutputStream os) {
+        OutputStreamWriter w = new OutputStreamWriter(os);
+        write (coll, w);
+    }
 
 }

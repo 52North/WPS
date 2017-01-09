@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,6 +33,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,6 +71,8 @@ public class R_Config implements ServletContextAware {
 
     private String wknPrefix = "org.n52.wps.server.r.";
 
+    public static final String LOCK_SUFFIX = "lock";
+
     private static final String DIR_DELIMITER = ";";
 
     private RConfigurationModule configModule;
@@ -95,7 +98,7 @@ public class R_Config implements ServletContextAware {
     }
 
     public void setConfigModule(RConfigurationModule configModule) {
-    	this.configModule = configModule;
+        this.configModule = configModule;
     }
 
     public RConfigurationModule getConfigModule() {
@@ -123,8 +126,9 @@ public class R_Config implements ServletContextAware {
         String[] dirs = resourceDirConfigParam.split(DIR_DELIMITER);
         for (String s : dirs) {
             Path dir = Paths.get(s);
-            if ( !dir.isAbsolute())
+            if ( !dir.isAbsolute()) {
                 dir = getBaseDir().resolve(s);
+            }
 
             resourceDirectories.add(dir);
             LOGGER.debug("Found resource directory configured in config variable: {}", dir);
@@ -143,7 +147,12 @@ public class R_Config implements ServletContextAware {
             if ( !dir.isAbsolute()) {
                 dir = new File(getBaseDir().toFile(), s);
             }
-            for (File rScript : dir.listFiles(new RFileExtensionFilter())) {
+            File[] files = dir.listFiles(new RFileExtensionFilter());
+            if (files == null) {
+                LOGGER.info("Configured script dir does not exist: {}", dir);
+                continue;
+            }
+            for (File rScript : files) {
                 rScripts.add(rScript);
                 LOGGER.debug("Registered script: {}", rScript.getAbsoluteFile());
             }
@@ -191,7 +200,7 @@ public class R_Config implements ServletContextAware {
     }
 
     public boolean getEnableBatchStart() {
-    	return configModule.isEnableBatchStart();
+        return configModule.isEnableBatchStart();
     }
 
     public URL getProcessDescriptionURL(String processWKN) {
@@ -218,16 +227,16 @@ public class R_Config implements ServletContextAware {
             if (configVariable != null) {
                 String[] configVariableDirs = configVariable.split(DIR_DELIMITER);
                 for (String s : configVariableDirs) {
-                    Path dir = Paths.get(s);
-                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(dir, basedir);
+                    Collection<File> files = resolveFilesFromResourcesOrFromWebapp(s, basedir);
                     this.utilsFiles.addAll(files);
                     LOGGER.debug("Added {} files to the list of util files: {}",
                                  files.size(),
                                  Arrays.toString(files.toArray()));
                 }
             }
-            else
+            else {
                 LOGGER.error("Could not load utils directory variable from config, not loading any utils files!");
+            }
         }
 
         return utilsFiles;
@@ -242,19 +251,23 @@ public class R_Config implements ServletContextAware {
      *        the full path to the webapp directory
      * @return
      */
-    private Collection<File> resolveFilesFromResourcesOrFromWebapp(Path p, Path baseDir) {
-        LOGGER.debug("Loading util files from {}", p);
+    private Collection<File> resolveFilesFromResourcesOrFromWebapp(String s, Path baseDir) {
+        LOGGER.debug("Loading util files from {}", s);
 
-        if ( !baseDir.isAbsolute())
+        Path p = Paths.get(s);
+        if ( !baseDir.isAbsolute()) {
             throw new RuntimeException(String.format("The given basedir (%s) is not absolute, cannot resolve path %s.",
                                                      baseDir,
                                                      p));
+        }
 
         ArrayList<File> foundFiles = new ArrayList<>();
         File f = null;
 
         // try resource first
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(p.toString());) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(s);) {
+        //URL url = Resources.getResource(p.toString());
+        //try (InputStream input = Resources.asByteSource(url).openStream();) {
             if (input != null) {
                 if (this.utilFileCache.containsKey(p) && this.utilFileCache.get(p).exists()) {
                     f = this.utilFileCache.get(p);
@@ -286,8 +299,9 @@ public class R_Config implements ServletContextAware {
                 File[] files = f.listFiles(rFileFilter);
                 foundFiles.addAll(Arrays.asList(files));
             }
-            else
+            else {
                 LOGGER.warn("Configured utils directory does not exist: {}", p);
+            }
         }
 
         LOGGER.debug("Found {} util files in directory configured as '{}' at {}", foundFiles.size(), p, f);
@@ -296,12 +310,24 @@ public class R_Config implements ServletContextAware {
     }
 
     public Path getBaseDir() {
-        return this.baseDir;
+//        return baseDir;
+        try {
+            return this.baseDir == null
+                    ? Paths.get(getClass().getResource("/").toURI())
+                    : baseDir;
+        } catch (URISyntaxException e) {
+            LOGGER.error("Could not determine fallback base dir!", e);
+            return Paths.get(""); // empty path
+        }
+    }
+
+    protected void setBaseDir(Path baseDir) {
+        this.baseDir = baseDir;
     }
 
     @Override
     public void setServletContext(ServletContext servletContext) {
-        this.baseDir = Paths.get(servletContext.getRealPath(""));
+        setBaseDir(Paths.get(servletContext.getRealPath("")));
     }
 
     public String getPublicScriptId(String s) {

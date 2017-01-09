@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -28,41 +28,39 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public abstract class AbstractTestCase<T  extends AbstractIOHandler> extends AbstractITClass {
 
-	protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestCase.class);
 
-	protected String projectRoot;
+    protected String projectRoot;
 
-	protected T dataHandler;
+    protected T dataHandler;
 
-	public AbstractTestCase() {        	
-		 File f = new File(this.getClass().getProtectionDomain().getCodeSource()
-				 .getLocation().getFile());
-				 projectRoot = f.getParentFile().getParentFile().getParent();
+    public AbstractTestCase() {
+         File f = new File(this.getClass().getProtectionDomain().getCodeSource()
+                 .getLocation().getFile());
+                 projectRoot = f.getParentFile().getParentFile().getParent();
     }
-	
-	@Before
-	public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));		
-		initializeDataHandler();
-	}
 
-	protected boolean isDataHandlerActive(){
+    @Before
+    public void setUp(){
+        initializeDataHandler();
+    }
 
-		if(dataHandler == null){
-			LOGGER.info("Data handler not initialized in test class " + this.getClass().getName());
-			return false;
-		}
+    protected boolean isDataHandlerActive(){
 
-		String className = dataHandler.getClass().getName();
+        if(dataHandler == null){
+            LOGGER.info("Data handler not initialized in test class " + this.getClass().getName());
+            return false;
+        }
 
-		if(!(WPSConfig.getInstance().isGeneratorActive(className)||WPSConfig.getInstance().isParserActive(className))){
-			LOGGER.info("Skipping inactive data handler: " + className);
-			return false;
-		}
-		return true;
-	}
+        String className = dataHandler.getClass().getName();
 
-	protected abstract void initializeDataHandler();
+        if(!(WPSConfig.getInstance().isGeneratorActive(className)||WPSConfig.getInstance().isParserActive(className))){
+            LOGGER.info("Skipping inactive data handler: " + className);
+            return false;
+        }
+        return true;
+    }
+
+    protected abstract void initializeDataHandler();
 
 }

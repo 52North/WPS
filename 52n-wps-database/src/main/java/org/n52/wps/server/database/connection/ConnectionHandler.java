@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,5 +36,5 @@ import java.sql.SQLException;
  */
 public interface ConnectionHandler {
 
-	public Connection getConnection() throws SQLException;
+    public Connection getConnection() throws SQLException;
 }

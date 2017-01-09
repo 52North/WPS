@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,8 +37,8 @@ import org.n52.wps.io.data.IComplexData;
  */
 public class ArrayDataBinding implements IComplexData {
 
-	private static final long serialVersionUID = 1L;
-	private final List<byte[]> payload;
+    private static final long serialVersionUID = 1L;
+    private final List<byte[]> payload;
 
     public ArrayDataBinding(List<byte[]> payload) {
         this.payload = payload;

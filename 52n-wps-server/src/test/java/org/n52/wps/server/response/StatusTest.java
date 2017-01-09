@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,6 +58,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.assertTrue;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 
 public class StatusTest extends AbstractITClass {
 
@@ -67,11 +68,13 @@ public class StatusTest extends AbstractITClass {
 
     @Before
     public void setUp() {
-        MockMvcBuilders.webAppContextSetup(this.wac).build();
-        WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
         fac = DocumentBuilderFactory.newInstance();
         fac.setNamespaceAware(true);
         algorithm = new StatusTestingProcess();
+
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(wac);
+        repositoryManager.init();
     }
 
     @Test
@@ -87,7 +90,7 @@ public class StatusTest extends AbstractITClass {
 
             final String requestID = executeRequestV200.getUniqueId().toString();
 
-            algorithm = RepositoryManager.getInstance().getAlgorithm(executeRequestV200.getAlgorithmIdentifier());
+            algorithm = RepositoryManagerSingletonWrapper.getInstance().getAlgorithm(executeRequestV200.getAlgorithmIdentifier());
 
             if (algorithm instanceof ISubject) {
                 ISubject subject = (ISubject) algorithm;
@@ -98,7 +101,7 @@ public class StatusTest extends AbstractITClass {
                         try {
                             StatusInfoDocument statusInfoDocument = StatusInfoDocument.Factory.parse(DatabaseFactory.getDatabase().lookupStatus(requestID));
                             assertTrue(statusInfoDocument.getStatusInfo().getStatus() != null);
-                            
+
                         } catch (ExceptionReport | XmlException | IOException e) {
                             e.printStackTrace();
                         }

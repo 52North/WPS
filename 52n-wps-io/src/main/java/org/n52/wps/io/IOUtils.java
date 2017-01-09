@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,7 +55,7 @@ public class IOUtils {
     /**
      * Reads the given input stream as a string and decodes that base64 string into a file with the specified
      * extension
-     * 
+     *
      * @param input
      *        the stream with the base64 string
      * @param extension
@@ -125,7 +125,7 @@ public class IOUtils {
 
     /**
      * Zip the files. Returns a zipped file and delete the specified files
-     * 
+     *
      * @param files
      *        files to zipped
      * @return the zipped file
@@ -160,8 +160,9 @@ public class IOUtils {
             in.close();
         }
 
-        if (deleteAfterwards)
+        if (deleteAfterwards){
             deleteResources(files);
+        }
 
         out.close();
 
@@ -174,8 +175,9 @@ public class IOUtils {
 
     public static File zipDirectory(String targetFileName, File directory) throws IOException {
         String filename = targetFileName;
-        if (targetFileName.endsWith(".zip"))
+        if (targetFileName.endsWith(".zip")){
             filename = targetFileName.replace(".zip", "");
+        }
         File zip = File.createTempFile(filename, ".zip");
 
         return zipDirectory(zip, directory);
@@ -184,8 +186,10 @@ public class IOUtils {
     public static File zipDirectory(File zip, File directory) throws IOException {
         LOGGER.debug("Zipping directoy {} to file {}", directory, zip);
 
-        try (FileOutputStream fout = new FileOutputStream(zip); ZipOutputStream zout = new ZipOutputStream(fout);) {
-            zipSubDirectory("", directory, zout);
+        try (FileOutputStream fout = new FileOutputStream(zip);) {
+            try(ZipOutputStream zout = new ZipOutputStream(fout);){
+                zipSubDirectory("", directory, zout);
+            }
         }
 
         return zip;
@@ -217,7 +221,7 @@ public class IOUtils {
 
     /**
      * Unzip the file. Returns the unzipped file with the specified extension and deletes the zipped file
-     * 
+     *
      * @param file
      *        the file to unzip
      * @param extension
@@ -306,7 +310,7 @@ public class IOUtils {
     /**
      * Delete the given files and all the files with the same name but different extension. If some file is
      * <code>null</code> just doesn't process it and continue to the next element of the array
-     * 
+     *
      * @param files
      *        the files to delete
      */
@@ -327,7 +331,7 @@ public class IOUtils {
     /**
      * Delete the given files and all the files with the same name but different extension. If some file is
      * <code>null</code> just doesn't process it and continue to the next element of the array
-     * 
+     *
      * @param files
      *        the files to delete
      */

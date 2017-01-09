@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,115 +30,115 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GeneratorFactory {
-	
-	public static String PROPERTY_NAME_REGISTERED_GENERATORS = "registeredGenerators";
-	private static GeneratorFactory factory;
-	private static Logger LOGGER = LoggerFactory.getLogger(GeneratorFactory.class);
-	
-	private List<IGenerator> registeredGenerators;
-	
-	/**
-	 * This factory provides all available {@link Generators} to WPS.
-	 * @param generators
-	 */
-	public static void initialize(Map<String, ConfigurationModule> generatorMap) {
-		if (factory == null) {
-			factory = new GeneratorFactory(generatorMap);
-		}
-		else {
-			LOGGER.warn("Factory already initialized");
-		}
-	}
-	
-	private GeneratorFactory(Map<String, ConfigurationModule> generatorMap) {
-		loadAllGenerators(generatorMap);
-		
-		// FvK: added Property Change Listener support
-		// creates listener and register it to the wpsConfig instance.
-		org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
-			public void propertyChange(
-					final PropertyChangeEvent propertyChangeEvent) {
-				LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
-				loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredGeneratorModules());
-			}
-		});
-	}
+
+    public static String PROPERTY_NAME_REGISTERED_GENERATORS = "registeredGenerators";
+    private static GeneratorFactory factory;
+    private static Logger LOGGER = LoggerFactory.getLogger(GeneratorFactory.class);
+
+    private List<IGenerator> registeredGenerators;
+
+    /**
+     * This factory provides all available Generator {@link ConfigurationModule}s to WPS.
+     * @param generatorMap a map of class names and generator configuration modules
+     */
+    public static void initialize(Map<String, ConfigurationModule> generatorMap) {
+        if (factory == null) {
+            factory = new GeneratorFactory(generatorMap);
+        }
+        else {
+            LOGGER.warn("Factory already initialized");
+        }
+    }
+
+    private GeneratorFactory(Map<String, ConfigurationModule> generatorMap) {
+        loadAllGenerators(generatorMap);
+
+        // FvK: added Property Change Listener support
+        // creates listener and register it to the wpsConfig instance.
+        org.n52.wps.commons.WPSConfig.getInstance().addPropertyChangeListener(org.n52.wps.commons.WPSConfig.WPSCONFIG_PROPERTY_EVENT_NAME, new PropertyChangeListener() {
+            public void propertyChange(
+                    final PropertyChangeEvent propertyChangeEvent) {
+                LOGGER.info(this.getClass().getName() + ": Received Property Change Event: " + propertyChangeEvent.getPropertyName());
+                loadAllGenerators(org.n52.wps.commons.WPSConfig.getInstance().getActiveRegisteredGeneratorModules());
+            }
+        });
+    }
 
     private void loadAllGenerators(Map<String, ConfigurationModule> generatorMap){
         registeredGenerators = new ArrayList<IGenerator>();
-		for(String currentGeneratorName : generatorMap.keySet()) {
+        for(String currentGeneratorName : generatorMap.keySet()) {
 
-//			// remove inactive properties
-//			Property[] activeProperties = {};
-//			ArrayList<Property> activeProps = new ArrayList<Property>();
-//			for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
-//				if(currentGenerator.getPropertyArray()[i].getActive()){
-//					activeProps.add(currentGenerator.getPropertyArray()[i]);
-//				}
-//			}			
-//			currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
-						
-			ConfigurationModule currentGenerator = generatorMap.get(currentGeneratorName);
-			
-			String generatorClass = "";
-			
-			if(currentGenerator instanceof ClassKnowingModule){
-				generatorClass = ((ClassKnowingModule)currentGenerator).getClassName();
-			}			
-			
-			IGenerator generator = null;
-			try {
-				 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
-			}
-			catch (ClassNotFoundException e) {
-				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
-			}
-			catch(IllegalAccessException e) {
-				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
-			}
-			catch(InstantiationException e) {
-				LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
-			}
-			if(generator != null) {
-				LOGGER.info("Generator class registered: " + generatorClass);
-				registeredGenerators.add(generator);
-			}
-		}
+//            // remove inactive properties
+//            Property[] activeProperties = {};
+//            ArrayList<Property> activeProps = new ArrayList<Property>();
+//            for(int i=0; i< currentGenerator.getPropertyArray().length; i++){
+//                if(currentGenerator.getPropertyArray()[i].getActive()){
+//                    activeProps.add(currentGenerator.getPropertyArray()[i]);
+//                }
+//            }
+//            currentGenerator.setPropertyArray(activeProps.toArray(activeProperties));
+
+            ConfigurationModule currentGenerator = generatorMap.get(currentGeneratorName);
+
+            String generatorClass = "";
+
+            if(currentGenerator instanceof ClassKnowingModule){
+                generatorClass = ((ClassKnowingModule)currentGenerator).getClassName();
+            }
+
+            IGenerator generator = null;
+            try {
+                 generator = (IGenerator) this.getClass().getClassLoader().loadClass(generatorClass).newInstance();
+            }
+            catch (ClassNotFoundException e) {
+                LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
+            }
+            catch(IllegalAccessException e) {
+                LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
+            }
+            catch(InstantiationException e) {
+                LOGGER.error("One of the generators could not be loaded: " + generatorClass, e);
+            }
+            if(generator != null) {
+                LOGGER.info("Generator class registered: " + generatorClass);
+                registeredGenerators.add(generator);
+            }
+        }
     }
 
-	public static GeneratorFactory getInstance() {
-		if(factory == null){
-			Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
-			initialize(generatorMap);
-		}
-		return factory;
-	}
-	
-	public IGenerator getGenerator(String schema, String format, String encoding, Class<?> outputInternalClass) {
-		
-		// dealing with NULL encoding
-		if (encoding == null){
-			encoding = IOHandler.DEFAULT_ENCODING;
-		}
-		
-		for(IGenerator generator : registeredGenerators) {
-			Class<?>[] supportedBindings = generator.getSupportedDataBindings();
-			for(Class<?> clazz : supportedBindings){
-				if(clazz.equals(outputInternalClass)) {
-					if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) && generator.isSupportedFormat(format)){
-						return generator;
-					}
-				}
-			}
-		}
-		//TODO: try a chaining approach, by calculation all permutations and look for matches.
-		return null;
-	}
+    public static GeneratorFactory getInstance() {
+        if(factory == null){
+            Map<String, ConfigurationModule> generatorMap = WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getActiveConfigurationModulesByCategory(ConfigurationCategory.GENERATOR);
+            initialize(generatorMap);
+        }
+        return factory;
+    }
 
-	public List<IGenerator> getAllGenerators() {
-		return registeredGenerators;
-	}
+    public IGenerator getGenerator(String schema, String format, String encoding, Class<?> outputInternalClass) {
 
-	
-	
+        // dealing with NULL encoding
+        if (encoding == null || encoding.isEmpty()){
+            encoding = IOHandler.DEFAULT_ENCODING;
+        }
+
+        for(IGenerator generator : registeredGenerators) {
+            Class<?>[] supportedBindings = generator.getSupportedDataBindings();
+            for(Class<?> clazz : supportedBindings){
+                if(clazz.equals(outputInternalClass)) {
+                    if(generator.isSupportedSchema(schema) && generator.isSupportedEncoding(encoding) && generator.isSupportedFormat(format)){
+                        return generator;
+                    }
+                }
+            }
+        }
+        //TODO: try a chaining approach, by calculation all permutations and look for matches.
+        return null;
+    }
+
+    public List<IGenerator> getAllGenerators() {
+        return registeredGenerators;
+    }
+
+
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -25,21 +25,21 @@ import net.opengis.wps.x100.ExecuteDocument;
 
 public abstract class AbstractTransactionalAlgorithm implements IAlgorithm{
 
-	
-	protected String algorithmID;
-	
-	
-	public AbstractTransactionalAlgorithm(String algorithmID){
-		this.algorithmID = algorithmID;
-		
-	}
 
-	public String getAlgorithmID() {
-		return algorithmID;
-	}
-	
-	public abstract Map<String, IData> run(ExecuteDocument document);
-	
-	
-	
+    protected String algorithmID;
+
+
+    public AbstractTransactionalAlgorithm(String algorithmID){
+        this.algorithmID = algorithmID;
+
+    }
+
+    public String getAlgorithmID() {
+        return algorithmID;
+    }
+
+    public abstract Map<String, IData> run(ExecuteDocument document);
+
+
+
 }

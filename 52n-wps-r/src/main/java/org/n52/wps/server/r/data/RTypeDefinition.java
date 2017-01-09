@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ public interface RTypeDefinition {
     public abstract String getKey();
 
     /**
-     * 
+     *
      * @return Type-expression used in the processDescription
      */
     public abstract String getMimeType();
@@ -52,20 +52,20 @@ public interface RTypeDefinition {
     // public abstract boolean isLitearal();
 
     /**
-     * 
+     *
      * @return (default) encoding or null if not applicable
      */
     public abstract String getEncoding();
 
     /**
-     * 
+     *
      * @return (default) Schema
      */
     public abstract String getSchema();
 
     /**
      * Refers to the Databinding in use
-     * 
+     *
      * @return IData class
      */
     public abstract Class<? extends IData> getIDataClass();

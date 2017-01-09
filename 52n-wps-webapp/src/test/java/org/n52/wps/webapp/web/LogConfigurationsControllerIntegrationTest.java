@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import org.jdom.Document;
-import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClassForControllerTests;
@@ -46,65 +45,56 @@ import org.n52.wps.webapp.util.JDomUtil;
 import org.n52.wps.webapp.util.ResourcePathUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class LogConfigurationsControllerIntegrationTest extends AbstractITClassForControllerTests {
 
-	private MockMvc mockMvc;
+    @Autowired
+    ConfigurationManager configurationManager;
 
-	@Autowired
-	ConfigurationManager configurationManager;
-	
-	@Autowired
-	private JDomUtil jDomUtil;
-	
-	@Autowired
-	private ResourcePathUtil resourcePathUtil;
-	
-	@Before
-	public void setup() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-	}
+    @Autowired
+    private JDomUtil jDomUtil;
 
-	@Test
-	public void display() throws Exception {
-		RequestBuilder builder = get("/log").accept(MediaType.TEXT_HTML);
-		ResultActions result = this.mockMvc.perform(builder);
-		result.andExpect(status().isOk()).andExpect(view().name("log"))
-				.andExpect(model().attributeExists("logConfigurations"));
-	}
+    @Autowired
+    private ResourcePathUtil resourcePathUtil;
 
-	@Test
-	public void processPost_success() throws Exception {
-		String path = resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);
-		Document originalDoc = jDomUtil.parse(path);
-		
-		RequestBuilder request = post("/log")
-				.param("wpsfileAppenderFileNamePattern", "testFileAppenderFileNamePattern")
-		.param("wpsfileAppenderEncoderPattern", "testFileAppenderFileNamePattern")
-		.param("wpsconsoleEncoderPattern", "testFileAppenderFileNamePattern")
-		.param("wpsfileAppenderMaxHistory", "10")
-		.param("rootLevel", "DEBUG")
-		.param("fileAppenderEnabled", "true")
-		.param("consoleAppenderEnabled", "true")
-		.param("loggers['org.apache.axiom']", "ERROR")
-		.param("loggers['org.apache.http.wire']", "OFF");
-		ResultActions result = this.mockMvc.perform(request);
-		result.andExpect(status().isOk());
-		LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
-		assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
-		
-		//reset document to original state
-		jDomUtil.write(originalDoc, path);
-	}
+    @Test
+    public void display() throws Exception {
+        RequestBuilder builder = get("/log").accept(MediaType.TEXT_HTML);
+        ResultActions result = this.getMockedWebService().perform(builder);
+        result.andExpect(status().isOk()).andExpect(view().name("log"))
+                .andExpect(model().attributeExists("logConfigurations"));
+    }
 
-	@Test
-	public void processPost_failure() throws Exception {
-		RequestBuilder request = post("/log").param("wpsfileAppenderFileNamePattern", "");
-		ResultActions result = this.mockMvc.perform(request);
-		result.andExpect(status().isBadRequest());
-	}
+    @Test
+    public void processPost_success() throws Exception {
+        String path = resourcePathUtil.getClassPathResourcePath(XmlLogConfigurationsDAO.FILE_NAME);
+        Document originalDoc = jDomUtil.parse(path);
+
+        RequestBuilder request = post("/log")
+                .param("wpsfileAppenderFileNamePattern", "testFileAppenderFileNamePattern")
+        .param("wpsfileAppenderEncoderPattern", "testFileAppenderFileNamePattern")
+        .param("wpsconsoleEncoderPattern", "testFileAppenderFileNamePattern")
+        .param("wpsfileAppenderMaxHistory", "10")
+        .param("rootLevel", "DEBUG")
+        .param("fileAppenderEnabled", "true")
+        .param("consoleAppenderEnabled", "true")
+        .param("loggers['org.apache.axiom']", "ERROR")
+        .param("loggers['org.apache.http.wire']", "OFF");
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isOk());
+        LogConfigurations logConfigurations = configurationManager.getLogConfigurationsServices().getLogConfigurations();
+        assertEquals("testFileAppenderFileNamePattern", logConfigurations.getWpsfileAppenderFileNamePattern());
+
+        //reset document to original state
+        jDomUtil.write(originalDoc, path);
+    }
+
+    @Test
+    public void processPost_failure() throws Exception {
+        RequestBuilder request = post("/log").param("wpsfileAppenderFileNamePattern", "");
+        ResultActions result = this.getMockedWebService().perform(request);
+        result.andExpect(status().isBadRequest());
+    }
 }

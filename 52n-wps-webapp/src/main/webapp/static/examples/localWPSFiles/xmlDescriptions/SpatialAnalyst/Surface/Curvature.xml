@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.surface.curvature</ows:Identifier><!-- ParameterCount=5 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.surface.curvature</ows:Identifier><!-- ParameterCount=5 -->
 		<ows:Title>Curvature_sa</ows:Title>
 		<ows:Abstract>Calculates the curvature of a raster surface, optionally including profile and plan curvature. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -42,7 +42,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_curvature_raster</ows:Identifier><!-- 1 -->
-				<ows:Title>out curvature raster</ows:Title>	
+				<ows:Title>out curvature raster</ows:Title>
 				<ows:Abstract>Output curvature raster dataset.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -59,13 +59,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_profile_curve_raster</ows:Identifier><!-- 3 -->
-				<ows:Title>out profile curve raster</ows:Title>	
+				<ows:Title>out profile curve raster</ows:Title>
 				<ows:Abstract>Output profile curve raster dataset. This is the curvature of the surface in the direction of slope.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -82,13 +82,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_plan_curve_raster</ows:Identifier><!-- 4 -->
-				<ows:Title>out plan curve raster</ows:Title>	
+				<ows:Title>out plan curve raster</ows:Title>
 				<ows:Abstract>Output plan curve raster dataset. This is the curvature of the surface perpendicular to the slope direction.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -105,12 +105,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

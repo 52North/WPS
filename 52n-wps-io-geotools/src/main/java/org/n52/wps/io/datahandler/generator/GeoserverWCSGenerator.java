@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -70,95 +70,95 @@ import org.w3c.dom.Element;
 
 //TODO: compact the 3 OWS Generators into a single one
 public class GeoserverWCSGenerator extends AbstractGeoserverWXSGenerator {
-	
-	private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGenerator.class);
-	private String username;
-	private String password;
-	private String host;
-	private String port;
-	
-	public GeoserverWCSGenerator() {		
-		super();
-		this.supportedIDataTypes.add(GTRasterDataBinding.class);
-		this.supportedIDataTypes.add(GeotiffBinding.class);		
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 
-		InputStream stream = null;	
-		try {
-			Document doc = storeLayer(data);
-			String xmlString = XMLUtil.nodeToString(doc);			
-			stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));			
-	    } catch(TransformerException e){
-	    	LOGGER.error("Error generating WCS output. Reason: ", e);
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
-	    } catch (IOException e) {
-	    	LOGGER.error("Error generating WCS output. Reason: ", e);
-	    	throw new RuntimeException("Error generating WCS output. Reason: " + e);
-		} catch (ParserConfigurationException e) {
-	    	LOGGER.error("Error generating WCS output. Reason: ", e);
-			throw new RuntimeException("Error generating WCS output. Reason: " + e);
-		}	
-		return stream;
-	}
-	
-	private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
-		File file = null;
-		String storeName = "";
-		
-		if(coll instanceof GTRasterDataBinding){
-			GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
-			GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload(), null);
-			file = fileData.getBaseFile(true);			
-		}
-		if(coll instanceof GeotiffBinding){
-			GeotiffBinding data = (GeotiffBinding) coll;
-			file = (File) data.getPayload();
-		}
-		
-		storeName = file.getName();			
-	
-		storeName = storeName +"_" + UUID.randomUUID();
-		GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
-		
-		String result = geoserverUploader.createWorkspace();
-		LOGGER.debug(result);
-		if(coll instanceof GTRasterDataBinding){
-			result = geoserverUploader.uploadGeotiff(file, storeName);
-		}		
-		LOGGER.debug(result);
-				
-		String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
-				
-		Document doc = createXML(storeName, capabilitiesLink);
-		return doc;
-	
-	}
-	
-	private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		Document doc = factory.newDocumentBuilder().newDocument();
-		
-		Element root = doc.createElement("OWSResponse");
-		root.setAttribute("type", "WMS");
-		
-		Element resourceIDElement = doc.createElement("ResourceID");
-		resourceIDElement.appendChild(doc.createTextNode(layerName));
-		root.appendChild(resourceIDElement);
-		
-		Element getCapabilitiesLinkElement = doc.createElement("GetCapabilitiesLink");
-		getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
-		root.appendChild(getCapabilitiesLinkElement);
-		/*
-		Element directResourceLinkElement = doc.createElement("DirectResourceLink");
-		directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
-		root.appendChild(directResourceLinkElement);
-		*/
-		doc.appendChild(root);
-		
-		return doc;
-	}
-	
+    private static Logger LOGGER = LoggerFactory.getLogger(GeoserverWCSGenerator.class);
+    private String username;
+    private String password;
+    private String host;
+    private String port;
+
+    public GeoserverWCSGenerator() {
+        super();
+        this.supportedIDataTypes.add(GTRasterDataBinding.class);
+        this.supportedIDataTypes.add(GeotiffBinding.class);
+    }
+
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+
+        InputStream stream = null;
+        try {
+            Document doc = storeLayer(data);
+            String xmlString = XMLUtil.nodeToString(doc);
+            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
+        } catch(TransformerException e){
+            LOGGER.error("Error generating WCS output. Reason: ", e);
+            throw new RuntimeException("Error generating WCS output. Reason: " + e);
+        } catch (IOException e) {
+            LOGGER.error("Error generating WCS output. Reason: ", e);
+            throw new RuntimeException("Error generating WCS output. Reason: " + e);
+        } catch (ParserConfigurationException e) {
+            LOGGER.error("Error generating WCS output. Reason: ", e);
+            throw new RuntimeException("Error generating WCS output. Reason: " + e);
+        }
+        return stream;
+    }
+
+    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
+        File file = null;
+        String storeName = "";
+
+        if(coll instanceof GTRasterDataBinding){
+            GTRasterDataBinding gtData = (GTRasterDataBinding) coll;
+            GenericFileDataWithGT fileData = new GenericFileDataWithGT(gtData.getPayload(), null);
+            file = fileData.getBaseFile(true);
+        }
+        if(coll instanceof GeotiffBinding){
+            GeotiffBinding data = (GeotiffBinding) coll;
+            file = (File) data.getPayload();
+        }
+
+        storeName = file.getName();
+
+        storeName = storeName +"_" + UUID.randomUUID();
+        GeoServerUploader geoserverUploader = new GeoServerUploader(username, password, host, port);
+
+        String result = geoserverUploader.createWorkspace();
+        LOGGER.debug(result);
+        if(coll instanceof GTRasterDataBinding){
+            result = geoserverUploader.uploadGeotiff(file, storeName);
+        }
+        LOGGER.debug(result);
+
+        String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wcs?Service=WCS&Request=GetCapabilities&Version=1.1.1";
+
+        Document doc = createXML(storeName, capabilitiesLink);
+        return doc;
+
+    }
+
+    private Document createXML(String layerName, String getCapabilitiesLink) throws ParserConfigurationException{
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = factory.newDocumentBuilder().newDocument();
+
+        Element root = doc.createElement("OWSResponse");
+        root.setAttribute("type", "WMS");
+
+        Element resourceIDElement = doc.createElement("ResourceID");
+        resourceIDElement.appendChild(doc.createTextNode(layerName));
+        root.appendChild(resourceIDElement);
+
+        Element getCapabilitiesLinkElement = doc.createElement("GetCapabilitiesLink");
+        getCapabilitiesLinkElement.appendChild(doc.createTextNode(getCapabilitiesLink));
+        root.appendChild(getCapabilitiesLinkElement);
+        /*
+        Element directResourceLinkElement = doc.createElement("DirectResourceLink");
+        directResourceLinkElement.appendChild(doc.createTextNode(getMapRequest));
+        root.appendChild(directResourceLinkElement);
+        */
+        doc.appendChild(root);
+
+        return doc;
+    }
+
 }

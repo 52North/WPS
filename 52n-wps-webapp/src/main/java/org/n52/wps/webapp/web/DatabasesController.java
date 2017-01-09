@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,18 +45,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("databases")
 public class DatabasesController extends BaseConfigurationsController {
 
-	/**
-	 * Display databases configuration modules
-	 * 
-	 * @return The databases view
-	 */
-	@RequestMapping(method = RequestMethod.GET)
-	public String displayDatabases(Model model) {
-		ConfigurationCategory category = ConfigurationCategory.DATABASE;
-		Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
-				.getConfigurationModulesByCategory(category);
-		model.addAttribute("configurations", configurations);
-		LOGGER.info("Retrived '{}' configurations.", category);
-		return "databases";
-	}
+    /**
+     * Display databases configuration modules
+     * @param model the model
+     * @return The databases view
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    public String displayDatabases(Model model) {
+        ConfigurationCategory category = ConfigurationCategory.DATABASE;
+        Map<String, ConfigurationModule> configurations = configurationManager.getConfigurationServices()
+                .getConfigurationModulesByCategory(category);
+        model.addAttribute("configurations", configurations);
+        LOGGER.info("Retrived '{}' configurations.", category);
+        return "databases";
+    }
 }

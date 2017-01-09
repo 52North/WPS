@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -26,13 +26,13 @@ import org.n52.wps.io.data.IData;
  */
 public abstract class InputDescriptor<T extends Class<? extends IData>> extends BoundDescriptor<T> {
 
-	private final BigInteger minOccurs;
-	private final BigInteger maxOccurs;
+    private final BigInteger minOccurs;
+    private final BigInteger maxOccurs;
 
-	protected InputDescriptor(Builder<? extends Builder<?,T>, T> builder) {
+    protected InputDescriptor(Builder<? extends Builder<?,T>, T> builder) {
         super(builder);
-		this.minOccurs = builder.minOccurs;
-		this.maxOccurs = builder.maxOccurs;
+        this.minOccurs = builder.minOccurs;
+        this.maxOccurs = builder.maxOccurs;
         Preconditions.checkState(maxOccurs.longValue() >= minOccurs.longValue(), "maxOccurs must be >= minOccurs");
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,70 +30,76 @@ package org.n52.wps.webapp.api;
 
 import java.util.List;
 
+import org.n52.wps.webapp.api.types.BooleanConfigurationEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
+import org.n52.wps.webapp.api.types.DoubleConfigurationEntry;
+import org.n52.wps.webapp.api.types.FileConfigurationEntry;
+import org.n52.wps.webapp.api.types.IntegerConfigurationEntry;
+import org.n52.wps.webapp.api.types.StringConfigurationEntry;
+import org.n52.wps.webapp.api.types.URIConfigurationEntry;
 
 /**
  * Configuration modules in the application need to implement this interface to recognized and added to the application.
  * Spring will scan the context for any class implementing this interface and register it as a configuration module.
  */
 public interface ConfigurationModule {
-	/**
-	 * The name of the module which will appear on the user interface. (e.g. Grass Repository)
-	 * 
-	 * @return the name of the configuration module
-	 */
-	String getModuleName();
+    /**
+     * The name of the module which will appear on the user interface. (e.g. Grass Repository)
+     *
+     * @return the name of the configuration module
+     */
+    String getModuleName();
 
-	/**
-	 * Get the active status of the module
-	 * 
-	 * @return the status of the module
-	 */
-	boolean isActive();
+    /**
+     * Get the active status of the module
+     *
+     * @return the status of the module
+     */
+    boolean isActive();
 
-	/**
-	 * Set the module status to active/inactive
-	 * 
-	 * @param active
-	 *            the new status
-	 */
-	void setActive(boolean active);
+    /**
+     * Set the module status to active/inactive
+     *
+     * @param active
+     *            the new status
+     */
+    void setActive(boolean active);
 
-	/**
-	 * Identify the category for the configuration module. See {@code ConfigurationCategory} for a list of avaliable
-	 * categories.
-	 * 
-	 * @return the category for the configuration module
-	 */
-	ConfigurationCategory getCategory();
+    /**
+     * Identify the category for the configuration module. See {@code ConfigurationCategory} for a list of avaliable
+     * categories.
+     *
+     * @return the category for the configuration module
+     */
+    ConfigurationCategory getCategory();
 
-	/**
-	 * List of all configurations entries for this configuration module. Configuration entries can be of type String,
-	 * Integer, Boolean, Double, File, and URI
-	 * 
-	 * @return the list of configuration entries
-	 * @see StringConfigurationEntry
-	 * @see IntegerConfigurationEntry
-	 * @see BooleanConfigurationEntry
-	 * @see DoubleConfigurationEntry
-	 * @see FileConfigurationEntry
-	 * @see URIConfigurationEntry
-	 */
-	List<? extends ConfigurationEntry<?>> getConfigurationEntries();
+    /**
+     * List of all configurations entries for this configuration module. Configuration entries can be of type String,
+     * Integer, Boolean, Double, File, and URI
+     *
+     * @return the list of configuration entries
+     * @see StringConfigurationEntry
+     * @see IntegerConfigurationEntry
+     * @see BooleanConfigurationEntry
+     * @see DoubleConfigurationEntry
+     * @see FileConfigurationEntry
+     * @see URIConfigurationEntry
+     */
+    List<? extends ConfigurationEntry<?>> getConfigurationEntries();
 
-	/**
-	 * List of algorithms for this configuration module.
-	 * 
-	 * @return the list of algorithms
-	 * @see AlgorithmEntry
-	 */
-	List<AlgorithmEntry> getAlgorithmEntries();
-	
-	/**
-	 * List of formats for this configuration module.
-	 * 
-	 * @return the list of formats
-	 * @see FormatEntry
-	 */
-	List<FormatEntry> getFormatEntries();
+    /**
+     * List of algorithms for this configuration module.
+     *
+     * @return the list of algorithms
+     * @see AlgorithmEntry
+     */
+    List<AlgorithmEntry> getAlgorithmEntries();
+
+    /**
+     * List of formats for this configuration module.
+     *
+     * @return the list of formats
+     * @see FormatEntry
+     */
+    List<FormatEntry> getFormatEntries();
 }

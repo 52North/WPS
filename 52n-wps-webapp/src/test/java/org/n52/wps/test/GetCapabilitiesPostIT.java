@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -98,7 +98,7 @@ public class GetCapabilitiesPostIT {
         }
 
         CapabilitiesDocument capsDoc = CapabilitiesDocument.Factory.parse(response);
-        
+
         XmlOptions opts = new XmlOptions();
         ArrayList<XmlError> errors = new ArrayList<XmlError>();
         opts.setErrorListener(errors);
@@ -127,14 +127,14 @@ public class GetCapabilitiesPostIT {
 
         try {
             PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "InvalidParameterValue");
-		}
+        }
         catch (IOException e) {
             fail(e.getMessage());
         }
-        
+
 
     }
-    
+
     @Test
     public void missingServiceParameter() throws ParserConfigurationException, SAXException, IOException, XmlException {
         URL resource = GetCapabilitiesPostIT.class.getResource("/GetCapabilities/MissingService.xml");
@@ -142,11 +142,11 @@ public class GetCapabilitiesPostIT {
 
         try {
             PostClient.checkForExceptionReport(GetCapabilitiesPostIT.url, payload.toString(), HttpServletResponse.SC_BAD_REQUEST, "MissingParameterValue");
-		}
+        }
         catch (IOException e) {
             fail(e.getMessage());
         }
-        
+
 
     }
 

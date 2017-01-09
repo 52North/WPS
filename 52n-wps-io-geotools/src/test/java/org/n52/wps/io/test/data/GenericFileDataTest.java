@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,40 +61,40 @@ import junit.framework.TestCase;
 
 public class GenericFileDataTest extends TestCase{
 
-	public void testUnzipData(){
+    public void testUnzipData(){
 
-		File f = new File(this.getClass().getProtectionDomain().getCodeSource()
-				.getLocation().getFile());
+        File f = new File(this.getClass().getProtectionDomain().getCodeSource()
+                .getLocation().getFile());
 
-		String projectRoot = f.getParentFile().getParentFile().getParent();
+        String projectRoot = f.getParentFile().getParentFile().getParent();
 
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/tasmania_roads.zip";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            fail(e1.getMessage());
+        }
 
-		InputStream input = null;
+        InputStream input = null;
 
-		/*
-		 * create a GenericFileData instance out of a zipped shapefile
-		 */
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			fail(e.getMessage());
-		}
-
-
-		GenericFileDataWithGT genericFileData = new GenericFileDataWithGT(input, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
-
-		String unzippedFilePath = genericFileData.writeData(new File(System.getProperty("java.io.tmpdir")));
-
-		assertTrue(unzippedFilePath != null && !unzippedFilePath.equals(""));
+        /*
+         * create a GenericFileData instance out of a zipped shapefile
+         */
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            fail(e.getMessage());
+        }
 
 
-	}
+        GenericFileDataWithGT genericFileData = new GenericFileDataWithGT(input, GenericFileDataConstants.MIME_TYPE_ZIPPED_SHP);
+
+        String unzippedFilePath = genericFileData.writeData(new File(System.getProperty("java.io.tmpdir")));
+
+        assertTrue(unzippedFilePath != null && !unzippedFilePath.equals(""));
+
+
+    }
 
 }

@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.extraction.sample</ows:Identifier><!-- ParameterCount=4 -->		
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.extraction.sample</ows:Identifier><!-- ParameterCount=4 -->
 		<ows:Title>Sample_sa</ows:Title>
 		<ows:Abstract>Creates a table that shows the values of cells from a raster, or set of rasters, for defined locations. The locations are defined by raster cells or by a set of points. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -29,7 +29,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>		
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -52,7 +52,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -67,14 +67,14 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<ows:Value>NEAREST</ows:Value>
 						<ows:Value>BILINEAR</ows:Value>
 						<ows:Value>CUBIC</ows:Value>
-					</ows:AllowedValues>	
+					</ows:AllowedValues>
 				</LiteralData>
 			</Input>
 		</DataInputs>
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_table</ows:Identifier><!-- 2 -->
-				<ows:Title>out table</ows:Title>	
+				<ows:Title>out table</ows:Title>
 				<ows:Abstract>Output table holding the sampled cell values.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -87,12 +87,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/dbf</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

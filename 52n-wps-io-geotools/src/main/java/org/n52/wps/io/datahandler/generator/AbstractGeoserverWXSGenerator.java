@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,40 +54,40 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 
-	protected String username;
-	protected String password;
-	protected String host;
-	protected String port;
-	
-	public AbstractGeoserverWXSGenerator() {		
-		super();
-		this.supportedIDataTypes.add(GTRasterDataBinding.class);
-		this.supportedIDataTypes.add(GeotiffBinding.class);
-		
-		for(ConfigurationEntry<?> property : properties){
-			if(property.getKey().equalsIgnoreCase("Geoserver_username")){
-				username = property.getValue().toString();
-			}
-			if(property.getKey().equalsIgnoreCase("Geoserver_password")){
-				password = property.getValue().toString();
-			}
-			if(property.getKey().equalsIgnoreCase("Geoserver_host")){
-				host = property.getValue().toString();
-			}
-			if(property.getKey().equalsIgnoreCase("Geoserver_port")){
-				port = property.getValue().toString();
-			}
-		}
-		if(port == null){
-			port = "" + WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getHostport();
-		}
-		
-		for(String supportedFormat : supportedFormats){
-			if(supportedFormat.equals("text/xml")){
-				supportedFormats.remove(supportedFormat);
-			}
-		}
-		
-	}
+    protected String username;
+    protected String password;
+    protected String host;
+    protected String port;
+
+    public AbstractGeoserverWXSGenerator() {
+        super();
+        this.supportedIDataTypes.add(GTRasterDataBinding.class);
+        this.supportedIDataTypes.add(GeotiffBinding.class);
+
+        for(ConfigurationEntry<?> property : properties){
+            if(property.getKey().equalsIgnoreCase("Geoserver_username")){
+                username = property.getValue().toString();
+            }
+            if(property.getKey().equalsIgnoreCase("Geoserver_password")){
+                password = property.getValue().toString();
+            }
+            if(property.getKey().equalsIgnoreCase("Geoserver_host")){
+                host = property.getValue().toString();
+            }
+            if(property.getKey().equalsIgnoreCase("Geoserver_port")){
+                port = property.getValue().toString();
+            }
+        }
+        if(port == null){
+            port = "" + WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getHostport();
+        }
+
+        for(String supportedFormat : supportedFormats){
+            if(supportedFormat.equals("text/xml")){
+                supportedFormats.remove(supportedFormat);
+            }
+        }
+
+    }
 
 }

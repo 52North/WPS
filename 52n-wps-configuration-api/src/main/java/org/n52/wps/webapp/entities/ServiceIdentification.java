@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,87 +29,89 @@
 package org.n52.wps.webapp.entities;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.n52.wps.webapp.dao.CapabilitiesDAO;
+import org.n52.wps.webapp.service.CapabilitiesService;
 
 /**
  * Holds parsed service identification values.
- * 
+ *
  * @see CapabilitiesService
  * @see CapabilitiesDAO
  */
 public class ServiceIdentification {
 
-	private final String blankErrorMessage = "Field cannot be blank.";
+    private final String blankErrorMessage = "Field cannot be blank.";
 
-	private String title;
+    private String title;
 
-	private String serviceAbstract;
+    private String serviceAbstract;
 
-	private String keywords;
+    private String keywords;
 
-	@NotBlank(message = blankErrorMessage)
-	private String serviceType;
+    @NotBlank(message = blankErrorMessage)
+    private String serviceType;
 
-	@NotBlank(message = blankErrorMessage)
-	private String serviceTypeVersions;
+    @NotBlank(message = blankErrorMessage)
+    private String serviceTypeVersions;
 
-	private String fees;
+    private String fees;
 
-	private String accessConstraints;
+    private String accessConstraints;
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getServiceAbstract() {
-		return serviceAbstract;
-	}
+    public String getServiceAbstract() {
+        return serviceAbstract;
+    }
 
-	public void setServiceAbstract(String serviceAbstract) {
-		this.serviceAbstract = serviceAbstract;
-	}
+    public void setServiceAbstract(String serviceAbstract) {
+        this.serviceAbstract = serviceAbstract;
+    }
 
-	public String getKeywords() {
-		return keywords;
-	}
+    public String getKeywords() {
+        return keywords;
+    }
 
-	public void setKeywords(String keywords) {
-		this.keywords = keywords;
-	}
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public String getServiceTypeVersions() {
-		return serviceTypeVersions;
-	}
+    public String getServiceTypeVersions() {
+        return serviceTypeVersions;
+    }
 
-	public void setServiceTypeVersions(String serviceTypeVersions) {
-		this.serviceTypeVersions = serviceTypeVersions;
-	}
+    public void setServiceTypeVersions(String serviceTypeVersions) {
+        this.serviceTypeVersions = serviceTypeVersions;
+    }
 
-	public String getFees() {
-		return fees;
-	}
+    public String getFees() {
+        return fees;
+    }
 
-	public void setFees(String fees) {
-		this.fees = fees;
-	}
+    public void setFees(String fees) {
+        this.fees = fees;
+    }
 
-	public String getAccessConstraints() {
-		return accessConstraints;
-	}
+    public String getAccessConstraints() {
+        return accessConstraints;
+    }
 
-	public void setAccessConstraints(String accessConstraints) {
-		this.accessConstraints = accessConstraints;
-	}
+    public void setAccessConstraints(String accessConstraints) {
+        this.accessConstraints = accessConstraints;
+    }
 
 }

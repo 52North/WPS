@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,50 +62,50 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class GML3BasicParserTest extends AbstractTestCase<GML3BasicParser> {
 
-	@Test
-	public void testParser() {
+    @Test
+    public void testParser() {
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/spearfish_restricted_sites_gml3.xml";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/spearfish_restricted_sites_gml3.xml";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+            Assert.fail(e1.getMessage());
+        }
 
-//		String[] mimetypes = theParser.getSupportedFormats();
+//        String[] mimetypes = theParser.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		// for (String mimetype : mimetypes) {
+        // for (String mimetype : mimetypes) {
 
-		GTVectorDataBinding theBinding = dataHandler.parse(input,
-				"text/xml; subtype=gml/3.2.1",
-				"http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
+        GTVectorDataBinding theBinding = dataHandler.parse(input,
+                "text/xml; subtype=gml/3.2.1",
+                "http://schemas.opengis.net/gml/3.2.1/base/feature.xsd");
 
-		Assert.assertNotNull(theBinding.getPayload());
-		Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
-		Assert.assertTrue(!theBinding.getPayload().isEmpty());
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-		// }
+        // }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GML3BasicParser();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GML3BasicParser();
+    }
 
 }

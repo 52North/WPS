@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -69,107 +69,107 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 /**
- * 
- * 
+ *
+ *
  * This class parses json into JTS geometries.
- *         
+ *
  *  @author BenjaminPross(bpross-52n)
- * 
+ *
  */
 public class GeoJSONParser extends AbstractParser {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GeoJSONParser.class);
 
-	public GeoJSONParser() {
-		super();
-		supportedIDataTypes.add(JTSGeometryBinding.class);
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
+    public GeoJSONParser() {
+        super();
+        supportedIDataTypes.add(JTSGeometryBinding.class);
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
 
-	@Override
-	public IData parse(InputStream input, String mimeType, String schema) {
+    @Override
+    public IData parse(InputStream input, String mimeType, String schema) {
 
-		String geojsonstring = "";
+        String geojsonstring = "";
 
-		String line = "";
+        String line = "";
 
-		BufferedReader breader = new BufferedReader(
-				new InputStreamReader(input));
+        BufferedReader breader = new BufferedReader(
+                new InputStreamReader(input));
 
-		try {
-			while ((line = breader.readLine()) != null) {
-				geojsonstring = geojsonstring.concat(line);
-			}
-		} catch (IOException e) {
-			LOGGER.error("Exception while reading inputstream.", e);
-		} finally {
-			try {
-				input.close();
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
+        try {
+            while ((line = breader.readLine()) != null) {
+                geojsonstring = geojsonstring.concat(line);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Exception while reading inputstream.", e);
+        } finally {
+            try {
+                input.close();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
 
-		if (geojsonstring.contains("FeatureCollection")) {
+        if (geojsonstring.contains("FeatureCollection")) {
 
-			try {
-				FeatureCollection<?, ?> featureCollection = new FeatureJSON()
-						.readFeatureCollection(geojsonstring);
+            try {
+                FeatureCollection<?, ?> featureCollection = new FeatureJSON()
+                        .readFeatureCollection(geojsonstring);
 
-				return new GTVectorDataBinding(featureCollection);
+                return new GTVectorDataBinding(featureCollection);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read FeatureCollection from inputstream");
-			}
+            } catch (IOException e) {
+                LOGGER.info("Could not read FeatureCollection from inputstream");
+            }
 
-		} else if (geojsonstring.contains("Feature")) {
+        } else if (geojsonstring.contains("Feature")) {
 
-			try {
-				SimpleFeature feature = new FeatureJSON().readFeature(geojsonstring);
+            try {
+                SimpleFeature feature = new FeatureJSON().readFeature(geojsonstring);
 
-				List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
+                List<SimpleFeature> featureList = new ArrayList<SimpleFeature>();
 
-				featureList.add(feature);
-				
-				ListFeatureCollection featureCollection = new ListFeatureCollection(
-						feature.getFeatureType(), featureList);
+                featureList.add(feature);
 
-				return new GTVectorDataBinding(featureCollection);
+                ListFeatureCollection featureCollection = new ListFeatureCollection(
+                        feature.getFeatureType(), featureList);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read Feature from inputstream");
-			}
+                return new GTVectorDataBinding(featureCollection);
 
-		} else if (geojsonstring.contains("GeometryCollection")) {
+            } catch (IOException e) {
+                LOGGER.info("Could not read Feature from inputstream");
+            }
 
-			try {
-				GeometryCollection g = new GeometryJSON().readGeometryCollection(geojsonstring);
+        } else if (geojsonstring.contains("GeometryCollection")) {
 
-				return new JTSGeometryBinding(g);
+            try {
+                GeometryCollection g = new GeometryJSON().readGeometryCollection(geojsonstring);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read GeometryCollection from inputstream.");
-			}
+                return new JTSGeometryBinding(g);
 
-		} else if(geojsonstring.contains("Point") || 
-				geojsonstring.contains("LineString") ||
-				geojsonstring.contains("Polygon") ||
-				geojsonstring.contains("MultiPoint") ||
-				geojsonstring.contains("MultiLineString") ||
-				geojsonstring.contains("MultiPolygon")){
+            } catch (IOException e) {
+                LOGGER.info("Could not read GeometryCollection from inputstream.");
+            }
 
-			try {
-				Geometry g = new GeometryJSON().read(geojsonstring);
+        } else if(geojsonstring.contains("Point") ||
+                geojsonstring.contains("LineString") ||
+                geojsonstring.contains("Polygon") ||
+                geojsonstring.contains("MultiPoint") ||
+                geojsonstring.contains("MultiLineString") ||
+                geojsonstring.contains("MultiPolygon")){
 
-				return new JTSGeometryBinding(g);
+            try {
+                Geometry g = new GeometryJSON().read(geojsonstring);
 
-			} catch (IOException e) {
-				LOGGER.info("Could not read single Geometry from inputstream.");
-			}
+                return new JTSGeometryBinding(g);
 
-		}
-		LOGGER.error("Could not parse inputstream, returning null.");
-		return null;
-	}
+            } catch (IOException e) {
+                LOGGER.info("Could not read single Geometry from inputstream.");
+            }
+
+        }
+        LOGGER.error("Could not parse inputstream, returning null.");
+        return null;
+    }
 
 }

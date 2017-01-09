@@ -1,3 +1,33 @@
+<%--
+
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+    Software GmbH
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License version 2 as published
+    by the Free Software Foundation.
+
+    If the program is linked with libraries which are licensed under one of
+    the following licenses, the combination of the program with the linked
+    library is not considered a "derivative work" of the program:
+
+        - Apache License, version 2.0
+        - Apache Software License, version 1.0
+        - GNU Lesser General Public License, version 3
+        - Mozilla Public License, versions 1.0, 1.1 and 2.0
+        - Common Development and Distribution License (CDDL), version 1.0
+
+    Therefore the distribution of the program linked with libraries licensed
+    under the aforementioned licenses, is permitted by the copyright holders
+    if the distribution is compliant with both the GNU General Public
+    License version 2 and the aforementioned licenses.
+
+    This program is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+    Public License for more details.
+
+--%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -78,11 +108,13 @@
 						</c:forEach>
 
 						<%-- Save button --%>
-						<div class="form-group">
-							<div class="col-lg-offset-3 col-lg-8">
-								<button type="submit" class="btn btn-primary">Save</button>
+						<c:if test="${not empty configurationModule.value.configurationEntries}">
+							<div class="form-group">
+								<div class="col-lg-offset-3 col-lg-8">
+									<button type="submit" class="btn btn-primary">Save</button>
+								</div>
 							</div>
-						</div>
+						</c:if>
 					</form>
 
 					<%-- Display the algorithms table if the module has any --%>
@@ -112,7 +144,8 @@
 										<td><a id="algorithmStatusButton" class="${algorithmStatusClass}"
 											href="<c:url value="/${baseUrl}/algorithms/activate/${fullClassName}/${algorithmEntry.algorithm}/${targetAlgorithmStatus}" />"><c:out
 													value="${algorithmStatusText}" /></a></td>
-										<td><a id="editAlgorithm" class="btn btn-default btn-mini" href="<c:url value="/repositories/algorithms/${fullClassName}/${algorithmEntry.algorithm}/edit" />">Edit</a>
+										<td>
+										<a data-toggle="modal" href="#editAlgorithm" class="btn btn-default btn-mini" onClick="setParametersForAlgorithmUpdate('${fullClassName}', '${algorithmEntry.algorithm}')">Edit</a>
 										</td>
 										<td><a id="deleteAlgorithm" class="btn btn-danger btn-mini" href="<c:url value="/repositories/algorithms/${fullClassName}/${algorithmEntry.algorithm}/delete" />">Delete</a>
 										</td>
@@ -121,9 +154,14 @@
 							</tbody>
 						</table>
 						<!--button type="submit" class="btn btn-primary" id="addAlgorithmButton" onClick="buttonClick('${fullClassName}')">Add algorithm</button-->						
-						<a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
-					</c:if>
-					
+                        <a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
+					</c:if>											
+					<c:if test="${fullClassName == 'org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM'}">
+						<a data-toggle="modal" href="#uploadProcess" class="btn btn-primary btn-lg">Upload Process</a>
+				    </c:if>
+					<c:if test="${fullClassName == 'org.n52.wps.server.r.LocalRAlgorithmRepositoryCM'}">
+						<a data-toggle="modal" href="#uploadRScript" class="btn btn-primary btn-lg">Upload R Script</a>
+				    </c:if>
 					<%-- Display the formats table if the module has any --%>
 					<c:if test="${not empty configurationModule.value.formatEntries}">
 
@@ -154,7 +192,7 @@
 										<td><a id="formatStatusButton" class="${formatStatusClass}"
 											href="<c:url value="/${baseUrl}/formats/activate/${fullClassName}/${fn:replace(formatEntry.mimeType, '/', 'forwardslash')}/${formatEntry.schema == '' ? 'null' : formatEntry.schema}/${formatEntry.encoding == '' ? 'null' : formatEntry.encoding}/${targetFormatStatus}" />"><c:out
 													value="${formatStatusText}" /></a></td>
-										<td><a id="editFormat" class="btn btn-default btn-mini" href="<c:url value="/parsers/formats/{fullClassName}/{formatEntry.mimeType}/{formatEntry.schema}/{formatEntry.encoding}/edit" />">Edit</a>
+										<td><a data-toggle="modal" href="#editFormat" class="btn btn-default btn-mini" onClick="setParametersForFormatUpdate('${fullClassName}', '${formatEntry.mimeType}', '${formatEntry.schema == '' ? '' : formatEntry.schema}', '${formatEntry.encoding == '' ? '' : formatEntry.encoding}')">Edit</a>
 										</td>
 										<td><a id="deleteFormat" class="btn btn-danger btn-mini" href="<c:url value="/parsers/formats/${fullClassName}/${fn:replace(formatEntry.mimeType, '/', 'forwardslash')}/${formatEntry.schema == '' ? 'null' : formatEntry.schema}/${formatEntry.encoding == '' ? 'null' : formatEntry.encoding}/delete" />">Delete</a>
 										<!--td><a id="deleteFormat" class="btn btn-danger btn-mini" onClick="ajaxDeleteFormat('${fullClassName}', '${formatEntry.mimeType}', '${(formatEntry.schema == ' ') ? 'null' : formatEntry.schema}', '${formatEntry.encoding == ' ' ? 'nullo' : formatEntry.encoding}')">Delete</a-->
@@ -173,65 +211,117 @@
 </div>
 <script src="<c:url value="/static/js/standard.module.js" />"></script>
 <script type="text/javascript">
-function setHiddenModuleName(moduleName) {
-$('input#hiddenModuleName').val(moduleName);
-}
-	$('a#deleteAlgorithm').click(function(event) {
-		event.preventDefault();
-		var a = $(this);
-		var row = a.parents("tr");
-		var url = a.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			success : function() {
-				(row).remove();
-				alertMessage("", "Algorithm deleted", "alert alert-success", a);
-			},
-			error : function(textStatus, errorThrown) {
-				alertMessage("Error: ", "Unable to delete algorithm", "alert alert-danger", a);
-			}
-		});
-	});
 
-	$('a#deleteFormat').click(function(event) {
-		event.preventDefault();
-		var a = $(this);
-		var row = a.parents("tr");
-		var url = a.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			success : function() {
-				(row).remove();
-				alertMessage("", "Format deleted", "alert alert-success", a);
-			},
-			error : function(textStatus, errorThrown) {
-				alertMessage("Error: ", "Unable to delete format", "alert alert-danger", a);
-			}
-		});
-	});
+	function setHiddenModuleName(moduleName) {
+		$('input#hiddenModuleName').val(moduleName);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	function setParametersForAlgorithmUpdate(moduleName, oldAlgorithmname) {
+		$('input#hiddenModuleName').val(moduleName);
+		$('input#newAlgorithmName').val(oldAlgorithmname);
+		$('input#hiddenOldAlgorithmName').val(oldAlgorithmname);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	function setParametersForFormatUpdate(moduleName, oldMimetype, oldSchema, oldEncoding) {
+		$('input#hiddenModuleName').val(moduleName);
+		$('input#newMimetype').val(oldMimetype);
+		$('input#newSchema').val(oldSchema);
+		$('input#newEncoding').val(oldEncoding);
+		$('input#hiddenOldMimetype').val(oldMimetype);
+		$('input#hiddenOldSchema').val(oldSchema);
+		$('input#hiddenOldEncoding').val(oldEncoding);
+		// reset and clear errors and alerts
+		$('#fieldError').remove();
+		$('#alert').remove();
+		$('#result').html('');
+	}
+	$('a#deleteAlgorithm').click(
+			function(event) {
+				event.preventDefault();
+				var a = $(this);
+				var row = a.parents("tr");
+				var url = a.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						(row).remove();
+						alertMessage("", "Algorithm deleted",
+								"alert alert-success", a);
+					},
+					error : function(textStatus, errorThrown) {
+						alertMessage("Error: ", "Unable to delete algorithm",
+								"alert alert-danger", a);
+					}
+				});
+			});
 
-	$('a#formatStatusButton').click(function(event) {
-		event.preventDefault();
-		var button = $(this);
-		var url = button.attr('href');
-		$.ajax({
-			type : "POST",
-			url : url,
-			success : function() {
-				var currentStatus = url.substring(url.lastIndexOf('/') + 1);
-				var trgetStatus = currentStatus == 'true' ? 'false' : 'true';
-				// remove the last false or true and replace it with the new target status for toggling
-				url = url.substr(0, url.lastIndexOf('/') + 1) + trgetStatus;
-				button.attr('href', url);
-				button.toggleClass("btn-success btn-danger").text(button.text() == 'Active' ? "Inactive" : "Active");
-				$("<span class='text-success'>	Status updated</span>").insertAfter(button).fadeOut(3000);
-			},
-			error : function(textStatus, errorThrown) {
-				$("<span class='text-danger'>	Error</span>").insertAfter(button).fadeOut(3000);
-				alertMessage("Error: ", "unable to update algorithm status", "alert alert-danger");
-			}
-		});
-	});
+	$('a#deleteFormat').click(
+			function(event) {
+				event.preventDefault();
+				var a = $(this);
+				var row = a.parents("tr");
+				var url = a.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						(row).remove();
+						alertMessage("", "Format deleted",
+								"alert alert-success", a);
+					},
+					error : function(textStatus, errorThrown) {
+						alertMessage("Error: ", "Unable to delete format",
+								"alert alert-danger", a);
+					}
+				});
+			});
+
+	$('a#formatStatusButton').click(
+			function(event) {
+				event.preventDefault();
+				var button = $(this);
+				var url = button.attr('href');
+				$.ajax({
+					type : "POST",
+					url : url,
+					headers : {
+						'X-CSRF-TOKEN' : "${_csrf.token}"
+					},
+					success : function() {
+						var currentStatus = url
+								.substring(url.lastIndexOf('/') + 1);
+						var trgetStatus = currentStatus == 'true' ? 'false'
+								: 'true';
+						// remove the last false or true and replace it with the new target status for toggling
+						url = url.substr(0, url.lastIndexOf('/') + 1)
+								+ trgetStatus;
+						button.attr('href', url);
+						button.toggleClass("btn-success btn-danger").text(
+								button.text() == 'Active' ? "Inactive"
+										: "Active");
+						$("<span class='text-success'>	Status updated</span>")
+								.insertAfter(button).fadeOut(3000);
+					},
+					error : function(textStatus, errorThrown) {
+						$("<span class='text-danger'>	Error</span>")
+								.insertAfter(button).fadeOut(3000);
+						alertMessage("Error: ",
+								"unable to update format status",
+								"alert alert-danger");
+					}
+				});
+			});
 </script>

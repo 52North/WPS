@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.classprobability</ows:Identifier><!-- ParameterCount=6 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.multivariate.classprobability</ows:Identifier><!-- ParameterCount=6 -->
 		<ows:Title>ClassProbability_sa</ows:Title>
 		<ows:Abstract>Creates probability layers for each class in a signature file. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -55,7 +55,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 				<LiteralData>
 					<ows:DataType ows:reference="xs:long"></ows:DataType>
 					<ows:AnyValue/>
-				</LiteralData>	
+				</LiteralData>
 			</Input>
 			<Input minOccurs="0" maxOccurs="1">
 				<ows:Identifier>a_priori_probabilities</ows:Identifier><!-- 4 -->
@@ -68,8 +68,8 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<ows:Value>EQUAL</ows:Value>
 						<ows:Value>FILE</ows:Value>
 						<ows:Value>SAMPLE</ows:Value>
-					</ows:AllowedValues>	
-				</LiteralData>	
+					</ows:AllowedValues>
+				</LiteralData>
 			</Input>
 				<Input minOccurs="0" maxOccurs="1">
 					<ows:Identifier>in_a_priori_file</ows:Identifier><!-- 5 -->
@@ -94,7 +94,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_multiband_raster</ows:Identifier><!-- 2 -->
-				<ows:Title>out multiband raster</ows:Title>	
+				<ows:Title>out multiband raster</ows:Title>
 				<ows:Abstract>The output multiband raster dataset. The dataset filename must have less than 10 characters.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -111,12 +111,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

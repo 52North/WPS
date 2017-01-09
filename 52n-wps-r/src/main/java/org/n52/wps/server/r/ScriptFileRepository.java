@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,6 @@ package org.n52.wps.server.r;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -39,10 +38,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.SortedSet;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-import javax.servlet.ServletContext;
 
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.r.info.RProcessInfo;
@@ -57,7 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.context.ServletContextAware;
 
 /**
  * Management class to store and retrieve script files and their corresponding well known names.
@@ -70,7 +68,7 @@ public class ScriptFileRepository {
 
     private static final String DEFAULT_VERSION = "1";
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ScriptFileRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptFileRepository.class);
 
     /** Maps current R-script files to identifiers **/
     private final Map<File, String> fileToWknMap = new HashMap<>();
@@ -92,7 +90,9 @@ public class ScriptFileRepository {
         if ( !wknToFileMap.containsKey(wkn)) {
             throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
         }
-        return wknToFileMap.get(wkn).values().iterator().next();
+        final Map<Integer, File> versionedScriptFiles = getScriptFileVersionsForWKN(wkn);
+        SortedSet<Integer> versions = new TreeSet<>(versionedScriptFiles.keySet());
+        return versionedScriptFiles.get(versions.first());
     }
 
     public String getScriptFileName(String wkn) {
@@ -102,14 +102,29 @@ public class ScriptFileRepository {
 
     public boolean hasReadableScriptFile(String wkn) {
         if ( !wknToFileMap.containsKey(wkn)) {
-            throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
+            LOGGER.info("Missing R Script for process '" + wkn + "'.");
+            return false;
+            //throw new IllegalStateException("Missing R Script for process '" + wkn + "'.");
         }
-        File file = getScriptFile(wkn);
+        final File file = getScriptFile(wkn);
         boolean readable = file != null
                 && file.exists()
                 && file.isFile()
                 && file.canRead();
         return readable;
+
+    }
+
+    /**
+     * @param file the file to check.
+     * @return <code>true</code> if script file is registered, <code>false</code> otherwise.
+     */
+    public boolean isRegisteredScriptFile(File file) {
+        if ( !fileToWknMap.containsKey(file)) {
+            LOGGER.debug("File {} is not registered: {}", file.getAbsoluteFile());
+            return false;
+        }
+        return true;
     }
 
     public boolean hasReadableScriptFile(RProcessInfo processInfo) {
@@ -181,10 +196,9 @@ public class ScriptFileRepository {
         return wknToFileMap.get(id);
     }
 
-    public String getWKNForScriptFile(File file) throws RAnnotationException, IOException, ExceptionReport {
-        if ( !file.exists())
-            throw new FileNotFoundException("File not found: " + file.getName());
-
+    public String getWKNForScriptFile(File file) throws RAnnotationException, ExceptionReport {
+//        if ( !file.exists())
+//            throw new FileNotFoundException("File not found: " + file.getName());
         return fileToWknMap.get(file);
     }
 
@@ -206,6 +220,9 @@ public class ScriptFileRepository {
         }
 
         File[] scripts = directory.listFiles(new RFileExtensionFilter());
+
+        Arrays.sort(scripts);
+
         LOGGER.debug("Loading {} script files from {}: {}", scripts.length, directory, Arrays.toString(scripts));
         return registerScriptFiles(Arrays.asList(scripts));
     }
@@ -233,8 +250,9 @@ public class ScriptFileRepository {
 
         try (FileInputStream fis = new FileInputStream(file);) {
 
-            if (fileToWknMap.containsKey(file.getAbsoluteFile()))
+            if (fileToWknMap.containsKey(file.getAbsoluteFile())) {
                 LOGGER.debug("File already registered, not doing it again: {}", file);
+            }
             else {
                 LOGGER.info("Registering script file {} from input {}", file, fis);
 
@@ -342,7 +360,8 @@ public class ScriptFileRepository {
     }
 
     public File getImportedFileForWKN(String scriptId, String importId) throws InvalidRScriptException {
-        File basefile = getValidatedScriptFile(importId);
+//        File basefile = getValidatedScriptFile(scriptId);
+        File basefile = getScriptFile(scriptId);
         Path basepath = basefile.toPath();
         Path importedFile = basepath.resolveSibling(importId);
 

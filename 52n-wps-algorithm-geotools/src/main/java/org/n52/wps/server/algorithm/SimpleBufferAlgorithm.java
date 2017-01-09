@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,7 +47,9 @@
  */
 package org.n52.wps.server.algorithm;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
@@ -56,6 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.geotools.feature.DefaultFeatureCollections;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -81,7 +84,7 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
     public SimpleBufferAlgorithm() {
         super();
     }
-    
+
     private FeatureCollection result;
     private FeatureCollection data;
     private double width;
@@ -107,10 +110,10 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
         double i = 0;
         int totalNumberOfFeatures = data.size();
         String uuid = UUID.randomUUID().toString();
-        result = DefaultFeatureCollections.newCollection();
+        List<SimpleFeature> featureList = new ArrayList<>();
         SimpleFeatureType featureType = null;
         LOGGER.debug("");
-        for (Iterator ia = data.iterator(); ia.hasNext();) {
+        for (FeatureIterator ia = data.features(); ia.hasNext();) {
             /**
              * ******* How to publish percentage results ************
              */
@@ -139,12 +142,12 @@ public class SimpleBufferAlgorithm extends AbstractAnnotatedAlgorithm {
             if (geometryBuffered != null) {
                 SimpleFeature createdFeature = (SimpleFeature) GTHelper.createFeature("ID" + new Double(i).intValue(), geometryBuffered, (SimpleFeatureType) featureType, feature.getProperties());
                 feature.setDefaultGeometry(geometryBuffered);
-                result.add(createdFeature);
+                featureList.add(createdFeature);
             } else {
                 LOGGER.warn("GeometryCollections are not supported, or result null. Original dataset will be returned");
             }
         }
-
+        result = GTHelper.createSimpleFeatureCollectionFromSimpleFeatureList(featureList);
     }
 
     private Geometry runBuffer(Geometry a, double width) {

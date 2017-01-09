@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,32 +49,32 @@ import org.n52.wps.io.datahandler.parser.AbstractParser;
  */
 public class WKTParser extends AbstractParser {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(WKTParser.class);
-	
-	public WKTParser() {
-		super();
-		supportedIDataTypes.add(JTSGeometryBinding.class);
-	}
-	
-	@Override
-	public JTSGeometryBinding parse(InputStream input, String mimeType, String schema) {
-		
-		try {
-			Geometry g = new WKTReader().read(new InputStreamReader(input));	
-			
-			return new JTSGeometryBinding(g);
-			
-		} catch (ParseException e) {
-			LOGGER.error(e.getMessage(), e);
-		}finally{
-			try {
-				input.close();
-			} catch (IOException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-		}
-		
-		return null;
-	}
+    private static Logger LOGGER = LoggerFactory.getLogger(WKTParser.class);
+
+    public WKTParser() {
+        super();
+        supportedIDataTypes.add(JTSGeometryBinding.class);
+    }
+
+    @Override
+    public JTSGeometryBinding parse(InputStream input, String mimeType, String schema) {
+
+        try {
+            Geometry g = new WKTReader().read(new InputStreamReader(input));
+
+            return new JTSGeometryBinding(g);
+
+        } catch (ParseException e) {
+            LOGGER.error(e.getMessage(), e);
+        }finally{
+            try {
+                input.close();
+            } catch (IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+
+        return null;
+    }
 
 }

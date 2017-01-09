@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,56 +62,56 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 
 public class KMLParserTest extends AbstractTestCase<KMLParser> {
 
-	@Test
-	public void testParser(){
+    @Test
+    public void testParser(){
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-//		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/streams.kml";//from geoserver, fail
-//		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/shape.kml";//can be read by grass gis, fail
-//		String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/states.kml";//geotools example kml, fail
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/x4.kml";//returned by our own generator, fail
+//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/streams.kml";//from geoserver, fail
+//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/shape.kml";//can be read by grass gis, fail
+//        String testFilePath = projectRoot + "/52n-wps-io/src/test/resources/states.kml";//geotools example kml, fail
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/x4.kml";//returned by our own generator, fail
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		String[] mimetypes = dataHandler.getSupportedFormats();
+        String[] mimetypes = dataHandler.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		for (String mimetype : mimetypes) {
+        for (String mimetype : mimetypes) {
 
-			try {
-				input = new FileInputStream(new File(testFilePath));
-			} catch (FileNotFoundException e) {
-				Assert.fail(e.getMessage());
-			}
+            try {
+                input = new FileInputStream(new File(testFilePath));
+            } catch (FileNotFoundException e) {
+                Assert.fail(e.getMessage());
+            }
 
-			GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
+            GTVectorDataBinding theBinding = dataHandler.parse(input, mimetype, "");
 
-			Assert.assertNotNull(theBinding.getPayload());
+            Assert.assertNotNull(theBinding.getPayload());
 
-			try {
-				File f = theBinding.getPayloadAsShpFile();
-				Assert.assertTrue(f.exists());
-			} catch (Exception e) {
-				e.printStackTrace();
-				Assert.fail(e.getMessage());
-			}
-			Assert.assertTrue(!theBinding.getPayload().isEmpty());
+            try {
+                File f = theBinding.getPayloadAsShpFile();
+                Assert.assertTrue(f.exists());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Assert.fail(e.getMessage());
+            }
+            Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new KMLParser();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new KMLParser();
+    }
 
 }

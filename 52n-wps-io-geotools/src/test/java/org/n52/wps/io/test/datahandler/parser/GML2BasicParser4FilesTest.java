@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -64,35 +64,35 @@ import org.n52.wps.webapp.api.FormatEntry;
  *
  */
 public class GML2BasicParser4FilesTest extends
-		AbstractTestCase<GML2BasicParser4Files> {
+        AbstractTestCase<GML2BasicParser4Files> {
 
-	@Test
-	public void testParser() {
+    @Test
+    public void testParser() {
 
-		if (!isDataHandlerActive()) {
-			return;
-		}
-		
-		List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
+        if (!isDataHandlerActive()) {
+            return;
+        }
 
-		FormatEntry format = formats.get(0);
+        List<FormatEntry> formats = dataHandler.getSupportedFullFormats();
 
-		String mimeType = format.getMimeType();
-		String schema = format.getSchema();
+        FormatEntry format = formats.get(0);
+
+        String mimeType = format.getMimeType();
+        String schema = format.getSchema();
 
         InputStream input = getClass().getResourceAsStream("/tasmania_roads_gml2.xml");
 
-		GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
-				schema);
+        GenericFileDataWithGTBinding theBinding = dataHandler.parse(input, mimeType,
+                schema);
 
-		Assert.assertNotNull(theBinding.getPayload());
-		Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GML2BasicParser4Files();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GML2BasicParser4Files();
+    }
 
 }

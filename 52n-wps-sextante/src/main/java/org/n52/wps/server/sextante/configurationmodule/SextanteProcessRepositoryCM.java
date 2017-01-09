@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2008-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,55 +43,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
  *
  */
 public class SextanteProcessRepositoryCM extends ClassKnowingModule{
-	
-	private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
-	
-	private boolean isActive = true;
 
-	private List<AlgorithmEntry> algorithmEntries;
-	
-	public SextanteProcessRepositoryCM() {
-		algorithmEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "SEXTANTE Algorithm Repository";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries = new ArrayList<>();
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    private boolean isActive = true;
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;
-	}
+    private List<AlgorithmEntry> algorithmEntries;
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.REPOSITORY;
-	}
+    public SextanteProcessRepositoryCM() {
+        algorithmEntries = new ArrayList<>();
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public String getModuleName() {
+        return "SEXTANTE Algorithm Repository";
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return algorithmEntries;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return null;
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-	@Override
-	public String getClassName() {
-		return SextanteProcessRepository.class.getName();
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.REPOSITORY;
+    }
+
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
+
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return algorithmEntries;
+    }
+
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return null;
+    }
+
+    @Override
+    public String getClassName() {
+        return SextanteProcessRepository.class.getName();
+    }
 
 }

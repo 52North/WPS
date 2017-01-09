@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -63,43 +63,43 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
 public class GeotiffZippedParserTest extends AbstractTestCase<GeotiffZippedParser> {
 
     @Test
-	public void testParser(){
+    public void testParser(){
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.zip";
+        String testFilePath = projectRoot + "/52n-wps-io-geotools/src/test/resources/6_UTM2GTIF.zip";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            Assert.fail(e1.getMessage());
+        }
 
-		String[] mimetypes = dataHandler.getSupportedFormats();
+        String[] mimetypes = dataHandler.getSupportedFormats();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		for (String mimetype : mimetypes) {
+        for (String mimetype : mimetypes) {
 
-			try {
-				input = new FileInputStream(new File(testFilePath));
-			} catch (FileNotFoundException e) {
-				Assert.fail(e.getMessage());
-			}
+            try {
+                input = new FileInputStream(new File(testFilePath));
+            } catch (FileNotFoundException e) {
+                Assert.fail(e.getMessage());
+            }
 
-			GTRasterDataBinding theBinding = dataHandler.parse(input, mimetype, null);
+            GTRasterDataBinding theBinding = dataHandler.parse(input, mimetype, null);
 
-			Assert.assertTrue(theBinding.getPayload() != null);
+            Assert.assertTrue(theBinding.getPayload() != null);
 
-		}
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GeotiffZippedParser();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GeotiffZippedParser();
+    }
 
 }

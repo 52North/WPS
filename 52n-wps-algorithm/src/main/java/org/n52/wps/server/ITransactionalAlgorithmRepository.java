@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -21,7 +21,7 @@ package org.n52.wps.server;
  *
  */
 public interface ITransactionalAlgorithmRepository extends IAlgorithmRepository{
-	boolean addAlgorithm(Object className);
-	boolean removeAlgorithm(Object className);
+    boolean addAlgorithm(Object className);
+    boolean removeAlgorithm(Object className);
 }
 

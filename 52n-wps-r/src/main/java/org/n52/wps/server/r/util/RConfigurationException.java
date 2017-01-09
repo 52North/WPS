@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -26,18 +26,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.n52.wps.server.r.util;
 
 /**
  *
- * @author Henning Bredel <h.bredel@52north.org>
+ * @author Henning Bredel (contact h.bredel@52north.org)
  */
 public class RConfigurationException extends Exception {
+
+    private static final long serialVersionUID = 2832533492788909753L;
 
     public RConfigurationException(String message) {
         super(message);

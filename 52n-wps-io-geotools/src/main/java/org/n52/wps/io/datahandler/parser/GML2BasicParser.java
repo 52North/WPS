@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -89,197 +89,198 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * This parser handles xml files compliant to GML2.
- * 
+ *
  * @author foerster
- * 
+ *
  */
 public class GML2BasicParser extends AbstractParser {
-	private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(GML2BasicParser.class);
 
-	public GML2BasicParser() {
-		super();
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
+    public GML2BasicParser() {
+        super();
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
 
-	public GTVectorDataBinding parse(InputStream stream, String mimeType,
-			String schema) {
+    public GTVectorDataBinding parse(InputStream stream, String mimeType,
+            String schema) {
 
-		FileOutputStream fos = null;
-		try {
-			File tempFile = File.createTempFile(UUID.randomUUID().toString(),
-					".gml2");
-			finalizeFiles.add(tempFile); // mark for final delete
-			fos = new FileOutputStream(tempFile);
-			int i = stream.read();
-			while (i != -1) {
-				fos.write(i);
-				i = stream.read();
-			}
-			fos.flush();
-			fos.close();
-			GTVectorDataBinding data = parseXML(tempFile);
+        FileOutputStream fos = null;
+        try {
+            File tempFile = File.createTempFile(UUID.randomUUID().toString(),
+                    ".gml2");
+            finalizeFiles.add(tempFile); // mark for final delete
+            fos = new FileOutputStream(tempFile);
+            int i = stream.read();
+            while (i != -1) {
+                fos.write(i);
+                i = stream.read();
+            }
+            fos.flush();
+            fos.close();
+            GTVectorDataBinding data = parseXML(tempFile);
 
-			return data;
-		} catch (IOException e) {
-			if (fos != null)
-				try {
-					fos.close();
-				} catch (Exception e1) {
-				}
-			throw new IllegalArgumentException("Error while creating tempFile",
-					e);
-		}
-	}
+            return data;
+        } catch (IOException e) {
+            if (fos != null){
+                try {
+                    fos.close();
+                } catch (Exception e1) {
+                }
+            }
+            throw new IllegalArgumentException("Error while creating tempFile",
+                    e);
+        }
+    }
 
-	public GTVectorDataBinding parseXML(File file) {
-		
-		SimpleFeatureCollection fc = parseSimpleFeatureCollection(file);
-		
-		GTVectorDataBinding data = new GTVectorDataBinding(fc);
+    public GTVectorDataBinding parseXML(File file) {
 
-		return data;
-	}
-	
-	public SimpleFeatureCollection parseSimpleFeatureCollection(File file) {
-		QName schematypeTuple = determineFeatureTypeSchema(file);
+        SimpleFeatureCollection fc = parseSimpleFeatureCollection(file);
 
-		Configuration configuration = null;
+        GTVectorDataBinding data = new GTVectorDataBinding(fc);
 
-		boolean shouldSetParserStrict = true;
+        return data;
+    }
 
-		String schemaLocation = schematypeTuple.getLocalPart();
+    public SimpleFeatureCollection parseSimpleFeatureCollection(File file) {
+        QName schematypeTuple = determineFeatureTypeSchema(file);
 
-		if (schemaLocation != null && schematypeTuple.getNamespaceURI() != null) {
-			SchemaRepository.registerSchemaLocation(
-					schematypeTuple.getNamespaceURI(), schemaLocation);
-			configuration = new ApplicationSchemaConfiguration(
-					schematypeTuple.getNamespaceURI(), schemaLocation);
-		} else {
-			configuration = new GMLConfiguration();
-			shouldSetParserStrict = false;
-		}
+        Configuration configuration = null;
 
-		org.geotools.xml.Parser parser = new org.geotools.xml.Parser(
-				configuration);
+        boolean shouldSetParserStrict = true;
 
-		// parse
-		SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
-		try {
-			Object parsedData = null;
-			try {
-				parser.setStrict(shouldSetParserStrict);
-				parsedData = parser.parse(new FileInputStream(file));
-			} catch (SAXException e5) {
-				// assume the xsd containing the schema was not found
-				configuration = new GMLConfiguration();
-				parser = new org.geotools.xml.Parser(configuration);
-				parser.setStrict(false);
-				parsedData = parser.parse(new FileInputStream(file));
-			}
-			if (parsedData instanceof SimpleFeatureCollection) {
-				fc = (SimpleFeatureCollection) parsedData;
-			} else {
-				List<?> possibleSimpleFeatureList = ((ArrayList<?>) ((HashMap<?, ?>) parsedData)
-						.get("featureMember"));
+        String schemaLocation = schematypeTuple.getLocalPart();
 
-				if (possibleSimpleFeatureList != null) {
-					List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
+        if (schemaLocation != null && schematypeTuple.getNamespaceURI() != null) {
+            SchemaRepository.registerSchemaLocation(
+                    schematypeTuple.getNamespaceURI(), schemaLocation);
+            configuration = new ApplicationSchemaConfiguration(
+                    schematypeTuple.getNamespaceURI(), schemaLocation);
+        } else {
+            configuration = new GMLConfiguration();
+            shouldSetParserStrict = false;
+        }
 
-					SimpleFeatureType sft = null;
+        org.geotools.xml.Parser parser = new org.geotools.xml.Parser(
+                configuration);
 
-					for (Object possibleSimpleFeature : possibleSimpleFeatureList) {
+        // parse
+        SimpleFeatureCollection fc = DefaultFeatureCollections.newCollection();
+        try {
+            Object parsedData = null;
+            try {
+                parser.setStrict(shouldSetParserStrict);
+                parsedData = parser.parse(new FileInputStream(file));
+            } catch (SAXException e5) {
+                // assume the xsd containing the schema was not found
+                configuration = new GMLConfiguration();
+                parser = new org.geotools.xml.Parser(configuration);
+                parser.setStrict(false);
+                parsedData = parser.parse(new FileInputStream(file));
+            }
+            if (parsedData instanceof SimpleFeatureCollection) {
+                fc = (SimpleFeatureCollection) parsedData;
+            } else {
+                List<?> possibleSimpleFeatureList = ((ArrayList<?>) ((HashMap<?, ?>) parsedData)
+                        .get("featureMember"));
 
-						if (possibleSimpleFeature instanceof SimpleFeature) {
-							SimpleFeature sf = ((SimpleFeature) possibleSimpleFeature);
-							if (sft == null) {
-								sft = sf.getType();
-							}
-							simpleFeatureList.add(sf);
-						}
-					}
+                if (possibleSimpleFeatureList != null) {
+                    List<SimpleFeature> simpleFeatureList = new ArrayList<SimpleFeature>();
 
-					fc = new ListFeatureCollection(sft, simpleFeatureList);
-				} else {
-					fc = (SimpleFeatureCollection) ((HashMap<?, ?>) parsedData)
-							.get("FeatureCollection");
-				}
-			}
+                    SimpleFeatureType sft = null;
 
-			SimpleFeatureIterator featureIterator = fc.features();
-			while (featureIterator.hasNext()) {
-				SimpleFeature feature = (SimpleFeature) featureIterator.next();
-				if (feature.getDefaultGeometry() == null) {
-					Collection<org.opengis.feature.Property> properties = feature
-							.getProperties();
-					for (org.opengis.feature.Property property : properties) {
-						try {
+                    for (Object possibleSimpleFeature : possibleSimpleFeatureList) {
 
-							Geometry g = (Geometry) property.getValue();
-							if (g != null) {
-								GeometryAttribute oldGeometryDescriptor = feature
-										.getDefaultGeometryProperty();
-								GeometryType type = new GeometryTypeImpl(
-										property.getName(),
-										(Class<?>) oldGeometryDescriptor
-												.getType().getBinding(),
-										oldGeometryDescriptor.getType()
-												.getCoordinateReferenceSystem(),
-										oldGeometryDescriptor.getType()
-												.isIdentified(),
-										oldGeometryDescriptor.getType()
-												.isAbstract(),
-										oldGeometryDescriptor.getType()
-												.getRestrictions(),
-										oldGeometryDescriptor.getType()
-												.getSuper(),
-										oldGeometryDescriptor.getType()
-												.getDescription());
+                        if (possibleSimpleFeature instanceof SimpleFeature) {
+                            SimpleFeature sf = ((SimpleFeature) possibleSimpleFeature);
+                            if (sft == null) {
+                                sft = sf.getType();
+                            }
+                            simpleFeatureList.add(sf);
+                        }
+                    }
 
-								GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(
-										type, property.getName(), 0, 1, true,
-										null);
-								Identifier identifier = new GmlObjectIdImpl(
-										feature.getID());
-								GeometryAttributeImpl geo = new GeometryAttributeImpl(
-										(Object) g, newGeometryDescriptor,
-										identifier);
-								feature.setDefaultGeometryProperty(geo);
-								feature.setDefaultGeometry(g);
+                    fc = new ListFeatureCollection(sft, simpleFeatureList);
+                } else {
+                    fc = (SimpleFeatureCollection) ((HashMap<?, ?>) parsedData)
+                            .get("FeatureCollection");
+                }
+            }
 
-							}
-						} catch (ClassCastException e) {
-							// do nothing
-						}
+            SimpleFeatureIterator featureIterator = fc.features();
+            while (featureIterator.hasNext()) {
+                SimpleFeature feature = (SimpleFeature) featureIterator.next();
+                if (feature.getDefaultGeometry() == null) {
+                    Collection<org.opengis.feature.Property> properties = feature
+                            .getProperties();
+                    for (org.opengis.feature.Property property : properties) {
+                        try {
 
-					}
-				}
-			}
-			return fc;
-		} catch (Exception e) {
-			LOGGER.error(
-					"Exception while trying to parse GML2 FeatureCollection.",
-					e);
-			throw new RuntimeException(e);
-		}
-	}
+                            Geometry g = (Geometry) property.getValue();
+                            if (g != null) {
+                                GeometryAttribute oldGeometryDescriptor = feature
+                                        .getDefaultGeometryProperty();
+                                GeometryType type = new GeometryTypeImpl(
+                                        property.getName(),
+                                        (Class<?>) oldGeometryDescriptor
+                                                .getType().getBinding(),
+                                        oldGeometryDescriptor.getType()
+                                                .getCoordinateReferenceSystem(),
+                                        oldGeometryDescriptor.getType()
+                                                .isIdentified(),
+                                        oldGeometryDescriptor.getType()
+                                                .isAbstract(),
+                                        oldGeometryDescriptor.getType()
+                                                .getRestrictions(),
+                                        oldGeometryDescriptor.getType()
+                                                .getSuper(),
+                                        oldGeometryDescriptor.getType()
+                                                .getDescription());
 
-	private QName determineFeatureTypeSchema(File file) {
-		try {
-			GML2Handler handler = new GML2Handler();
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			factory.newSAXParser().parse(new FileInputStream(file),
-					(DefaultHandler) handler);
-			String schemaUrl = handler.getSchemaUrl();
-			String namespaceURI = handler.getNameSpaceURI();
-			return new QName(namespaceURI, schemaUrl);
+                                GeometryDescriptor newGeometryDescriptor = new GeometryDescriptorImpl(
+                                        type, property.getName(), 0, 1, true,
+                                        null);
+                                Identifier identifier = new GmlObjectIdImpl(
+                                        feature.getID());
+                                GeometryAttributeImpl geo = new GeometryAttributeImpl(
+                                        (Object) g, newGeometryDescriptor,
+                                        identifier);
+                                feature.setDefaultGeometryProperty(geo);
+                                feature.setDefaultGeometry(g);
 
-		} catch (Exception e) {
-			LOGGER.error(
-					"Exception while trying to determining GML2 FeatureType schema.",
-					e);
-			throw new IllegalArgumentException(e);
-		}
-	}
+                            }
+                        } catch (ClassCastException e) {
+                            // do nothing
+                        }
+
+                    }
+                }
+            }
+            return fc;
+        } catch (Exception e) {
+            LOGGER.error(
+                    "Exception while trying to parse GML2 FeatureCollection.",
+                    e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private QName determineFeatureTypeSchema(File file) {
+        try {
+            GML2Handler handler = new GML2Handler();
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.newSAXParser().parse(new FileInputStream(file),
+                    (DefaultHandler) handler);
+            String schemaUrl = handler.getSchemaUrl();
+            String namespaceURI = handler.getNameSpaceURI();
+            return new QName(namespaceURI, schemaUrl);
+
+        } catch (Exception e) {
+            LOGGER.error(
+                    "Exception while trying to determining GML2 FeatureType schema.",
+                    e);
+            throw new IllegalArgumentException(e);
+        }
+    }
 
 }

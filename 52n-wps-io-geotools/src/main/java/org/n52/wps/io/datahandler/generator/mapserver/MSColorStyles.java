@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,28 +51,28 @@ import edu.umn.gis.mapscript.colorObj;
 
 /**
  * This is a BindingClass for Mapscript ColorStyles.
- * 
+ *
  * @author Jacob Mendt
- * 
- * @TODO Offer various different styles (For example getBlack() getGrey() ...)
+ *
+ * TODO Offer various different styles (For example getBlack() getGrey() ...)
  */
 public class MSColorStyles {
 
-	/**
-	 * Returns an mapscript color object for the default color red.
-	 * 
-	 * @return colorObj Mapscript color object red
-	 */
-	public static colorObj getDefaultColor() {
-		return new colorObj(255, 128, 128, 0);
-	}
+    /**
+     * Returns an mapscript color object for the default color red.
+     *
+     * @return colorObj Mapscript color object red
+     */
+    public static colorObj getDefaultColor() {
+        return new colorObj(255, 128, 128, 0);
+    }
 
-	/**
-	 * Returns an mapscript color object for the default outline color grey.
-	 * 
-	 * @return colorObj Mapscript color object grey
-	 */
-	public static colorObj getDefaultOutlineColor() {
-		return new colorObj(96, 96, 96, 0);
-	}
+    /**
+     * Returns an mapscript color object for the default outline color grey.
+     *
+     * @return colorObj Mapscript color object grey
+     */
+    public static colorObj getDefaultOutlineColor() {
+        return new colorObj(96, 96, 96, 0);
+    }
 }

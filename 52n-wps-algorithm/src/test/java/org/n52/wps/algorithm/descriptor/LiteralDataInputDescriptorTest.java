@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,34 +36,34 @@ import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
  * @author tkunicki
  */
 public class LiteralDataInputDescriptorTest extends TestCase {
-    
+
     public final static String MOCK_UNALLOWED = "MOCK_UNALLOWED";
-    
+
     public enum  MOCK_ALLOWED_VALUES {
         MOCK_ALLOWED1,
         MOCK_ALLOWED2,
         MOCK_ALLOWED3,
     }
-    
+
     public LiteralDataInputDescriptorTest(String testName) {
         super(testName);
     }
-    
+
     public void testDefaultValue() {
         LiteralDataInputDescriptor descriptor = null;
-        
+
         // test default for defaultValue
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).build();
         assertNull(descriptor.getDefaultValue());
         assertFalse(descriptor.hasDefaultValue());
-        
+
         // test "" for defaultValue (unset annotation case)
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 defaultValue("").
                 build();
         assertEquals("", descriptor.getDefaultValue());
         assertFalse(descriptor.hasDefaultValue());
-        
+
         // test with a valid defaultValue (unset annotation case)
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 defaultValue("mock_default").
@@ -74,34 +74,34 @@ public class LiteralDataInputDescriptorTest extends TestCase {
 
     public void testAllowedValues() {
         LiteralDataInputDescriptor descriptor = null;
-        
+
         // test default for allowedValues
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).build();
         assertNotNull(descriptor.getAllowedValues());
         assertEquals(0, descriptor.getAllowedValues().size());
         assertFalse(descriptor.hasAllowedValues());
-        
+
         // test allowedValues(String[])
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 allowedValues(ClassUtil.convertEnumToStringArray(MOCK_ALLOWED_VALUES.class)).build();
         validateAllowValues(descriptor);
-        
+
         // test allowedValues(List<String>)
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 allowedValues(ClassUtil.convertEnumToStringList(MOCK_ALLOWED_VALUES.class)).build();
         validateAllowValues(descriptor);
-        
+
         // test allowedValues(Class<? extends Enum>)
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 allowedValues(MOCK_ALLOWED_VALUES.class).build();
         validateAllowValues(descriptor);
-        
+
         // test allowedValues()
         descriptor = LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
                 defaultValue(MOCK_ALLOWED_VALUES.MOCK_ALLOWED1.name()).
                 allowedValues(MOCK_ALLOWED_VALUES.class).build();
         validateAllowValues(descriptor);
-        
+
         boolean thrown = false;
         try {
             LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).
@@ -120,7 +120,7 @@ public class LiteralDataInputDescriptorTest extends TestCase {
                 LiteralDataInputDescriptor.builder("mock_identifier", LiteralStringBinding.class).build();
         assertEquals("mock_identifier", descriptor.getIdentifier());
         assertEquals(LiteralStringBinding.class, descriptor.getBinding());
-        
+
         boolean thrown = false;
         try {
             LiteralDataInputDescriptor.builder(null, LiteralStringBinding.class);
@@ -129,7 +129,7 @@ public class LiteralDataInputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             LiteralDataInputDescriptor.builder("", LiteralStringBinding.class);
@@ -138,7 +138,7 @@ public class LiteralDataInputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         thrown = false;
         try {
             LiteralDataInputDescriptor.builder("mock_identifier", null);
@@ -147,7 +147,7 @@ public class LiteralDataInputDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
     }
 
     public void testAnyURIBuilder() {
@@ -226,12 +226,12 @@ public class LiteralDataInputDescriptorTest extends TestCase {
         assertEquals(LiteralStringBinding.class, descriptor.getBinding());
         assertEquals(BasicXMLTypeFactory.STRING_URI, descriptor.getDataType());
     }
-    
+
     private void validateAllowValues(LiteralDataInputDescriptor descriptor) {
         assertTrue(descriptor.hasAllowedValues());
-       
+
         List<String> allowedValueList = descriptor.getAllowedValues();
-        
+
         assertNotNull(allowedValueList);
         assertEquals(MOCK_ALLOWED_VALUES.values().length, allowedValueList.size());
         for (int index = 0; index < allowedValueList.size(); ++index) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,6 +33,7 @@ import java.io.InputStream;
 import net.opengis.ows.x20.BoundingBoxType;
 import net.opengis.ows.x20.DomainMetadataType;
 import net.opengis.ows.x20.LanguageStringType;
+import net.opengis.wps.x20.BoundingBoxDataDocument.BoundingBoxData;
 import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.DataTransmissionModeType;
 import net.opengis.wps.x20.ExecuteRequestType;
@@ -49,6 +50,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.RepositoryManager;
@@ -68,249 +70,249 @@ import org.slf4j.LoggerFactory;
  */
 public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 
-	private String identifier;
-	private ExecuteRequestV200 request;
-	private ResultDocument resultDoc;
-	private StatusInfoDocument statusInfoDoc;
-	private RawData rawDataHandler = null;
-	private ProcessOffering description;
-	private ProcessDescription superDescription;
-	private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilderV200.class);
-	
-	public static enum Status {
-		Accepted, Failed, Succeeded, Running
-	}
-	
-	public ExecuteResponseBuilderV200(ExecuteRequestV200 request) throws ExceptionReport{
-		this.request = request;
-		resultDoc = ResultDocument.Factory.newInstance();
-		resultDoc.addNewResult();
-		resultDoc.getResult().setJobID(request.getUniqueId().toString());
-		XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetResult.xsd");
-		statusInfoDoc = StatusInfoDocument.Factory.newInstance();		
-		statusInfoDoc.addNewStatusInfo();
-		XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wpsGetStatus.xsd");
-		this.identifier = request.getAlgorithmIdentifier().trim();
-		superDescription = RepositoryManager.getInstance().getProcessDescription(this.identifier);
-		description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
-		if(description==null){
-			throw new RuntimeException("Error while accessing the process description for "+ identifier);
-		}
-	}
+    private String identifier;
+    private ExecuteRequestV200 request;
+    private ResultDocument resultDoc;
+    private StatusInfoDocument statusInfoDoc;
+    private RawData rawDataHandler = null;
+    private ProcessOffering description;
+    private ProcessDescription superDescription;
+    private static Logger LOGGER = LoggerFactory.getLogger(ExecuteResponseBuilderV200.class);
 
-	public void update() throws ExceptionReport {
+    public static enum Status {
+        Accepted, Failed, Succeeded, Running
+    }
 
-		// if status succeeded, update response with result
-		if (statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())) {
-			// the response only include dataInputs, if the property is set to true;
-			// has the client specified the outputs?
-				// Get the outputdescriptions from the algorithm
+    public ExecuteResponseBuilderV200(ExecuteRequestV200 request) throws ExceptionReport{
+        this.request = request;
+        resultDoc = ResultDocument.Factory.newInstance();
+        resultDoc.addNewResult();
+        resultDoc.getResult().setJobID(request.getUniqueId().toString());
+        XMLBeansHelper.addSchemaLocationToXMLObject(resultDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+        statusInfoDoc = StatusInfoDocument.Factory.newInstance();
+        statusInfoDoc.addNewStatusInfo();
+        this.identifier = request.getAlgorithmIdentifier().trim();
+        superDescription = RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(this.identifier);
+        description = (ProcessOffering) superDescription.getProcessDescriptionType(WPSConfig.VERSION_200);
+        if(description==null){
+            throw new RuntimeException("Error while accessing the process description for "+ identifier);
+        }
+    }
 
-				OutputDescriptionType[] outputDescs = description.getProcess().getOutputArray();
-				if(request.isRawData()) {
-					//TODO check how this should be handled
-					OutputDefinitionType rawDataOutput = request.getExecute().getOutputArray(0);
-					String id = rawDataOutput.getId();
-					OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
-					if(desc.getDataDescription() instanceof ComplexDataType) {
-						String encoding = getEncoding(rawDataOutput);
-						String schema = getSchema(rawDataOutput);
-						String responseMimeType = getMimeType(rawDataOutput);
-						generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
-					}
+    public void update() throws ExceptionReport {
 
-					else if (desc.getDataDescription() instanceof LiteralDataType) {
-						String mimeType = null;
-						String schema = null;
-						String encoding = null;
-						
-						LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
-						
-						DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
-						String reference = dataType != null ? dataType.getReference() : null;
-						generateLiteralDataOutput(id, resultDoc, true, reference, schema, mimeType, encoding, desc.getTitleArray(0));
-					}
-					else if (desc.getDataDescription() instanceof BoundingBoxType) {
-						generateBBOXOutput(id, resultDoc, true, desc.getTitleArray(0));
-					}
-					return;
-				}
-				// Get the outputdefinitions from the clients request
-				// For each request of output
-				for(int i = 0; i<request.getExecute().getOutputArray().length; i++) {
-					OutputDefinitionType definition = request.getExecute().getOutputArray(i);
-					String responseID = definition.getId();
-					OutputDescriptionType desc = XMLBeansHelper.findOutputByID(responseID, outputDescs);
-					if(desc==null){
-						throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
-					}
-					if(desc.getDataDescription() instanceof ComplexDataType) {
-						String mimeType = getMimeType(definition);
-						String schema = getSchema(definition);
-						String encoding = getEncoding(definition);
-						
-						generateComplexDataOutput(responseID, definition.getTransmission().equals(DataTransmissionModeType.REFERENCE), false,  schema, mimeType, encoding, desc.getTitleArray(0));
-					}
-					else if (desc.getDataDescription() instanceof LiteralDataType) {
-						String mimeType = null;
-						String schema = null;
-						String encoding = null;
-						
-						LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
-						
-						DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
-						String reference = dataType != null ? dataType.getReference() : null;
-						generateLiteralDataOutput(responseID, resultDoc, false, reference, schema, mimeType, encoding, desc.getTitleArray(0));
-					}
-					else if (desc.getDataDescription() instanceof BoundingBoxType) {
-						generateBBOXOutput(responseID, resultDoc, false, desc.getTitleArray(0));
-					}
-					else{
-						throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
-					}
-				}
-		}
-	}
+        // if status succeeded, update response with result
+        if (statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())) {
+            // the response only include dataInputs, if the property is set to true;
+            // has the client specified the outputs?
+                // Get the outputdescriptions from the algorithm
 
-	/**
-	 * Returns the schema according to the given output description and type.
-	 */
-	private static String getSchema(OutputDefinitionType def) {
-		String schema = null;
-		if(def != null) {
-			schema = def.getSchema();
-		}
+                OutputDescriptionType[] outputDescs = description.getProcess().getOutputArray();
+                if(request.isRawData()) {
+                    //TODO check how this should be handled
+                    OutputDefinitionType rawDataOutput = request.getExecute().getOutputArray(0);
+                    String id = rawDataOutput.getId();
+                    OutputDescriptionType desc = XMLBeansHelper.findOutputByID(id, outputDescs);
+                    if(desc.getDataDescription() instanceof ComplexDataType) {
+                        String encoding = getEncoding(rawDataOutput);
+                        String schema = getSchema(rawDataOutput);
+                        String responseMimeType = getMimeType(rawDataOutput);
+                        generateComplexDataOutput(id, false, true, schema, responseMimeType, encoding, null);
+                    }
 
-		return schema;
-	}
+                    else if (desc.getDataDescription() instanceof LiteralDataType) {
+                        String mimeType = null;
+                        String schema = null;
+                        String encoding = null;
 
-	private static String getEncoding(OutputDefinitionType def) {
-		String encoding = null;
-		if(def != null) {
-			encoding = def.getEncoding();
-		}
-		return encoding;
-	}
+                        LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
 
-	public String getMimeType() {
-		return getMimeType(null);
-	}
+                        DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
+                        String reference = dataType != null ? dataType.getReference() : null;
+                        generateLiteralDataOutput(id, resultDoc, true, reference, schema, mimeType, encoding, desc.getTitleArray(0));
+                    }
+                    else if (desc.getDataDescription() instanceof BoundingBoxData) {
+                        generateBBOXOutput(id, resultDoc, true, desc.getTitleArray(0));
+                    }
+                    return;
+                }
+                // Get the outputdefinitions from the clients request
+                // For each request of output
+                for(int i = 0; i<request.getExecute().getOutputArray().length; i++) {
+                    OutputDefinitionType definition = request.getExecute().getOutputArray(i);
+                    String responseID = definition.getId();
+                    OutputDescriptionType desc = XMLBeansHelper.findOutputByID(responseID, outputDescs);
+                    if(desc==null){
+                        throw new ExceptionReport("Could not find the output id " + responseID, ExceptionReport.INVALID_PARAMETER_VALUE);
+                    }
+                    if(desc.getDataDescription() instanceof ComplexDataType) {
+                        String mimeType = getMimeType(definition);
+                        String schema = getSchema(definition);
+                        String encoding = getEncoding(definition);
 
-	public String getMimeType(XmlObject definitionObject) {
+                        generateComplexDataOutput(responseID, definition.getTransmission().equals(DataTransmissionModeType.REFERENCE), false,  schema, mimeType, encoding, desc.getTitleArray(0));
+                    }
+                    else if (desc.getDataDescription() instanceof LiteralDataType) {
+                        String mimeType = null;
+                        String schema = null;
+                        String encoding = null;
 
-		String mimeType = "";
+                        LiteralDataType literalDataType = (LiteralDataType)desc.getDataDescription();
 
-		if (definitionObject instanceof OutputDefinitionType) {
+                        DomainMetadataType dataType = literalDataType.getLiteralDataDomainArray(0).getDataType();
+                        String reference = dataType != null ? dataType.getReference() : null;
+                        generateLiteralDataOutput(responseID, resultDoc, false, reference, schema, mimeType, encoding, desc.getTitleArray(0));
+                    }
+                    else if (desc.getDataDescription() instanceof BoundingBoxData) {
+                        generateBBOXOutput(responseID, resultDoc, false, desc.getTitleArray(0));
+                    }
+                    else{
+                        throw new ExceptionReport("Requested type not supported: BBOX", ExceptionReport.INVALID_PARAMETER_VALUE);
+                    }
+                }
+        }
+    }
 
-			OutputDefinitionType def = (OutputDefinitionType) definitionObject;
+    /**
+     * Returns the schema according to the given output description and type.
+     */
+    private static String getSchema(OutputDefinitionType def) {
+        String schema = null;
+        if(def != null) {
+            schema = def.getSchema();
+        }
 
-			mimeType = def.getMimeType();
-			OutputDescriptionType[] outputDescs = description.getProcess()
-					.getOutputArray();
+        return schema;
+    }
 
-			String inputID = "";
+    private static String getEncoding(OutputDefinitionType def) {
+        String encoding = null;
+        if(def != null) {
+            encoding = def.getEncoding();
+        }
+        return encoding;
+    }
 
-			if (def != null) {
-				inputID = def.getId();
-			}
+    public String getMimeType() {
+        return getMimeType(null);
+    }
 
-			OutputDescriptionType outputDes = null;
+    public String getMimeType(XmlObject definitionObject) {
 
-			for (OutputDescriptionType tmpOutputDes : outputDescs) {
-				if (inputID.equalsIgnoreCase(tmpOutputDes.getIdentifier()
-						.getStringValue())) {
-					outputDes = tmpOutputDes;
-					break;
-				}
-			}
+        String mimeType = "";
 
-			// use default mime type
-			if (mimeType == null) {
+        if (definitionObject instanceof OutputDefinitionType) {
 
-				Format[] formats = outputDes.getDataDescription()
-						.getFormatArray();
+            OutputDefinitionType def = (OutputDefinitionType) definitionObject;
 
-				for (Format format : formats) {
-					if (format.isSetDefault()) {
-						mimeType = format.getMimeType();
-						break;
-					}
-				}
+            mimeType = def.getMimeType();
+            OutputDescriptionType[] outputDescs = description.getProcess()
+                    .getOutputArray();
 
-				LOGGER.warn("Using default mime type: " + mimeType
-						+ " for output: " + inputID);
-			}
-		}
+            String inputID = "";
 
-		return mimeType;
-	}
+            if (def != null) {
+                inputID = def.getId();
+            }
 
-	private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
-		IData obj = request.getAttachedResult().get(responseID);
-		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, superDescription);
-		}
-		else {
-			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, superDescription);
-			if(asReference) {
-				handler.updateResponseAsReference(resultDoc, (request.getUniqueId()).toString(),mimeType);
-			}
-			else {
-				handler.updateResponseForInlineComplexData(resultDoc);
-			}
-		}
+            OutputDescriptionType outputDes = null;
 
-	}
+            for (OutputDescriptionType tmpOutputDes : outputDescs) {
+                if (inputID.equalsIgnoreCase(tmpOutputDes.getIdentifier()
+                        .getStringValue())) {
+                    outputDes = tmpOutputDes;
+                    break;
+                }
+            }
 
-	private void generateLiteralDataOutput(String responseID, ResultDocument res, boolean rawData, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
-		IData obj = request.getAttachedResult().get(responseID);
-		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, superDescription);
-		}else{
-			OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, superDescription);
-			handler.updateResponseForLiteralData(res, dataTypeReference);
-		}
-	}
+            // use default mime type
+            if (mimeType == null) {
 
-	private void generateBBOXOutput(String responseID, ResultDocument res, boolean rawData, LanguageStringType title) throws ExceptionReport {
+                Format[] formats = outputDes.getDataDescription()
+                        .getFormatArray();
+
+                for (Format format : formats) {
+                    if (format.isSetDefault()) {
+                        mimeType = format.getMimeType();
+                        break;
+                    }
+                }
+
+                LOGGER.warn("Using default mime type: " + mimeType
+                        + " for output: " + inputID);
+            }
+        }
+
+        return mimeType;
+    }
+
+    private void generateComplexDataOutput(String responseID, boolean asReference, boolean rawData, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport{
+        IData obj = request.getAttachedResult().get(responseID);
+        if(rawData) {
+            rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, superDescription);
+        }
+        else {
+            OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, superDescription);
+            if(asReference) {
+                handler.updateResponseAsReference(resultDoc, (request.getUniqueId()).toString(),mimeType);
+            }
+            else {
+                handler.updateResponseForInlineComplexData(resultDoc);
+            }
+        }
+
+    }
+
+    private void generateLiteralDataOutput(String responseID, ResultDocument res, boolean rawData, String dataTypeReference, String schema, String mimeType, String encoding, LanguageStringType title) throws ExceptionReport {
+        IData obj = request.getAttachedResult().get(responseID);
+        if(rawData) {
+            rawDataHandler = new RawData(obj, responseID, schema, encoding, mimeType, this.identifier, superDescription);
+        }else{
+            OutputDataItem handler = new OutputDataItem(obj, responseID, schema, encoding, mimeType, title, this.identifier, superDescription);
+            handler.updateResponseForLiteralData(res, dataTypeReference);
+        }
+    }
+
+    private void generateBBOXOutput(String responseID, ResultDocument res, boolean rawData, LanguageStringType title) throws ExceptionReport {
         IBBOXData obj = (IBBOXData) request.getAttachedResult().get(responseID);
-		if(rawData) {
-			rawDataHandler = new RawData(obj, responseID, null, null, null, this.identifier, superDescription);
-		}else{
-			OutputDataItem handler = new OutputDataItem(obj, responseID, null, null, null, title, this.identifier, superDescription);
-			handler.updateResponseForBBOXData(res, obj);
-		}
+        if(rawData) {
+            rawDataHandler = new RawData(obj, responseID, null, null, null, this.identifier, superDescription);
+        }else{
+            OutputDataItem handler = new OutputDataItem(obj, responseID, null, null, null, title, this.identifier, superDescription);
+            handler.updateResponseForBBOXData(res, obj);
+        }
 
-	}
+    }
 
-	public InputStream getAsStream() throws ExceptionReport{
-		if(request.isRawData() && rawDataHandler != null) {
-			return rawDataHandler.getAsStream();
-		}
-		
-		if(request.getExecute().getMode().equals(ExecuteRequestType.Mode.SYNC)){
-			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
-		}else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
-			//save last status info and return result document
-			DatabaseFactory.getDatabase().insertResponse(
-					request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
-			return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
-		}
-		
-		return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
-	}
+    public InputStream getAsStream() throws ExceptionReport{
+        if(request.isRawData() && rawDataHandler != null) {
+            return rawDataHandler.getAsStream();
+        }
 
-	public void setStatus(XmlObject statusObject) {
-		
-		if(statusObject instanceof StatusInfo){
-			
-			StatusInfo status = (StatusInfo)statusObject;
-			
-			statusInfoDoc.setStatusInfo(status);
-		}else{
-			LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x20.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));
-		}
-	}
+        if(request.getExecute().getMode().equals(ExecuteRequestType.Mode.SYNC)){
+            return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
+        }else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
+            //save last status info and return result document
+                XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+            DatabaseFactory.getDatabase().insertResponse(
+                    request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
+            return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
+        }
+        XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+        return statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions());
+    }
+
+    public void setStatus(XmlObject statusObject) {
+
+        if(statusObject instanceof StatusInfo){
+
+            StatusInfo status = (StatusInfo)statusObject;
+
+            statusInfoDoc.setStatusInfo(status);
+        }else{
+            LOGGER.warn(String.format("XMLObject not of type \"net.opengis.wps.x20.StatusInfoDocument.StatusInfo\", but {}. Cannot not set status. ", statusObject.getClass()));
+        }
+    }
 
 }
 

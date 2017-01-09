@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class ResponseURLFilter implements Filter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ResponseURLFilter.class);
-    
+
     public final static String PROP_responseURLFilterEnabled = "responseURLFilterEnabled";
 
     private String configURLString;
@@ -64,9 +64,9 @@ public class ResponseURLFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        
+
         Server server = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule();
-        
+
         // Build URL from WPS configuration.  This is the
         // hardcoded URL that we expect to see in responses and would like to
         // replace with the URL from the HTTP request.
@@ -74,9 +74,9 @@ public class ResponseURLFilter implements Filter {
             server.getHostname() + ":" +
             server.getHostport() + "/" +
             server.getWebappPath();
-        
+
         enabled = server.isResponseURLFilterEnabled();
-        
+
         if (enabled) {
             LOGGER.info("Response URL filtering enabled using base URL of {}", configURLString);
         } else {
@@ -87,19 +87,19 @@ public class ResponseURLFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        
+
         HttpServletRequest requestHTTP = (request instanceof HttpServletRequest) ?
                 (HttpServletRequest) request : null;
         HttpServletResponse responseHTTP = (response instanceof HttpServletResponse) ?
                 (HttpServletResponse) response : null;
-        
+
         if (enabled && requestHTTP != null && responseHTTP != null) {
-            
+
             String requestURLString = extractRequestURLString(requestHTTP);
-           
+
             // extract servlet path from request URL
             String baseURLString = requestURLString.replaceAll("/[^/]*$", "");
-            
+
             LOGGER.info("Wrapping response for URL filtering");
             chain.doFilter(request, new BaseURLFilterHttpServletResponse(
                     responseHTTP, configURLString, baseURLString));
@@ -146,7 +146,7 @@ public class ResponseURLFilter implements Filter {
 
         @Override
         public PrintWriter getWriter() throws IOException {
-            return new PrintWriter(getOutputStream()); 
+            return new PrintWriter(getOutputStream());
         }
     }
 
@@ -175,7 +175,7 @@ public class ResponseURLFilter implements Filter {
                         // 2) unset 'match' flag
                         outputStream.write(replace.array());
                         match = false;
-                    } // else { /* POTENTIAL MATCH ongoing, writes deferred */ } 
+                    } // else { /* POTENTIAL MATCH ongoing, writes deferred */ }
                 } else {
                     // FAILED MATCH
                     // 1) write out portion of 'find' buffer that matched
@@ -226,14 +226,14 @@ public class ResponseURLFilter implements Filter {
             outputStream.flush();
         }
 
-		@Override
-		public boolean isReady() {
-			return false;
-		}
+        @Override
+        public boolean isReady() {
+            return false;
+        }
 
-		@Override
-		public void setWriteListener(WriteListener writeListener) {			
-		}
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
+        }
 
     }
 }

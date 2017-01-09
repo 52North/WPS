@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,42 +40,42 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.ArrayDataBinding;
 
 /**
- * 
+ *
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden
  *
  */
 public class WCPSGenerator extends AbstractGenerator {
-	
-	public WCPSGenerator(){
-		super();
-		supportedIDataTypes.add(ArrayDataBinding.class);
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
 
-//		// check for correct request before returning the stream
-//		if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
-//			throw new IOException("I don't support the incoming datatype");
-//		}
-		
-		List<byte[]> wcpsoutput = ((ArrayDataBinding)data).getPayload();
-		
-		File tempFile = File.createTempFile("wcps", ".bin");
-		this.finalizeFiles.add(tempFile);
-		FileOutputStream fos = new FileOutputStream(tempFile);
-		
-		for (byte[] currentArray : wcpsoutput){
-			fos.write(currentArray);
-		}
-		
-		fos.flush();
-		fos.close();
-		
-		InputStream stream = new FileInputStream(tempFile);
-		
-		return stream;
-	}
+    public WCPSGenerator(){
+        super();
+        supportedIDataTypes.add(ArrayDataBinding.class);
+    }
 
-	public void writeToStream(IData outputData, OutputStream outputStream) {}	
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema) throws IOException {
+
+//        // check for correct request before returning the stream
+//        if (!(this.isSupportedGenerate(data.getSupportedClass(), mimeType, schema))){
+//            throw new IOException("I don't support the incoming datatype");
+//        }
+
+        List<byte[]> wcpsoutput = ((ArrayDataBinding)data).getPayload();
+
+        File tempFile = File.createTempFile("wcps", ".bin");
+        this.finalizeFiles.add(tempFile);
+        FileOutputStream fos = new FileOutputStream(tempFile);
+
+        for (byte[] currentArray : wcpsoutput){
+            fos.write(currentArray);
+        }
+
+        fos.flush();
+        fos.close();
+
+        InputStream stream = new FileInputStream(tempFile);
+
+        return stream;
+    }
+
+    public void writeToStream(IData outputData, OutputStream outputStream) {}
 }

@@ -10,5 +10,5 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 <!-- 	<bean class="org.n52.wps.server.r.ScriptFileRepository" id="RScriptRepository" scope="singleton"></bean> -->
 <!-- 	<bean class="org.n52.wps.server.r.metadata.RAnnotationParser" id="RAnnotationParser"></bean> -->
 <!-- 	<bean class="org.n52.wps.server.r.LocalRAlgorithmRepository" id="RAlgorithmRepository"></bean> -->
-	
+
 </beans>

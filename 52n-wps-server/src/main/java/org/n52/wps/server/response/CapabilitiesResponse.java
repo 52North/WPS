@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,51 +45,50 @@ import org.n52.wps.util.XMLBeansHelper;
  */
 public class CapabilitiesResponse extends Response {
 
-	/**
-	 * Serves the Request with a Response
-	 * @param request The GetCapabilities request
-	 */
-	public CapabilitiesResponse(CapabilitiesRequest request){
-		super(request);
-	}
-	
-	/**
-	 * Save this Response to an OutputStream
-	 * @param os The OutputStream to save this Response to
-	 * @throws ExceptionReport
-	 */
-	public InputStream getAsStream() throws ExceptionReport{
-		try {
+    /**
+     * Serves the Request with a Response
+     * @param request The GetCapabilities request
+     */
+    public CapabilitiesResponse(CapabilitiesRequest request){
+        super(request);
+    }
 
-			/* [OGC 06-121r9 OWS Common 2.0]:
-			 * if acceptVersions parameter was send, the first supported version should be used
-			 */
-			String[] requestedVersions = (String[]) getRequest().getMap().get("version");
-			
-			if(requestedVersions != null && requestedVersions.length != 0){
-				
-				for (int i = 0; i < requestedVersions.length; i++) {
-					String requestedVersion = requestedVersions[i].trim();
-					if(WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)){
+    /**
+     * Save this Response to an InputStream
+     * @throws ExceptionReport if an exception occurred while creating the response <code>InputStream</code>
+     */
+    public InputStream getAsStream() throws ExceptionReport{
+        try {
 
-						if(requestedVersion.equals(WPSConfig.VERSION_100)){
-							return CapabilitiesConfiguration.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());							
-						}else if(requestedVersion.equals(WPSConfig.VERSION_200)){
-							return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());	
-						}
-					}
-				}
-				
-			}
-			/* [OGC 06-121r9 OWS Common 2.0]:
-			 * if no acceptVersions parameter was send, the highest supported version should be used
-			 * WPS 2.0 in this case
-			 */
-			return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
-		} catch (IOException e) {
-			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
-		} catch (XmlException e) {
-			throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-	}
+            /* [OGC 06-121r9 OWS Common 2.0]:
+             * if acceptVersions parameter was send, the first supported version should be used
+             */
+            String[] requestedVersions = (String[]) getRequest().getMap().get("version");
+
+            if(requestedVersions != null && requestedVersions.length != 0){
+
+                for (int i = 0; i < requestedVersions.length; i++) {
+                    String requestedVersion = requestedVersions[i].trim();
+                    if(WPSConfig.SUPPORTED_VERSIONS.contains(requestedVersion)){
+
+                        if(requestedVersion.equals(WPSConfig.VERSION_100)){
+                            return CapabilitiesConfiguration.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
+                        }else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+                            return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
+                        }
+                    }
+                }
+
+            }
+            /* [OGC 06-121r9 OWS Common 2.0]:
+             * if no acceptVersions parameter was send, the highest supported version should be used
+             * WPS 2.0 in this case
+             */
+            return CapabilitiesConfigurationV200.getInstance().newInputStream(XMLBeansHelper.getXmlOptions());
+        } catch (IOException e) {
+            throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
+        } catch (XmlException e) {
+            throw new ExceptionReport("Exception occured while generating response", ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+    }
 }

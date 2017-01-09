@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,6 +38,7 @@ import org.n52.wps.algorithm.descriptor.ComplexDataOutputDescriptor;
 import org.n52.wps.algorithm.descriptor.InputDescriptor;
 import org.n52.wps.algorithm.descriptor.LiteralDataInputDescriptor;
 import org.n52.wps.algorithm.descriptor.LiteralDataOutputDescriptor;
+import org.n52.wps.algorithm.descriptor.MetadataDescriptor;
 import org.n52.wps.algorithm.descriptor.OutputDescriptor;
 import org.n52.wps.algorithm.util.ClassUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
@@ -50,18 +51,18 @@ import org.slf4j.LoggerFactory;
  * @author tkunicki
  */
 public abstract class AnnotationParser<A extends Annotation, M extends AccessibleObject & Member, B extends AnnotationBinding<M>> {
-    
+
     public final static Logger LOGGER = LoggerFactory.getLogger(AnnotationParser.class);
-     
+
     public B parse(M member) {
         A annotation = member.getAnnotation(getSupportedAnnotation());
         return annotation == null ? null : parse(annotation, member);
     }
-    
+
     public abstract B parse(A annotation, M member);
-    
+
     public abstract Class<? extends A> getSupportedAnnotation();
-    
+
     public static class ExecuteAnnotationParser extends AnnotationParser<Execute, Method, ExecuteMethodBinding> {
 
         @Override
@@ -74,27 +75,27 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
         public Class<? extends Execute> getSupportedAnnotation() {
             return Execute.class;
         }
-        
+
     }
-    
+
     public abstract static class DataAnnotationParser<A extends Annotation, M extends AccessibleObject & Member, B extends AnnotationBinding.DataBinding<M, ? extends BoundDescriptor>>
         extends AnnotationParser<A,M,B> {
         protected abstract B createBinding(M member);
     }
-    
+
     public abstract static class InputAnnotationParser<A extends Annotation, M extends AccessibleObject & Member, B extends AnnotationBinding.InputBinding<M, ? extends InputDescriptor>>
         extends DataAnnotationParser<A,M,B> {}
-    
+
     public abstract static class OutputAnnotationParser<A extends Annotation, M extends AccessibleObject & Member, B extends AnnotationBinding.OutputBinding<M, ? extends OutputDescriptor>>
         extends DataAnnotationParser<A,M,B> {}
-    
+
     public abstract static class LiteralDataInputAnnotationParser<M extends AccessibleObject & Member, B extends AnnotationBinding.InputBinding<M, LiteralDataInputDescriptor>>
         extends InputAnnotationParser<LiteralDataInput, M, B> {
-        
+
         @Override
         public B parse(LiteralDataInput annotation, M member) {
-        
-            B annotatedBinding = createBinding(member); 
+
+            B annotatedBinding = createBinding(member);
             // auto generate binding if it's not explicitly declared
             Type payloadType = annotatedBinding.getPayloadType();
             Class<? extends ILiteralData> binding = annotation.binding();
@@ -161,6 +162,11 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
                     LOGGER.warn("Invalid maxOccurs \"ENUM_COUNT\" specified for for input type {}, setting maxOccurs to {}", inputType, maxOccurs);
                 }
             }
+
+            //ParameterMetadata[] metadataAnnnotations = member.getDeclaredAnnotationsByType(ParameterMetadata.class);
+
+            List<MetadataDescriptor> metadataDescriptors = parseMetadata(member);
+
             if (binding != null) {
                 LiteralDataInputDescriptor descriptor =
                         LiteralDataInputDescriptor.builder(annotation.identifier(), binding).
@@ -169,7 +175,7 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
                         minOccurs(annotation.minOccurs()).
                         maxOccurs(maxOccurs).
                         defaultValue(defaultValue).
-                        allowedValues(allowedValues).
+                        allowedValues(allowedValues).addMetadataDescriptors(metadataDescriptors).
                         build();
                 annotatedBinding.setDescriptor(descriptor);
             } else {
@@ -183,10 +189,10 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
             return LiteralDataInput.class;
         }
     }
-    
+
     public abstract static class LiteralDataOutputAnnotationParser<M extends AccessibleObject & Member, B extends AnnotationBinding.OutputBinding<M, LiteralDataOutputDescriptor>>
         extends OutputAnnotationParser<LiteralDataOutput, M, B> {
-        
+
         @Override
         public B parse(LiteralDataOutput annotation, M member) {
             B annotatedBinding = createBinding(member);
@@ -203,11 +209,14 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
                     LOGGER.error("Unable to determine binding class for {}; type must fully resolved to use auto-binding", payloadType);
                 }
             }
+
+            List<MetadataDescriptor> metadataDescriptors = parseMetadata(member);
+
             if (binding != null) {
                 LiteralDataOutputDescriptor descriptor =
                         LiteralDataOutputDescriptor.builder(annotation.identifier(), binding).
                         title(annotation.title()).
-                        abstrakt(annotation.abstrakt()).
+                        abstrakt(annotation.abstrakt()).addMetadataDescriptors(metadataDescriptors).
                         build();
                 annotatedBinding.setDescriptor(descriptor);
             } else {
@@ -221,20 +230,23 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
             return LiteralDataOutput.class;
         }
     }
-    
+
     public static class ComplexDataInputAnnotationParser<M extends AccessibleObject & Member, B extends AnnotationBinding.InputBinding<M, ComplexDataInputDescriptor>>
         extends InputAnnotationParser<ComplexDataInput, M, B> {
 
         @Override
         public B parse(ComplexDataInput annotation, M member) {
             B annotatedBinding = createBinding(member);
+
+            List<MetadataDescriptor> metadataDescriptors = parseMetadata(member);
+
             ComplexDataInputDescriptor descriptor =
                     ComplexDataInputDescriptor.builder(annotation.identifier(), annotation.binding()).
                     title(annotation.title()).
                     abstrakt(annotation.abstrakt()).
                     minOccurs(annotation.minOccurs()).
                     maxOccurs(annotation.maxOccurs()).
-                    maximumMegaBytes(annotation.maximumMegaBytes()).
+                    maximumMegaBytes(annotation.maximumMegaBytes()).addMetadataDescriptors(metadataDescriptors).
                     build();
             annotatedBinding.setDescriptor(descriptor);
             return  annotatedBinding.validate() ? annotatedBinding : null;
@@ -250,17 +262,20 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
-    
+
     public abstract static class ComplexDataOutputAnnotationParser<M extends AccessibleObject & Member, B extends AnnotationBinding.OutputBinding<M, ComplexDataOutputDescriptor>>
         extends OutputAnnotationParser<ComplexDataOutput, M, B> {
-        
+
         @Override
         public B parse (ComplexDataOutput annotation, M member) {
             B annotatedBinding = createBinding(member);
-            ComplexDataOutputDescriptor descriptor = 
+
+            List<MetadataDescriptor> metadataDescriptors = parseMetadata(member);
+
+            ComplexDataOutputDescriptor descriptor =
                     ComplexDataOutputDescriptor.builder(annotation.identifier(), annotation.binding()).
                     title(annotation.title()).
-                    abstrakt(annotation.abstrakt()).
+                    abstrakt(annotation.abstrakt()).addMetadataDescriptors(metadataDescriptors).
                     build();
             annotatedBinding.setDescriptor(descriptor);
             return annotatedBinding.validate() ? annotatedBinding : null;
@@ -271,7 +286,7 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
             return ComplexDataOutput.class;
         }
     }
-    
+
     public static class LiteralDataInputFieldAnnotationParser extends LiteralDataInputAnnotationParser<Field, AnnotationBinding.InputBinding<Field, LiteralDataInputDescriptor>> {
         @Override
         protected InputBinding<Field, LiteralDataInputDescriptor> createBinding(Field member) {
@@ -296,7 +311,7 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
             return new OutputFieldBinding<ComplexDataOutputDescriptor>(member);
         }
     }
-    
+
     public static class LiteralDataInputMethodAnnotationParser extends LiteralDataInputAnnotationParser<Method, AnnotationBinding.InputBinding<Method, LiteralDataInputDescriptor>> {
         @Override
         protected InputBinding<Method, LiteralDataInputDescriptor> createBinding(Method member) {
@@ -320,5 +335,20 @@ public abstract class AnnotationParser<A extends Annotation, M extends Accessibl
         protected OutputBinding<Method, ComplexDataOutputDescriptor> createBinding(Method member) {
             return new OutputMethodBinding<ComplexDataOutputDescriptor>(member);
         }
+    }
+
+    public List<MetadataDescriptor> parseMetadata(M member) {
+        ParameterMetadata metadataAnnnotation = member.getDeclaredAnnotation(ParameterMetadata.class);
+
+        List<MetadataDescriptor> metadataDescriptors = new ArrayList<>();
+
+        if(metadataAnnnotation != null){
+            String[] roles = metadataAnnnotation.roles();
+            for (int i = 0; i < roles.length; i++) {
+                metadataDescriptors.add(MetadataDescriptor.builder().href(metadataAnnnotation.hrefs()[i]).role(metadataAnnnotation.roles()[i]).build());
+            }
+        }
+
+        return metadataDescriptors;
     }
 }

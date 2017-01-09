@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,35 +41,35 @@ import org.n52.wps.util.XMLBeansHelper;
 
 public class DescribeProcessResponse extends Response{
 
-	public DescribeProcessResponse(Request request){
-		super(request);
-	}
-	
+    public DescribeProcessResponse(Request request){
+        super(request);
+    }
+
     @Override
-	public InputStream getAsStream() throws ExceptionReport{
-		try {
-			//TODO change to Request.getMapValue
-			String[] requestedVersions = (String[]) getRequest().getMap().get("version");
-			
-			if(requestedVersions != null && requestedVersions.length > 0){
-				
-				String requestedVersion = requestedVersions[0];
-				
-				if(requestedVersion.equals(WPSConfig.VERSION_100)){
-					
-					return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
-					
-				}else if(requestedVersion.equals(WPSConfig.VERSION_200)){
-					
-					return ((ProcessOfferingsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
-					
-				}
-				
-			}
-		}
-		catch(Exception e) {
-			throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-		return null;
-	}
+    public InputStream getAsStream() throws ExceptionReport{
+        try {
+            //TODO change to Request.getMapValue
+            String[] requestedVersions = (String[]) getRequest().getMap().get("version");
+
+            if(requestedVersions != null && requestedVersions.length > 0){
+
+                String requestedVersion = requestedVersions[0];
+
+                if(requestedVersion.equals(WPSConfig.VERSION_100)){
+
+                    return ((ProcessDescriptionsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+
+                }else if(requestedVersion.equals(WPSConfig.VERSION_200)){
+
+                    return ((ProcessOfferingsDocument)request.getAttachedResult()).newInputStream(XMLBeansHelper.getXmlOptions());
+
+                }
+
+            }
+        }
+        catch(Exception e) {
+            throw new ExceptionReport("Exception occured while writing response document", ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+        return null;
+    }
 }

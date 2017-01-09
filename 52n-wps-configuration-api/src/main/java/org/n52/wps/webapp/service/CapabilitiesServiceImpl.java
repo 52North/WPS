@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,26 +41,26 @@ import org.springframework.stereotype.Service;
 @Service("capabilitiesService")
 public class CapabilitiesServiceImpl implements CapabilitiesService {
 
-	@Autowired
-	private CapabilitiesDAO capabilitiesDAO;
+    @Autowired
+    private CapabilitiesDAO capabilitiesDAO;
 
-	@Override
-	public ServiceIdentification getServiceIdentification() {
-		return capabilitiesDAO.getServiceIdentification();
-	}
+    @Override
+    public ServiceIdentification getServiceIdentification() {
+        return capabilitiesDAO.getServiceIdentification();
+    }
 
-	@Override
-	public ServiceProvider getServiceProvider() {
-		return capabilitiesDAO.getServiceProvider();
-	}
+    @Override
+    public ServiceProvider getServiceProvider() {
+        return capabilitiesDAO.getServiceProvider();
+    }
 
-	@Override
-	public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
-		capabilitiesDAO.saveServiceIdentification(serviceIdentification);
-	}
+    @Override
+    public void saveServiceIdentification(ServiceIdentification serviceIdentification) {
+        capabilitiesDAO.saveServiceIdentification(serviceIdentification);
+    }
 
-	@Override
-	public void saveServiceProvider(ServiceProvider serviceProvider) {
-		capabilitiesDAO.saveServiceProvider(serviceProvider);
-	}
+    @Override
+    public void saveServiceProvider(ServiceProvider serviceProvider) {
+        capabilitiesDAO.saveServiceProvider(serviceProvider);
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -56,10 +56,10 @@ public class ClassUtil {
     }
 
     public static <T extends Enum<T>> List<String> convertEnumToStringList(Class<T> enumType) {
-        ArrayList stringList = null;
+        ArrayList<String> stringList = null;
         T[] constants = enumType.getEnumConstants();
         if (constants != null && constants.length > 0) {
-            stringList = new ArrayList(constants.length);
+            stringList = new ArrayList<String>(constants.length);
             for (T constant : constants) {
                 stringList.add(constant.name());
             }
@@ -79,16 +79,18 @@ public class ClassUtil {
 
     public static Class<?> unwrap(Class<?> clazz) {
         Class<?> unwrapped = FROM_WRAPPER.get(clazz);
-        if (unwrapped == null)
+        if (unwrapped == null){
             return clazz;
+        }
         return unwrapped;
 
     }
 
     public static Class<?> wrap(Class<?> clazz) {
         Class<?> wrapped = TO_WRAPPER.get(clazz);
-        if (wrapped == null)
+        if (wrapped == null){
             return clazz;
+        }
         return wrapped;
     }
 

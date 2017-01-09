@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,7 +62,7 @@ public class PostClient {
         payloadP = "request=" + payloadP;
 
         InputStream in = sendRequestForInputStream(targetURL, payloadP);
-        
+
         // Get the response
         BufferedReader rd = new BufferedReader(new InputStreamReader(in));
         List<String> lines= new LinkedList<String>();
@@ -78,7 +78,7 @@ public class PostClient {
         // Send data
         URL url = new URL(targetURL);
 
-        URLConnection conn = url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setDoOutput(true);
 
@@ -87,10 +87,13 @@ public class PostClient {
         wr.write(payload);
         wr.close();
 
-        return conn.getInputStream();
-
+        if (conn.getResponseCode() >= 400) {
+            return conn.getErrorStream();
+        } else {
+             return conn.getInputStream();
+        }
     }
-    
+
     public static void checkForExceptionReport(String targetURL, String payload, int expectedHTTPStatusCode, String... expectedExceptionParameters) throws IOException{
         // Send data
         URL url = new URL(targetURL);
@@ -104,30 +107,30 @@ public class PostClient {
         wr.write(payload);
         wr.close();
 
-        try {            
-            conn.getInputStream();			
-		} catch (IOException e) {
-			/*
-			 * expected, ignore
-			 */			
-		}
-    	
+        try {
+            conn.getInputStream();
+        } catch (IOException e) {
+            /*
+             * expected, ignore
+             */
+        }
+
         InputStream error = ((HttpURLConnection) conn).getErrorStream();
-        
+
         String exceptionReport = "";
-        
+
         int data = error.read();
         while (data != -1) {
-        	exceptionReport = exceptionReport + (char)data;
+            exceptionReport = exceptionReport + (char)data;
             data = error.read();
         }
         error.close();
-        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);    
-        
+        assertTrue(((HttpURLConnection) conn).getResponseCode() == expectedHTTPStatusCode);
+
         for (String expectedExceptionParameter : expectedExceptionParameters) {
-            
-            assertTrue(exceptionReport.contains(expectedExceptionParameter)); 
-			
-		}   
+
+            assertTrue(exceptionReport.contains(expectedExceptionParameter));
+
+        }
     }
 }

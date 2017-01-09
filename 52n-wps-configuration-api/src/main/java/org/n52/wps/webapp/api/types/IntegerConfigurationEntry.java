@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,12 +32,12 @@ import org.n52.wps.webapp.api.ConfigurationType;
 
 public class IntegerConfigurationEntry extends ConfigurationEntry<Integer> {
 
-	public IntegerConfigurationEntry(String key, String title) {
-		super(key, title, ConfigurationType.INTEGER);
-	}
-	
-	public IntegerConfigurationEntry(String key, String title, String description, boolean required, Integer value) {
-		super(key, title, description, required, value, ConfigurationType.INTEGER);
-	}
-	
+    public IntegerConfigurationEntry(String key, String title) {
+        super(key, title, ConfigurationType.INTEGER);
+    }
+
+    public IntegerConfigurationEntry(String key, String title, String description, boolean required, Integer value) {
+        super(key, title, description, required, value, ConfigurationType.INTEGER);
+    }
+
 }

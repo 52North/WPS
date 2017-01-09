@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -24,11 +24,11 @@ import org.n52.test.mock.MockEnum;
  * @author tkunicki
  */
 public class AnnotationMemberDescriptorSample {
-  
+
     // TEST IMPLEMENTATION NOTE:  no polymorphism in sample methods, the reflection utilities
     // used for generic method lookup used in the unit tests (polymorphism is ok in
     // actual implementations as the annotations are what drive method lookups)
-    
+
     // Represents almost all cases for fields: literal or complex data, input or output. with expections noted below.
     // We are using String instances, but any literal or complex payload type could be swapped out.
     public String stringField;
@@ -36,7 +36,7 @@ public class AnnotationMemberDescriptorSample {
     public List<? extends String> stringExtendListField;
     public List<? super String> stringSuperListField;
     public List unboundListField;  // effectively List<? extends Object>
-    
+
     public void setString(String stringParameter) {
         this.stringField = stringParameter;
     }
@@ -67,7 +67,7 @@ public class AnnotationMemberDescriptorSample {
     public List getUnboundList() {
         return this.unboundListField;
     }
-    
+
     // Special case: enumerations for *inputs* have payload type of String so that
     // Enumerations can be bound with  LiteralStringBinding instances.  Exception
     // is List of enums for outputs.
@@ -78,29 +78,29 @@ public class AnnotationMemberDescriptorSample {
     public List<? super MockEnum> enumSuperListField;
 */
     public MockEnum getEnum() {
-        return enumField; 
+        return enumField;
     }
     public void setEnum(MockEnum enumParameter) {
-        this.enumField = enumParameter; 
+        this.enumField = enumParameter;
     }
     public List<MockEnum> getEnumList() {
-        return enumListField; 
+        return enumListField;
     }
     public void setEnumList(List<MockEnum> enumListParameter) {
-        this.enumListField = enumListParameter; 
+        this.enumListField = enumListParameter;
     }
 /* NOT CURRENTLY SUPPORTED, need to be able to infer concrete type by reflection
     public List<? extends MockEnum> getEnumExtendList() {
-        return enumExtendsListField; 
+        return enumExtendsListField;
     }
     public void setEnumExtendList(List<? extends MockEnum> enumExtendsListParameter) {
-        this.enumExtendsListField = enumExtendsListParameter; 
+        this.enumExtendsListField = enumExtendsListParameter;
     }
     public List<? super MockEnum> getEnumSuperList() {
-        return enumSuperListField; 
+        return enumSuperListField;
     }
     public void setEnumSuperList(List<? super MockEnum> enumSuperListParameter) {
-        this.enumSuperListField = enumSuperListParameter; 
+        this.enumSuperListField = enumSuperListParameter;
     }
 */
 }

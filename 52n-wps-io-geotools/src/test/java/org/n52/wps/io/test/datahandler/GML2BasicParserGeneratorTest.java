@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -71,65 +71,65 @@ import org.n52.wps.webapp.api.FormatEntry;
  */
 public class GML2BasicParserGeneratorTest extends AbstractTestCase<GML2BasicGenerator> {
 
-	@Test
-	public void testParser() {
+    @Test
+    public void testParser() {
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/tasmania_roads_gml2.xml";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/tasmania_roads_gml2.xml";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+            Assert.fail(e1.getMessage());
+        }
 
-		GML2BasicParser parser = new GML2BasicParser();
+        GML2BasicParser parser = new GML2BasicParser();
 
-		List<FormatEntry> formats = parser.getSupportedFullFormats();
+        List<FormatEntry> formats = parser.getSupportedFullFormats();
 
-		FormatEntry format = formats.get(0);
+        FormatEntry format = formats.get(0);
 
-		String mimeType = format.getMimeType();
-		String schema = format.getSchema();
+        String mimeType = format.getMimeType();
+        String schema = format.getSchema();
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		GTVectorDataBinding theBinding = parser.parse(input, mimeType, schema);
+        GTVectorDataBinding theBinding = parser.parse(input, mimeType, schema);
 
-		Assert.assertNotNull(theBinding.getPayload());
-		Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
-		Assert.assertTrue(!theBinding.getPayload().isEmpty());
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+        Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-		try {
-			InputStream stream = dataHandler.generateStream(theBinding, mimeType, schema);
+        try {
+            InputStream stream = dataHandler.generateStream(theBinding, mimeType, schema);
 
-			theBinding = parser.parse(stream, mimeType, schema);
+            theBinding = parser.parse(stream, mimeType, schema);
 
-			Assert.assertNotNull(theBinding.getPayload());
-			Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
-			Assert.assertTrue(!theBinding.getPayload().isEmpty());
+            Assert.assertNotNull(theBinding.getPayload());
+            Assert.assertTrue(theBinding.getPayloadAsShpFile().exists());
+            Assert.assertTrue(!theBinding.getPayload().isEmpty());
 
-		} catch (IOException e) {
-			System.err.println(e);
-			Assert.fail(e.getMessage());
-		}
+        } catch (IOException e) {
+            System.err.println(e);
+            Assert.fail(e.getMessage());
+        }
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GML2BasicGenerator();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GML2BasicGenerator();
+    }
 
 }

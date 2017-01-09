@@ -34,14 +34,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-commons</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-client-lib</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -56,6 +59,7 @@
 					<groupId>stax</groupId>
 				</exclusion>
 			</exclusions>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -70,21 +74,26 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm-impl</artifactId>
-		</dependency>
-        <dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>52n-wps-matlab</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-database</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-configuration-api</artifactId>
 		</dependency>
-        
+
+                <!-- uncomment this to work with the wps-gitalgorithm repository -->
+                <!--<dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>52n-wps-git-algorithm-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>-->
+
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
@@ -105,24 +114,6 @@
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.security</groupId>
-			<artifactId>52n-security-config</artifactId>
-			<exclusions>
-				<exclusion>
-					<artifactId>servlet-api</artifactId>
-					<groupId>javax.servlet</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.security</groupId>
-			<artifactId>52n-security-authentication</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.n52.security</groupId>
-			<artifactId>52n-security-authn-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -189,10 +180,12 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
+			<scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
         <dependency>
             <groupId>com.thetransactioncompany</groupId>
@@ -217,6 +210,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-expression</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -225,6 +219,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -233,18 +228,26 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-oxm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -258,70 +261,152 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- End of Spring dependencies -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>commons-io</artifactId>
+			<groupId>commons-io</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>validation-api</artifactId>
+			<groupId>javax.validation</groupId>
 		</dependency>
 		<dependency>
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>taglibs</groupId>
 			<artifactId>standard</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-extras</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<!-- Database dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-pool</groupId>
 			<artifactId>commons-pool</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-dbcp</groupId>
 			<artifactId>commons-dbcp</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>xmlbeans</artifactId>
+			<groupId>org.apache.xmlbeans</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-ows-v110</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-wps-v100</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+            <scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-opengis</artifactId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-coverage</artifactId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>guava</artifactId>
+			<groupId>com.google.guava</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>commons-codec</artifactId>
+			<groupId>commons-codec</groupId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<artifactId>commons-httpclient</artifactId>
+			<groupId>commons-httpclient</groupId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>hamcrest-core</artifactId>
+			<groupId>org.hamcrest</groupId>
+            <scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>Rserve</artifactId>
+			<groupId>org.nuiton.thirdparty</groupId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<artifactId>jdom</artifactId>
+			<groupId>org.jdom</groupId>
+            <scope>runtime</scope>
 		</dependency>
 	</dependencies>
 
 	<properties>
 		<wps.logfile.name>${catalina.base:-.}/logs/52n-wps</wps.logfile.name>
-		<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
 		<wps.db.initial-data.file>WEB-INF/classes/db/initial-data.sql</wps.db.initial-data.file>
@@ -388,21 +473,12 @@
 							<filtering>true</filtering>
 							<targetPath>static</targetPath>
 						</resource>
-						<resource>
-							<directory>src/main/webapp/WEB-INF/views</directory>
-							<filtering>true</filtering>
-							<targetPath>WEB-INF/views</targetPath>
-							<includes>
-								<include>**/*.jsp</include>
-							</includes>
-						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.17</version>
 				<configuration>
 					<argLine>-Xmx1024m</argLine>
 					<testFailureIgnore>true</testFailureIgnore>
@@ -439,61 +515,8 @@
 		</plugins>
 	</build>
 	<profiles>
-		<!-- <profile> -->
-		<!-- use war:exploded without copying the libs! an with no jar file -->
-		<!-- <id>no-libs</id> -->
-		<!-- <build> -->
-		<!-- <plugins> -->
-		<!-- <plugin> -->
-		<!-- <inherited>true</inherited> -->
-		<!-- <groupId>org.apache.maven.plugins</groupId> -->
-		<!-- <artifactId>maven-war-plugin</artifactId> -->
-		<!-- <version>2.2</version> -->
-		<!-- <executions> -->
-		<!-- <execution> -->
-		<!-- <id>default-war</id> -->
-		<!-- <phase>none</phase> -->
-		<!-- </execution> -->
-		<!-- <execution> -->
-		<!-- <id>war-exploded</id> -->
-		<!-- <phase>package</phase> -->
-		<!-- <goals> -->
-		<!-- <goal>exploded</goal> -->
-		<!-- </goals> -->
-		<!-- </execution> -->
-		<!-- </executions> -->
-
-		<!-- http://stackoverflow.com/a/5805046/261210 -->
-		<!-- <configuration> -->
-		<!-- <overlays> -->
-		<!-- <overlay> -->
-		<!-- <groupId>org.n52.wps</groupId> -->
-		<!-- <excludes> -->
-		<!-- <exclude>WEB-INF/lib/*.jar</exclude> -->
-		<!-- </excludes> -->
-		<!-- </overlay> -->
-		<!-- </overlays> -->
-		<!-- </configuration> -->
-		<!-- </plugin> -->
-		<!-- </plugins> -->
-		<!-- </build> -->
-		<!-- </profile> -->
 		<profile>
 			<id>with-deploy</id>
-			<!-- server configuration for settings.xml =====================================
-				<server> <id>loho</id> <configuration> <cargo.remote.username>admin</cargo.remote.username>
-				<cargo.remote.password>admin</cargo.remote.password> </configuration> </server>
-				<profile> <id>wps-localhost</id> <properties> <conf.wps.server.settings>loho</conf.wps.server.settings>
-				<conf.wps.remote.server>localhost</conf.wps.remote.server> <conf.wps.remote.port>8080</conf.wps.remote.port>
-				<conf.wps.deploy.containerId>tomcat7x</conf.wps.deploy.containerId> </properties>
-				</profile> tomcat-users.xml ================ <user name="admin" password="admin"
-				roles="admin-gui,manager-gui,admin-script,manager-script" /> Run with Maven
-				(Run Configuration in Eclipse) =============================================
-				- start Tomcat - mvn install -Pwps-localhost,with-deploy Remote Debugging
-				in Eclipse =========================== Add Java options to Tomcat: -Xdebug
-				-Xrunjdwp:transport=dt_socket,address=11111,server=y,suspend=n Add new Remote
-				Java Application as debugging configuration and use the address above as
-				the connection port. -->
 			<build>
 				<finalName>WPS</finalName>
 				<plugins>
@@ -699,75 +722,47 @@
 					<classifier>geotools</classifier> </configuration> </plugin> </plugins> -->
 			</build>
 			<dependencies>
-<!-- 				<dependency> -->
-<!-- 					<groupId>${project.groupId}</groupId> -->
-<!-- 					<artifactId>52n-wps-ags</artifactId> -->
-<!-- 				</dependency> -->
-<!-- 				<dependency> -->
-<!-- 					<groupId>${project.groupId}</groupId> -->
-<!-- 					<artifactId>52n-wps-python</artifactId> -->
-<!-- 				</dependency> -->
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-io-geotools</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-algorithm-geotools</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-r</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-grass</artifactId>
+					<scope>runtime</scope>
 				</dependency>
- 				<dependency>
- 					<groupId>${project.groupId}</groupId>
- 					<artifactId>52n-wps-mc</artifactId>
- 					<exclusions>
- 						<exclusion>
- 							<artifactId>xml-apis</artifactId>
- 							<groupId>xml-apis</groupId>
- 						</exclusion>
- 					</exclusions>
- 				</dependency>
 				<dependency>
 					<groupId>${project.groupId}</groupId>
 					<artifactId>52n-wps-sextante</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<artifactId>Rserve</artifactId>
+					<groupId>org.nuiton.thirdparty</groupId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-opengis</artifactId>
+					<scope>runtime</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.geotools</groupId>
+					<artifactId>gt-coverage</artifactId>
+					<scope>runtime</scope>
 				</dependency>
 			</dependencies>
-		</profile>
-		<profile>
-			<activation>
-				<property>
-					<name>include.wps.config.file</name>
-				</property>
-			</activation>
-			<properties>
-				<wps.config.file>WEB-INF/config/wps_config.xml</wps.config.file>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<id>copy-external-wps-config</id>
-								<configuration>
-									<copy overwrite="true" file="${include.wps.config.file}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/config/wps_config.xml" />
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 </project>

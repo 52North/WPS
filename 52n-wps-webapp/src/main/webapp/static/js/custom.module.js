@@ -13,6 +13,7 @@ $('form#customForm').submit(
 			$.ajax({
 				type : form.attr('method'),
 				url : url,
+				headers: { 'X-CSRF-TOKEN': $('[name="csrf_token"]').attr('content') },
 				data : form.serialize(),
 				success : function() {
 					alertMessage("", "Configurations Updated", "alert alert-success");

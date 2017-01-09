@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,10 +30,12 @@ package org.n52.wps.server.request;
 
 import java.io.IOException;
 
+import net.opengis.wps.x20.GetResultDocument;
 import net.opengis.wps.x20.ResultDocument;
 
 import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.response.GetResultResponseV200;
@@ -42,39 +44,57 @@ import org.w3c.dom.Document;
 
 public class GetResultRequestV200 extends Request {
 
-	private ResultDocument document;
-	
-	private String jobID;
-	
-	public GetResultRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
-		super(map);
-		jobID = getMapValue("jobid", true);		
-	}
+    private XmlObject document;
 
-	public GetResultRequestV200(Document doc) throws ExceptionReport {
-		super(doc);		
-		jobID = getMapValue("jobid", true);	
-	}
+    private String jobID;
 
-	@Override
-	public Object getAttachedResult() {
-		return document;
-	}
+    private GetResultDocument getResultDocument;
 
-	@Override
-	public Response call() throws ExceptionReport {
-		try {
-			document = ResultDocument.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
-		} catch (XmlException | IOException e) {
-			LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
-		}		
-		
-		return new GetResultResponseV200(this);
-	}
+    public GetResultRequestV200(CaseInsensitiveMap map) throws ExceptionReport {
+        super(map);
+        jobID = getMapValue("jobid", true);
+    }
 
-	@Override
-	public boolean validate() throws ExceptionReport {		
-		return true;
-	}
+    public GetResultRequestV200(Document doc) throws ExceptionReport {
+        super(doc);
+
+                if(!validate()){
+                        throw new ExceptionReport("GetResultRequest not valid",
+                                        ExceptionReport.NO_APPLICABLE_CODE);
+                }
+                if(getResultDocument.getGetResult() != null){
+                        jobID = getResultDocument.getGetResult().getJobID();
+                }
+                if(jobID == null || jobID.equals("")){
+                        throw new ExceptionReport("JobID not valid",
+                                        ExceptionReport.INVALID_PARAMETER_VALUE, "jobID");
+                }
+    }
+
+    @Override
+    public Object getAttachedResult() {
+        return document;
+    }
+
+    @Override
+    public Response call() throws ExceptionReport {
+        try {
+            document = XmlObject.Factory.parse(DatabaseFactory.getDatabase().lookupResponse(jobID));
+        } catch (XmlException | IOException e) {
+            LOGGER.error("Could not parse StatusinfoDocument looked up in database.");
+        }
+
+        return new GetResultResponseV200(this);
+    }
+
+    @Override
+    public boolean validate() throws ExceptionReport {
+               try {
+                   getResultDocument = GetResultDocument.Factory.parse(doc.getFirstChild());
+               } catch (XmlException e) {
+                       return false;
+               }
+               return getResultDocument != null;
+    }
 
 }

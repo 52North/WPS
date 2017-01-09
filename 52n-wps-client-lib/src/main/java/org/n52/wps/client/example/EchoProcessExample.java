@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -90,8 +90,9 @@ public class EchoProcessExample {
         String parameterOut = "literalOutput";
         executeBuilder.setResponseDocument(parameterOut, null, null, null);
 
-        if ( !executeBuilder.isExecuteValid())
+        if ( !executeBuilder.isExecuteValid()) {
             System.out.println("Created execute request is NOT valid.");
+        }
 
         // build and send the request document
         ExecuteDocument executeRequest = executeBuilder.getExecute();
@@ -104,8 +105,9 @@ public class EchoProcessExample {
             ExecuteResponseDocument responseDoc = (ExecuteResponseDocument) response;
             XObject data = XPathAPI.eval(responseDoc.getDomNode(), "//wps:LiteralData");
             String output = data.toString();
-            if (output.equals(input))
+            if (output.equals(input)) {
                 System.out.println("Echo received!");
+            }
         }
     }
 }

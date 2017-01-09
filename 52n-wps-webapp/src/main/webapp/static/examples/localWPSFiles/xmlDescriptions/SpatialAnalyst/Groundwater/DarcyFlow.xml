@@ -2,7 +2,7 @@
 <wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0">
 	<ProcessDescription wps:processVersion="2" statusSupported="true" storeSupported="true">
-		<ows:Identifier>org.n52.wps.ags.spatialanalyst.groundwater.darcyflow</ows:Identifier><!-- ParameterCount=7 -->	
+		<ows:Identifier>org.n52.wps.ags.spatialanalyst.groundwater.darcyflow</ows:Identifier><!-- ParameterCount=7 -->
 		<ows:Title>DarcyFlow_sa</ows:Title>
 		<ows:Abstract>Calculates the groundwater volume balance residual and other outputs for steady flow in an aquifer. Uses ArcObjects library - Spatial Analyst</ows:Abstract>
 		<DataInputs>
@@ -25,7 +25,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -48,7 +48,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -71,7 +71,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -94,7 +94,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexData>
 			</Input>
@@ -102,7 +102,7 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 		<ProcessOutputs>
 			<Output>
 				<ows:Identifier>out_volume_raster</ows:Identifier><!-- 4 -->
-				<ows:Title>out volume raster</ows:Title>	
+				<ows:Title>out volume raster</ows:Title>
 				<ows:Abstract>The output raster where each cell value represents the groundwater volume balance residual for steady flow in an aquifer, as determined by Darcy's Law.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -119,13 +119,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 			<Output>
 				<ows:Identifier>out_direction_raster</ows:Identifier><!-- 5 -->
-				<ows:Title>out direction raster</ows:Title>	
+				<ows:Title>out direction raster</ows:Title>
 				<ows:Abstract>An optional output raster where each cell value represents the direction of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the {out_magnitude_raster} to describe the flow vector.</ows:Abstract>
 				<ComplexOutput>
 					<Default>
@@ -142,13 +142,13 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 						<Format>
 							<MimeType>application/img</MimeType>
 							<Schema></Schema>
-						</Format>	
+						</Format>
 					</Supported>
 				</ComplexOutput>
 			</Output>
 				<Output>
 					<ows:Identifier>out_magnitude_raster</ows:Identifier><!-- 6 -->
-					<ows:Title>out magnitude raster</ows:Title>	
+					<ows:Title>out magnitude raster</ows:Title>
 					<ows:Abstract>An optional output raster where each cell value represents the magnitude of the seepage velocity vector (average linear velocity) at the center of the cell, calculated as the average value of the seepage velocity through the four faces of the cell. It is used with the {out_direction_raster} to describe the flow vector.</ows:Abstract>
 					<ComplexOutput>
 						<Default>
@@ -165,12 +165,12 @@ http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="
 							<Format>
 								<MimeType>application/img</MimeType>
 								<Schema></Schema>
-							</Format>	
+							</Format>
 						</Supported>
 					</ComplexOutput>
 				</Output>
 		</ProcessOutputs>
 	</ProcessDescription>
 </wps:ProcessDescriptions>
-									
-	
+
+

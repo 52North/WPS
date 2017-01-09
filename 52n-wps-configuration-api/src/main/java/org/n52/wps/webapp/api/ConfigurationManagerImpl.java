@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,43 +42,43 @@ import org.springframework.stereotype.Component;
 @Component("configurationManager")
 public class ConfigurationManagerImpl implements ConfigurationManager {
 
-	@Autowired
-	private ConfigurationService configurationService;
+    @Autowired
+    private ConfigurationService configurationService;
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private CapabilitiesService capabilitiesService;
+    @Autowired
+    private CapabilitiesService capabilitiesService;
 
-	@Autowired
-	private LogConfigurationsService logConfigurationsService;
-	
-	@Autowired
-	private BackupService backupService;
-	
-	@Override
-	public ConfigurationService getConfigurationServices() {
-		return configurationService;
-	}
+    @Autowired
+    private LogConfigurationsService logConfigurationsService;
 
-	@Override
-	public UserService getUserServices() {
-		return userService;
-	}
+    @Autowired
+    private BackupService backupService;
 
-	@Override
-	public CapabilitiesService getCapabilitiesServices() {
-		return capabilitiesService;
-	}
+    @Override
+    public ConfigurationService getConfigurationServices() {
+        return configurationService;
+    }
 
-	@Override
-	public LogConfigurationsService getLogConfigurationsServices() {
-		return logConfigurationsService;
-	}
+    @Override
+    public UserService getUserServices() {
+        return userService;
+    }
 
-	@Override
-	public BackupService getBackupServices() {
-		return backupService;
-	}
+    @Override
+    public CapabilitiesService getCapabilitiesServices() {
+        return capabilitiesService;
+    }
+
+    @Override
+    public LogConfigurationsService getLogConfigurationsServices() {
+        return logConfigurationsService;
+    }
+
+    @Override
+    public BackupService getBackupServices() {
+        return backupService;
+    }
 }

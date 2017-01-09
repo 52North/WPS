@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -19,6 +19,6 @@ package org.n52.wps.server;
 import java.io.File;
 
 public interface IWorkspaceRepository {
-	File getWorkspace();
-	boolean createWorkspace();
+    File getWorkspace();
+    boolean createWorkspace();
 }

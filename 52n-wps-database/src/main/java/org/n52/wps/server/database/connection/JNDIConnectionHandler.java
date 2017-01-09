@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,29 +39,29 @@ import javax.sql.DataSource;
  */
 public class JNDIConnectionHandler implements ConnectionHandler {
 
-	private final DataSource dataSource;
+    private final DataSource dataSource;
 
-	/**
-	 * Create a new JNDI Connection Handler.
-	 *
-	 * @param jndiName the name used by the container to tie to the database
-	 * @throws NamingException
-	 */
-	public JNDIConnectionHandler(String jndiName) throws NamingException {
-		InitialContext context = new InitialContext();
-		dataSource = (DataSource) context.lookup("java:comp/env/jdbc/" + jndiName);
-	}
+    /**
+     * Create a new JNDI Connection Handler.
+     *
+     * @param jndiName the name used by the container to tie to the database
+     * @throws NamingException if a naming exception is encountered
+     */
+    public JNDIConnectionHandler(String jndiName) throws NamingException {
+        InitialContext context = new InitialContext();
+        dataSource = (DataSource) context.lookup("java:comp/env/jdbc/" + jndiName);
+    }
 
-	/**
-	 * Gets a connection from the database. Attempts to retrieve a new
-	 * connection from the connection pool
-	 *
-	 * @return
-	 * @throws SQLException
-	 */
-	@Override
-	public Connection getConnection() throws SQLException {
-		Connection conn = dataSource.getConnection();
-		return conn;
-	}
+    /**
+     * Gets a connection from the database. Attempts to retrieve a new
+     * connection from the connection pool
+     *
+     * @return the connection
+     * @throws SQLException if a sql exception is encountered
+     */
+    @Override
+    public Connection getConnection() throws SQLException {
+        Connection conn = dataSource.getConnection();
+        return conn;
+    }
 }

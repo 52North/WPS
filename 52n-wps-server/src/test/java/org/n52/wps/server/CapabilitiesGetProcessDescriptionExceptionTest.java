@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,60 +47,61 @@ import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 public class CapabilitiesGetProcessDescriptionExceptionTest extends AbstractITClass {
-	
-	public static final String IDENTIFIER = "CatchMeIfYouCan";	
-	public static boolean algorithmTriedToInstantiate;
 
-	@Before
+    public static final String IDENTIFIER = "CatchMeIfYouCan";
+    public static boolean algorithmTriedToInstantiate;
+
+    @Before
     public void setUp(){
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
-	
-	@Test
-	public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
-//		MockUtil.getMockConfig();
-		CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
-		
-		Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);
-		
-		boolean found = false;
-		for (ProcessBriefType pbt : caps.getCapabilities().getProcessOfferings().getProcessArray()) {
-			if (IDENTIFIER.equals(pbt.getIdentifier().getStringValue())) {
-				found = true;
-			}
-		}
-		
-		Assert.assertFalse("Algo found but was not expected!", found);
-	}
 
-	@Algorithm(version = "0.1", identifier = CapabilitiesGetProcessDescriptionExceptionTest.IDENTIFIER)
-	public static class InstantiationExceptionAlgorithm extends AbstractAnnotatedAlgorithm {
-		
-		public InstantiationExceptionAlgorithm() {
-			CapabilitiesGetProcessDescriptionExceptionTest.algorithmTriedToInstantiate = true;
-		}
-		
-		private String output;
+    @Test
+    public void shouldIgnoreExceptionousProcess() throws XmlException, IOException {
+//        MockUtil.getMockConfig();
+        CapabilitiesDocument caps = CapabilitiesConfiguration.getInstance(CapabilitiesDocument.Factory.newInstance());
 
-		@LiteralDataInput(identifier = "input")
-		public String input;
+        Assert.assertTrue("Erroneous algorithm was never instantiated!", algorithmTriedToInstantiate);
 
-		@LiteralDataOutput(identifier = "output")
-		public String getOutput() {
-			return this.output;
-		}
+        boolean found = false;
+        for (ProcessBriefType pbt : caps.getCapabilities().getProcessOfferings().getProcessArray()) {
+            if (IDENTIFIER.equals(pbt.getIdentifier().getStringValue())) {
+                found = true;
+            }
+        }
 
-		@Execute
-		public void thisMethodsWillNeverEverByCalled() {
-			this.output = "w0000t";
-		}
-		
-		@Override
-		public synchronized ProcessDescription getDescription() {
-			throw new RuntimeException("Gotcha!");
-		}
+        Assert.assertFalse("Algo found but was not expected!", found);
+    }
 
-		
-	}
+    @Algorithm(version = "0.1", identifier = CapabilitiesGetProcessDescriptionExceptionTest.IDENTIFIER)
+    public static class InstantiationExceptionAlgorithm extends AbstractAnnotatedAlgorithm {
+
+        public InstantiationExceptionAlgorithm() {
+            CapabilitiesGetProcessDescriptionExceptionTest.algorithmTriedToInstantiate = true;
+        }
+
+        private String output;
+
+        @LiteralDataInput(identifier = "input")
+        public String input;
+
+        @LiteralDataOutput(identifier = "output")
+        public String getOutput() {
+            return this.output;
+        }
+
+        @Execute
+        public void thisMethodsWillNeverEverByCalled() {
+            this.output = "w0000t";
+        }
+
+        @Override
+        public synchronized ProcessDescription getDescription() {
+            throw new RuntimeException("Gotcha!");
+        }
+
+
+    }
 }

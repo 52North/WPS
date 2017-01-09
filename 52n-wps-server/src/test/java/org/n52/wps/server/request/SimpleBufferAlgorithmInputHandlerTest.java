@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,6 +53,7 @@ import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -61,7 +62,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
  *
  * @author isuftin
  */
-public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass{
+public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass {
 
     private static String sampleFileName = null;
     private static File sampleFile = null;
@@ -83,8 +84,9 @@ public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass{
 
     @Before
     public void setUp() throws XmlException, IOException {
-		MockMvcBuilders.webAppContextSetup(this.wac).build();
-		WPSConfig.getInstance().setConfigurationManager(this.wac.getBean(ConfigurationManager.class));
+        RepositoryManager repositoryManager = new RepositoryManager();
+        repositoryManager.setApplicationContext(this.wac);
+        repositoryManager.init();
     }
 
     @After

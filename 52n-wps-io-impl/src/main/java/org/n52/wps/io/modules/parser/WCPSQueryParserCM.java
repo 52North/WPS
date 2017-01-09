@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,55 +41,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class WCPSQueryParserCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
+    private boolean isActive = true;
 
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
-	
-	private List<FormatEntry> formatEntries;
-	
-	public WCPSQueryParserCM(){
-		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "WCPSQueryParser";
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries;
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    private List<FormatEntry> formatEntries;
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
+    public WCPSQueryParserCM(){
+        formatEntries = new ArrayList<>();
+        configurationEntries = new ArrayList<>();
+    }
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
-	}
+    @Override
+    public String getModuleName() {
+        return "WCPSQueryParser";
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return Collections.emptyList();
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.PARSER;
+    }
 
-	@Override
-	public String getClassName() {
-		return WCPSQueryParser.class.getName();
-	}
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
+
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return formatEntries;
+    }
+
+    @Override
+    public String getClassName() {
+        return WCPSQueryParser.class.getName();
+    }
 
 }

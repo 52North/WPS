@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,43 +68,43 @@ import org.n52.wps.io.test.datahandler.AbstractTestCase;
  */
 public class GML3BasicParser4FilesTest extends AbstractTestCase<GML3BasicParser4Files> {
 
-	@Test
-	public void testParser() {
+    @Test
+    public void testParser() {
 
-		if(!isDataHandlerActive()){
-			return;
-		}
+        if(!isDataHandlerActive()){
+            return;
+        }
 
-		String testFilePath = projectRoot
-				+ "/52n-wps-io-geotools/src/test/resources/spearfish_restricted_sites_gml3.xml";
+        String testFilePath = projectRoot
+                + "/52n-wps-io-geotools/src/test/resources/spearfish_restricted_sites_gml3.xml";
 
-		try {
-			testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			System.err.println(e1);
-			Assert.fail(e1.getMessage());
-		}
+        try {
+            testFilePath = URLDecoder.decode(testFilePath, "UTF-8");
+        } catch (UnsupportedEncodingException e1) {
+            System.err.println(e1);
+            Assert.fail(e1.getMessage());
+        }
 
-		InputStream input = null;
+        InputStream input = null;
 
-		try {
-			input = new FileInputStream(new File(testFilePath));
-		} catch (FileNotFoundException e) {
-			Assert.fail(e.getMessage());
-		}
+        try {
+            input = new FileInputStream(new File(testFilePath));
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
 
-		GenericFileDataWithGTBinding theBinding = dataHandler.parse(input,
-				"text/xml; subtype=gml/3.1.1",
-				"http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
+        GenericFileDataWithGTBinding theBinding = dataHandler.parse(input,
+                "text/xml; subtype=gml/3.1.1",
+                "http://schemas.opengis.net/gml/3.1.1/base/feature.xsd");
 
-		Assert.assertNotNull(theBinding.getPayload());
-		Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
+        Assert.assertNotNull(theBinding.getPayload());
+        Assert.assertNotNull(theBinding.getPayload().getBaseFile(true).exists());
 
-	}
+    }
 
-	@Override
-	protected void initializeDataHandler() {
-		dataHandler = new GML3BasicParser4Files();
-	}
+    @Override
+    protected void initializeDataHandler() {
+        dataHandler = new GML3BasicParser4Files();
+    }
 
 }

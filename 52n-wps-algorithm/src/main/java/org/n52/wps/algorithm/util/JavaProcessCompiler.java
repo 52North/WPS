@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,19 +39,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for compiling Java processes.
- * 
+ *
  * @author Benjamin Pross
  *
  */
 public class JavaProcessCompiler {
 
-	private static Logger LOGGER = LoggerFactory
-			.getLogger(JavaProcessCompiler.class);
+    private static Logger LOGGER = LoggerFactory
+            .getLogger(JavaProcessCompiler.class);
 
     /**
      * Static method for compiling source files
      * TODO: return possible compile errors
-     * 
+     *
      * @param fileName source file name
      */
     public static void compile(String fileName)
@@ -69,7 +69,7 @@ public class JavaProcessCompiler {
             try {
                 classpath.add(new URL("file:" + path));
             } catch (MalformedURLException e) {
-            	LOGGER.error("Wrong url: " + e.getMessage(), e);
+                LOGGER.error("Wrong url: " + e.getMessage(), e);
             }
         }
 
@@ -106,10 +106,10 @@ public class JavaProcessCompiler {
 
         try {
             fileManager.close();
-        } catch (IOException e) { 
-        	LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
         }
 
     }
-	
+
 }

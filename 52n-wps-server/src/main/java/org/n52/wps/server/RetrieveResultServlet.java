@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 
+ *
  * @author Benjamin Pross, Daniel Nüst
  *
  */
@@ -66,7 +66,7 @@ public class RetrieveResultServlet {
 
     // TODO: in future parameterize
     private final boolean indentXML = false;
-    
+
     private final int uuid_length = 36;
 
     public RetrieveResultServlet() {
@@ -76,16 +76,16 @@ public class RetrieveResultServlet {
     @RequestMapping(method = RequestMethod.GET)
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		// id of result to retrieve.
-		String id = request.getParameter("id");
+        // id of result to retrieve.
+        String id = request.getParameter("id");
 
-		// optional alternate name for filename (rename the file when retrieving
-		// if requested)
-		boolean altName = false;
-		String alternateFilename = request.getParameter("filename");
-		if (!StringUtils.isEmpty(alternateFilename)) {
-			altName = true;
-		}
+        // optional alternate name for filename (rename the file when retrieving
+        // if requested)
+        boolean altName = false;
+        String alternateFilename = request.getParameter("filename");
+        if (!StringUtils.isEmpty(alternateFilename)) {
+            altName = true;
+        }
 
         // return result as attachment (instructs browser to offer user "Save" dialog)
         String attachment = request.getParameter("attachment");
@@ -94,14 +94,14 @@ public class RetrieveResultServlet {
             errorResponse("id parameter missing", response);
         } else {
 
-        	if(!isIDValid(id)){
-        		errorResponse("id parameter not valid", response);
-        	}
-        	
+            if(!isIDValid(id)){
+                errorResponse("id parameter not valid", response);
+            }
+
             IDatabase db = DatabaseFactory.getDatabase();
             String mimeType = db.getMimeTypeForStoreResponse(id);
             long contentLength = db.getContentLengthForStoreResponse(id);
-            
+
             InputStream inputStream = null;
             OutputStream outputStream = null;
             try {
@@ -115,15 +115,15 @@ public class RetrieveResultServlet {
                     String suffix = MIMEUtil.getSuffixFromMIMEType(mimeType).toLowerCase();
 
                     // if attachment parameter unset, default to false for mime-type of 'xml' and true for everything else.
-					boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix)) || Boolean.parseBoolean(attachment);
-					if (useAttachment) {
-						String attachmentName = (new StringBuilder(id)).append('.').append(suffix).toString();
+                    boolean useAttachment = (StringUtils.isEmpty(attachment) && !"xml".equals(suffix)) || Boolean.parseBoolean(attachment);
+                    if (useAttachment) {
+                        String attachmentName = (new StringBuilder(id)).append('.').append(suffix).toString();
 
-						if (altName) {
-							attachmentName = (new StringBuilder(alternateFilename)).append('.').append(suffix).toString();
-						}
-						response.addHeader("Content-Disposition", "attachment; filename=\"" + attachmentName + "\"");
-					}
+                        if (altName) {
+                            attachmentName = (new StringBuilder(alternateFilename)).append('.').append(suffix).toString();
+                        }
+                        response.addHeader("Content-Disposition", "attachment; filename=\"" + attachmentName + "\"");
+                    }
 
                     response.setContentType(mimeType);
 
@@ -224,45 +224,45 @@ public class RetrieveResultServlet {
     public static Throwable getRootCause(Throwable t) {
         return t.getCause() == null ? t : getRootCause(t.getCause());
     }
-    
-    public boolean isIDValid(String id){    
-    	
-    	if(id.length() <= uuid_length){
-    		
+
+    public boolean isIDValid(String id){
+
+        if(id.length() <= uuid_length){
+
             try {
                 UUID checkUUID = UUID.fromString(id);
-                
+
                 if(checkUUID.toString().equals(id)){
-                	return true;
+                    return true;
                 }else{
-                	return false;
+                    return false;
                 }
-			} catch (Exception e) {
-            	return false;
-			}
-    		
-    	}else {
-    		
-    		String uuidPartOne = id.substring(0, uuid_length);
-    		String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());
-    		
-    		return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);    		
-    	}
+            } catch (Exception e) {
+                return false;
+            }
+
+        }else {
+
+            String uuidPartOne = id.substring(0, uuid_length);
+            String uuidPartTwo = id.substring(id.length() - uuid_length, id.length());
+
+            return isUUIDValid(uuidPartOne) && isUUIDValid(uuidPartTwo);
+        }
     }
-    
-	public boolean isUUIDValid(String uuid) {
 
-		// the following can be used to check whether the id is a valid UUID
-		try {
-			UUID checkUUID = UUID.fromString(uuid);
+    public boolean isUUIDValid(String uuid) {
 
-			if (checkUUID.toString().equals(uuid)) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (Exception e) {
-			return false;
-		}
-	}
+        // the following can be used to check whether the id is a valid UUID
+        try {
+            UUID checkUUID = UUID.fromString(uuid);
+
+            if (checkUUID.toString().equals(uuid)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

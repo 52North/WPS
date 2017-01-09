@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,18 +34,18 @@ import org.n52.wps.webapp.entities.LogConfigurations;
  * Read and write to/from the log configuration file to/from {@link LogConfigurations} object.
  */
 public interface LogConfigurationsDAO {
-	/**
-	 * Get the log configuration file and parse it to a {@code LogConfigurations} object
-	 * 
-	 * @return Log configurations object
-	 */
-	LogConfigurations getLogConfigurations();
+    /**
+     * Get the log configuration file and parse it to a {@code LogConfigurations} object
+     *
+     * @return Log configurations object
+     */
+    LogConfigurations getLogConfigurations();
 
-	/**
-	 * Write a {@code LogConfigurations} object to log file
-	 * 
-	 * @param logConfigurations
-	 *            the log configurations object
-	 */
-	void saveLogConfigurations(LogConfigurations logConfigurations);
+    /**
+     * Write a {@code LogConfigurations} object to log file
+     *
+     * @param logConfigurations
+     *            the log configurations object
+     */
+    void saveLogConfigurations(LogConfigurations logConfigurations);
 }

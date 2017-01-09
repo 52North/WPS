@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,55 +41,55 @@ import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
 public class GenericFileParserCM extends ClassKnowingModule{
 
-	private boolean isActive = true;
-	
-	private List<? extends ConfigurationEntry<?>> configurationEntries;
-	
-	private List<FormatEntry> formatEntries;
-	
-	public GenericFileParserCM(){
-		formatEntries = new ArrayList<>();
-		configurationEntries = new ArrayList<>();
-	}
-	
-	@Override
-	public String getModuleName() {
-		return "GenericFileParser";
-	}
+    private boolean isActive = true;
 
-	@Override
-	public boolean isActive() {
-		return isActive;
-	}
+    private List<? extends ConfigurationEntry<?>> configurationEntries;
 
-	@Override
-	public void setActive(boolean active) {
-		this.isActive = active;		
-	}
+    private List<FormatEntry> formatEntries;
 
-	@Override
-	public ConfigurationCategory getCategory() {
-		return ConfigurationCategory.PARSER;
-	}
+    public GenericFileParserCM(){
+        formatEntries = new ArrayList<>();
+        configurationEntries = new ArrayList<>();
+    }
 
-	@Override
-	public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-		return configurationEntries;
-	}
+    @Override
+    public String getModuleName() {
+        return "GenericFileParser";
+    }
 
-	@Override
-	public List<AlgorithmEntry> getAlgorithmEntries() {
-		return Collections.emptyList();
-	}
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
 
-	@Override
-	public List<FormatEntry> getFormatEntries() {
-		return formatEntries;
-	}
+    @Override
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
 
-	@Override
-	public String getClassName() {
-		return GenericFileParser.class.getName();
-	}
+    @Override
+    public ConfigurationCategory getCategory() {
+        return ConfigurationCategory.PARSER;
+    }
+
+    @Override
+    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+        return configurationEntries;
+    }
+
+    @Override
+    public List<AlgorithmEntry> getAlgorithmEntries() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<FormatEntry> getFormatEntries() {
+        return formatEntries;
+    }
+
+    @Override
+    public String getClassName() {
+        return GenericFileParser.class.getName();
+    }
 
 }

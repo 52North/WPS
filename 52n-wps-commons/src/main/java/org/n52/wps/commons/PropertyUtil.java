@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2006-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,32 +34,32 @@ import com.google.common.base.Joiner;
  * @author tkunicki
  */
 public class PropertyUtil {
-    
+
     private final static Logger LOGGER = LoggerFactory.getLogger(PropertyUtil.class);
-    
+
     private final static Joiner JOINER = Joiner.on(".");
-    
+
     private final String systemPropertyRoot;
     private final Map<String, ConfigurationEntry<?>> propertyNameMap;
     private ConfigurationModule configurationModule;
     private ConfigurationManager configurationManager;
-    
+
     public PropertyUtil(ConfigurationModule configurationModule) {
-    	this.configurationModule = configurationModule;
-    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
-    	systemPropertyRoot = null;
+        this.configurationModule = configurationModule;
+        configurationManager = WPSConfig.getInstance().getConfigurationManager();
+        systemPropertyRoot = null;
         propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
-    	fillPropertyNameMap();
+        fillPropertyNameMap();
     }
-    
+
     public PropertyUtil(ConfigurationModule configurationModule, String systemPropertyRoot) {
-    	this.configurationModule = configurationModule;
-    	configurationManager = WPSConfig.getInstance().getConfigurationManager();
-    	this.systemPropertyRoot = systemPropertyRoot;
+        this.configurationModule = configurationModule;
+        configurationManager = WPSConfig.getInstance().getConfigurationManager();
+        this.systemPropertyRoot = systemPropertyRoot;
         propertyNameMap = new LinkedHashMap<String, ConfigurationEntry<?>>();
-    	fillPropertyNameMap();
+        fillPropertyNameMap();
     }
-    
+
     private void fillPropertyNameMap(){
         List<? extends ConfigurationEntry<?>> properties = configurationModule.getConfigurationEntries();
         if (properties != null) {
@@ -69,13 +69,13 @@ public class PropertyUtil {
                 }
             }
         }
-    	
+
     }
 
     public boolean extractBoolean(final String valueKey, boolean valueDefault) {
-        
+
         String valueAsString;
-        
+
         if (systemPropertyRoot != null) {
             String systemPropertyName = JOINER.join(systemPropertyRoot, valueKey);
             valueAsString = System.getProperty(systemPropertyName);
@@ -89,7 +89,7 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
-        
+
         ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             valueAsString = property.getValue().toString();
@@ -103,23 +103,23 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
-        
+
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
-        		return (Boolean) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Boolean){
+                return (Boolean) configurationEntry.getValue();
+            }
         }
-        
+
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
         return valueDefault;
     }
-    
+
     public long extractLong(final String valueKey, long valueDefault) {
-        
+
         String valueAsString;
-        
+
         if (systemPropertyRoot != null) {
             String systemPropertyName = JOINER.join(systemPropertyRoot, valueKey);
             valueAsString = System.getProperty(systemPropertyName);
@@ -137,7 +137,7 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
-        
+
         ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             valueAsString = property.getValue().toString();
@@ -155,23 +155,23 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
-        
+
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
-        		return (Long) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Long){
+                return (Long) configurationEntry.getValue();
+            }
         }
-        
+
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
         return valueDefault;
     }
-    
+
     public double extractDouble(final String valueKey, double valueDefault) {
-        
+
         String valueAsString;
-        
+
         if (systemPropertyRoot != null) {
             String systemPropertyName = JOINER.join(systemPropertyRoot, valueKey);
             valueAsString = System.getProperty(systemPropertyName);
@@ -189,7 +189,7 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
-        
+
         ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             valueAsString = property.getValue().toString();
@@ -207,21 +207,21 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
-        
+
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
-        		return (Double) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+
+            if(configurationEntry != null && configurationEntry.getValue() instanceof Double){
+                return (Double) configurationEntry.getValue();
+            }
         }
-        
+
         LOGGER.info("Using default value for \"{}\" of {}", valueKey, valueDefault);
         return valueDefault;
     }
-    
+
     public String extractString(String valueKey, String valueDefault) {
-        
+
         String value;
 
         if (systemPropertyRoot != null) {
@@ -236,7 +236,7 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
-         
+
         ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             value = property.getValue().toString();
@@ -249,23 +249,23 @@ public class PropertyUtil {
         } else {
            LOGGER.debug("Config property \"{}\" not present", valueKey);
         }
-        
+
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
-        		return (String) configurationEntry.getValue();
-        	}        	
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+
+            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+                return (String) configurationEntry.getValue();
+            }
         }
-         
+
         LOGGER.info("Using default value for \"{}\": {}", valueKey, valueDefault);
         return valueDefault;
     }
-    
+
     public long extractPeriodAsMillis(String valueKey, long valueDefault) {
-        
+
         String periodAsString;
-        
+
         if (systemPropertyRoot != null) {
             String systemPropertyName = JOINER.join(systemPropertyRoot, valueKey);
             periodAsString = System.getProperty(systemPropertyName);
@@ -288,7 +288,7 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("System property root not present, skipping system property lookup for {}", valueKey);
         }
-        
+
         ConfigurationEntry<?> property = propertyNameMap != null ? propertyNameMap.get(valueKey) : null;
         if (property != null) {
             periodAsString = property.getValue().toString();
@@ -311,14 +311,14 @@ public class PropertyUtil {
         } else {
             LOGGER.debug("Config property for \"{}\"  not present", valueKey);
         }
-        
+
         if(configurationModule != null && configurationManager != null){
-        	ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
-        	
-        	if(configurationEntry != null && configurationEntry.getValue() instanceof String){
-        		periodAsString = (String) configurationEntry.getValue();
-                
-        		if (periodAsString != null) {
+            ConfigurationEntry<?> configurationEntry = configurationManager.getConfigurationServices().getConfigurationEntry(configurationModule, valueKey);
+
+            if(configurationEntry != null && configurationEntry.getValue() instanceof String){
+                periodAsString = (String) configurationEntry.getValue();
+
+                if (periodAsString != null) {
                     try {
                         Period period = Period.parse(periodAsString);
                         if (period != null) {
@@ -333,10 +333,10 @@ public class PropertyUtil {
                     }
                 } else {
                     LOGGER.error("ConfigurationModule entry for \"{}\" exists but unable to parse \"{}\" as ISO8601 period", valueKey, periodAsString);
-                }       		
-        	}        	
+                }
+            }
         }
-        
+
         LOGGER.info("Using default value for \"{}\" of {}ms", valueKey, valueDefault);
         return valueDefault;
     }

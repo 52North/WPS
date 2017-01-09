@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,13 +36,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Starting RServe via command line on different OS.
- * 
+ *
  * For documentation see http://www.rforge.net/Rserve/doc.html
- * 
+ *
  * For information about RServe on Windows see http://rforge.net/Rserve/rserve-win.html
- * 
+ *
  * @author Daniel
- * 
+ *
  */
 public class RStarter {
 
@@ -75,7 +75,7 @@ public class RStarter {
 
     /**
      * command for local testing: cmd /c start R --vanilla --slave -e library(Rserve);Rserve()
-     * 
+     *
      * @throws IOException
      */
     private static void startRServeOnWindows() throws IOException {
@@ -106,8 +106,9 @@ public class RStarter {
             // process should have already exited at this point
             // TODO see if access to the started shell is possible, maybe this helps:
             // http://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html?page=2
-            if ( !process.isAlive())
+            if ( !process.isAlive()) {
                 log.debug("Process exit status: {}", process.exitValue());
+            }
         }
     }
 
@@ -129,8 +130,9 @@ public class RStarter {
      */
     public void killRserveOnWindows() {
         try {
-            if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0)
+            if (Runtime.getRuntime().exec("taskkill /IM RServe.exe /T /F").waitFor() == 0) {
                 return;
+            }
         }
         catch (InterruptedException | IOException e) {
             log.warn("Error trying to stop Rserve on windows.", e);

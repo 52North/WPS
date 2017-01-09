@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,28 +36,31 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.n52.wps.server.ExceptionReport;
-import org.n52.wps.server.r.RResource;
 import org.n52.wps.server.r.data.RDataTypeRegistry;
 import org.n52.wps.server.r.data.R_Resource;
+import org.n52.wps.server.r.util.ResourceUrlGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Matthias Hinz, Daniel Nüst
  *
  */
 public class ResourceAnnotation extends RAnnotation {
 
-    private static Logger log = LoggerFactory.getLogger(ResourceAnnotation.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceAnnotation.class);
 
-    private List<R_Resource> resources = new ArrayList<R_Resource>();
+    private List<R_Resource> resources = new ArrayList<>();
 
-    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry) throws IOException,
+    private final ResourceUrlGenerator urlGenerator;
+
+    public ResourceAnnotation(List<R_Resource> resources, RDataTypeRegistry dataTypeRegistry, ResourceUrlGenerator urlGenerator) throws IOException,
             RAnnotationException {
-        super(RAnnotationType.RESOURCE, new HashMap<RAttribute, Object>(), dataTypeRegistry);
+        super(RAnnotationType.RESOURCE, new HashMap<>(), dataTypeRegistry);
         this.resources.addAll(resources);
-        log.debug("NEW {}", this);
+        this.urlGenerator = urlGenerator;
+        log.trace("NEW {}", this);
     }
 
     @Override
@@ -74,17 +77,19 @@ public class ResourceAnnotation extends RAnnotation {
                 // String fullResourceURL = resource.getFullResourceURL(this.resourceDirUrl).toExternalForm();
                 String fullResourceURL;
                 try {
-                    fullResourceURL = RResource.getResourceURL(resource).toExternalForm();
+                    fullResourceURL = urlGenerator.getResourceURL(resource).toExternalForm();
                 }
                 catch (ExceptionReport e) {
                     log.error("Could not create full resource URL for {}", resource);
                     continue;
                 }
 
-                if (startloop)
+                if (startloop) {
                     startloop = false;
-                else
+                }
+                else {
                     namedList.append(", ");
+                }
 
                 String resourceName = resource.getResourceValue();
 
@@ -104,13 +109,15 @@ public class ResourceAnnotation extends RAnnotation {
             log.trace("Created resource list for usage in R: {}", namedList);
             return namedList.toString();
         }
-        else
+        else {
             throw new RAnnotationException("Attribute '{}' not defined for this annotation: {}", attr, this);
+        }
     }
 
     protected Collection<R_Resource> getResources() {
-        if (this.resources == null)
-            this.resources = new ArrayList<R_Resource>();
+        if (this.resources == null) {
+            this.resources = new ArrayList<>();
+        }
 
         return this.resources;
     }
@@ -119,10 +126,12 @@ public class ResourceAnnotation extends RAnnotation {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("ResourceAnnotation [resources=");
-        if (this.resources != null)
+        if (this.resources != null) {
             builder.append(Arrays.toString(this.resources.toArray()));
-        else
+        }
+        else {
             builder.append("<null>");
+        }
         builder.append("]");
         return builder.toString();
     }

@@ -2,8 +2,8 @@
 <wps:Execute service="WPS" version="1.0.0" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0
 	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">
 	<ows:Identifier>org.n52.wps.server.algorithm.intersection.IntersectionAlgorithm</ows:Identifier>
-	
-	
+
+
 	<wps:DataInputs>
 		<wps:Input>
 			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">Polygon1</ows:Identifier>
@@ -39,7 +39,7 @@
 												<gml:coord>
 													<gml:X>684400.725342893</gml:X>
 													<gml:Y>5872892.869645119</gml:Y>
-												</gml:coord>			
+												</gml:coord>
 											</gml:LinearRing>
 										</gml:outerBoundaryIs>
 										<gml:innerBoundaryIs/>
@@ -50,13 +50,13 @@
 									<pac:value dataType="double">4.0</pac:value>
 								</pac:property>
 							</pac:StaticFeature>
-						</pac:packetMember>																				
+						</pac:packetMember>
 					</pac:GMLPacket>
 				</wps:ComplexData>
 			</wps:Data>
 		</wps:Input>
-		
-		
+
+
 		<wps:Input>
 			<ows:Identifier xmlns:ns1="http://www.opengis.net/ows/1.1">Polygon2</ows:Identifier>
 			<wps:Data>
@@ -108,14 +108,14 @@
 									<pac:value dataType="double">2.0</pac:value>
 								</pac:property>
 							</pac:StaticFeature>
-						</pac:packetMember>																				
+						</pac:packetMember>
 					</pac:GMLPacket>
 				</wps:ComplexData>
 			</wps:Data>
 		</wps:Input>
 	</wps:DataInputs>
-	
-	
+
+
 	<wps:ResponseForm>
 		<wps:ResponseDocument>
 			<wps:Output schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" mimeType="text/xml" encoding="UTF-8">

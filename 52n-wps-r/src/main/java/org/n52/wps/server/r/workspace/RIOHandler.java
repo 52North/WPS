@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2010-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -108,9 +108,10 @@ public class RIOHandler {
     public class StringInputFilter implements RInputFilter {
 
         public String filter(String input) throws ExceptionReport {
-            if (input.contains("=") || input.contains("<-"))
+            if (input.contains("=") || input.contains("<-")) {
                 throw new ExceptionReport("Assignment operators found, not allowed, illegal input '" + input + "'",
                                           ExceptionReport.INVALID_PARAMETER_VALUE);
+            }
 
             return input;
         }
@@ -143,12 +144,12 @@ public class RIOHandler {
 
     /**
      * Searches annotations (class attribute) for Inputs / Outputs with a specific referring id
-     * 
-     * @param ioType
-     * @param id
-     * @param annotations
-     * @return
-     * @throws RAnnotationException
+     *
+     * @param ioType the input/output type
+     * @param id the id
+     * @param annotations the annotations
+     * @return the matching <code>IData</code> class
+     * @throws RAnnotationException if an exception occurred while trying to figure out the  input/output data type
      */
     protected Class< ? extends IData> getIODataType(RAnnotationType ioType,
                                                     String id,
@@ -177,8 +178,9 @@ public class RIOHandler {
     }
 
     public Class< ? extends IData> getOutputDataType(String id, Collection<RAnnotation> annotations) {
-        if (id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings"))
+        if (id.equalsIgnoreCase("sessionInfo") || id.equalsIgnoreCase("warnings")) {
             return GenericFileDataBinding.class;
+        }
 
         try {
             return getIODataType(RAnnotationType.OUTPUT, id, annotations);
@@ -193,16 +195,17 @@ public class RIOHandler {
     /**
      * parses iData values to string representations which can be evaluated by Rserve, complex data will be
      * preprocessed and handled here, uses parseLiteralInput for parsing literal Data
-     * 
+     *
      * @param input
      *        input value as databinding
-     * @param Rconnection
+     * @param connection
      *        (open)
      * @return String which could be evaluated by RConnection.eval(String)
-     * @throws IOException
-     * @throws RserveException
-     * @throws REXPMismatchException
-     * @throws ExceptionReport
+     * @throws IOException if an exception occurred while parsing the input
+     * @throws RserveException if an exception occurred while parsing the input
+     * @throws REXPMismatchException if an exception occurred while parsing the input
+     * @throws RAnnotationException if an exception occurred while parsing the input
+     * @throws ExceptionReport if an exception occurred while parsing the input
      */
     public String parseInput(List<IData> input, RConnection connection) throws IOException,
             RserveException,
@@ -219,8 +222,9 @@ public class RIOHandler {
             result = "c(";
             // parsing elements 1..n-1 to vector:
             for (int i = 0; i < input.size() - 1; i++) {
-                if (input.get(i).equals(null))
+                if (input.get(i).equals(null)) {
                     continue;
+                }
                 result += parseInput(input.subList(i, i + 1), connection);
                 result += ", ";
             }
@@ -233,10 +237,22 @@ public class RIOHandler {
         log.debug("Handling input value {} with payload {}", ivalue, ivalue.getPayload());
 
         Class< ? extends IData> iclass = ivalue.getClass();
-        if (ivalue instanceof ILiteralData)
+        if (ivalue instanceof ILiteralData) {
             return parseLiteralInput(iclass, ivalue.getPayload());
+        }
 
-        if (ivalue instanceof GenericFileDataWithGTBinding || ivalue instanceof GenericFileDataBinding) {
+        if (ivalue instanceof GenericFileDataWithGTBinding) {
+            GenericFileDataWithGT value = (GenericFileDataWithGT) ivalue.getPayload();
+
+            InputStream is = value.getDataStream();
+            String ext = value.getFileExtension();
+            result = streamFromWPSToRserve(connection, is, ext);
+            is.close();
+
+            return result;
+        }
+
+        if (ivalue instanceof GenericFileDataBinding) {
             GenericFileData value = (GenericFileData) ivalue.getPayload();
 
             InputStream is = value.getDataStream();
@@ -300,10 +316,12 @@ public class RIOHandler {
             }
             else if (iClass.equals(LiteralBooleanBinding.class)) {
                 boolean b = Boolean.parseBoolean(valueString);
-                if (b)
+                if (b) {
                     result = "TRUE";
-                else
+                }
+                else {
                     result = "FALSE";
+                }
             }
             else if (iClass.equals(LiteralStringBinding.class)) {
                 result = "\"" + valueString + "\"";
@@ -348,9 +366,10 @@ public class RIOHandler {
                                                                RAnnotationType.OUTPUT,
                                                                RAttribute.IDENTIFIER,
                                                                result_id);
-        if (list.size() > 1)
+        if (list.size() > 1) {
             log.warn("Filtered for annotation by name but got more than one result! Just using the first one of : {}",
                      Arrays.toString(list.toArray()));
+        }
 
         RAnnotation currentAnnotation = list.get(0);
         log.debug("Current annotation: {}", currentAnnotation);
@@ -359,35 +378,50 @@ public class RIOHandler {
         String filename = new File(result.asString()).getName();
 
         if (iClass.equals(GenericFileDataBinding.class) || iClass.equals(GenericFileDataWithGTBinding.class)) {
-            log.debug("Creating output with GenericFileDataBinding for file {}", filename);
+            log.debug("Creating output with {} for file {}", iClass.getName(), filename);
+            String mimeType = "application/unknown";
 
             File resultFile = new File(filename);
             log.debug("Loading file " + resultFile.getAbsolutePath());
 
-            if ( !resultFile.isAbsolute())
+            if ( !resultFile.isAbsolute()) {
                 // relative path names are relative to R work directory
                 resultFile = new File(connection.eval("getwd()").asString(), resultFile.getName());
+            }
 
-            if (resultFile.exists())
+            if (resultFile.exists()) {
                 log.debug("Found file at {}", resultFile);
-            else
+            }
+            else {
                 log.warn("Result file does not exist at {}", resultFile);
+            }
 
             // Transfer file from R workdir to WPS workdir
             File outputFile = null;
-            if (wpsWorkDirIsRWorkDir)
+            if (wpsWorkDirIsRWorkDir) {
                 outputFile = resultFile;
-            else
+            }
+            else {
                 outputFile = streamFromRserveToWPS(connection, resultFile.getAbsolutePath(), wpsWorkDir);
+            }
 
-            if ( !outputFile.exists())
+            if ( !outputFile.exists()) {
                 throw new IOException("Output file does not exists: " + resultFile.getAbsolutePath());
+            }
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
-            String mimeType = dataTypeRegistry.getType(rType).getMimeType();
-            GenericFileData out = new GenericFileData(outputFile, mimeType);
+            mimeType = dataTypeRegistry.getType(rType).getMimeType();
 
-            return new GenericFileDataBinding(out);
+            if(iClass.equals(GenericFileDataBinding.class)){
+                GenericFileData out = new GenericFileData(outputFile, mimeType);
+
+                return new GenericFileDataBinding(out);
+
+            }else if(iClass.equals(GenericFileDataWithGTBinding.class)){
+                GenericFileDataWithGT out = new GenericFileDataWithGT(outputFile, mimeType);
+
+                return new GenericFileDataWithGTBinding(out);
+            }
         }
         else if (iClass.equals(GTVectorDataBinding.class)) {
             RTypeDefinition dataType = currentAnnotation.getRDataType();
@@ -397,21 +431,25 @@ public class RIOHandler {
                 if (wpsWorkDirIsRWorkDir) {
                     // vector data binding needs "main" shapefile
                     String shpFileName = filename;
-                    if ( !shpFileName.endsWith(".shp"))
+                    if ( !shpFileName.endsWith(".shp")) {
                         shpFileName = filename + ".shp";
+                    }
 
                     outputFile = new File(shpFileName);
-                    if ( !outputFile.isAbsolute())
+                    if ( !outputFile.isAbsolute()) {
                         // relative path names are alway relative to R work directory
                         outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
+                    }
                 }
                 else {
                     // if it is a shapefile and the r workdir is remote, I need to zip, trnasfer, and unzip it
                     String baseName = null;
-                    if (filename.endsWith(".shp"))
+                    if (filename.endsWith(".shp")) {
                         baseName = filename.substring(0, filename.length() - ".shp".length());
-                    else
+                    }
+                    else {
                         baseName = filename;
+                    }
 
                     log.debug("Zipping output '{}' as shapefile with base '{}' with R util function: {}",
                               result_id,
@@ -431,8 +469,9 @@ public class RIOHandler {
                         log.info("R call to zipShp() did not work, streaming of shapefile without zipping");
                         String[] dir = connection.eval("dir()").asStrings();
                         for (String f : dir) {
-                            if (f.startsWith(baseName) && !f.equals(filename))
+                            if (f.startsWith(baseName) && !f.equals(filename)) {
                                 streamFromRserveToWPS(connection, f, wpsWorkDir);
+                            }
                         }
 
                         outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
@@ -442,17 +481,20 @@ public class RIOHandler {
             else {
                 if (wpsWorkDirIsRWorkDir) {
                     outputFile = new File(filename);
-                    if ( !outputFile.isAbsolute())
+                    if ( !outputFile.isAbsolute()) {
                         // relative path names are always relative to R work directory
                         outputFile = new File(connection.eval("getwd()").asString(), outputFile.getName());
+                    }
                 }
-                else
+                else {
                     outputFile = streamFromRserveToWPS(connection, filename, wpsWorkDir);
+                }
             }
 
-            if ( !outputFile.exists())
+            if ( !outputFile.exists()) {
                 throw new ExceptionReport("Output file does not exist: " + outputFile,
                                           ExceptionReport.NO_APPLICABLE_CODE);
+            }
 
             String rType = currentAnnotation.getStringValue(RAttribute.TYPE);
             String mimeType = dataTypeRegistry.getType(rType).getMimeType();
@@ -521,20 +563,21 @@ public class RIOHandler {
     /**
      * Streams a File from R workdirectory to a temporal file in the WPS4R workdirectory
      * (R.Config.WORK_DIR/random folder)
-     * 
+     *
      * @param filename
      *        name or path of the file located in the R workdirectory
-     * @param wpsWorkDir
+     * @param wpsWorkDir the working directory
      * @return Location of a file which has been streamed
-     * @throws IOException
-     * @throws FileNotFoundException
+     * @throws IOException if an exception occurred while streaming from Rserve to WPS
+     * @throws FileNotFoundException if an exception occurred while streaming from Rserve to WPS
      */
     private File streamFromRserveToWPS(RConnection connection, String filename, String wpsWorkDir) throws IOException,
             FileNotFoundException {
         File tempfile = new File(filename);
         File destination = new File(wpsWorkDir);
-        if ( !destination.exists())
+        if ( !destination.exists()) {
             destination.mkdirs();
+        }
         tempfile = new File(destination, tempfile.getName());
 
         // Do streaming Rserve --> WPS tempfile
@@ -554,7 +597,7 @@ public class RIOHandler {
 
     /**
      * Streams a file from WPS to Rserve workdirectory
-     * 
+     *
      * @param connection
      *        active RConnecion
      * @param is

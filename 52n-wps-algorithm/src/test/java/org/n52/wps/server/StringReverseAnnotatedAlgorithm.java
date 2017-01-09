@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ public class StringReverseAnnotatedAlgorithm extends AbstractAnnotatedAlgorithm 
 
     private String inputString;
     private String outputString;
-    
+
     @LiteralDataInput(
         identifier="INPUT_STRING",
         title="Input String",

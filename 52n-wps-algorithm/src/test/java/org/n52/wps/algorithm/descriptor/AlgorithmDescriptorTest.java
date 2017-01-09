@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -29,12 +29,30 @@ import org.n52.test.mock.MockBinding;
  * @author tkunicki
  */
 public class AlgorithmDescriptorTest extends TestCase {
-    
+
     private LiteralDataOutputDescriptor.Builder MOCK_OUPUT1_BUILDER;
-    
+
     private List<InputDescriptor.Builder<?,?>> MOCK_INPUT_BUILDERS;
     private List<OutputDescriptor.Builder<?,?>> MOCK_OUTPUT_BUILDERS;
-    
+    private MetadataDescriptor MOCK_PROCESS_METADATA_BUILDER_1;
+    private MetadataDescriptor MOCK_PROCESS_METADATA_BUILDER_2;
+    private List<MetadataDescriptor> MOCK_PROCESS_METADATA_BUILDERS;
+
+    private static final String PROCESS_ROLE_1 = "http://test.io";
+    private static final String PROCESS_HREF_1 = "http://example.io";
+    private static final String PROCESS_ROLE_2 = "http://example.io";
+    private static final String PROCESS_HREF_2 = "http://test.io";
+
+    private static final String INPUT_PARAMETER_ROLE_1 = "http://inputParameter1test.io";
+    private static final String INPUT_PARAMETER_HREF_1 = "http://inputParameter1example.io";
+    private static final String INPUT_PARAMETER_ROLE_2 = "http://inputParameter2example.io";
+    private static final String INPUT_PARAMETER_HREF_2 = "http://inputParameter2test.io";
+
+    private static final String OUTPUT_PARAMETER_ROLE_1 = "http://outputParameter1test.io";
+    private static final String OUTPUT_PARAMETER_HREF_1 = "http://outputParameter1example.io";
+    private static final String OUTPUT_PARAMETER_ROLE_2 = "http://outputParameter2example.io";
+    private static final String OUTPUT_PARAMETER_HREF_2 = "http://outputParameter2test.io";
+
     public AlgorithmDescriptorTest(String testName) {
         super(testName);
     }
@@ -47,22 +65,29 @@ public class AlgorithmDescriptorTest extends TestCase {
         MOCK_INPUT_BUILDERS.add(ComplexDataInputDescriptor.builder("mock_input3", MockBinding.class));
         MOCK_INPUT_BUILDERS.add(ComplexDataInputDescriptor.builder("mock_input4", MockBinding.class));
         MOCK_INPUT_BUILDERS = Collections.unmodifiableList(MOCK_INPUT_BUILDERS);
-        
+
         MOCK_OUPUT1_BUILDER = LiteralDataOutputDescriptor.booleanBuilder("mock_output1");
-        
+
         MOCK_OUTPUT_BUILDERS = new ArrayList<OutputDescriptor.Builder<?,?>>();
 //        MOCK_OUTPUT_BUILDERS.add(LiteralDataOutputDescriptor.booleanBuilder("mock_output1"));
         MOCK_OUTPUT_BUILDERS.add(LiteralDataOutputDescriptor.booleanBuilder("mock_output2"));
         MOCK_OUTPUT_BUILDERS.add(ComplexDataOutputDescriptor.builder("mock_output3", MockBinding.class));
         MOCK_OUTPUT_BUILDERS.add(ComplexDataOutputDescriptor.builder("mock_output4", MockBinding.class));
         MOCK_OUTPUT_BUILDERS = Collections.unmodifiableList(MOCK_OUTPUT_BUILDERS);
-        
+
+        MOCK_PROCESS_METADATA_BUILDER_1 = MetadataDescriptor.builder().role(PROCESS_ROLE_1).href(PROCESS_HREF_1).build();
+        MOCK_PROCESS_METADATA_BUILDER_2 = MetadataDescriptor.builder().role(PROCESS_ROLE_2).href(PROCESS_HREF_2).build();
+
+        MOCK_PROCESS_METADATA_BUILDERS = new ArrayList<>();
+        MOCK_PROCESS_METADATA_BUILDERS.add(MOCK_PROCESS_METADATA_BUILDER_1);
+        MOCK_PROCESS_METADATA_BUILDERS.add(MOCK_PROCESS_METADATA_BUILDER_2);
+
     }
-    
+
     public void testStaticBuilder_String() {
-        
+
         AlgorithmDescriptor descriptor = null;
-        
+
         // Test fail-early, exception should be thrown if identifier is 'null';
         boolean thrown = false;
         try {
@@ -72,7 +97,7 @@ public class AlgorithmDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         // test that static builder with String parameter
         descriptor = AlgorithmDescriptor.builder("mock_identifier").
                 addOutputDescriptor(MOCK_OUPUT1_BUILDER).  // require one output
@@ -80,13 +105,13 @@ public class AlgorithmDescriptorTest extends TestCase {
         assertEquals("mock_identifier", descriptor.getIdentifier());
         assertTrue(descriptor.hasTitle());
         assertEquals("mock_identifier", descriptor.getTitle());
-        
+
     }
 
     public void testStaticBuilder_Class() {
-        
+
         AlgorithmDescriptor descriptor = null;
-        
+
         // Test fail-early, exception should be thrown if idnetifier is 'null';
         boolean thrown = false;
         try {
@@ -96,7 +121,7 @@ public class AlgorithmDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         // test that static builder with a valid class parameter
          descriptor = AlgorithmDescriptor.builder(getClass()).
                 addOutputDescriptor(MOCK_OUPUT1_BUILDER). // require one output
@@ -105,16 +130,16 @@ public class AlgorithmDescriptorTest extends TestCase {
         assertTrue(descriptor.hasTitle());
         assertEquals(getClass().getCanonicalName(), descriptor.getTitle());
     }
-    
+
 
 
     public void testVersion() {
         AlgorithmDescriptor descriptor = null;
-        
+
         // test default is "1.0.0"
         descriptor = createMinimumCompliantBuilder().build();
         assertEquals("1.0.0", descriptor.getVersion());
-        
+
         // test we can change
         descriptor = createMinimumCompliantBuilder().version("X.Y.Z").build();
         assertEquals("X.Y.Z", descriptor.getVersion());
@@ -122,15 +147,15 @@ public class AlgorithmDescriptorTest extends TestCase {
 
     public void testStoreSupported() {
         AlgorithmDescriptor descriptor = null;
-        
+
         // test default is true
         descriptor = createMinimumCompliantBuilder().build();
         assertTrue(descriptor.getStoreSupported());
- 
+
         // test we can set to true (explicitly)
         descriptor = createMinimumCompliantBuilder().storeSupported(true).build();
         assertTrue(descriptor.getStoreSupported());
-        
+
         // test we can set to false
         descriptor = createMinimumCompliantBuilder().storeSupported(false).build();
         assertFalse(descriptor.getStoreSupported());
@@ -138,45 +163,93 @@ public class AlgorithmDescriptorTest extends TestCase {
 
     public void testStatusSupported() {
         AlgorithmDescriptor descriptor = null;
-        
+
         // test default is true
         descriptor = createMinimumCompliantBuilder().build();
         assertTrue(descriptor.getStatusSupported());
- 
+
         // test we can set to true (explicitly)
         descriptor = createMinimumCompliantBuilder().statusSupported(true).build();
         assertTrue(descriptor.getStatusSupported());
-        
+
         // test we can set to false
         descriptor = createMinimumCompliantBuilder().statusSupported(false).build();
         assertFalse(descriptor.getStatusSupported());
     }
 
+    public void testProcessMetadata() {
+        AlgorithmDescriptor descriptor = null;
+
+        // test process with one metadata descriptor
+        descriptor = createAlgorithmDescriptorWithMetadataDescriptor().build();
+
+        assertTrue(descriptor.getMetadataDescriptors().size() == 1);
+        assertTrue(descriptor.getMetadataDescriptors().size() > 0);
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getRole().equals(PROCESS_ROLE_1));
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getHref().equals(PROCESS_HREF_1));
+
+     // test process with a list of metadata descriptors
+        descriptor = createAlgorithmDescriptorWithTwoMetadataDescriptors().build();
+
+        for (MetadataDescriptor metadataDescriptor : descriptor.getMetadataDescriptors()) {
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_1)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_1));
+            }
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_2)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_2));
+            }
+        }
+    }
+
+    public void testParameterMetadata() {
+        AlgorithmDescriptor descriptor = null;
+
+        // test process with one metadata descriptor
+        descriptor = createAlgorithmDescriptorWithMetadataDescriptor().build();
+
+        assertTrue(descriptor.getMetadataDescriptors().size() == 1);
+        assertTrue(descriptor.getMetadataDescriptors().size() > 0);
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getRole().equals(PROCESS_ROLE_1));
+        assertTrue(descriptor.getMetadataDescriptors().get(0).getHref().equals(PROCESS_HREF_1));
+
+        // test process with a list of metadata descriptors
+        descriptor = createAlgorithmDescriptorWithTwoMetadataDescriptors().build();
+
+        for (MetadataDescriptor metadataDescriptor : descriptor.getMetadataDescriptors()) {
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_1)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_1));
+            }
+            if(metadataDescriptor.getRole().equals(PROCESS_ROLE_2)){
+                assertTrue(metadataDescriptor.getHref().equals(PROCESS_HREF_2));
+            }
+        }
+    }
+
     public void testInputDescriptorHandling() {
         AlgorithmDescriptor descriptor = null;
-        
+
         // test default is true
         descriptor = createMinimumCompliantBuilder().build();
         assertNotNull(descriptor.getInputDescriptors());
         assertEquals(0, descriptor.getInputDescriptors().size());
         assertNotNull(descriptor.getInputIdentifiers());
         assertEquals(0, descriptor.getInputIdentifiers().size());
-        
-        
+
+
         // test addInputDescriptor(InputDescriptor.Builder<?,?>) interface.
         AlgorithmDescriptor.Builder<?> builder = createMinimumCompliantBuilder();
         for (InputDescriptor.Builder inputBuilder : MOCK_INPUT_BUILDERS) {
             builder.addInputDescriptor(inputBuilder);
         }
         validateInputDescriptors(builder.build());
-        
+
         // test addInputDescriptor(InputDescriptor<?>) interface.
         builder = createMinimumCompliantBuilder();
         for (InputDescriptor.Builder inputBuilder : MOCK_INPUT_BUILDERS) {
             builder.addInputDescriptor(inputBuilder.build());
         }
         validateInputDescriptors(builder.build());
-        
+
         // test addInputDescriptor(InputDescriptor<?>) interface.
         builder = createMinimumCompliantBuilder();
         List<InputDescriptor> inputDescriptorList = new ArrayList<InputDescriptor>(MOCK_INPUT_BUILDERS.size());
@@ -189,7 +262,7 @@ public class AlgorithmDescriptorTest extends TestCase {
 
     public void testOutputDescriptorHanding() {
         AlgorithmDescriptor descriptor = null;
-        
+
         // Test fail-early, exception should be thrown if idnetifier is 'null';
         boolean thrown = false;
         try {
@@ -199,28 +272,28 @@ public class AlgorithmDescriptorTest extends TestCase {
             thrown = true;
         }
         assertTrue(thrown);
-        
+
         // test assumption that createMinimumCompliantBuilder() returns us 1 output
         descriptor = createMinimumCompliantBuilder().build();
         assertNotNull(descriptor.getOutputDescriptors());
         assertEquals(1, descriptor.getOutputDescriptors().size());
         assertNotNull(descriptor.getOutputIdentifiers());
         assertEquals(1, descriptor.getOutputIdentifiers().size());
-        
+
         // test addOutputDescriptor(OutputDescriptor.Builder<?,?>) interface.
         AlgorithmDescriptor.Builder<?> builder = createMinimumCompliantBuilder();
         for (OutputDescriptor.Builder outputBuilder : MOCK_OUTPUT_BUILDERS) {
             builder.addOutputDescriptor(outputBuilder);
         }
         validateOutputDescriptors(builder.build());
-        
+
         // test addOutputDescriptor(OutputDescriptor<?>) interface.
         builder = createMinimumCompliantBuilder();
         for (OutputDescriptor.Builder outputBuilder : MOCK_OUTPUT_BUILDERS) {
             builder.addOutputDescriptor(outputBuilder.build());
         }
         validateOutputDescriptors(builder.build());
-        
+
         // test addOutputDescriptor(OutputDescriptor<?>) interface.
         builder = createMinimumCompliantBuilder();
         List<OutputDescriptor> outputDescriptorList = new ArrayList<OutputDescriptor>(MOCK_OUTPUT_BUILDERS.size());
@@ -230,15 +303,25 @@ public class AlgorithmDescriptorTest extends TestCase {
         builder.addOutputDescriptors(outputDescriptorList);
         validateOutputDescriptors(builder.build());
     }
-    
+
     private AlgorithmDescriptor.Builder<?> createMinimumCompliantBuilder() {
         return AlgorithmDescriptor.builder("mock_identifier").
                 addOutputDescriptor(MOCK_OUPUT1_BUILDER);
     }
-    
+
+    private AlgorithmDescriptor.Builder<?> createAlgorithmDescriptorWithMetadataDescriptor() {
+        return AlgorithmDescriptor.builder("mock_identifier").
+                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptor(MOCK_PROCESS_METADATA_BUILDER_1);
+    }
+
+    private AlgorithmDescriptor.Builder<?> createAlgorithmDescriptorWithTwoMetadataDescriptors() {
+        return AlgorithmDescriptor.builder("mock_identifier").
+                addOutputDescriptor(MOCK_OUPUT1_BUILDER).addMetadataDescriptors(MOCK_PROCESS_METADATA_BUILDERS);
+    }
+
     private void validateInputDescriptors(AlgorithmDescriptor algorithmDescriptor) {
         assertNotNull(algorithmDescriptor.getInputDescriptors());
-        
+
         // Test Collection<InputDescriptor> getInputDescriptors()
         Collection<InputDescriptor> collection = algorithmDescriptor.getInputDescriptors();
         // correct size?
@@ -258,19 +341,19 @@ public class AlgorithmDescriptorTest extends TestCase {
         assertNotNull(inputDescriptor);
         assertEquals("mock_input4", inputDescriptor.getIdentifier());
         assertFalse(iterator.hasNext());
-        
+
         // Test InputDescriptor getInputDescriptor(String)
         // Can we access by indentifier?
         assertNotNull(algorithmDescriptor.getInputDescriptor("mock_input1"));
         assertNotNull(algorithmDescriptor.getInputDescriptor("mock_input2"));
         assertNotNull(algorithmDescriptor.getInputDescriptor("mock_input3"));
         assertNotNull(algorithmDescriptor.getInputDescriptor("mock_input4"));
-        // Are we getting the correct decriptors returned by identifier?      
+        // Are we getting the correct decriptors returned by identifier?
         assertEquals(algorithmDescriptor.getInputDescriptor("mock_input1").getIdentifier(), "mock_input1");
         assertEquals(algorithmDescriptor.getInputDescriptor("mock_input2").getIdentifier(), "mock_input2");
         assertEquals(algorithmDescriptor.getInputDescriptor("mock_input3").getIdentifier(), "mock_input3");
         assertEquals(algorithmDescriptor.getInputDescriptor("mock_input4").getIdentifier(), "mock_input4");
-        
+
         // Test List<String> getInputIdentifiers();
         List<String> inputIdentifierList = algorithmDescriptor.getInputIdentifiers();
         // Size ok?
@@ -281,10 +364,10 @@ public class AlgorithmDescriptorTest extends TestCase {
         assertEquals("mock_input3", inputIdentifierList.get(2));
         assertEquals("mock_input4", inputIdentifierList.get(3));
     }
-    
+
     private void validateOutputDescriptors(AlgorithmDescriptor algorithmDescriptor) {
         assertNotNull(algorithmDescriptor.getOutputDescriptors());
-        
+
         // Test Collection<OutputDescriptor> getOutputDescriptors()
         Collection<OutputDescriptor> collection = algorithmDescriptor.getOutputDescriptors();
         // correct size?
@@ -304,19 +387,19 @@ public class AlgorithmDescriptorTest extends TestCase {
         assertNotNull(outputDescriptor);
         assertEquals("mock_output4", outputDescriptor.getIdentifier());
         assertFalse(iterator.hasNext());
-        
+
         // Test OutputDescriptor getOutputDescriptor(String)
         // Can we access by indentifier?
         assertNotNull(algorithmDescriptor.getOutputDescriptor("mock_output1"));
         assertNotNull(algorithmDescriptor.getOutputDescriptor("mock_output2"));
         assertNotNull(algorithmDescriptor.getOutputDescriptor("mock_output3"));
         assertNotNull(algorithmDescriptor.getOutputDescriptor("mock_output4"));
-        // Are we getting the correct decriptors returned by identifier?      
+        // Are we getting the correct decriptors returned by identifier?
         assertEquals(algorithmDescriptor.getOutputDescriptor("mock_output1").getIdentifier(), "mock_output1");
         assertEquals(algorithmDescriptor.getOutputDescriptor("mock_output2").getIdentifier(), "mock_output2");
         assertEquals(algorithmDescriptor.getOutputDescriptor("mock_output3").getIdentifier(), "mock_output3");
         assertEquals(algorithmDescriptor.getOutputDescriptor("mock_output4").getIdentifier(), "mock_output4");
-        
+
         // Test List<String> getOutputIdentifiers();
         List<String> outputIdentifierList = algorithmDescriptor.getOutputIdentifiers();
         // Size ok?

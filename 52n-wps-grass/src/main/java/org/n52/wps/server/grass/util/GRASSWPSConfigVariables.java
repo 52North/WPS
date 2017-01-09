@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ package org.n52.wps.server.grass.util;
  *
  */
 public enum GRASSWPSConfigVariables {
-	
-	Python_Path,Addon_Dir,DONT_USE_PROCESSES,Grass_Home,TMP_Dir,ModuleStarter_Home,Python_Home,PROJ_SHARE_Dir,GISRC_Dir;
-	
+
+    Python_Path,Addon_Dir,DONT_USE_PROCESSES,Grass_Home,TMP_Dir,ModuleStarter_Home,Python_Home,PROJ_SHARE_Dir,GISRC_Dir;
+
 }

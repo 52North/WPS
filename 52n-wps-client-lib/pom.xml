@@ -40,23 +40,52 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-io</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>52n-wps-io-impl</artifactId>
-        </dependency>
 		<dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-io-geotools</artifactId>
         </dependency>
         <dependency>
-			<groupId>org.n52.wps</groupId>
+			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>52n-wps-algorithm-impl</artifactId>
             <scope>test</scope>
-        </dependency>
+        </dependency>		
+        <dependency>
+			<artifactId>xmlbeans</artifactId>
+			<groupId>org.apache.xmlbeans</groupId>
+		</dependency>
+		<dependency>
+			<artifactId>52n-xml-ows-v110</artifactId>
+			<groupId>org.n52.sensorweb</groupId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-configuration-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>52n-wps-algorithm</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-api</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-all</artifactId>
@@ -87,6 +116,26 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
 			<scope>test</scope>
 		</dependency>
     </dependencies>

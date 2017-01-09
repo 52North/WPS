@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -60,6 +60,6 @@ public class JTSConvexHullAlgorithm extends AbstractAnnotatedAlgorithm {
 
     @Execute
     public void runAlgorithm() {
-    	result = data.convexHull();
+        result = data.convexHull();
     }
 }

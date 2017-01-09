@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,137 +45,137 @@ import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.InputReference;
 
 public class WCS111XMLEmbeddedBase64OutputReferenceStrategy implements IReferenceStrategy{
-    
+
     private String fetchedMimeType;
     private String fetchedEncoding;
 
-	@Override
-	public boolean isApplicable(InputReference input) {
+    @Override
+    public boolean isApplicable(InputReference input) {
 
-		if(input.isSetBody()) {			
-			XmlObject xo = input.getBody();			
-			return xo.toString().contains("http://www.opengis.net/wcs/1.1.1");
-		}else{
-			String dataURLString = input.getHref();
-			return (dataURLString.contains("=GetCoverage") && dataURLString.contains("=1.1.1"));		
-		}
-	}
+        if(input.isSetBody()) {
+            XmlObject xo = input.getBody();
+            return xo.toString().contains("http://www.opengis.net/wcs/1.1.1");
+        }else{
+            String dataURLString = input.getHref();
+            return (dataURLString.contains("=GetCoverage") && dataURLString.contains("=1.1.1"));
+        }
+    }
 
-	@Override
-	public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport {
+    @Override
+    public ReferenceInputStream fetchData(InputReference input) throws ExceptionReport {
 
-		String dataURLString = input.getHref();
-	
-		String schema = input.getSchema();
-		String encoding = input.getEncoding();
-		String mimeType = input.getMimeType();
-		
-		try {
-			URL dataURL = new URL(dataURLString);
-			// Do not give a direct inputstream.
-			// The XML handlers cannot handle slow connections
-			URLConnection conn = dataURL.openConnection();
-			conn.setRequestProperty("Accept-Encoding", "gzip");
-			conn.setRequestProperty("Content-type", "multipart/mixed");
-			//Handling POST with referenced document
-			if(input.isSetBodyReference()) {
-				String bodyReference = input.getBodyReferenceHref();
-				URL bodyReferenceURL = new URL (bodyReference);
-				URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
-				bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
-				InputStream referenceInputStream = retrievingZippedContent(bodyReferenceConn);
-				IOUtils.copy(referenceInputStream, conn.getOutputStream());
-			}
-			//Handling POST with inline message
-			else if (input.isSetBody()) {
-				conn.setDoOutput(true);
-				
-				input.getBody().save(conn.getOutputStream());
-			}
-			InputStream inputStream = retrievingZippedContent(conn);
-			
-			BufferedReader bRead = new BufferedReader(new InputStreamReader(inputStream));
-			
-			String line = "";
-			
-			//boundary between different content types
-			String boundary = "";
-			
-			boolean boundaryFound = false;
-			
-			boolean encodedImagepart = false;
-			
-			String encodedImage = "";
-			
-			//e.g. base64
-			String contentTransferEncoding = "";
-			
-			String imageContentType = "";
-			
-			int boundaryCount = 0;
-			
-			while((line = bRead.readLine()) != null){
-				
-				if(line.contains("boundary")){
-					boundary = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
-					boundaryFound = true;
-					continue;
-				}
-				if(boundaryFound){					
-					if(line.contains(boundary)){
-						boundaryCount++;
-						continue;
-					}
-				}
-				
-				if(encodedImagepart){
-					encodedImage = encodedImage.concat(line);
-				}				
-				//is the image always the third part?!
-				else if(boundaryCount == 2){
-					if(line.contains("Content-Type")){
-						imageContentType = line.substring(line.indexOf(":") +1).trim();
-					}else if(line.contains("Content-Transfer-Encoding")){
-						contentTransferEncoding = line.substring(line.indexOf(":") +1).trim();					
-					}else if(line.contains("Content-ID")){
-						/*	just move further one line (which is hopefully empty)
-						 * 	and start parsing the encoded image 				
-						 */
-						line = bRead.readLine();
-						encodedImagepart = true;
-					}
-				}
-				
-			}
-			
-			return new ReferenceInputStream(
+        String dataURLString = input.getHref();
+
+        String schema = input.getSchema();
+        String encoding = input.getEncoding();
+        String mimeType = input.getMimeType();
+
+        try {
+            URL dataURL = new URL(dataURLString);
+            // Do not give a direct inputstream.
+            // The XML handlers cannot handle slow connections
+            URLConnection conn = dataURL.openConnection();
+            conn.setRequestProperty("Accept-Encoding", "gzip");
+            conn.setRequestProperty("Content-type", "multipart/mixed");
+            //Handling POST with referenced document
+            if(input.isSetBodyReference()) {
+                String bodyReference = input.getBodyReferenceHref();
+                URL bodyReferenceURL = new URL (bodyReference);
+                URLConnection bodyReferenceConn = bodyReferenceURL.openConnection();
+                bodyReferenceConn.setRequestProperty("Accept-Encoding", "gzip");
+                InputStream referenceInputStream = retrievingZippedContent(bodyReferenceConn);
+                IOUtils.copy(referenceInputStream, conn.getOutputStream());
+            }
+            //Handling POST with inline message
+            else if (input.isSetBody()) {
+                conn.setDoOutput(true);
+
+                input.getBody().save(conn.getOutputStream());
+            }
+            InputStream inputStream = retrievingZippedContent(conn);
+
+            BufferedReader bRead = new BufferedReader(new InputStreamReader(inputStream));
+
+            String line = "";
+
+            //boundary between different content types
+            String boundary = "";
+
+            boolean boundaryFound = false;
+
+            boolean encodedImagepart = false;
+
+            String encodedImage = "";
+
+            //e.g. base64
+            String contentTransferEncoding = "";
+
+            String imageContentType = "";
+
+            int boundaryCount = 0;
+
+            while((line = bRead.readLine()) != null){
+
+                if(line.contains("boundary")){
+                    boundary = line.substring(line.indexOf("\"") + 1, line.lastIndexOf("\""));
+                    boundaryFound = true;
+                    continue;
+                }
+                if(boundaryFound){
+                    if(line.contains(boundary)){
+                        boundaryCount++;
+                        continue;
+                    }
+                }
+
+                if(encodedImagepart){
+                    encodedImage = encodedImage.concat(line);
+                }
+                //is the image always the third part?!
+                else if(boundaryCount == 2){
+                    if(line.contains("Content-Type")){
+                        imageContentType = line.substring(line.indexOf(":") +1).trim();
+                    }else if(line.contains("Content-Transfer-Encoding")){
+                        contentTransferEncoding = line.substring(line.indexOf(":") +1).trim();
+                    }else if(line.contains("Content-ID")){
+                        /*    just move further one line (which is hopefully empty)
+                         *     and start parsing the encoded image
+                         */
+                        line = bRead.readLine();
+                        encodedImagepart = true;
+                    }
+                }
+
+            }
+
+            return new ReferenceInputStream(
                     new Base64InputStream(new ByteArrayInputStream(encodedImage.getBytes())),
                     imageContentType,
                     null); // encoding is null since encoding was removed
-		}
-		catch(RuntimeException e) {
-			throw new ExceptionReport("Error occured while parsing XML", 
-										ExceptionReport.NO_APPLICABLE_CODE, e);
-		}
-		catch(MalformedURLException e) {
-			String inputID = input.getIdentifier();
-			throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString, 
-										ExceptionReport.INVALID_PARAMETER_VALUE );
-		}
-		catch(IOException e) {
-			 String inputID = input.getIdentifier();
-			 throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString, 
-					 				ExceptionReport.INVALID_PARAMETER_VALUE );
-		}
-	}
+        }
+        catch(RuntimeException e) {
+            throw new ExceptionReport("Error occured while parsing XML",
+                                        ExceptionReport.NO_APPLICABLE_CODE, e);
+        }
+        catch(MalformedURLException e) {
+            String inputID = input.getIdentifier();
+            throw new ExceptionReport("The inputURL of the execute is wrong: inputID: " + inputID + " | dataURL: " + dataURLString,
+                                        ExceptionReport.INVALID_PARAMETER_VALUE );
+        }
+        catch(IOException e) {
+             String inputID = input.getIdentifier();
+             throw new ExceptionReport("Error occured while receiving the complexReferenceURL: inputID: " + inputID + " | dataURL: " + dataURLString,
+                                     ExceptionReport.INVALID_PARAMETER_VALUE );
+        }
+    }
 
-	private InputStream retrievingZippedContent(URLConnection conn) throws IOException{
-		String contentType = conn.getContentEncoding();
-		if(contentType != null && contentType.equals("gzip")) {
-			return new GZIPInputStream(conn.getInputStream());
-		}
-		else{
-			return conn.getInputStream();
-		}
-	}
+    private InputStream retrievingZippedContent(URLConnection conn) throws IOException{
+        String contentType = conn.getContentEncoding();
+        if(contentType != null && contentType.equals("gzip")) {
+            return new GZIPInputStream(conn.getInputStream());
+        }
+        else{
+            return conn.getInputStream();
+        }
+    }
 }

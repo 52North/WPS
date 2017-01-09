@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -118,7 +118,7 @@ public class PostgresDatabase extends AbstractDatabase {
 
             PostgresDatabaseConfigurationModule flatFileDatabaseConfigurationModule = (PostgresDatabaseConfigurationModule) WPSConfig.getInstance().getConfigurationManager().getConfigurationServices().getConfigurationModule(PostgresDatabaseConfigurationModule.class.getName());
 
-        	Server server = WPSConfig.getInstance().getServerConfigurationModule();
+            Server server = WPSConfig.getInstance().getServerConfigurationModule();
 
             baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
                     server.getHostname(), server.getHostport(), server.getWebappPath());
@@ -627,9 +627,9 @@ public class PostgresDatabase extends AbstractDatabase {
         return PostgresDatabase.connectionURL;
     }
 
-	@Override
-	public InputStream lookupStatus(String request_id) {
-		return null;
-	}
+    @Override
+    public InputStream lookupStatus(String request_id) {
+        return null;
+    }
 
 }

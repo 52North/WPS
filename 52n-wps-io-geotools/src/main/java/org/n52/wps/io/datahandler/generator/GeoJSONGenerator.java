@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007 - 2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,42 +68,42 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GeoJSONGenerator extends AbstractGenerator {
 
-	public GeoJSONGenerator(){
-		super();
-		supportedIDataTypes.add(JTSGeometryBinding.class);
-		supportedIDataTypes.add(GTVectorDataBinding.class);
-	}
-	
-	@Override
-	public InputStream generateStream(IData data, String mimeType, String schema)
-			throws IOException {
-		
-		if(data instanceof JTSGeometryBinding){
-			Geometry g = ((JTSGeometryBinding)data).getPayload();
-			
-			File tempFile = File.createTempFile("wps", "json");
-			finalizeFiles.add(tempFile); // mark for final delete
-			
-			 new GeometryJSON().write(g, tempFile);
-					
-			InputStream is = new FileInputStream(tempFile);
-			
-			return is;
-		}else if(data instanceof GTVectorDataBinding){
-			
-			SimpleFeatureCollection f = (SimpleFeatureCollection)data.getPayload();
-			
-			File tempFile = File.createTempFile("wps", "json");
-			finalizeFiles.add(tempFile); // mark for final delete
-			
-			 new FeatureJSON().writeFeatureCollection(f, tempFile);
-					
-			InputStream is = new FileInputStream(tempFile);
-			
-			return is;
-		}
-		
-		return null;
-	}
+    public GeoJSONGenerator(){
+        super();
+        supportedIDataTypes.add(JTSGeometryBinding.class);
+        supportedIDataTypes.add(GTVectorDataBinding.class);
+    }
+
+    @Override
+    public InputStream generateStream(IData data, String mimeType, String schema)
+            throws IOException {
+
+        if(data instanceof JTSGeometryBinding){
+            Geometry g = ((JTSGeometryBinding)data).getPayload();
+
+            File tempFile = File.createTempFile("wps", "json");
+            finalizeFiles.add(tempFile); // mark for final delete
+
+             new GeometryJSON().write(g, tempFile);
+
+            InputStream is = new FileInputStream(tempFile);
+
+            return is;
+        }else if(data instanceof GTVectorDataBinding){
+
+            SimpleFeatureCollection f = (SimpleFeatureCollection)data.getPayload();
+
+            File tempFile = File.createTempFile("wps", "json");
+            finalizeFiles.add(tempFile); // mark for final delete
+
+             new FeatureJSON().writeFeatureCollection(f, tempFile);
+
+            InputStream is = new FileInputStream(tempFile);
+
+            return is;
+        }
+
+        return null;
+    }
 
 }

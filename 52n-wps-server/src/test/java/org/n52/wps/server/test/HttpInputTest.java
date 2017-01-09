@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,40 +46,40 @@ import org.n52.wps.server.request.strategy.DefaultReferenceStrategy;
 import org.n52.wps.server.request.strategy.IReferenceStrategy;
 
 public class HttpInputTest {
-	
-	static final String sampleFileName = "src/test/resources/InputTestExecuteSample.xml";
-	
-	@Test
-	public void testHttpInput() throws XmlException, IOException{
-		
-		
-		// Arrange
-		File sample = new File(sampleFileName);
-		ExecuteDocument execDoc = ExecuteDocument.Factory.parse(sample);
-		InputType[] inputArray = execDoc.getExecute().getDataInputs().getInputArray();
-		
-		// Act & Assert
-		for (InputType currentInput : inputArray){
-			System.out.println("Testing input " + currentInput.getIdentifier().getStringValue());
-			
-			IReferenceStrategy strategy = new DefaultReferenceStrategy();
-			try {
-				InputStream is = strategy.fetchData(new InputReference(currentInput));
-				Assert.assertNotNull(is);
-				printStream(is);
-				
-			} catch (ExceptionReport e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-	
-	private static void printStream (InputStream is) throws IOException{
-		BufferedReader in = new BufferedReader(new InputStreamReader(is));
-		String line = null;
-		while((line = in.readLine()) != null) {
-		  System.out.println(line);
-		}
-	}
+
+    static final String sampleFileName = "src/test/resources/InputTestExecuteSample.xml";
+
+    @Test
+    public void testHttpInput() throws XmlException, IOException{
+
+
+        // Arrange
+        File sample = new File(sampleFileName);
+        ExecuteDocument execDoc = ExecuteDocument.Factory.parse(sample);
+        InputType[] inputArray = execDoc.getExecute().getDataInputs().getInputArray();
+
+        // Act & Assert
+        for (InputType currentInput : inputArray){
+            System.out.println("Testing input " + currentInput.getIdentifier().getStringValue());
+
+            IReferenceStrategy strategy = new DefaultReferenceStrategy();
+            try {
+                InputStream is = strategy.fetchData(new InputReference(currentInput));
+                Assert.assertNotNull(is);
+                printStream(is);
+
+            } catch (ExceptionReport e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private static void printStream (InputStream is) throws IOException{
+        BufferedReader in = new BufferedReader(new InputStreamReader(is));
+        String line = null;
+        while((line = in.readLine()) != null) {
+          System.out.println(line);
+        }
+    }
 }
