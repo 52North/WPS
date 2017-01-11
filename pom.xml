@@ -225,7 +225,7 @@
 		<org.springframework.version>4.1.6.RELEASE</org.springframework.version>
 		<org.spring-security.version>4.0.1.RELEASE</org.spring-security.version>
         <maven.build.timestamp.format>yyyy</maven.build.timestamp.format>
-        <currentYear>2015</currentYear>
+        <currentYear>2017</currentYear>
         <!--<currentYearDynamic>${maven.build.timestamp}</currentYearDynamic>-->
 	</properties>
 	<dependencyManagement>
