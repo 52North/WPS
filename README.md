@@ -4,7 +4,7 @@
 * Master: [![Master Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)
 * Develop: [![Develop Build Status](https://travis-ci.org/52North/WPS.png?branch=dev)](https://travis-ci.org/52North/WPS)
 
-# Description
+## Description
 The 52°North Web Processing Service enables the deployment of geo-processes on the web in a standardized way. It features a pluggable architecture for processes and data encodings.
 
 Current features
@@ -45,12 +45,12 @@ Current features
   * Vector results can be stored directly as WFS layer
   * Raster results can be stored directly as WCS layer
 
-# Getting Started and configuration
+# Getting Started and Configuration
 
-* Get the latest Version here [52°North WPS 3.4.0](http://52north.org/downloads/send/15-wps/489-52n-wps-webapp-3-4-0), [additional GeoTools Package](http://52north.org/downloads/send/15-wps/488-wps-3-4-0-geotools-package)
-    * deploy the war-file of the client in your favorite web container (e.g. tomcat)
-    * Access the WPS admin console via: http://yourhost:yourport/yourwebapp-path/webAdmin/index.jsp
-      * Default credentials: wps, wps (to change this, edit the users.xml located in WPS_WEBAPP_ROOT/WEB-INF/classes)
+Get the latest Version here [52°North WPS 3.4.0](http://52north.org/downloads/send/15-wps/489-52n-wps-webapp-3-4-0), [additional GeoTools Package](http://52north.org/downloads/send/15-wps/488-wps-3-4-0-geotools-package)
+* deploy the war-file of the client in your favorite web container (e.g. tomcat)
+* Access the WPS admin console via: http://yourhost:yourport/yourwebapp-path/webAdmin/index.jsp
+    * Default credentials: wps, wps (to change this, edit the users.xml located in WPS_WEBAPP_ROOT/WEB-INF/classes)
 
 # License
 
@@ -87,7 +87,7 @@ See here : [Geoprocessing Tutorials](https://wiki.52north.org/bin/view/Geoproces
 
 # Demo
 
-* [Geoprocessing Demo Server](http://geoprocessing.demo.52north.org/)
+Try out the latest WPS release with GeoTools package (GRASS 7 and SEXTANTE processes enabled) or get a sneak preview of the 4.0 version on our [Geoprocessing Demo Server](http://geoprocessing.demo.52north.org/).
 
 # Changelog
 
