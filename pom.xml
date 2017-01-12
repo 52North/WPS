@@ -9,7 +9,7 @@
 	<artifactId>52n-wps-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>52North Web Processing Service</name>
-	<version>4.0.0-SNAPSHOT</version>
+	<version>4.0.0-beta.1</version>
 	<description>
 		52 North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
@@ -33,7 +33,8 @@
 		<connection>scm:git:git://github.com/52North/WPS.git</connection>
 		<url>https://github.com/52North/WPS</url>
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
-	</scm>
+	  <tag>v4.0.0-beta.1</tag>
+  </scm>
 	<repositories>		
 	    <repository>
 			<id>n52-releases</id>
