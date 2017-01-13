@@ -1,9 +1,9 @@
 # 52°North WPS [![OpenHUB](https://www.openhub.net/p/n52-wps/widgets/project_thin_badge.gif)](https://www.openhub.net/p/n52-wps)
 
-
-
 ## Description
+
 Standardized web-based geo-processing.
+
 The 52°North Web Processing Service enables the deployment of geo-processes on the web in a standardized way. It features a pluggable architecture for processes and data encodings.
 
 The 52°North WPS implements the [OGC WPS specification](http://www.opengeospatial.org/standards/wps).
