@@ -35,6 +35,17 @@
 		<developerConnection>scm:git:ssh://git@github.com/52North/WPS.git</developerConnection>
 	  <tag>HEAD</tag>
   </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>n52-releases</id>
+            <url>https://52north.org/maven/repo/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>n52-snapshots</id>
+            <url>https://52north.org/maven/repo/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 	<repositories>		
 	    <repository>
 			<id>n52-releases</id>
