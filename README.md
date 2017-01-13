@@ -130,6 +130,22 @@ http://52north.org/about/licensing/cla-guideline
 
 ## Credits
 
+ * Benjamin Pross, @bpross-52n
+ * Daniel Nüst, @nuest
+ * Matthias Müller, @matthias-mueller
+ * Theodor Foerster, @theodorfoerster
+ * Matthes Rieke, @matthesrieke
+ * Christian Autermann, @autermann
+ * Tom Kunicki, @tkunicki
+ * Bastian Baranski, @bbaranski
+ * Ivan Suftin, @isuftin
+ * Matthias Hinz, @MatthiasHinz
+ * Jordan Walker, @jiwalker-usgs
+ * Phil Russom, @prusso-sse
+ * Steffen Reichel, @grmpfhmbl
+ * Hadrien Tulipe, @htulipe
+ * German Carillo, @gacarrillor
+
 ## Contributing Organizations
 
 ### Funding organizations
