@@ -38,11 +38,11 @@
 
     <distributionManagement>
         <repository>
-            <id>n52-releases</id>
+            <id>n52-releases-dist</id>
             <url>dav:https://52north.org/maven/repo/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>n52-snapshots</id>
+            <id>n52-snapshots-dist</id>
             <url>dav:https://52north.org/maven/repo/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
