@@ -150,7 +150,11 @@ public class BackupServiceImpl implements BackupService {
 
         // The tar file has been included in the overall backup zip file, so delete it
         if (dbTarFile.exists()) {
-            dbTarFile.delete();
+        	try {
+                dbTarFile.delete();
+			} catch (Exception e) {
+				LOGGER.error("Could not delete file: " + dbTarFile.getAbsolutePath());
+			}
         }
     }
 
@@ -169,42 +173,57 @@ public class BackupServiceImpl implements BackupService {
             LOGGER.error("Unable to restore the database from the supplied tar.gz file: ", e);
         } finally {
             // Delete the tag.gz file
-            new File(tarPath).delete();
+        	try {
+        		new File(tarPath).delete();
+			} catch (Exception e) {
+				LOGGER.error("Could not delete file: " + tarPath);
+			}
         }
     }
 
     private void writeToZip(File file, ZipOutputStream zipOutput) throws IOException {
-        FileInputStream input = null;
         if (file.exists()) {
-            input = new FileInputStream(file);
-            zipOutput.putNextEntry(new ZipEntry(file.getName()));
 
-            // write to Zip
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = input.read(buffer)) > 0) {
-                zipOutput.write(buffer, 0, bytesRead);
-            }
+        	try (FileInputStream input = new FileInputStream(file)) {
 
-            input.close();
+                zipOutput.putNextEntry(new ZipEntry(file.getName()));
+
+                // write to Zip
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = input.read(buffer)) > 0) {
+                    zipOutput.write(buffer, 0, bytesRead);
+                }
+
+			} catch (Exception e) {
+				LOGGER.error("Could not write file to ZippedOutputstream: " + file.getAbsolutePath(), e);
+			}
         }
         zipOutput.closeEntry();
     }
 
     private void extractToFile(File file, ZipInputStream zipInput) throws IOException {
         if (!file.exists()) {
-            file.createNewFile();
+        	try {
+                file.createNewFile();
+			} catch (Exception e) {
+				LOGGER.error("Could not create file: " + file.getAbsolutePath(), e);
+				return;
+			}
         }
-        FileOutputStream output = new FileOutputStream(file);
+        try(FileOutputStream output = new FileOutputStream(file)) {
 
-        // write to file
-        LOGGER.debug("Writing '{}'.", file.getName());
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = zipInput.read(buffer)) > 0) {
-            output.write(buffer, 0, bytesRead);
-        }
-        output.close();
+            // write to file
+            LOGGER.debug("Writing '{}'.", file.getName());
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = zipInput.read(buffer)) > 0) {
+                output.write(buffer, 0, bytesRead);
+            }
+
+		} catch (Exception e) {
+			LOGGER.error("Could not write ZipInputStream to file: " + file.getAbsolutePath(), e);
+		}
         zipInput.closeEntry();
     }
 

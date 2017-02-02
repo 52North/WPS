@@ -65,6 +65,14 @@ public interface ConfigurationDAO {
     Boolean getConfigurationModuleStatus(ConfigurationModule module);
 
     /**
+     * Checks if the configuration module with the given class name is persistent
+     *
+     * @param moduleClassName The class name of the module
+     * @return true, if the module is persistent, false otherwise
+     */
+    Boolean isConfigurationModulePersistent(String moduleClassName);
+
+    /**
      * Get the stored configuration entry value
      *
      * @param moduleClassName
