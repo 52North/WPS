@@ -101,7 +101,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
             Boolean isModulePersistent = configurationDAO.isConfigurationModulePersistent(module.getClass().getName());
             if (isModulePersistent) {
-            	Boolean moduleStatus = configurationDAO.getConfigurationModuleStatus(module);
+                Boolean moduleStatus = configurationDAO.getConfigurationModuleStatus(module);
                 // module exist, set values from the database
                 module.setActive(moduleStatus);
                 setConfigurationModuleValuesFromDatabase(module);

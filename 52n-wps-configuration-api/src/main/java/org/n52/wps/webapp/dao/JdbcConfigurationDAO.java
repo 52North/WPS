@@ -30,7 +30,6 @@ package org.n52.wps.webapp.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -434,8 +433,8 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
     }
 
 
-	@Override
-	public Boolean isConfigurationModulePersistent(String moduleClassName) {
+    @Override
+    public Boolean isConfigurationModulePersistent(String moduleClassName) {
         LOGGER.debug("Getting configuration module '{}' from the database.", moduleClassName);
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("module_class_name", moduleClassName);
@@ -443,15 +442,15 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
 
         Boolean isModulePersistent = namedParameterJdbcTemplate.query(sql, parameters, new ResultSetExtractor<Boolean>(){
 
-			@Override
-			public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
-		        return rs.next();
-			}
+            @Override
+            public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+                return rs.next();
+            }
 
         });
 
         LOGGER.debug("Configuration module is persistent: ", isModulePersistent);
 
-		return isModulePersistent;
-	}
+        return isModulePersistent;
+    }
 }

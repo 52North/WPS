@@ -150,11 +150,11 @@ public class BackupServiceImpl implements BackupService {
 
         // The tar file has been included in the overall backup zip file, so delete it
         if (dbTarFile.exists()) {
-        	try {
+            try {
                 dbTarFile.delete();
-			} catch (Exception e) {
-				LOGGER.error("Could not delete file: " + dbTarFile.getAbsolutePath());
-			}
+            } catch (Exception e) {
+                LOGGER.error("Could not delete file: " + dbTarFile.getAbsolutePath());
+            }
         }
     }
 
@@ -173,18 +173,18 @@ public class BackupServiceImpl implements BackupService {
             LOGGER.error("Unable to restore the database from the supplied tar.gz file: ", e);
         } finally {
             // Delete the tag.gz file
-        	try {
-        		new File(tarPath).delete();
-			} catch (Exception e) {
-				LOGGER.error("Could not delete file: " + tarPath);
-			}
+            try {
+                new File(tarPath).delete();
+            } catch (Exception e) {
+                LOGGER.error("Could not delete file: " + tarPath);
+            }
         }
     }
 
     private void writeToZip(File file, ZipOutputStream zipOutput) throws IOException {
         if (file.exists()) {
 
-        	try (FileInputStream input = new FileInputStream(file)) {
+            try (FileInputStream input = new FileInputStream(file)) {
 
                 zipOutput.putNextEntry(new ZipEntry(file.getName()));
 
@@ -195,21 +195,21 @@ public class BackupServiceImpl implements BackupService {
                     zipOutput.write(buffer, 0, bytesRead);
                 }
 
-			} catch (Exception e) {
-				LOGGER.error("Could not write file to ZippedOutputstream: " + file.getAbsolutePath(), e);
-			}
+            } catch (Exception e) {
+                LOGGER.error("Could not write file to ZippedOutputstream: " + file.getAbsolutePath(), e);
+            }
         }
         zipOutput.closeEntry();
     }
 
     private void extractToFile(File file, ZipInputStream zipInput) throws IOException {
         if (!file.exists()) {
-        	try {
+            try {
                 file.createNewFile();
-			} catch (Exception e) {
-				LOGGER.error("Could not create file: " + file.getAbsolutePath(), e);
-				return;
-			}
+            } catch (Exception e) {
+                LOGGER.error("Could not create file: " + file.getAbsolutePath(), e);
+                return;
+            }
         }
         try(FileOutputStream output = new FileOutputStream(file)) {
 
@@ -221,9 +221,9 @@ public class BackupServiceImpl implements BackupService {
                 output.write(buffer, 0, bytesRead);
             }
 
-		} catch (Exception e) {
-			LOGGER.error("Could not write ZipInputStream to file: " + file.getAbsolutePath(), e);
-		}
+        } catch (Exception e) {
+            LOGGER.error("Could not write ZipInputStream to file: " + file.getAbsolutePath(), e);
+        }
         zipInput.closeEntry();
     }
 
