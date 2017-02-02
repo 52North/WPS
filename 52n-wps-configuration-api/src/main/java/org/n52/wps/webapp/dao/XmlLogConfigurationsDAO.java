@@ -50,7 +50,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class XmlLogConfigurationsDAO implements LogConfigurationsDAO {
 
-    public static String FILE_NAME = "logback.xml";
+    public static final String FILE_NAME = "logback.xml";
     private static Logger LOGGER = LoggerFactory.getLogger(XmlLogConfigurationsDAO.class);
 
     @Autowired

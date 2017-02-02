@@ -150,7 +150,7 @@ public class ConfigurationServiceImplTest {
     @Test
     public void syncConfigurations_newConfigurations() {
         String classModuleNames = "org.n52.wps.webapp.testmodules.TestConfigurationModule";
-        when(configurationDAO.getConfigurationModuleStatus(any(ConfigurationModule.class))).thenReturn(null);
+        when(configurationDAO.isConfigurationModulePersistent((any(String.class)))).thenReturn(false);
         when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), anyString())).thenReturn(null);
         when(configurationDAO.getAlgorithmEntry(startsWith(classModuleNames), anyString())).thenReturn(null);
 
@@ -162,7 +162,7 @@ public class ConfigurationServiceImplTest {
          * verify that they're inserted
          */
         for (ConfigurationModule module : getTestMap().values()) {
-            verify(configurationDAO).getConfigurationModuleStatus(module);
+            verify(configurationDAO).isConfigurationModulePersistent(module.getClass().getName());
             verify(configurationDAO).insertConfigurationModule(module);
 
             for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {
@@ -192,6 +192,7 @@ public class ConfigurationServiceImplTest {
 
         String classModuleNames = "org.n52.wps.webapp.testmodules.TestConfigurationModule";
         when(configurationDAO.getConfigurationModuleStatus(any(ConfigurationModule.class))).thenReturn(true);
+        when(configurationDAO.isConfigurationModulePersistent((any(String.class)))).thenReturn(true);
         when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(stringKey))).thenReturn(
                 "synced string");
         when(configurationDAO.getConfigurationEntryValue(startsWith(classModuleNames), eq(integerKey))).thenReturn(99);
@@ -228,7 +229,7 @@ public class ConfigurationServiceImplTest {
          * configuration modules
          */
         for (ConfigurationModule module : getTestMap().values()) {
-            verify(configurationDAO).getConfigurationModuleStatus(module);
+            verify(configurationDAO).isConfigurationModulePersistent(module.getClass().getName());
             verify(configurationDAO, never()).insertConfigurationModule(module);
 
             for (ConfigurationEntry<?> entry : module.getConfigurationEntries()) {

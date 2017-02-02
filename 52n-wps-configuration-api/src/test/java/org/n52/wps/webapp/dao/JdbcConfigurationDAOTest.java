@@ -100,13 +100,25 @@ public class JdbcConfigurationDAOTest {
     @Test
     public void getConfigurationModuleStatus_nonExistingModule() {
         Boolean statusOfModule = configurationDAO.getConfigurationModuleStatus(testModule3);
-        assertNull(statusOfModule);
+        assertFalse(statusOfModule);
+    }
+
+    @Test
+    public void isConfigurationModulePersistent_nonExistingModule() {
+    	Boolean statusOfModule = configurationDAO.isConfigurationModulePersistent(testModule3.getClass().getName());
+    	assertFalse(statusOfModule);
+    }
+
+    @Test
+    public void isConfigurationModulePersistent_existingModule() {
+    	Boolean statusOfModule = configurationDAO.isConfigurationModulePersistent(testModule1.getClass().getName());
+    	assertTrue(statusOfModule);
     }
 
     @Test
     public void insertConfigurationModule() {
-        Boolean statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
-        assertNull(statusOfModule3);
+        Boolean statusOfModule3 = configurationDAO.isConfigurationModulePersistent(testModule3.getClass().getName());
+        assertFalse(statusOfModule3);
         configurationDAO.insertConfigurationModule(testModule3);
         statusOfModule3 = configurationDAO.getConfigurationModuleStatus(testModule3);
         assertTrue(statusOfModule3);

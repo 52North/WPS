@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -134,11 +135,11 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         });
 
         if (status.isEmpty()) {
-            return null;
+            return false;
         } else if (status.size() == 1) {
             return status.get(0);
         } else {
-            return null;
+            return false;
         }
     }
 
@@ -429,5 +430,27 @@ public class JdbcConfigurationDAO implements ConfigurationDAO {
         parameters.put("old_encoding", oldEncoding);
         parameters.put("configuration_module", moduleClassName);
         namedParameterJdbcTemplate.update("UPDATE formatentry SET mime_type = :new_mimetype, schema =:new_schema, encoding = :new_encoding " + "WHERE mime_type = :old_mimetype AND schema =:old_schema AND encoding = :old_encoding AND configuration_module = :configuration_module", parameters);
+    }
+
+
+    @Override
+    public Boolean isConfigurationModulePersistent(String moduleClassName) {
+        LOGGER.debug("Getting configuration module '{}' from the database.", moduleClassName);
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("module_class_name", moduleClassName);
+        String sql = "SELECT * FROM configurationmodule WHERE module_class_name = :module_class_name";
+
+        Boolean isModulePersistent = namedParameterJdbcTemplate.query(sql, parameters, new ResultSetExtractor<Boolean>(){
+
+            @Override
+            public Boolean extractData(ResultSet rs) throws SQLException, DataAccessException {
+                return rs.next();
+            }
+
+        });
+
+        LOGGER.debug("Configuration module is persistent: ", isModulePersistent);
+
+        return isModulePersistent;
     }
 }

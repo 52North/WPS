@@ -99,8 +99,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
         for (ConfigurationModule module : getAllConfigurationModules().values()) {
             LOGGER.info("Initializing and syncing configuration module '{}'.", module.getClass().getName());
 
-            Boolean moduleStatus = configurationDAO.getConfigurationModuleStatus(module);
-            if (moduleStatus != null) {
+            Boolean isModulePersistent = configurationDAO.isConfigurationModulePersistent(module.getClass().getName());
+            if (isModulePersistent) {
+                Boolean moduleStatus = configurationDAO.getConfigurationModuleStatus(module);
                 // module exist, set values from the database
                 module.setActive(moduleStatus);
                 setConfigurationModuleValuesFromDatabase(module);
@@ -201,9 +202,16 @@ public class ConfigurationServiceImpl implements ConfigurationService {
     public <T> T getConfigurationEntryValue(ConfigurationModule module, ConfigurationEntry<?> entry,
             Class<T> requiredType) throws WPSConfigurationException {
         Object value = entry.getValue();
-        if (value == null || (requiredType != null && !requiredType.isAssignableFrom(value.getClass()))) {
-            String errorMessage = "The value '" + value + "' cannot be assigned to a/an '"
+        String errorMessage = null;
+        if (value == null) {
+            errorMessage = "Value is null.";
+        }else if (requiredType == null) {
+            errorMessage = "Required type is null.";
+        }else if (!requiredType.isAssignableFrom(value.getClass())) {
+            errorMessage = "The value '" + value + "' cannot be assigned to a/an '"
                     + requiredType.getSimpleName() + "' type.";
+        }
+        if(errorMessage != null){
             throw new WPSConfigurationException(errorMessage);
         }
         LOGGER.debug("Value '{}' of type '{}' for configuration entry '{}' in module '{}' is retrieved.", value,
