@@ -414,7 +414,7 @@ public class ExecuteResponseBuilder {
 	}
 
 	public void save(OutputStream os) throws ExceptionReport {
-		LOGGER.info("SAVE: " + doc.toString());
+		LOGGER.info("SAVE RESPONSE: " + doc.toString());
 		if (request.isRawData() && rawDataHandler != null) {
 			rawDataHandler.save(os);
 			return;

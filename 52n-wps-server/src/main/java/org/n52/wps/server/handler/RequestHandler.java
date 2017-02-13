@@ -301,12 +301,14 @@ public class RequestHandler {
 			
 			ExceptionReport exceptionReport = null;
 			try {
+				LOGGER.debug("submit the task for execution");
 				// submit the task for execution
-				pool.addTask(task);
-				// set status to accepted
 				status.setProcessAccepted("Request is queued for execution.");
 				task.getRequest().getExecuteResponseBuilder().setStatus(status);
 
+				pool.addTask(task);
+				// set status to accepted
+				
 				if (((ExecuteRequest) req).isStoreResponse()) {
 					resp = new ExecuteResponse(execReq);
 					resp.save(os);
@@ -315,7 +317,9 @@ public class RequestHandler {
 				try {
 					// retrieve status with timeout enabled
 					try {
+						LOGGER.debug("Wait for finished");
 						resp = task.get();
+						LOGGER.debug("Succeeded");
 						// Thread.sleep(this.sleepingTime);
 						status.setProcessSucceeded("Process has succeeded");
 						status.unsetProcessAccepted();
@@ -324,6 +328,7 @@ public class RequestHandler {
 					} catch (ExecutionException ee) {
 						// the computation threw an error
 						// probably the client input is not valid
+						LOGGER.debug("Exception of execution catched");
 						if (ee.getCause() instanceof ExceptionReport) {
 							exceptionReport = (ExceptionReport) ee.getCause();
 						} else {
@@ -396,12 +401,15 @@ public class RequestHandler {
 			try {
 				// CancelRequest is called with the WPSTask retrieved from the
 				// tasks registry
+				
 				String taskId = ((CancelRequest) req).getCancelDom()
 						.getCancel().getProcessInstanceIdentifier()
 						.getInstanceId();
+				LOGGER.debug("loading Task with PID "+taskId);
 				WPSTask<Response> task = pool.getTask(taskId);
 				resp = ((CancelRequest) req).call(task);
 			} catch (Exception e) {
+				e.printStackTrace();
 				if (e.getCause() instanceof ExceptionReport) {
 					exceptionReport = (ExceptionReport) e.getCause();
 				} else {

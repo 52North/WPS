@@ -16,7 +16,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.transport.http.HTTPConstants;
-import org.apache.ode.utils.Namespaces;
+
 
 /**
  *
@@ -71,7 +71,7 @@ public class ODEServiceClient{
 
     public OMElement buildMessage(String operation, String[] params, Object[] values) {
         OMFactory _factory = OMAbstractFactory.getOMFactory();
-        OMNamespace pmns = _factory.createOMNamespace(Namespaces.ODE_PMAPI_NS, "pmapi");
+        OMNamespace pmns = _factory.createOMNamespace("", "pmapi");
         OMElement root = _factory.createOMElement(operation, pmns);
         for (int m = 0; m < params.length; m++) {
             OMElement omelmt = _factory.createOMElement(params[m], null);

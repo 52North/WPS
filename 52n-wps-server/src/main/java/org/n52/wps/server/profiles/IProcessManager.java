@@ -45,7 +45,6 @@ import org.n52.wps.server.request.UndeployProcessRequest;
 import org.w3c.dom.Document;
 
 public interface IProcessManager {
-
 	
 	boolean unDeployProcess(UndeployProcessRequest request) throws Exception;
 	boolean containsProcess(String processID) throws Exception;
@@ -59,4 +58,7 @@ public interface IProcessManager {
 	String getIID();
 	void callback(ExecuteResponseDocument execRespDom);
 	void cancel();
+	
+	
+	
 }

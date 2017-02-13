@@ -55,6 +55,7 @@
 </dependency>
  
 <!-- Apache ODE Dependencies -->
+
 <dependency>
             <groupId>org.apache.ode</groupId>
             <artifactId>ode-axis2</artifactId>
@@ -134,8 +135,7 @@
         <dependency>
             <groupId>org.apache.neethi</groupId>
             <artifactId>neethi</artifactId>
-            <version>2.0.4</version>
-            <scope>compile</scope>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>

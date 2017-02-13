@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog PUBLIC "-//OASIS/DTD Entity Resolution XML Catalog V1.0//EN"
+   "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+	<!-- 
+	### Use rewriteSystem to remap a DOCTYPE system identifier, ...
+	<rewriteSystem systemIdStartString="http://www.oasis-open.org/docbook/xml/4.5/" rewritePrefix="file:///usr/share/xml/docbook45/"/>
+	
+	### ... and use rewriteURI to remap other URLs like stylesheet references.
+	<rewriteURI uriStartString="http://docbook.sourceforge.net/release/xsl/current/" rewritePrefix="file:///usr/share/xml/docbook-xsl-1.73.1/"/>
+	-->
+	<rewriteURI uriStartString="http://docs.oasis-open.org/" rewritePrefix="src/main/schemas/" />
+    <rewriteURI uriStartString="http://schemas.opengis.net/" rewritePrefix="src/main/schemas/" />
+    <rewriteURI uriStartString="http://www.opengis.net/" rewritePrefix="src/main/schemas/" />
+	<rewriteURI uriStartString="http://www.w3.org/1999/xlink" rewritePrefix="src/main/schemas/xlink/1.0.0/xlink" />    
+</catalog>

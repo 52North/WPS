@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:jsdl="http://schemas.ggf.org/jsdl/2005/11/jsdl" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<import namespace="http://schemas.ggf.org/jsdl/2005/11/jsdl" schemaLocation="../../jsdl/jsdl.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<complexType name="AbstractDeploymentProfileType" abstract="true">
+		<sequence>
+			<element name="Schema">
+				<complexType>
+					<attribute name="href" type="anyURI" use="required"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+	<!-- =========================================================== -->
+	<complexType name="DataDeploymentProfileType">
+		<complexContent>
+			<extension base="wps:AbstractDeploymentProfileType">
+				<choice>
+					<element name="Archive" type="base64Binary">
+						<annotation>
+							<documentation>Tar or Zipped file to be deployed on the Grid.</documentation>
+						</annotation>
+					</element>
+					<element name="ArchiveReference" type="wps:ArchiveReferenceType">
+						<annotation>
+							<documentation>Reference (URL) to an archive file to be deployed on the Grid.</documentation>
+						</annotation>
+					</element>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+	<!-- =========================================================== -->
+	<complexType name="ArchiveReferenceType">
+		<annotation>
+			<documentation>Reference (URL) to an archive file to be deployed. </documentation>
+		</annotation>
+		<attribute name="href" type="anyURI" use="required">
+			<annotation>
+				<documentation>Reference to a web-accessible archive file to be deployed. This attribute shall contain a URL from which this archive can be electronically retrieved. </documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+	<!-- =========================================================== -->
+	<complexType name="ApacheOdeDeploymentProfileType">
+		<complexContent>
+			<extension base="wps:AbstractDeploymentProfileType">
+				<choice>
+					<element name="Archive" type="base64Binary">
+						<annotation>
+							<documentation>Tar or Zipped file to be deployed on Apache ODE server.</documentation>
+						</annotation>
+					</element>
+					<element name="ArchiveReference" type="wps:ArchiveReferenceType">
+						<annotation>
+							<documentation>Reference (URL) to an archive file to be deployed on Apache ODE server.</documentation>
+						</annotation>
+					</element>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="OozieDeploymentProfileType">
+		<complexContent>
+			<extension base="wps:AbstractDeploymentProfileType">
+				<choice>
+					<element name="Archive" type="base64Binary">
+						<annotation>
+							<documentation>Tar or Zipped file to be deployed on Oozie server.</documentation>
+						</annotation>
+					</element>
+					<element name="ArchiveReference" type="wps:ArchiveReferenceType">
+						<annotation>
+							<documentation>Reference (URL) to an archive file to be deployed on Oozie server.</documentation>
+						</annotation>
+					</element>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="JavaDeploymentProfileType">
+		<complexContent>
+			<extension base="wps:AbstractDeploymentProfileType">
+				<choice>
+					<element name="Archive" type="base64Binary">
+						<annotation>
+							<documentation>Java JAR file to be deployed.</documentation>
+						</annotation>
+					</element>
+					<element name="ArchiveReference" type="wps:ArchiveReferenceType">
+						<annotation>
+							<documentation>Reference (URL) to JAR file to be deployed on the WPS server.</documentation>
+						</annotation>
+					</element>
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="SagaDeploymentProfileType">
+		<complexContent>
+			<extension base="wps:AbstractDeploymentProfileType">
+				<sequence>
+					<choice>
+						<element name="Archive" type="base64Binary">
+							<annotation>
+								<documentation>Tar or Zipped file to be deployed on the Grid.</documentation>
+							</annotation>
+						</element>
+						<element name="ArchiveReference" type="wps:ArchiveReferenceType">
+							<annotation>
+								<documentation>Reference (URL) to an archive file to be deployed on the Grid.</documentation>
+							</annotation>
+						</element>
+					</choice>
+					<element name="jsdlTemplate">
+						<annotation>
+							<documentation>JSDL template containing substitution variables.</documentation>
+						</annotation>
+						<complexType>
+							<sequence>
+								<element ref="jsdl:JobDefinition"/>
+							</sequence>
+						</complexType>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<element name="ApacheOdeDeploymentProfile" type="wps:ApacheOdeDeploymentProfileType"/>
+	<element name="OozieDeploymentProfile" type="wps:OozieDeploymentProfileType"/>
+	<element name="JavaDeploymentProfile" type="wps:JavaDeploymentProfileType"/>
+	<element name="SagaDeploymentProfile" type="wps:SagaDeploymentProfileType"/>
+	<element name="DataDeploymentProfile" type="wps:DataDeploymentProfileType"/>
+</schema>

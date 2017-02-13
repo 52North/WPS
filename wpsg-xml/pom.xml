@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>be.spacebel.wps</groupId>
+	<artifactId>wpsg-xml</artifactId>
+	<version>2.0.3</version>
+	<packaging>jar</packaging>
+	<name>OGC WPS-G schemas</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xmlbeans-maven-plugin</artifactId>
+				<version>2.3.3</version>
+				<executions>
+					<execution>
+						<id>main</id>
+						<goals>
+							<goal>xmlbeans</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<schemaDirectory>${basedir}/src/main/schemas</schemaDirectory>
+					<sourceSchemas>
+						<sourceSchema>xlink/1.0.0/xlinks.xsd</sourceSchema>
+						<sourceSchema>wps/wpsAll.xsd</sourceSchema>
+						<sourceSchema>wps/wpsESEQoS.xsd</sourceSchema>
+						<sourceSchema>wps/wpsESEMetadata.xsd</sourceSchema>
+						<sourceSchema>wps/wps_urllist.xsd</sourceSchema>
+						<sourceSchema>wps/wps_datalist.xsd</sourceSchema>
+						<sourceSchema>wps/wps_cachelist.xsd</sourceSchema>
+						<sourceSchema>wps/wps_vito.xsd</sourceSchema>
+						<sourceSchema>ode/pmapi.xsd</sourceSchema>
+					</sourceSchemas>
+					<download>false</download>
+				</configuration>
+
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											xmlbeans-maven-plugin
+										</artifactId>
+										<versionRange>
+											[2.3.3,)
+										</versionRange>
+										<goals>
+											<goal>xmlbeans</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>2.6.0</version>
+		</dependency>
+	
+
+	</dependencies>
+	
+</project>

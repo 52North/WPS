@@ -73,11 +73,7 @@
 		<name>opengeo repository</name>
 		<url>http://repo.opengeo.org</url>
 	</repository>    
-    <repository>
-        <id>mpi-vito</id>
-        <name>mpi-vito-releases</name>
-        <url>http://mpi-vito.spacebel.be:8081/artifactory/libs-release-local</url>
-    </repository>
+  
 <repository>
             <id>mvnrepository.com</id>
             <name>mvnrepository.com</name>
@@ -86,6 +82,7 @@
   </repositories>
   
     <build>
+   
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -97,9 +94,10 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
                 <configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 		    <encoding>ISO-8859-1</encoding>
                 </configuration>
             </plugin>
@@ -129,15 +127,16 @@
    				</configuration>
  			</plugin>	
  			-->
+ 			
         </plugins>
     </build>
     <modules>
 	
+	<module>wpsg-xml</module>
+	
         <module>52n-wps-commons</module>
         <module>52n-wps-io</module>
         <module>52n-wps-server</module>
-		<module>52n-wps-unicore</module>
-		<module>52n-wps-gridgain</module>
 		<module>52n-wps-webapp</module>
         <module>52n-wps-client-lib</module>
         <module>52n-wps-sextante</module>
@@ -146,8 +145,6 @@
         <module>52n-wps-webadmin</module>
         <module>52n-wps-ags</module>
         <module>52n-wps-python</module>
-    
-       
   </modules>
     <dependencies>
         <!-- <dependency>
@@ -254,7 +251,13 @@
             	<artifactId>52n-wps-python</artifactId>
             	<version>${project.version}</version>
 			</dependency>
+			
 
+			<dependency>
+            	<groupId>be.spacebel.ese.wps</groupId>
+            	<artifactId>dataManager</artifactId>
+            	<version>1.0.0</version>
+			</dependency>
            
         
         <!--

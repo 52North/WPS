@@ -31,7 +31,6 @@ import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
-import org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile;
 
 
 public abstract class AbstractSelfDescribingAlgorithm extends AbstractAlgorithm implements ISubject{

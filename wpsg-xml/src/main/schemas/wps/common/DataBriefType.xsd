@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: DataBriefType.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>Brief description of a Data, designed for Data discovery. </description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- ==============================================================
+		Import or include schema
+	============================================================== -->
+	<include schemaLocation="DescriptionType.xsd"/>
+	<!--
+	<import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="../../ISO_19139/gmd/metadataEntity.xsd"/>
+	-->
+	<include schemaLocation="DataVersion.xsd"/>
+	<!-- ==============================================================
+		elements and types
+	============================================================== -->
+	<complexType name="DataBriefType">
+		<complexContent>
+			<extension base="wps:DescriptionType">
+				<sequence>
+					<element name="Profile" type="anyURI" minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>Optional unordered list of application profiles to which this Data complies.</documentation>
+						</annotation>
+					</element><!--
+					<element name="Metadata" type="gmd:MD_Metadata_Type" minOccurs="0" maxOccurs="unbounded">
+						<annotation>
+							<documentation>Optional unordered list of additional metadata about this auxiliary data. A list of optional and/or required metadata elements for this auxiliary data could be specified in an Application Profile for this service. </documentation>
+						</annotation>
+					</element>-->
+				</sequence>
+				<attribute ref="wps:dataVersion" use="required"/>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

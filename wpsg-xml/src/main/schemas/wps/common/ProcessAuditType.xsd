@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<complexType name="AuditTraceType">
+		<annotation>
+			<documentation>Process Audit trace. </documentation>
+		</annotation>
+		<sequence>
+			<any/>
+		</sequence>
+		<attribute name="shortForm" type="boolean" use="required">
+			<annotation>
+				<documentation>The short form (default) provides the execution processing flow. The long form provides the full execution trace.</documentation>
+			</annotation>
+		</attribute>
+		<anyAttribute/>
+	</complexType>
+	<!-- =========================================================== -->
+</schema>

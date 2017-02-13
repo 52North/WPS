@@ -3,6 +3,7 @@ package org.n52.wps.server;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -11,9 +12,11 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.server.repository.DefaultTransactionalProcessRepository;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.util.XMLUtils;
+
 import net.opengis.wps.x100.AuditTraceType;
 import net.opengis.wps.x100.ExecuteResponseDocument;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
@@ -23,7 +26,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 
 	protected String algorithmID;
 	private static Logger LOGGER = Logger
-			.getLogger(DefaultTransactionalProcessRepository.class);
+			.getLogger(AbstractTransactionalAlgorithm.class);
 
 	public AbstractTransactionalAlgorithm(String algorithmID) {
 		this.algorithmID = algorithmID;
@@ -34,7 +37,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		return algorithmID;
 	}
 
-	public abstract HashMap run(ExecuteRequest document)
+	public abstract Map<String, IData> run(ExecuteRequest document)
 			throws ExceptionReport;
 
 	/** call the backend to cancel the task */
@@ -150,6 +153,7 @@ public abstract class AbstractTransactionalAlgorithm implements IAlgorithm {
 		String path = subPath + "WEB-INF/AuditDocuments/" + instanceId + ".xml";
 		try {
 			// TODO handling when exception occurs ...
+			LOGGER.debug("auditTraceType save in "+path);
 			auditTraceType.save(new File(path));
 			// XMLUtils.writeXmlFile((Document)auditTraceType.getDomNode(),
 			// path);

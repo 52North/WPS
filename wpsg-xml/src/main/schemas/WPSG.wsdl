@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wpsx="http://www.esa.int/example/wsdl2" xmlns:ns="http://schemas.ggf.org/jsdl/2005/11/jsdl" targetNamespace="http://www.esa.int/example/wsdl2">
+	<wsdl:types>
+		<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/wps/1.0.0">
+			<xs:include schemaLocation="./wps/wpsAll.xsd"/>
+			<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="./wsa/ws-addr.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="cancelRequest">
+		<wsdl:part name="parameters" element="wps:Cancel"/>
+	</wsdl:message>
+	<wsdl:message name="cancelResponse">
+		<wsdl:part name="parameters" element="wps:CancelResponse"/>
+	</wsdl:message>
+	<wsdl:message name="getStatusRequest">
+		<wsdl:part name="parameters" element="wps:GetStatus"/>
+	</wsdl:message>
+	<wsdl:message name="getStatusResponse">
+		<wsdl:part name="parameters" element="wps:GetStatusResponse"/>
+	</wsdl:message>
+	<wsdl:message name="executeRequest">
+		<wsdl:part name="parameters" element="wps:Execute"/>
+		<wsdl:part name="ReplyTo" element="wsa:ReplyTo"/>
+		<wsdl:part name="MessageID" element="wsa:MessageID"/>
+	</wsdl:message>
+	<wsdl:message name="executeResponse">
+		<wsdl:part name="parameters" element="wps:ExecuteResponse"/>
+	</wsdl:message>
+	<wsdl:message name="getCapabilitiesRequest">
+		<wsdl:part name="parameters" element="wps:GetCapabilities"/>
+	</wsdl:message>
+	<wsdl:message name="getCapabilitiesResponse">
+		<wsdl:part name="parameters" element="wps:Capabilities"/>
+	</wsdl:message>
+	<wsdl:message name="describeProcessRequest">
+		<wsdl:part name="parameters" element="wps:DescribeProcess"/>
+	</wsdl:message>
+	<wsdl:message name="describeProcessResponse">
+		<wsdl:part name="parameters" element="wps:ProcessDescriptions"/>
+	</wsdl:message>
+	<wsdl:message name="deployProcessRequest">
+		<wsdl:part name="parameters" element="wps:DeployProcess"/>
+	</wsdl:message>
+	<wsdl:message name="deployProcessResponse">
+		<wsdl:part name="parameters" element="wps:DeployProcessResponse"/>
+	</wsdl:message>
+	<wsdl:message name="undeployProcessRequest">
+		<wsdl:part name="parameters" element="wps:UndeployProcess"/>
+	</wsdl:message>
+	<wsdl:message name="undeployProcessResponse">
+		<wsdl:part name="parameters" element="wps:UndeployProcessResponse"/>
+	</wsdl:message>
+	<wsdl:message name="deployDataRequest">
+		<wsdl:part name="parameters" element="wps:DeployData"/>
+	</wsdl:message>
+	<wsdl:message name="deployDataResponse">
+		<wsdl:part name="parameters" element="wps:DeployDataResponse"/>
+	</wsdl:message>
+	<wsdl:message name="undeployDataRequest">
+		<wsdl:part name="parameters" element="wps:UndeployData"/>
+	</wsdl:message>
+	<wsdl:message name="undeployDataResponse">
+		<wsdl:part name="parameters" element="wps:UndeployDataResponse"/>
+	</wsdl:message>
+	<wsdl:message name="describeDataRequest">
+		<wsdl:part name="parameters" element="wps:DescribeData"/>
+	</wsdl:message>
+	<wsdl:message name="describeDataResponse">
+		<wsdl:part name="parameters" element="wps:DataDescriptions"/>
+	</wsdl:message>
+	<wsdl:message name="getAuditRequest">
+		<wsdl:part name="parameters" element="wps:GetAudit"/>
+	</wsdl:message>
+	<wsdl:message name="getAuditResponse">
+		<wsdl:part name="parameters" element="wps:GetAuditResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="WPSGPortType">
+		<wsdl:operation name="Cancel">
+			<wsdl:input message="wpsx:cancelRequest"/>
+			<wsdl:output message="wpsx:cancelResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetStatus">
+			<wsdl:input message="wpsx:getStatusRequest"/>
+			<wsdl:output message="wpsx:getStatusResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="Execute">
+			<wsdl:input message="wpsx:executeRequest"/>
+			<wsdl:output message="wpsx:executeResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetCapabilities">
+			<wsdl:input message="wpsx:getCapabilitiesRequest"/>
+			<wsdl:output message="wpsx:getCapabilitiesResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DescribeProcess">
+			<wsdl:input message="wpsx:describeProcessRequest"/>
+			<wsdl:output message="wpsx:describeProcessResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeployProcess">
+			<wsdl:input message="wpsx:deployProcessRequest"/>
+			<wsdl:output message="wpsx:deployProcessResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="UndeployProcess">
+			<wsdl:input message="wpsx:undeployProcessRequest"/>
+			<wsdl:output message="wpsx:undeployProcessResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeployData">
+			<wsdl:input message="wpsx:deployDataRequest"/>
+			<wsdl:output message="wpsx:deployDataResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="UndeployData">
+			<wsdl:input message="wpsx:deployDataRequest"/>
+			<wsdl:output message="wpsx:deployDataResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DescribeData">
+			<wsdl:input message="wpsx:describeDataRequest"/>
+			<wsdl:output message="wpsx:describeDataResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetAudit">
+			<wsdl:input message="wpsx:getAuditRequest"/>
+			<wsdl:output message="wpsx:getAuditResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WPSGSoap11Binding" type="wpsx:WPSGPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="Cancel">
+			<soap:operation soapAction="urn:cancel" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetStatus">
+			<soap:operation soapAction="urn:getStatus" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="Execute">
+			<soap:operation soapAction="urn:execute" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+				<soap:header message="wpsx:executeRequest" part="ReplyTo" use="literal"/>
+				<soap:header message="wpsx:executeRequest" part="MessageID" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetCapabilities">
+			<soap:operation soapAction="urn:getCapabilities" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DescribeProcess">
+			<soap:operation soapAction="urn:describeProcess" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DeployProcess">
+			<soap:operation soapAction="urn:deployProcess" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="UndeployProcess">
+			<soap:operation soapAction="urn:undeployProcess" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DeployData">
+			<soap:operation soapAction="urn:deployData" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="UndeployData">
+			<soap:operation soapAction="urn:undeployData" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DescribeData">
+			<soap:operation soapAction="urn:describeData" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetAudit">
+			<soap:operation soapAction="urn:getAudit" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WPS">
+		<wsdl:port name="WPSGHttpSoap11Endpoint" binding="wpsx:WPSGSoap11Binding">
+			<soap:address location="http://ssegrid.vgt.vito.be:8081/52n-wps-webapp-2.0-RC8-SNAPSHOT/services/WPS.WPSHttpSoap11Endpoint"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

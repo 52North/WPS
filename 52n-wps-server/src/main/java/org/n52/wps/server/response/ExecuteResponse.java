@@ -148,7 +148,11 @@ public class ExecuteResponse extends Response {
 		sender.sendRobust(XMLUtils.toOM(((Document) this
 				.getExecuteResponseBuilder().getDoc().getDomNode())
 				.getDocumentElement()));
-	
+		LOGGER.debug("Fire and Forget Callback closed");
+		sender.cleanupTransport();
+		sender.cleanup();
+		LOGGER.debug("All cleaned for axis service client");
+		
 	}
 
 	// use this if you want a single ServiceClient (TODO to be deleted)

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsGetAudit_request.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema Document encodes the WPS GetAudit operation request.</description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<include schemaLocation="common/RequestBaseType.xsd"/>
+	<include schemaLocation="common/ProcessInstanceType.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<element name="GetAudit">
+		<annotation>
+			<documentation>WPS GetAudit operation request.</documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:RequestBaseType">
+					<sequence>
+						<element name="ProcessInstanceIdentifier" type="wps:ProcessInstanceType">
+							<annotation>
+								<documentation>Process instance identifier.</documentation>
+							</annotation>
+						</element>
+					</sequence>
+					<attribute name="shortForm" type="boolean" default="true">
+						<annotation>
+							<documentation>The short form (default) provides the execution processing flow. The long form provides the full execution trace.</documentation>
+						</annotation>
+					</attribute>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+</schema>

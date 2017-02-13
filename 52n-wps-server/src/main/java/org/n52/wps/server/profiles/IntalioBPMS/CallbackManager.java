@@ -1,13 +1,9 @@
 package org.n52.wps.server.profiles.IntalioBPMS;
 
 import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
-
 import org.apache.axis2.client.async.AxisCallback;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.saaj.util.SAAJUtil;
-import org.apache.axis2.util.XMLUtils;
-import org.apache.log4j.spi.LoggerFactory;
 import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Document;
 

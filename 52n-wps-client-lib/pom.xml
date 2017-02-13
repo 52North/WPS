@@ -41,7 +41,7 @@
 				<dependency>
 			<groupId>be.spacebel.wps</groupId>
 			<artifactId>wpsg-xml</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.3</version>
 		</dependency>
 
     </dependencies>

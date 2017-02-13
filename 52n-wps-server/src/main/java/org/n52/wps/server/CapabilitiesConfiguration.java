@@ -139,8 +139,10 @@ public class CapabilitiesConfiguration {
 			process.setProcessVersion(processVersion);
 			process.setTitle(title);
 		}
-		DataOfferings datas = capsSkeleton.getCapabilities().addNewDataOfferings();
+		DataOfferings datas = null; 
 		for(String dataName : RepositoryManager.getInstance().getDatas()) {
+		if(datas==null) { datas=capsSkeleton.getCapabilities().addNewDataOfferings();
+		}
 			DataDescriptionType description = RepositoryManager.getInstance().getDataDescription(dataName);
 			if(description==null){
 				continue;

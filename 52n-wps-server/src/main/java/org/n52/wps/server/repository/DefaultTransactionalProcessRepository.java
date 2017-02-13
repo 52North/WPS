@@ -288,7 +288,6 @@ public class DefaultTransactionalProcessRepository implements
 		UndeployProcessRequest request = (UndeployProcessRequest) process;
 		try {
 			LOGGER.info("try undeploy");
-			processManager.unDeployProcess(request);
 			Property[] propArray = getRepository().getPropertyArray();
 			for (int i = 0; i < propArray.length; i++) {
 				LOGGER.info(i);
@@ -304,6 +303,8 @@ public class DefaultTransactionalProcessRepository implements
 					}
 				}
 			}
+			processManager.unDeployProcess(request);
+			
 			
 		} catch (Exception e) {
 			LOGGER.warn("Could not remove algorithm: " + request);

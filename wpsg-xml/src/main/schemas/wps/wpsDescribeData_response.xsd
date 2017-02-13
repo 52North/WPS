@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:gmd="http://www.isotc211.org/2005/gmd" targetNamespace="http://www.opengis.net/wps/1.0.0" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsDescribeData_response.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema Document encodes the WPS DescribeData operation response.</description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="../ISO_19139/gmd/gmd.xsd"/>
+	<include schemaLocation="common/ResponseBaseType.xsd"/>
+	<include schemaLocation="common/DataBriefType.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<element name="DataDescriptions">
+		<annotation>
+			<documentation>WPS DescribeData operation response. </documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:ResponseBaseType">
+					<sequence>
+						<element name="DataDescription" type="wps:DataDescriptionType" maxOccurs="unbounded">
+							<annotation>
+								<documentation>Ordered list of one or more full Data descriptions, listed in the order in which they were requested in the DescribeData operation request. </documentation>
+							</annotation>
+						</element>
+					</sequence>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+	<!-- =========================================================== -->
+	<complexType name="DataDescriptionType">
+		<annotation>
+			<documentation>Full description of a data. </documentation>
+		</annotation>
+		<complexContent>
+			<extension base="wps:DataBriefType">
+				<sequence>
+					<element ref="gmd:MD_Metadata" minOccurs="0"/>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+</schema>

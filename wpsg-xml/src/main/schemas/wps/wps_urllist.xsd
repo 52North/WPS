@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://ese.esa.int/wps/format/URLList" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ese.esa.int/wps/format/URLList" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="URLList">
+		<xs:annotation>
+			<xs:documentation>A list of urls</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="url" type="xs:string" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="count" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Number of url elements</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

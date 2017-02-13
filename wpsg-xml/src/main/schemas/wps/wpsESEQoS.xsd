@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<xs:schema xmlns:esehdr="http://ese.esa.int/wps/qos" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" targetNamespace="http://ese.esa.int/wps/qos" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="../ows/1.1.0/owsCommon.xsd"/>
+	<xs:element name="QoS" type="esehdr:QoSType"/>
+	<xs:complexType name="QoSType">
+		<xs:sequence>
+			<xs:element name="Priority">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="LOW"/>
+						<xs:enumeration value="MEDIUM"/>
+						<xs:enumeration value="HIGH"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

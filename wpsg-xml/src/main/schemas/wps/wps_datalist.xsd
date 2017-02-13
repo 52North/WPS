@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://ese.esa.int/wps/format/DataList" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ese.esa.int/wps/format/DataList" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="DataList">
+		<xs:annotation>
+			<xs:documentation>A list of data entries</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Entry" type="xs:string" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="count" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>Number of data elements</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

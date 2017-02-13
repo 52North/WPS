@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:ns1="http://org.apache.axis2/xsd" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wpsx="http://www.esa.int/example/wsdl1" xmlns:ns="http://schemas.ggf.org/jsdl/2005/11/jsdl" xmlns:ns2="http://www.isotc211.org/2005/gco" xmlns:ns3="http://www.isotc211.org/2005/gmd" xmlns:ns4="http://www.isotc211.org/2005/gsr" xmlns:ns5="http://www.isotc211.org/2005/gss" xmlns:ns6="http://www.isotc211.org/2005/gts" xmlns:ns7="http://www.opengis.net/gml/3.2" targetNamespace="http://www.esa.int/example/wsdl1">
+	<wsdl:types>
+		<xs:schema attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://www.opengis.net/wps/1.0.0">
+			<xs:include schemaLocation="./wps/wpsAll.xsd"/>
+			<xs:import namespace="http://www.w3.org/2005/08/addressing" schemaLocation="./wsa/ws-addr.xsd"/>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="executeResponseCallbackRequest">
+		<wsdl:part name="parameters" element="wps:ExecuteResponse"/>
+		<wsdl:part name="RelatesTo" element="wsa:RelatesTo"/>
+	</wsdl:message>
+	<wsdl:message name="executeRequest">
+		<wsdl:part name="parameters" element="wps:Execute"/>
+		<wsdl:part name="ReplyTo" element="wsa:ReplyTo"/>
+		<wsdl:part name="MessageID" element="wsa:MessageID"/>
+	</wsdl:message>
+	<wsdl:message name="executeResponse">
+		<wsdl:part name="parameters" element="wps:ExecuteResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="CallbackWPSGPortType">
+		<wsdl:operation name="ExecuteResponseCallback">
+			<wsdl:input message="wpsx:executeResponseCallbackRequest" wsaw:Action="urn:executeResponseCallback"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:portType name="WPSGPortType">
+		<wsdl:operation name="Execute">
+			<wsdl:input message="wpsx:executeRequest" wsaw:Action="urn:execute"/>
+			<wsdl:output message="wpsx:executeResponse" wsaw:Action="urn:executeResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="CallbackWPSGSoap11Binding" type="wpsx:CallbackWPSGPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ExecuteResponseCallback">
+			<soap:operation soapAction="urn:executeResponseCallback" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+				<soap:header message="wpsx:executeResponseCallbackRequest" part="RelatesTo" use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:binding name="WPSGSoap11Binding" type="wpsx:WPSGPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="Execute">
+			<soap:operation soapAction="urn:execute" style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+				<soap:header message="wpsx:executeRequest" part="ReplyTo" use="literal"/>
+				<soap:header message="wpsx:executeRequest" part="MessageID" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WPS-Workflow">
+		<wsdl:port name="WPSGHttpSoap11Endpoint" binding="wpsx:WPSGSoap11Binding">
+			<soap:address location="http://l-pccnl:8080/ode/processes/TemplateWorkflow"/>
+		</wsdl:port>
+	</wsdl:service>
+	<wsdl:service name="WPS-ClientCallback">
+		<wsdl:port name="CallbackWPSGHttpSoap11Endpoint" binding="wpsx:CallbackWPSGSoap11Binding">
+			<soap:address location="http://localhost:8080/unknown/callback"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

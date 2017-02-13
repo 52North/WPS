@@ -58,6 +58,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.opengis.ows.x11.BoundingBoxType;
 import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.wps.x100.InputDescriptionType;
 import net.opengis.wps.x100.InputType;
@@ -67,6 +68,7 @@ import org.apache.log4j.Logger;
 import org.n52.wps.io.IParser;
 import org.n52.wps.io.ParserFactory;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.SimpleBBoxBinding;
 import org.n52.wps.io.datahandler.xml.AbstractXMLParser;
 import org.n52.wps.io.datahandler.xml.GML2BasicParser;
 import org.n52.wps.io.datahandler.xml.GML3BasicParser;
@@ -417,7 +419,13 @@ public class InputHandler {
 	 */
 	protected void handleBBoxValue(InputType input) throws ExceptionReport{
 		//String inputID = input.getIdentifier().getStringValue();
-		throw new ExceptionReport("BBox is not supported", ExceptionReport.OPERATION_NOT_SUPPORTED);
+		String inputID = input.getIdentifier().getStringValue();
+		BoundingBoxType bbox = input.getData().getBoundingBoxData();
+	
+		List<IData> list = new ArrayList<IData>();
+		list.add(new SimpleBBoxBinding(bbox));
+		inputData.put(inputID, list);
+		
 	}
 	
 	/**
