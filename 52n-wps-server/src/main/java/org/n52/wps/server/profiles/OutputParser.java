@@ -166,7 +166,6 @@ public class OutputParser {
 	}
 
 	public static IData handleLiteralValue(OutputDataType output) throws ExceptionReport {
-		
 		String parameter = output.getData().getLiteralData().getStringValue();
 		String xmlDataType = output.getData().getLiteralData().getDataType();
 		IData parameterObj = null;

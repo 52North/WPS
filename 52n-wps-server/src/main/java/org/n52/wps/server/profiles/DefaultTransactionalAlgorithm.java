@@ -32,7 +32,10 @@ package org.n52.wps.server.profiles;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +50,17 @@ import net.opengis.wps.x100.OutputDataType;
 import net.opengis.wps.x100.OutputDescriptionType;
 import net.opengis.wps.x100.ProcessDescriptionDocument;
 import net.opengis.wps.x100.ProcessDescriptionType;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.PropertyDocument.Property;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.DataListDataBinding;
+import org.n52.wps.io.data.binding.complex.EODataCacheDataBinding;
 import org.n52.wps.io.data.binding.complex.GenericFileDataBinding;
 import org.n52.wps.io.data.binding.complex.URLListDataBinding;
 import org.n52.wps.io.data.binding.literal.LiteralBooleanBinding;
@@ -61,12 +69,14 @@ import org.n52.wps.io.data.binding.literal.LiteralIntBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
+import org.n52.wps.server.profiles.java.JavaManager;
+import org.n52.wps.server.profiles.java.JavaTransactionalAlgorithm;
 import org.n52.wps.server.repository.TransactionalRepositoryManager;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
+
 
 public class DefaultTransactionalAlgorithm extends
 		AbstractTransactionalAlgorithm {
@@ -106,7 +116,7 @@ public class DefaultTransactionalAlgorithm extends
 	}
 
 	// TODO : BPEL has nothing to do here...
-	public HashMap<String, IData> run(ExecuteRequest req)
+	public Map<String, IData> run(ExecuteRequest req)
 			throws ExceptionReport {
 		ExecuteResponseDocument responseDocument;
 		HashMap<String, IData> resultHash = new HashMap<String, IData>();
@@ -119,6 +129,11 @@ public class DefaultTransactionalAlgorithm extends
 		Document invokeResponse;
 		LOGGER.info("DefaultTransactionAlgo Run");
 		try {
+			// in case of the specific case of JavaManager the invokeJava method must be called
+			// because it directly returns the Map<String,IData> format
+			if(getProcessManager() instanceof JavaManager) {
+				return ((JavaManager)getProcessManager()).invokeJava(req, getAlgorithmID());
+			}
 			invokeResponse = getProcessManager().invoke(req, getAlgorithmID());
 			/**
 			 * Parsing
@@ -149,7 +164,11 @@ public class DefaultTransactionalAlgorithm extends
 							.put(key, OutputParser.handleBBoxValue(ioElement));
 				}
 			}
-		} catch (CancellationException e) {
+		} 
+		catch(InterruptedException e) {
+			throw new CancellationException();
+		}
+		catch (CancellationException e) {
 			throw e;
 		} catch (ExceptionReport e) {
 			e.printStackTrace();
@@ -250,6 +269,29 @@ public class DefaultTransactionalAlgorithm extends
 	}
 
 	public Class getInputDataType(String id) {
+		
+		if(getProcessManager() instanceof JavaManager) {
+			try {
+			JavaManager manager = (JavaManager)getProcessManager();
+			List<URL> jarList = new ArrayList<URL>();
+			String jarDir = manager.getProcessDeploymentDirectory(getAlgorithmID());
+			// List all file in parent directory with jar suffix extension
+			Collection<File> list = FileUtils.listFiles(new File(jarDir), FileFilterUtils.suffixFileFilter("jar"), null);
+			for(File f : list) {
+				URL jarURL = f.toURI().toURL();
+				jarList.add(jarURL);
+			}
+			ClassLoader classLoader = new URLClassLoader(jarList.toArray(new URL[jarList.size()]), this.getClass().getClassLoader());
+			
+			//if(		be.spacebel.ese.data.wps.DownloadEOData)
+			
+			JavaTransactionalAlgorithm algorithm = (JavaTransactionalAlgorithm)classLoader.loadClass(algorithmID).newInstance();
+			Class itype = algorithm.getInputDataType(id);
+			if(itype !=null)
+			return itype;
+			}
+			catch(Exception e) {e.printStackTrace();};
+		}
 		InputDescriptionType[] inputs = processDescription.getDataInputs()
 				.getInputArray();
 		for (InputDescriptionType input : inputs) {
@@ -292,6 +334,32 @@ public class DefaultTransactionalAlgorithm extends
 	}
 
 	public Class getOutputDataType(String id) {
+		if(getProcessManager() instanceof JavaManager) {
+			try {
+			JavaManager manager = (JavaManager)getProcessManager();
+			List<URL> jarList = new ArrayList<URL>();
+			String jarDir = manager.getProcessDeploymentDirectory(getAlgorithmID());
+			// List all file in parent directory with jar suffix extension
+			Collection<File> list = FileUtils.listFiles(new File(jarDir), FileFilterUtils.suffixFileFilter("jar"), null);
+			for(File f : list) {
+				URL jarURL = f.toURI().toURL();
+				jarList.add(jarURL);
+			}
+			ClassLoader classLoader = new URLClassLoader(jarList.toArray(new URL[jarList.size()]), this.getClass().getClassLoader());
+			
+			//if(		be.spacebel.ese.data.wps.DownloadEOData)
+			
+			JavaTransactionalAlgorithm algorithm = (JavaTransactionalAlgorithm)classLoader.loadClass(algorithmID).newInstance();
+			Class itype = algorithm.getOutputDataType(id);
+			if(itype !=null) {
+				LOGGER.info("itype is not null so using the implemented local method");
+				return itype;
+			}
+			
+			}
+			catch(Exception e) {e.printStackTrace();};
+		}
+		LOGGER.info("LOOKing for standard default transactional algorithm output class");
 		OutputDescriptionType[] outputs = processDescription
 				.getProcessOutputs().getOutputArray();
 
@@ -323,11 +391,26 @@ public class DefaultTransactionalAlgorithm extends
 							.getFormat().getMimeType();
 					if (mimeType.contains("xml") || (mimeType.contains("XML"))) {
 						if (output.getComplexOutput().getDefault().getFormat()
-								.getSchema().contains("wps")) {
+								.getSchema().contains("URLList")) {
 							LOGGER.info("Output Data Type found is URLListDataBinding");
 							return URLListDataBinding.class;
 
-						} else {
+						} 
+						else if (output.getComplexOutput().getDefault().getFormat()
+								.getSchema().contains("DataList")) {
+							LOGGER.info("Output Data Type found is URLListDataBinding");
+							return DataListDataBinding.class;
+
+						} 
+						else if (output.getComplexOutput().getDefault().getFormat()
+								.getSchema().contains("EODataCache")) {
+							LOGGER.info("Output Data Type found is URLListDataBinding");
+							return EODataCacheDataBinding.class;
+
+						} 
+
+						
+						else {
 							return GenericFileDataBinding.class;
 						}
 

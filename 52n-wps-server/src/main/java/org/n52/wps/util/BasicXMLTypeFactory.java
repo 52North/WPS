@@ -35,6 +35,8 @@ Muenster, Germany
 package org.n52.wps.util;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.apache.ws.security.util.XmlSchemaDateFormat;
@@ -73,6 +75,13 @@ public class BasicXMLTypeFactory {
 		
 	}
 	
+	
+	public static void main(String[] args) throws ParseException {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Date dateStr = formatter.parse("2010-02-02");
+		System.out.println(dateStr.toGMTString());
+	}
+	
 	/**
 	 * This is a helper method to create always the correct Java Type out of a string. 
 	 * It is based on the basic schema datatypes.
@@ -100,7 +109,20 @@ public class BasicXMLTypeFactory {
 			return new LiteralBooleanBinding(Boolean.parseBoolean(obj));
 		} else if (xmlDataTypeURI.equals(STRING_URI)) {
 			return new LiteralStringBinding(obj);
-		} else if (xmlDataTypeURI.equals(DATETIME_URI) || xmlDataTypeURI.equals(DATE_URI)) {
+		} 
+		else if (xmlDataTypeURI.equals(DATE_URI)) {
+			
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			Date dateStr = formatter.parse(obj);
+			return new LiteralDateTimeBinding(dateStr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		}
+		else if ( xmlDataTypeURI.equals(DATETIME_URI)) {
 			try {
 				return new LiteralDateTimeBinding(new XmlSchemaDateFormat()
 						.parse(obj));

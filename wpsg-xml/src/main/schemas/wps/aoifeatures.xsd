@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v2004 rel. 4 U (http://www.xmlspy.com) by Joeri Theelen (GIM NV) -->
+<!--==============================================================
+    File:			aoifeatures.xsd
+    Version:	v4.4.0 2007-08-21
+    Author:		Stefaan Desender
+    Company:	GIM Geographic Information Management nv
+    ==============================================================-->
+<xsd:schema targetNamespace="http://www.esa.int/xml/schemas/mass/aoifeatures" elementFormDefault="qualified" version="1.0" xmlns:gml="http://www.opengis.net/gml" xmlns:aoi="http://www.esa.int/xml/schemas/mass/aoifeatures" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:appinfo>aoifeatures.xsd v4.4.0 2007-08-21</xsd:appinfo>
+		<xsd:documentation>GML v3 Schema for AOI features.</xsd:documentation>
+	</xsd:annotation>
+	<!--==============================================================
+    Import constructs from the GML Feature and Geometry schemas
+    ==============================================================-->
+	<xsd:import namespace="http://www.opengis.net/gml" schemaLocation="../gml/3.1.1/base/gml.xsd"/>
+	<!--================================================================
+    Global element Declarations 
+    ================================================================-->
+	<xsd:element name="AreaOfInterest" type="aoi:AreaOfInterestType" substitutionGroup="gml:_FeatureCollection"/>
+	<!--================================================================
+    Private element Declarations 
+    ================================================================-->
+	<xsd:element name="Feature" type="aoi:FeatureType" substitutionGroup="gml:_Feature"/>
+	<!--==============================================================
+    Type definitions
+    ==============================================================-->
+	<xsd:complexType name="AreaOfInterestType">
+		<xsd:complexContent>
+			<xsd:restriction base="gml:AbstractFeatureCollectionType">
+				<xsd:sequence>
+					<xsd:element ref="gml:boundedBy" minOccurs="0"/>
+					<xsd:element ref="gml:featureMember" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+				<xsd:attribute ref="gml:id" use="required"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="featureMember" substitutionGroup="gml:featureMember">
+		<xsd:complexType>
+			<xsd:complexContent>
+				<xsd:restriction base="gml:FeaturePropertyType">
+					<xsd:sequence>
+						<xsd:element ref="aoi:Feature"/>
+					</xsd:sequence>
+				</xsd:restriction>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:complexType name="RestrictedAbstractFeatureType" abstract="true">
+		<xsd:complexContent>
+			<xsd:restriction base="gml:AbstractFeatureType">
+				<xsd:sequence>
+					<xsd:element ref="gml:boundedBy" minOccurs="0"/>
+				</xsd:sequence>
+				<xsd:attribute ref="gml:id" use="required"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="FeatureType">
+		<xsd:complexContent>
+			<xsd:extension base="aoi:RestrictedAbstractFeatureType">
+				<xsd:sequence>
+					<xsd:element name="code" type="xsd:token" minOccurs="0"/>
+					<xsd:element name="label" type="xsd:normalizedString" minOccurs="0"/>
+					<xsd:element name="geometry" type="aoi:GeometryPropertyType"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="GeometryPropertyType">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element ref="gml:Point"/>
+				<xsd:element ref="gml:MultiPoint"/>
+				<xsd:element ref="gml:LineString"/>
+				<xsd:element ref="gml:MultiCurve"/>
+				<xsd:element ref="gml:Polygon"/>
+				<xsd:element ref="gml:MultiSurface"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

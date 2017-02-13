@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsExecute_response.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema Document encodes the WPS Execute operation response.</description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<include schemaLocation="common/ResponseBaseType.xsd"/>
+	<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="../ows/1.1.0/owsAll.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<element name="DeployProcessResponse">
+		<annotation>
+			<documentation>WPS DeployProcess operation response. </documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:ResponseBaseType">
+					<sequence>
+						<element name="Result">
+							<annotation>
+								<documentation>DeployProcess request result.</documentation>
+							</annotation>
+							<complexType>
+								<sequence>
+									<element name="Message" type="string" minOccurs="0">
+										<annotation>
+											<documentation>Result message. Required if success is false.</documentation>
+										</annotation>
+									</element>
+								</sequence>
+								<attribute name="success" type="boolean" use="required"/>
+							</complexType>
+						</element>
+						<element ref="ows:Identifier" minOccurs="0">
+							<annotation>
+								<documentation>Identifier of the deployed process.</documentation>
+							</annotation>
+						</element>
+					</sequence>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+</schema>

@@ -11,43 +11,7 @@
     <packaging>jar</packaging>
     <name>52north 52n-wps-io</name>
     <description>The project 52 north 52n-wps-io does something with JAVA.</description>
-     <repositories>
-       <repository>
-        <releases>
-                <enabled>true</enabled>
-        </releases>
-        <snapshots>
-                <enabled>false</enabled>
-        </snapshots>
-        <id>ifgi.releases</id>
-        <name>Ifgi - Maven releases</name>
-        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/releases/</url>
-</repository>
-<repository>
-        <releases>
-                <enabled>false</enabled>
-        </releases>
-        <snapshots>
-                <enabled>true</enabled>
-        </snapshots>
-        <id>ifgi.snapshots</id>
-        <name>Ifgi - Maven snapshots</name>
-        <url>http://ifgi-redundance.uni-muenster.de/mvn-repository/snapshots/</url>
-</repository>      
-<repository>
-                <id>osgeo</id>
-                <name>Open Source Geospatial Foundation Repository</name>
-                <url>http://download.osgeo.org/webdav/geotools/</url>
-            </repository>
-            <repository>
-                   <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <id>opengeo</id>
-                    <name>OpenGeo Maven Repository</name>
-                    <url>http://repo.opengeo.org</url>
-            </repository>
-    </repositories>   
+ 
     
  <dependencies>
  
@@ -58,6 +22,11 @@
    <version>1.0.4</version>
    <scope>compile</scope>
 </dependency>
+	<dependency>
+			<groupId>be.spacebel.wps</groupId>
+			<artifactId>wpsg-xml</artifactId>
+			<version>2.0.3</version>
+		</dependency>
 <dependency>
      <groupId>com.vividsolutions</groupId>
      <artifactId>jts</artifactId>
@@ -129,7 +98,7 @@
 <dependency>
    <groupId>commons-io</groupId>
    <artifactId>commons-io</artifactId>
-   <version>1.3.1</version>
+   <version>2.4</version>
 </dependency>
 <dependency>
    <groupId>javax.media</groupId>

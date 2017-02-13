@@ -53,6 +53,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 
+
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.geotools.feature.DefaultFeatureCollections;
@@ -80,7 +81,7 @@ import org.opengis.filter.identity.Identifier;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
+import xint.esa.ese.wps.format.urlList.URLListDocument;
 
 import com.vividsolutions.jts.geom.Geometry;
 

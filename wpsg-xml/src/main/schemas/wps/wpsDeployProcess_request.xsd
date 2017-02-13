@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsExecute_request.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema Document encodes the WPS Execute operation request.</description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<include schemaLocation="common/RequestBaseType.xsd"/>
+	<include schemaLocation="wpsDescribeProcess_response.xsd"/>
+	<include schemaLocation="common/DeploymentProfiles.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<element name="DeployProcess">
+		<annotation>
+			<documentation>WPS DeployProcess operation request.</documentation>
+		</annotation>
+		<complexType>
+			<complexContent>
+				<extension base="wps:RequestBaseType">
+					<sequence>
+						<element ref="wps:ProcessDescription"/>
+						<element name="DeploymentProfile" type="wps:AbstractDeploymentProfileType">
+							<annotation>
+								<documentation>Process deployment profile. This can be a Apache ODE deployment profile or a SAGA deployment profile.</documentation>
+							</annotation>
+						</element>
+					</sequence>
+				</extension>
+			</complexContent>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+	<element name="ProcessDescription" type="wps:ProcessDescriptionType">
+		<annotation>
+			<documentation>Full Process description.</documentation>
+		</annotation>
+	</element>
+</schema>

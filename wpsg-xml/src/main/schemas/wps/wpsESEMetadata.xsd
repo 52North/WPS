@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 sp2 (x64) (http://www.altova.com) by John (SPB) -->
+<xs:schema xmlns:esepmd="http://ese.esa.int/wps/metadata" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" targetNamespace="http://ese.esa.int/wps/metadata" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import namespace="http://www.opengis.net/ows/1.1" schemaLocation="../ows/1.1.0/owsCommon.xsd"/>
+	<xs:element name="Metadata" type="esepmd:MetadataType" substitutionGroup="ows:AbstractMetaData"/>
+	<xs:complexType name="MetadataType">
+		<xs:sequence>
+			<xs:element name="Creator" type="xs:string" minOccurs="0"/>
+			<xs:element name="Validator" type="xs:string" minOccurs="0"/>
+			<xs:element name="Usage" type="xs:string" minOccurs="0"/>
+			<xs:element name="ValidationStatus" type="xs:string" minOccurs="0"/>
+			<xs:element name="Documentation" type="xs:string" minOccurs="0"/>
+			<xs:element name="ProcessingTimeEstimate" type="xs:string" minOccurs="0"/>
+			<xs:element name="ResourceEstimates" type="esepmd:ResourceEstimatesType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ResourceEstimatesType">
+		<xs:choice>
+			<xs:sequence>
+				<xs:element name="CPU" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of CPUs</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="RAM" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of GB</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Storage" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Number of GB</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="Network" type="xs:int">
+					<xs:annotation>
+						<xs:documentation>Required Mbits/s</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+			<xs:sequence>
+				<xs:element name="ProcessingServiceURL" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Processing Service URL</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="ProcessIdentifier" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>Process identifier</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:choice>
+		<xs:attribute name="type" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="static"/>
+					<xs:enumeration value="dynamic"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

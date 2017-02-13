@@ -9,6 +9,8 @@ import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.mortbay.log.Log;
+import org.n52.wps.server.AbstractCancellableAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.handler.WPSTask;
@@ -91,11 +93,14 @@ public class CancelRequest extends Request {
 					ExceptionReport.INVALID_TASKID);
 		}
 		try {
+			if (getTaskStatus().isSetProcessStarted() || getTaskStatus().isSetProcessAccepted()) {
+				getTask().cancel(true);
+				
+			}
 			// If a task is already started, the backend should also
 			// cancel the task
 			if (getTaskStatus().isSetProcessStarted()) {
 				LOGGER.info("Doing Process Cancellation");
-				getTask().cancel(true);
 				if (getTask().isCancelled()) {
 					LOGGER.info("ProcessCancelled Yes");
 				}
@@ -105,17 +110,28 @@ public class CancelRequest extends Request {
 					((AbstractTransactionalAlgorithm) getTask().getRequest()
 							.getAlgorithm()).cancel();
 				}
+				if (getTask().getRequest().getAlgorithm() instanceof AbstractCancellableAlgorithm) {
+					LOGGER.info("Process is started --> cancel backend");
+					((AbstractCancellableAlgorithm) getTask().getRequest()
+							.getAlgorithm()).cancel();
+				}
 				// then cancel the task (the previous step generated an
 				// Exception if a problem occured)
 				
 				// update database (status file) with new status cancelled
 				// TODO replace with ProcessCancelled
+				try {
 				getTaskStatus().unsetProcessStarted();
+				}
+				catch(Exception e) {
+					Log.debug(getTaskStatus().toString());
+				}
 				getTaskStatus().setProcessCancelled("");
 				ExecuteResponse resp = new ExecuteResponse(getTask()
 						.getRequest());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.info("Task cannot be cancelled");
 			throw new ExceptionReport("The task cannot be cancelled.",
 					ExceptionReport.CANCELLATION_FAILED);

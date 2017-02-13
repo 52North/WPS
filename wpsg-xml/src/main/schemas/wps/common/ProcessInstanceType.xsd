@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<complexType name="ProcessInstanceType">
+		<annotation>
+			<documentation>Process instance identifier. </documentation>
+		</annotation>
+		<simpleContent>
+			<extension base="anyURI">
+				<attribute name="instanceId" type="anyURI">
+					<annotation>
+						<documentation>Unique identifier of the Process instance. This could be set to the statusLocation attribute found in the Execute response. </documentation>
+					</annotation>
+				</attribute>
+			</extension>
+		</simpleContent>
+	</complexType>
+	<!-- =========================================================== -->
+	<element name="ProcessInstanceIdentifier" type="wps:ProcessInstanceType">
+		<annotation>
+			<documentation>Process instance identifier.</documentation>
+		</annotation>
+	</element>
+</schema>

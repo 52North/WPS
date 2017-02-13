@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified" elementFormDefault="qualified">
 	<xs:element name="AlgorithmDescription">
 		<xs:annotation>
 			<xs:documentation>Deployment Description for a WPS Algorithm</xs:documentation>
@@ -21,7 +21,7 @@
 						<xs:documentation>URN referencing the specific container, e.g. urn:n52:wps:algorithmcontainer:arctoolbox:9.3</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="requiredRuntimeComponent" type="xs:anyURI" maxOccurs="unbounded">
+				<xs:element maxOccurs="unbounded" name="requiredRuntimeComponent" type="xs:anyURI">
 					<xs:annotation>
 						<xs:documentation>URN referencing a required processing backend, e.g. urn:n52:wps:gpsystem:arcgis:9.3</xs:documentation>
 					</xs:annotation>
@@ -32,12 +32,12 @@
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="parameter" type="AlgorithmParameterType" maxOccurs="unbounded">
+							<xs:element maxOccurs="unbounded" name="parameter" type="AlgorithmParameterType">
 								<xs:annotation>
 									<xs:documentation>The tool's parameters</xs:documentation>
 								</xs:annotation>
 							</xs:element>
-							<xs:element name="separatorString" type="xs:string" minOccurs="0">
+							<xs:element minOccurs="0" name="separatorString" type="xs:string">
 								<xs:annotation>
 									<xs:documentation>A string that acts as a seperator between parameters, e.g. " " for SPACE</xs:documentation>
 								</xs:annotation>
@@ -59,17 +59,17 @@
 			<xs:documentation>Structure for a parameter description.</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="prefixString" type="xs:string" minOccurs="0">
+			<xs:element minOccurs="0" name="prefixString" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>A prefix string that shall be added before this parameter, e.g. "-p("</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="suffixString" type="xs:string" minOccurs="0">
+			<xs:element minOccurs="0" name="suffixString" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>A suffix string that shall be added before this parameter, e.g. ")"</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="separatorString" type="xs:string" minOccurs="0">
+			<xs:element minOccurs="0" name="separatorString" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>A string that acts as a separator between individual parameter values, e.g. " " for SPACE</xs:documentation>
 				</xs:annotation>
@@ -81,12 +81,12 @@
 				<xs:element name="positionID" type="PositionIDType"/>
 				<xs:element name="stringID" type="StringIDType"/>
 			</xs:choice>
-			<xs:element name="wpsInputID" type="xs:string" minOccurs="0">
+			<xs:element minOccurs="0" name="wpsInputID" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>The WPS Input ID this parameter shall be mapped to.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="wpsOutputID" type="xs:string" minOccurs="0">
+			<xs:element minOccurs="0" name="wpsOutputID" type="xs:string">
 				<xs:annotation>
 					<xs:documentation>The WPS Output ID this parameter shall be mapped to.</xs:documentation>
 				</xs:annotation>

@@ -1,249 +1,348 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<WPSConfiguration xsi:schemaLocation="http://n52.org/wps schema_v1.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://n52.org/wps">
-  <Datahandlers>
-    <ParserList>
-      <Parser name="GML3BasicParser" className="org.n52.wps.io.datahandler.xml.GML3BasicParser" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="URLListParser" className="org.n52.wps.io.datahandler.xml.URLListParser" active="true">
-        <Property name="supportedSchema" active="true">http://ssegrid.esa.int/wps/JavaSAGAProfile</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="SimpleGMLParser" className="org.n52.wps.io.datahandler.xml.SimpleGMLParser" active="true">
-        <Property name="supportedSchema" active="true">http://www.opengeospatial.org/gmlpacket.xsd</Property>
-        <Property name="supportedSchema" active="true">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GML2BasicParser" className="org.n52.wps.io.datahandler.xml.GML2BasicParser" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GML2BasicParser4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicParser4Files" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="AsciiGrassParser" className="org.n52.wps.io.datahandler.binary.AsciiGrassParser" active="true">
-        <Property name="supportedFormat" active="true">application/image-ascii-grass</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GenericFileParser" className="org.n52.wps.io.datahandler.binary.GenericFileParser" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedFormat" active="true">application/img</Property>
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">application/geotiff</Property>
-        <Property name="supportedFormat" active="true">application/dbase</Property>
-        <Property name="supportedFormat" active="true">application/remap</Property>
-        <Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
-        <Property name="supportedFormat" active="true">application/x-netcdf</Property>
-        <Property name="supportedFormat" active="true">application/dgn</Property>
-        <Property name="supportedFormat" active="true">image/jpeg</Property>
-        <Property name="supportedFormat" active="true">image/png</Property>
-        <Property name="supportedFormat" active="true">application/x-geotiff</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser" active="true">
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">image/geotiff</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GeotiffParserZipped" className="org.n52.wps.io.datahandler.binary.GeotiffZippedParser" active="true">
-        <Property name="supportedFormat" active="true">image/x-zipped-tiff</Property>
-        <Property name="supportedFormat" active="true">image/x-zipped-geotiff</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GeotiffBase64Parser" className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser" active="true">
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">image/geotiff</Property>
-        <Property name="supportedEncoding" active="true">Base64</Property>
-      </Parser>
-      <Parser name="GTBinZippedSHPParserBase64" className="org.n52.wps.io.datahandler.binary.GTBinZippedBase64SHPParser" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedEncoding" active="true">Base64</Property>
-      </Parser>
-      <Parser name="GTBinZippedSHPParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GML3BasicParser4Files" className="org.n52.wps.io.datahandler.xml.GML3BasicParser4Files" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="GRASSKMLParser" className="org.n52.wps.io.datahandler.xml.GRASSKMLParser" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
-        <Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="KMLParser" className="org.n52.wps.io.datahandler.xml.KMLParser" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
-        <Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Parser>
-      <Parser name="WKTParser" className="org.n52.wps.io.datahandler.binary.GTBinZippedWKT64Parser" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
-        <Property name="supportedEncoding" active="true">Base64</Property>
-      </Parser>
-    </ParserList>
-    <GeneratorList>
-     <Generator name="URLListGenerator" className="org.n52.wps.io.datahandler.xml.URLListGenerator" active="true">
-        <Property name="supportedSchema" active="true">http://ssegrid.esa.int/wps/JavaSAGAProfile</Property>
-        <Property name="supportedSchema" active="true">http://schemas.spacebel.be/wps/urllist.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="GML3BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator" active="true">
-        <Property name="featureTransformerIncludeBounding" active="true">false</Property>
-        <Property name="featureTransformerDecimalPlaces" active="true">4</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="GML2BasicGenerator" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator" active="true">
-        <Property name="featureTransformerIncludeBounding" active="true">false</Property>
-        <Property name="featureTransformerDecimalPlaces" active="true">4</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="SimpleGMLGenerator" className="org.n52.wps.io.datahandler.xml.SimpleGMLGenerator" active="true">
-        <Property name="supportedSchema" active="true">http://www.opengeospatial.org/gmlpacket.xsd</Property>
-        <Property name="supportedSchema" active="true">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="AsciiGrassGenerator" className="org.n52.wps.io.datahandler.binary.AsciiGrassGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/image-ascii-grass</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="GeotiffGenerator" className="org.n52.wps.io.datahandler.binary.GeotiffGenerator" active="true">
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">image/geotiff</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <!--GTBinZippedSHPGenerator inherits formats etc from GMLBasic parser-->
-      <Generator name="GTBinZippedSHPGenerator" className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedEncoding" active="true">Base64</Property>
-      </Generator>
-      <Generator name="GenericFileGenerator" className="org.n52.wps.io.datahandler.binary.GenericFileGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedFormat" active="true">application/shp</Property>
-        <Property name="supportedFormat" active="true">application/img</Property>
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">application/geotiff</Property>
-        <Property name="supportedFormat" active="true">application/dbase</Property>
-        <Property name="supportedFormat" active="true">application/remap</Property>
-        <Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
-        <Property name="supportedFormat" active="true">application/x-netcdf</Property>
-        <Property name="supportedFormat" active="true">application/dgn</Property>
-        <Property name="supportedFormat" active="true">image/jpeg</Property>
-        <Property name="supportedFormat" active="true">image/png</Property>
-        <Property name="supportedFormat" active="true">application/x-geotiff</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="GenericFileGeneratorBase64" className="org.n52.wps.io.datahandler.binary.Base64Generator" active="true">
-        <Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
-        <Property name="supportedFormat" active="true">application/img</Property>
-        <Property name="supportedFormat" active="true">application/img</Property>
-        <Property name="supportedFormat" active="true">image/tiff</Property>
-        <Property name="supportedFormat" active="true">application/geotiff</Property>
-        <Property name="supportedFormat" active="true">application/dbase</Property>
-        <Property name="supportedFormat" active="true">application/remap</Property>
-        <Property name="supportedEncoding" active="true">Base64</Property>
-      </Generator>
-      <Generator name="GRASSXMLGenerator" className="org.n52.wps.io.datahandler.xml.GRASSXMLGenerator" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <!--GML2BasicGenerator4Files inherits formats etc from GMLBasic parser-->
-      <Generator name="GML2BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files" active="true"/>
-      <Generator name="GML3BasicGenerator4Files" className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator4Files" active="true">
-        <Property name="featureTransformerIncludeBounding" active="true">false</Property>
-        <Property name="featureTransformerDecimalPlaces" active="true">4</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
-        <Property name="supportedFormat" active="true">text/xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-      <Generator name="WMSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWMSGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/WMS</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-        <Property name="Geoserver_username" active="true">admin</Property>
-        <Property name="Geoserver_password" active="true">geoserver</Property>
-        <Property name="Geoserver_host" active="true">localhost</Property>
-        <Property name="Geoserver_port" active="true">8080</Property>
-      </Generator>
-      <Generator name="WFSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWFSGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/WFS</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-        <Property name="Geoserver_username" active="true">admin</Property>
-        <Property name="Geoserver_password" active="true">geoserver</Property>
-        <Property name="Geoserver_host" active="true">localhost</Property>
-        <Property name="Geoserver_port" active="true">8080</Property>
-      </Generator>
-      <Generator name="WCSGenerator" className="org.n52.wps.io.datahandler.ows.GeoserverWCSGenerator" active="true">
-        <Property name="supportedFormat" active="true">application/WCS</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-        <Property name="Geoserver_username" active="true">admin</Property>
-        <Property name="Geoserver_password" active="true">geoserver</Property>
-        <Property name="Geoserver_host" active="true">localhost</Property>
-        <Property name="Geoserver_port" active="true">8080</Property>
-      </Generator>
-      <Generator name="KMLGenerator" className="org.n52.wps.io.datahandler.xml.KMLGenerator" active="true">
-        <Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
-        <Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
-        <Property name="supportedEncoding" active="true">UTF-8</Property>
-      </Generator>
-    </GeneratorList>
-  </Datahandlers>
-  <AlgorithmRepositoryList>
-    <Repository name="LocalAlgorithmRepository" className="org.n52.wps.server.repository.LocalAlgorithmRepository" active="true">
-    <!-- 
-       <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.intergrid.GridDataTransfer</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.importgrid.ImportData</Property>
-      <Property name="Algorithm" active="true">org.n52.wps.server.algorithm.publishgrid.PublishData</Property>
-     -->
-     </Repository>
-    <Repository name="UploadedAlgorithmRepository" className="org.n52.wps.server.repository.UploadedAlgorithmRepository" active="true"/>
-		
-		<Repository name="GeotoolsProcessRepository" className="org.n52.wps.geotools.GeotoolsProcessRepository" active="false">
+<WPSConfiguration xsi:schemaLocation="http://n52.org/wps schema_v1.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://n52.org/wps">
+	<Datahandlers>
+		<ParserList>
+			<Parser name="GML3BasicParser" className="org.n52.wps.io.datahandler.xml.GML3BasicParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="URLListParser" className="org.n52.wps.io.datahandler.xml.URLListParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/URLList</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="EODataListParser" className="org.n52.wps.io.datahandler.xml.EODataListParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/EODataCache</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="DataListParser" className="org.n52.wps.io.datahandler.xml.DataListParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/DataList</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="SimpleGMLParser" className="org.n52.wps.io.datahandler.xml.SimpleGMLParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://www.opengeospatial.org/gmlpacket.xsd</Property>
+				<Property name="supportedSchema" active="true">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GML2BasicParser" className="org.n52.wps.io.datahandler.xml.GML2BasicParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GML2BasicParser4Files"
+				className="org.n52.wps.io.datahandler.xml.GML2BasicParser4Files"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="AsciiGrassParser"
+				className="org.n52.wps.io.datahandler.binary.AsciiGrassParser"
+				active="true">
+				<Property name="supportedFormat" active="true">application/image-ascii-grass</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			
+					<Parser name="GenericXMLParser" className="be.vito.ese.wps.io.GenericXMLParser" active="true">
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+			</Parser>      
+			
+			
+			
+			<Parser name="GenericFileParser"
+				className="org.n52.wps.io.datahandler.binary.GenericFileParser"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">application/geotiff</Property>
+				<Property name="supportedFormat" active="true">application/dbase</Property>
+				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GeotiffParser" className="org.n52.wps.io.datahandler.binary.GeotiffParser"
+				active="true">
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">image/geotiff</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GeotiffParserZipped"
+				className="org.n52.wps.io.datahandler.binary.GeotiffZippedParser"
+				active="true">
+				<Property name="supportedFormat" active="true">image/x-zipped-tiff</Property>
+				<Property name="supportedFormat" active="true">image/x-zipped-geotiff</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GeotiffBase64Parser"
+				className="org.n52.wps.io.datahandler.binary.GeotiffBase64Parser"
+				active="true">
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">image/geotiff</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Parser>
+			<Parser name="GTBinZippedSHPParserBase64"
+				className="org.n52.wps.io.datahandler.binary.GTBinZippedBase64SHPParser"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Parser>
+			<Parser name="GTBinZippedSHPParser"
+				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPParser"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GML3BasicParser4Files"
+				className="org.n52.wps.io.datahandler.xml.GML3BasicParser4Files"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="GRASSKMLParser" className="org.n52.wps.io.datahandler.xml.GRASSKMLParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
+				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="KMLParser" className="org.n52.wps.io.datahandler.xml.KMLParser"
+				active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
+				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Parser>
+			<Parser name="WKTParser"
+				className="org.n52.wps.io.datahandler.binary.GTBinZippedWKT64Parser"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-wkt</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Parser>
+		</ParserList>
+		<GeneratorList>
+			<Generator name="TimeSeriesGenerator" className="be.vito.ese.wps.io.TimeSeriesGenerator" active="true">
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="supportedSchema" active="true">http://vito.be/ese/timeseries.xsd</Property>
+			</Generator>	      
+			<Generator name="URLListGenerator"
+				className="org.n52.wps.io.datahandler.xml.URLListGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/URLList</Property>
+				<Property name="supportedSchema" active="true">http://schemas.spacebel.be/wps/urllist.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="EODataListGenerator"
+				className="org.n52.wps.io.datahandler.xml.EODataListGenerator"
+				active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/EODataCache</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="DataListGenerator"
+				className="org.n52.wps.io.datahandler.xml.DataListGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://ese.esa.int/wps/format/DataList</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="GML3BasicGenerator"
+				className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator"
+				active="true">
+				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
+				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="GML2BasicGenerator"
+				className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator"
+				active="true">
+				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
+				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="SimpleGMLGenerator"
+				className="org.n52.wps.io.datahandler.xml.SimpleGMLGenerator"
+				active="true">
+				<Property name="supportedSchema" active="true">http://www.opengeospatial.org/gmlpacket.xsd</Property>
+				<Property name="supportedSchema" active="true">http://geoserver.itc.nl:8080/wps/schemas/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/gmlpacket.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="AsciiGrassGenerator"
+				className="org.n52.wps.io.datahandler.binary.AsciiGrassGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/image-ascii-grass</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="GeotiffGenerator"
+				className="org.n52.wps.io.datahandler.binary.GeotiffGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">image/geotiff</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<!--GTBinZippedSHPGenerator inherits formats etc from GMLBasic parser -->
+			<Generator name="GTBinZippedSHPGenerator"
+				className="org.n52.wps.io.datahandler.binary.GTBinZippedSHPGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Generator>
+			<Generator name="GenericFileGenerator"
+				className="org.n52.wps.io.datahandler.binary.GenericFileGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedFormat" active="true">application/shp</Property>
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">application/geotiff</Property>
+				<Property name="supportedFormat" active="true">application/dbase</Property>
+				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedFormat" active="true">application/x-erdas-hfa</Property>
+				<Property name="supportedFormat" active="true">application/x-netcdf</Property>
+				<Property name="supportedFormat" active="true">application/dgn</Property>
+				<Property name="supportedFormat" active="true">image/jpeg</Property>
+				<Property name="supportedFormat" active="true">image/png</Property>
+				<Property name="supportedFormat" active="true">application/x-geotiff</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="GenericFileGeneratorBase64"
+				className="org.n52.wps.io.datahandler.binary.Base64Generator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/x-zipped-shp</Property>
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">application/img</Property>
+				<Property name="supportedFormat" active="true">image/tiff</Property>
+				<Property name="supportedFormat" active="true">application/geotiff</Property>
+				<Property name="supportedFormat" active="true">application/dbase</Property>
+				<Property name="supportedFormat" active="true">application/remap</Property>
+				<Property name="supportedEncoding" active="true">Base64</Property>
+			</Generator>
+			<Generator name="GRASSXMLGenerator"
+				className="org.n52.wps.io.datahandler.xml.GRASSXMLGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.0.0/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.1/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/2.1.2.1/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<!--GML2BasicGenerator4Files inherits formats etc from GMLBasic parser -->
+			<Generator name="GML2BasicGenerator4Files"
+				className="org.n52.wps.io.datahandler.xml.GML2BasicGenerator4Files"
+				active="true" />
+			<Generator name="GML3BasicGenerator4Files"
+				className="org.n52.wps.io.datahandler.xml.GML3BasicGenerator4Files"
+				active="true">
+				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
+				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.0.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.0/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.1.1/base/feature.xsd</Property>
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/gml/3.2.1/base/feature.xsd</Property>
+				<Property name="supportedFormat" active="true">text/xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+			<Generator name="WMSGenerator"
+				className="org.n52.wps.io.datahandler.ows.GeoserverWMSGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/WMS</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="Geoserver_username" active="true">admin</Property>
+				<Property name="Geoserver_password" active="true">geoserver</Property>
+				<Property name="Geoserver_host" active="true">localhost</Property>
+				<Property name="Geoserver_port" active="true">8080</Property>
+			</Generator>
+			<Generator name="WFSGenerator"
+				className="org.n52.wps.io.datahandler.ows.GeoserverWFSGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/WFS</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="Geoserver_username" active="true">admin</Property>
+				<Property name="Geoserver_password" active="true">geoserver</Property>
+				<Property name="Geoserver_host" active="true">localhost</Property>
+				<Property name="Geoserver_port" active="true">8080</Property>
+			</Generator>
+			<Generator name="WCSGenerator"
+				className="org.n52.wps.io.datahandler.ows.GeoserverWCSGenerator"
+				active="true">
+				<Property name="supportedFormat" active="true">application/WCS</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+				<Property name="Geoserver_username" active="true">admin</Property>
+				<Property name="Geoserver_password" active="true">geoserver</Property>
+				<Property name="Geoserver_host" active="true">localhost</Property>
+				<Property name="Geoserver_port" active="true">8080</Property>
+			</Generator>
+			<Generator name="KMLGenerator"
+				className="org.n52.wps.io.datahandler.xml.KMLGenerator" active="true">
+				<Property name="supportedSchema" active="true">http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd</Property>
+				<Property name="supportedFormat" active="true">application/vnd.google-earth.kml+xml</Property>
+				<Property name="supportedEncoding" active="true">UTF-8</Property>
+			</Generator>
+		</GeneratorList>
+	</Datahandlers>
+	<AlgorithmRepositoryList>
+		<Repository name="LocalAlgorithmRepository"
+			className="org.n52.wps.server.repository.LocalAlgorithmRepository"
+			active="true">
+			<Property name="Algorithm" active="true">be.spacebel.ese.data.wps.DownloadEOData</Property>
+			<Property name="Algorithm" active="true">be.spacebel.ese.data.wps.RemoveEOData</Property>
+			<Property name="Algorithm" active="true">be.spacebel.ese.data.wps.ReleaseEOData</Property>
+			<Property name="Algorithm" active="true">be.spacebel.ese.data.wps.QueryEOData</Property>
 		</Repository>
-		
-		
-		<Repository name="LocalUnicoreAlgorithmRepository"	className="org.n52.wps.unicore.UnicoreAlgorithmRepository" active="false">			
+
+		<Repository name="UploadedAlgorithmRepository"
+			className="org.n52.wps.server.repository.UploadedAlgorithmRepository"
+			active="true" />
+		<Repository name="GeotoolsProcessRepository"
+			className="org.n52.wps.geotools.GeotoolsProcessRepository" active="false">
+		</Repository>
+
+
+		<Repository name="LocalUnicoreAlgorithmRepository"
+			className="org.n52.wps.unicore.UnicoreAlgorithmRepository" active="false">
 			<Property name="Algorithm" active="true">org.n52.wps.unicore.algorithm.UnicoreSimpleBufferAlgorithm</Property>
 
 			<Property name="Registry" active="true">https://localhost:8080/DEMO-SITE/services/Registry?res=default_registry</Property>
@@ -251,53 +350,79 @@
 			<Property name="Type" active="true">jks</Property>
 			<Property name="Alias" active="true">demo user</Property>
 			<Property name="Password" active="true">unicore</Property>
-			
+
 			<Property name="OverwriteRemoteFile" active="true">false</Property>
-			<Property name="CompressInputData" active="true">true</Property>			
+			<Property name="CompressInputData" active="true">true</Property>
 		</Repository>
-		
 
-		
-<!-- 
- <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
-      <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
-      <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaProcessManager</Property>
-      <Property name="WorkspaceLocationRoot" active="true"/>
-      <Property name="supportedFormat" active="true">saga.xsd</Property>
-      <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile</Property>
-      <Property name="GridFilesDir" active="true">/ssegrid/$wps_id/</Property>
-      <Property name="WPSPublicationPrefix" active="true">ftp://$hostname/$wps_id/</Property>
-      <Property name="SagaLibDir" active="true">/ssegrid/saga/</Property>
-      <Property name="GridGlue" active="true">http://$hostname/config/VITOGrid_GLUE.xml</Property>
-      <Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property>
-      <Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property>
-      <Property name="DataDeployDirectory" active="true">/ssegrid/$wps_id/deploy/auxdata/</Property>
-      <Property name="MyProxyUser" active="true">ddaems</Property>
-      <Property name="MyProxyPassword" active="true">R0d3Du1v3l</Property>
-      <Property name="MyProxyURL" active="true">ce1.intern.vgt.vito.be</Property>
-    </Repository>
--->
 
-<!-- 
- <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" active="true">
-      <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
-      <Property name="ProcessManager" active="true">org.n52.wps.server.profiles.IntalioBPMS.ApacheOdeProcessManager</Property>
-      <Property name="SSEGrid_Home" active="true">/ssegrid/$wps_id/</Property>
-      <Property name="WorkspaceLocationRoot" active="true"/>
-      <Property name="supportedFormat" active="true">apacheode.xsd</Property>
-      <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property>
-      <Property name="Ode_DeploymentEndpoint" active="true">http://$hostname.vgt.vito.be:8080/axis2/services/DeploymentService</Property>
-      <Property name="Ode_ProcessManagerEndpoint" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/ProcessManagement</Property>
-      <Property name="Ode_ProcessesPrefix" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/</Property>
-      <Property name="WPSPublicationPrefix" active="true">ftp://$hostname.vgt.vito.be/$wps_id/</Property>
-    </Repository>
 
-  
-     -->
-  </AlgorithmRepositoryList>
-  <Server hostname="$hostname" hostport="8080" includeDataInputsInResponse="false" computationTimeoutMilliSeconds="5" cacheCapabilites="false" webappPath="$wps_id">
-  <Property name="portalFTPUser" active="true">ftpuser</Property>
-  <Property name="portalFTPPassword" active="true">ssegrid</Property>
-    <Database/>
-  </Server>
+		<!-- <Repository name="JavaSagaRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" 
+			active="true"> <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property> 
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaProcessManager</Property> 
+			<Property name="WorkspaceLocationRoot" active="true"/> <Property name="supportedFormat" 
+			active="true">saga.xsd</Property> <Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.JavaSaga.JavaSagaDeploymentProfile</Property> 
+			<Property name="GridFilesDir" active="true">/ssegrid/$wps_id/</Property> 
+			<Property name="WPSPublicationPrefix" active="true">ftp://$hostname/$wps_id/</Property> 
+			<Property name="SagaLibDir" active="true">/ssegrid/saga/</Property> <Property 
+			name="GridGlue" active="true">http://$hostname/config/VITOGrid_GLUE.xml</Property> 
+			<Property name="DataDeploymentProfile" active="true">org.n52.wps.server.profiles.Data.DataDeploymentProfile</Property> 
+			<Property name="DataManager" active="true">org.n52.wps.server.profiles.Data.DataSSEGridManager</Property> 
+			<Property name="DataDeployDirectory" active="true">/ssegrid/$wps_id/deploy/auxdata/</Property> 
+			<Property name="MyProxyUser" active="true">ddaems</Property> <Property name="MyProxyPassword" 
+			active="true">R0d3Du1v3l</Property> <Property name="MyProxyURL" active="true">ce1.intern.vgt.vito.be</Property> 
+			</Repository> -->
+		<!-- <Repository name="ApacheOdeRepository" className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository" 
+			active="true"> <Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property> 
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.IntalioBPMS.ApacheOdeProcessManager</Property> 
+			<Property name="SSEGrid_Home" active="true">/ssegrid/$wps_id/</Property> 
+			<Property name="WorkspaceLocationRoot" active="true"/> <Property name="supportedFormat" 
+			active="true">apacheode.xsd</Property> <Property name="DeploymentProfile" 
+			active="true">org.n52.wps.server.profiles.IntalioBPMS.BPELDeploymentProfile</Property> 
+			<Property name="Ode_DeploymentEndpoint" active="true">http://$hostname.vgt.vito.be:8080/axis2/services/DeploymentService</Property> 
+			<Property name="Ode_ProcessManagerEndpoint" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/ProcessManagement</Property> 
+			<Property name="Ode_ProcessesPrefix" active="true">http://$hostname.vgt.vito.be:8080/ode/processes/</Property> 
+			<Property name="WPSPublicationPrefix" active="true">ftp://$hostname.vgt.vito.be/$wps_id/</Property> 
+			</Repository> -->
+
+		<Repository name="JavaRepository"
+			className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository"
+			active="true">
+			<Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.java.JavaManager</Property>
+			<Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.java.JavaDeploymentProfile</Property>
+			<Property name="supportedFormat" active="true">java.xsd</Property>
+		</Repository>
+		<!-- Oozie Repository Sample -->
+		<Repository name="OozieRepository"
+			className="org.n52.wps.server.repository.DefaultTransactionalProcessRepository"
+			active="true">
+			<Property name="ProcessAlgorithm" active="true">org.n52.wps.server.profiles.DefaultTransactionalAlgorithm</Property>
+			<Property name="ProcessManager" active="true">org.n52.wps.server.profiles.oozie.OozieManager</Property>
+			<Property name="supportedFormat" active="true">oozie.xsd</Property>
+			<Property name="Oozie_URL" active="true">http://91.183.191.245:11000/oozie/</Property>
+			<!-- HDFS_Local_URL is the url used locally on the oozie server -->
+			<Property name="HDFS_Local_URL" active="true">hdfs://quickstart.cloudera:8020</Property>
+			<!-- HDFS_remote_URL is the url used externally from the WPS server -->
+			<Property name="HDFS_Remote_URL" active="true">hdfs://91.183.191.245:8020</Property>
+			<!-- The local url of the job tracker (on oozie server) -->
+			<Property name="JobTracker_URL" active="true">quickstart.cloudera:8032</Property>
+			<Property name="Hadoop_Default_User" active="true">christophe</Property>
+			<Property name="HDFS_Admin_User" active="true">hdfs</Property>
+			<Property name="HDFS_Deploy_Directory" active="true">/user/hdfs/deploy</Property>
+			<Property name="DeploymentProfile" active="true">org.n52.wps.server.profiles.oozie.OozieDeploymentProfile</Property>
+		</Repository>
+
+
+
+	</AlgorithmRepositoryList>
+	<Server hostname="$hostname" hostport="8080"
+		includeDataInputsInResponse="true" computationTimeoutMilliSeconds="5"
+		cacheCapabilites="false" webappPath="WPS">
+		<!-- 
+		<Property name="portalFTPUser" active="true">ftpuser</Property>
+		<Property name="portalFTPPassword" active="true">ssegrid</Property>
+		 -->
+		<Database />
+	</Server>
 </WPSConfiguration>

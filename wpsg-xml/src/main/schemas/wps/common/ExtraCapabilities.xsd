@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2006 sp2 U (http://www.altova.com) by Joel Lim (Spacebel SA) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:wps="http://www.opengis.net/wps/1.0.0" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="qualified" version="1.0.0" xml:lang="en">
+	<!-- =============================================================
+		includes and imports
+	============================================================== -->
+	<import namespace="http://www.w3.org/1999/xlink" schemaLocation="../../xlink/1.0.0/xlinks.xsd"/>
+	<include schemaLocation="DataBriefType.xsd"/>
+	<!-- =============================================================
+		elements and types
+	============================================================== -->
+	<!-- =========================================================== -->
+	<element name="SupportedDeploymentProfiles">
+		<annotation>
+			<documentation>List of default and other schemas profiles supported for deployement and execution, i.e. ApacheOdeBPEL, GridProfile, ...</documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="Default">
+					<annotation>
+						<documentation>Identifies the default profile that will be used unless the operation request specifies another supported profile.</documentation>
+					</annotation>
+					<complexType>
+						<sequence>
+							<element ref="wps:DeploymentSchema">
+								<annotation>
+									<documentation>Default deployment schema</documentation>
+								</annotation>
+							</element>
+						</sequence>
+					</complexType>
+				</element>
+				<element name="Supported">
+					<annotation>
+						<documentation>Unordered list of references to all of the profile schemas supported by this service. The default profile shall be included in this list.</documentation>
+					</annotation>
+					<complexType>
+						<sequence>
+							<element ref="wps:DeploymentSchema" maxOccurs="unbounded"/>
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+		<!-- =========================================================== -->
+	<element name="DataOfferings">
+		<annotation>
+			<documentation>List of brief descriptions of the data offered by this WPS server. </documentation>
+		</annotation>
+		<complexType>
+			<sequence>
+				<element name="Data" type="wps:DataBriefType" maxOccurs="unbounded">
+					<annotation>
+						<documentation>Unordered list of one or more brief descriptions of all the data offered by this WPS server. </documentation>
+					</annotation>
+				</element>
+			</sequence>
+		</complexType>
+	</element>
+	<!-- =========================================================== -->
+	<element name="DeploymentSchema">
+		<complexType>
+			<attribute ref="xlink:href"/>
+		</complexType>
+	</element>
+</schema>

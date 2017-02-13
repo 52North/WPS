@@ -64,14 +64,14 @@ import org.n52.wps.server.request.DeployProcessRequest;
 import org.n52.wps.server.request.ExecuteRequest;
 import org.n52.wps.server.request.UndeployProcessRequest;
 import org.n52.wps.server.request.deploy.DeploymentProfile;
-import org.w3.x2005.x08.addressing.MessageIDDocument;
-import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
+import xint.esa.ese.wps.format.urlList.URLListDocument;
+
+
 
 /**
  * TODO this class was based on transactional branch implementation. However the

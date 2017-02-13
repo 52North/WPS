@@ -2,7 +2,9 @@ package org.n52.wps.io.data.binding.complex;
 
 import org.n52.wps.io.data.IComplexData;
 
-import xint.esa.ssegrid.wps.javaSAGAProfile.URLListDocument;
+import xint.esa.ese.wps.format.urlList.URLListDocument;
+
+
 
 public class URLListDataBinding implements IComplexData{
 	

@@ -42,12 +42,12 @@
 				<dependency>
 			<groupId>be.spacebel.wps</groupId>
 			<artifactId>wpsg-xml</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.3</version>
 		</dependency>
 		<dependency>
-			<groupId>tomcat</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>5.5.15</version>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>7.0.30</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -70,6 +70,7 @@
 			<artifactId>axis2</artifactId>
 			<version>1.5</version>
 		</dependency>
+	        
 		<dependency>
 	<groupId>commons-net</groupId>
 	<artifactId>commons-net</artifactId>
@@ -83,38 +84,41 @@
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-impl</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-dom</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.12</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.ws.commons.axiom</groupId>
 			<artifactId>axiom-api</artifactId>
-			<version>1.2.8</version>
+			<version>1.2.12</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.rampart</groupId>
-			<artifactId>rampart-core</artifactId>
-			<version>1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xmlbeans</groupId>
-					<artifactId>xbean</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>opensaml</groupId>
-					<artifactId>opensaml</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.ant</groupId>
-					<artifactId>ant-nodeps</artifactId>
-				</exclusion>
-
-			</exclusions>
-		</dependency>
+	<dependency>
+	<groupId>net.sf.wsag4j.types</groupId>
+	<artifactId>wsag4j-addressing-types</artifactId>
+	<version>2.0.0</version>
+</dependency>
+      <dependency>
+	<groupId>org.apache.axis2</groupId>
+	<artifactId>axis2-saaj</artifactId>
+	<version>1.6.2</version>
+</dependency>
+<dependency>
+	<groupId>org.apache.ws.security</groupId>
+	<artifactId>wss4j</artifactId>
+	<version>1.6.1</version>
+</dependency>
+            
+<dependency>
+	<groupId>org.apache.ant</groupId>
+	<artifactId>ant</artifactId>
+	<version>1.8.2</version>
+</dependency>
+                  
+            
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
@@ -127,6 +131,38 @@
 			<version>2.0</version>
 			<scope>compile</scope>
 		</dependency>	
-	</dependencies>
+		 <dependency>
+      <groupId>org.apache.oozie</groupId>
+      <artifactId>oozie-client</artifactId>
+      <version>4.0.0-cdh5.1.0</version>
+    </dependency>
+   <dependency>
+	<groupId>org.apache.hadoop</groupId>
+	<artifactId>hadoop-client</artifactId>
+	<version>2.3.0-cdh5.1.0</version>
+	<scope>compile</scope>
+</dependency>
+
+  <dependency>
+	<groupId>org.apache.hadoop</groupId>
+	<artifactId>hadoop-auth</artifactId>
+	<version>2.3.0-cdh5.1.0</version>
+	<scope>compile</scope>
+</dependency>
+ 
+  	</dependencies>
+  	<repositories>
+  	<repository>
+    <id>cloudera-repo-releases</id>
+    <url>https://repository.cloudera.com/artifactory/repo/</url>
+  </repository>
+          	<repository>
+    <id>cloudera-repo-releases2</id>
+    <url>https://repository.cloudera.com/cloudera/cloudera-repos/</url>
+  </repository>
+        </repositories>
+  
+  
+  
 </project>
 

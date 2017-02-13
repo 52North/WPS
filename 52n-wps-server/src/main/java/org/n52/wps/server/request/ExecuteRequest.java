@@ -68,6 +68,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.server.AbstractCancellableAlgorithm;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
@@ -126,8 +127,8 @@ public class ExecuteRequest extends Request implements IObserver {
 		MessageContext context = MessageContext.getCurrentMessageContext();
 		if (context != null) {
 			ServiceContext serviceContext = context.getServiceContext();
-			String address = serviceContext.getMyEPR().getAddress();
-			setMyEPR(address);
+			//String address = serviceContext.getMyEPR(arg0)getMyEPR().getAddress();
+			//setMyEPR(address);
 		}
 
 	}
@@ -187,6 +188,7 @@ public class ExecuteRequest extends Request implements IObserver {
 	 */
 	public ExecuteRequest(CaseInsensitiveMap ciMap) throws ExceptionReport {
 		super(ciMap);
+		getUniqueId();
 		initForGET(ciMap);
 		// validate the client input
 		validate();
@@ -523,7 +525,9 @@ public class ExecuteRequest extends Request implements IObserver {
 					}
 				}
 			}
-			// For each input supplied by the client
+			// For each input supplied by the client;
+			if(getExecute().getDataInputs()==null)
+				return true;
 			for (InputType input : getExecute().getDataInputs().getInputArray()) {
 				boolean identifierMatched = false;
 				// Try to match the input with one of the descriptions
@@ -621,6 +625,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			// register so that any function that calls
 			// ExecuteContextFactory.getContext() gets the instance registered
 			// with this thread
+			LOGGER.debug("Registered Execution Context with Id:"+getId());
 			ExecutionContext context = new ExecutionContext(getId());
 			ExecutionContextFactory.registerContext(context);
 
@@ -630,9 +635,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			if (getExecute().getDataInputs() != null) {
 				inputs = getExecute().getDataInputs().getInputArray();
 			}
-			// The input handler parses (and validates) the inputs.
-			InputHandler parser = new InputHandler(inputs,
-					getAlgorithmIdentifier());
+			
 			// TODO (Spacebel) OutputHandler for validation
 			// we got so far:
 			// get the algorithm, and run it with the clients input
@@ -646,7 +649,13 @@ public class ExecuteRequest extends Request implements IObserver {
 			 */
 			algorithm = RepositoryManager.getInstance().getAlgorithm(
 					getAlgorithmIdentifier(), this);
-
+			
+			if(algorithm == null) {
+				LOGGER.error("Algorithm is null - unexpected");
+				throw new ExceptionReport("Impossible to instantiate algorithm : " + getAlgorithmIdentifier(), ExceptionReport.NO_APPLICABLE_CODE);
+				
+			}
+			
 			if (algorithm instanceof ISubject) {
 				ISubject subject = (ISubject) algorithm;
 				subject.addObserver(this);
@@ -654,9 +663,11 @@ public class ExecuteRequest extends Request implements IObserver {
 			}
 
 			if (algorithm instanceof AbstractTransactionalAlgorithm) {
+				LOGGER.info("running the script");
 				returnResults = ((AbstractTransactionalAlgorithm) algorithm)
 						.run(this);
-				LOGGER.info("Storing audit...");
+				
+				LOGGER.info("Ends run - Storing audit...");
 				try {
 				AbstractTransactionalAlgorithm.storeAuditLongDocument(this
 						.getUniqueId().toString(),
@@ -668,6 +679,7 @@ public class ExecuteRequest extends Request implements IObserver {
 										.getAudit());
 				}
 				catch(Exception e) {
+					e.printStackTrace();
 					LOGGER.warn("Cannot store audit after process run !");
 				}
 			}
@@ -692,6 +704,12 @@ public class ExecuteRequest extends Request implements IObserver {
 					&& !(algorithm instanceof AbstractTransactionalAlgorithm)) {
 				// TODO maybe this method signature should disappear
 				// (getParsedInputData can be called later)
+				if(algorithm instanceof AbstractCancellableAlgorithm) {
+					((AbstractCancellableAlgorithm)algorithm).setInstanceId(this.getId());
+				}
+				// The input handler parses (and validates) the inputs.
+				InputHandler parser = new InputHandler(inputs,
+						getAlgorithmIdentifier());
 				returnResults = algorithm.run(parser.getParsedInputData());
 			}
 			/**
@@ -706,9 +724,13 @@ public class ExecuteRequest extends Request implements IObserver {
 			}
 
 		} catch (CancellationException e) {
+			LOGGER.info("catch cancelllation exception");
 			return null;
+		
 		} catch (Exception e) {
-			if(!(algorithm instanceof AbstractTransactionalAlgorithm)) {
+			LOGGER.info("catch exception");
+			e.printStackTrace();
+			if(!(algorithm instanceof AbstractTransactionalAlgorithm) && !(algorithm instanceof AbstractCancellableAlgorithm)) {
 				LOGGER.debug("RuntimeException:" + e.getMessage());
 				StatusType statusFailed = StatusType.Factory.newInstance();
 				statusFailed.addNewProcessFailed();
@@ -727,7 +749,7 @@ public class ExecuteRequest extends Request implements IObserver {
 						ExceptionReport.NO_APPLICABLE_CODE, e);
 			}
 			try {
-				LOGGER.info("Storing audit...");
+				LOGGER.info("Storing audit (exception case)...");
 				AbstractTransactionalAlgorithm.storeAuditLongDocument(this
 						.getUniqueId().toString(),
 						((AbstractTransactionalAlgorithm) algorithm)
@@ -736,6 +758,7 @@ public class ExecuteRequest extends Request implements IObserver {
 						.storeAuditDocument(this.getUniqueId().toString(),
 								((AbstractTransactionalAlgorithm) algorithm)
 										.getAudit());
+				LOGGER.info("Audit stored");
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				LOGGER.info("Audit storing failed");
@@ -743,6 +766,7 @@ public class ExecuteRequest extends Request implements IObserver {
 			}
 			// send callback with exception
 			if (addressingHeader != null) {
+				LOGGER.info("found addressing header");
 				try {
 					StatusType status = StatusType.Factory.newInstance();
 					status.addNewProcessFailed().setExceptionReport(
@@ -757,6 +781,9 @@ public class ExecuteRequest extends Request implements IObserver {
 					LOGGER.warn("Execution response callback could not be sent. Please check the ws addressing header.");
 					e2.printStackTrace();
 				}
+			}
+			else {
+			LOGGER.info("header not found");
 			}
 			throw exReport;
 		} finally {
@@ -806,6 +833,26 @@ public class ExecuteRequest extends Request implements IObserver {
 		return execResp;
 	}
 
+	
+	public ArrayList<SOAPHeaderBlock> getQOSHeaderBlocks() {
+		LOGGER.info("Addressing header");
+		// TODO Auto-generated method stub
+		if (this.soapHeader == null) {
+			LOGGER.info("soap Header is null");
+			return null;
+		}
+		try {
+			ArrayList<SOAPHeaderBlock> headerBlocks = this.soapHeader
+					.getHeaderBlocksWithNSURI("http://ese.esa.int/wps/qos");
+			LOGGER.info(headerBlocks.toString());
+			// sendCallback(headerBlocks);
+			return headerBlocks;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	private ArrayList<SOAPHeaderBlock> getSAMLHeaderBlocks() {
 		LOGGER.info("Addressing header");

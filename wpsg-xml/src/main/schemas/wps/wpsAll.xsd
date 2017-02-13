@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2015 sp2 (x64) (http://www.altova.com) by John (SPB) -->
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:esepmd="http://ese.esa.int/wps/metadata" targetNamespace="http://www.opengis.net/wps/1.0.0" elementFormDefault="unqualified" version="1.0.0 2010-02-03" xml:lang="en">
+	<annotation>
+		<appinfo>$Id: wpsAll.xsd 2007-10-09 $</appinfo>
+		<documentation>
+			<description>This XML Schema includes and imports, directly and indirectly, all the XML Schemas defined by the WPS Implemetation Specification.</description>
+			<copyright>
+	WPS is an OGC Standard.
+	Copyright (c) 2007,2010 Open Geospatial Consortium, Inc. All Rights Reserved.
+	To obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .
+			</copyright>
+		</documentation>
+	</annotation>
+	<!-- ==============================================================
+		includes
+	============================================================== -->
+	<include schemaLocation="wpsDescribeProcess_request.xsd"/>
+	<include schemaLocation="wpsDescribeProcess_response.xsd"/>
+	<include schemaLocation="wpsExecute_request.xsd"/>
+	<include schemaLocation="wpsExecute_response.xsd"/>
+	<include schemaLocation="wpsGetCapabilities_request.xsd"/>
+	<include schemaLocation="wpsGetCapabilities_response.xsd"/>
+	<include schemaLocation="common/DeploymentProfiles.xsd"/>
+	<include schemaLocation="common/DataBriefType.xsd"/>
+	<include schemaLocation="wpsDeployProcess_request.xsd"/>
+	<include schemaLocation="wpsDeployProcess_response.xsd"/>
+	<include schemaLocation="wpsUndeployProcess_request.xsd"/>
+	<include schemaLocation="wpsUndeployProcess_response.xsd"/>
+	<include schemaLocation="wpsDeployData_request.xsd"/>
+	<include schemaLocation="wpsDeployData_response.xsd"/>
+	<include schemaLocation="wpsUndeployData_request.xsd"/>
+	<include schemaLocation="wpsUndeployData_response.xsd"/>
+	<include schemaLocation="wpsDescribeData_request.xsd"/>
+	<include schemaLocation="wpsDescribeData_response.xsd"/>
+	<include schemaLocation="wpsGetStatus_request.xsd"/>
+	<include schemaLocation="wpsGetStatus_response.xsd"/>
+	<include schemaLocation="wpsCancel_request.xsd"/>
+	<include schemaLocation="wpsCancel_response.xsd"/>
+	<include schemaLocation="wpsGetAudit_request.xsd"/>
+	<include schemaLocation="wpsGetAudit_response.xsd"/>
+	<!-- =========================================================== -->
+	<import namespace="http://ese.esa.int/wps/metadata" schemaLocation="wpsESEMetadata.xsd"/>
+</schema>

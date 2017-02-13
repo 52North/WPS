@@ -61,6 +61,16 @@
             <groupId>org.n52.wps</groupId>
             <artifactId>52n-wps-server</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>servlet-api</artifactId>
+            		<groupId>javax.servlet</groupId>
+            	</exclusion>
+            	<exclusion>
+            		<artifactId>servlet-api-2.5</artifactId>
+            		<groupId>org.mortbay.jetty</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
      
         <dependency>
