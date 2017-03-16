@@ -45,6 +45,7 @@ import net.opengis.ows.x20.DCPDocument.DCP;
 import net.opengis.ows.x20.HTTPDocument.HTTP;
 import net.opengis.ows.x20.KeywordsType;
 import net.opengis.ows.x20.LanguageStringType;
+import net.opengis.ows.x20.MetadataType;
 import net.opengis.ows.x20.OperationDocument.Operation;
 import net.opengis.ows.x20.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.ows.x20.RequestMethodType;
@@ -303,6 +304,20 @@ public class CapabilitiesConfigurationV200 {
                     process.setOutputTransmission(offering.getOutputTransmission());
 
                     process.addNewTitle().setStringValue(title.getStringValue());
+
+                    MetadataType metadataType = process.addNewMetadata();
+
+                    metadataType.setRole("Process description");
+
+                    String describeProcessHref = "";
+
+                    try {
+                        describeProcessHref = getEndpointURL() + "?service=WPS&request=DescribeProcess&version=2.0.0&identifier=" + algorithmName;
+                    } catch (UnknownHostException e) {
+                        LOG.error("Could not create describeProcessURL.");
+                    }
+
+                    metadataType.setHref(describeProcessHref);
 
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
