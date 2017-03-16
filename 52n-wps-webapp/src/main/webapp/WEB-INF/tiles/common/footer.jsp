@@ -95,6 +95,8 @@
             <noscript>2012</noscript>
             52&deg;North Initiative for Geospatial Open Source Software GmbH. All Rights Reserved.
         </small>
+        <br/>
+        <small>${project.build.finalName} based on ${git.branch}.${git.revision} built at ${timestamp}</small>
     </div>
 </div>
 </body>
