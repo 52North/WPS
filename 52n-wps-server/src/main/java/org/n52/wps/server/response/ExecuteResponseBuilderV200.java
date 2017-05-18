@@ -290,6 +290,12 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
         }
 
         if(request.getExecute().getMode().equals(ExecuteRequestType.Mode.SYNC)){
+
+            //if an error occurred, the status was set to failed and the exception report was written to the database
+            if(statusInfoDoc != null && statusInfoDoc.getStatusInfo().getStatus().equals(Status.Failed.toString())){
+                return DatabaseFactory.getDatabase().lookupResponse(request.getUniqueId().toString());
+            }
+
             return resultDoc.newInputStream(XMLBeansHelper.getXmlOptions());
         }else if(statusInfoDoc.getStatusInfo().getStatus().equals(Status.Succeeded.toString())){
             //save last status info and return result document
