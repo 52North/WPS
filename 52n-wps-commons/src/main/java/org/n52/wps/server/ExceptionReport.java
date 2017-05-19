@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.ows.x11.ExceptionType;
@@ -111,6 +112,7 @@ public class ExceptionReport extends Exception {
 
         // Printing service Exception
         net.opengis.ows.x20.ExceptionReportDocument reportV200 = net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
+        XMLBeansHelper.addSchemaLocationToXMLObject(reportV200, "http://www.opengis.net/ows/2.0 http://schemas.opengis.net/ows/2.0/owsAll.xsd");
         net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 = reportV200.addNewExceptionReport();
         exceptionReportV200.setVersion(WPSConfig.VERSION_200);
         net.opengis.ows.x20.ExceptionType exV200 = exceptionReportV200.addNewException();

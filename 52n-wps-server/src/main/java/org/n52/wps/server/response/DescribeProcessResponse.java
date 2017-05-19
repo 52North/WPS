@@ -34,9 +34,9 @@ import net.opengis.wps.x100.ProcessDescriptionsDocument;
 import net.opengis.wps.x20.ProcessOfferingsDocument;
 
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.Request;
-import org.n52.wps.util.XMLBeansHelper;
 
 
 public class DescribeProcessResponse extends Response{

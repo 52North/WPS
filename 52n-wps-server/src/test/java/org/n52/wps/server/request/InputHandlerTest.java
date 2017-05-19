@@ -53,11 +53,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
-import org.n52.wps.util.XMLBeansHelper;
 import org.n52.wps.webapp.common.AbstractITClass;
 
 /**

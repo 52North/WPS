@@ -46,6 +46,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.IOHandler;
@@ -67,7 +68,6 @@ import org.n52.wps.server.handler.DataInputInterceptors.DataInputInterceptorImpl
 import org.n52.wps.server.handler.DataInputInterceptors.InterceptorInstance;
 import org.n52.wps.server.request.strategy.ReferenceInputStream;
 import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
-import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;

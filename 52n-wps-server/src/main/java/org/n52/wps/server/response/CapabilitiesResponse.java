@@ -33,11 +33,11 @@ import java.io.InputStream;
 
 import org.apache.xmlbeans.XmlException;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.CapabilitiesConfiguration;
 import org.n52.wps.server.CapabilitiesConfigurationV200;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.request.CapabilitiesRequest;
-import org.n52.wps.util.XMLBeansHelper;
 
 /**
  * A Response to the Request "GetCapabilities"
