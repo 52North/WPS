@@ -260,6 +260,7 @@ public class CapabilitiesConfiguration {
         ProcessOfferings processes = skel.getCapabilities()
                 .addNewProcessOfferings();
         RepositoryManager rm = RepositoryManagerSingletonWrapper.getInstance();
+        boolean addProcessDescriptionLinkToProcessSummary = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getAddProcessDescriptionLinkToProcessSummary();
         List<String> algorithms = rm.getAlgorithms();
         if (algorithms.isEmpty()){
             LOG.warn("No algorithms found in repository manager.");
@@ -278,19 +279,23 @@ public class CapabilitiesConfiguration {
                     process.setProcessVersion(processVersion);
                     process.setTitle(title);
 
-                    MetadataType metadataType = process.addNewMetadata();
+                    if (addProcessDescriptionLinkToProcessSummary) {
 
-                    metadataType.setRole("Process description");
+                        MetadataType metadataType = process.addNewMetadata();
 
-                    String describeProcessHref = "";
+                        metadataType.setRole("Process description");
 
-                    try {
-                        describeProcessHref = getEndpointURL() + "?service=WPS&request=DescribeProcess&version=1.0.0&identifier=" + algorithmName;
-                    } catch (UnknownHostException e) {
-                        LOG.error("Could not create describeProcessURL.");
+                        String describeProcessHref = "";
+
+                        try {
+                            describeProcessHref = getEndpointURL()
+                                    + "?service=WPS&request=DescribeProcess&version=1.0.0&identifier=" + algorithmName;
+                        } catch (UnknownHostException e) {
+                            LOG.error("Could not create describeProcessURL.");
+                        }
+
+                        metadataType.setHref(describeProcessHref);
                     }
-
-                    metadataType.setHref(describeProcessHref);
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
             }

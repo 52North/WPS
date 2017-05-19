@@ -277,6 +277,7 @@ public class CapabilitiesConfigurationV200 {
     private static void initProcessOfferings(CapabilitiesDocument skel) {
         Contents contents = skel.getCapabilities()
                 .addNewContents();
+        boolean addProcessDescriptionLinkToProcessSummary = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getAddProcessDescriptionLinkToProcessSummary();
         for (String algorithmName : RepositoryManagerSingletonWrapper.getInstance()
                 .getAlgorithms()) {
             try {
@@ -305,20 +306,23 @@ public class CapabilitiesConfigurationV200 {
 
                     process.addNewTitle().setStringValue(title.getStringValue());
 
-                    MetadataType metadataType = process.addNewMetadata();
+                    if (addProcessDescriptionLinkToProcessSummary) {
 
-                    metadataType.setRole("Process description");
+                        MetadataType metadataType = process.addNewMetadata();
 
-                    String describeProcessHref = "";
+                        metadataType.setRole("Process description");
 
-                    try {
-                        describeProcessHref = getEndpointURL() + "?service=WPS&request=DescribeProcess&version=2.0.0&identifier=" + algorithmName;
-                    } catch (UnknownHostException e) {
-                        LOG.error("Could not create describeProcessURL.");
+                        String describeProcessHref = "";
+
+                        try {
+                            describeProcessHref = getEndpointURL()
+                                    + "?service=WPS&request=DescribeProcess&version=2.0.0&identifier=" + algorithmName;
+                        } catch (UnknownHostException e) {
+                            LOG.error("Could not create describeProcessURL.");
+                        }
+
+                        metadataType.setHref(describeProcessHref);
                     }
-
-                    metadataType.setHref(describeProcessHref);
-
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
             }
