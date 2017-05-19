@@ -48,6 +48,7 @@ import net.opengis.wps.x100.StatusType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
@@ -57,7 +58,6 @@ import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.server.WebProcessingService;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.request.ExecuteRequestV100;
-import org.n52.wps.util.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

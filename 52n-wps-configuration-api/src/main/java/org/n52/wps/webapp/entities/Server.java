@@ -73,10 +73,12 @@ public class Server implements ConfigurationModule {
             "Maximum time that excess idle threads are kept alive", true, 1000);
     private ConfigurationEntry<Integer> maxQueuedTasksEntry = new IntegerConfigurationEntry("max_queued_tasks", "Maximum queued tasks",
             "Maximum queued tasks of the work queue", true, 100);
+    private ConfigurationEntry<Boolean> addProcessDescriptionLinkToProcessSummaryEntry = new BooleanConfigurationEntry("add_process_description_Link_to_process_summary",
+            "Add ProcessDescriptionl ink to ProcessSummary", "Add ProcessDescriptionl ink to ProcessSummary in the Capabilities", false, true);
 
     private List<? extends ConfigurationEntry<?>> configurationEntries = Arrays.asList(protocolEntry, hostnameEntry, hostportEntry,
             computationTimeoutEntry, weppappPathEntry, repoReloadIntervalEntry, includeDataInputsInResponseEntry,
-            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry);
+            cacheCapabilitesEntry, responseURLFilterEnabledEntry, minPoolSizeEntry, maxPoolSizeEntry, keepAliveSecondsEntry, maxQueuedTasksEntry, addProcessDescriptionLinkToProcessSummaryEntry);
 
     private String hostname;
     private String protocol;
@@ -91,6 +93,7 @@ public class Server implements ConfigurationModule {
     private int maxPoolSize;
     private int keepAliveSeconds;
     private int maxQueuedTasks;
+    private boolean addProcessDescriptionLinkToProcessSummary;
 
     public Server() {
         //
@@ -255,6 +258,15 @@ public class Server implements ConfigurationModule {
     @ConfigurationKey(key = "max_queued_tasks")
     public void setMaxQueuedTasks(int maxQueuedTasks) {
         this.maxQueuedTasks = maxQueuedTasks;
+    }
+
+    public boolean getAddProcessDescriptionLinkToProcessSummary() {
+        return addProcessDescriptionLinkToProcessSummary;
+    }
+
+    @ConfigurationKey(key = "add_process_description_Link_to_process_summary")
+    public void setAddProcessDescriptionLinkToProcessSummary(boolean addProcessDescriptionLinkToProcessSummary) {
+        this.addProcessDescriptionLinkToProcessSummary = addProcessDescriptionLinkToProcessSummary;
     }
 
 }

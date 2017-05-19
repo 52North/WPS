@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.io.IOHandler;
 import org.n52.wps.io.data.IBBOXData;
 import org.n52.wps.io.data.IComplexData;
@@ -39,7 +40,6 @@ import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.ProcessDescription;
-import org.n52.wps.util.XMLBeansHelper;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;

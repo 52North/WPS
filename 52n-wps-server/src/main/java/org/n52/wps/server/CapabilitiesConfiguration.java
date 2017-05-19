@@ -36,16 +36,6 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.opengis.ows.x11.CodeType;
-import net.opengis.ows.x11.DCPDocument.DCP;
-import net.opengis.ows.x11.LanguageStringType;
-import net.opengis.ows.x11.OperationDocument.Operation;
-import net.opengis.ows.x11.RequestMethodType;
-import net.opengis.wps.x100.CapabilitiesDocument;
-import net.opengis.wps.x100.ProcessBriefType;
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
@@ -55,6 +45,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+
+import net.opengis.ows.x11.CodeType;
+import net.opengis.ows.x11.DCPDocument.DCP;
+import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.ows.x11.MetadataType;
+import net.opengis.ows.x11.OperationDocument.Operation;
+import net.opengis.ows.x11.RequestMethodType;
+import net.opengis.wps.x100.CapabilitiesDocument;
+import net.opengis.wps.x100.ProcessBriefType;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessOfferingsDocument.ProcessOfferings;
 
 /**
  * Encapsulation of the WPS Capabilities document. This class has to be initialized with either a
@@ -259,6 +260,7 @@ public class CapabilitiesConfiguration {
         ProcessOfferings processes = skel.getCapabilities()
                 .addNewProcessOfferings();
         RepositoryManager rm = RepositoryManagerSingletonWrapper.getInstance();
+        boolean addProcessDescriptionLinkToProcessSummary = WPSConfig.getInstance().getWPSConfig().getServerConfigurationModule().getAddProcessDescriptionLinkToProcessSummary();
         List<String> algorithms = rm.getAlgorithms();
         if (algorithms.isEmpty()){
             LOG.warn("No algorithms found in repository manager.");
@@ -276,6 +278,24 @@ public class CapabilitiesConfiguration {
                     String processVersion = description.getProcessVersion();
                     process.setProcessVersion(processVersion);
                     process.setTitle(title);
+
+                    if (addProcessDescriptionLinkToProcessSummary) {
+
+                        MetadataType metadataType = process.addNewMetadata();
+
+                        metadataType.setRole("Process description");
+
+                        String describeProcessHref = "";
+
+                        try {
+                            describeProcessHref = getEndpointURL()
+                                    + "?service=WPS&request=DescribeProcess&version=1.0.0&identifier=" + algorithmName;
+                        } catch (UnknownHostException e) {
+                            LOG.error("Could not create describeProcessURL.");
+                        }
+
+                        metadataType.setHref(describeProcessHref);
+                    }
                     LOG.trace("Added algorithm to process offerings: {}\n\t\t{}", algorithmName, process);
                 }
             }
