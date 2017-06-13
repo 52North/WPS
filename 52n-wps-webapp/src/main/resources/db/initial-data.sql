@@ -1,5 +1,6 @@
 INSERT INTO users VALUES(DEFAULT, 'wps', 'f0e272b0741e2a259fc10111a65445608294fdbf894a11ca1652bbfdef121ffbc7aecfa0b475a743', 'ROLE_ADMIN');
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.JTSConvexHullAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
+INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.SimpleBufferAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.DummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.LongRunningDummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
