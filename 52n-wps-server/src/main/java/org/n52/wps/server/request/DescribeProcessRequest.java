@@ -173,8 +173,12 @@ public class DescribeProcessRequest extends Request {
                                             ExceptionReport.INVALID_PARAMETER_VALUE,
                                             "identifier");
             }
-            ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
-            document.getProcessDescriptions().addNewProcessDescription().set(description);
+            try {
+                ProcessDescriptionType description = (ProcessDescriptionType) RepositoryManagerSingletonWrapper.getInstance().getProcessDescription(algorithmName).getProcessDescriptionType(WPSConfig.VERSION_100);
+                document.getProcessDescriptions().addNewProcessDescription().set(description);
+            } catch (Exception e) {
+                LOGGER.warn("Could not get process description for algorithm: " + algorithmName, e);
+            }
         }
 
         LOGGER.info("Handled Request successfully for: " + getMapValue("identifier", true));
