@@ -8,11 +8,7 @@ The 52°North Web Processing Service enables the deployment of geo-processes on 
 
 The 52°North WPS implements the [OGC WPS specification](http://www.opengeospatial.org/standards/wps).
 
-## Build Status
-* Master: [![Master Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)
-* Develop: [![Develop Build Status](https://travis-ci.org/52North/WPS.png?branch=dev)](https://travis-ci.org/52North/WPS)
-
-## Features
+Features
 * General Features
   * Full java-based Open Source implementation.
   * Pluggable framework for algorithms and XML data handling and processing frameworks
@@ -48,6 +44,10 @@ The 52°North WPS implements the [OGC WPS specification](http://www.opengeospati
   * Raster/Vector results can be stored directly as WMS layer
   * Vector results can be stored directly as WFS layer
   * Raster results can be stored directly as WCS layer
+
+## Build Status
+* Master: [![Master Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)
+* Develop: [![Develop Build Status](https://travis-ci.org/52North/WPS.png?branch=dev)](https://travis-ci.org/52North/WPS)
 
 ## License
 
