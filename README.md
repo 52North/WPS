@@ -2,13 +2,13 @@
 
 ## Description
 
-Standardized web-based geo-processing.
+### Standardized web-based geo-processing.
 
-The 52°North Web Processing Service enables the deployment of geo-processes on the web in a standardized way. It features a pluggable architecture for processes and data encodings.
+** The 52°North Web Processing Service enables the deployment of geo-processes on the web in a standardized way. It features a pluggable architecture for processes and data encodings. **
 
 The 52°North WPS implements the [OGC WPS specification](http://www.opengeospatial.org/standards/wps).
 
-Features
+### Features
 * General Features
   * Full java-based Open Source implementation.
   * Pluggable framework for algorithms and XML data handling and processing frameworks
