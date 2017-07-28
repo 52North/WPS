@@ -37,15 +37,12 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.bbox.BoundingBoxData;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.algorithm.test.DummyTestClass;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  * This class is for testing RawData output.

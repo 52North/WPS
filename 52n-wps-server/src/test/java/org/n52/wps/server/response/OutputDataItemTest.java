@@ -40,16 +40,6 @@ import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
-import net.opengis.ows.x11.LanguageStringType;
-import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
-import net.opengis.wps.x100.LiteralOutputType;
-import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.ProcessBriefType;
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlValidationError;
@@ -71,10 +61,17 @@ import org.n52.wps.io.data.binding.literal.LiteralShortBinding;
 import org.n52.wps.io.data.binding.literal.LiteralStringBinding;
 import org.n52.wps.server.ProcessDescription;
 import org.n52.wps.server.WebProcessingService;
-import org.n52.wps.server.response.OutputDataItem;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import net.opengis.ows.x11.LanguageStringType;
+import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument.ExecuteResponse;
+import net.opengis.wps.x100.LiteralOutputType;
+import net.opengis.wps.x100.OutputDescriptionType;
+import net.opengis.wps.x100.ProcessBriefType;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionType.ProcessOutputs;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 /**
  * @author BenjaminPross(bpross-52n)

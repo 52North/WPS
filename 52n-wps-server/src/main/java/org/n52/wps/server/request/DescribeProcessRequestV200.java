@@ -31,11 +31,7 @@ package org.n52.wps.server.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
