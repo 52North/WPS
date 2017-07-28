@@ -176,7 +176,7 @@ public class RDataTypeRegistry {
             sb.append("\n");
         }
 
-        LOGGER.info("R Data Type Mapping: {}", sb.toString());
+        LOGGER.trace("R Data Type Mapping: {}", sb.toString());
     }
 
     private int getLengthOf(String text) {
