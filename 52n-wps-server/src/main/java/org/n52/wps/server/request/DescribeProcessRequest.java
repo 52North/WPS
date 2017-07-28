@@ -30,12 +30,9 @@ package org.n52.wps.server.request;
 
 import java.util.List;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.QName;
-
 import org.apache.commons.collections.map.CaseInsensitiveMap;
-import org.apache.xmlbeans.XmlCursor;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.WebProcessingService;
@@ -136,10 +133,8 @@ public class DescribeProcessRequest extends Request {
 
         document = ProcessDescriptionsDocument.Factory.newInstance();
         document.addNewProcessDescriptions();
-        XmlCursor c = document.newCursor();
-        c.toFirstChild();
-        c.toLastAttribute();
-        c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
+
+        XMLBeansHelper.addSchemaLocationToXMLObject(document, "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd");
 
         String[] identifiers = getMapValue("identifier", true).split(",");
         document.getProcessDescriptions().setLang(WebProcessingService.DEFAULT_LANGUAGE);
