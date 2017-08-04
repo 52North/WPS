@@ -42,6 +42,7 @@ import net.opengis.wps.x20.ComplexDataType;
 import net.opengis.wps.x20.LiteralDataDocument;
 import net.opengis.wps.x20.LiteralDataDomainType;
 import net.opengis.wps.x20.LiteralDataType;
+import net.opengis.wps.x20.LiteralDataType.LiteralDataDomain;
 import net.opengis.wps.x20.ProcessOfferingDocument.ProcessOffering;
 
 import org.apache.xmlbeans.XmlOptions;
@@ -562,9 +563,11 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                     textXMLFormat.setMimeType("text/xml");
 
-                    LiteralDataDomainType literalDataDomainType = literalData.addNewLiteralDataDomain();
+                    LiteralDataDomain literalDataDomain = literalData.addNewLiteralDataDomain();
 
-                    literalDataDomainType.addNewDataType().setReference(literalDescriptor.getDataType());
+                    literalDataDomain.addNewDataType().setReference(literalDescriptor.getDataType());
+
+                    literalDataDomain.setDefault(true);
 
                     if (literalDescriptor.hasDefaultValue()) {
 
@@ -572,15 +575,15 @@ public abstract class AbstractDescriptorAlgorithm implements IAlgorithm, ISubjec
 
                         defaultValue.setStringValue(literalDescriptor.getDefaultValue());
 
-                        literalDataDomainType.setDefaultValue(defaultValue);
+                        literalDataDomain.setDefaultValue(defaultValue);
                     }
                     if (literalDescriptor.hasAllowedValues()) {
-                        net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed = literalDataDomainType.addNewAllowedValues();
+                        net.opengis.ows.x20.AllowedValuesDocument.AllowedValues allowed = literalDataDomain.addNewAllowedValues();
                         for (String allowedValue : literalDescriptor.getAllowedValues()) {
                             allowed.addNewValue().setStringValue(allowedValue);
                         }
                     } else {
-                        literalDataDomainType.addNewAnyValue();
+                        literalDataDomain.addNewAnyValue();
                     }
 
                     dataInput.setDataDescription(literalData);
