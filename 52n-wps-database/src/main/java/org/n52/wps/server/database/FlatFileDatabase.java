@@ -46,10 +46,6 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import net.opengis.ows.x20.ExceptionReportDocument;
-import net.opengis.wps.x20.ResultDocument;
-import net.opengis.wps.x20.StatusInfoDocument;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -63,6 +59,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+
+import net.opengis.wps.x20.StatusInfoDocument;
 
 /*
  * @author tkunicki (Thomas Kunicki, USGS)
@@ -513,7 +511,7 @@ public final class FlatFileDatabase implements IDatabase {
 
                 if (object instanceof StatusInfoDocument) {
                     return object.newInputStream();
-                } else if (object instanceof ResultDocument || object instanceof ExceptionReportDocument) {
+                } else {
 
                     LOGGER.info("Last response file not of type status info document.");
 

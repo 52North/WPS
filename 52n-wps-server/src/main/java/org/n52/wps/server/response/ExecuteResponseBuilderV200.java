@@ -109,6 +109,11 @@ public class ExecuteResponseBuilderV200 implements ExecuteResponseBuilder{
 
                 OutputDescriptionType[] outputDescs = description.getProcess().getOutputArray();
                 if(request.isRawData()) {
+                    //need to create the last status document
+                    XMLBeansHelper.addSchemaLocationToXMLObject(statusInfoDoc, "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+                    DatabaseFactory.getDatabase().insertResponse(
+                            request.getUniqueId().toString(), statusInfoDoc.newInputStream(XMLBeansHelper.getXmlOptions()));
+
                     //TODO check how this should be handled
                     OutputDefinitionType rawDataOutput = request.getExecute().getOutputArray(0);
                     String id = rawDataOutput.getId();

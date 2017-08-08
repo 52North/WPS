@@ -161,8 +161,7 @@ public class AllTestsIT {
         assertThat(response, response, not(containsString("ExceptionReport")));
         assertThat(response, response, containsString("statusLocation"));
 
-        Document doc;
-        doc = AllTestsIT.parseXML(response);
+        Document doc = AllTestsIT.parseXML(response);
 
         NodeList executeResponse = doc.getElementsByTagName("wps:ExecuteResponse");
 

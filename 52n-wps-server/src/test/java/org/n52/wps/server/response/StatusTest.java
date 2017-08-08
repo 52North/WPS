@@ -28,6 +28,9 @@
  */
 package org.n52.wps.server.response;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -35,30 +38,25 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.wps.x20.GetStatusDocument;
-import net.opengis.wps.x20.StatusInfoDocument;
-
 import org.apache.xmlbeans.XmlException;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.IAlgorithm;
 import org.n52.wps.server.RepositoryManager;
+import org.n52.wps.server.RepositoryManagerSingletonWrapper;
 import org.n52.wps.server.algorithm.test.StatusTestingProcess;
 import org.n52.wps.server.database.DatabaseFactory;
 import org.n52.wps.server.observerpattern.IObserver;
 import org.n52.wps.server.observerpattern.ISubject;
 import org.n52.wps.server.request.ExecuteRequestV200;
 import org.n52.wps.server.request.GetStatusRequestV200;
-import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import static org.junit.Assert.assertTrue;
-import org.n52.wps.server.RepositoryManagerSingletonWrapper;
+import net.opengis.wps.x20.GetStatusDocument;
+import net.opengis.wps.x20.StatusInfoDocument;
 
 public class StatusTest extends AbstractITClass {
 
@@ -103,7 +101,7 @@ public class StatusTest extends AbstractITClass {
                             assertTrue(statusInfoDocument.getStatusInfo().getStatus() != null);
 
                         } catch (ExceptionReport | XmlException | IOException e) {
-                            e.printStackTrace();
+                            fail(e.getMessage());
                         }
 
                     }
@@ -120,10 +118,11 @@ public class StatusTest extends AbstractITClass {
 
             StatusInfoDocument statusInfoDocument = StatusInfoDocument.Factory.parse(statusRequestV200.call().getAsStream());
 
-            System.out.println(statusInfoDocument.xmlText());
+            assertTrue(statusInfoDocument.getStatusInfo().getJobID().equals(requestID));
+            assertTrue(statusInfoDocument.getStatusInfo().getStatus().equals("Succeeded"));
 
         } catch (SAXException | IOException | ParserConfigurationException | ExceptionReport | XmlException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 

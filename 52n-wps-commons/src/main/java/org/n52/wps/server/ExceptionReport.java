@@ -112,8 +112,8 @@ public class ExceptionReport extends Exception {
 
         // Printing service Exception
         net.opengis.ows.x20.ExceptionReportDocument reportV200 = net.opengis.ows.x20.ExceptionReportDocument.Factory.newInstance();
-        XMLBeansHelper.addSchemaLocationToXMLObject(reportV200, "http://www.opengis.net/ows/2.0 http://schemas.opengis.net/ows/2.0/owsAll.xsd");
         net.opengis.ows.x20.ExceptionReportDocument.ExceptionReport exceptionReportV200 = reportV200.addNewExceptionReport();
+        XMLBeansHelper.addSchemaLocationToXMLObject(reportV200, "http://www.opengis.net/ows/2.0 http://schemas.opengis.net/ows/2.0/owsAll.xsd");
         exceptionReportV200.setVersion(WPSConfig.VERSION_200);
         net.opengis.ows.x20.ExceptionType exV200 = exceptionReportV200.addNewException();
         exV200.setExceptionCode(errorKey);
@@ -140,6 +140,7 @@ public class ExceptionReport extends Exception {
         // Printing service Exception
         ExceptionReportDocument report = ExceptionReportDocument.Factory.newInstance();
         net.opengis.ows.x11.ExceptionReportDocument.ExceptionReport exceptionReport = report.addNewExceptionReport();
+        XMLBeansHelper.addSchemaLocationToXMLObject(report, "http://www.opengis.net/ows/1.1 http://schemas.opengis.net/ows/1.1.0/owsAll.xsd");
         exceptionReport.setVersion(WPSConfig.VERSION_100);
         ExceptionType ex = exceptionReport.addNewException();
         ex.setExceptionCode(errorKey);
