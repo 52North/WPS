@@ -46,6 +46,7 @@ import net.opengis.wps.x100.SupportedComplexDataType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GenericFileDataWithGTBinding;
@@ -190,15 +191,40 @@ public class GrassProcessDelegator extends GenericGrassAlgorithm{
 
         Map<String, IData> result = new HashMap<String, IData>();
 
-        OutputDefinitionType output = ExecutionContextFactory.getContext().getOutputs().get(0);
+        ExecutionContext executionContext = ExecutionContextFactory.getContext();
 
-        String outputSchema = output.getSchema();
+        OutputDefinitionType output = null;
+        net.opengis.wps.x20.OutputDefinitionType wps200Output = null;
 
-        String outputMimeType = output.getMimeType();
+        if(executionContext.getOutputs().isWPS200Execution()){
+            wps200Output =  executionContext.getOutputs().getWps200OutputDefinitionTypes().get(0);
+        }else{
+            output =  executionContext.getOutputs().getWps100OutputDefinitionTypes().get(0);
+        }
 
-        CodeType outputIdentifierCT = output.getIdentifier();
+        String outputSchema = "";
 
-        String outputIdentifier = outputIdentifierCT.getStringValue();
+        String outputMimeType = "";
+
+        CodeType outputIdentifierCT = null;
+
+        String outputIdentifier = "";
+
+        if(output != null){
+            outputSchema = output.getSchema();
+
+            outputMimeType = output.getMimeType();
+
+            outputIdentifierCT = output.getIdentifier();
+
+            outputIdentifier = outputIdentifierCT.getStringValue();
+        }else if(wps200Output != null){
+            outputSchema = wps200Output.getSchema();
+
+            outputMimeType = wps200Output.getMimeType();
+
+            outputIdentifier = wps200Output.getId();
+        }
 
         HashMap<String, List<IData>> firstInputMap = new HashMap<String, List<IData>>();
 

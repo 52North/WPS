@@ -29,6 +29,7 @@
 package org.n52.wps.server.request;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
+import org.n52.wps.commons.context.OutputTypeWrapper;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.ExceptionReport;
@@ -55,6 +57,7 @@ import org.w3c.dom.Document;
 
 import net.opengis.ows.x20.ExceptionReportDocument;
 import net.opengis.ows.x20.ExceptionType;
+import net.opengis.wps.x100.OutputDefinitionType;
 import net.opengis.wps.x20.DataInputType;
 import net.opengis.wps.x20.ExecuteDocument;
 import net.opengis.wps.x20.ExecuteRequestType;
@@ -172,8 +175,11 @@ public class ExecuteRequestV200 extends ExecuteRequest implements IObserver {
         IAlgorithm algorithm = null;
         Map<String, List<IData>> inputMap = null;
         try {
-            //TODO add outputs to execution context
-            ExecutionContext context = new ExecutionContext();
+
+            OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
+            outputTypeWrapper.setWps200OutputDefinitionTypes(Arrays.asList(getExecute().getOutputArray()));
+
+            ExecutionContext context = new ExecutionContext(outputTypeWrapper);
 
             // register so that any function that calls
             // ExecuteContextFactory.getContext() gets the instance registered
