@@ -41,6 +41,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.ctc.wstx.stax.WstxInputFactory;
@@ -54,6 +56,8 @@ import javanet.staxutils.XMLStreamUtils;
  * @author tkunicki
  */
 public class XMLUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLUtil.class);
 
     private final static XMLOutputFactory xmlOutputFactory;
     private final static XMLInputFactory xmlInputFactory;
@@ -78,6 +82,7 @@ public class XMLUtil {
                     indent);
         }
         catch (XMLStreamException e) {
+            LOGGER.error("Error copying XML", e);
             throw new IOException("Error copying XML", e);
         }
     }
@@ -89,6 +94,7 @@ public class XMLUtil {
                     indent);
         }
         catch (XMLStreamException e) {
+            LOGGER.error("Error copying XML", e);
             throw new IOException("Error copying XML", e);
         }
 
