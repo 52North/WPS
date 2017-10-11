@@ -46,6 +46,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -394,8 +396,9 @@ public final class FlatFileDatabase implements IDatabase {
                 // to a temp file and rename these when completed. Large responses
                 // can cause the call below to take a significant amount of time.
                 XMLUtil.copyXML(responseInputStream, responseOutputStream, indentXML);
-            }
-            finally {
+            }catch(XMLStreamException e){
+                LOGGER.info("Could not store XML response for job: " +id);
+            }finally {
                 IOUtils.closeQuietly(responseInputStream);
                 IOUtils.closeQuietly(responseOutputStream);
             }
@@ -409,9 +412,6 @@ public final class FlatFileDatabase implements IDatabase {
 
         }
         catch (FileNotFoundException e) {
-            throw new RuntimeException("Error storing response for " + id, e);
-        }
-        catch (IOException e) {
             throw new RuntimeException("Error storing response for " + id, e);
         }
     }

@@ -16,7 +16,6 @@
  */
 package org.n52.wps.commons;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -75,27 +74,29 @@ public class XMLUtil {
         return xmlOutputFactory;
     }
 
-    public static void copyXML(InputStream input, OutputStream output, boolean indent) throws IOException {
+    public static void copyXML(InputStream input, OutputStream output, boolean indent) throws XMLStreamException {
         try {
             copyXML(xmlInputFactory.createXMLStreamReader(input, "UTF-8"),
                     xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"),
                     indent);
         }
         catch (XMLStreamException e) {
-            LOGGER.error("Error copying XML", e);
-            throw new IOException("Error copying XML", e);
+            LOGGER.info("Error copying XML");
+            LOGGER.trace(e.getMessage());
+            throw new XMLStreamException("Error copying XML", e);
         }
     }
 
-    public static void copyXML(Source input, OutputStream output, boolean indent) throws IOException {
+    public static void copyXML(Source input, OutputStream output, boolean indent) throws XMLStreamException {
         try {
             copyXML(xmlInputFactory.createXMLStreamReader(input),
                     xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"),
                     indent);
         }
         catch (XMLStreamException e) {
-            LOGGER.error("Error copying XML", e);
-            throw new IOException("Error copying XML", e);
+            LOGGER.info("Error copying XML");
+            LOGGER.trace(e.getMessage());
+            throw new XMLStreamException("Error copying XML", e);
         }
 
     }
