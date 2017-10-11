@@ -52,6 +52,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -272,6 +273,7 @@ public class GML2BasicParser extends AbstractParser {
             factory.newSAXParser().parse(new FileInputStream(file),
                     (DefaultHandler) handler);
             String schemaUrl = handler.getSchemaUrl();
+            schemaUrl = URLDecoder.decode(schemaUrl, "UTF-8");
             String namespaceURI = handler.getNameSpaceURI();
             return new QName(namespaceURI, schemaUrl);
 
