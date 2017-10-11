@@ -16,14 +16,15 @@
  */
 package org.n52.wps.commons.context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.opengis.wps.x100.OutputDefinitionType;
 
 public class OutputTypeWrapper {
 
-    private List<? extends OutputDefinitionType> wps100OutputDefinitionTypes;
-    private List<? extends net.opengis.wps.x20.OutputDefinitionType> wps200OutputDefinitionTypes;
+    private List<? extends OutputDefinitionType> wps100OutputDefinitionTypes = new ArrayList<>();
+    private List<? extends net.opengis.wps.x20.OutputDefinitionType> wps200OutputDefinitionTypes = new ArrayList<>();
 
     private boolean isWPS100Execution = false;
     private boolean isWPS200Execution = false;

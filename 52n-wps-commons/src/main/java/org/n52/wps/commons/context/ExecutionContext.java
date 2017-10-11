@@ -28,7 +28,7 @@ public class ExecutionContext {
     }
 
     public ExecutionContext(OutputTypeWrapper output) {
-        outputDefinitionTypes = output;
+        outputDefinitionTypes = output == null ? new OutputTypeWrapper() : output;
     }
 
     public String getTempDirectoryPath() {
