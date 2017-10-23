@@ -84,6 +84,7 @@ public class GetStatusRequestV200 extends Request {
         try {
             document = StatusInfoDocument.Factory.parse(DatabaseFactory.getDatabase().lookupStatus(jobID));
         } catch (XmlException | IOException e) {
+            LOGGER.info("No such job: " + jobID);
             throw new ExceptionReport("Job doesn't exist.", ExceptionReport.NO_SUCH_JOB, "jobID=" + jobID);
         }
 
