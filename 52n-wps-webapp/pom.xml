@@ -402,6 +402,10 @@
 			<groupId>org.jdom</groupId>
             <scope>runtime</scope>
 		</dependency>
+        <dependency>
+             <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+             <artifactId>classloader-leak-prevention-servlet3</artifactId>
+         </dependency>
 	</dependencies>
 
 	<properties>
