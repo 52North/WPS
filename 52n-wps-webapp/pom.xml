@@ -86,13 +86,6 @@
 			<artifactId>52n-wps-configuration-api</artifactId>
 		</dependency>
 
-                <!-- uncomment this to work with the wps-gitalgorithm repository -->
-                <!--<dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>52n-wps-git-algorithm-repository</artifactId>
-                    <version>${project.version}</version>
-                </dependency>-->
-
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-algorithm</artifactId>
@@ -405,11 +398,12 @@
 		<dependency>
 			<groupId>org.n52.wps</groupId>
 			<artifactId>52n-xml-wps-v20</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-                  <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
-                  <artifactId>classloader-leak-prevention-servlet3</artifactId>
-              </dependency>
+            <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
+            <artifactId>classloader-leak-prevention-servlet3</artifactId>
+         </dependency>
 	</dependencies>
 
 	<properties>
