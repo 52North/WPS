@@ -32,22 +32,21 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.n52.wps" level="DEBUG" />
-	<logger name="org.n52.wps.server.WebProcessingService" level="DEBUG" />
-	<logger name="org.n52.wps.server.r" level="DEBUG" />
-	<logger name="org.n52.wps.repository.git" level="DEBUG" />
-	<logger name="org.n52.wps.io.datahandler.parser.GeotiffParser" level="DEBUG" />
-	<logger name="org.n52.wps.grid" level="INFO" />
+	<logger name="org.n52.wps" level="INFO" />
+	<logger name="org.n52.wps.server.WebProcessingService" level="INFO" />
+	<logger name="org.n52.wps.server.r" level="WARN" />
+	<logger name="org.n52.wps.repository.git" level="INFO" />
+	<logger name="org.n52.wps.webapp.service.ConfigurationServiceImpl" level="WARN" />
+	<logger name="org.n52.wps.webapp.dao.JdbcConfigurationDAO" level="WARN" />
 	<logger name="org.codehaus.xfire.aegis.type" level="OFF" />
 	<logger name="org.apache.commons.digester" level="OFF" />
-	<logger name="org.apache.catalina" level="DEBUG" />
-	<logger name="org.apache.axis" level="OFF" />
-	<logger name="org.apache.axis2" level="OFF" />
+	<logger name="org.apache.catalina" level="WARN" />
 	<logger name="org.apache.axiom" level="OFF" />
 	<logger name="org.apache.catalina.session" level="OFF" />
 	<logger name="org.apache.http.wire" level="ERROR" />
 	<logger name="org.apache.http.headers" level="ERROR" />
-	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="WARN" />
 	<!-- log all bean creations -->
 	<logger name="org.springframework.beans.factory.support.DefaultListableBeanFactory" level="INFO" />
 

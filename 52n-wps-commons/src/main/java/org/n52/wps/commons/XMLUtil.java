@@ -16,7 +16,6 @@
  */
 package org.n52.wps.commons;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -41,6 +40,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import com.ctc.wstx.stax.WstxInputFactory;
@@ -54,6 +55,8 @@ import javanet.staxutils.XMLStreamUtils;
  * @author tkunicki
  */
 public class XMLUtil {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XMLUtil.class);
 
     private final static XMLOutputFactory xmlOutputFactory;
     private final static XMLInputFactory xmlInputFactory;
@@ -71,25 +74,29 @@ public class XMLUtil {
         return xmlOutputFactory;
     }
 
-    public static void copyXML(InputStream input, OutputStream output, boolean indent) throws IOException {
+    public static void copyXML(InputStream input, OutputStream output, boolean indent) throws XMLStreamException {
         try {
             copyXML(xmlInputFactory.createXMLStreamReader(input, "UTF-8"),
                     xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"),
                     indent);
         }
         catch (XMLStreamException e) {
-            throw new IOException("Error copying XML", e);
+            LOGGER.info("Error copying XML");
+            LOGGER.trace(e.getMessage());
+            throw new XMLStreamException("Error copying XML", e);
         }
     }
 
-    public static void copyXML(Source input, OutputStream output, boolean indent) throws IOException {
+    public static void copyXML(Source input, OutputStream output, boolean indent) throws XMLStreamException {
         try {
             copyXML(xmlInputFactory.createXMLStreamReader(input),
                     xmlOutputFactory.createXMLStreamWriter(output, "UTF-8"),
                     indent);
         }
         catch (XMLStreamException e) {
-            throw new IOException("Error copying XML", e);
+            LOGGER.info("Error copying XML");
+            LOGGER.trace(e.getMessage());
+            throw new XMLStreamException("Error copying XML", e);
         }
 
     }

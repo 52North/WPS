@@ -50,6 +50,8 @@ This project includes:
   Bean Validation API under The Apache Software License, Version 2.0
   BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   builder under Apache License 2.0
+  ClassLoader Leak Prevention library under Apache 2
+  ClassLoader Leak Prevention library for servlet environments under Apache 2
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
   common under Eclipse Public License (EPL)

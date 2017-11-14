@@ -56,6 +56,8 @@ public class ExceptionReport extends Exception {
     public static final String FILE_SIZE_EXCEEDED = "FileSizeExceeded";
     /** An error occurs during remote and distributed computation process. */
     public static final String REMOTE_COMPUTATION_ERROR = "RemoteComputationError";
+    /** WPS 2.0 async execute, result is not available yet  */
+    public static final String RESULT_NOT_READY = "ResultNotReady";
 
 
     /** A GetStatus request was send with a JobID of a synchronous job, or if the JobID doesn't exist at all. */
@@ -182,6 +184,9 @@ public class ExceptionReport extends Exception {
             return HttpServletResponse.SC_BAD_REQUEST;
 
         case NO_SUCH_JOB:
+            return HttpServletResponse.SC_BAD_REQUEST;
+
+        case RESULT_NOT_READY:
             return HttpServletResponse.SC_BAD_REQUEST;
 
         case NO_APPLICABLE_CODE:

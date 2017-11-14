@@ -161,6 +161,7 @@ public abstract class ResponseData {
                                 }
                                 if(schema == null && encoding == null){
                                     format = potenitalFormat;
+                                    break;
                                 }
                          }
                      }

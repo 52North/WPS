@@ -23,6 +23,7 @@ package org.n52.wps.commons.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,29 +69,29 @@ public class ExecutionContextTest {
 
         ExecutionContext ec;
 
-        ec = new ExecutionContext((OutputDefinitionType)null);
-        assertNotNull(ec.getOutputs());
-        assertEquals(0, ec.getOutputs().size());
+        OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
 
-        ec = new ExecutionContext(Arrays.asList(new OutputDefinitionType[0]));
+        ec = new ExecutionContext((OutputTypeWrapper)null);
         assertNotNull(ec.getOutputs());
-        assertEquals(0, ec.getOutputs().size());
+        assertEquals(0, ec.getOutputs().getWps100OutputDefinitionTypes().size());
 
-        ec = new ExecutionContext(Arrays.asList(new OutputDefinitionType[1]));
-        assertNotNull(ec.getOutputs());
-        assertEquals(1, ec.getOutputs().size());
+        outputTypeWrapper.setWps100OutputDefinitionTypes(new ArrayList<>(0));
 
-        ec = new ExecutionContext((List<OutputDefinitionType>)null);
+        ec = new ExecutionContext(outputTypeWrapper);
         assertNotNull(ec.getOutputs());
-        assertEquals(0, ec.getOutputs().size());
+        assertEquals(0, ec.getOutputs().getWps100OutputDefinitionTypes().size());
 
-        ec = new ExecutionContext(OutputDefinitionType.Factory.newInstance());
+        outputTypeWrapper = new OutputTypeWrapper();
+
+        outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(new OutputDefinitionType[1]));
+
+        ec = new ExecutionContext(outputTypeWrapper);
         assertNotNull(ec.getOutputs());
-        assertEquals(1, ec.getOutputs().size());
+        assertEquals(1, ec.getOutputs().getWps100OutputDefinitionTypes().size());
 
         ec = new ExecutionContext();
         assertNotNull(ec.getOutputs());
-        assertEquals(0, ec.getOutputs().size());
+        assertEquals(0, ec.getOutputs().getWps100OutputDefinitionTypes().size());
     }
 
 

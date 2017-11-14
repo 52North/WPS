@@ -37,6 +37,7 @@ import java.util.UUID;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -207,7 +208,7 @@ public class RetrieveResultServlet {
             String id) throws IOException {
         try {
             XMLUtil.copyXML(inputStream, outputStream, indent);
-        } catch (IOException e) {
+        } catch (XMLStreamException e) {
             throw new IOException("Error writing XML response for id " + id, e);
         }
     }

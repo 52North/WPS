@@ -38,6 +38,8 @@ import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +54,7 @@ import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.commons.context.ExecutionContext;
 import org.n52.wps.commons.context.ExecutionContextFactory;
+import org.n52.wps.commons.context.OutputTypeWrapper;
 import org.n52.wps.io.data.IComplexData;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.server.AbstractTransactionalAlgorithm;
@@ -620,15 +623,22 @@ public class ExecuteRequestV100 extends ExecuteRequest implements IObserver  {
         try {
             ExecutionContext context;
             if (getExecute().isSetResponseForm()) {
-                context = getExecute().getResponseForm().isSetRawDataOutput() ?
-                        new ExecutionContext(getExecute().getResponseForm().getRawDataOutput()) :
-                        new ExecutionContext(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
+
+                OutputTypeWrapper outputTypeWrapper = new OutputTypeWrapper();
+
+                if(getExecute().getResponseForm().isSetRawDataOutput()){
+                    outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(new OutputDefinitionType[]{getExecute().getResponseForm().getRawDataOutput()}));
+                }else{
+                    outputTypeWrapper.setWps100OutputDefinitionTypes(Arrays.asList(getExecute().getResponseForm().getResponseDocument().getOutputArray()));
+                }
+
+                context =  new ExecutionContext(outputTypeWrapper);
             }
             else {
                 context = new ExecutionContext();
             }
 
-                // register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
+            // register so that any function that calls ExecuteContextFactory.getContext() gets the instance registered with this thread
             ExecutionContextFactory.registerContext(context);
 
             LOGGER.debug("started with execution");

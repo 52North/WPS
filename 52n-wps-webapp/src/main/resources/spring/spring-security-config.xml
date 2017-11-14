@@ -28,6 +28,7 @@
 		<intercept-url pattern="/log/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<intercept-url pattern="/service_identification/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 		<intercept-url pattern="/service_provider/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
+		<intercept-url pattern="/databases/**" access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" />
 	</http>
 	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" />
 	<authentication-manager>
