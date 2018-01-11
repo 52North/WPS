@@ -2,7 +2,6 @@ language: java
 script: "mvn clean install -Pintegration-test"
 jdk:
   - openjdk7
-  - oraclejdk7
 
 before_install:
   - cat /etc/hosts # optionally check the content *before*
