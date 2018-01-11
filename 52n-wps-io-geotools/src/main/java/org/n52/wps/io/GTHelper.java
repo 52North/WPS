@@ -464,6 +464,8 @@ public class GTHelper {
 
             domain = URLDecoder.decode(domain, "UTF-8");
 
+            domain = domain.replace("file:", "");
+
             int startIndex = domain.indexOf("WEB-INF");
             if(startIndex<0){
                 //not running as webapp
@@ -478,7 +480,7 @@ public class GTHelper {
                 domain = domain.substring(0,startIndex);
                 String baseDirLocation = domain;
 
-                String baseDir = baseDirLocation +  "/static/schemas" + File.separator;
+                String baseDir = (baseDirLocation.endsWith("/") ? baseDirLocation : baseDirLocation + File.separator) +  "static/schemas" + File.separator;
                 File folder = new File(baseDir);
                 if(!folder.exists()){
                     folder.mkdirs();
@@ -489,7 +491,7 @@ public class GTHelper {
                 writer.flush();
                 writer.close();
 
-                String url = serviceBaseURL +"/static/schemas/"+ uuid+".xsd";
+                String url = (serviceBaseURL.endsWith("/") ? serviceBaseURL : serviceBaseURL + "/") +"static/schemas/"+ uuid+".xsd";
                 return url;
             }
         }
