@@ -54,6 +54,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -98,6 +99,9 @@ public class PostgresDatabase extends AbstractDatabase {
 	private static final int SELECTION_STRING_REQUEST_ID_PARAM_INDEX = 1;
 	private static final int SELECTION_STRING_RESPONSE_COLUMN_INDEX = 1;
 	private static final int SELECTION_STRING_RESPONSE_MIMETYPE_COLUMN_INDEX = 2;
+
+	// If the delimiter changes, examine Patterns below.
+	private final static Joiner JOINER = Joiner.on(".");
 
 	private static String connectionURL;
 	private static Path BASE_DIRECTORY;
@@ -221,6 +225,15 @@ public class PostgresDatabase extends AbstractDatabase {
 	}
 
 	@Override
+	public synchronized String storeComplexValue(String id,
+	    InputStream stream,
+	    String type,
+	    String mimeType) {
+            id = JOINER.join(id, UUID.randomUUID().toString());
+	    return super.storeComplexValue(id, stream, type, mimeType);
+	}
+	
+	@Override
 	protected String insertResultEntity(InputStream stream, String id, String type, String mimeType) {
 		boolean compressData = !SAVE_RESULTS_TO_DB;
 		boolean proceed = true;
@@ -312,17 +325,17 @@ public class PostgresDatabase extends AbstractDatabase {
 			if (proceed) {
 				try (Connection connection = getConnection();
 						PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
-					updateStatement.setString(INSERT_COLUMN_REQUEST_ID, id);
-					updateStatement.setTimestamp(INSERT_COLUMN_REQUEST_DATE, new Timestamp(Calendar.getInstance().getTimeInMillis()));
-
+					updateStatement.setString(2, id);
+					
 					if (SAVE_RESULTS_TO_DB) {
 						// This is implemented because we need to handle the case of SAVE_RESULTS_TO_DB = true. However,
 						// this should not be used if you expect results to be large. 
 						// TODO- Remove and reimplement when setAsciiStream() has been properly implemented 
 						// @ https://github.com/pgjdbc/pgjdbc/blob/master/org/postgresql/jdbc4/AbstractJdbc4Statement.java
-						updateStatement.setString(INSERT_COLUMN_RESPONSE, IOUtils.toString(stream, DEFAULT_ENCODING));
+//						updateStatement.setAsciiStream(INSERT_COLUMN_RESPONSE, stream);
+						updateStatement.setString(1, IOUtils.toString(stream, DEFAULT_ENCODING));
 					} else {
-						updateStatement.setString(INSERT_COLUMN_RESPONSE, data);
+						updateStatement.setString(1, data);
 					}
 					updateStatement.executeUpdate();
 
