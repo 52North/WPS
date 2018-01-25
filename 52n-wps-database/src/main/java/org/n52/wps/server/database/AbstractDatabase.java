@@ -394,7 +394,7 @@ public abstract class AbstractDatabase implements IDatabase{
                 LOGGER.warn("Query did not return a valid result.");
                 return null;
             } else {
-                LOGGER.info("Successfully retrieved the Mimetyoe of the response: "
+                LOGGER.info("Successfully retrieved the Mimetype of the response: "
                         + id);
                 return res.getString(2);
             }
