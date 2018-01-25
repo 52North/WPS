@@ -201,7 +201,7 @@
 
             Direct connection configuration:
             <Database>
-                Alternative connection method
+                <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
                 <Property active="true" name="databaseName">postgres</Property>
                 <Property active="true" name="databasePath">//localhost:5432</Property>
                 <Property active="true" name="username">username</Property>
