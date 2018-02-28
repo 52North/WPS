@@ -153,9 +153,9 @@
 								</c:forEach>
 							</tbody>
 						</table>
-						<!--button type="submit" class="btn btn-primary" id="addAlgorithmButton" onClick="buttonClick('${fullClassName}')">Add algorithm</button-->						
-                        <a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
-					</c:if>											
+						<!--button type="submit" class="btn btn-primary" id="addAlgorithmButton" onClick="buttonClick('${fullClassName}')">Add algorithm</button-->
+					</c:if>						
+                    <a data-toggle="modal" href="#addAlgorithm" class="btn btn-primary btn-lg" onClick="setHiddenModuleName('${fullClassName}')">Add algorithm</a>
 					<c:if test="${fullClassName == 'org.n52.wps.server.modules.UploadedAlgorithmRepositoryCM'}">
 						<a data-toggle="modal" href="#uploadProcess" class="btn btn-primary btn-lg">Upload Process</a>
 				    </c:if>
