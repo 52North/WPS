@@ -49,7 +49,7 @@ The 52°North WPS implements the [OGC WPS specification](http://www.opengeospati
 * Master: [![Master Build Status](https://travis-ci.org/52North/WPS.png?branch=master)](https://travis-ci.org/52North/WPS)
 * Develop: [![Develop Build Status](https://travis-ci.org/52North/WPS.png?branch=dev)](https://travis-ci.org/52North/WPS)
 
-## License
+## Licenses
 
 This project consists of modules which are published under different licenses.
 
@@ -76,7 +76,7 @@ This project consists of modules which are published under different licenses.
   * 52n-wps-webadmin
   * 52n-wps-webapp
   
-For details see the LICENSE and NOTICE files. Be aware that some modules contain their own LICENSE and NOTICE files.
+For details see the [LICENSE](https://github.com/52North/WPS/blob/website-markdown/LICENSE) and [NOTICE](https://github.com/52North/WPS/blob/website-markdown/NOTICE) files. Be aware that some modules contain their own LICENSE and NOTICE files.
 
 ## Changelog
 
@@ -118,8 +118,8 @@ Benjamin Pross (b.pross (at) 52north.org)
 
 ## Support
 
-You can get support in the community mailing list and forums:
-http://52north.org/resources/mailing-lists-and-forums/
+You can find support in the community mailing list :
+https://list.52north.org/mailman/listinfo/geoprocessing
 
 ## Contribute
 
@@ -129,6 +129,8 @@ A link to the contributors license agreement and further explanations are availa
 http://52north.org/about/licensing/cla-guideline
 
 ## Credits
+
+### Contributors
 
  * Benjamin Pross, @bpross-52n
  * Daniel Nüst, @nuest
