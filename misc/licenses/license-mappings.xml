@@ -324,14 +324,6 @@
 	</artifact>
 
 	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
-	<artifact>
-		<groupId>org.n52.wps</groupId>
-		<artifactId>ogckml2.2</artifactId>
-		<version>1.0.0</version>
-		<license>GNU GENERAL PUBLIC LICENSE (GPL Version 2, June 1991)</license>
-	</artifact>
-
-	<!-- 52north.org/maven/repo/releases/org/n52/wps/ -->
     <artifact>
         <groupId>org.n52.wps</groupId>
         <artifactId>52n-wps-ags-workspace</artifactId>

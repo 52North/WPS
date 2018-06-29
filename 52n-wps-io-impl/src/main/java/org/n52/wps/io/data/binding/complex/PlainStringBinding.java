@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,7 +39,7 @@ public class PlainStringBinding implements IComplexData{
 		payload = string;
 	}
 
-	public Object getPayload() {
+	public String getPayload() {
 		return payload;
 	}
 

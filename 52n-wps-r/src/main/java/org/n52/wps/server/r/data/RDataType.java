@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2010 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.data;
 
 import org.n52.wps.io.data.GenericFileDataConstants;
@@ -74,15 +73,15 @@ public enum RDataType implements RTypeDefinition {
             "kml", GenericFileDataConstants.MIME_TYPE_KML, GenericFileDataWithGTBinding.class, true, null, "UTF-8"),
 
     // graphical data
-    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, null),
+    GIF("gif", GenericFileDataConstants.MIME_TYPE_IMAGE_GIF, GenericFileDataBinding.class, true, null, "base64"),
 
-    JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, null),
+    JPEG("jpeg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
 
-    JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, null),
+    JPEG2("jpg", GenericFileDataConstants.MIME_TYPE_IMAGE_JPEG, GenericFileDataBinding.class, true, null, "base64"),
 
-    PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class, true, null, null),
+    PNG("png", GenericFileDataConstants.MIME_TYPE_IMAGE_PNG, GenericFileDataBinding.class, true, null, "base64"),
 
-    TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, null),
+    TIFF("tiff", GenericFileDataConstants.MIME_TYPE_TIFF, GenericFileDataBinding.class, true, null, "base64"),
 
     // file data and xml:
     TEXT_PLAIN("text", GenericFileDataConstants.MIME_TYPE_PLAIN_TEXT, GenericFileDataBinding.class, true), TEXT_XML(

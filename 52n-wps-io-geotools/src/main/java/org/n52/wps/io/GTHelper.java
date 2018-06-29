@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,13 +56,11 @@ import java.util.Collection;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.gml2.SrsSyntax;
 import org.geotools.referencing.CRS;
-import org.n52.wps.ServerDocument.Server;
 import org.n52.wps.commons.WPSConfig;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -75,6 +73,8 @@ import org.opengis.geometry.aggregate.MultiCurve;
 import org.opengis.geometry.aggregate.MultiSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -351,7 +351,7 @@ public class GTHelper {
 					}else if(property.getType().getBinding().equals(Double.class)){
 						schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
 						"<xs:simpleType> ";
-						schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+						schema = schema + "<xs:restriction base=\"xs:double\"> "+
 						"</xs:restriction> "+
 						"</xs:simpleType> "+
 						"</xs:element> ";
@@ -422,7 +422,7 @@ public class GTHelper {
 						}else if(property.getType().getBinding().equals(Double.class)){
 							schema = schema + "<xs:element name=\""+attributeName+"\" minOccurs=\"0\" maxOccurs=\"1\"> "+
 							"<xs:simpleType> ";
-							schema = schema + "<xs:restriction base=\"xs:integer\"> "+
+							schema = schema + "<xs:restriction base=\"xs:double\"> "+
 							"</xs:restriction> "+
 							"</xs:simpleType> "+
 							"</xs:element> ";
@@ -449,15 +449,6 @@ public class GTHelper {
 			}
 
 		public static String storeSchema(String schema, String uuid) throws IOException {
-			Server server = WPSConfig.getInstance().getWPSConfig().getServer();
-			String protocol = server.getProtocol();
-			String hostname = server.getHostname();
-			String port = server.getHostport();
-			String webapp = server.getWebappPath();
-			
-			LOGGER.debug("GTHelper hostname " + hostname);
-			LOGGER.debug("GTHelper port " + port);
-			LOGGER.debug("GTHelper webapp " + webapp);
 			
 			String domain = WPSConfig.class.getProtectionDomain().getCodeSource().getLocation().getFile();
 			
@@ -488,7 +479,7 @@ public class GTHelper {
 				writer.flush();
 				writer.close();
 				
-				String url = protocol+"://"+hostname+":"+port+"/"+webapp+"/schemas/"+ uuid+".xsd";
+				String url = WPSConfig.getServerBaseURL()+"/schemas/"+ uuid+".xsd";
 				return url;
 			}
 		}
@@ -501,6 +492,10 @@ public class GTHelper {
 				LOGGER.error("Exception while decoding CRS EPSG:4326", e);
 			}
 			return null;
+		}
+		
+		public static SrsSyntax getSrsSyntaxFromString(String syntaxString){		    
+		    return SrsSyntax.valueOf(syntaxString);		    
 		}
 
 }

@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2006 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2006 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,7 +44,7 @@ public class ExecutionContext {
 
     public String getTempDirectoryPath() {
 
-        return System.getProperty("java.io.tmpdir") + this.tempFolderName;
+        return System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + this.tempFolderName;
     }
 
     public List<OutputDefinitionType> getOutputs() {

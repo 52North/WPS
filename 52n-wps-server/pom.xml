@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>52n-wps-parent</artifactId>
 		<groupId>org.n52.wps</groupId>
-		<version>3.3.2-SNAPSHOT</version>
+		<version>3.6.3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>52n-wps-server</artifactId>
@@ -70,6 +70,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>52n-wps-io-impl</artifactId>
 		</dependency>
+		
+<!-- 		<dependency> -->
+<!-- 			<groupId>${project.groupId}</groupId> -->
+<!-- 			<artifactId>52n-wps-mc</artifactId> -->
+<!-- 		</dependency> -->
+		
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -99,7 +105,7 @@
 			<artifactId>xmlbeans</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.n52.wps</groupId>
+			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>52n-xml-wps-v100</artifactId>
 		</dependency>
 		<dependency>

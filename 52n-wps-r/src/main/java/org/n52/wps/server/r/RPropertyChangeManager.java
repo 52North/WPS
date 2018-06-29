@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2010 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r;
 
 import java.beans.PropertyChangeEvent;
@@ -184,7 +183,10 @@ public class RPropertyChangeManager implements PropertyChangeListener {
         if ( !algorithmPropertyHash.isEmpty())
             propertyChanged = true;
 
-        propertyChanged = checkPropertyOrder(oldPropertyArray, propertyChanged);
+        //Bugfix #222: Why is the order checked?
+        //This causes a second reload of the wps_config, even if no property was changed
+        //The properties are sorted anyway
+//        propertyChanged = checkPropertyOrder(oldPropertyArray, propertyChanged);
 
         if (propertyChanged) {
             Property[] newPropertyArray = newPropertyList.toArray(new Property[0]);

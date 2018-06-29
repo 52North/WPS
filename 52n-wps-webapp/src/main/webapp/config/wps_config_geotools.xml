@@ -6,6 +6,8 @@
 			<Parser name="GML3BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser"
 				active="true">
+				<Format mimetype="text/xml; subtype=gml/3.1.1"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -25,10 +27,12 @@
 			</Parser>
 			<Parser name="GML32BasicParser"
 				className="org.n52.wps.io.datahandler.parser.GML32BasicParser" active="true">
+				<Property name="setParserNonStrict" active="true">true</Property>
+				<Property name="setBasicGMLConfiguration" active="true">true</Property>
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="SimpleGMLParser"
 				className="org.n52.wps.io.datahandler.parser.SimpleGMLParser"
@@ -235,7 +239,7 @@
 				className="org.n52.wps.io.datahandler.parser.GML3BasicParser4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -253,7 +257,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Parser>
 			<Parser name="GRASSKMLParser"
 				className="org.n52.wps.io.datahandler.parser.GRASSKMLParser" active="true">
@@ -269,7 +273,7 @@
 			<Parser name="GTBinZippedWKT64Parser"
 				className="org.n52.wps.io.datahandler.parser.GTBinZippedWKT64Parser"
 				active="true">
-				<Format mimetype="application/x-zipped-wkt" encoding="Base64"/>
+				<Format mimetype="application/x-zipped-wkt" encoding="base64"/>
 			</Parser>
 
 			<Parser name="WCPSQueryParser"
@@ -308,7 +312,7 @@
 				className="org.n52.wps.io.datahandler.generator.GML3BasicGenerator"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -326,9 +330,13 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
+				<Format mimetype="text/xml; subtype=gml/3.1.1"
+					schema="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd" />
 				<Property name="featureTransformerIncludeBounding" active="true">false</Property>
 				<Property name="featureTransformerDecimalPlaces" active="true">4</Property>
+<!-- 				will be used to generate the SRS name, see http://docs.geotools.org/stable/javadocs/org/geotools/gml2/SrsSyntax.html leave empty to use default syntax-->
+				<Property name="srsSyntax" active="true">OGC_HTTP_URL</Property>
 			</Generator>
 			<Generator name="GML2BasicGenerator"
 				className="org.n52.wps.io.datahandler.generator.GML2BasicGenerator"
@@ -515,7 +523,7 @@
 				className="org.n52.wps.io.datahandler.generator.ProxyGMLGenerator4Files"
 				active="true">
 				<Format mimetype="text/xml"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 				<Format mimetype="text/xml"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml"
@@ -539,7 +547,7 @@
 				<Format mimetype="text/xml; subtype=gml/3.1.1"
 					schema="http://schemas.opengis.net/gml/3.1.1/base/feature.xsd" />
 				<Format mimetype="text/xml; subtype=gml/3.2.1"
-					schema="http://schemas.opengis.net/gml/3.2.1/base/feature.xsd" />
+					schema="http://schemas.opengis.net/gml/3.2.1/feature.xsd" />
 			</Generator>
 			<Generator name="WMSGenerator"
 				className="org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator"
@@ -1133,14 +1141,12 @@
 		<Repository name="ServiceLoaderAlgorithmRepository"
 			className="org.n52.wps.server.ServiceLoaderAlgorithmRepository" active="true">
 		</Repository>
-		<!-- 
+		<!--
 		<Repository name="MCProcessRepository" className="org.n52.wps.mc.MCProcessRepository" active="true">
-			<Property name="CACHED_REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml C:\mypackages\mirror</Property>
-			<Property name="REMOTE_REPOSITORY" active="true">http://141.30.100.178/gpfeed/gpfeed.xml</Property>
-			<Property name="LOCAL_REPOSITORY" active="false">C:\mypackages</Property>
+			<Property name="REMOTE_REPOSITORY" active="false">http://141.30.100.178/gpfeed2/gpfeed.xml</Property>
+			<Property name="LOCAL_REPOSITORY" active="true">D:\MCpackages</Property>
 		</Repository>
-		 -->
-		
+		-->
   </AlgorithmRepositoryList>
 	<RemoteRepositoryList />
 	
@@ -1150,6 +1156,7 @@
 		<!-- Setting to 'true' will enable filtering of responses documents.  Any server URL in
              the response document will be replaced with the server URL used in the HTTP request. --> 
         <Property name="responseURLFilterEnabled" active="true">false</Property>
+        <Property name="forceGeoToolsXYAxisOrder" active="true">false</Property>
 		<Database>
 			<!-- NOTE: database wipe is only implemented for the FlatFileDatabase (the default) -->
 			<!-- enable database wiping base on values below -->
@@ -1192,7 +1199,7 @@
 
             Direct connection configuration:
             <Database>
-                Alternative connection method    
+                <Property active="true" name="databaseClass">org.n52.wps.server.database.PostgresDatabase</Property>
                 <Property active="true" name="databaseName">postgres</Property>
                 <Property active="true" name="databasePath">//localhost:5432</Property>
                 <Property active="true" name="username">username</Property>

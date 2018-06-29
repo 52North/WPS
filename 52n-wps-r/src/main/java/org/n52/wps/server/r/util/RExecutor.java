@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2010 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2010 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -26,7 +26,6 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-
 package org.n52.wps.server.r.util;
 
 import java.io.BufferedReader;
@@ -125,9 +124,14 @@ public class RExecutor {
                 if (appendSwitchedOffCommandsAsComments)
                     line = "# (ignored by " + RegExp.WPS_OFF + ") " + line;
             }
-            else {
+            else {               
                 // not switched off:
-                if (line.trim().startsWith(COMMENT_CHARACTER)) {
+                if (line.trim().startsWith(COMMENT_CHARACTER) && line.contains("updateStatus")) {
+                    //remove comment in front of updateStatus call for execution
+                    line = line.replaceFirst("#", "").trim();
+                    scriptExecutionString.append(line);
+                    scriptExecutionString.append("\n");
+                }else if (line.trim().startsWith(COMMENT_CHARACTER)) {
                     if (appendComments)
                         scriptExecutionString.append(line);
                 }

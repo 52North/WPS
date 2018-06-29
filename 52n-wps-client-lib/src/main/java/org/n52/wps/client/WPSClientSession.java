@@ -1,30 +1,18 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
- *       • Apache License, version 2.0
- *       • Apache Software License, version 1.0
- *       • GNU Lesser General Public License, version 3
- *       • Mozilla Public License, versions 1.0, 1.1 and 2.0
- *       • Common Development and Distribution License (CDDL), version 1.0
- *
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.n52.wps.client;
 
@@ -42,15 +30,6 @@ import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.opengis.ows.x11.ExceptionReportDocument;
-import net.opengis.ows.x11.OperationDocument.Operation;
-import net.opengis.wps.x100.CapabilitiesDocument;
-import net.opengis.wps.x100.ExecuteDocument;
-import net.opengis.wps.x100.ExecuteResponseDocument;
-import net.opengis.wps.x100.ProcessBriefType;
-import net.opengis.wps.x100.ProcessDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionsDocument;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -59,6 +38,14 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+
+import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.ows.x11.OperationDocument.Operation;
+import net.opengis.wps.x100.CapabilitiesDocument;
+import net.opengis.wps.x100.ExecuteDocument;
+import net.opengis.wps.x100.ExecuteResponseDocument;
+import net.opengis.wps.x100.ProcessDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionsDocument;
 
 /**
  * Contains some convenient methods to access and manage WebProcessingSerivces in a very
@@ -78,6 +65,8 @@ public class WPSClientSession {
 	private static WPSClientSession session;
 	private Map<String, CapabilitiesDocument> loggedServices;
 	private XmlOptions options = null;
+	private boolean useConnectURL = false;
+	private String connectURL;
 	
 	// a Map of <url, all available process descriptions>
 	private Map<String, ProcessDescriptionsDocument> processDescriptions;
@@ -117,7 +106,23 @@ public class WPSClientSession {
 	 * @throws WPSClientException
 	 */
 	public boolean connect(String url) throws WPSClientException {
+		return connect(url, false);
+	}
+	
+	/**
+	 * Connects to a WPS and retrieves Capabilities plus puts all available Descriptions into cache.
+	 * @param url the entry point for the service. This is used as id for further identification of the service.
+	 * @param useConnectURL use the URL that was passed for communication with the WPS and not the URLs from the Operations Metadata 
+	 * @return true, if connect succeeded, false else.
+	 * @throws WPSClientException
+	 */
+	public boolean connect(String url, boolean useConnectURL) throws WPSClientException {
 		LOGGER.info("CONNECT");
+		this.useConnectURL = useConnectURL;
+		this.connectURL = url;
+		if(useConnectURL){
+			LOGGER.info("Use connect URL for further communication: " + connectURL);			
+		}
 		if(loggedServices.containsKey(url)) {
 			LOGGER.info("Service already registered: " + url);
 			return false;
@@ -243,11 +248,7 @@ public class WPSClientSession {
 			LOGGER.warn("serviceCaps are null, perhaps server does not exist");
 			return null;
 		}
-		ProcessBriefType[] processes = doc.getCapabilities().getProcessOfferings().getProcessArray();
-		String[] processIDs = new String[processes.length];
-		for(int i = 0; i < processIDs.length; i++) {
-			processIDs[i] = processes[i].getIdentifier().getStringValue();
-		}
+		String[] processIDs = new String[]{"all"};
 		return describeProcess(processIDs, url);
 		
 	}
@@ -259,16 +260,19 @@ public class WPSClientSession {
 	 * @throws WPSClientException
 	 */
 	public ProcessDescriptionsDocument describeProcess(String[] processIDs, String serverID) throws WPSClientException {
-		CapabilitiesDocument caps = this.loggedServices.get(serverID);
-		Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
-		String url = null;
-		for(Operation operation : operations){
-			if(operation.getName().equals("DescribeProcess")) {
-				url = operation.getDCPArray()[0].getHTTP().getGetArray()[0].getHref();
+		String url = connectURL;
+		if (!useConnectURL) {
+			CapabilitiesDocument caps = this.loggedServices.get(serverID);
+			Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
+
+			for (Operation operation : operations) {
+				if (operation.getName().equals("DescribeProcess")) {
+					url = operation.getDCPArray()[0].getHTTP().getGetArray()[0].getHref();
+				}
 			}
-		}
-		if(url == null) {
-			throw new WPSClientException("Missing DescribeOperation in Capabilities");
+			if (url == null) {
+				throw new WPSClientException("Capabilities do not contain any information about the entry point for DescribeProcess operation.");
+			}
 		}
 		return retrieveDescriptionViaGET(processIDs, url);
 	}
@@ -281,16 +285,19 @@ public class WPSClientSession {
 	 * @return either an ExecuteResponseDocument or an InputStream if asked for RawData or an Exception Report 
 	 */
 	private Object execute(String serverID, ExecuteDocument execute, boolean rawData) throws WPSClientException{
-		CapabilitiesDocument caps = loggedServices.get(serverID);
-		Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
-		String url = null;
-		for(Operation operation : operations) {
-			if(operation.getName().equals("Execute")) {
-				url = operation.getDCPArray()[0].getHTTP().getPostArray()[0].getHref();
+		String url = connectURL;
+		if (!useConnectURL) {
+			CapabilitiesDocument caps = loggedServices.get(serverID);
+			Operation[] operations = caps.getCapabilities().getOperationsMetadata().getOperationArray();
+			for (Operation operation : operations) {
+				if (operation.getName().equals("Execute")) {
+					url = operation.getDCPArray()[0].getHTTP().getPostArray()[0].getHref();
+				}
 			}
-		}
-		if(url == null) {
-			throw new WPSClientException("Caps does not contain any information about the entry point for process execution");
+			if (url == null) {
+				throw new WPSClientException(
+						"Capabilities do not contain any information about the entry point for Execute operation.");
+			}
 		}
 		execute.getExecute().setVersion(SUPPORTED_VERSION);
 		return retrieveExecuteResponseViaPOST(url, execute,rawData);

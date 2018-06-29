@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
@@ -62,7 +63,7 @@ import com.google.common.base.Joiner;
  * @author tkunicki (Thomas Kunicki, USGS)
  *
  */
-public final class FlatFileDatabase implements IDatabase {
+public final class FlatFileDatabase extends AbstractDatabase {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(FlatFileDatabase.class);
 
@@ -112,8 +113,6 @@ public final class FlatFileDatabase implements IDatabase {
 
     protected final File baseDirectory;
 
-    protected final String baseResultURL;
-
     protected final boolean gzipComplexValues;
 
     protected final Object storeResponseSerialNumberLock;
@@ -127,11 +126,7 @@ public final class FlatFileDatabase implements IDatabase {
         Server server = WPSConfig.getInstance().getWPSConfig().getServer();
         Database database = server.getDatabase();
         PropertyUtil propertyUtil = new PropertyUtil(database.getPropertyArray(), KEY_DATABASE_ROOT);
-        
-        // NOTE: The hostname and port are hard coded as part of the 52n framework design/implementation.
-        baseResultURL = String.format(server.getProtocol() + "://%s:%s/%s/RetrieveResultServlet?id=",
-                server.getHostname(), server.getHostport(), server.getWebappPath());
-        LOGGER.info("Using \"{}\" as base URL for results", baseResultURL);
+        LOGGER.info("Using \"{}\" as base URL for results", getBaseResultURL());
         
         String baseDirectoryPath = propertyUtil.extractString(KEY_DATABASE_PATH, DEFAULT_DATABASE_PATH);
         baseDirectory = new File(baseDirectoryPath);
@@ -157,11 +152,6 @@ public final class FlatFileDatabase implements IDatabase {
         gzipComplexValues = propertyUtil.extractBoolean(KEY_DATABASE_COMPLEX_GZIP, DEFAULT_DATABASE_COMPLEX_GZIP);
 
         storeResponseSerialNumberLock = new Object();
-    }
-
-    @Override
-    public String generateRetrieveResultURL(String id) {
-        return baseResultURL + id;
     }
 
     @Override
@@ -575,5 +565,15 @@ public final class FlatFileDatabase implements IDatabase {
             }
             file.delete();
         }
+    }
+
+    @Override
+    public Connection getConnection() {
+        return null;
+    }
+
+    @Override
+    public String getConnectionURL() {
+        return null;
     }
 }

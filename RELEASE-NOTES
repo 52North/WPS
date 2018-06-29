@@ -1,0 +1,56 @@
+RELEASE NOTES
+
+ The 52°North Web Processing Service (WPS) enables the deployment of geo-processes on the web in a standardized way. 
+ It features a pluggable architecture for processes and data encodings. 
+ The implementation is based on the OpenGIS specification: 05-007r7.
+ 
+    Changes since last release
+==================================
+ 
+  --- New features ---
+ 
+	  * Improved parsing of GML 3.2
+ 
+  --- Changes ---
+ 
+  --- Fixed issues --- 
+	  * #228 ExecutionContext.getTempDirectoryPath() misses to put an "/" after the java.io.tmpdir property
+	  * #235 Use connect URL in describeProcess
+	  * #236 Replace describeProcess identifier
+
+    Release WPS-3.5.0
+==================================
+ 
+  --- New features ---
+  
+	  * Allow complex XML inputs to be wrapped in a CDATA-element
+  
+  --- Changes ---
+
+	  * 52n-wps-client-lib available under Apache 2 license
+  
+  --- Fixed issues ---
+  
+ 
+    Release WPS-3.4.0
+=====================================
+ 
+  --- New features ---
+  
+	  * Add mechanism to update the status of a WPS4R process 
+	  * Add a self-cleaning file input stream implementation for Postgres database
+	  * Raise an exception if an annotated Algorithm has no @Execute annotation
+	  * Empty port and webapp path allowed for WPS URL
+  
+  --- Changes ---
+
+	  * Use moving code packages version 1.1  
+	  * Removed outdated python module.
+	  * Switch to Rserve from maven central
+	  * GRASS backend works with current GRASS 7 release
+  
+  --- Fixed issues ---
+  
+	  * Issue #123: Admin console not working when using Tomcat 6
+	  * Issue #173: Databinding issue with WPS4R
+	  * Issue #222: Save configuration with active R backend results in duplicate algorithm entries

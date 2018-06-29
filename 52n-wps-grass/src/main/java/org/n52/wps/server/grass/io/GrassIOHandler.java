@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2007 - 2014 52°North Initiative for Geospatial Open Source
+ * ﻿Copyright (C) 2007 - 2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -614,7 +614,7 @@ public class GrassIOHandler {
 					bufWrite.close();
 				}
 				LOGGER.error("An error occured while executing the GRASS GIS process.");
-				throw new RuntimeException("An error occured while executing the GRASS GIS process. See the log under " + "http://" + host + ":" + hostPort+ "/" + WebProcessingService.WEBAPP_PATH + "/GRASS_LOGS/" + uuid + logFilename + " for more details.");
+				throw new RuntimeException("An error occured while executing the GRASS GIS process. See the log under " + WPSConfig.getServerBaseURL() + "/GRASS_LOGS/" + uuid + logFilename + " for more details.");
 			}
 			
 		} catch (IOException e) {
