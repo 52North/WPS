@@ -55,10 +55,8 @@ import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.apache.commons.httpclient.HttpException;
-import org.n52.wps.commons.XMLUtil;
 import org.n52.wps.io.data.GenericFileDataWithGT;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
@@ -82,12 +80,8 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
 
         InputStream stream = null;
         try {
-            Document doc = storeLayer(data);
-            String xmlString = XMLUtil.nodeToString(doc);
-            stream = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
-        } catch(TransformerException e){
-            LOGGER.error("Error generating WFS output. Reason: ", e);
-            throw new RuntimeException("Error generating WFS output. Reason: " + e);
+            String getFeatureURL = storeLayer(data);
+            stream = new ByteArrayInputStream(getFeatureURL.getBytes("UTF-8"));
         } catch (IOException e) {
             LOGGER.error("Error generating WFS output. Reason: ", e);
             throw new RuntimeException("Error generating WFS output. Reason: " + e);
@@ -98,7 +92,7 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         return stream;
     }
 
-    private Document storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
+    private String storeLayer(IData coll) throws HttpException, IOException, ParserConfigurationException{
         GTVectorDataBinding gtData = (GTVectorDataBinding) coll;
         File file = null;
         try {
@@ -127,7 +121,7 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         result = geoserverUploader.uploadShp(zipped, layerName);
         LOGGER.debug(result);
 
-        String capabilitiesLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Request=GetCapabilities&Version=1.1.0";
+        String getFeatureLink = "http://"+host+":"+port+"/geoserver/wfs?Service=WFS&Version=1.1.0&Request=GetFeature&typeName="+ "N52:"+file.getName().subSequence(0, file.getName().length()-4);
         //String directLink = geoserverBaseURL + "?Service=WFS&Request=GetFeature&Version=1.1.0&typeName=N52:"+file.getName().subSequence(0, file.getName().length()-4);
 
         //delete shp files
@@ -136,8 +130,8 @@ public class GeoserverWFSGenerator extends AbstractGeoserverWXSGenerator {
         shx.delete();
         dbf.delete();
         prj.delete();
-        Document doc = createXML("N52:"+file.getName().subSequence(0, file.getName().length()-4), capabilitiesLink);
-        return doc;
+
+        return getFeatureLink;
 
     }
 
