@@ -314,6 +314,11 @@
 			<artifactId>commons-fileupload</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <scope>runtime</scope>
+        </dependency>
 		<!-- Database dependencies -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -374,11 +379,6 @@
 			<artifactId>commons-codec</artifactId>
 			<groupId>commons-codec</groupId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<artifactId>commons-httpclient</artifactId>
-			<groupId>commons-httpclient</groupId>
-            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<artifactId>hamcrest-core</artifactId>

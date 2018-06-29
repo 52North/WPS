@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.n52.wps.io.datahandler.generator.GeoserverWMSGenerator;
+import org.n52.wps.io.datahandler.generator.AbstractGeoserverWXSGenerator;
 import org.n52.wps.webapp.api.AlgorithmEntry;
 import org.n52.wps.webapp.api.ClassKnowingModule;
 import org.n52.wps.webapp.api.ConfigurationCategory;
@@ -60,9 +60,9 @@ import org.n52.wps.webapp.api.FormatEntry;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 import org.n52.wps.webapp.api.types.StringConfigurationEntry;
 
-public class GeoserverWMSGeneratorCM extends ClassKnowingModule{
+public class GeoserverWXSGeneratorCM extends ClassKnowingModule{
 
-    private boolean isActive = true;
+private boolean active = true;
 
 public static final String geoserverUsernameKey = "Geoserver_username";
 public static final String geoserverPasswordKey = "Geoserver_password";
@@ -85,50 +85,50 @@ private String geoserverPassword;
 private String geoserverHost;
 private String geoserverPort;
 
-    private List<FormatEntry> formatEntries;
+private List<FormatEntry> formatEntries;
 
-    public GeoserverWMSGeneratorCM(){
-        formatEntries = new ArrayList<>();
-    }
+public GeoserverWXSGeneratorCM(){
+formatEntries = new ArrayList<>();
+}
 
-    @Override
-    public String getModuleName() {
-        return "GeoserverWMSGenerator";
-    }
+@Override
+public String getModuleName() {
+return "GeoserverWXSGenerator";
+}
 
-    @Override
-    public boolean isActive() {
-        return isActive;
-    }
+@Override
+public boolean isActive() {
+return active;
+}
 
-    @Override
-    public void setActive(boolean active) {
-        this.isActive = active;
-    }
+@Override
+public void setActive(boolean active) {
+this.active = active;
+}
 
-    @Override
-    public ConfigurationCategory getCategory() {
-        return ConfigurationCategory.GENERATOR;
-    }
+@Override
+public ConfigurationCategory getCategory() {
+return ConfigurationCategory.GENERATOR;
+}
 
-    @Override
-    public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
-        return configurationEntries;
-    }
+@Override
+public List<? extends ConfigurationEntry<?>> getConfigurationEntries() {
+return configurationEntries;
+}
 
-    @Override
-    public List<AlgorithmEntry> getAlgorithmEntries() {
-        return null;
-    }
+@Override
+public List<AlgorithmEntry> getAlgorithmEntries() {
+return null;
+}
 
-    @Override
-    public List<FormatEntry> getFormatEntries() {
-        return formatEntries;
-    }
+@Override
+public List<FormatEntry> getFormatEntries() {
+return formatEntries;
+}
 
-    @Override
-    public String getClassName() {
-        return GeoserverWMSGenerator.class.getName();
+@Override
+public String getClassName() {
+return AbstractGeoserverWXSGenerator.class.getName();
 }
 
 public String getGeoserverUsername() {
@@ -165,6 +165,6 @@ return geoserverPort;
 @ConfigurationKey(key = geoserverPortKey)
 public void setGeoserverPort(String geoserverPort) {
 this.geoserverPort = geoserverPort;
-    }
+}
 
 }
