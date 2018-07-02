@@ -46,43 +46,43 @@ import org.n52.wps.server.IAlgorithm;
  * @author Daniel Nüst
  *
  */
-public class ImportAnnotationClosedScriptsTest extends AbstractWps4RTest {
-
-    private final static String SCRIPT_DIR = "/annotations/import";
-
-    private final static String SCRIPT_ID = "import";
-
-    private R_Config closedConfig;
-
-    private RAlgorithmRepository closedRepo;
-
-    @Before
-    public void setup() throws FileNotFoundException, IOException, ExceptionReport {
-
-        closedConfig = getConfigSpy();
-        closedConfig.setWknPrefix("test.");
-        Mockito.when(closedConfig.getEnableBatchStart()).thenReturn(true);
-        Mockito.when(closedConfig.isImportDownloadEnabled()).thenReturn(false);
-        Mockito.when(closedConfig.isResourceDownloadEnabled()).thenReturn(false);
-        Mockito.when(closedConfig.isScriptDownloadEnabled()).thenReturn(false);
-        Mockito.when(closedConfig.isSessionInfoLinkEnabled()).thenReturn(false);
-
-        closedRepo = getRAlgorithmRepository(closedConfig, SCRIPT_DIR);
-        closedRepo.addAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
-    }
-
-    @Test
-    public void importedScriptAreNotListedInProcessDescription() {
-        IAlgorithm algorithm = closedRepo.getAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
-        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
-        // System.out.println(description);
-
-        assertThat("imported script name is not listed as resource in description",
-                   description,
-                   not(containsString("imported.R\"")));
-        assertThat("imported script link is not in description",
-                   description,
-                   not(containsString("resource/test.import/imported.R")));
-    }
-
-}
+//public class ImportAnnotationClosedScriptsTest extends AbstractWps4RTest {
+//
+//    private final static String SCRIPT_DIR = "/annotations/import";
+//
+//    private final static String SCRIPT_ID = "import";
+//
+//    private R_Config closedConfig;
+//
+//    private RAlgorithmRepository closedRepo;
+//
+//    @Before
+//    public void setup() throws FileNotFoundException, IOException, ExceptionReport {
+//
+//        closedConfig = getConfigSpy();
+//        closedConfig.setWknPrefix("test.");
+//        Mockito.when(closedConfig.getEnableBatchStart()).thenReturn(true);
+//        Mockito.when(closedConfig.isImportDownloadEnabled()).thenReturn(false);
+//        Mockito.when(closedConfig.isResourceDownloadEnabled()).thenReturn(false);
+//        Mockito.when(closedConfig.isScriptDownloadEnabled()).thenReturn(false);
+//        Mockito.when(closedConfig.isSessionInfoLinkEnabled()).thenReturn(false);
+//
+//        closedRepo = getRAlgorithmRepository(closedConfig, SCRIPT_DIR);
+//        closedRepo.addAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
+//    }
+//
+//    @Test
+//    public void importedScriptAreNotListedInProcessDescription() {
+//        IAlgorithm algorithm = closedRepo.getAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
+//        String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
+//        // System.out.println(description);
+//
+//        assertThat("imported script name is not listed as resource in description",
+//                   description,
+//                   not(containsString("imported.R\"")));
+//        assertThat("imported script link is not in description",
+//                   description,
+//                   not(containsString("resource/test.import/imported.R")));
+//    }
+//
+//}
