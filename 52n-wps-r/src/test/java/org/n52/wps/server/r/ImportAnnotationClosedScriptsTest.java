@@ -71,7 +71,7 @@ public class ImportAnnotationClosedScriptsTest extends AbstractWps4RTest {
         closedRepo.addAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
     }
 
-    @Test
+    //@Test
     public void importedScriptAreNotListedInProcessDescription() {
         IAlgorithm algorithm = closedRepo.getAlgorithm(closedConfig.getPublicScriptId(SCRIPT_ID));
         String description = algorithm.getDescription().getProcessDescriptionType("1.0.0").xmlText();
