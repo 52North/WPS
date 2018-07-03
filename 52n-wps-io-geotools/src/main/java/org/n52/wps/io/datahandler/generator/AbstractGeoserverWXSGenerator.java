@@ -47,12 +47,16 @@
  */
 package org.n52.wps.io.datahandler.generator;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTRasterDataBinding;
 import org.n52.wps.io.data.binding.complex.GeotiffBinding;
 import org.n52.wps.webapp.api.types.ConfigurationEntry;
 
-public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
+public class AbstractGeoserverWXSGenerator extends AbstractGenerator {
 
     protected String username;
     protected String password;
@@ -88,6 +92,14 @@ public abstract class AbstractGeoserverWXSGenerator extends AbstractGenerator {
             }
         }
 
+    }
+
+    @Override
+    public InputStream generateStream(IData data,
+            String mimeType,
+            String schema) throws IOException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
