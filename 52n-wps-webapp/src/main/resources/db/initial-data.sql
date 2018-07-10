@@ -3,8 +3,8 @@ INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.modules.LocalAlgorith
 
 
 INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.project.riesgos.shakemap.algorithm.ShakemapAlgorithm','org.n52.wps.project.riesgos.shakemap.modules.ShakemapAlgorithmRepositoryCM',TRUE);
-INSERT INTO FORMATENTRY VALUES('text/xml', 'https://raw.githubusercontent.com/bpross-52n/shakemap-xmlbeans/master/src/main/xsd/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapParserCM',TRUE);
-INSERT INTO FORMATENTRY VALUES('text/xml', 'https://raw.githubusercontent.com/bpross-52n/shakemap-xmlbeans/master/src/main/xsd/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapGeneratorCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', 'http://earthquake.usgs.gov/eqcenter/shakemap/xml/schemas/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', 'http://earthquake.usgs.gov/eqcenter/shakemap/xml/schemas/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapGeneratorCM',TRUE);
 
 
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.r.RConfigurationModule', FALSE);
