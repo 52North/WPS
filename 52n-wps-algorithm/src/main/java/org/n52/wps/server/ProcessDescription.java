@@ -119,7 +119,11 @@ public class ProcessDescription {
                 processDescription.addNewAbstract().setStringValue(processDescriptionV100.getAbstract().getStringValue());
             }
 
-            InputDescriptionType[] inputDescriptionTypes = processDescriptionV100.getDataInputs().getInputArray();
+            InputDescriptionType[] inputDescriptionTypes = new InputDescriptionType[]{};
+
+            if(processDescriptionV100.getDataInputs() != null){
+                inputDescriptionTypes = processDescriptionV100.getDataInputs().getInputArray();
+            }
 
             for (InputDescriptionType inputDescriptionType : inputDescriptionTypes) {
 
