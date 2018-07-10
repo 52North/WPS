@@ -1,11 +1,11 @@
 INSERT INTO users VALUES(DEFAULT, 'wps', 'f0e272b0741e2a259fc10111a65445608294fdbf894a11ca1652bbfdef121ffbc7aecfa0b475a743', 'ROLE_ADMIN');
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.JTSConvexHullAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.DummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.LongRunningDummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
-INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.server.algorithm.test.EchoProcess','org.n52.wps.server.modules.LocalAlgorithmRepositoryCM',TRUE);
+INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.modules.LocalAlgorithmRepositoryCM', FALSE);
+
+
+INSERT INTO ALGORITHMENTRY VALUES('org.n52.wps.project.riesgos.shakemap.algorithm.ShakemapAlgorithm','org.n52.wps.project.riesgos.shakemap.modules.ShakemapAlgorithmRepositoryCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', 'https://raw.githubusercontent.com/bpross-52n/shakemap-xmlbeans/master/src/main/xsd/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapParserCM',TRUE);
+INSERT INTO FORMATENTRY VALUES('text/xml', 'https://raw.githubusercontent.com/bpross-52n/shakemap-xmlbeans/master/src/main/xsd/shakemap.xsd', '', 'org.n52.wps.project.riesgos.shakemap.modules.ShakemapGeneratorCM',TRUE);
+
 
 INSERT INTO CONFIGURATIONMODULE VALUES('org.n52.wps.server.r.RConfigurationModule', FALSE);
 
