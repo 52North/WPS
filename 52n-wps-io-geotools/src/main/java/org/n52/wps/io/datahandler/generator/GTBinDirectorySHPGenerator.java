@@ -115,9 +115,11 @@ public class GTBinDirectorySHPGenerator {
         GTVectorDataBinding binding = (GTVectorDataBinding) data;
         SimpleFeatureCollection originalCollection = (SimpleFeatureCollection) binding.getPayload();
 
-        SimpleFeatureCollection collection = createCorrectFeatureCollection(originalCollection);
+        if(checkIfAttributeNameIsLongerThan10Chars(originalCollection.getSchema())){
+            originalCollection = createCorrectFeatureCollection(originalCollection);
+        }
 
-        return createShapefileDirectory(collection, parent);
+        return createShapefileDirectory(originalCollection, parent);
     }
 
     //attribute names have to be truncated or they will not be filled with values
@@ -125,13 +127,9 @@ public class GTBinDirectorySHPGenerator {
             SimpleFeatureCollection fc) {
 
         List<SimpleFeature> featureList = new ArrayList<>();
-        SimpleFeatureType featureType = null;
+        SimpleFeatureType featureType = truncateAttributeNames(fc.getSchema());
         SimpleFeatureIterator iterator = fc.features();
-    
-        if(checkIfAttributeNameIsLongerThan10Chars(fc.getSchema())){
-            featureType = truncateAttributeNames(fc.getSchema());
-        }
-        
+
         while(iterator.hasNext()){
             SimpleFeature feature = (SimpleFeature) iterator.next();
             SimpleFeature resultFeature = GTHelper.createFeature(feature.getID(), (Geometry)feature.getDefaultGeometry(), featureType, truncatePropertyNames(feature.getProperties()));
