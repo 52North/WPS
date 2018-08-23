@@ -57,11 +57,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import javax.xml.namespace.QName;
-
 import org.apache.commons.lang.StringUtils;
 import org.geotools.data.DataStoreFactorySpi;
-import org.geotools.data.DataUtilities;
 import org.geotools.data.DefaultTransaction;
 import org.geotools.data.FeatureStore;
 import org.geotools.data.Transaction;
@@ -73,14 +70,11 @@ import org.geotools.data.simple.SimpleFeatureStore;
 import org.geotools.feature.AttributeImpl;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.NameImpl;
-import org.geotools.feature.PropertyImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeImpl;
 import org.geotools.feature.type.AttributeDescriptorImpl;
 import org.geotools.feature.type.AttributeTypeImpl;
-import org.geotools.feature.type.PropertyDescriptorImpl;
 import org.geotools.referencing.CRS;
 import org.n52.wps.io.GTHelper;
-import org.n52.wps.io.SchemaRepository;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.opengis.feature.IllegalAttributeException;
@@ -90,7 +84,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.slf4j.Logger;
@@ -99,13 +92,13 @@ import org.slf4j.LoggerFactory;
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GTBinDirectorySHPGenerator {
-    
+
     private static Logger LOGGER = LoggerFactory.getLogger(GTBinDirectorySHPGenerator.class);
 
     private Map<String, AttributeDescriptor> attributeNameDescriptorMap = new HashMap<>();
-    
+
     private Map<String, String> attributeNameMap = new HashMap<>();
-    
+
     public File writeFeatureCollectionToDirectory(IData data)
             throws IOException {
         return writeFeatureCollectionToDirectory(data, null);
@@ -141,116 +134,116 @@ public class GTBinDirectorySHPGenerator {
     }
 
     private boolean checkIfAttributeNameIsLongerThan10Chars(SimpleFeatureType simpleFeatureType){
-        
+
         List<AttributeDescriptor> attributeDescriptors = simpleFeatureType.getAttributeDescriptors();
-        
+
         for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
             String attributeName = attributeDescriptor.getName().getLocalPart();
             if(attributeName.length() > 10){
-                return true;                
+                return true;
             }
-        
-        }        
-        return false;        
+
+        }
+        return false;
     }
-    
+
     public Collection<Property> truncatePropertyNames(Collection<Property> properties){
-        
+
         Collection<Property> newProperties = new ArrayList<>();
-        
+
         for (Property property : properties) {
-            
+
             Property newProperty = property;
-            
+
             String propertyName = property.getName().getLocalPart();
-            
+
             if(propertyName.length() > 10){
                 //truncate
 //                String newPropertyName = attributeNameMap.get(propertyName);
-                
+
                 newProperty = new AttributeImpl(property.getValue(), attributeNameDescriptorMap.get(propertyName), null);
             }
-            
-            newProperties.add(newProperty);            
+
+            newProperties.add(newProperty);
         }
-        
+
         return newProperties;
-        
+
     }
-    
+
     public SimpleFeatureType truncateAttributeNames(SimpleFeatureType simpleFeatureType){
-        
+
         SimpleFeatureType newType = simpleFeatureType;
-        
+
         List<AttributeDescriptor> attributeDescriptors = simpleFeatureType.getAttributeDescriptors();
-        
+
         List<AttributeDescriptor> newAttributeDescriptors = new ArrayList<>();
-        
+
         for (AttributeDescriptor attributeDescriptor : attributeDescriptors) {
             String attributeName = attributeDescriptor.getName().getLocalPart();
             AttributeDescriptor newAttributeDescriptor = attributeDescriptor;
             if(attributeName.length() > 10){
                 //truncate
                 String newAttributeName = attributeName.substring(0,10);
-                
+
                 LOGGER.info(String.format("Attribute name: %s  was longer than 10 chars, truncating to %s", attributeName, newAttributeName));
-                
+
                 checkNames(attributeName, newAttributeName, attributeNameMap);
-                
+
                 attributeNameMap.put(attributeName, newAttributeName);
-                
+
                 //create new attribute
                 Name newName = new NameImpl(attributeDescriptor.getName().getNamespaceURI(), newAttributeName);
-                
+
                 AttributeType attributeType = attributeDescriptor.getType();
-                
+
                 AttributeType newAttributeType = new AttributeTypeImpl(newName, attributeType.getBinding(), attributeType.isIdentified(), attributeType.isAbstract(), attributeType.getRestrictions(), attributeType.getSuper(), attributeType.getDescription());
-                
+
                 newAttributeDescriptor = new AttributeDescriptorImpl(newAttributeType, newName, attributeDescriptor.getMinOccurs(), attributeDescriptor.getMaxOccurs(), attributeDescriptor.isNillable(), attributeDescriptor.getDefaultValue());
-                
+
                 attributeNameDescriptorMap.put(attributeName, newAttributeDescriptor);
             }
             newAttributeDescriptors.add(newAttributeDescriptor);
         }
-        
+
         newType = new SimpleFeatureTypeImpl(simpleFeatureType.getName(), newAttributeDescriptors, simpleFeatureType.getGeometryDescriptor(), simpleFeatureType.isAbstract(), simpleFeatureType.getRestrictions(), simpleFeatureType.getSuper(), simpleFeatureType.getDescription());
-                
+
         return newType;
     }
-    
+
     public String checkNames(String originalName, String truncatedName, Map<String, String> attributeNameMap){
-        
+
         //check if truncated attribute name already exists
         //it can happen that two truncated attribute name are equal
         //e.g. population_min and population_max, which would be truncated both to population
         if(attributeNameMap.containsValue(truncatedName)){
-            
-            LOGGER.info("Found duplicate truncated name: " + truncatedName);            
+
+            LOGGER.info("Found duplicate truncated name: " + truncatedName);
             // create new truncatedName, substring 0,9 and add increasing number
             truncatedName = createNewTruncatedName(truncatedName);
-            
+
             truncatedName = checkNames(originalName, truncatedName, attributeNameMap);
         }
-        
+
         return truncatedName;
-        
+
     }
-    
+
     private String createNewTruncatedName(String truncatedName){
-        
+
         //we'll go for 1 digit
         String shortenedTruncatedName = truncatedName.substring(0,9);
         String possibleNumber = truncatedName.substring(9);
-        
+
         if(!StringUtils.isNumeric(possibleNumber)){
             truncatedName = shortenedTruncatedName + 1;
         }else{
             truncatedName = shortenedTruncatedName + (Integer.parseInt(possibleNumber) + 1);
         }
-        
+
         return truncatedName;
     }
-    
+
     /**
      * Transforms the given {@link FeatureCollection} into a zipped SHP file
      * (.shp, .shx, .dbf, .prj) and returs its Base64 encoding
