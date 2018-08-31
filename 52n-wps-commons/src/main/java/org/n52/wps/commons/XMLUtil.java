@@ -64,6 +64,9 @@ public class XMLUtil {
     static {
         xmlInputFactory = new WstxInputFactory();
         xmlOutputFactory = new WstxOutputFactory();
+        //necessary for writing XML with no namespace prefix
+        ((WstxOutputFactory)xmlOutputFactory).getConfig().enableAutomaticNamespaces(true);
+        ((WstxOutputFactory)xmlOutputFactory).getConfig().setAutomaticNsPrefix("ns");
     }
 
     public static XMLInputFactory getInputFactory() {
