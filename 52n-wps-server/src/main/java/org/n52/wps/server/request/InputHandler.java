@@ -71,6 +71,7 @@ import org.n52.wps.server.request.strategy.ReferenceStrategyRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.google.common.primitives.Doubles;
 
@@ -2441,10 +2442,15 @@ public class InputHandler {
         Node dataNode = input.getData().getDomNode();
 
         try {
-            if(dataNode.getChildNodes().getLength() > 1){
-                boundingBoxDocument = BoundingBoxDocument.Factory.parse(dataNode.getChildNodes().item(1));
-            }else{
-                boundingBoxDocument = BoundingBoxDocument.Factory.parse(input.getData().getDomNode());
+
+            NodeList childNodes = dataNode.getChildNodes();
+
+            for (int i = 0; i < childNodes.getLength(); i++) {
+                Node child = childNodes.item(i);
+                if(child.getLocalName().equals("BoundingBox")){
+                    boundingBoxDocument = BoundingBoxDocument.Factory.parse(child);
+                    break;
+                }
             }
         } catch (XmlException e) {
             LOGGER.error("XmlException occurred while trying to parse bounding box: " + (boundingBoxDocument == null ? null : boundingBoxDocument.toString()), e);
