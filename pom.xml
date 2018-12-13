@@ -62,11 +62,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>OpenGEO</id>
-			<name>opengeo repository</name>
-			<url>http://repo.opengeo.org</url>
-		</repository>
 	</repositories>
 	<build>
 		<pluginManagement>
