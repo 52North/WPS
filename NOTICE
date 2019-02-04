@@ -51,6 +51,8 @@ This project includes:
   AOP alliance under Public Domain
   Apache Commons Exec under Apache License, Version 2.0
   Apache Commons Lang under The Apache Software License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
+  Apache HttpCore under Apache License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   authentication under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
@@ -102,7 +104,6 @@ This project includes:
   HSQLDB under HSQLDB License
   htmlparser under The MIT License
   HttpClient under Apache License
-  HttpCore under Apache License
   ibatis-sqlmap under The Apache Software License, Version 2.0
   Image I/O-Extensions - Custom Streams under GNU Lesser General Public License, version 3 or later (LGPL)
   Image I/O-Extensions - Improved TIFF Plugin under BSD License
