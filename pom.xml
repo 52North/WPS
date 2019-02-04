@@ -9,7 +9,7 @@
 	<artifactId>52n-wps-parent</artifactId>
 	<packaging>pom</packaging>
 	<name>52North Web Processing Service</name>
-	<version>3.6.3-SNAPSHOT</version>
+	<version>3.6.3</version>
 	<description>
 		52 North processing provides different tools for web based
 		processing in context of the OGC WPS specification.
