@@ -35,7 +35,7 @@ import org.n52.wps.algorithm.annotation.Execute;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 import org.n52.wps.server.AbstractAnnotatedAlgorithm;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * This algorithm creates a convex hull of a JTS geometry using build the in method.

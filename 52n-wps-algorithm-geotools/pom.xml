@@ -98,8 +98,8 @@
 			<groupId>javax.media</groupId>
 		</dependency>
 		<dependency>
-			<artifactId>jts</artifactId>
-			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts-core</artifactId>
+			<groupId>org.locationtech.jts</groupId>
 		</dependency>
 		<dependency>
 			<artifactId>gt-api</artifactId>

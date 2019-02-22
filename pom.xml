@@ -2,7 +2,7 @@
 	<parent>
         <groupId>org.n52</groupId>
         <artifactId>parent</artifactId>
-        <version>2</version>
+        <version>14</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.n52.wps</groupId>
@@ -190,7 +190,7 @@
 				<configuration>
 					<noticeTemplate>misc/licenses/NOTICE.template</noticeTemplate>
 					<licenseMapping>
-						<param>misc/licenses/license-mappings.xml</param>
+						<param>http://52north.github.io/cdn/licenses/license-mappings-jdk9.xml</param>
 					</licenseMapping>
 					<generateChildNotices>false</generateChildNotices>
 				</configuration>
@@ -203,6 +203,13 @@
 						</goals>
 					</execution>
 				</executions>
+				<dependencies>
+				    <dependency>
+                        <groupId>javax.annotation</groupId>
+                        <artifactId>javax.annotation-api</artifactId>
+                        <version>1.3.2</version>
+                    </dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 		<extensions>
@@ -227,7 +234,7 @@
 		<module>52n-wps-database</module>
 		<module>52n-wps-webapp</module>
 		<module>52n-wps-client-lib</module>
-		<module>52n-wps-sextante</module>
+<!-- 		<module>52n-wps-sextante</module> -->
 		<module>52n-wps-grass</module>
 		<module>52n-wps-r</module>
 	</modules>
@@ -237,7 +244,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.5</slf4j.version>
 		<logback.version>1.0.13</logback.version>
-		<geotools.version>13.5</geotools.version>
+		<geotools.version>20.2</geotools.version>
 		<apache.ode.version>1.3.3</apache.ode.version>
 		<apache.axis2.version>1.5.1</apache.axis2.version>
 		<jackson.version>2.1.2</jackson.version>
@@ -317,7 +324,17 @@
 				<!-- provided due to use of slf4j bridge -->
 				<scope>provided</scope>
 			</dependency>
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>1.1.3</version>
+            </dependency>
 			<!-- START import geotools dependencies -->
+		<dependency>
+			<groupId>org.locationtech.jts</groupId>
+			<artifactId>jts-core</artifactId>
+			<version>1.16.0</version>
+		</dependency>
 			<dependency>
 				<groupId>org.geotools</groupId>
 				<artifactId>geotools</artifactId>
@@ -842,11 +859,11 @@
 				<artifactId>52n-wps-client-lib</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>52n-wps-sextante</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+<!-- 			<dependency> -->
+<!-- 				<groupId>${project.groupId}</groupId> -->
+<!-- 				<artifactId>52n-wps-sextante</artifactId> -->
+<!-- 				<version>${project.version}</version> -->
+<!-- 			</dependency> -->
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>52n-wps-grass</artifactId>

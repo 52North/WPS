@@ -60,8 +60,8 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<artifactId>jts</artifactId>
-			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts-core</artifactId>
+			<groupId>org.locationtech.jts</groupId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

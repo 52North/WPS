@@ -85,7 +85,7 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 
 /**

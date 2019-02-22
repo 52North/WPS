@@ -30,7 +30,7 @@ package org.n52.wps.io.data.binding.complex;
 
 import org.n52.wps.io.data.IComplexData;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * This class wraps a JTS Geometry.

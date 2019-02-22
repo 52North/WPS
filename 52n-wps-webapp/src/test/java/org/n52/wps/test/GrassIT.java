@@ -56,7 +56,7 @@ import org.n52.wps.io.datahandler.parser.GTBinZippedSHPParser;
 import org.n52.wps.io.datahandler.parser.GeotiffParser;
 import org.xml.sax.SAXException;
 
-import com.vividsolutions.jts.io.InputStreamInStream;
+import org.locationtech.jts.io.InputStreamInStream;
 
 /**
  *

@@ -743,11 +743,11 @@
 					<artifactId>52n-wps-grass</artifactId>
 					<scope>runtime</scope>
 				</dependency>
-				<dependency>
-					<groupId>${project.groupId}</groupId>
-					<artifactId>52n-wps-sextante</artifactId>
-					<scope>runtime</scope>
-				</dependency>
+<!-- 				<dependency> -->
+<!-- 					<groupId>${project.groupId}</groupId> -->
+<!-- 					<artifactId>52n-wps-sextante</artifactId> -->
+<!-- 					<scope>runtime</scope> -->
+<!-- 				</dependency> -->
 				<dependency>
 					<artifactId>Rserve</artifactId>
 					<groupId>org.nuiton.thirdparty</groupId>

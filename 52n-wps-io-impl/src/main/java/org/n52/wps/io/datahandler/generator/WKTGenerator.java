@@ -35,8 +35,8 @@ import java.io.InputStream;
 import org.n52.wps.io.data.IData;
 import org.n52.wps.io.data.binding.complex.JTSGeometryBinding;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKTWriter;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTWriter;
 
 /**
  * This class generates a String representation out of a JTS Geometry.

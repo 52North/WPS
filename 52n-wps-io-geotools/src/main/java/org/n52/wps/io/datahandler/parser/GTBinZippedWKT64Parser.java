@@ -58,14 +58,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.NameImpl;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geometry.jts.WKTReader2;
 import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.ParseException;
 import org.n52.wps.io.GTHelper;
 import org.n52.wps.io.IOUtils;
 import org.n52.wps.io.IParser;
@@ -77,9 +77,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Bastian Schaeffer; Matthias Mueller, TU Dresden
@@ -147,7 +146,7 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
                 Reader fileReader = new FileReader(wktFile);
 
                 WKTReader2 wktReader = new WKTReader2();
-                com.vividsolutions.jts.geom.Geometry geometry = wktReader.read(fileReader);
+                Geometry geometry = wktReader.read(fileReader);
                 geometries.add(geometry);
             }
 
@@ -174,7 +173,7 @@ public class GTBinZippedWKT64Parser extends AbstractParser {
         }
     }
 
-    private SimpleFeatureCollection createFeatureCollection(List<com.vividsolutions.jts.geom.Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
+    private SimpleFeatureCollection createFeatureCollection(List<Geometry> geometries, CoordinateReferenceSystem coordinateReferenceSystem){
 
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
         if(coordinateReferenceSystem==null){

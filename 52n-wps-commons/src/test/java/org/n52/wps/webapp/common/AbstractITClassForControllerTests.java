@@ -16,7 +16,10 @@
  */
 package org.n52.wps.webapp.common;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.webapp.api.ConfigurationManager;
@@ -55,6 +58,11 @@ public class AbstractITClassForControllerTests {
 
     protected MockMvc getMockedWebService() {
         return mockMvc;
+    }
+
+    @Test
+    public void testMockMvc() {
+    	assertTrue(mockMvc != null);
     }
 
 }

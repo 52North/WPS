@@ -89,7 +89,7 @@ import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.identity.Identifier;
 import org.xml.sax.SAXException;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * This parser handles xml files for GML 3.2.1
