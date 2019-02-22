@@ -40,21 +40,20 @@ This project includes:
   52North WPS Input/Output API under Apache License, Version 2.0
   52North WPS R Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Server under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
-  52North WPS Sextante Processing Backend under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North WPS Web Application under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   AOP alliance under Public Domain
+  Apache Commons BeanUtils under The Apache Software License, Version 2.0
+  Apache Commons Lang under Apache License, Version 2.0
   Apache Velocity under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
   ArcGrid datasource module under Lesser General Public License (LGPL)
   Autotag - Core runtime under The Apache Software License, Version 2.0
   Bean Validation API under The Apache Software License, Version 2.0
-  BeanShell under GNU LESSER GENERAL PUBLIC LICENSE
   builder under Apache License 2.0
   ClassLoader Leak Prevention library under Apache 2
   ClassLoader Leak Prevention library for servlet environments under Apache 2
   ClassMate under The Apache Software License, Version 2.0
   Collections under The Apache Software License, Version 2.0
-  common under Eclipse Public License (EPL)
   Commons Codec under The Apache Software License, Version 2.0
   Commons Configuration under The Apache Software License, Version 2.0
   Commons DBCP under The Apache Software License, Version 2.0
@@ -64,15 +63,13 @@ This project includes:
   Commons JXPath under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
-  commons-beanutils under The Apache Software License, Version 2.0
   core under The Apache Software License, Version 2.0
   CORS Filter under The Apache Software License, Version 2.0
   Data Mapper for Jackson under The Apache Software License, Version 2.0
   DataStore Support under Lesser General Public License (LGPL)
   Derby Engine under The Apache Software License, Version 2.0
-  ecore under Eclipse Public License (EPL)
+  EJML under The Apache Software License, Version 2.0
   EPSG Authority Service using WKT file under Lesser General Public License (LGPL)
-  Feature Based Graphs and Networks under Lesser General Public License (LGPL)
   FreeMarker under BSD-style license
   GeoJSON Support under Lesser General Public License (LGPL)
   GeoTIFF grid coverage exchange module under Lesser General Public License (LGPL)
@@ -83,12 +80,13 @@ This project includes:
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest All under New BSD License
   Hamcrest Core under New BSD License
-  Hamcrest Library under BSD style
+  Hamcrest library under New BSD License
   Hibernate Validator Engine under Apache License, Version 2.0
   HttpClient under Apache License
   HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
   Image I/O-Extensions - Custom Streams under Lesser General Public License (LGPL)
+  Image I/O-Extensions - GeoCore under Lesser General Public License (LGPL)
   Image I/O-Extensions - utilities classes and methods under Lesser General Public License (LGPL)
   Improved TIFF Plugin under Lesser General Public License (LGPL)
   Jackson under The Apache Software License, Version 2.0
@@ -98,6 +96,7 @@ This project includes:
   jai_codec under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_core under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   jai_imageio under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
+  Java implementation of GeographicLib under The MIT License(MIT)
   Java Property Utility under The Apache Software License, Version 2.0
   Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
@@ -106,25 +105,50 @@ This project includes:
   jaxb-api under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JBoss Logging 3 under GNU Lesser General Public License, version 2.1
   JCL 1.1.1 implemented over SLF4J under MIT License
-  jcommon under GNU Lesser General Public Licence
   JDOM under Similar to Apache License but with the acknowledgment clause removed
-  jep under GNU General Public License, version 2
-  jfreechart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   jMock 2 Core under BSD style
   jMock JUnit 4 Extension under BSD style
   Joda time under Apache 2
   JSON.simple under The Apache Software License, Version 2.0
   jsp-api under CDDL 1.1 or GPL2 w/ CPE
-  jsr-275 under BSD License
   jsr173_api under BEA license, http://svn.apache.org/repos/asf/beehive/trunk/LICENSE.jsr173-api
   jstl under CDDL 1.1 or GPL2 w/ CPE
-  JTS Topology Suite under Lesser General Public License (LGPL)
+  jt-affine under Lesser General Public License (LGPL)
+  jt-algebra under Lesser General Public License (LGPL)
+  jt-bandcombine under Lesser General Public License (LGPL)
+  jt-bandmerge under Lesser General Public License (LGPL)
+  jt-bandselect under Lesser General Public License (LGPL)
+  jt-binarize under Lesser General Public License (LGPL)
+  jt-border under Lesser General Public License (LGPL)
+  jt-buffer under Lesser General Public License (LGPL)
+  jt-classifier under Lesser General Public License (LGPL)
+  jt-colorconvert under Lesser General Public License (LGPL)
+  jt-colorindexer under Lesser General Public License (LGPL)
+  jt-crop under Lesser General Public License (LGPL)
+  jt-errordiffusion under Lesser General Public License (LGPL)
+  jt-format under Lesser General Public License (LGPL)
+  jt-imagefunction under Lesser General Public License (LGPL)
+  jt-iterators under Lesser General Public License (LGPL)
+  jt-lookup under Lesser General Public License (LGPL)
+  jt-mosaic under Lesser General Public License (LGPL)
+  jt-nullop under Lesser General Public License (LGPL)
+  jt-orderdither under Lesser General Public License (LGPL)
+  jt-piecewise under Lesser General Public License (LGPL)
+  jt-rescale under Lesser General Public License (LGPL)
+  jt-rlookup under Lesser General Public License (LGPL)
+  jt-scale under Lesser General Public License (LGPL)
+  jt-scale2 under Lesser General Public License (LGPL)
+  jt-shadedrelief under Lesser General Public License (LGPL)
+  jt-stats under Lesser General Public License (LGPL)
+  jt-translate under Lesser General Public License (LGPL)
+  jt-utilities under Lesser General Public License (LGPL)
+  jt-vectorbin under Lesser General Public License (LGPL)
+  jt-warp under Lesser General Public License (LGPL)
+  jt-zonal under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
   KML XML Support under Lesser General Public License (LGPL)
-  kXML 2 under The BSD License
-  libMath under GPL 2.0 license
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
@@ -141,6 +165,11 @@ This project includes:
   OGC WPS schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGNL - Object Graph Navigation Library under The Apache Software License, Version 2.0
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  org.eclipse.emf.common under The Eclipse Public License Version 1.0
+  org.eclipse.emf.ecore under The Eclipse Public License Version 1.0
+  org.eclipse.emf.ecore.xmi under The Eclipse Public License Version 1.0
+  org.eclipse.xsd under The Eclipse Public License Version 1.0
+  org.locationtech.jts:jts-core under Eclipse Publish License, Version 1.0 or Eclipse Distribution License - v 1.0
   oro under The Apache Software License, Version 1.1
   PicoContainer Core under BSD License
   PJL Compressing Filter under Apache Software License V2.0
@@ -148,11 +177,9 @@ This project includes:
   Referencing services under Lesser General Public License (LGPL)
   REngine under GNU Lesser General Public License
   Rserve under GNU Lesser General Public License
-  sextante under GPL 2.0 license
-  sextante_algorithms under GPL 2.0 license
-  sextante_gt27_bindings under GPL 2.0 license
-  sextante_gui under GPL 2.0 license
   Shapefile module under Lesser General Public License (LGPL)
+  SI Quantities under BSD
+  SI Units for Java SE 8 under BSD
   SLF4J API Module under MIT License
   SLF4J Simple Binding under MIT License
   Spring AOP under The Apache Software License, Version 2.0
@@ -196,8 +223,10 @@ This project includes:
   Tiles request - Servlet support under The Apache Software License, Version 2.0
   Tiles Request - Velocity support under The Apache Software License, Version 2.0
   Tiles Request - Wildcard file loading in Servlets under The Apache Software License, Version 2.0
-  trove under GNU Lesser General Public License, version 2.1 or later (LGPL)
-  vecmath under GPL 2.0 license w/ CPE
+  Units of Measurement API under BSD
+  Units of Measurement Common Library under BSD
+  Units of Measurement Common Unit Systems for Java 8 under BSD
+  Units of Measurement Implementation for Java SE under BSD
   VelocityTools under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   Woodstox under The Apache Software License, Version 2.0
@@ -205,9 +234,7 @@ This project includes:
   Xalan Java Serializer under The Apache Software License, Version 2.0
   xercesImpl under The Apache Software License, Version 2.0
   XML Parsing under Lesser General Public License (LGPL)
-  XML Pull Parsing API under Public Domain
   XmlBeans under The Apache Software License, Version 2.0
   XMLUnit for Java under BSD License
-  xsd under Eclipse Public License (EPL)
   ZonalStats operator under Simplified BSD
 

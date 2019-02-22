@@ -50,8 +50,7 @@ package org.n52.wps.io.datahandler.parser;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
-
+import org.n52.wps.commons.XMLBeansHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -82,7 +81,7 @@ public class GML2Handler extends DefaultHandler {
             return;
         }
         rootVisited = true;
-        String schemaLocationAttr = attributes.getValue(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
+        String schemaLocationAttr = attributes.getValue(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation");
         if(schemaLocationAttr == null) {
             LOGGER.debug("schemaLocation attribute is not set correctly with namespace");
             schemaLocationAttr = attributes.getValue("xsi:schemaLocation");

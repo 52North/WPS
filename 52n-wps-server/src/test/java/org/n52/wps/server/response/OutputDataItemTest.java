@@ -46,6 +46,7 @@ import org.apache.xmlbeans.XmlValidationError;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.io.BasicXMLTypeFactory;
 import org.n52.wps.io.data.ILiteralData;
 import org.n52.wps.io.data.binding.literal.LiteralAnyURIBinding;
@@ -140,7 +141,7 @@ public class OutputDataItemTest extends AbstractITClass{
         c.toFirstChild();
         c.toLastAttribute();
         c.setAttributeText(
-                new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI,
+                new QName(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI,
                         "schemaLocation"),
                 "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
         responseElem.setServiceInstance(WPSConfig.getInstance().getServiceEndpoint()

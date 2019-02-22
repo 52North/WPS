@@ -44,7 +44,9 @@ import net.opengis.wps.x100.ExecuteDocument;
 import net.opengis.wps.x100.InputType;
 
 import org.apache.xmlbeans.XmlException;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureCollection;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,10 +54,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.wps.commons.WPSConfig;
 import org.n52.wps.io.data.IData;
+import org.n52.wps.io.data.binding.complex.GTVectorDataBinding;
 import org.n52.wps.server.ExceptionReport;
 import org.n52.wps.server.RepositoryManager;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.n52.wps.webapp.common.AbstractITClass;
+import org.opengis.feature.simple.SimpleFeature;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
@@ -146,15 +150,19 @@ public class SimpleBufferAlgorithmInputHandlerTest extends AbstractITClass {
         assertThat(data, is(notNullValue()));
         assertThat(data.getSupportedClass().getName(), is(equalToIgnoringCase("org.geotools.feature.FeatureCollection")));
         assertThat(data.getPayload(), is(notNullValue()));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getID(), is(equalToIgnoringCase("featureCollection")));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getSchema().getTypeName(), is(equalToIgnoringCase("tasmania_roads")));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getSchema().getAttributeCount(), equalTo(7));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).fids().size(), equalTo(14));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).fids().toArray()[0].toString(), is(equalToIgnoringCase("tasmania_roads.1")));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).fids().toArray()[13].toString(), is(equalToIgnoringCase("tasmania_roads.9")));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getBounds().toString(), is(equalToIgnoringCase("ReferencedEnvelope[145.19754 : 148.27298000000002, -43.423512 : -40.852802]")));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getBounds().getArea(), equalTo(7.906064362400054d));
-        assertThat(((DefaultFeatureCollection) data.getPayload()).getBounds().getDimension(), equalTo(2));
+
+        SimpleFeatureCollection featureCollection = (SimpleFeatureCollection) ((GTVectorDataBinding)data).getPayload();
+
+        assertThat(featureCollection.getID(), is(equalToIgnoringCase("featureCollection")));
+        assertThat(featureCollection.getSchema().getTypeName(), is(equalToIgnoringCase("tasmania_roads")));
+        assertThat(featureCollection.getSchema().getAttributeCount(), equalTo(7));
+        SimpleFeature[] featureArray = featureCollection.toArray(new SimpleFeature[]{});
+        assertThat(featureArray.length, equalTo(14));
+        assertThat(featureArray[0].getID(), is(equalToIgnoringCase("tasmania_roads.1")));
+        assertThat(featureArray[13].getID(), is(equalToIgnoringCase("tasmania_roads.14")));
+        assertThat(featureCollection.getBounds().toString(), is(equalToIgnoringCase("ReferencedEnvelope[145.19754 : 148.27298000000002, -43.423512 : -40.852802]")));
+        assertThat(featureCollection.getBounds().getArea(), equalTo(7.906064362400054d));
+        assertThat(featureCollection.getBounds().getDimension(), equalTo(2));
 
         assertThat(width, is(notNullValue()));
         assertThat(((Double)width.getPayload()), equalTo(20.0d));

@@ -63,6 +63,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.wps.commons.WPSConfig;
+import org.n52.wps.commons.XMLBeansHelper;
 import org.n52.wps.webapp.api.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -548,7 +549,7 @@ public class CapabilitiesConfigurationV200 {
             XmlCursor c = instance.newCursor();
             c.toFirstChild();
             c.toLastAttribute();
-            c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
+            c.setAttributeText(new QName(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/2.0 http://schemas.opengis.net/wps/2.0/wps.xsd");
 
             wpsCapabilities.addNewService().setStringValue("WPS");//Fixed to WPS TODO: put in WPSConfig or so
 

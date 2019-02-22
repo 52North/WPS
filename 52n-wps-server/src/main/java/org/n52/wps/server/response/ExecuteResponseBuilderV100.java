@@ -89,7 +89,7 @@ public class ExecuteResponseBuilderV100 implements ExecuteResponseBuilder{
         XmlCursor c = doc.newCursor();
         c.toFirstChild();
         c.toLastAttribute();
-        c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
+        c.setAttributeText(new QName(XMLBeansHelper.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), "http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsExecute_response.xsd");
         doc.getExecuteResponse().setServiceInstance(WPSConfig.getInstance().getServiceEndpoint()
                 + "?REQUEST=GetCapabilities&SERVICE=WPS");
         doc.getExecuteResponse().setLang(WebProcessingService.DEFAULT_LANGUAGE);

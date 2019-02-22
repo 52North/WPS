@@ -18,13 +18,7 @@ package org.n52.wps.commons;
 
 import java.util.concurrent.ConcurrentMap;
 
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-
-import net.opengis.wps.x100.InputDescriptionType;
-import net.opengis.wps.x100.OutputDescriptionType;
-import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
-import net.opengis.wps.x20.ProcessDescriptionType;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -34,6 +28,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import net.opengis.wps.x100.InputDescriptionType;
+import net.opengis.wps.x100.OutputDescriptionType;
+import net.opengis.wps.x100.ProcessDescriptionType.DataInputs;
+import net.opengis.wps.x20.ProcessDescriptionType;
+
 /*
  *
  * Some conveniant methods, to access some XMLBean objects.
@@ -41,6 +40,10 @@ import com.google.common.collect.Maps;
  *
  */
 public class XMLBeansHelper {
+
+    public static final String W3C_XML_SCHEMA_INSTANCE_NS_URI =
+            "http://www.w3.org/2001/XMLSchema-instance";
+
     public static OutputDescriptionType findOutputByID(String outputID, OutputDescriptionType[] outputDescs) {
         for(OutputDescriptionType desc : outputDescs) {
             if(desc.getIdentifier().getStringValue().equals(outputID)) {
@@ -110,7 +113,7 @@ public class XMLBeansHelper {
         XmlCursor c = object.newCursor();
         c.toFirstChild();
         c.toLastAttribute();
-        c.setAttributeText(new QName(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
+        c.setAttributeText(new QName(W3C_XML_SCHEMA_INSTANCE_NS_URI, "schemaLocation"), schemaLocation);
 
     }
 
